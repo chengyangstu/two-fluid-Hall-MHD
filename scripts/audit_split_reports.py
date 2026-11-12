@@ -41,12 +41,13 @@ for stem,title in manifest['titles'].items():
     if stem=='02_paper_results':
         dossier=set(re.findall(r'\\label\{paper:([^}]+)\}',body))
         assert dossier==set(V),(len(dossier),len(V))
-    reports.append({'file':str(path.relative_to(P)),'title':title,'pages':len(doc),
+    reports.append({'file':path.relative_to(P).as_posix(),'title':title,'pages':len(doc),
                     'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
                     'chapters':[x for x in doc.get_toc() if x[0]==1],
                     'links':dict(counts),'fonts':sorted(fonts),'cited_full_reads':len(cites),
                     'latex_warnings':warnings,'near_page_edges':edge})
-    for n in samples[stem]:
+    for n in sorted(set(samples[stem]+[len(doc)-1,len(doc)])):
+        if not 1<=n<=len(doc):continue
         out=Q/f'{stem}_p{n}.png'
         doc[n-1].get_pixmap(matrix=fitz.Matrix(1.4,1.4)).save(out)
         rendered.append((stem,n,out))
@@ -56,7 +57,7 @@ for k in range(0,len(rendered),4):
         im=Image.open(path);im.thumbnail((600,850));x=j%2*620;y=j//2*900
         canvas.paste(im,(x+10,y+30));draw.text((x+10,y+8),f'{stem}, PDF page {n}',fill='black')
     canvas.save(Q/f'contact_{k//4+1}.png')
-record={'date':'2026-11-12','volumes':reports,'errors':errors,'full_read_dossiers_preserved':122,
+record={'date':'2026-11-12','volumes':reports,'errors':errors,'full_read_dossiers_preserved':len(V),
         'all_master_labels_preserved':manifest['all_master_labels_preserved'],
         'rendered_samples':[[s,n] for s,n,p in rendered]}
 (Q/'audit.json').write_text(json.dumps(record,ensure_ascii=False,indent=2))

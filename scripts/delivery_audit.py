@@ -13,7 +13,7 @@ unique=[r for r in c if not r.get('duplicate_of') and r.get('eligibility')!='排
 errors=[];cited=set();manifest=[];allfiles={}
 for f in sorted((P/'papers').glob('*.pdf')):
  try:
-  data=f.read_bytes();d=fitz.open(stream=data,filetype='pdf');item={'path':str(f.relative_to(P)),'bytes':len(data),'pages':len(d),'sha256':hashlib.sha256(data).hexdigest()};allfiles[item['path']]=item;manifest.append(item)
+  data=f.read_bytes();d=fitz.open(stream=data,filetype='pdf');item={'path':f.relative_to(P).as_posix(),'bytes':len(data),'pages':len(d),'sha256':hashlib.sha256(data).hexdigest()};allfiles[item['path']]=item;manifest.append(item)
  except Exception as e:errors.append('PDF '+str(f)+': '+str(e))
 for r in c:
  if r.get('local_pdf'):

@@ -10,6 +10,7 @@ ids=['01_theory_numerics','02_paper_results','03_solved_open']
 titles=['理论与数值基础','不同文章的结果','已解决与未解决的问题']
 short=['基础卷','结果卷','问题卷']
 provenance={}
+full_read_count=len(json.loads((P/'research/reading_notes/verified.json').read_text()))
 
 def flatten(path):
     p=P/path
@@ -89,7 +90,7 @@ base=(P/'preamble.tex').read_text()
 (O/'preamble.tex').write_text(base)
 frontnotes=[
  '本卷保留全部模型推导、完整离子/电子方程、双流体到Hall MHD的约化、数值方法与参数细节；所有详细推导集中在第1章。第3章可先读，用于把核心方程和实现流程对应起来。',
- '本卷先按七条问题线串联论文结果，再给实验对照、检索边界及122篇逐篇全文核读档案。未核读候选单列，不作为研究结论证据。',
+ f'本卷先按七条问题线串联论文结果，再给实验对照、检索边界及{full_read_count}篇逐篇全文核读档案。未核读候选单列，不作为研究结论证据。',
  '本卷逐项列出已解决结果与未解决问题，标明作者、年份、稳定文献键及可点击引文；原文缺口与本报告综合判断分别标注。后半卷保留更详细的模型边界、争议与可检验研究设计。'
 ]
 for i,body in enumerate(bodies):
@@ -103,7 +104,7 @@ for i,body in enumerate(bodies):
     header+=r'{\sffamily\Huge\bfseries\color{ink}'+titles[i]+r'\par}\vspace{10mm}'+'\n'
     header+=r'{\sffamily\large 三卷本 · 第'+str(i+1)+r'卷\par}\vfill'+'\n'
     header+='分卷更新：2026年11月12日。\\\\[5pt]\n'
-    header+='全文核读证据：122篇，核读更新至2026年11月11日。\\\\[5pt]\n'
+    header+=f'全文核读证据：{full_read_count}篇，核读更新至2026年11月12日。\\\\[5pt]\n'
     header+=frontnotes[i]+'\n'+r'\end{titlepage}\chapter*{本卷阅读与查阅方式}'+'\n'
     header+=frontnotes[i]+'\n\n'
     header+='三卷分别编排目录和参考文献，文献键保持一致；同一论文在不同卷的引文编号可能不同。标明“基础卷、结果卷、问题卷”的交叉引用会跳转到对应PDF；各卷应保存在同一目录。若阅读器限制跨文件跳转，可按卷名和章节/公式号查阅。全部原文位于项目根目录的papers文件夹。\n\n'
@@ -117,8 +118,8 @@ for i,body in enumerate(bodies):
 manifest={'date':'2026-11-12','titles':dict(zip(ids,titles)),'source_hashes':provenance,
           'all_master_labels_preserved':True,'label_ownership':ownership,
           'cross_volume_reference_counts':link_counts,
-          'omitted_text':'Only the former combined-cover reading directions and the final repeated reading-route paragraph; scientific sections, 122 dossiers and candidate inventory retained.',
-          'full_reads_unchanged':122}
+          'omitted_text':f'Only the former combined-cover reading directions and the final repeated reading-route paragraph; scientific sections, {full_read_count} dossiers and candidate inventory retained.',
+          'full_read_count':full_read_count}
 (QA/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2))
 print('Generated three volumes; labels preserved:',len(ownership),flush=True)
 
