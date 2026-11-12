@@ -1,0 +1,636 @@
+Draft version June 9, 2026
+Typeset using LATEX default style in AASTeX631
+A Numerical Experiment on Oscillatory Magnetic Reconnection in a Laboratory Plasma System
+Driven by Alternating Currents
+Sripan Mondal,1 Abhishekh Kumar Srivastava,2 and Eric R. Priest3
+1Department of Physics, Indian Institute of Technology (BHU), Varanasi-221005, India
+2Department of Physics, Indian Institute of Technology (BHU), Varanasi-221005, India. Email:- asrivastava.app@itbhu.ac.in
+3Mathematics Institute, St Andrews University, KY16 9SS, St Andrews, UK
+ABSTRACT
+Using the open source MPI-AMRVAC framework, we study oscillatory reconnection in a laboratory
+plasma, which occurs when a magnetic null is perturbed by incoming fast magnetoacoustic waves driven
+by an alternating current. The magnetic null region collapses to first form a y-directed current sheet
+that later changes its orientation to the x-direction. The x-directed current sheet has smaller enhanced
+thermal pressure and out-of-plane current than the y-directed current sheet. The Hall effect produces
+an out-of-plane plasma flow that evolves with a time lag with respect to the enhanced thermal pressure
+and out-of-plane current density. Increasing the amplitude of the alternating current produces higher
+thermal pressure, out-of-plane current density, and out-of-plane plasma flow, while the first peaks of
+thermal pressure and out-of-plane current density occur earlier.
+Keywords: Hall Magnetohydrodynamics; MHD Waves; Magnetic Reconnection; Laboratory Plasma
+1. INTRODUCTION
+Breaking and topological rearrangement of magnetic field lines, namely, magnetic reconnection, occurs in different
+plasma systems such as solar and space plasmas, planetary magnetospheres, and laboratory fusion plasmas (e.g.,
+Yamada et al. 2010; Hesse & Cassak 2020; Nakamura et al. 2025). Such a process can result in the liberation of non-
+potential magnetic energy stored in the magnetic configurations and its transformation into heat, bulk kinetic energy
+of the plasma, and kinetic energy of charged particles (e.g., Goedbloed & Poedts 2004; Priest 2014). In principle,
+magnetic reconnection is a three-dimensional process, which can take place near the magnetic nulls, separators, or
+quasi-separators configured in various kinds of magnetic geometry (e.g., Pontin & Priest 2022). A two-dimensional
+description of magnetic reconnection requires a magnetic X-type geometry in which a magnetic null is located at the
+intersection of two separatrix curves (e.g., Pontin & Priest 2022). However, the formation of a sheet of high current
+density (namely, a current sheet) is an essential step towards the onset of magnetic reconnection irrespective of the
+geometry.
+Investigations of magnetic reconnection have been carried out using observational data from the space satellites
+for both solar (e.g., Drake et al. 2025) and magnetospheric plasmas (e.g., Gershman et al. 2024). Several dedicated
+laboratory experiments such as MRX (Magnetic Reconnection Experiment) (e.g., Yamada et al. 2005, 2014, 2016)
+and TREX (e.g., Olson et al. 2016) have been set up to improve our understanding of reconnection in the laboratory.
+There are also laser-induced high energy density experiments of magnetic reconnection (e.g., Fox et al. 2011; Fiksel
+et al. 2014; Egedal 2021; Fox et al. 2022). In addition, there are experiments driven by pulsed-power platforms in
+which the plasma pressure is on the order of the magnetic pressure (e.g., Hare et al. 2017).
+In parallel, numerical simulations play a significant role in enhancing the existing understanding of magnetic re-
+connection at disparate spatio-temporal scales (e.g., Pontin et al. 2024; Moreno-Insertis et al. 2025; Shay et al. 2025;
+Richter et al. 2025). Single-fluid magnetohydrodynamic (MHD) models are frequently used in two- or three-dimensional
+models. However, when ions and electrons are decoupled, a two-fluid prescription is preferable. If the length-scale of
+plasma dynamics is larger than the electron inertial length but smaller than the ion inertial length, corrections due
+to the Hall effect need to be incorporated into the MHD equations, which is the focus of this paper (e.g., Birn et al.
+arXiv:2606.09745v1  [physics.plasm-ph]  8 Jun 2026
+
+2
+2001; Huba & Rudakov 2002; Huba 2003; Huba & Rudakov 2003; Knoll & Chac´on 2006; Malakit et al. 2009; Stanier
+et al. 2017).
+If the initiation is associated with MHD instabilities such as the resistive tearing mode or the ideal kink mode (e.g.,
+Baty 2000; Browning et al. 2024), it is termed spontaneous reconnection. However, if the reconnection is caused by
+some external driving such as flux emerging from below the solar surface, erupting prominences or magnetoacoustic
+waves (e.g., Sakai et al. 1984; Vekstein 2017; Srivastava et al. 2019), it is regarded as externally driven reconnection.
+In laboratory plasma systems, most of the experiments have reconnection that is externally driven (e.g., Yamada et al.
+1997; Hare et al. 2017).
+Since various kinds of wave mode are ubiquitous in the solar corona, they can interact with nulls, separators or
+quasi-separators to initiate magnetic reconnection. This process, together with the possibility of reconnection driving
+waves, is referred to as a ‘Symbiosis of Waves and Reconnection (SWAR)’ (e.g., Mondal et al. 2024; Srivastava et al.
+2025). At laboratory scales, such a process has been studied using an experiment in which an alternating current
+varying between 40 kA and 70 kA with a half-period of 400 µs generates fast magnetoacoustic waves that converge
+towards a magnetic null. This results in the accumulation of current to form a current sheet that gradually thins in
+the presence of Hall currents and inverse currents (e.g., Frank & Savinov 2024).
+In the solar corona, if a current sheet changes its orientation from, say, vertical to horizontal or vice-versa, it is termed
+oscillatory reconnection (e.g., Craig & McClymont 1991; McLaughlin et al. 2009; Thurgood et al. 2017; Karampelas
+et al. 2022). However, the periodicity of such an oscillation depends on the background plasma parameters rather
+than the details of the driver and can take place in a self-consistent manner even in the absence of continuous driving
+(e.g., Karampelas et al. 2023). Moreover, in a reconnection experiment in MRX, it has been found that, during an
+increase of current in the poloidal flux loops from 0 to 15 kA, a vertical current sheet is formed, which undergoes
+‘Push’ reconnection. Then, during a decrease of the current, the sheet changes its orientation and undergoes ‘Pull’
+reconnection (e.g., Yamada et al. 1997).
+Here, we conduct a two-dimensional Hall-MHD simulation of such externally-driven oscillatory reconnection in a
+plasma system that is magnetically dominated. Our main aim is to examine how physical variables change with time
+during the collapse of a magnetic null due an alternating current flowing through wires close to the boundary of the
+simulation domain. In section 2, the numerical setup is presented along with the adopted numerical methods. In
+section 3, the scientific outcomes are demonstrated and discussed in detail. This is followed by a summary of the
+findings in the section 4.
+2. SETUP FOR THE NUMERICAL EXPERIMENT
+We consider a plasma system having a uniform number density (n0) of 1013 cm−3 and a temperature (T0) of 105 K,
+i.e., around 8.6 eV, which are similar to those used in the MRX setup while conducting a study of collisional magnetic
+reconnection in a low-β (i.e., magnetically dominated) plasma. The resulting Debye length (λD =
+p
+ϵ0kBT0/n0e2) is
+estimated to be around 7 × 10−4 cm, while the electron inertial length (de =
+p
+ϵ0mec2/n0e2) and ion inertial length
+(di =
+p
+ϵ0mpc2/n0e2) are 0.17 cm and 7.2 cm, respectively. Here, ϵ0, kB, c, me and mp are the permittivity of free
+space, Boltzmann constant, speed of light, electron mass and proton mass, respectively. We consider a two-dimensional
+simulation domain spanning over [−7.5di, 7.5di], (i.e., [−54 cm, 54 cm]) in both the x- and y-directions.
+We place four straight wires each having length (L) of 360 cm, extending from z = −180 cm to z = +180 cm in the z-
+direction at the following locations: (x1, y1) = [0 cm, −216 cm], (x2, y2) = [0 cm, +216 cm], (x3, y3) = [−216 cm, 0 cm]
+and (x4, y4) = [+216 cm, 0 cm]. Direct currents of amplitude Idc = 72 kA flow through each wire in the positive
+z-direction. The resulting magnetic field possesses a magnetic null patch at the middle of the simulation domain in
+the z = 0 plane (see Fig. 1(a)). If we define
+r2
+i = (x −xi)2 + (y −yi)2
+(1)
+for i = 1, 2, 3, 4, 5, 6, then the x-component of the magnetic field in the z = 0 plane can be written as–
+B0x = −
+2
+X
+i=1
+IdcL(y −yi)
+r2
+i ×
+p
+r2
+i + L2/4
++
+4
+X
+i=3
+IdcL(y −yi)
+r2
+i ×
+p
+r2
+i + L2/4
+,
+(2)
+while the y-component in the same plane is
+B0y =
+2
+X
+i=1
+IdcL(x −xi)
+r2
+i ×
+p
+r2
+i + L2/4
+−
+4
+X
+i=3
+IdcL(x −xi)
+r2
+i ×
+p
+r2
+i + L2/4
+.
+(3)
+
+3
+Figure 1. (a) The initial magnetic field configuration, in which the β = 1 curve where the thermal (PT ) and magnetic (PM)
+pressure are equal is denoted by a magenta circle. (b) The variation with time of the alternating currents of different amplitude
+imposed at the left and right side boundaries; vertical dashed lines correspond to times of 3.9 µs, 13.9 µs, 24 µs, 34 µs and 44
+µs. (c) The perturbations in magnetic field and plasma as wave-like fronts seen in the z-component of current density (Jz) (top
+row) and PT (bottom row) at 5.5 µs for three different amplitudes of the alternating current. The inward propagation of the
+initial wave-like perturbations from 0 to 7.6 µs is shown in Fig1c.mp4 (Multimedia available online).
+Since, these wires are far away from the boundaries of the simulation domain, the resulting magnetic field is in
+quasi-static equilibrium in the presence of a uniform density and temperature, if it is not subjected to any other
+perturbations.
+We place two more straight z-directed wires of length L1 = 3.6 cm, along which alternating currents flow at the
+following locations: (x5, y5) = [−57.6 cm, 0 cm], and (x6, y6) = [57.6 cm, 0 cm]. The periodicity and phase of the
+alternating currents flowing through them are the same (see Fig. 1(b)) and have the form
+Iac = I0f(t),
+(4)
+where
+f(t) =
+
+
+
+
+
+
+
+
+
+0
+when t ≤t1;
+sin
+
+2π(t−t1)
+T
+
+when t1 ≤t ≤t2;
+0
+when t > t2,
+(5)
+where t1 = 4 µs, t2 = 44 µs and T = 40 µs. We vary the amplitude I0 from 0.36 kA to 3.60 kA to see how it affects
+the dynamics of the reconnection. The alternating currents generate a time-varying magnetic field given by
+bx =
+IacL1(y −y5)
+r2
+5 ×
+p
+r2
+5 + L2
+1/4
++
+IacL1(y −y6)
+r2
+6 ×
+p
+r2
+6 + L2
+1/4
+,
+(6)
+
+4
+by = −
+IacL1(x −x5)
+r2
+5 ×
+p
+r2
+5 + L2
+1/4
+−
+IacL1(x −x6)
+r2
+6 ×
+p
+r2
+6 + L2
+1/4
+.
+(7)
+We discretize the simulation domain using a resolution of 160 × 160 initially, which is then subjected to one level
+of adaptive mesh refinement to have an effective maximum resolution of 320 × 320 with the smallest cell size being
+0.34 cm. Since, this smallest cell size is much smaller than the ion inertial length of 7.2 cm, the Hall effect decouples
+the ions and electrons and is well treated in our simulation. The smallest cell size is nearly twice the electron inertial
+length of 0.17 cm, but a full kinetic simulation would treat the electron behaviour better. Thus, we solve the following
+dimensionless Hall-MHD equations to simulate the magneto-plasma dynamics using open-source MPI-AMRVAC (e.g.,
+Keppens et al. 2023):
+∂ρ
+∂t + ⃗∇· (ρ⃗V ) = 0,
+(8)
+∂
+∂t(ρ⃗V ) + ⃗∇·
+h
+ρ⃗V ⃗V + Ptot⃗I −⃗B ⃗B
+i
+= 0,
+(9)
+∂e
+∂t + ⃗∇·
+
+e⃗V + Ptot⃗V −⃗B ⃗B · ⃗V
+
++
+⃗∇·
+ηH
+ρ [( ⃗J · ⃗B) ⃗B −( ⃗B. ⃗B) ⃗J]
+
+= 0,
+(10)
+∂⃗B
+∂t + ⃗∇·
+
+⃗V ⃗B −⃗B⃗V + ηH
+ρ ( ⃗B ⃗J −⃗J ⃗B)
+
+= 0,
+(11)
+where
+Ptot = PT + B2
+2 ,
+e =
+PT
+γ −1 + 1
+2ρV 2 + B2
+2
+(12)
+and
+⃗J = ⃗∇× ⃗B,
+⃗∇· ⃗B = 0.
+(13)
+Here, ηH = ρ/(nee), and the dimensionless value of ηH is derived from a normalized background density (e.g., Leroy
+& Keppens 2017). So, since the normalized background density in the present case is 1, the (dimensionless) value of
+ηH to be 1. We do not include a physical resistivity in the simulation.
+Since Eqs. (8)-(13) are solved numerically, the variables have been made dimensionless by dividing the dimensional
+values by characteristic values. For example, the normalising length L∗is here the ion inertial length (7.2 cm). The
+corresponding temperature T ∗and number density n∗are taken to be 105 K and 1013 cm−3, respectively, whereas
+the density ρ∗= 1.4n∗mH is 2.34 × 10−11 g cm−3, in terms of the hydrogen mass (mH).
+The thermal pressure
+P ∗= 2.3n∗kBT ∗is 317.5 dyne cm−2, while the other variables are magnetic field B∗=
+√
+4πP ∗= 63 G, velocity
+V ∗= B∗/(√4πρ∗) = 3.68 × 106 cm s−1 and time t∗= L∗/V ∗= 2 µs.
+Temporal integration is carried out using a “two-step” method, and the “Harten-Lax-van Leer (HLL)” Riemann
+solver (e.g., Harten 1983) is utilized to estimate the flux at cell interfaces. A second-order symmetric total variation
+diminishing limiter, namely “vanleer” (e.g., van Leer 1979) is used to suppress spurious numerical oscillations. Thermal
+pressure and density are fixed at their initial values at all four boundaries. On the side boundaries, the x-component
+of velocity is assumed to be antisymmetric, while the other two components are taken to be symmetric. On the top
+and bottom boundaries, the y-component of velocity is assumed to be antisymmetric with the other two components
+being symmetric. This ensures that the normal velocity vanishes at all four boundaries, which therefore reflect the
+plasma flows. Furthermore, we do not introduce any damping layers to damp the reflections. Hence, the boundary
+effects play a role in the dynamics under consideration, especially, in the absence of external driving. The imposed
+boundary conditions for the other variables except the magnetic field are similar to those considered previously (e.g.,
+Karampelas et al. 2022).
+3. RESULTS
+Since the wires carrying the alternating currents are placed very close to the left and right side boundaries, such
+currents generate magnetic field perturbations, which then propagate inward into the simulation domain as fast
+magnetoacoustic waves and disturb the quasi-stable equilibrium. The waves can be modeled as perturbations in the
+
+5
+Figure 2. Variation with time of Jz (top row) and PT (bottom row) for an imposed alternating current having an amplitude
+of 1.98 kA. Jz changes both its magnitude and direction, while the current sheet changes its orientation and back again. The
+final column shows the continuation of the oscillation after the driver has been switched off. The changes in Jz and PT from
+7.8 to 60 µs are shown in Fig2.mp4 (Multimedia available online).
+Figure 3. Spatial distribution of the in-plane current density components (Jx (first column) and Jy (second column)), out-of-
+plane magnetic field (Bz) (third column), out-of-plane Lorentz force (LFz) (fourth column), and out-of-plane plasma flow (Vz)
+(fifth column) at 14.7 (top row) and 35.2 µs (bottom row), when the imposed alternating current amplitude is 1.98 kA. The
+evolutions of Jx, Jy, Bz, LFz, and Vz from 7.8 to 60 µs are shown in Fig3.mp4 (Multimedia available online).
+background magnetic field denoted via out-of-plane current density (say, Jz) and in the background plasma conditions
+such as in thermal pressure (PT ) (see Fig. 1(c) (Multimedia available online)). The waves are found to reach the
+magnetic null around 6.5 to 6.8 µs after starting their propagation at 4 µs from the alternating current carrying wires
+giving a propagation speed of 207 to 230 km s−1. The amplitude of the perturbation increases with the amplitude
+of the driving alternating current (see Fig. 1(c)). Approaching fast magnetoacoustic waves cause the magnetic null
+point to collapse and form a current concentration at the null location and along the separatrices. In the following
+
+6
+subsection, we discuss the evolution in Jz and PT with an alternating current of amplitude I0 = 1.98 kA, determine
+the role of Hall effects on the dynamics, and further demonstrate the oscillation in the out-of-plane electric field.
+3.1. Morphological Overview and Electric Field Oscillations for a Particular I0
+Due to the resulting unbalanced Lorentz force, the magnetic null eventually forms a y-directed current sheet with
+a strong current (Jz) directed out of the plane. The magnitude of Jz at first increases before beginning to decrease
+around 21 µs (see Fig. 2 (Multimedia available online)). From 24 µs to 44 µs, the orientation of the current sheet
+changes to horizontal (i.e., the x-direction) along with a reversal of the direction of Jz. Such a change in the orientation
+of the current sheet is a manifestation of oscillatory reconnection. Comparatively weaker inverse Jz profiles are evident
+in the outflow regions at 14.7 µs and 35.2 µs, associated with strong reconnection outflows. Moreover, even though the
+driving alternating current is switched off around 44 µs, the cycle of current accumulation and reversal continues for
+some time (see right-most column of top row of Fig. 2). Such a persistence of oscillatory reconnection has previously
+been discussed (e.g., Craig & McClymont 1991; McLaughlin et al. 2009; Karampelas et al. 2022, 2023) and can occur
+also in the absence of a Hall term.
+As discussed above, changes in Jz with time can give us an indication of how the magnetic topology changes in time.
+PT increases within the current sheet structure and also along the separatrices with increasing Jz (see Fig. 2), as well as
+in the outflow regions. PT decreases within the current sheet and along the separatrices when Jz decreases. However,
+a higher value of PT persists in the outflow regions at farthest distances from magnetic Y-points and separatrices (see
+third and sixth column of bottom row of Fig. 2) most likely due to the combined effect of resistive heating and presence
+of Hall term. At later stages, after 44 µs, PT decreases almost to its initial value, which is similar to purely resistive
+behaviour.
+To understand the role of the Hall effect, we consider the spatial distributions of in-plane currents (Jx and Jy) and
+out-of-plane magnetic field (Bz) (see Fig. 3 (Multimedia available online)), which vanish in resistive MHD but are a
+common feature of Hall-current models (e.g., Huba & Rudakov 2002; Huba 2003). Unlike Jz, the in-plane currents
+exist not within the current sheet but at its outer peripheries. In addition to the accumulation of in-plane currents
+along the separatrices, inverse Jx and Jy are present in the outflow region at 14.7 µs and 35.2 µs, respectively (see
+Figs. 3(a) and (g)). Moreover, when a y-directed current sheet is present, there are localized peaks in |Jy| along the
+outflow regions at 14.7 µs (see green and orange dotted structures in Fig. 3(b)). Similarly, for an x-directed current
+sheet, there are localized peaks in |Jx| along the y = 0 line in the outflow regions at 35.2 µs (see green and magenta
+dotted structures in Fig. 3(f)). These additional features are associated with the presence of inverse Jz in the outflow
+regions (Frank & Savinov 2024).
+The Hall current profile produces a quadrupolar configuration for Bz near the diffusion region, typical of Hall effects
+(e.g., Huba & Rudakov 2002; Huba 2003; Huba & Rudakov 2003; Shay et al. 2001; Uzdensky & Kulsrud 2006; Drake
+et al. 2008). Moreover, at times 14.7 µs and 35.2 µs, a more complex nested Bz is found. Apart from the quadrupolar
+field concentrated along the magnetic separatrices, another set of oppositely oriented quadrupolar magnetic fields
+appears in the outflow regions in association with the inverse Hall currents (see Figs. 3(c), (h)).
+Therefore, the
+variation of this inverse Bz with x in the outflow regions near the peaks in |Jy| possesses a high gradient as it reverses
+direction over a short distance across the peaks in |Jy| (see Figs. 3(b)-(c)). Similarly, across the peaks in |Jx|, there
+are high gradients of inverse Bz along the y-direction (see Figs. 3(f), (h)).
+In pure 2D MHD simulations in the xy-plane without any guide field, the Lorentz force will only have x- and y-
+components. However, the presence of in-plane Hall currents produces a non-vanishing Lorentz force in the z-direction
+(say, LFz). Its direction within the current sheet changes from positive to negative when the sheet alters its orientation
+from the y- to the x-direction (see Figs. 3(d), (i)). The out-of-plane plasma flow (Vz) inside the current sheet also
+changes its direction (see Figs. 3(e), (j)). The directional similarities between LFz and Vz are also present along the
+separatrices (see Fig. 3). Moreover, there are complex configurations of in-plane currents in the outflow regions which
+produce weaker inverse LFz and Vz there (see Fig. 3).
+To further ensure occurrence of the oscillatory reconnection, we examine whether the out-of-plane electric field, i.e.,
+Ez possesses any oscillation or not at the primary location of the magnetic null, i.e., at (x, y) = [0,0] cm while keeping
+I0 fixed at 1.98 kA. Basically, we calculate Ez = −(VxBy −VyBx)+Jz/σ. Here, Vx and Vy are the x- and y-components
+of the plasma velocity. Similarly, Bx and By are the x- and y-components of the magnetic field. σ is the conductivity.
+We find that the diffusive part of Ez, i.e., Jz/σ is much higher than the conductive part at the location of measurement
+(see dashed and dotted curves in Fig. 4). More importantly, we find that both diffusive and conductive parts of Ez
+
+7
+Figure 4. Oscillations in the out-of-plane electric field, i.e., Ez at (x, y) = [0,0] cm, i.e., at the primary location of the magnetic
+null for I0 = 1.98 kA. The conductive, diffusive and total Ez are shown as dashed, dotted and solid blue curves respectively.
+Vertical black dashed lines denote 13.9 µs, 24 µs, 34 µs and 44 µs, as in Fig. 1(b).
+oscillate and change their direction with a reversal of the direction of the driving current (see Fig. 4). Therefore, we
+confirm that oscillatory reconnection is taking place at the location of magnetic null. Moreover, this oscillation in Ez
+is indicative of the variation in energy conversion rate with time.
+3.2. Temporal Evolution of Jz, PT and Vz at the Primary Null Location and its Dependence on I0
+Increasing the amplitude I0 of the imposed currents produces a stronger perturbation in the magnetic field and
+results in more intense fast-mode waves (see Fig. 1(c)) that perturb the magnetic null to form a current sheet. The
+oscillatory reconnection remains similar, with a current sheet initially forming in the y-direction followed by one in the
+x-direction. We examine how Jz, PT , and Vz change within the current sheet and its surroundings if we change I0 (see
+Fig. 5(a) (Multimedia available online)). The magnitude of Jz within the current sheet increases with an increase in
+I0 (see the top row of Fig. 5(a)). Jz within the current sheet in the absence of driving currents follows the same trend
+(see the animation associated with Fig. 5(a)). To have a more quantitative comparison, we calculate the change in Jz
+with time at the origin (x, y) = [0,0] cm between 3.9 µs and 60 µs. Irrespective of I0, Jz begins to accumulate around
+7.6 µs at the null location, and, after that, it keeps on increasing. The rate of increase of Jz is found to be higher for
+higher I0 (see Fig. 5(b)). For comparatively lower values of I0, Jz attains a peak around 13.9 µs, i.e., the time when
+sinusoidal driving currents reach their peak (denoted by the first vertical black dashed line in Fig. 5(b)). However, as
+I0 is increased, the peaks in Jz are attained at earlier times (see Fig. 5(b)). This may indicate that the dynamics are
+being driven by forces generated within the simulation domain rather than just responding directly to the boundary
+forcing.
+In all of the cases, Jz reaches zero around 24 µs and thereafter reverses its direction irrespective of the magnitude
+of I0. This time of reversal for Jz is similar to the time of reversal of the driving alternating current (denoted by the
+second vertical black dashed line in Fig. 5(b)). In comparison to the first phase with a y-directed current sheet, the
+magnitude of Jz increases with a shallower slope for all I0 in the second phase with the x-directed current sheet and
+attains lower magnitudes (see Fig. 5(b)). However, slopes of change in Jz are definitely higher in the case of higher
+I0 in both phases (see Fig. 5(b)). We do not even find proper dips in Jz for any of the I0 around 34 µs, i.e., the time
+when the driving current attains its dip (denoted by the third vertical black dashed line in Fig. 5(b)). Eventually, the
+magnitude of Jz again decreases and reaches zero at 44 µs for lower I0 (denoted by the fourth vertical black dashed line
+in Fig. 5(b)). Interestingly, Jz reverses its direction even before 44 µs for higher I0. The persistence of nonzero values
+
+8
+Figure 5. (a) Jz, PT , and Vz maps at 13.9 µs for imposed alternating currents of three different amplitudes (0.36 kA, 1.98
+kA and 3.60 kA) (top to bottom). The evolutions of Jz, PT , and Vz from 7.8 to 60 µs for all three amplitudes are shown in
+Fig5a.mp4 (Multimedia available online). (b) The time-variation in Jz at the magnetic null (x, y) = [0,0] cm. Vertical black
+dashed lines correspond to 13.9 µs, 24 µs, 34 µs and 44 µs, as in Fig. 1(b) and in Fig. 4. (c) Variation in PT with time at the
+same location. (d) Variation in Vz at the same location with time. Vertical black dashed lines in (c) and (d) are the same as in
+(b).
+of Jz after the driving current is switched off is evident from the profiles of Jz in the cyan-shaded region of Fig. 5(b). Jz
+undergoes another oscillation in direction before declining to zero around 60 µs. After the external driving is switched
+off, the profiles of Jz for I0 of 0.36 kA and 0.90 kA have lower magnitudes than for higher values of I0. As discussed
+before, the contribution of the diffusive part, i.e., Jz/σ is higher to the total Ez. Therefore, the dependence of the
+temporal variation of Jz on I0 is indicative of how the value of I0 can change the features of oscillatory Ez.
+Next, we examine how the magnitude of I0 affects the temporal variation of PT at (x,y) = [0,0] cm. From the
+colormaps of PT in Fig. 5(a), it is evident that an increase in I0 increases PT within the current sheet, along the
+separatrices and also in the outflow regions. At (x,y) = [0,0] cm, PT starts to increase almost around 7.6 µs irrespective
+of I0, similar to Jz. As for Jz in Fig. 5(b), the slope of increase of PT is higher for higher I0. Moreover, the first peaks
+in PT are also attained at earlier times than in 13.9 µs for higher I0 (see Fig. 5(c)). After the peaks, PT at (x,y) = [0,0]
+cm falls to its initial background value even before the driving current vanishes during its reversal (see Fig. 5(c)). At
+times close to the reversal of the driving current, PT decreases to values even smaller than its initial value. Afterwards,
+during the increase of the driving current in the opposite direction, PT increases again up to roughly three times its
+initial value for I0 = 3.60 kA. In general, the peaks in this second phase of reconnection are much smaller than those
+in the first phase. Similar to the first phase, PT decreases to its initial background value before the driving current is
+switched off at 44 µs for all I0. In fact, as time advances, the value of PT first decreases beyond its initial value and
+then increases to reach near its initial value at times close to 44 µs. Later, it increases again beyond its initial value
+before eventually reaching an equilibrium around 60 µs. In general, an increase in amplitude of the driving current,
+
+9
+I0, raises the magnitude of PT at each time (see Fig. 5(c)). In Jz, we notice one cycle of damped oscillation with a
+pair of peaks in opposite directions after the driving current has been switched off. However, we do not see two clear
+peaks in PT .
+From the spatial distribution of Vz for I0 = 0.36 kA, 1.98 kA and 3.60 kA at 13.9 µs, we find that Vz increases with
+an increase of I0 (see Fig. 5(a)). Just like Vz and PT at (x,y) = [0,0] cm, we find that Vz starts to increase from 7.6 µs.
+However, unlike Jz and PT , the first peak in Vz is attained later than 13.9 µs for all values of I0 (denoted by the first
+black dashed vertical line in Fig. 5(d)). Thus, there is a time lag for Vz in comparison to Jz and PT . Furthermore,
+the peaks in Vz are not attained at earlier times for higher I0 than those for lower I0. Following the initial time lag,
+Vz reaches zero at a time later than 24 µs. Also, in contrast to Jz and PT , for higher values of I0 (i.e., for I0 = 2.52
+kA, 3.06 kA and 3.60 kA), the magnitude of Vz during the second stage of reconnection is larger than during the first
+stage with a y-directed current sheet (see Fig. 5(d)). However, in general, similar to Jz and PT , the magnitude of Vz
+at (x,y) = [0,0] cm increases with I0 in both the first and second stage (see Fig. 5(d)). After the driving current is
+switched off, Vz undergoes a one cycle damped oscillation before vanishing at around 60 µs. In these late stages, while
+the profiles of Jz and PT tend to overlap (see profiles in cyan shaded regions in Figs. 5(b)-(c)), the profiles of Vz are
+more separate (see Fig. 5(d)).
+4.
+DISCUSSION AND CONCLUSION
+We have simulated oscillatory reconnection driven by alternating current-induced fast magnetoacoustic waves in
+laboratory plasma conditions. The mutually beneficial coexistence of reconnection and waves is important in the solar
+corona where the waves can drive reconnection and waves can be generated by reconnection (e.g., Mondal et al. 2024;
+Srivastava et al. 2025). The present study indicates that such a symbiosis of waves and reconnection may be relevant
+and significant also at the laboratory scales. We find that oscillatory reconnection can also take place in the absence of
+Hall effects. However, the introduction of the Hall effect generates additional features such as in-plane Hall currents,
+quadrupolar magnetic fields and plasma flows in the out-of-plane direction. Furthermore, strong reconnection plasma
+outflows generates inverse Hall currents in the outflow regions which lead to more complex configurations of Bz. All
+of these features are present in a laboratory experiment that studies fast wave-driven formation of a current sheet by
+collapse of a magnetic null (e.g., Frank & Savinov 2024).
+We measure the variation in time of physical variables such as Jz, PT and Vz at the magnetic null location for seven
+amplitudes of the driving current from 0.36 kA to 3.60 kA. We find that an increase in I0 raises the values of Jz,
+PT and Vz which possess nearly sinusoidal trends up to 44 µs. However, Vz possesses a time-lag compared with the
+driving current, whereas Jz and PT peak almost at the same time as the driving current or even slightly earlier. The
+higher mass of ions compared with electrons implies smaller accelerations for the ions (e.g., Mandt et al. 1994; Huba
+1995; Rogers et al. 2001), which produces the time-lag in Vz. Thus, the bulk plasma possesses a finite response-time
+to the Hall-modified magnetic stresses.
+Moreover, Jz and PT attain higher peak values in the first stage of reconnection with a y-directed current sheet.
+In contrast, Vz attains higher values in the second stage for higher values of I0. Actually, in the initial stage, the
+collapse of the null is driven in the absence of prior Hall currents. Therefore, the entire wave energy is available to
+distort the null and thin the current sheet. As time advances, the presence of the y-directed current sheet breaks the
+initial symmetry, which in turn accelerates the decoupling of ions and electrons (e.g., Mandt et al. 1994; Huba 1995;
+Rogers et al. 2001). Hence, the Hall effects gradually start to become more dominant and to modify the background
+conditions and introduce dispersive effects. Therefore, the x-directed current sheet tends to possess a lower current
+Jz, while Jz and PT attain lower values in the second phase than in the initial phase. The ions are accelerated at a
+slower rate during first-stage of reconnection within the y-directed current sheet (e.g., Mandt et al. 1994; Huba 1995;
+Rogers et al. 2001), but, during the second phase, Vz attains higher peaks for higher I0.
+Oscillatory reconnection has been studied extensively under solar coronal conditions using resistive MHD simulations
+in 2D (e.g., Craig & McClymont 1991; McLaughlin et al. 2009, 2012; Karampelas et al. 2023) as well as in 3D (e.g.,
+Thurgood et al. 2017) in the absence of Hall physics. From these studies, it has been found that, if the null is perturbed
+by a single fast wave-like pulse, oscillatory reconnection can continue for multiple cycles, either due to the reflective
+nature of the boundaries (e.g., Craig & McClymont 1991) or even in the absence of such reflection (e.g., McLaughlin
+et al. 2009). Specifically, it has been shown that the period of oscillatory reconnection decreases with an increase
+in the amplitude of an aperiodic velocity driver (e.g., McLaughlin et al. 2009). Later, it was also reported that the
+period of oscillatory reconnection is inversely proportional to the background magnetic field and the square root of
+
+10
+the initial plasma pressure (e.g., Karampelas et al. 2023). In present study, we have imposed fast waves continuously
+at the magnetic null from 4 µs to 44 µs. We find that the current sheet changes its orientation only once. So, the
+system behaves nearly in accordance with the driving current until it is switched off. After 44 µs, the system possesses
+a damped oscillatory behaviour in which the current sheet changes its orientation before reaching quasi-equilibrium.
+This oscillatory behaviour is due to the reflective nature of the boundaries (e.g., Craig & McClymont 1991; Karampelas
+et al. 2022).
+Now, in solar coronal conditions, oscillatory reconnection has been found to continue for multiple cycles (e.g., Craig
+& McClymont 1991; McLaughlin et al. 2009). However, if the Lundquist number S is less than 104, the perturbation
+of a magnetic null will decay in less than one oscillation time (e.g., Craig & McClymont 1991). In general, it has
+been reported that, if the oscillatory reconnection is due to reflections from the boundaries, the time-scale for the
+oscillation is τosc = 2 ln S ×R/vA s, where R is the distance of the boundary from the position of the null and vA is the
+Alfv´en speed at the boundary (e.g., Craig & McClymont 1991). The oscillation will decay over a time-scale given by
+τdecay = (2/π2)(ln S)2 × R/vA s. In the present case, we have R = 54 cm, and vA = 55 × 106 cm.s−1. The numerical
+magnetic diffusivity is ηnumerical = δx × vA, where δx is the smallest cell size. Since the reconnection dynamics is
+taking place symmetrically about the centre of the domain, the system size, say, l can be considered to be the distance
+from the centre to the boundaries, namely, l = R = 54 cm. Hence, the Lundquist number S can be estimated to be
+160. This makes τosc and τdecay to be around 9.8 µs and 5 µs, respectively. From the estimated profiles of Jz, PT and
+Vz in the absence of a driving current, we can see that the oscillation decays even before completing one oscillation.
+Thus, the late-stage behaviour in our simulation agrees qualitatively with what is expected for a plasma system with
+low Lundquist number. In future, it would be interesting to study the effects of changes in the initial background
+plasma density, temperature, magnetic field on the dynamics, as well as the effect of an increase in spatial resolution
+with an accompanying increase in effective Lundquist number. Carrying out a laboratory experiment on this scenario,
+as well as a fully kinetic simulation, would be invaluable.
+ACKNOWLEDGMENTS
+The authors are thankful to the anonymous reviewers for their valuable constructive remarks which have been very
+helpful in improving the manuscript.
+The authors appreciate the user-friendly, flexible framework of open source
+MPI-AMRVAC 3.0 which is helpful to perform this simulation in laboratory scales using Hall-MHD formalism. S.M.
+acknowledges the financial support provided by the Prime Minister’s Research Fellowship (PMRF) of India. A.K.S
+would like to acknowledge the ISRO grant(DS/2B-13012(2)/26/2022-Sec.2) for the support of his scientific research.
+REFERENCES
+Baty, H. 2000, A&A, 353, 1074
+Birn, J., Drake, J. F., Shay, M. A., et al. 2001,
+J. Geophys. Res., 106, 3715, doi: 10.1029/1999JA900449
+Browning, P. K., Gordovskyy, M., Schiavo, L. A. C. A., &
+Stewart, J. 2024, Fundamental Plasma Physics, 10,
+100049, doi: 10.1016/j.fpp.2024.100049
+Craig, I., & McClymont, A. 1991, Astrophys. J., 371, L41,
+doi: 10.1086/185997
+Drake, J. F., Shay, M. A., & Swisdak, M. 2008, Physics of
+Plasmas, 15, 042306, doi: 10.1063/1.2901194
+Drake, J. F., Antiochos, S. K., Bale, S. D., et al. 2025,
+SSRv, 221, 27, doi: 10.1007/s11214-025-01153-x
+Egedal, J. 2021, Exploring 3D Collisionless Magnetic
+Reconnection in the Laboratory, NASA Proposal ID.
+21-HTIDS21-0003
+Fiksel, G., Fox, W., Bhattacharjee, A., et al. 2014, PhRvL,
+113, 105003, doi: 10.1103/PhysRevLett.113.105003
+Fox, W., Bhattacharjee, A., & Germaschewski, K. 2011, in
+2010 NASA Laboratory Astrophysics Workshop, C45
+Fox, W., Schaeffer, D., Fiksel, G., et al. 2022, in APS
+Meeting Abstracts, Vol. 2022, APS Division of Plasma
+Physics Meeting Abstracts, CM09.005
+Frank, A. G., & Savinov, S. A. 2024, Symmetry, 16, 103,
+doi: 10.3390/sym16010103
+Gershman, D. J., Fuselier, S. A., Cohen, I. J., et al. 2024,
+SSRv, 220, 7, doi: 10.1007/s11214-023-01017-2
+Goedbloed, J. P. H., & Poedts, S. 2004, Principles of
+Magnetohydrodynamics
+Hare, J. D., Suttle, L., Lebedev, S. V., et al. 2017, PhRvL,
+118, 085001, doi: 10.1103/PhysRevLett.118.085001
+Harten, A. 1983, Journal of Computational Physics, 49,
+357, doi: 10.1016/0021-9991(83)90136-5
+Hesse, M., & Cassak, P. A. 2020, Journal of Geophysical
+Research (Space Physics), 125, e25935,
+doi: 10.1029/2018JA025935
+
+11
+Huba, J. D. 1995, Physics of Plasmas, 2, 2504,
+doi: 10.1063/1.871212
+Huba, J. D. 2003, in Space Simulations, ed. M. Scholer,
+C. Dum, & J. B¨uchner (New York: Springer), 170–197
+Huba, J. D., & Rudakov, L. I. 2002, Phys. Plasmas, 9, 4435
+Huba, J. D., & Rudakov, L. I. 2003, Physics of Plasmas, 10,
+3139, doi: 10.1063/1.1582474
+Karampelas, K., McLaughlin, J. A., Botha, G. J. J., &
+R´egnier, S. 2022, ApJ, 925, 195,
+doi: 10.3847/1538-4357/ac3b53
+—. 2023, ApJ, 943, 131, doi: 10.3847/1538-4357/acac90
+Keppens, R., Popescu Braileanu, B., Zhou, Y., et al. 2023,
+A&A, 673, A66, doi: 10.1051/0004-6361/202245359
+Knoll, D. A., & Chac´on, L. 2006, PhRvL, 96, 135001,
+doi: 10.1103/PhysRevLett.96.135001
+Leroy, M. H. J., & Keppens, R. 2017, Physics of Plasmas,
+24, 012906, doi: 10.1063/1.4974758
+Malakit, K., Cassak, P. A., Shay, M. A., & Drake, J. F.
+2009, Geophys. Res. Lett., 36, L07107,
+doi: 10.1029/2009GL037538
+Mandt, M. E., Denton, R. E., & Drake, J. F. 1994,
+Geophys. Res. Lett., 21, 73, doi: 10.1029/93GL03382
+McLaughlin, J. A., De Moortel, I., Hood, A. W., & Brady,
+C. S. 2009, A&A, 493, 227,
+doi: 10.1051/0004-6361:200810465
+McLaughlin, J. A., Thurgood, J. O., & MacTaggart, D.
+2012, A&A, 548, A98, doi: 10.1051/0004-6361/201220234
+Mondal, S., Srivastava, A. K., Pontin, D. I., et al. 2024,
+ApJ, 977, 235, doi: 10.3847/1538-4357/ad9022
+Moreno-Insertis, F., Hansteen, V. H., & N´obrega-Siverio,
+D. 2025, arXiv e-prints, arXiv:2510.19993,
+doi: 10.48550/arXiv.2510.19993
+Nakamura, R., Burch, J. L., Birn, J., et al. 2025, SSRv,
+221, 17, doi: 10.1007/s11214-025-01143-z
+Olson, J., Egedal, J., Greess, S., et al. 2016, PhRvL, 116,
+255001, doi: 10.1103/PhysRevLett.116.255001
+Pontin, D. I., & Priest, E. R. 2022, Living Reviews in Solar
+Physics, 19, 1, doi: 10.1007/s41116-022-00032-9
+Pontin, D. I., Wyper, P. F., & Priest, E. R. 2024, in
+Magnetohydrodynamic Processes in Solar Plasmas, ed.
+A. K. Srivastava, M. Goossens, & I. Arregui, 345–414,
+doi: 10.1016/B978-0-32-395664-2.00014-1
+Priest, E. 2014, Magnetohydrodynamics of the Sun,
+doi: 10.1017/CBO9781139020732
+Richter, M. M., Mu˜noz, P. A., & Spanier, F. 2025, Physics
+of Plasmas, 32, 093904, doi: 10.1063/5.0268535
+Rogers, B. N., Denton, R. E., Drake, J. F., & Shay, M. A.
+2001, PhRvL, 87, 195004,
+doi: 10.1103/PhysRevLett.87.195004
+Sakai, J., Tajima, T., & Brunel, F. 1984, SoPh, 91, 103,
+doi: 10.1007/BF00213617
+Shay, M., Adhikari, S., Beesho, N., et al. 2025, SSRv, 221,
+81, doi: 10.1007/s11214-025-01210-5
+Shay, M. A., Drake, J. F., Rogers, B. N., & Denton, R. E.
+2001, J. Geophys. Res., 106, 3759,
+doi: 10.1029/1999JA001007
+Srivastava, A. K., Mishra, S. K., Jel´ınek, P., et al. 2019,
+ApJ, 887, 137, doi: 10.3847/1538-4357/ab4a0c
+Srivastava, A. K., Mondal, S., Priest, E. R., et al. 2025,
+ApJ, 984, 36, doi: 10.3847/1538-4357/adc379
+Stanier, A., Daughton, W., Simakov, A. N., et al. 2017,
+Physics of Plasmas, 24, 022124, doi: 10.1063/1.4976712
+Thurgood, J. O., Pontin, D. I., & McLaughlin, J. A. 2017,
+ApJ, 844, 2, doi: 10.3847/1538-4357/aa79fa
+Uzdensky, D. A., & Kulsrud, R. M. 2006, Physics of
+Plasmas, 13, 062305, doi: 10.1063/1.2209627
+van Leer, B. 1979, Journal of Computational Physics, 32,
+101, doi: 10.1016/0021-9991(79)90145-1
+Vekstein, G. 2017, Journal of Plasma Physics, 83,
+205830501, doi: 10.1017/S0022377817000782
+Yamada, M., Ji, H., Kulsrud, R., et al. 2005, in American
+Institute of Physics Conference Series, Vol. 784, Magnetic
+Fields in the Universe: From Laboratory and Stars to
+Primordial Structures., ed. E. M. de Gouveia dal Pino,
+G. Lugones, & A. Lazarian (AIP), 27–41,
+doi: 10.1063/1.2077169
+Yamada, M., Kulsrud, R., & Ji, H. 2010, Reviews of
+Modern Physics, 82, 603,
+doi: 10.1103/RevModPhys.82.603
+Yamada, M., Yoo, J., Jara-Almonte, J., et al. 2014, Nature
+Communications, 5, 4774, doi: 10.1038/ncomms5774
+Yamada, M., Yoo, J., & Myers, C. E. 2016, Physics of
+Plasmas, 23, 055402, doi: 10.1063/1.4948721
+Yamada, M., Ji, H., Hsu, S., et al. 1997, Physics of
+Plasmas, 4, 1936, doi: 10.1063/1.872336

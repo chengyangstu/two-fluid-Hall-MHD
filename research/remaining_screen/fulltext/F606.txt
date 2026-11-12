@@ -1,0 +1,697 @@
+
+===== PDF PAGE 1 =====
+     Can plasmoid-mediated reconnection occur in collisionless systems?
+                  Keita Akutagawa,1 Shinsuke Imada,1 and Munehito Shoda1
+                  Department of Earth and Planetary Science, The University of Tokyo 7-3-1 Hongo, Bunkyo-ku, Tokyo, 113-0033,
+                  Japan
+
+                     (*Electronic mail: akutagawa@eps.s.u-tokyo.ac.jp)
+
+                     (Dated: 17 July 2025)
+
+                 Magnetic reconnection is a process that converts magnetic energy into plasma energy by changing the magnetic field
+                     line topology. The outstanding question is why the reconnection rate is O(0.01−0.1) in many astrophysical phenom-
+                   ena, for example solar flares and terrestrial substorms. Previous studies have shown two ideas of Hall reconnection
+                and plasmoid instability. However, there is no consensus on which process is the reason for the fast reconnection. In
+                      this paper, we discuss the formation of secondary plasmoids in 2D antiparallel collisionless reconnection using 2.5-
+                  dimensional particle-in-cell simulations and discuss whether plasmoid-mediated reconnection occur in collisionless
+                  systems by comparing with plasmoid instability in resistive MHD simulations. We find that in collisionless systems
+                  secondary plasmoids can indeed form. However, the mass ratio has a strong effect on the formation of secondary plas-2025            moids, and it indicates that secondary plasmoids do not emerge using realistic ion-electron mass ratio (mi/me = 1836).
+                  Furthermore, we find that there is no enhancement of the reconnection rate due to the secondary plasmoid in the col-
+                     lisionless system, as discussed in the plasmoid-mediated reconnection. Although our simulation O(100λi) box is notJul                    large enough to discuss astrophysical phenomena such as solar flares, it can reflect a relatively small plasma system
+16           such as the Earth’s magnetotail.
+
+                I.  INTRODUCTION                          A classical solution to fast reconnection (with a reconnec-
+                                                                               tion rate of O(0.01 −0.1)) is the Petschek model11, where
+                                                               slow-mode shocks facilitate efficient magnetic energy diffu-           Magnetic  reconnection  converts magnetic  energy  into
+                                                                                sion. However, its implementation requires localized anoma-         plasma energy through changes in magnetic field topology. It
+                                                                          lous resistivity12, the physical origin of which remains un-          plays an important role in magnetotail substorms1–3 and solar
+            flares4–6. Beyond the solar system, it plays a crucial role in as-     clear.  A model  that explains  fast reconnection without
+                                                               anomolous  resistivity  is the plasmoid-mediated reconnec-          tronomical objects such as pulsar winds and black hole jets7.
+                                                                               tion model.  In systems with a sufficiently large Lundquist          Thus, magnetic reconnection is a universal physical process
+                                                            number (S > Sc = O(104)), current sheets induce plasmoid[astro-ph.SR]    that plays a fundamental role across a wide range of scales in
+                                                                                     instability13–16.  This instability results in the creation and           the universe.
+                                                                  growth of plasmoids over various scales, leading to fast mag-
+       A unique characteristic of magnetic reconnection is its oc-                                                                               netic reconnection with a rate of about 0.018,17,18.  The
+          currence across a wide range of scales.  For example, the                                                                    Lundquist number of the solar corona (S ∼1014) is well above
+           Earth’s magnetotail has a size of approximately 103λi (λi be-                                                                           the threshold  for plasmoid  instability, making plasmoid-
+          ing the ion inertial length), where kinetic effects are signif-
+                                                                   mediated reconnection a significant process for explaining so-
+           icant throughout the system, and it behaves as a fully colli-
+                                                                                       lar flares. Indeed, signatures of plasmoid instability are some-
+           sionless system.  In contrast, solar flares have a size of ap-                                                                       times observed during flare events19.
+          proximately 107−8λi, where the system as a whole follows
+           the MHD behavior. However, the diffusion region is much       In the kinetic regime, in 2001 the GEM Challenge20 re-
+          smaller than the electron mean free path (105λi), making the    vealed that kinetic effects (including Hall effect) should be
+         system globally collisional but locally collisionless. Under-    important for fast magnetic reconnection. They carried out
+          standing magnetic reconnection requires insights across these    four different simulations, which are Resistive MHD with uni-
+         broad scales and varying collisionality conditions. The details    form resistivity, Hall MHD, Hybrid (particle ions and fluid
+          of scales and physical parameters in various magnetic recon-     electrons), PIC (particle ions and electrons) and showed that
+          nection are summarized in [H. Ji & W. Daughton, 2011, Ref.    the reconnection rate was O(0.1) when using Hall MHD, Hy-arXiv:2507.11904v1
+            8].                                                                    brid, PIC. On the other hand, the reconnection rate in Resis-
+          One of the most important unresolved issues in magnetic re-     tive MHD is much smaller than others.  The major differ-
+          connection is how fast magnetic reconnection can be realized    ences between Hall reconnection (seen in models which in-
+         on the MHD scale. In the classical Sweet-Parker model9,10,    clude Hall effect) and Sweet-Parker reconnection (seen in Re-
+           the reconnection rate, which serves as an indicator of en-     sistive MHD with uniform resistivity) appear in the following
+          ergy conversion efficiency, scales as S−1/2 with respect to the     points. First, quadrupole magnetic field is seen21,22. It is per-
+          Lundquist number S := µ0VALCS/η, where VA is the Alfvén    pendicular to the plane of anti-parallel magnetic field. Second,
+          speed, LCS is the length of the current sheet and η is the resis-    the decoupling of the motion of ions and electrons around the
+             tivity. However, this dependence fails to explain solar flares     diffusion region is seen and it creates current22,23. Quadrupole
+          occurring in the solar corona (S ∼1014) with a reconnection    magnetic field corresponds to this current24. Third, the decou-
+            rate of O(0.01−0.1), necessitating additional physical mech-    pling of the distribution of ions and electrons is seen and it
+         anisms for faster reconnection.                                    creates electric field because of the charge separation25. This
+
+===== PDF PAGE 2 =====
+                                                                                                     2
+
+electric field corresponds to the Hall term in the Ohm’s law.    and Langdon-Marder type correction37,38 to preserve charge
+Finally, the bifurcated current sheet is seen in the outflow    conservation. The MHD code is based on the finite volume
+region26. The detail of these structure is written in section    method with the HLLD Riemann solver39, 2nd-order MUSCL
+II.                                                                reconstruction40, and a 2nd-order Runge-Kutta method. The
+  In systems where the diffusion region becomes collision-    solenoidal condition of the magnetic field is enforced using
+less, such as in solar flares, dissipation is determined by ki-    the upwind constrained transport method41.
+netic effects, leading to a behavior distinct from the MHD
+description. Consequently, it is not obvious whether fast re-
+connection, like Petschek or plasmoid-mediated reconnection,    A.  PIC simulation setup
+occurs within the collisonless regime. In addition, when ki-
+netic effects are important, fast magnetic reconnection (with    We use Harris current sheet42 with an  initial magnetic
+the reconnection rate of ∼O(0.1)) can be achieved by the     field Bx = B0 tanh(y/δ),By = 0,Bz = 0 (no guide field) and
+Hall effect20 (in the absence of slow shocks or plasmoids),                                                           a number density n = n0 cosh−2(y/δ)+nb; here δ is the half-
+though the reason why the Hall effect accelerates reconnection                                                                thickness of the current sheet and nb is the number density
+is not immediately apparent from previous studies (electron-                                                               of background plasmas. The temperature ratio on the current
+positron system27, strong guide field system28). Recently, the                                                                sheet is Ti/Te = 1, and the ratio of the electron plasma fre-
+pressure balance around the diffusion region has been found                                                       quency to the electron cyclotron frequency is ωpe/Ωce = 1.
+to be important29,30.   It is important to investigate whether                                                   The half-thickness is set to δ = 2.0λi. The number density and
+magnetic reconnection, with a diffusion region governed by                                                             temperature of the background plasmas are nb = 0.2n0 and
+kinetic scales, exhibits the same macroscopic behavior as the                                                                           Tib = Teb = 0.2Ti so that the upstream plasma beta is β = 0.04.
+MHD model.                                        We use 100 ppc on the current sheet (20 ppc at background re-
+  Some full particle simulations reported that secondary plas-                                                               gion)
+moids were formed in the reconnecting current sheet in col-                                                     The simulation box size is fixed at Lx × Ly = 100λi × 50λi
+lisionless plasma.  Especially in PIC simulations for pair                                                      where λi is the ion inertial length.  To verify that our re-
+plasmas,  it  is known  that secondary plasmoids are well                                                                        sults are not affected by boundary effects, we also performed
+formed31,32.  From these results, mass ratio mi/me should    simulations with Lx × Ly = 200λi × 100λi. The boundaries
+be important for secondary plasmoid formation33, however                                                                 are periodic in the x-direction and conducting walls in the
+the reason is not yet clear.  It is also known that guide field                                                                    y-direction. The grid spacing and time step are set to ∆x =
+promotes the production of secondary plasmoid by Kelvin-                                                  ∆y = 0.1λe (where λe denotes the electron inertial length) and
+Helmholtz instability34,35.  The PIC simulation results that                                                             ∆t = 0.05ω−1pe , respectively.  Reconnection is initiated by a
+generate these secondary plasmoids are very similar to the                                                             small perturbation in the z-component of the vector potential,
+plasmoid instability. On the other hand, no studies discuss                                                            given by ∆Az = −2δ exp(−(x2 + y2)/(2δ)2) × εB0, where ε
+whether the secondary plasmoid formed in collisionless mag-                                                                               is set to 0.1.
+netic reconnection is physically equivalent to the plasmoid re-                                                     The evolution of reconnection is examined over a range of
+connection discussed in Resistive MHD framework or not.                                                     mass ratios (mi/me = 1 −32). A summary of the simulation
+  This study aims to examine whether plasmoid-mediated re-                                                               setup is provided in Table I.
+connection, described in the framework of MHD, occurs in
+collisionless plasmas, where resistivity is governed by kinetic                                                    TABLE I: PIC simulation setup
+effects.  Previous PIC simulations have reported the forma-
+tion of structures like secondary plasmoids, a characteris-
+                                                     Run    mi/me    Domain size      Grid cells       Particlestic of plasmoid instability, during collisionless anti-parallel
+                                                            1       1       100λi ×50λi     1000×500    2.8×107magnetic reconnection33,36.  However,  it remains unclear
+                                                            2       2       100λi ×50λi     1414×717    5.6×107whether these structures exhibit the same physical properties
+                                                 3A       4       100λi ×50λi    2000×1000    1.1×108as plasmoid-mediated reconnection. In this study, we employ
+                                                   3B       4       200λi ×100λi    4000×2000    3.8×1082.5-dimensional PIC simulations to explore the parameter de-
+                                                            4       8       100λi ×50λi    2828×1414    2.2×108pendence of secondary plasmoids, and compare the results
+                                                 5A      16       100λi ×50λi    4000×2000    4.5×108
+with MHD simulations to assess whether the secondary plas-                                                   5B      16      200λi ×100λi    8000×4000    1.5×109
+moids observed in PIC simulations are physically equivalent                                                            6       32       100λi ×50λi    5656×2828    9.0×108
+to those in MHD simulations.
+
+
+
+II.  SIMULATION SETUP
+                                                           B.   Resisitive MHD simulation setup
+
+  The simulation code used in this study is the open-source
+plasma simulation code ’KAMMUY’ developed by us. It in-    We use Harris current sheet42 with an initial magnetic field
+cludes both PIC and MHD simulation codes, written in CUDA    Bx = B0 tanh(y/δ),By = 0,Bz = 0 (no guide field) and a den-
+and C++ for GPU acceleration.                                       sity ρ = ρ0 cosh−2(y/δ) + ρb; here δ is the half-thickness of
+  The PIC code employs Yee-lattice, Leapfrog integration,    the current sheet and ρb is the density of background plasma.
+
+===== PDF PAGE 3 =====
+                                                                                                     3
+
+The half-thickness is set to δ = 1.0. The density and tempera-
+ture of the background plasmas are ρb = 0.5ρ0 and Tb = 0.5T
+so that the upstream plasma beta is β = 0.25.
+  The size of the simulation box is Lx × Ly = 400 × 80 and
+the resistivity is set to η = 10−3 so that the Lundquist num-
+ber is greater than the threshold of plasmoid instability SCS ∼
+O(104). To verify that our results are not affected by bound-
+ary effects, we also performed simulations with Lx × Ly =
+1000 × 200.  The size of the grid is ∆x = ∆y = 1.0/16.0.
+Initial current sheet is pressed by small incompressible per-
+turbation; Reconnection is triggered by a small perturbation;
+dAz = −2δ exp(−(x2 +y2)/(2δ)2)×εB0 and ε is set to 0.05.
+ A summary of our simulation setup is given in Table II.
+
+      TABLE II: Resistive MHD simulation setup
+
+
+Run     Domain size      Grid size        Grid cells
+  7       400×80        1.0/16.0      6400×1280
+  8      1000×200       1.0/16.0     16000×3200
+
+                                                          FIG. 2: Ions and electrons contribution to the out-of-plane
+                                                                  current Jz at x = 50λi,60λi for mi/me = 16 case (Run 5A) at
+                                                                     160Ω−1ci  .
+III.  SECONDARY PLASMOID IN COLLISIONLESS
+MAGNETIC RECONNECTION
+                                                                           starts at t = 100Ω−1ci and reaches a steady rate of about 0.15 af-
+A.  Overview                                                            ter t = 160Ω−1ci  . This value closely matches that found in pre-
+                                                             vious studies20,25,27. The variation in the reconnection onset
+                                                           time is attributed to ion mass: lower mi/me allows more ions
+                                                                    to contribute to dissipation through Landau resonance with the
+                                                                out-of-plane electric field Ez. The delayed transition to steady
+                                                                        state compared to previous studies is attributed to the use of a
+                                                                       relatively thicker initial current sheet (δ = 2λi).
+                                                               Figure 2 shows the contributions of ions and electrons to
+                                                                 the out-of-plane current  jz at different positions. Figure 2(a)
+                                                                presents the contributions at x = 50λi, where electrons mainly
+                                                                 contribute to jz. The ion contribution exhibits two peaks cor-
+                                                           responding to the two peaks in number density (see Figure
+                                                                        3(a)), but its magnitude is small and has little impact on the
+                                                                          total  jz. Figure 2(b) illustrates the contributions at x = 60λi,
+                                                             near the edge of the Hall effect and outflow jet (see Figure
+                                                                         3). The electron contribution exhibits two peaks, resulting in
+                                                           a bifurcated current sheet, which has been observed in both
+                                                               simulations and observations26,43.
+FIG. 1: Time evolution of reconnection rate calculated by (1)                                                               Figure 3 shows the spatial distributions of physical vari-
+                     for each mi/me case.                        ables for the mi/me = 16 case (Run 5A) at t = 160Ω−1ci  . Fig-
+                                                              ure 3(a) and (b) display the number densities of ions and elec-
+  Figure 1 presents the reconnection rate for each mi/me     trons. The ion density exhibits two peaks near the center of the
+cases. The reconnection region is identified as the minimum    reconnection region (x ∼50λi,y ∼0λi), whereas the electron
+point of the reconnecting magnetic flux, defined as Φmin(t) :=    density has only one peak. The difference in spatial distri-
+min(Φ(x,t)), where Φ(x,t) := R |Bx(x,y,t)|dy. The reconnec-    bution between ions and electrons induces charge separation,
+tion rate is calculated as                                        as reported in a previous study25.  Figure 3(c) presents the
+                                                                out-of-plane magnetic field Bz, referred to as the Hall mag-
+                      1   d                                  netic field, which has a quadrupole structure.  Its magnitude
+                   r = −        Φmin,                   (1)
+                     VA0B0 dt                                       is approximately 0.1B0, with a sign reversal in the outflow
+                                                               regions (x = [30λi,40λi],[60λi,70λi]).  Both the magnitude
+where VA0 := B0/p µ0n0(mi +me) is the Alfvén speed, and    and sign are consistent with previous studies24. Figure 3(d)
+B0 is the anti-parallel magnetic field strength. Reconnection    presents the electric field Ey, known as the Hall electric field,
+
+===== PDF PAGE 4 =====
+                                                                                                     4
+
+
+
+
+
+  FIG. 3: Spatial distributions of physical variables for mi/me = 16 case (Run 5A) at steady state (t = 160Ω−1ci  ). (a) number
+      density of ions ni normalized by initial number density n0, (b) number density of electrons ne normalized by n0, (c)
+ out-of-plane magnetic field Bz normalized by initial anti-parallel magnetic field B0, (d) the Hall electric field Ey normalized by
+ VAiB0, where VAi := B0/√µ0n0mi, (e) ion bulk speed in the x direction Vix normalized by VAi, (f) electron bulk speed in the x
+         direction Vex normalized by VAe := B0/√µ0n0me. White or black lines show the in-plane magnetic field lines.
+
+
+whose sign reverses at y ∼0. This field corresponds to the    B.  Mass ratio dependence of secondary plasmoids
+charge separation shown in Figure 3(a) and (b). Its magnitude
+ranges in 0.5−1.0VAiB0. A previous study25 reported a value      Figure 4 presents the ion number density  for various
+of ∼VAiB0, which is consistent with our result. Figure 3(e)                                                    mi/me cases.  Secondary plasmoids are distinctly observed
+and (f) show the x-component of the bulk speed of ions and                                                                    for mi/me = 1,2,4,8 cases, whereas they are not observed for
+electrons, Vix and Vex. In the outflow region, Vix and Vex are                                                    mi/me = 16,32 cases. Additionally, the number of secondary
+on the order of VAi and VAe, respectively. At the boundary be-    plasmoids increases as mi/me decreases. These findings sug-
+tween the inflow and outflow regions, Vex exhibits a nonzero                                                                  gest that secondary plasmoid formation depends on mi/me,
+value along the magnetic field lines. While the structure of Vex                                                           with a possible threshold between mi/me = 8 and mi/me = 16.
+in the outflow region resembles that of Vix, the jet thickness                                          We found that in collisionless plasma systems secondary
+differs. The spatial distributions of Vix and Vex are consistent                                                           plasmoids could indeed form.  However, the mi/me has a
+with previous studies22,23.                                                               strong effect on the formation of secondary plasmoids, and
+                                                                                               it is difficult to form secondary plasmoids using high mi/me.
+
+
+  To summarize, we find that our simulation code, originally
+                                                             C.   Collisionless tearing mode in electron diffusion regiondeveloped for this study, can reproduce various aspects of col-
+lisionless reconnection reported in the literature (at least when
+mi/me = 16 is adopted). This result confirms the validity of      Figure 5 presents the ion number density and the electron
+our code for magnetic reconnection simulations and ensures     diffusion region25,44 during the formation of secondary plas-
+the reliability of the results presented later.                   moids for mi/me = 2 case. The electron diffusion region is
+
+===== PDF PAGE 5 =====
+                                                                                                    5
+
+
+
+
+
+FIG. 4: Spatial distribution of the number density of ions for each mi/me case normalized by the initial value ni0. We choose
+  snapshots which has secondary plasmoids. For mi/me = 16,32 cases, we cannot find any secondary plasmoids in whole
+                               simulation time. White line shows the magnetic field lines.
+
+
+                                                                    identified as the area where De := jµEµ > 0 in the electron
+                                                                        rest frame44. Here jµ := (ρq,j) and Eµ := Fµνuν where ρq is
+                                                               the charge density, j is the current, Fµν is the electromagnetic
+                                                               tensor and uν is the four-velocity. De can also be written as
+                                                 De = γe(j·(E+ve ×B)−ρq(ve ·E)), where γe is the Lorentz
+                                                                   factor of electron flow. The figure suggests that secondary
+                                                         plasmoids form within this region.
+                                                    To investigate the mechanism of secondary plasmoid for-
+                                                            mation, we focus on the electron diffusion region and com-
+                                                            pare it with the growth rate of collisionless electron tearing
+                                                                          instability. The linear growth rate is expressed as:
+
+
+                                                                                                                 3
+                                                                     kvTe   ue    2     1+Ti/Te
+                                                                  γ = √π   vTe    1+(meTe/miTi)1/4 (1−k2δ 2),      (2)
+
+                                                     where vTe is the electron thermal speed, ue is the out-of-plane
+                                                                electron bulk speed at the current sheet, and k is the wave
+                                                   number of the growth mode45. The maximum growth rate is
+                                                           given by:
+ FIG. 5: Enlarged spatial distributions of the ion number
+ density and De at electron rest frame for mi/me = 2 case.                   1
+                                                                   kmax = √    ,Several secondary plasmoids are found inside the electron                                                                  3δ
+ diffusion region (De > 0). White or black lines show the           √                  3                          (3)
+              in-plane magnetic field lines.                             2  3 vTe   ue    2     1+Ti/Te
+                                                                    γmax =                                                        .                                                                 9δ √π   vTe    1+(meTe/miTi)1/4
+
+===== PDF PAGE 6 =====
+                                                                                                     6
+
+
+
+
+
+FIG. 6: Comparison to linear growth rate (3) and the Fourier    FIG. 8: Spatial distribution of De/De,max cut in y = 0 for each
+ component of By in x = [40λi,60λi],y = 0.0 for mi/me = 2      mi/me case. This figure shows De/De,max > 0.2 where we
+ (Run 2) case when several secondary plasmoids exist in the      define as the effective electron diffusion region. The length is
+  electron diffusion region. Mode 2 is well consistent with          normalized by ion inertial length λi for each mi/me.
+  Eq. (3) after secondary plasmoids are beginning to appear
+                    around 90Ω−1ci  .                       To illustrate the dependence of the electron diffusion region
+                                                     on the mass ratio, Figure 7 presents De for mi/me = 2,32.
+                                                As mi/me increases, the size of the electron diffusion region
+  Figure 6 compares the growth rate of the Fourier compo-    (De > 0 area) normalized by λi decreases. The value of De
+nent for the mi/me = 2 case with the linear growth rate from    also declines with increasing mi/me.  Figure 8 displays the
+Eq. (3). In the simulation, the growth rate is computed using     spatial distribution of De/De,max along y = 0. Here, we de-
+the By component within x = [40λi,60λi]. The linear growth     fine the effective electron diffusion region as the area where
+rate is derived from the background electron temperature,    De/De,max > 0.2. Changing the threshold does not affect the
+vTe = p2Teb/me, and the simulated out-of-plane electron bulk    mi/me dependence of the length of the electron diffusion re-
+velocity, ue. The observed modes at t = 95 ∼100Ω−1ci  align    gion. The length of this region, normalized by λi, shrinks as
+well with the linear growth rate predicted by Eq. (3), indicat-    mi/me increases.
+ing that secondary plasmoid formation is driven by collision-
+less electron tearing instability inside the electron diffusion
+region.                                                  D. X point around secondary plasmoid
+
+
+                                                     To illustrate the nature of magnetic field dissipation near the
+                                                               X-point, Figure 9 presents De and the negative of the non-ideal
+                                                                out-of-plane electric field, −E∗z = −(E + ve × B)z. These
+                                                                    figures indicate that the region surrounding the X-point as-
+                                                                sociated with the secondary plasmoid (x ∼[30λi,40λi], here-
+                                                                        after referred to as the "secondary plasmoid X-point") ex-
+                                                                       hibits no magnetic dissipation (De ∼0) in contrast to the elec-
+                                                                  tron diffusion region, where dissipation is present (De > 0 at
+                                                           x ∼[50λi,60λi]).
+                                                     To clarify the origin of minimal dissipation near the sec-
+                                                         ondary plasmoid X-point region, we compare particles in the
+                                                                  electron diffusion region and the secondary plasmoid X-point
+                                                                  region. Figure 10 presents histograms of the displacement in
+                                                                 the z direction for electrons passing through each region at
+                                                 150Ω−1ci  . Both histograms exhibit a single peak, but the elec-
+                                                                  tron diffusion region shows an excess in the range of approxi-
+                                                          mately 20 ∼40 on the horizontal axis. This indicates distinct
+                                                                  electron behaviors in the two regions.
+                                                     To explore this further, we conduct a particle orbit analy-
+                                                                                 sis. Figure 11 presents randomly sampled orbits correspond-
+ FIG. 7: Spatial distribution of De for mi/me = 2,32 cases.                                                              ing to the peak of the secondary plasmoid X-point region (A,
+  Red area (De > 0) corresponds to the electron diffusion                                                                      straight line), the peak of the electron diffusion region (B, dot-
+                           region.
+                                                                 ted line), and the flatten area where particles moved relatively
+
+===== PDF PAGE 7 =====
+                                                                                                     7
+
+
+
+
+
+                                                         FIG. 11: Orbits of random sampled particle around electron
+                                                                      diffusion region and secondary plasmoid X-point. The
+                                                                regions of (A), (B) and (C) to pick up one sample are shown
+                                                                          in Figure 10. The circle shows the start position at
+                                                                                                     t = 130Ω−1ci and the square shows the end position at
+                                                                                                                                  t = 170Ω−1ci
+
+
+   FIG. 9: De and negative sign of non-ideal electric field
+−E∗z = −(E +ve ×B)z when secondary plasmoid exists for
+mi/me = 4 case. Black line shows the in-plane magnetic field
+                                lines.
+
+
+
+
+
+ FIG. 10: Histograms of moved distance of electron in the z
+ direction for mi/me = 4 case. Blue histogram represents the
+      electrons which pass secondary plasmoid X-point
+  (x ∼[30λi,40λi],y ∼[−0.5λi,0.5λi]) at 150Ω−1ci  . Orange
+  histogram represents the electrons which pass the electron
+   diffusion region (x ∼[50λi,60λi],y ∼[−0.5λi,0.5λi]) at
+       150Ω−1ci  . Moved distance is calculated by
+                 z(t = 170Ω−1ci )−z(t = 130Ω−1ci ).
+
+
+                                                          FIG. 12: Each component of out-of-plane non-ideal electric
+large in the z direction through the electron diffusion region                                                                            field Ez for mi/me = 4 case (see Eq. (4)). Black line shows
+(C, dashed line). The orbits at (A) and (B) suggest the cy-                                                                               the in-plane magnetic field lines.
+clotron motion, as they almost do not move in the z direction
+for about half or one gyration period. In contrast, the orbit in
+area (C) exhibits the meandering motion, oscillating around                                                 From the electron equation of motion, E∗z can be expressed as:
+y = 0 and moving in z direction. Meandering particles can
+resonate with E∗z , receiving energy from magnetic field ef-             ∇·Pe   me dve
+                                                        E∗z =     +fectively. In conclusion, almost no meandering particles are                                                                           nee     e  dt    z
+observed in the secondary plasmoid X-point region.                                                                                                                                (4)                                                                                      ∂Pxze    ∂Pyze
+  To explore the physical origin of the nearly-zero E∗z at the                    ∂x +  ∂y   me   ∂vez                                        =       +       +ve ·∇vez   .secondary plasmoid X-point, we plot the components of E∗z .                     nee        e    ∂t
+
+===== PDF PAGE 8 =====
+                                                                                                     8
+
+
+  Figure 12 presents the components of (4), referred to as the
+electron pressure term and the electron inertial term. These
+figures indicate that the electron pressure term is the main
+contributor to E∗z inside the electron diffusion region. A pre-
+vious study also examined these components to determine the
+origin of E∗z and concluded that the electron pressure term is
+dominant46. The electron pressure gradient arises from mean-
+dering particles, which is consistent with Figure 10. On the
+other hand, the electron pressure term and the electron inertial
+term are canceled at secondary plasmoid X-point. It indicates
+that meandering particles are swept out from secondary plas-
+moid X-point due to the motion of secondary plasmoid in the x
+direction and E∗z becomes nearly zero. It should be the reason
+why the histogram in Figure 10 shows that almost no particles
+are meandering around secondary plasmoid X-point.
+
+
+
+IV.  COMPARISON TO PLASMOID INSTABILITY
+
+                                                               FIG. 13: Time evolution of jz for Run 3B case.
+  As discussed in the previous section, secondary plasmoids
+appear in some PIC simulations with a small ion-electron
+mass ratio mi/me, which look like plasmoid instability in re-
+sistive MHD simulations. However, this does not necessarily
+imply identical underlying physics; secondary plasmoids in
+PIC simulations play the same roles as the plasmoid instabil-
+ity. Furthermore, the difference between the absence of sec-
+ondary plasmoids in high mi/me PIC simulation and plasmoid
+instability in resistive MHD simulation is unclear. To address
+this concern, we present a comparative analysis of secondary
+plasmoids in PIC and MHD simulations in this section.
+
+
+
+A.  Diffusion region
+
+
+  We begin by comparing the properties of the current sheet
+and the diffusion region. To this end, we examine two PIC
+simulation results (Run 3B and 5B) and one MHD simulation
+result (Run 7).
+  Figure 13 and 14 present the results of the out-of-plane cur-
+rent  jz and De := jµEµ for Run 3B case. Due to the small    FIG. 14: Time evolution of the De := jµEµ for Run 3B case.
+mass ratio mi/me, secondary plasmoids are generated from the
+current sheet during magnetic reconnection. Figure 13 shows
+that an elongated current sheet forms at t ∼100Ω−1ci  , followed      Figure 15 and 16 present the results of the out-of-plane cur-
+by the generation of multiple secondary plasmoids after the     rent  jz and De := jµEµ in Run 5B. Figure 15 illustrates  jz.
+onset of magnetic reconnection. After t = 150Ω−1ci  , plasmoid    Similar to Run 3B case, an elongated current sheet forms in
+formation becomes non-steady. Figure 14 illustrates that sec-    the early stage, but its subsequent evolution differs signifi-
+ondary plasmoids emerge inside the electron diffusion region     cantly. No secondary plasmoids appear. Around t ∼200Ω−1ci  ,
+and are subsequently advected. Pairs of De > 0 and De < 0     fluctuations begin in the current sheet. Moreover, the mag-
+are observed to flow together. Here, De > 0 corresponds to    nitude of  jz at t = 250Ω−1ci   is smaller than at t = 150Ω−1ci  ,
+the electron diffusion region, while De < 0 represents the re-     indicating an increase in sheet thickness and stabilization
+gion where plasma energy is converted into electromagnetic    against collisionless tearing instability. Figure 16 shows that
+energy, indicating the presence of a dynamo effect. This sug-    the electron diffusion region remains at the center, with its
+gests that dissipation and the dynamo effect occur simultane-     size unchanged over time. As discussed in Section III, when
+ously, resulting in negligible net dissipation. In Section III,    mi/me = 16, the size is approximately 20λe = 5λi, where λe
+particle orbit analysis confirms that magnetic dissipation does    and λi are the electron and ion inertial lengths, respectively.
+not occur near the X-point of secondary plasmoids. This fig-    Outside this region, areas with De < 0 appear, indicating the
+ure further supports that no significant magnetic dissipation    presence of a dynamo effect.
+occurs overall.                                                  Figure 17 and 18 present the time evolution of the out-of-
+
+===== PDF PAGE 9 =====
+                                                                                                     9
+
+
+
+
+
+      FIG. 15: Time evolution of jz for Run 5B case.                 FIG. 17: Time evolution of jz for Run 7 case.
+
+
+
+
+
+FIG. 16: Time evolution of the De := jµEµ for Run 5B case.         FIG. 18: Time evolution of the η j2 for Run 7 case.
+
+
+plane current  jz and Joule dissipation η j2 for the resistive     netic reconnection. To this end, we examine PIC simulation
+MHD case (Run 7). Until tVA/δ ∼200, the diffusion region     result (Run 3A) and MHD simulation result (Run 7) to assess
+elongates horizontally, indicating that the reconnecting cur-                                                               notable differences.
+rent sheet forms a structure similar to the Sweet-Parker cur-                                                     The energy conversion efficiency is evaluated using the
+rent sheet. At tVA/δ ∼250, plasmoid instability generates two                                                           time derivatives of the magnetic and plasma (thermal + ki-
+localized diffusion regions. Additionally, Joule dissipation in-                                                                      netic) energies, integrated over the entire simulation domain,
+creases at the two X-points formed by plasmoid instability.                                                               as shown in Figure 19.  The rate of change increases at
+By tVA/δ ∼320, the dissipation region elongates again, and                                                        tVA/δ ∼250, corresponding to the onset of the plasmoid in-
+at tVA/δ ∼350, multiple small diffusion regions emerge.                                                                             stability, indicating that plasmoid instability accelerates en-
+                                                            ergy conversion in the system.
+                                                          Meanwhile, PIC simulations show a different behavior.
+B.  Energy conversion                                        Figure 20 displays the time evolution of the total kinetic en-
+                                                            ergy (∑i,s(γi −1)msc2), magnetic energy ( R B2/2µ0dxdy) and
+  Energy conversion efficiency or reconnection rate, along-     electric energy ( R ε0E2/2dxdy). Here, i and s denote parti-
+side the current sheet structure, is an important aspect of mag-     cle index and species, respectively, and the integrals are over
+
+===== PDF PAGE 10 =====
+                                                                                                    10
+
+
+                                                        The electron diffusion region is on the electron scale,
+                                                                 while plasmoid is on the ion scale. The key parameter
+                                                                        controlling both scales is the mass ratio mi/me (Figure
+                                                                             4, 5, 6, 7).
+
+                                                                          2. For low mi/me cases (≲10), secondary plasmoids ap-
+                                                                        pear; however, this is not due to plasmoid instability, as
+                                                          no enhancement of reconnection rate (Figure 13, 14, 17,
+                                                                     18, 19, 20).
+
+                                                                          3. For high mi/me cases (≳10), secondary plasmoids do
+                                                                    not appear because the electron diffusion region does
+                                                                    not elongate but remains constant in size (Figure 15,
+                                                                     16, 17, 18).
+
+                                                               In particular, this study reveals that the role and formationFIG. 19: Time evolution of the energy change gradient of the
+                                                    mechanism of secondary plasmoids differ fundamentally be- kinetic and magnetic energy in the resistive MHD case (Run
+                                                       tween PIC and resistive MHD simulations. The key distinc-     7). Each energy is calculated as the sum of the entire
+                                                                    tion lies in resistivity: while resistivity η is externally imposed                      simulation box.
+                                                                    in MHD, it arises self-consistently in collisionless systems.
+                                                             Figure 21 illustrates our conclusion that plasmoid-mediated
+                                                             reconnection do not occur in 2D antiparallel reconnection
+                                                           with higher mass ratio because the secondary plasmoids do
+                                                              not accelerate reconnection within physical parameters of our
+                                                                 simulations.
+                                                Some previous studies show that secondary plasmoids are
+                                                       formed in 2D reconnection with higher mi/me (2D case47,48,
+                                           2D with guide field case34,48, 3D case49). Secondary plasmoid
+                                                             formations in antiparallel magnetic reconnection may be due
+                                                                    to the coarse resolution. Comparison of PIC simulation results
+                                                           with different grid sizes are shown in Appendix A. To find out
+                                                      what happens with 2D reconnection with guide field or 3D
+                                                             reconnection is our future work. Moreover previous study50
+                                                               reported that electrostatic instability occur inside the electron
+                                                                  diffusion region when large ωpe/Ωce is used. To clarify the
+                                                      ωpe/Ωce dependence for secondary plasmoid formation andFIG. 20: Time evolution of the energy change gradient of the
+                                                                 the size of the electron diffusion region is also our future work. total kinetic energy, magnetic field energy and electric field
+                                                                  In Section III, we discuss the mi/me dependence of sec- energy in the PIC case (Run 3A). Each energy is calculated
+                                                         ondary plasmoid formation inside the electron diffusion re-           as the sum of the entire simulation box.
+                                                                 gion. The length of this region is estimated as
+
+                                           s
+the entire simulation domain. These results show that the ef-                                       me                                                            LDe = 2r−1λe ∼20λe (r ∼0.1) = 20           λi,     (5)
+ficiency of energy conversion increases after the onset of re-                                            mi
+connection. However, it drops around t ∼120Ω−1ci  , coinciding
+with the formation of secondary plasmoids.  It suggests that    where λe is the electron inertial length and r is the recon-
+secondary plasmoid reduces the energy conversion efficiency.    nection rate, typically O(0.1).  According to Eq. (2), the
+It is the opposite of plasmoid instabiltiy which increases the    current sheet becomes unstable for the tearing modes with
+energy conversion efficiency.                                 wavelengths larger than the sheet thickness. Assuming the re-
+                                                            connecting current sheet thickness is O(1.0λi), the instability
+                                                               condition becomes
+V. SUMMARY AND DISCUSSION
+                                s                                                                me                                                             ∴mi < 100 ∼10.    (6)                                                           LDe ∼20                                                                                              λi > 2πλi,
+  From the simulation results presented above, the follow-                   mi              me   π2
+ing three findings have been clarified which are valid for 2D
+antiparallel collisionless magnetic reconnection within the pa-    This threshold agrees with our results (Figure 4) and implies
+rameters of our simulations:                                        that secondary plasmoids should not form when the real mass
+                                                                        ratio (∼1836) is used. Our results indicate that the reason
+    1. Secondary plasmoids form due to collisionless electron   why secondary plasmoid formation has mi/me dependence is
+      tearing instability inside the electron diffusion region.     that the ratio between the plasmoid size (ion scale) and the
+
+===== PDF PAGE 11 =====
+                                                                                                    11
+
+
+
+
+
+  FIG. 21: Secondary plasmoids do not support plasmoid-mediated reconnection in 2D antiparallel reconnection with higher
+                                               mass ratio.
+
+
+
+electron diffusion region size (electron scale) is controlled by    should be needed to discuss the difference between secondary
+mi/me.                                                   plasmoid formation and plasmoid instability for both experi-
+  In Section IV, we compare the current sheet structure and    mental and observational studies.
+diffusion region.  For large mi/me cases, the current sheet       Finally, future prospects are discussed. The system inves-
+structure is almost the same between PIC and resistive MHD     tigated in this study is of the order of O(102)λi, while there
+simulation results; however, secondary plasmoids rarely ap-     is a scale gap of 103 compared to the collisional scale in so-
+pear due to the fixed size of the electron diffusion region. The     lar flares. In 2D collisionless magnetic reconnection simula-
+Hall effect becomes significant at higher mi/me, generating     tions, extending the current sheet length by 103 requires 106
+an out-of-plane magnetic field (Hall magnetic field) that alters    times more memory and (at least) 103 times more computa-
+the reconnecting current sheet structure from the anti-parallel     tion time. With recent GPU advancements, this may become
+configuration.  In contrast, an anti-parallel current sheet is     feasible. However, handling 3D effects or full-scale systems
+formed in resistive MHD simulations. The Hall effect may    (O(107∼8)λi) presents major challenges. We consider multi-
+partly explain why the plasmoid instability scarcely develops    hierarchy simulations a promising approach to this issue54–57,
+in collisionless systems. A detailed comparison with the Hall    and an important direction for future work.
+plasmoid instability reported in previous studies51 is beyond
+the scope of this paper.
+  Several observational studies have reported secondary plas-     VI. ACKNOWLEDGMENTS
+moids in collisionless systems. For instance, secondary plas-
+moids have been observed in some solar flares19. Solar flares
+                                                          Numerical computations were carried out on GPU clus-
+are believed to be driven by hybrid magnetic reconnection in-
+                                                                           ter at the Center for Computational Astrophysics, Nationalvolving both collisional and collisionless X-points8. In such
+                                                          Astronomical Observatory of Japan.  It is also partially sup-
+events, a thin current sheet formed via plasmoid instability at
+                                                              ported by Recommendation Program for Young Researchersthe MHD scale can thin down to the kinetic scale (below 105
+                                                       and Woman Researchers, Supercomputing Division, Infor-
+m, or approximately 105λi, which corresponds to the electron-                                                         mation Technology Center, The University of Tokyo.  This
+electron mean free path in the solar corona).  Our simula-
+                                                    work was supported by JSPS KAKENHI Grant Numbers
+tion domain is O(102)λi, indicating a large scale gap.  It re-                                                     25K01052, 24K00688. This research was supported by the
+mains uncertain whether plasmoid instability occurs in sys-
+                                                                grant of Joint Research by the National Institutes of Natu-
+tems of size O(105)λi. On the other hand, since our simula-                                                                           ral Sciences (NINS) (NINS program No OML032402). This
+tion size is comparable to the Earth’s magnetotail, our results
+                                                    work was performed using the facilities of the Institute for
+imply that plasmoid instability should not appear there. This
+                                                         Space–Earth Environmental Research (ISEE), Nagoya Uni-
+contradicts observations reporting persistent magnetic field
+                                                                         versity.
+variations caused by plasmoids from collisionless magnetic
+reconnection52.
+  In experimental study53, electron scale secondary plas-
+                                            DATA AVAILABILITY STATEMENTmoids were found inside the diffusion region in collisionless
+systems. Note that our results indicate that plasmoid-mediated
+reconnection in 2D without guide field case may not occur     The simulation codes that support the findings of this study
+and the situation is far from experimental one. However, we    are openly available in GitHub repository https://github.
+suggest that examining the reconnecting electric field in detail    com/keita-akutagawa. The simulation results that support
+
+===== PDF PAGE 12 =====
+                                                                                                    12
+
+
+the findings of this study are available from the corresponding     in this appendix suggest the possibility that secondary plas-
+author upon reasonable request.                            moids formed in previous studies may be due to the coarse
+                                                                  resolution (under 10 grids for 1λe).  It is possible that sec-
+                                                         ondary plasmoid could be formed under high mi/me due to
+Appendix A: Resolution dependence                                different values of physical parameters (ωpe/Ωce,Ti/Te, and
+                                                           so on). It remains unclear and further simulations are needed.
+
+
+
+                                                                                  1T. Nagai, M. Fujimoto, Y. Saito, S. Machida, T. Terasawa, R. Nakamura,
+                                                                                      T. Yamamoto, T. Mukai, A. Nishida, and S. Kokubun, Journal of Geophys-
+                                                                                              ical Research 103, 4419–4440 (1998).
+                                                                                 2S. Imada, R. Nakamura,  P. W. Daly, M. Hoshino, W. Baumjohann,
+                                                                                    S. Mühlbachler, A. Balogh,  and H. RèMe, Journal of Geophysical Re-
+                                                                               search 112, A03202 (2007).
+                                                                              3V. Angelopoulos, J. P. McFadden, D. Larson, C. W. Carlson, S. B. Mende,
+                                                                      H. Frey, T. Phan, D. G. Sibeck, K.-H. Glassmeier, U. Auster, E. Donovan,
+                                                                                                                    I. R. Mann, I. J. Rae, C. T. Russell, A. Runov, X.-Z. Zhou, and L. Kepko,
+                                                                            Science 321, 931 (2008).
+                                                                                 4S. Tsuneta, H. Hara, T. Shimizu, L. W. Acton, K. T. Strong, H. S. Hud-
+                                                                                   son, and Y. Ogawara, Publications of the Astronomical Society of Japan
+                                                                                 44, L63–L69.
+                                                                                 5S. Imada, K. Aoki, H. Hara, T. Watanabe, L. K. Harra, and T. Shimizu, The
+                                                                               Astrophysical Journal Letters 776, L11 (2013).
+                                                                       6K. K. Reeves, V. Polito, B. Chen, G. Galan, S. Yu, W. Liu, and G. Li, The
+                                                                               Astrophysical Journal 905, 165 (2020).
+                                                                                      7F. Guo, Y.-H. Liu, S. Zenitani, and M. Hoshino, Space Science Reviews
+                                                                             220, 43 (2024).
+                                                                       8H. Ji and W. Daughton, Physics of Plasmas 18, 111207 (2011).
+                                                                                        9P. A. Sweet, in in IAU Symp. 6. Electromagnetic Phenomena in Cosmi-
+                                                                                   cal Physics, edited by B. Lehnet (Cambridge University Press, New York)
+                                                                            (1958) p. 123.
+                                                                               10E. N. Parker, Journal of Geophysical Research 62, 509 (1957).
+                                                                          11H. E. Petschek, in in Proc. AAS-NASA Symp. NASA-SP 50. The physics of
+                                                                              Solar Flares, edited W. N. Ness (1965) p. 425.
+                                                                            12R. M. Kulsrud, Physics of Plasmas 18, 111201 (2011).
+                                                                          13N. F. Loureiro, A. A. Schekochihin, and S. C. Cowley, Physics of Plasmas
+                                                                                 14, 100703 (2007).
+                                                                          14A. Bhattacharjee, Y.-M. Huang, H. Yang, and B. Rogers, Physics of Plas-
+                                                               mas 16, 112102 (2009).
+                                                                                   15T. Shibayama, K. Kusano, T. Miyoshi, T. Nakabou,  and G. Vekstein,
+                                                                              Physics of Plasmas 22, 100706 (2015).
+                                                                                  16S. Zenitani and T. Miyoshi, The Astrophysical Journal Letters 894, L7
+                                                                                 (2020).
+                                                                          17K. Shibata and S. Tanuma, Earth, Planets and Space 53, 473–482 (2001).
+                                                                          18D. A. Uzdensky, N. F. Loureiro, and A. A. Schekochihin, Physical Review
+                                                                                     Letters 105, 235002 (2010).
+  FIG. 22: Three simulation results of different mi/me and         19S. Takasao, A. Asai, H. Isobe, and K. Shibata, The Astrophysical Journal
+         resolution. (a): mi/me = 16,∆= 0.5λe, (b):                   Letters 745, L6 (2012).
+ mi/me = 16,∆= 0.1λe, and (c): mi/me = 100,∆= 0.5λe.         20J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton, M. Hesse,
+                                                           M. Kuznetsova, Z. W. Ma, A. Bhattacharjee, A. Otto, and P. L. Pritchett,
+                                                                                Journal of Geophysical Research 106, 3715–3719 (2001).
+  In this appendix, we examine the dependence of the PIC      21T. Nagai, I. Shinohara, M. Fujimoto, M. Hoshino, Y. Saito, S. Machida,
+simulation results on grid resolution. Figure 22 shows three      and T. Mukai, Journal of Geophysical Research 106, 25929–25950 (2001).
+                                                                                        22P. L. Pritchett, Journal of Geophysical Research 106, 3783–3798 (2001).
+cases with different mi/me and grid resolutions: (a) mi/me =                                                                            23R. A. Treumann and W. Baumjohann, Frontiers in Physics 1, 31 (2013).
+16, ∆= 0.5λe; (b) mi/me = 16, ∆= 0.1λe; (c) mi/me = 100,      24J. F. Drake, M. Swisdak, T. D. Phan, P. A. Cassak, M. A. Shay, S. T. Lepri,
+∆= 0.5λe.  Here, ∆is the grid size. A comparison be-       R. P. Lin, E. Quataert, and T. H. Zurbuchen, Journal of Geophysical Re-
+tween panels (a) and (b) indicates that secondary plasmoids       search 114, A05111 (2009).
+are formed when the electron inertial length λe is resolved by      25S. Zenitani, M. Hesse, A. Klimas, C. Black, and M. Kuznetsova, Physics
+                                                                                 of Plasmas 18, 122108–122108 (2011).
+only 2 grid points. On the other hand, there is no secondary                                                                    26M. Hoshino, T. Mukai, T. Yamamoto, and S. Kokubun, Journal of Geo-
+plasmoid when λe is resolved by 10 grids. A comparison be-       physical Research 103, 4509–4530 (1998).
+tween panels (b) and (c) indicates that secondary plasmoids     27Y.-H. Liu, M. Hesse, F. Guo, H. Li, and T. K. M. Nakamura, Physics of
+also emerge for mi/me = 100 case under the coarse resolution       Plasmas 25, 080701 (2018).
+                                                                              28Y.-H. Liu, W. Daughton, H. Karimabadi, H. Li, and S. Peter Gary, Physicscondition. From these results, we conclude that sufficient grid
+                                                                                 of Plasmas 21, 022113 (2014).
+resolution is essential for accurately capturing the formation                                                                              29Y.-H. Liu, M. Hesse,  F. Guo, W. Daughton, H.  Li,  P. A. Cassak,
+of secondary plasmoids. Some previous studies report the for-      and M. A. Shay, Physical Review Letters 118 (2017), 10.1103/Phys-
+mation of secondary plasmoids in PIC simulation. Our results       RevLett.118.085101.
+
+===== PDF PAGE 13 =====
+                                                                                                    13
+
+
+30Y.-H. Liu, P. Cassak, X. Li, M. Hesse, S.-C. Lin, and K. Genestreti, Com-     45L. M. Zelenyi and V. V. Krasnoselskikh, Soviet Astronomy 23, 460 (1979).
+  munications Physics 5, 97 (2022).                                      46M. Hesse, K. Schindler, J. Birn, and M. Kuznetsova, Physics of Plasmas 6,
+31B. Cerutti, G. R. Werner, D. A. Uzdensky, and M. C. Begelman, The As-      1781–1795 (1999).
+  trophysical Journal 770, 147 (2013).                                    47M. Oka, T. D. Phan, S. Krucker, M. Fujimoto, and I. Shinohara, The As-
+32L. Sironi, D. Giannios, and M. Petropoulou, Monthly Notices of the Royal        trophysical Journal 714, 915–926 (2010).
+  Astronomical Society 462, 48–74 (2016).                                      48S. Lu, V. Angelopoulos, A. V. Artemyev, P. L. Pritchett, W. J. Sun, and
+33W. Daughton, J. Scudder,  and H. Karimabadi, Physics of Plasmas 13,          J. A. Slavin, The Astrophysical Journal 900, 145 (2020).
+  072101 (2006).                                                          49K. Fujimoto and R. D. Sydora, Physical Review Letter 109, 265004 (2012).
+34J. F. Drake, M. Swisdak, K. M. Schoeffler, B. N. Rogers, and S. Kobayashi,      50J. Jara-Almonte, W. Daughton, and H. Ji, Physics of Plasmas 21, 032114
+  Geophysical Research Letters 33, L13105 (2006).                               (2014).
+35R. L. Fermo, J. F. Drake, and M. Swisdak, Physical Review Letters 108,     51Y.-M. Huang, A. Bhattacharjee, and B. P. Sullivan, Physics of Plasmas 18,
+  255005 (2012).                                                      072109–072109 (2011).
+36M. Oka, M. Fujimoto, T. K. M. Nakamura,  I. Shinohara,  and K.  I.     52L. J. Chen, A. Bhattacharjee,  P. A. Puhl-Quinn, H. Yang, N. Bessho,
+  Nishikawa, Physical Review Letters 101, 205004 (2008).                         S. Imada, S. Mühlbachler,  P. W. Daly, B. Lefebvre, Y. Khotyaintsev,
+37B. Marder, Journal of Computational Physics 68, 48–55 (1987).               A. Vaivads, A. Fazakerley,  and E. Georgescu, Nature Physics 4, 19–23
+38A. B. Langdon, Computer Physics Communications 70, 447–450 (1992).         (2008).
+39T. Miyoshi and K. Kusano, Journal of Computational Physics 208, 315–344      53J. Olson, J. Egedal, S. Greess, R. Myers, M. Clark, D. Endrizzi, K. Flana-
+  (2005).                                                                       gan, J. Milhone, E. Peterson, J. Wallace, D. Weisberg, and C. B. Forest,
+40B. van Leer, Journal of Computational Physics 32, 101–136 (1979).              Physical Review Letter 116, 255001 (2016).
+41T. A. Gardiner and J. M. Stone, Journal of Computational Physics 205,      54T. Sugiyama and K. Kusano, Journal of Computational Physics 227, 1340–
+  509–539 (2005).                                                     1352 (2007).
+42E. G. Harris, Il Nuovo Cimento 23, 115–121 (1962).                            55S. Usami, R. Horiuchi, H. Ohtani,  and M. Den, Physics of Plasmas 20,
+43A. Runov, R. Nakamura, W. Baumjohann, T. L. Zhang, M. Volwerk, H. U.      061208 (2013).
+  Eichelberger,  and A. Balogh, Geophysical Research Letters 30, 1036     56L. K. Daldorff, G. Tóth, T. I. Gombosi, G. Lapenta, J. Amaya, S. Markidis,
+  (2003).                                                               and J. U. Brackbill, Journal of Computational Physics 268, 236–254 (2014).
+44S. Zenitani, M. Hesse, A. Klimas, and M. Kuznetsova, Physical Review     57K. Makwana, R. Keppens, and G. Lapenta, Computer Physics Communi-
+  Letters 106, 195003 (2011).                                                      cations 221, 81–94 (2017).

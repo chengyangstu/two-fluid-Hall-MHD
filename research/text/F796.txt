@@ -1,0 +1,1764 @@
+Draft version May 19, 2022
+Typeset using LATEX twocolumn style in AASTeX631
+Anisotropic electron heating in turbulence-driven magnetic reconnection in the near-Sun solar wind
+Luca Franci
+,1, 2 Emanuele Papini
+,2 Alfredo Micera
+,3 Giovanni Lapenta
+,4 Petr Hellinger
+,5, 6
+Daniele Del Sarto
+,7 David Burgess
+,8 and Simone Landi
+9
+1School of Physical and Chemical Sciences, Queen Mary University of London, London, UK
+2National Institute for Astrophysics (INAF) - Institute for Space Astrophysics and Planetology (IAPS), Rome, Italy
+3Solar-Terrestrial Centre of Excellence–SIDC, Royal Observatory of Belgium, Brussels, Belgium
+4Centre for Mathematical Plasma Astrophysics, KU Leuven, Leuven, Belgium
+5Astronomical Institute, Czech Academy of Sciences, Prague, Czech Republic
+6Institute of Atmospheric Physics, Czech Academy of Sciences, Prague, Czech Republic
+7Institut Jean Lamour, UMR 7198 CNRS – Universit´e de Lorraine, Nancy, France
+8School of Physical and Chemical Sciences, Queen Mary University of London, London, UK.
+9Dipartimento di Fisica e Astronomia, Universit`a degli Studi di Firenze, Sesto Fiorentino, Italy
+(Dated: May 19, 2022)
+ABSTRACT
+We perform a high-resolution two-dimensional fully-kinetic numerical simulation of a turbulent
+plasma system with observation-driven conditions, in order to investigate the interplay between turbu-
+lence, magnetic reconnection, and particle heating from ion to sub-electron scales in the near-Sun solar
+wind. We ﬁnd that the power spectra of the turbulent plasma and electromagnetic ﬂuctuations show
+multiple power-law intervals down to scales smaller than the electron gyroradius. Magnetic reconnec-
+tion is observed to occur in correspondence of current sheets with a thickness of the order of the electron
+inertial length, which form and shrink due to interacting ion-scale vortexes. In some cases, both ion
+and electron outﬂows are observed (the classic reconnection scenario), while in others —typically for
+the shortest current sheets— only electron jets are presents (“electron-only reconnection”). At the
+onset of reconnection, the electron temperature starts to increase and a strong parallel temperature
+anisotropy develops. This suggests that in strong turbulence electron-scale coherent structures may
+play a signiﬁcant role for electron heating, as impulsive and localized phenomena such as magnetic
+reconnection may transfer energy from the electromagnetic ﬁelds to particles more eﬃciently than
+damping mechanisms related to interactions with wave-like ﬂuctuations.
+Keywords: Space plasmas — Plasma astrophysics — Solar wind — Interplanetary turbulence
+1. INTRODUCTION
+The solar wind is a highly magnetized and nearly col-
+lisionless plasma ﬂow that originates in the Sun’s corona
+(Marsch 2006) and blows in our solar system, ﬁlling
+the the whole heliosphere. While expanding away from
+the Sun, its temperature gradually decreases with he-
+liocentric distance.
+Such temperature decrease, how-
+ever, is smaller than what is expected in the case of a
+purely adiabatic expansion (e.g., Verscharen et al. 2019,
+and therefernces therein). This represents the observa-
+tional evidence that local heating and particle energisa-
+tion mechanisms are at play in the solar wind (Goldstein
+et al. 2015). Despite decades-long investigation by dif-
+ferent heliospheric missions, understanding the origin of
+solar wind heating is one of the long-standing open is-
+sues in space plasma physics. Among others, turbulent
+dissipation is the most promising candidate to explain
+the observed heating (e.g., Kiyani et al. 2015; Parashar
+et al. 2015).
+Turbulence is routinely observed in the solar wind
+(e.g., Bruno & Carbone 2013).
+In-situ spacecraft ob-
+servations return power spectra of magnetic ﬂuctuations
+exhibiting a power-law behavior over many decades in
+frequency (e.g., Tu & Marsch 1995; Bruno & Carbone
+2013; Chen et al. 2013a; Kiyani et al. 2015).
+This is
+the expression of a turbulent energy cascade: the mag-
+netic and kinetic energy stored at the largest scales is
+transferred (i.e., ”cascades”) via nonlinear interactions
+arXiv:2205.08670v1  [physics.space-ph]  18 May 2022
+
+2
+Franci et al.
+to progressively smaller and smaller scales, down to par-
+ticles characteristic scales.
+As the solar wind plasma
+is collisionless, the energy cascade must terminate via
+mechanisms that are alternative to particle collisions.
+Typically, the power spectrum of the turbulent mag-
+netic ﬂuctuations has a spectral index (i.e., a slope),
+α, that decreases with increasing frequency.
+At large
+scales/low frequencies (the so-called “inertial range”),
+where the plasma can be described as a magnetized
+ﬂuid within the framework of magnetohydrodynamics
+(MHD), both in-situ observations and numerical sim-
+ulations report α ∈[−5/3, −3/2], depending on the
+level of imbalance between outward and inward prop-
+agating Alfv´en waves and on the heliocentric distance
+(e.g., Boldyrev et al. 2011; Chen et al. 2013b; Chen 2016;
+Chen et al. 2020). As we approach particles character-
+istic scales, where kinetic eﬀects become important, the
+picture gets increasingly complex. In the range across
+and just below the ion characteristic scales (known as
+“spectral break” or “transition region”), both observa-
+tions and simulations recover α ∈[−4, −2], depending
+on plasma parameters such as the ion plasma beta and
+the level of turbulent ﬂuctuations, α ≃−2.8 being the
+value more frequently observed (e.g., Bruno et al. 2014;
+Franci et al. 2016; Verscharen et al. 2019). When the
+turbulent cascade reaches the electron scales, α further
+decreases (e.g., Alexandrova et al. 2009; Sahraoui et al.
+2013). At present, there is no consensus on the spec-
+tral properties of the magnetic ﬂuctuations around and
+below the electron characteristic scales and even the de-
+scription of their power spectrum in terms of a spectral
+index is controversial. In particular, two alternative phe-
+nomenological descriptions have been presented, which
+model the power spectrum of the magnetic ﬁeld either
+as a power law with an exponential cut-oﬀ(Alexan-
+drova et al. 2009, 2012; Alexandrova et al. 2021), or
+as two power laws with diﬀerent slopes at scales larger
+and smaller than the electron gyroradius (Sahraoui et al.
+2013; Huang & Sahraoui 2019). While the spectral index
+observed in the inertial range can be explained in terms
+of the Kolmogorov phenomenology (Kolmogorov 1941),
+eventually extended to include MHD eﬀects (Iroshnikov
+1963; Kraichnan 1965; Goldreich & Sridhar 1995), at
+sub-ion scales we still lack a deﬁnite explanation.
+In the framework of wave-like turbulence, the energy
+cascade at kinetic scales is mediated by ﬂuctuations
+whose properties resemble those of either kinetic Alfv´en
+waves of whistlers waves (Howes et al. 2008; Schekochi-
+hin et al. 2009). The mechanisms responsible for dissi-
+pating energy and terminating the cascade, thus leading
+to particle heating, can be either resonant, as for Lan-
+dau and cyclotron damping (e.g., He et al. 2015; Sulem
+et al. 2016; Howes et al. 2018; Chen et al. 2019), or
+non-resonant, as in the case of stochastic heating(e.g.,
+Chandran et al. 2013; Vech et al. 2017; Martinovi´c et al.
+2020). Recent numerical studies (Parashar et al. 2010;
+Papini et al. 2021) have revealed, however, that the tur-
+bulent structures at sub-ion scales are characterized by
+very-low temporal-frequency features, not directly con-
+nected to wave activity. This strongly supports the idea
+that coherent structures such as vortexes, discontinu-
+ities, and thin intense current sheets, can play a key
+role in mediating the turbulent cascade (e.g., Gosling
+2007; Greco et al. 2012; Karimabadi et al. 2013; Os-
+man et al. 2014; Franci et al. 2016; Cerri & Califano
+2017; Perrone et al. 2016; Wan et al. 2016; Franci et al.
+2017; Yang et al. 2017; Camporeale et al. 2018; Pap-
+ini et al. 2020; Agudelo Rueda et al. 2021; Papini et al.
+2021; Smith & Vasquez 2021, and references therein).
+Particle energization in collisionless plasmas can pro-
+ceed via the pressure-strain coupling, which starts to
+play an important role around the ion scales and by
+which the kinetic energy of a spatially inhomogeneous
+ﬂow is anisotropically transferred to internal energy (Del
+Sarto et al. 2016; Yang et al. 2017; Del Sarto & Pego-
+raro 2017; Matthaeus et al. 2020; Bandyopadhyay et al.
+2021; Hellinger et al. 2022).
+Another promising mechanism for energy dissipation
+and particle heating in turbulent plasmas is magnetic
+reconnection (e.g., Retin`o et al. 2007; Gosling 2007; Er-
+gun et al. 2017; V¨or¨os et al. 2017; Eastwood et al. 2018;
+Stawarz et al. 2019; Zhou et al. 2021).
+Through re-
+connection, the energy contained in the magnetic ﬁeld
+is released into the plasma, triggered by a topological
+change in the magnetic ﬁeld conﬁguration and the sub-
+sequent relaxation of the magnetic ﬁeld lines. Recon-
+nection is usually accompanied by the appearance of
+ion and electron outﬂow jets. Recently, however, in-situ
+observations by Magnetospheric Multiscale (MMS) in
+the Earth’s magnetosheath have revealed some peculiar
+magnetic reconnection events producing electron jets
+with no ion counterpart (“electron-only reconnection”)
+(Phan et al. 2018). These were observed in correspon-
+dence of thin electron-scale current sheets embedded in
+strong turbulent ﬂuctuations. Further observational and
+numerical studies have shown that this is likely to occur
+when the correlation length of the turbulence is of the or-
+der of just a few ion inertial lengths, thus current sheets
+tend to form and reconnect at scales at which the ions
+have already decoupled from the magnetic ﬁeld (Stawarz
+et al. 2019; Califano et al. 2020; Sharma Pyakurel et al.
+2019; Stawarz et al. 2022).
+As reconnection converts magnetic energy into parti-
+cle kinetic and thermal energy, it likely plays a major
+
+3
+role in the evolution and dissipation of turbulence (Ser-
+vidio et al. 2009; Matthaeus & Velli 2011). Indeed, tur-
+bulence and reconnection are observed to be intimately
+linked to each other. Numerical simulations also show
+that, on the one hand, turbulence develops in recon-
+nection outﬂows (Karimabadi et al. 2013; Pucci et al.
+2017; Lapenta et al. 2020) and the turbulent cascade
+at sub-ion scales can be directly triggered by reconnec-
+tion events (Franci et al. 2017). On the other hand, the
+interaction between turbulent structures spontaneously
+generates and squeezes thin intense current sheets, un-
+til they eventually reconnect (e.g., Matthaeus & Lamkin
+1986; Biskamp & Bremer 1994; Wei et al. 2000; Gosling
+2007; Servidio et al. 2009, 2011; Franci et al. 2017; Cerri
+& Califano 2017; Papini et al. 2019; Stawarz et al. 2019;
+Agudelo Rueda et al. 2021). Magnetic reconnection is
+also linked to particle temperature anisotropy, as this is
+expected to be correlated to the hyperbolic ﬂow close to
+a reconnecting X-point (Cai & Lee 1997; Brackbill 2011;
+Del Sarto et al. 2016). Anisotropic electron heating and
+non-gyrotropic velocity distribution functions have in-
+deed been observed both in numerical simulations of
+single reconnection events (Cai & Lee 1997; Aunai et al.
+2013; Pucci et al. 2018a; Sladkov et al. 2021) and in Clus-
+ter measurements of a reconnecting thin current sheet
+in the Earth’s magnetotail (Retin`o et al. 2008).
+Fully-kinetic simulations of collisionless turbulent
+plasmas, which retain both ion and electron kinetic ef-
+fects, represent an invaluable tool for investigating the
+turbulent energy cascade down to electron scales (e.g.,
+Groˇselj et al. 2018; Gonz´alez et al. 2019; Roytershteyn
+et al. 2019; Cerri et al. 2019), its interplay with mag-
+netic reconnection (e.g., Karimabadi et al. 2013; Pucci
+et al. 2017; Pucci et al. 2018b; Adhikari et al. 2021;
+Agudelo Rueda et al. 2021), as well as the role of
+electron-scale coherent structures in dissipating energy
+and heating particles (e.g., Camporeale & Burgess 2011;
+Parashar et al. 2015; Yang et al. 2017; Arr`o et al. 2021;
+Bandyopadhyay et al. 2021; Yang et al. 2022).
+They
+have also provided numerical evidence for an enhance-
+ment of the electron parallel temperature anisotropy in
+the outﬂows of strong reconnection events, which oc-
+curred spontaneously as the result of the interactions
+between sub-proton scale turbulent structures (Campo-
+reale & Burgess 2011; Haynes et al. 2014).
+In this work, we investigate the development of tur-
+bulence, its interplay with magnetic reconnection, and
+particle heating by means of a high-resolution 2D fully-
+kinetic simulation of strong plasma turbulence in the
+near-Sun solar wind, carried out using the iPic3D code
+(Markidis et al. 2010). The initial conditions model the
+average plasma environment encountered by the Parker
+Solar Probe (PSP) spacecraft during its ﬁrst solar en-
+counter at about 36 solar radii from the Sun (Bale et al.
+2019). The plasma system size is 32 times the ion inertial
+length, which allows us to accurately model the turbu-
+lent energy cascade from ion scales down to sub-electron
+scales, providing predictions for the spectral properties
+of the turbulent ﬂuctuations at scales that cannot be
+resolved by PSP. To overcome the current unfeasibility
+of resolving the electron scales while concurrently mod-
+elling the large MHD scales, we compare the turbulent
+spectral properties of the fully-kinetic simulation with
+those obtained from a hybrid-kinetic simulation (per-
+formed with the CAMELIA code Franci et al. 2018),
+which models a much larger system with a lower reso-
+lution, but employing the same physical plasma condi-
+tions.
+The paper is organized as follows. In Sec.2, we de-
+scribe the numerical dataset, providing details on the
+simulation setup and fundamental plasma parameters.
+In Sec.3, we present our results, in terms of spectral
+properties of the turbulent energy cascahde, particle
+heating, and the occurrence of standard and electron-
+only reconnection events. Finally, we discuss our ﬁnd-
+ings and draw our conclusions in Sec.4.
+2. NUMERICAL DATASET
+We performed a 2D particle-in-cell (PIC) simula-
+tion of plasma turbulence using the semi-implicit code
+iPIC3D (Markidis et al. 2010), a fully kinetic code
+which solves the Vlasov-Maxwell equations for a non-
+relativistic plasma of ions and electrons.
+Ipic3D em-
+ploys an implicit scheme for the temporal integration of
+the Vlasov–Maxwell system (Brackbill & Forslund 1982)
+which removes the numerical stability constraints typi-
+cal of explicit schemes (Cohen et al. 1989; Hockney &
+Eastwood 1988), so that it is possible to retain small
+spatiotemporal scales in an approximate way without
+the need to resolve the Debye length and to include the
+speed of light in the Courant condition for the temporal
+integration. This allows us to retain all kinetic eﬀects,
+which are vital to describe correctly the overall evolu-
+tion of the system, while still employing a simulation
+box whose size is an order of magnitude larger than the
+ion characteristic scales.
+The initial condition consists of a uniform plasma
+composed of electrons and ions (assumed to be only pro-
+tons, embedded in and ambient magnetic ﬁeld B0.
+We use the following normalization units: the magni-
+tude of the ambient ﬁeld B0 = |B0| for the magnetic
+ﬂuctuations, the initial plasma density n0 = ni,0 = ne,0
+for the density ﬂuctuations, the (ion) Alfv´en speed vA =
+diΩi = B0/√4πn0mi for the velocity ﬂuctuations, the
+
+4
+Franci et al.
+inverse of the proton plasma frequency Ωi = eB0/(mic)
+for time, the proton inertial length di = vA/Ωi for
+lengths. The plasma beta for a given plasma species is
+βi,e = 8πni,eKBTi,e/B2
+0. The electron spatial and tem-
+poral characteristic scales are related to the ion ones
+through the proton-to-electron mass ratio µ = mi/me
+as de = di/√µ and Ωe = µΩi. Quantities and symbols
+used in these deﬁnitions are: the speed of light c, the ion
+and electron number densities ni,e, the magnitude of the
+electronic charge e, the proton and electron masses mi,e,
+the Boltzmann’s constant KB, and the proton and elec-
+tron temperatures Ti,e.
+The 2D computational domain consists of 20482 grid
+points with a spatial resolution ∆x, y = di/64 and a
+size Lx,y = 32 di. The time step for the particle advance
+is ∆t = 0.000625 Ω−1
+i
+= 0.0625 Ω−1
+e . We employ a re-
+duced ion-to-proton mass ratio of µ = mi/me = 100 in
+order to decrease the computational cost of the simula-
+tion and 1024 ions and 8192 electrons per cell to reduce
+the noise level at small scales. The ambient magnetic
+ﬁeld B0 is along the z-direction. We set its magnitude
+such that c/vA = ωi/Ωi = 200 and c/vAe = ωe/Ωe = 20
+(we recall here that the electron Alfv´en speed is vAe =
+B0/√4πneme). In this work, each ﬁeld Ψ will be decom-
+posed in its perpendicular (in-plane) component, Ψ⊥,
+and its parallel (out-of-plane, along z) component, Ψ∥,
+with respect to the orientation of B0. The only excep-
+tions will be the particle temperatures, for which ⊥and
+∥will denote directions with respect to the local mag-
+netic ﬁeld.
+Initially, we assume a uniform number density n =
+1, an ion plasma beta βi = 0.2, an electron plasma
+beta βe = 0.5, and no ion nor electron temperature
+anisotropy, i.e. Ai,e = T(i,e)⊥/T(i,e)∥= 1. We add an
+initial spectrum of in-plane Alfv´enic-like magnetic and
+ion bulk velocity ﬂuctuations, composed of modes with
+wavenumbers in the range −0.8 ≲kx,y di ≲0.8 and
+random phases. Their initial global amplitude can be
+estimated in terms of their root-mean-square value as
+δBrms ≃0.39 B0 and δurms
+i
+≃0.34 vA, so that there is
+a small initial residual energy (excess of magnetic over
+ion kinetic energy). Initial electron bulk velocity ﬂuc-
+tuations with both perpendicular and parallel compo-
+nents are also imposed, such that n0(δui,∥−δue,∥) =
+−n0δue,∥= J∥= ∇× δB⊥and n0(δui,⊥−δue,⊥) =
+J⊥= ∇⊥× δB∥= 0. As a consequence, at t = 0 we
+have δue,⊥= δui,⊥, so that δurms
+e,⊥≃0.34 vA.
+3. RESULTS
+3.1. Fully developed turbulence at sub-ion scales
+We let the plasma system evolve from its initial con-
+dition until a turbulent energy cascade has fully devel-
+0
+200
+400
+600
+800
+1000
+1200
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0
+2
+4
+6
+8
+0
+2
+4
+6
+8
+10
+12
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+Figure 1. Time evolution of some global quantities. Panel
+(a): root-mean-square (rms) value of the out-of-plane and in-
+plane components of the current density, J∥and J⊥. Panel
+(b): maximum of the magnitude of the current density, |J|, in
+the whole simulation box. Panel (c): rms of the components
+of the magnetic ﬂuctuations, B⊥and B∥, and of ion bulk
+velocity, ui,⊥and ui,∥. In all panels, a vertical dashed green
+line marks the time when the rms of J∥reaches a maximum,
+i.e., when turbulence has fully developed.
+In panel (b), a
+vertical dashed black line marks the time when reconnection
+events start occurring, which also corresponds to the time
+when B⊥starts decreasing, indicated by the vertical dashed
+red line in panel (c).
+oped and starts to slowly decay. This occurs when the
+rms value of the current density, J, reaches a maxi-
+mum/plateau (e.g. Franci et al. 2015a, 2017). Figure 1
+shows the time evolution of some fundamental space-
+averaged quantities that allow us to follow the devel-
+opment of the turbulent cascade, identifying diﬀerent
+phases. Figure 1(a) shows the rms of the components
+of J both parallel and perpendicular to the ambient
+magnetic ﬁeld B0. The former provides the dominant
+contribution to the total current and reaches a maxi-
+mum at tpeak = 11.4 Ω−1
+i , marked by a green dashed
+vertical line.
+The following analysis will therefore be
+performed at this time.
+The other component, Jrms
+⊥
+,
+is initially almost zero and quickly grows, yet remain-
+
+5
+ing quite smaller than its parallel counterpart at all
+times. This is related to the rapid development of par-
+allel magnetic ﬂuctuations, as shown below. The eddy
+turnover time corresponding to the initial injection scale,
+kinjdi ≃(k2
+x +k2
+y) di ≃1.1 is the time associated to non-
+linear energy transfers at t = 0 and can be estimated
+as tinj
+NL ∼[kinjδBinj
+k ]−1 ∼[kinjδBrms]−1 ∼2.3 Ω−1
+i . A
+turbulent energy cascade develops fully from the injec-
+tion scale down to the electron scales in a few nonlinear
+times, as tpeak ∼5 tNL. This is similar to what previ-
+ously observed in hybrid simulations with similar initial
+conditions (e.g. Franci et al. 2015b,a), where about 10
+nonlinear times were required.
+Figure1(b) shows the time evolution of the maximum
+of the magnitude of the current density computed over
+the whole simulation box. This starts increasing after
+about one tNL and then reaches a ﬁrst maximum at
+trec ≃4.9 Ω−1
+i , which is after about 2 tNL.
+In Franci
+et al. (2017), we have provided numerical evidence of
+the link between the time of the ﬁrst maximum of |J|
+and the onset of magnetic reconnection events. Here we
+observe the same, as we see clear signs of reconnection in
+the magnetic and current structures starting at t ≃trec
+(not shown). Figure 1(c) shows the rms of the in-plane
+and out-of-plane components of the magnetic ﬁeld (red
+solid and dashed, respectively) and of the ion bulk ve-
+locity (light blue). The behaviour of Brms
+⊥
+and urms
+i,⊥is
+qualitatively the same as previously observed in hybrid
+simulations (cf. Fig. 1 of Franci et al. (2015a)): after a
+quick re-adjustment of the initial conditions, the former
+slightly increases before slowly decreasing, while the lat-
+ter decreases during the whole evolution. As a result, the
+initial small excess of magnetic energy further increases
+reaching a maximum at about half the simulation and
+then remains almost constant. The parallel components
+δBrms
+∥
+and urms
+i,∥, which are initially zero, quickly start to
+increase until they reach an almost constant and com-
+parable value, which is a few times smaller than their
+perpendicular counterparts. This indicates that the lev-
+els of compressibility and magnetic compressibility that
+spontaneously form are relatively small but not negligi-
+ble. It is interesting to note that δBrms
+⊥
+reaches a max-
+imum at t = 5 Ω−1
+i
+≃trec and starts decreasing when
+reconnection events start occurring.
+Figure 2 shows the isocontours of the energy in the
+magnetic ﬂuctuations, |δB|2 = |B−B0|2 = δB2
+x+δB2
+y+
+δB2
+z (panels (a) and (b)) and in the current density, |J|2,
+both in the whole 32 di × 32 di simulation domain (pan-
+els (c) and (d)) and in a 8 di × 8 di sub-domain (bottom
+panels). Coherent magnetic structures, i.e., vortexes or
+islands, are embedded in a more chaotic environment
+where stretched and twisted shapes emerge. The vor-
+texes have radii from a few times di down to a few times
+de.
+Gradients of the magnetic ﬁeld occur at smaller
+scales, as the strongest current structures have a width
+of the order of de. For an easy comparison by eye, we
+have also drawn circles with radius r = di and r = de in
+ﬁg. 2(a)-(c) and lines with length l = di and l = de in
+ﬁg. 2(b)-(d).
+3.2. Spectral properties of the turbulent ﬂuctuations
+Figure 2 has shown that the turbulent structures are
+randomly oriented, as expected given that the ambient
+magnetic ﬁeld is orthogonal to the simulation plane so
+there is no privileged direction in the plane.
+We can
+then reasonably assume the two-dimensional spectra of
+the turbulent ﬂuctuations to be statistically isotropic
+and analyse the spectral properties of each ﬁeld by com-
+puting its omnidirectional power spectrum P. The top
+panel of Fig. 3(a) shows the power spectra of the ﬂuc-
+tuations of the magnetic ﬁeld B, of the electric ﬁeld
+E, and of the ion and electron bulk velocities ui and
+ue at t = tpeak. Black vertical dashed lines mark the
+wavenumbers corresponding to the ion and electron in-
+ertial length, di,e, and gyroradius, ρi,e. For each ﬁeld, a
+dashed line with the same color indicate the noise level,
+estimated by computing the power spectrum at t = 0
+when only the large-scale initial ﬂuctuations should be
+present. The bottom panel of Fig. 3(a) shows the signal-
+to-noise ratio (SNR) for each ﬁeld. In the following, we
+will consider the power spectra reliable (meaning that
+their shape is not aﬀected by the noise) at those scales
+where SNR > 3. This holds for k⊥di ≳20 (or, equiv-
+alently, k⊥de ≳2) for PE and Pui and for k⊥di ≳45
+(k⊥de ≳4.5) for for PB and Pue. This ensures that
+our modelling of the magnetic ﬁeld power spectrum is
+meaningful around the electron scales and for a further
+half a decade in wavenumber above k⊥de = 1.
+The
+top panel of Figure 3(a) suggests that both PB and
+Pue may exhibit a power-law behaviour with diﬀerent
+spectral indices in diﬀerent ranges above and below the
+electron scales. On the contrary, Pui starts dropping
+at k⊥di ≳1 and its behavior is not so clear. There is
+a hint that for 4 ≲k⊥di ≲10 it may exhibit a similar
+slope to the magnetic ﬁeld (although such interval is too
+limited to make any claim) and then it starts ﬂattening
+just before the noise level is reached, so it is not possible
+to infer whether this is a numerical or physical eﬀect.
+Finally, PE at sub-ion scales is much less steep than
+PB, so that the level of the electric ﬁeld ﬂuctuations
+is much larger than the magnetic ﬁeld’s for k⊥di ≳5.
+In order to provide a more quantitative characteriza-
+tion of PB and Pue, Fig. 3(b) shows them compensated
+by diﬀerent powers of k⊥. The top panel of Fig. 3(b)
+
+6
+Franci et al.
+Figure 2. Contour plots of the logarithm of the magnitude of the magnetic ﬂuctuations, |δB|2 = |B −B0|2 (left column), and of
+the current density, |J|2 (right column) at t = tpeak, both in the whole simulation box (top row) and in a sub-domain (bottom
+row). Magnetic vortexes are compared with circles of radius r = di,e and current sheet widths are compared with lines of length
+l = di,e.
+shows that the magnetic ﬁeld power spectrum can be
+modelled by PB ∝kαB
+⊥
+with αB ≃−11/3 for almost
+a decade at k⊥de < 1 and −5 for a shorter interval
+at k⊥de > 1. Correspondingly, we observe Pue ∝kαe
+⊥
+with αe ≃−5/3 and −3 in the two intervals of scales,
+respectively. The relation αe = αB + 2 can be easily
+explained by considering the deﬁnition of the current
+density, J = niui −neue, and Amp`ere’s law which links
+it to magnetic ﬁeld, J = ∇×B (where the displacement
+current has been neglected). Due to charge neutrality,
+ni = ne = n and, assuming that n = n0 + δn with
+δn ≪n0, we get ue ∝∇×B. In Fourier space this reads
+ue,k ∝k × Bk, from which we obtain P(ue) ∝k2
+⊥P(B)
+(since in 2D k = k⊥). At smaller scales, k⊥de ≳2.5,
+there is a hint of another possible power-law range in
+P(ue), withαe ≃−5. This interval is very narrow, just
+about a factor of 2 in wavenumber, as the power spec-
+trum quickly reaches the noise level. Although we can-
+not consider this power-law behavior and its slope reli-
+able enough, the further steepening of the power spec-
+trum is evident from the top panel of Fig. 3(a). In the
+same interval, the magnetic ﬁeld power spectrum also
+steepens accordingly, although αe = αB + 2 does not
+seem to hold perfectly anymore, possibly due to the ef-
+fect of the large noise in the density due to which the
+assumption δn ≪n0 might not hold anymore and/or
+
+7
+10-8
+10-6
+10-4
+10-2
+100
+100
+101
+102
+100
+102
+10-2
+10-1
+100
+101
+100
+101
+10-3
+10-2
+10-1
+100
+101
+Figure 3. Spectral behavior of the electromagnetic and plasma ﬂuctuations. Panel (a): power spectra of the magnetic ﬁeld B,
+the electric ﬁeld E, the ion bulk velocity ui, and the electron bulk velocity ue with the respective noise in dashed lines (top),
+and corresponding signal-to-noise ratio SNR (bottom). Vertical dashed black lines mark the particle characteristic scales, i.e.,
+the ion and electron inertial length di,e and gyroradius ρi,e. Panel (b): power spectra of the magnetic ﬁeld B (top) and of the
+electron bulk velocity ﬂuctuations ue (bottom), compensated by diﬀerent power laws (and by an exponential cut-oﬀfor B). The
+grey area marks the scales at which SNR < 3.
+to the fact that at large wavenumbers (and frequencies)
+we cannot neglect the displacement current anymore.
+The fact that at the smallest scales P(ue) seems to ex-
+hibit still a power-law behavior P(ue) while P(B) seems
+to follow approximately, might represent a hint that the
+turbulent cascade is still proceeding at k⊥ρe ≳1, but the
+dynamics might be dominated by the electron processes
+rather than by the magnetic ﬂuctuations. Investigating
+this will require new simulations with an even higher
+resolution and larger number of electrons per cell, in or-
+der to further improve the accuracy of the power spectra
+below the electron scales.
+As mentioned in Sec. 1, there is no consensus in the
+literature on the shape of the magnetic ﬁeld power spec-
+trum across the electron characteristic scales and, more
+precisely, on whether it exhibits a double power-law be-
+havior or rather an exponential decay. So far, we have
+discussed how two power laws with a spectral index
+of −11/3 and −5 seems to provide a good modelling
+for PB over a little more than a full decade across the
+electron scales, more speciﬁcally for 0.25 ≲k⊥de ≲4.
+We also compensated the magnetic ﬁeld power spectrum
+by the inverse of an exponential cut-oﬀsimilar to that
+suggested by
+Alexandrova et al. (2021), which reads
+PB ∝k−8/3
+⊥
+exp (−c k⊥ρe) with c = 1.8.
+The result
+is shown by the green line in the top panel of Fig. 3(b).
+This also seems to provide a good approximation for PB
+as it is almost a horizontal line, although with signiﬁcant
+oscillations, for a little more than a decade in wavenum-
+ber. We need to note, however, that we have set c = 1
+instead of c = 1.8 as in Alexandrova et al. (2021), since
+the latter does not work well here. The diﬀerence in this
+constant might be due either to the unrealistic mass ra-
+tio employed in the simulation or to the fact that the
+exponential cut-oﬀmodel fails in our case, possibly due
+to the speciﬁc plasma conditions. Providing strong nu-
+merical evidence in favour or against this goes beyond
+the scope of this paper, as we only intended to show
+that the simulation is able to model the turbulent cas-
+cade accurately up to scales smaller than the electron
+gyroradius, regardless of what the exact shape of the
+power spectra is.
+A limitation of this fully kinetic simulation, as for
+most simulations employing the same model, is the fact
+that the MHD scales are not retained. Usually, espe-
+cially when explicit numerical codes are used, this is
+due to the fact that all characteristic spatial scales need
+to be resolved, including the Debye length. This is not
+a requirement in our case, as the iPic3D code employs
+the implicit moment method. Here, however, the box
+size is still limited as we decided to prioritize employ-
+ing a very large number of ppc to reduce the numerical
+noise. While this choice assures that the power spec-
+tra are more accurate at large wavenumbers, missing
+completely the MHD range makes the turbulent cascade
+start developing at the ion scales. Some important prop-
+erties (e.g., the plasma and magnetic compressibility, the
+residual energy) at ion scales are set by our initial condi-
+
+8
+Franci et al.
+10-7
+10-5
+10-3
+10-1
+10-1
+100
+101
+10-2
+100
+102
+10-7
+10-5
+10-3
+10-1
+10-1
+100
+101
+10-2
+100
+102
+10-7
+10-5
+10-3
+10-1
+10-1
+100
+101
+10-2
+100
+102
+10-7
+10-5
+10-3
+10-1
+10-1
+100
+101
+10-2
+100
+102
+10-7
+10-5
+10-3
+10-1
+10-1
+100
+101
+10-2
+100
+102
+10-7
+10-5
+10-3
+10-1
+10-1
+100
+101
+10-2
+100
+102
+Figure 4. Direct comparison between the power spectra of the kinetic simulation, Pkin, and those of the hybrid simulation Phyb
+for the magnetic ﬁeld B (a), the electric ﬁeld E (b), the ion bulk velocity ui (c), the electron bulk velocity ue (d), the ion
+density ni(e), and the parallel magnetic ﬁeld B∥(f). For each ﬁeld, the ratio Phyb/Pkin is also shown in the bottom panels.
+
+9
+tions rather than self-developing from the larger scales.
+One could then wonder whether this sub-ion scale turbu-
+lence is representative of the plasma dynamics in a larger
+plasma system or if it is instead sensibly constrained or
+aﬀected by the box size. In order to investigate this and
+validate our results, we have run a hybrid simulation
+with the same physical conditions but a much larger box,
+able to model the turbulent cascade over two decades in
+wavenumber, one above and one below the ion scales.
+This simulation has the same parameters and initial con-
+ditions as the one described in (Franci et al. 2020a), so
+that further information can be found in Appendix A
+therein. The only (minor) diﬀerences are that the grid
+points are 4000 × 4000 instead of 4096 × 4096 (and cor-
+respondingly the box size is 250 di instead of 256) and
+2048 ppc instead of 1024.
+In Fig. 4 we compare the power spectra of diﬀerent
+ﬁelds for the fully kinetic simulation, Pkin, and for the
+hybrid simulation, Phyb. For the former, we only draw
+the portion of the power spectra where the correspond-
+ing SNR is above 3. For the latter, since we have only the
+initial power spectra for ui and ni, we apply the SNR cri-
+terium by using the noise threshold SNR(ui) < 3 for Pui
+and SNR(ni) < 3 for all other power spectra. Fig. 4(a)
+compares the spectral behavior of the magnetic ﬂuctu-
+ations. P hyb
+B
+is more extended at large scales, since the
+hybrid simulation box is larger. This allows for the de-
+velopment of a Kolmogorov-like power law with a spec-
+tral index of −5/3 for k⊥di ≲3.5, which then steepens
+to a power law with a slope compatible with −11/3,
+as already observed in Franci et al. (2020a). P kin
+B , in-
+stead, completely lacks the −5/3 range and is higher
+at the largest scales.
+This is likely due to two main
+reasons.
+First, the injection scale is just in the mid-
+dle of that range, and probably the ﬂuctuations at the
+largest scales did not have time to fully partake in the
+cascade.
+Secondly, in the fully kinetic simulation the
+mechanisms leading to a fully developed inertial range
+are missing and therefore those underlying the sub-ion
+scale turbulence may start determining the dynamics at
+slightly larger scales. Between the ion-scale break of the
+hybrid simulation (the end of MHD inertial range) and
+the electron scales, i.e., in the range 3.5 ≲k⊥di ≲10,
+P hyb
+B
+and P kin
+B
+overlap.
+Finally, at k⊥di ≃10, i.e.,
+k⊥de ∼k⊥ρe ∼1, when P kin
+B
+steepens as the electron
+physics kicks in, P hyb
+B
+maintains the same slope until
+the noise level is reached. In Fig. 4(b), P hyb
+E
+and P kin
+E
+are compared. These are quite overlapped in the range
+0.6 ≲k⊥di ≲6 while, at smaller scales, the former ﬂat-
+tens while the latter keeps going down with a more or
+less constant slope. This diﬀerence in behavior may be
+partially due to the diﬀerent level of noise in the two sim-
+ulations, as ∆xhyb = 4 ∆xkin and ppchyb = 1/4 ppckin.
+The latter condition is related to the fact that in the hy-
+brid case the electrons are treated as an isothermal ﬂuid,
+so that Pe ∝βe/2 ni and the number of ions per cell
+(2048) determines the noise in the electric ﬁeld, while in
+fully kinetic case Pe ∝neTe, so the number of electrons
+per cell (8192) is the determining one. As a consequence,
+a sub-domain of a given size contains 16 times more par-
+ticles in the fully kinetic simulation with respect to the
+hybrid one.
+It is, however, reasonable to ascribe the
+ﬂattening at scales much larger than the spatial resolu-
+tion to diﬀerent physics, given that in the hybrid model
+we approximate ∇· Pe ∼βe/2∇ni, so any possible ef-
+fect due to electron temperature anisotropy and non-
+gyrotropy, which can be expected to become important
+when the electron scales are approached, is not retained
+in the hybrid model. In Fig. 4(c) we compare the power
+spectra of the ion bulk velocity. These are very close
+to each other at all the scales where the noise is neg-
+ligible, with just a minor diﬀerence when reaching the
+electron scales. From this comparison, we can conclude
+that the spectral behavior of the ion velocity seems to
+be the same in the two simulations, thus it is not sig-
+niﬁcantly aﬀected by the presence of kinetic electrons
+and related processes. The power spectra of the elec-
+tron bulk velocity, shown in Fig. 4(d), start overlapping
+at k⊥di ≃0.5 and they proceed together for about a
+decade, up to k⊥de ≃0.5, where P hyb
+ue
+further steepens,
+accordingly with P hyb
+B
+as explained above. Figure 4(e)
+compares the power spectra of the ion density ﬂuctua-
+tions. We note here that for the fully kinetic simulation
+we have veriﬁed that the spectrum of the ion density,
+Pni, and that of the electron density, Pne, are exactly
+identical up to k⊥di ≃40, where they start being af-
+fected by the two diﬀerent levels of noise (due to the
+diﬀerent number of pcc for the two species).
+We ob-
+serve that P hyb
+ni
+and P kin
+ni
+almost perfectly overlap in
+the whole range k⊥di ≃1 and k⊥ρe ≃1, with P hyb
+ni
+getting larger just below the electron scales.
+Finally,
+Fig. 4(f) compares the power spectra of the parallel mag-
+netic ﬂuctuations. Interestingly, P hyb
+Bz
+is slightly larger
+than P kin
+Bz at all scales, especially below the ion-scale
+break where they exhibit the same spectral slope there-
+fore keeping a constant diﬀering factor. This could be
+somehow related to the diﬀerent initial amplitude of the
+turbulent ﬂuctuations with respect to the ambient ﬁeld,
+given that the ratio P hyb
+Bz /P hyb
+Bz
+is compatible with the
+ratio Bhyb
+rms/Bkin
+rms ≃1.2. Another possible reason for the
+diﬀerence in the magnetic compressibility could be re-
+lated to the plasma betas: although we start the two
+simulations with the same values of βi and βe, these
+evolve diﬀerently and reach diﬀerent values when the
+
+10
+Franci et al.
+turbulence is fully developed (in particular, βe does not
+change in the hybrid case by deﬁnition). This diﬀerence,
+however, is very small and as such cannot be consider as
+an indication of a diﬀerent regime or diﬀerent underlying
+physics.
+Fig. 4 globally returns a picture where the MHD-scale
+ﬂuctuations and their properties and evolution do not
+seem to have signiﬁcant eﬀects on those below the ion
+scales. This is supported in particular mode by the spec-
+tral behaviour of the density ﬂuctuations, since these
+are zero at the beginning (apart from the small-scale
+noise due to the ﬁnite number of ppc) and only develop
+self-consistently through plasma processes. This further
+validates the ﬁndings by Franci et al. (2020b) on the
+kinetic turbulent cascade: the plasma dynamics in the
+kinetic range is mainly controlled by a few fundamental
+physical parameters, so that the properties of the ﬂuctu-
+ations at sub-ion scales are independent of the presence
+and extension of an inertial range.
+Since in the fully kinetic simulation βe = 0.5, then
+ρe = √βe di ≃0.7 di so the two electron characteris-
+tic scales are very close to each other. It is not possi-
+ble to infer whether one of the two, or a combination
+of them, determines the steepening of the power spec-
+tra around the electron scales. Preliminary analysis on
+another fully kinetic simulation (not shown here) with
+βe = 0.04, where ρe = 0.2de, seems to suggest that the
+electron-scale break is related to k⊥ρe rather than to
+k⊥de. At this level, however, we cannot exclude that
+the break might occur at either of the two scales de-
+pending on the value of βe, just like it is observed to
+happen for the role of βi for the ion-scale break (Chen
+et al. 2014; Franci et al. 2016).
+3.3. Anisotropic ion and electron heating
+We now focus on the electron and proton heating gen-
+erated by turbulence.
+In Fig. 5, we report the over-
+all evolution of both ion and electron temperatures and
+their spatial distribution once turbulence is fully devel-
+oped. Fig. 5(a) shows the time evolution of the aver-
+age value (over the whole simulation box) of the per-
+pendicular, Ti,⊥, parallel, Ti,∥, and total temperature,
+Ti = (2 Ti,⊥+Ti,∥)/3, and of the temperature anisotropy,
+Ai = Ti,⊥/Ti,∥, all normalized to their initial values.
+We recall here that the temperature components are
+deﬁned with respect to the local mean magnetic ﬁeld.
+At the time of maximum turbulent activity, Ti has in-
+creased of almost 8% with respect to its initial value
+T in
+i
+= 0.1. Such increase does not stop at tpeak, being
+linear in time afterwards. This hints at the possibility
+that, in the presence of an energy injection mechanism
+that keeps feeding the turbulent cascade and maintains
+it in a quasi-steady state over a longer time, the ion tem-
+perature could increase signiﬁcantly more. Ti,⊥starts
+increasing as soon as the simulation begins and keeps
+increasing throughout the whole evolution, with some
+oscillations until t ≃5 and then a linear increase in
+time. Ti,∥, instead, remains constant until t ≃2 (com-
+parable to the eddy turnover time at the injection scale),
+then decreases reaching a minimum just before trec and
+it increases monotonically afterwards. Correspondingly,
+Ai increases until trec and then it decreases very slowly,
+reaching an almost constant value of 1.06 at tpeak. The
+corresponding quantities for the electrons are shown in
+Fig. 5(b). Te remains almost constant until about trec,
+then increases very slowly, reaching a value of 1.01 T in
+e
+at tpeak, with T in
+e = 0.25 being its initial value. Despite
+the quite small increase in the total electron tempera-
+ture, its perpendicular and parallel components exhibit
+very large variations. Te,⊥shows a small initial decrease,
+then stays almost constant until just before trec and then
+starts decreasing more rapidly, linearly in time. On the
+contrary, Te,∥increases initially more or less linearly in
+time, then at around trec it starts increasing much faster.
+Correspondingly, Ae decreases monotonically through-
+out the simulation (faster after trec), reaching a value of
+about 0.9 at tpeak, which keeps decreasing afterwards.
+Summarizing, Fig. 5(a)-(b) show that at t ≃trec =
+4.9 Ω−1
+i
+(i.e., when the ﬁrst maximum of |J| marks the
+onset of magnetic reconnection), there is a clear and
+signiﬁcant change of behavior in the particle heating,
+characterized by the fact that: (i) the rate of variation
+of the total ion temperature increases and becomes al-
+most constant; (ii) the total electron temperature starts
+increasing linearly in time; (iii) the ion temperature
+anisotropy reaches a plateau and starts decreasing very
+slowly; (iv) the rate of variation of the electron tem-
+perature anisotropy increases. It is then reasonable to
+assume that the change in particle heating is related to
+the onset of magnetic reconnection events.
+In order to test this assumption, Fig. 5(c)-(h) show
+the spatial distribution of the above quantities in the
+2D simulation domain. In the top row (panels c-e), we
+show the ion perpendicular and parallel temperatures
+and their ratio. Ti,⊥and Ti,∥exhibit a very patchy be-
+haviour, with alternating regions where they are larger
+or smaller of their initial value.
+Typically, in regions
+where one component has increased the other one has
+decreased. As a result, despite their average values are
+very similar and their maximum values are also compa-
+rable, Ai is larger than 2 in many large areas, reach-
+ing a maximum as large as 3.7.
+Regions with values
+well above or below 1 are alternating and somewhere
+we observe a quadrupolar conﬁguration, both in cor-
+
+11
+0
+2
+4
+6
+8
+10
+12
+0.9
+0.95
+1
+1.05
+1.1
+0
+2
+4
+6
+8
+10
+12
+0.9
+0.95
+1
+1.05
+1.1
+Figure 5.
+Ion and electron temperatures.
+Panel (a): time evolution of the (simulation-box) averaged perpendicular, Ti,⊥,
+parallel, Ti,∥, total temperature, Ti, and temperature anisotropy, Ai, for the ions. The latter is normalized to its initial value.
+The components are deﬁned with respect to the local mean magnetic ﬁeld. Panel (b): same quantities as in panel (a) but for
+the electrons. Panels (c-e): contour plots of Ti,⊥, Ti,∥, and Ai. Panels (f-h): contour plots of Te,⊥, Te,∥, and Ae. In panels
+(c)-(h), the maximum and minimum values of each quantity are reported in the bottom left corner.
+respondence of X-points where magnetic lines reconnect
+(e.g., at the point [8,17]) and inside big vortexes (e.g., at
+[19,9]). The spatial distribution of the electron tempera-
+ture looks quite diﬀerent. Te,⊥is close to its initial value
+in most of the simulation box, exhibiting just a small de-
+crease in correspondence of what look like reconnection
+outﬂows around X-points and a small increase at the
+center of vortexes. On the contrary, Te,∥exhibits much
+larger variations, slightly decreasing in regions where the
+magnetic ﬁeld lines get compressed and becoming about
+twice larger in the reconnection outﬂows. As a conse-
+quence, in these latter areas Ae gets very small reaching
+values as small as 0.36. The spatial distribution of both
+ion and electron temperatures is consistent with what
+we have inferred from the time evolution of their average
+values and with the observed change of behavior at the
+time when reconnection starts occurring: reconnection
+is likely to be at least partially responsible for particle
+heating, especially for the electrons. This sounds rea-
+sonable, as magnetic reconnection is a mechanism that
+transfers energy from the magnetic ﬁeld to the particles.
+
+12
+Franci et al.
+3.4. Standard and electron-only reconnection
+In order to conﬁrm the role of reconnection in heat-
+ing the particles and in generating a strong temper-
+ature anisotropy, especially for the electrons, we now
+provide a more quantitative characterization of the re-
+gions where reconnection events occur. Figure 2 clearly
+showed qualitative evidence for the presence of reconnec-
+tion events in the simulation, e.g., X-points and small
+magnetic islands emerging in proximity of thin strong
+current sheets. Magnetic reconnection is known to oc-
+cur in turbulent plasmas as the the result of the inter-
+action of turbulent eddies which leads to the formation
+and stretching of intense current sheets. Indeed, it has
+been observed to occur spontaneously in numerical sim-
+ulations of plasma turbulence performed with diﬀerent
+methods (e.g. Matthaeus & Lamkin 1986; Servidio et al.
+2009; Franci et al. 2015b; Wan et al. 2015; Cerri & Cal-
+ifano 2017; Haggerty et al. 2017) and it has been shown
+to provide a signiﬁcant contribution to the further devel-
+opment of the turbulent cascade at sub-ion scales (e.g.
+Franci et al. 2017; Mallet et al. 2017; Papini et al. 2019).
+In Fig. 6(a), we show a pseudocolor plot of the out-of-
+plane component of the vector potential, Az, with its
+isocontours superimposed as black lines.
+Green stars
+mark saddle points, i.e., X-points which represent poten-
+tial reconnection sites. Fig. 6(b) shows arrows marking
+the direction of the local magnetic ﬁeld in the simula-
+tion box, on top of the contour plot of the |δB|2. This
+clearly shows that the local magnetic ﬁeld has oppo-
+site sign at the two sides of most of the X-points, as
+required for magnetic reconnection to occur. Recently,
+Agudelo Rueda et al. (2021) have investigated the spon-
+taneous occurrence of reconnection in a 3D fully kinetic
+simulation of plasma turbulence by means of a set of
+indicators based on thresholds. Here we chose to apply
+the same criteria to detect and characterize reconnec-
+tion events. Although our 2D setting is deﬁnitely less
+realistic than a 3D one, here we have the advantage that
+it is straightforward to identify X-points in 2D. In this
+sense, our analysis of reconnection events can be consid-
+ered as complementary to the work by Agudelo Rueda
+et al. (2021), and in some sense a further validation.
+For a given (positive) scalar quantity, Ψ, we deﬁne a
+threshold Ψth = ⟨Ψ⟩+ NΨrms and we look for regions
+where Ψ/Ψth −1 > 0. Here, we chose to set N = 1, as
+we ﬁnd that this is enough for detecting the strongest
+reconnection events in our simulation. The criteria we
+have evaluated are:
+C1 : |J| > |J|th ≡⟨|J|⟩+ |J|rms
+(Fig. 6c)
+C2 : |ui,e| > |ui,e|th ≡⟨|ui,e|⟩+ |ui,e|rms
+(Fig. 6d, e)
+C3 : Ti,e > T th
+i,e ≡⟨Ti,e⟩+ T rms
+i,e
+(Fig. 6g, h)
+C4 : J · E|+ > J · E|th
++ ≡⟨J · E|+⟩+ J · E|rms
++
+(Fig. 6f)
+where for the last criterion, we consider only positive
+values of J · E, which denote energy transfer from the
+ﬁelds to the particles. Figure 6(c) shows the result of
+indicator C1 for |J|, revealing the presence of intense
+current structures.
+We can clearly see that all these
+have a width of the order of de and lengths of the order
+of a few times di.
+We count about a dozen of them,
+taking into account that some of them are actually por-
+tions of the same current sheet, as the simulation box
+is periodic. In Fig. 6(d)-(e), we estimate the indicator
+C2 for |ui,e|, related to the presence of fast ions and
+electrons that provide evidence for the presence of a re-
+connection outﬂow (or jet). The ion bulk velocity ex-
+ceeds the threshold in some regions with a width of the
+order of 1 −2 di, some of which seem to be directly re-
+lated to X-points and represent ion jets in the reconnec-
+tion outﬂow, while others seem to be within large-scale
+vortexes.
+On the contrary, the electron bulk velocity
+is above its threshold in all the regions directly con-
+nected to the strong current sheets observed in panel
+(c). These fast electron jets have a very small width,
+of the order of the de, as they are conﬁned in small re-
+gions between larger-scale structures. It is interesting
+to note that many of the observed reconnection events
+seem to be highly asymmetric, as jets are observed only
+on one side of the X-point and not on the other. Fig-
+ure 6(f), shows the contour plot of indicator C4. J ·E|+
+is above its threshold in a few thin regions correspond-
+ing to the most intense current sheets, providing fur-
+ther evidence that in the location of reconnection events
+magnetic energy is converted into particle energy.
+In
+Fig. 6(g)-(h), we estimate indicator C3 on Ti,e which is
+related to the presence of heated ions and electrons. The
+regions where the particle temperatures exceed their re-
+spective threshold look similar for ions and electrons,
+meaning that most reconnection events are eventually
+leading to both ion and electron heating. A major dif-
+ference, however, can be appreciated by comparing with
+Fig.5(c)-(h): reconnection heats the electrons preferen-
+tially in the parallel direction with respect to the local
+magnetic ﬁeld and the ions in the perpendicular direc-
+tion. The latter result appears to be an agreement with
+the fact that a sheared in-plane ion ﬂow tends to transfer
+energy to the in-plane ion pressure tensor components
+via the action of the symmetric part of the strain tensor
+
+13
+Figure 6. Identiﬁcation of magnetic reconnection events through the indicators C1-C4 from Agudelo Rueda et al. (2021). Panel
+(a): contour plot of the out-of-plane vector potential Az. The black isocontours represent magnetic ﬁeld lines. Green stars
+mark the saddle points, which represent potential reconnection sites. Panel (b): contour plot of the magnitude of the magnetic
+ﬂuctuations, with arrows marking the direction of the local magnetic ﬁeld. Panel (c-h): contour plots of Ψ/Ψth−1, with Ψ = |ui|,
+|ue|, |J ·E|, Ti, and Te, respectively. These panels have all the same color scale as in panel (c). Panel (h): classiﬁcation of some
+reconnection events as “standard” or “electron-only” by superimposing the areas where |ue,⊥| (red) and |ui,⊥| (blue) exceed their
+respective thresholds.
+
+14
+Franci et al.
+(Del Sarto et al. 2016; Yang et al. 2017; Del Sarto &
+Pegoraro 2017; Matthaeus et al. 2020; Bandyopadhyay
+et al. 2021; Hellinger et al. 2022). Again, we observe a
+signiﬁcant lack of symmetry, as particles are heated only
+on one side of the X-point, typically the same for both
+species. In Fig.6(i), we compare the indicators C2 for
+ions and electrons, by showing the contour plots of their
+perpendicular components, |ui,⊥|2 and |ue,⊥|2 on top of
+each other (in shades of blue and red, respectively). This
+allows us to appreciate if a reconnection event produces
+both in-plane ion and electron jets, as in “standard” re-
+connection, or only an electron jet with no ion counter-
+part, as in “electron-only” reconnection. For some of the
+X-points, it is not straightforward to apply this classi-
+ﬁcation, mainly because no strong ion nor electron jets
+are observed or because the geometry is complex. We
+still observe about a dozen of events which can be la-
+belled as electron-only (yellow circles) and about half
+a dozen that are standard (light blue circles). Summa-
+rizing Fig. 6, we can conclude that as a result of the
+interaction between turbulent magnetic structures, thin
+intense current sheets form and shrink until they un-
+dergo reconnection. Such reconnection events transfer
+magnetic energy to the particles, heating the electrons
+in the direction parallel to the mean ﬁeld and the ions
+mainly in the orthogonal direction. Thin electrons jets
+are also observed in the reconnection outﬂow, with ion
+counterparts only in about one third of events. The fact
+that standard reconnection is observed only in a minor-
+ity of events might be related the simulation box size,
+which is only a few tens of di, and to the energy in-
+jection, which occurs at the ion scales (Califano et al.
+2020).
+These conditions strongly limit the magnetic
+correlation length, which characterizes the size of the
+interacting turbulent magnetic structures and, as conse-
+quence, also set the length and thickness of the current
+sheets forming in-between (e.g. Stawarz et al. 2019). In
+other words, there are only a few vortexes with radius of
+the order of few times di, so there are only a few chances
+to develop strong current sheets with such a length. On
+the contrary, most of them are formed by the interaction
+of magnetic structures with smaller size and will there-
+fore be shorter. Indeed, the ion jets observed in Fig. 6(i)
+seem to be concentrated just next to some of the largest
+vortexes.
+Quantitatively characterizing the properties
+of reconnection and its interplay with electron-scale tur-
+bulence goes beyond the scope of this work and will be
+the subject of future investigation. Here, we intended
+to show evidence for the coexistence of both types of
+reconnection events spontaneously driven by turbulence
+at sub-ion scales and at electron scales.
+4. DISCUSSION AND CONCLUSIONS
+In this work, we have presented the results of a two-
+dimensional simulation of plasma turbulence at sub-ion
+and electrons scales performed with the fully kinetic
+code iPIC3D, showing signature of turbulence-driven
+magnetic reconnection and related anisotropic particle
+heating. We have modelled plasma conditions similar to
+those measured by PSP during its ﬁrst solar encounter.
+This allowed us to extend towards larger wavenumbers
+the analysis of the ion-scale turbulent cascade performed
+with hybrid simulations in Franci et al. (2020a). Our
+simulation employs a large box in terms of the electron
+characteristic scales, i.e., 320 de × 320 de (di = 10 de,
+since the proton-to-electron mass ratio has been set to
+100), a spatial resolution ∆x = di/64 ≃0.16 de, and
+implements a very large number of particles (1024 ppc
+ions and 8192 ppc electrons, for a total of more than 40
+billion particles in the whole simulation domain). This
+setting allowed us to accurately model the development
+of the turbulent cascade and to determine the spectral
+properties of the magnetic and electron bulk velocity
+ﬂuctuations for a decade and a half in wavenumber in
+the range 0.1 ≲k⊥de ≲4, fully capturing the electron-
+scale transition.
+The turbulent dynamics is characterized by the con-
+current presence of coherent magnetic ﬁeld structures
+in the form of vortexes, with radii between a few times
+de and a few times di, and very elongated thick ﬁla-
+ments, with a width of the order of di and a length up
+to about about 20 di.
+In between these, thin intense
+current sheets form, with width of the order of de.
+Our results show that, at the maximum of turbulent
+activity, the power spectrum of the magnetic ﬂuctua-
+tions exhibits is very well modelled by a double power
+law, with a spectral index αB compatible with −11/3
+and −5 respectively above and below the electron char-
+acteristic scales. Since the electron beta is close to 1, the
+electron inertial length and gyroradius are very close to
+each other, thus making it impossible to infer whether
+the electron-scale transition is associated to either or
+both of them.
+Complementary numerical simulations
+(not shown here) performed by varying both spatial res-
+olution and number of ppc, have showed that the lo-
+cation of such transition is of physical origin, provided
+that a suﬃcient number of grid points allows to cover
+approximately a full decade across the electron scales.
+The power spectrum of the electron bulk velocity be-
+haves just as one would expect considering that at sub-
+ion scales the current density is almost exclusively due
+to the electron bulk motion: it also behaves like a dou-
+ble power law, with a spectral index αe = αB + 2. We
+observe a hint of a further steepening in the power spec-
+
+15
+trum of the electron bulk velocity ﬂuctuations (and cor-
+respondingly, of the magnetic ﬁeld) at k⊥de ≳2. How-
+ever, such steepening occurs very close to the scale at
+which the spectra reach the noise level, therefore it is
+not possible to draw any conclusion. Simulations with a
+better spatial resolution will be needed to further inves-
+tigate whether such steepening is present or not. The
+spectrum of the electric ﬂuctuations behaves diﬀerently,
+as it does not exhibit any major change of slope when
+the electron scales are reached. Such behavior seems to
+be consistent with Cluster observations in the Earth’s
+magnetosheath (Matteini et al. 2017), where the steep-
+ening of the spectrum of the magnetic ﬁeld at electron
+scales does not have a counterpart in the electric ﬁeld.
+A thorough investigation of the nature and of the spec-
+tral properties of the electric ﬁeld, including an analysis
+of the diﬀerent contributions to the generalized Ohm’s
+law, is currently ongoing and will be the subject of a
+follow-up work.
+The limited size of the simulation box in terms of di,
+together with the fact that the initial energy injection
+in the simulation occurs at the ion scales, makes it im-
+possible to model the turbulent cascade in the inertial
+MHD range. We have compared the power spectra of all
+the ﬁelds with those obtained from a hybrid kinetic sim-
+ulation (performed with the CAMELIA code) which im-
+plemented the same plasma conditions (same ion beta,
+same eletron beta, very similar initial amplitude of the
+turbulent ﬂuctuations) but used a much larger box. In-
+deed, all power spectra from the fully-kinetic simula-
+tion are well in agreement with their hybrid counter-
+parts, down to scales comparable or slightly larger than
+de.
+Below this scale, almost all the spectra from the
+iPic3D simulation further steepen, while the ones from
+CAMELIA exhibit no change of behavior. This is not
+surprising, as the two models diﬀer signiﬁcantly at the
+electron scales: CAMELIA treats the electrons as an
+isothermal massless ﬂuid and therefore electron iner-
+tia eﬀects and electrons kinetic eﬀects are not retained.
+What is not necessarily obvious is the fact that the spec-
+tral behavior below di is almost completely unaﬀected
+by the existence/absence of a turbulence cascade in the
+inertial range. This hints at a certain degree of univer-
+sality of the sub-ion scale turbulent cascade: its prop-
+erties seem to depend on the plasma conditions alone,
+regardless of what is happening at larger scales. This
+is in agreement with what has been recently observed
+in Franci et al. (2020b).
+There, the spectral proper-
+ties of turbulence driven by a Kelvin-Helmholtz insta-
+bility observed by MMS in the Earth’s magnetosheath
+have been correctly modelled by a hybrid simulation of
+Alfv´enic turbulence. This employed the observed values
+for the plasma beta, the electron beta, and the level of
+turbulent ﬂuctuations with respect to the ambient mag-
+netic ﬁeld.
+The development of turbulence is observed to have
+an eﬀect on particle heating. The ions quickly develop
+a certain temperature anisotropy, whose average value
+reaches a maximum of 1.08 at t ≃trec and then decreases
+very slightly. Their average parallel temperature with
+respect to the local magnetic ﬁeld starts increasing at
+t ≃trec and reaches the average perpendicular compo-
+nent at t ≃tpeak. This behavior is quite similar to what
+observed in previous hybrid simulations, where the per-
+pendicular ion temperature quickly starts to increase,
+leading to the formation of temperature anisotropy, with
+a comparable increase of the parallel temperature start-
+ing later (more or less at time of the the onset of mag-
+netic reconnection), therefore freezing the temperature
+anisotropy
+(Franci et al. 2015b, 2017). The electrons
+develop a temperature anisotropy in the opposite sense,
+i.e., the parallel component is much larger than the per-
+pendicular and whose average value keeps decreasing
+throughout the whole evolution, even after the turbu-
+lent cascade has fully developed. Both the ions and the
+electrons are heated during the simulation, as their to-
+tal temperature increases of 7% and 1%, respectively. In
+the time evolution of the temperature of both species we
+observe a link with the onset of magnetic reconnection:
+at t ≃trec, the rate of increase of the ion temperature
+sharply increases, while the electron temperature starts
+increasing after remaining at its initial value in the ﬁrst
+part of the simulation.
+The spatial distribution of the electron temperature
+and its anisotropy conﬁrms a major role of magnetic re-
+connection in heating the electrons: the regions where
+the parallel electron temperature increases (and there-
+fore where the temperature anisotropy mostly diﬀers
+from 1) are localized in the outﬂows of reconnection
+events at the sides of X-points. This has been conﬁrmed
+by detecting reconnection events using the criteria de-
+ﬁned and applied in Agudelo Rueda et al. (2021) (there
+for a 3D fully kinetic simulation), which are based on
+intensity threshold on the current density, the ion and
+electron bulk velocity and temperature, and the energy
+transfer from the electromagnetic ﬁelds to the particles
+mediated by J · E. The results of such analysis have re-
+vealed the coexistence of “standard” and “electron-only”
+reconnection events, exhibiting both ion and electron
+jets or electron jets alone, respectively. There is a hint
+that the diﬀerent nature of reconnection events is related
+to the length of the reconnecting current sheet, which
+in turns depends on the size of the interacting magnetic
+vortexes (Stawarz et al. 2019). The latter is also directly
+
+16
+Franci et al.
+link to the correlation length of the turbulence, which
+has been observed to have an impact on the nature of
+the reconnection (Califano et al. 2020; Sharma Pyakurel
+et al. 2019; Stawarz et al. 2022). The areas where we
+observe the largest increases in electron temperature are
+all located in reconnection outﬂows. For the ions, some
+areas of increased temperature are in correspondence of
+reconnection events, while others appear to be inside
+magnetic ﬁeld vortexes.
+In conclusion, we have modelled the development
+of plasma turbulence accurately from ion down to
+sub-electron scales, observing the spontaneous occur-
+rence of magnetic reconnection events (both standard
+and electron-only), which are associated with strongly
+anisotropic electron heating.
+In order to make the simulation computationally fea-
+sible, in this work we employ smaller values of some
+plasma parameters with respect to their real value or to
+their typical value in the solar wind at 1 AU: mi/me =
+100 instead of 1836 (as a consequence, di = 10 de instead
+of 43 de), c/vAi = ωi/Ωi = 200 instead of ∼103 and
+c/vAe = ωe/Ωe = 20 instead of ∼200. This is consistent
+with the fact that here we are modelling the near-Sun
+solar wind, as encountered by PSP during its ﬁrst perihe-
+lion. In this sense, our parameters are just intermediate
+between the typical solar-wind values mentioned above
+and those in the upper solar corona, i.e., c/vAi ∼102 and
+c/vAe ∼3. Verscharen et al. (2020) demonstrated that
+plasma models employing mi/me = 100 and c/vAi ≳10
+can successfully cover physics on scales ≳0.2 di for
+βi ∼βe ∼1, which is the regime we have explored here.
+Since we employ that exact value of mi/me, an order
+of magnitude larger value of c/vAi, and we also have
+c/vAe ≳10, we are conﬁdent that our fully kinetic sim-
+ulation provide quite a correct modelling of the plasma
+dynamics down to electron scales.
+That said, a main limitation of our study is the 2D ge-
+ometry, which strongly constrains our simulation results,
+since both turbulence and magnetic reconnection are in-
+herently 3D processes. Modelling the spectral behavior
+reliably from ion to sub-electron scales and estimating
+particle heating quantitatively, however, require a high
+accuracy (in terms of both grid size and number of ppc)
+which are diﬃcult to reach in 3D at the moment. There-
+fore, high-resolution 2D fully kinetic simulations repre-
+sent an optimal starting point for this kind of analysis.
+Still, all the results obtained in the present study will
+need to be validated by future 3D simulations with sim-
+ilar plasma conditions. Indeed, this will be the subject
+of future work.
+ACKNOWLEDGEMENTS
+The authors acknowledge valuable discussions with
+Julia Stawarz, Jeﬀersson Agudelo Rueda, Daniel Ver-
+scharen, Lorenzo Matteini, Domenico Trotta, Francesco
+Califano, Giuseppe Arr`o, and with the members of the
+Solar Orbiter Science Working Groups.
+L.F.
+and
+D.B.
+are
+supported
+by
+the
+UK
+Sci-
+ence and Technology Facilities Council (STFC) grant
+ST/T00018X/1. A.M. thanks the Belgian Federal Sci-
+ence Policy Oﬃce (BELSPO) for the provision of ﬁ-
+nancial support in the framework of the PRODEX
+Programme of the European Space Agency (ESA) un-
+der contract number 4000134474.
+G.L acknowledges
+funding from the KULeuven Bijzonder Onderzoeksfonds
+(BOF) under the C1 project TRACESpace, from the
+European Union’s project DEEP-SEA (grant agreement
+955606 ) and from the NASA grant 80NSSC19K0841.
+This work was performed using the DiRAC Data
+Intensive Service at Cambridge, which is operated by
+the University of Cambridge Research Computing as
+part of the Cambridge Service for Data Driven Dis-
+covery (CSD3), and the DiRAC Data Intensive service
+at Leicester (DIaL), operated by the University of Le-
+icester IT Services, both of which form part of the
+STFC DiRAC HPC Facility (www.dirac.ac.uk).
+The
+DiRAC component of CSD3 was funded by BEIS cap-
+ital funding via STFC capital grants ST/P002307/1
+and
+ST/R002452/1
+and
+STFC
+operations
+grant
+ST/R00689X/1.
+The DIaL equipment was funded
+by BEIS capital funding via STFC capital grants
+ST/K000373/1 and ST/R002363/1 and STFC DiRAC
+Operations grant ST/R001014/1.
+DiRAC is part of
+the National e-Infrastructure.
+Access to DiRAC re-
+sources was granted through Director’s Discretionary
+Time allocations in 2019 and 2020.
+We acknowledge
+CINECA for the availability of high performance com-
+puting resources and support under the program Ac-
+cordo Quadro MoU INAF-CINECA “Nuove frontiere
+in Astroﬁsica: HPC e Data Exploration di nuova gen-
+erazione” (project “INA20 C6A55”).
+We acknowledge
+PRACE for awarding us access to SuperMUC-NG at
+GCS@LRZ, Germany and Marconi at CINECA, Italy.
+The discussion of the results of this work has been
+facilitated by the Project HPC-EUROPA3 (INFRAIA-
+2016-1-730897), with the support of the EC Research
+Innovation Action under the H2020 Programme (grants
+HPC177WO5I and HPC17MTH1N). We acknowledge
+funding by Fondazione Cassa di Risparmio di Firenze
+under the project “HIPERCRHEL”.
+
+17
+REFERENCES
+Adhikari, S., Parashar, T. N., Shay, M. A., et al. 2021,
+Phys. Rev. E, 104, 065206,
+doi: 10.1103/PhysRevE.104.065206
+Agudelo Rueda, J. A., Verscharen, D., Wicks, R. T., et al.
+2021, J. Plasma Phys., 87, 905870228,
+doi: 10.1017/S0022377821000404
+Alexandrova, O., Jagarlamudi, V. K., Hellinger, P., et al.
+2021, Phys. Rev. E, 103, 063202,
+doi: 10.1103/PhysRevE.103.063202
+Alexandrova, O., Lacombe, C., Mangeney, A., Grappin, R.,
+& Maksimovic, M. 2012, Astrophys. J., 760,
+doi: 10.1088/0004-637X/760/2/121
+Alexandrova, O., Saur, J., Lacombe, C., et al. 2009, Phys.
+Rev. Lett., 103, doi: 10.1103/PhysRevLett.103.165003
+Arr`o, G., Califano, F., & Lapenta, G. 2021, Spectral
+properties and energy cascade at kinetic scales in
+collisionless plasma turbulence, arXiv.
+https://arxiv.org/abs/2112.12753
+Aunai, N., Hesse, M., & Kuznetsova, M. 2013, Phys.
+Plasmas, 20, 092903
+Bale, S., Badman, S., Bonnell, J., et al. 2019, Nature, 576,
+237, doi: 10.1038/s41586-019-1818-7
+Bandyopadhyay, R., Chasapis, A., Matthaeus, W. H., et al.
+2021, Phys. Plasmas, 28, 112305, doi: 10.1063/5.0071015
+Biskamp, D., & Bremer, U. 1994, Phys. Rev. Lett., 72, 3819
+Boldyrev, S., Perez, J. C., Borovsky, J. E., & Podesta, J. J.
+2011, Astrophys. J. Lett., 741,
+doi: 10.1088/2041-8205/741/1/L19
+Brackbill, J. 2011, Phys. Plasmas, 18, 032309
+Brackbill, J. U., & Forslund, D. W. 1982, J. Comp. Phys.,
+46, 271, doi: 10.1016/0021-9991(82)90016-X
+Bruno, R., & Carbone, V. 2013, Living Rev. Solar Phys.,
+10, 2, doi: 10.12942/lrsp-2013-2
+Bruno, R., Trenchi, L., & Telloni, D. 2014, Astrophys. J.
+Lett., 793, L15, doi: 10.1088/2041-8205/793/1/L15
+Cai, H.-J., & Lee, L. C. 1997, Phys. Plasmas, 4, 509
+Califano, F., Cerri, S. S., Faganello, M., et al. 2020, Front.
+Phys., 8, doi: 10.3389/fphy.2020.00317
+Camporeale, E., & Burgess, D. 2011, Astrophys. J., 730,
+doi: 10.1088/0004-637X/730/2/114
+Camporeale, E., Sorriso-Valvo, L., Califano, F., & Retin`o,
+A. 2018, Phys. Rev. Lett., 120, 125101,
+doi: 10.1103/PhysRevLett.120.125101
+Cerri, S. S., & Califano, F. 2017, New J. Phys., 19, 025007,
+doi: 10.1088/1367-2630/aa5c4a
+Cerri, S. S., Groˇselj, D., & Franci, L. 2019, Front. Astron.
+Space Sci., 6, 64, doi: 10.3389/fspas.2019.00064
+Chandran, B. D. G., Verscharen, D., Quataert, E., et al.
+2013, Astrophys. J., 776, 45,
+doi: 10.1088/0004-637x/776/1/45
+Chen, C. H. K. 2016, J. Plasma Phys., 82, 535820602,
+doi: 10.1017/S0022377816001124
+Chen, C. H. K., Bale, S. D., Salem, C. S., & Maruca, B. A.
+2013a, Astrophys. J., 770,
+doi: 10.1088/0004-637X/770/2/125
+Chen, C. H. K., Boldyrev, S., Xia, Q., & Perez, J. C. 2013b,
+Phys. Rev. Lett., 110,
+doi: 10.1103/PhysRevLett.110.225002
+Chen, C. H. K., Klein, K. G., & Howes, G. G. 2019, Nature
+Comm., 10, doi: 10.1038/s41467-019-08435-3
+Chen, C. H. K., Leung, L., Boldyrev, S., Maruca, B. A., &
+Bale, S. D. 2014, Geophys. Res. Lett., 41, 8081,
+doi: 10.1002/2014GL062009
+Chen, C. H. K., Bale, S. D., Bonnell, J. W., et al. 2020,
+Astrophys. J., Suppl. Ser., 246, 53,
+doi: 10.3847/1538-4365/ab60a3
+Cohen, B. I., Langdon, A. B., Hewett, D. W., & Procassini,
+R. J. 1989, J. Comp. Phys., 81, 151,
+doi: 10.1016/0021-9991(89)90068-5
+Del Sarto, D., & Pegoraro, F. 2017, Mon. Not. R. Astron.
+Soc., 475, 181, doi: 10.1093/mnras/stx3083
+Del Sarto, D., Pucci, F., Tenerani, A., & Velli, M. 2016, J.
+Geophys. Res., 121, 1857, doi: 10.1002/2015JA021975
+Eastwood, J., Mistry, R., Phan, T., et al. 2018, Geophys.
+Res. Lett., 45, 4569, doi: 10.1029/2018GL077670
+Ergun, R. E., Chen, L. J., Wilder, F. D., et al. 2017,
+Geophys. Res. Lett., 44, 2978,
+doi: 10.1002/2016GL072493
+Franci, L., Hellinger, P., Guarrasi, M., et al. 2018, J. Phys.
+Conf. Ser., 1031, 012002,
+doi: 10.1088/1742-6596/1031/1/012002
+Franci, L., Landi, S., Matteini, L., Verdini, A., & Hellinger,
+P. 2015a, Astrophys. J., 812, 21,
+doi: 10.1088/0004-637X/812/1/21
+—. 2016, Astrophys. J., 833, 91,
+doi: 10.3847/1538-4357/833/1/91
+Franci, L., Verdini, A., Matteini, L., Landi, S., & Hellinger,
+P. 2015b, Astrophys. J. Lett., 804,
+doi: 10.1088/2041-8205/804/2/L39
+Franci, L., Cerri, S. S., Califano, F., et al. 2017, Astrophys.
+J. Lett., 850, L16, doi: 10.3847/2041-8213/aa93fb
+Franci, L., Sarto, D. D., Papini, E., et al. 2020a, Evidence
+of a ”current-mediated” turbulent regime in space and
+astrophysical plasmas. https://arxiv.org/abs/2010.05048
+Franci, L., Stawarz, J. E., Papini, E., et al. 2020b,
+Astrophys. J., 898, 175, doi: 10.3847/1538-4357/ab9a47
+
+18
+Franci et al.
+Goldreich, P., & Sridhar, S. 1995, Astrophys. J., 438, 763,
+doi: 10.1086/175121
+Goldstein, M. L., Wicks, R. T., Perri, S., & Sahraoui, F.
+2015, Philos. Trans. Royal Soc. A, 373, 20140147,
+doi: 10.1098/rsta.2014.0147
+Gonz´alez, C. A., Parashar, T. N., Gomez, D., Matthaeus,
+W. H., & Dmitruk, P. 2019, Phys. Plasmas, 26, 012306,
+doi: 10.1063/1.5054110
+Gosling, J. T. 2007, Astrophys. J. Lett., 671, L73,
+doi: 10.1086/524842
+Greco, A., Valentini, F., Servidio, S., & Matthaeus, W. H.
+2012, Phys. Rev. E, 86, 066405,
+doi: 10.1103/PhysRevE.86.066405
+Groˇselj, D., Mallet, A., Loureiro, N. F., & Jenko, F. 2018,
+Phys. Rev. Lett., 120, 105101,
+doi: 10.1103/PhysRevLett.120.105101
+Haggerty, C. C., Parashar, T. N., Matthaeus, W. H., et al.
+2017, Phys. Plasmas, 24, 102308, doi: 10.1063/1.5001722
+Haynes, C. T., Burgess, D., & Camporeale, E. 2014,
+Astrophys. J., 783, 38, doi: 10.1088/0004-637x/783/1/38
+He, J., Wang, L., Tu, C., Marsch, E., & Zong, Q. 2015,
+Astrophys. J., 800, L31,
+doi: 10.1088/2041-8205/800/2/l31
+Hellinger, P., Montagud-Camps, V., Franci, L., et al. 2022,
+Astrophys. J., 930, 48, doi: 10.3847/1538-4357/ac5fad
+Hockney, R. W., & Eastwood, J. W. 1988, Computer
+simulation using particles (New York: Taylor and Francis
+Group), doi: 10.1201/9780367806934
+Howes, G. G., Dorland, W., Cowley, S. C., et al. 2008, Phys.
+Rev. Lett., 100, doi: 10.1103/PhysRevLett.100.065004
+Howes, G. G., McCubbin, A. J., & Klein, K. G. 2018, J.
+Plasma Phys., 84, 905840105,
+doi: 10.1017/S0022377818000053
+Huang, S. Y., & Sahraoui, F. 2019, Astrophys. J., 876, 138,
+doi: 10.3847/1538-4357/ab17d3
+Iroshnikov, P. S. 1963, Astron. Zh., 40, 742
+Karimabadi, H., Roytershteyn, V., Wan, M., et al. 2013,
+Phys. Plasmas, 20, doi: 10.1063/1.4773205
+Kiyani, K. H., Osman, K. T., & Chapman, S. C. 2015,
+Philos. Trans. Royal Soc. A, 373, 20140155,
+doi: 10.1098/rsta.2014.0155
+Kolmogorov, A. 1941, Akademiia Nauk SSSR Doklady, 30,
+301
+Kraichnan, R. H. 1965, Phys. Fluids, 8, 1385,
+doi: 10.1063/1.1761412
+Lapenta, G., Pucci, F., Goldman, M. V., & Newman, D. L.
+2020, Astrophys. J., 888, 104,
+doi: 10.3847/1538-4357/ab5a86
+Mallet, A., Schekochihin, A. A., & Chandran, B. D. G.
+2017, J. Plasma Phys., 83, 905830609,
+doi: 10.1017/S0022377817000812
+Markidis, S., Lapenta, G., & Rizwan-uddin. 2010,
+Mathematics and Computers in Simulation, 80, 1509,
+doi: https://doi.org/10.1016/j.matcom.2009.08.038
+Marsch, E. 2006, Living Rev. Sol. Phys., 3, 1,
+doi: 10.12942/lrsp-2006-1
+Martinovi´c, M. M., Klein, K. G., Kasper, J. C., et al. 2020,
+Astrophys. J., Suppl. Ser., 246, 30,
+doi: 10.3847/1538-4365/ab527f
+Matteini, L., Alexandrova, O., Chen, C. H. K., & Lacombe,
+C. 2017, Mon. Not. R. Astron. Soc., 466, 945,
+doi: 10.1093/mnras/stw3163
+Matthaeus, W. H., & Lamkin, S. L. 1986, Phys. Fluids, 29,
+2513
+Matthaeus, W. H., & Velli, M. 2011, Space Sci. Rev., 160,
+145, doi: 10.1007/s11214-011-9793-9
+Matthaeus, W. H., Yang, Y., Wan, M., et al. 2020,
+Astrophys. J., 891, 101, doi: 10.3847/1538-4357/ab6d6a
+Osman, K., Matthaeus, W., Gosling, J., et al. 2014, Phys.
+Rev. Lett., 112, doi: 10.1103/physrevlett.112.215002
+Papini, E., Cicone, A., Franci, L., et al. 2021, Astrophys. J.
+Lett., 917, L12, doi: 10.3847/2041-8213/ac11fd
+Papini, E., Cicone, A., Piersanti, M., et al. 2020, J. Plasma
+Phys., 86, 871860501, doi: 10.1017/S0022377820001221
+Papini, E., Franci, L., Landi, S., et al. 2019, Astrophys. J.,
+870, 52, doi: 10.3847/1538-4357/aaf003
+Parashar, T. N., Salem, C., Wicks, R. T., et al. 2015, J.
+Plasma Phys., 81, 905810513,
+doi: 10.1017/S0022377815000860
+Parashar, T. N., Servidio, S., Breech, B., Shay, M. A., &
+Matthaeus, W. H. 2010, Phys. Plasmas, 17,
+doi: 10.1063/1.3486537
+Perrone, D., Alexandrova, O., Mangeney, A., et al. 2016,
+Astrophys. J., 826, 196,
+doi: 10.3847/0004-637x/826/2/196
+Phan, T. D., Eastwood, J. P., Shay, M. A., et al. 2018,
+Nature, 557, 202, doi: 10.1038/s41586-018-0091-5
+Pucci, F., Servidio, S., Sorriso-Valvo, L., et al. 2017,
+Astrophys. J. Lett., 841, 60,
+doi: 10.3847/1538-4357/aa704f
+Pucci, F., Usami, S., Ji, H., et al. 2018a, Phys. Plasmas, 25,
+122111
+Pucci, F., Matthaeus, W. H., Chasapis, A., et al. 2018b,
+Astrophys. J., 867, 10, doi: 10.3847/1538-4357/aadd0a
+Retin`o, A., Sundkvist, D., Vaivads, A., et al. 2007, Nature
+Physics, 3, 235
+
+19
+Retin`o, A., Nakamura, R., Vaivads, A., et al. 2008, J.
+Geophys. Res. Space Phys., 113, A12215,
+doi: 10.1029/2008JA013511
+Roytershteyn, V., Boldyrev, S., Delzanno, G. L., et al. 2019,
+Astrophys. J., 870, 103, doi: 10.3847/1538-4357/aaf288
+Sahraoui, F., Huang, S. Y., Belmont, G., et al. 2013,
+Astrophys. J., 777, 15, doi: 10.1088/0004-637X/777/1/15
+Schekochihin, A. A., Cowley, S. C., Dorland, W., et al.
+2009, Astrophys. J. Supl. Series, 182, 310,
+doi: 10.1088/0067-0049/182/1/310
+Servidio, S., Matthaeus, W. H., Shay, M. A., Cassak, P. A.,
+& Dmitruk, P. 2009, Phys. Rev. Lett., 102, 115003,
+doi: 10.1103/PhysRevLett.102.115003
+Servidio, S., Dmitruk, P., Greco, A., et al. 2011, Nonlinear
+Process. Geophys., 18, 675, doi: 10.5194/npg-18-675-2011
+Sharma Pyakurel, P., Shay, M. A., Phan, T. D., et al. 2019,
+Phys. Plasmas, 26, 082307, doi: 10.1063/1.5090403
+Sladkov, A., Smets, R., Aunai, N., & Korzhimanov, A.
+2021, Phys. Plasmas, 28, 072108
+Smith, C. W., & Vasquez, B. J. 2021, Front. Astron. Space
+Sci., 7, doi: 10.3389/fspas.2020.611909
+Stawarz, J. E., Eastwood, J. P., Phan, T. D., et al. 2019,
+Astrophys. J. Lett., 877, L37,
+doi: 10.3847/2041-8213/ab21c8
+Stawarz, J. E., Eastwood, J. P., Phan, T. D., et al. 2022,
+Phys. Plasmas, 29, 012302, doi: 10.1063/5.0071106
+Sulem, P. L., Passot, T., Laveder, D., & Borgogno, D. 2016,
+Astrophys. J., 818, 66, doi: 10.3847/0004-637X/818/1/66
+Tu, C.-Y., & Marsch, E. 1995, Space Sci. Rev., 73, 1,
+doi: 10.1007/BF00748891
+Vech, D., Klein, K. G., & Kasper, J. C. 2017, Astrophys. J.,
+850, L11, doi: 10.3847/2041-8213/aa9887
+Verscharen, D., Klein, K. G., & Maruca, B. A. 2019, Living
+Rev. Sol. Phys., 16, 5, doi: 10.1007/s41116-019-0021-0
+Verscharen, D., Parashar, T. N., Gary, S. P., & Klein, K. G.
+2020, Mon. Not. R. Astron. Soc., 494, 2905,
+doi: 10.1093/mnras/staa977
+V¨or¨os, Z., Yordanova, E., Varsani, A., et al. 2017, J.
+Geophys. Res. Space Phys., 122, 11,442,
+doi: https://doi.org/10.1002/2017JA024535
+Wan, M., Matthaeus, W. H., Roytershteyn, V., et al. 2015,
+Phys. Rev. Lett., 114, 175002,
+doi: 10.1103/PhysRevLett.114.175002
+—. 2016, Phys. Plasmas, 23, 042307, doi: 10.1063/1.4945631
+Wei, F., Hu, Q., Feng, X., & Schwen, R. 2000, Sci. China
+Math., 43, 629
+Yang, Y., Matthaeus, W. H., Roy, S., et al. 2022,
+Astrophys. J., 929, 142, doi: 10.3847/1538-4357/ac5d3e
+Yang, Y., Matthaeus, W. H., Parashar, T. N., et al. 2017,
+Phys. Plasmas, 24, 072306, doi: 10.1063/1.4990421
+Zhou, M., Man, H. Y., Deng, X. H., et al. 2021, Geophys.
+Res. Lett., 48, e2020GL091215,
+doi: https://doi.org/10.1029/2020GL091215

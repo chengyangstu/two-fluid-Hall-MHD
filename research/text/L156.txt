@@ -1,0 +1,2252 @@
+A Discontinuous Galerkin Method for Ideal Two-
+Fluid Plasma Equations
+John Loverich1,∗, Ammar Hakim1 and Uri Shumlak2
+Abstract. A discontinuous Galerkin method for the ideal 5 moment two-ﬂuid plasma
+system is presented. The method uses a second or third order discontinuous Galerkin
+spatial discretization and a third order TVD Runge-Kutta time stepping scheme. The
+method is benchmarked against an analytic solution of a dispersive electron acoustic
+square pulse as well as the two-ﬂuid electromagnetic shock [1] and existing numerical
+solutions to the GEM challenge magnetic reconnection problem [2]. The algorithm can
+be generalized to arbitrary geometries and three dimensions. An approach to main-
+taining small gauge errors based on error propagation is suggested.
+Key words: Plasma, Two-Fluid, 5 Moment, Discontinuous Galerkin, Electrostatic Shock, Electro-
+magnetic Shock, Magnetic Reconnection
+1
+Introduction
+Fusion power promises to be a safe, efﬁcient and environmentally friendly energy source.
+Controlled fusion power concepts have been under investigation for decades, the vast
+majority of these concepts require an intimate understanding of plasma physics to deter-
+mine the stability and conﬁnement properties. Numerical plasma physics has proved ex-
+tremely valuable in deciphering experimental data and predicting the behavior of plasma
+experiments. Many plasma ﬂuid models, and in particular the full two-ﬂuid plasma
+model, have received very little attention from the numerical plasma physics community.
+This work describes an advanced algorithm for the ideal 5-moment two-ﬂuid plasma sys-
+tem.
+To solve problems in plasma physics and to gain physical intuition of plasma phe-
+nomena a hierarchy of classical plasma models have been developed. The most funda-
+mental continuum plasma model is the Vlasov model which eliminates individual par-
+ticles in favor of a continuous distribution function. This model is six dimensional as
+the distribution function is a function of both position and velocity. The Vlasov model
+can be re-written as an equivalent system that consists of an inﬁnite number of moment
+∗Corresponding author.
+http://www.global-sci.com/
+Global Science Preprint
+arXiv:1003.4542v1  [physics.plasm-ph]  23 Mar 2010
+
+2
+equations. A reduction of the Vlasov model can then be obtained by truncating this in-
+ﬁnite series. Assuming scalar pressure and setting the heat tensor and higher moments
+to zero produces the 5 moment truncation of the Vlasov model. This model is known as
+the ideal 5 moment two-ﬂuid plasma model, and will be discussed in this paper. Asymp-
+totic approximations of this two-ﬂuid system produce a series of increasingly simpler
+ﬂuid models including two-ﬂuid MHD (Magnetohydrodynamics), Hall MHD and then
+the ideal MHD models.
+The main beneﬁt of a ﬂuid model over the Vlasov model is the reduced dimensional-
+ity from 6 dimensions to 3 dimensions. Physics is lost in this reduction, but an enormous
+amount of physics relevant to fusion and spacecraft propulsion remains in the ﬂuid de-
+scription. Ideal MHD has been extremely successful in explaining large scale instabilities
+in such devices as the Z-pinch, spheromak and tokamak [3, 4]. Unfortunately there are
+many regimes where the description is invalid and where it fails to explain the observed
+phenomena. An example of this includes ion demagnetization which is important in
+Field Reversed Conﬁgurations [5] and Hall thrusters. Hall MHD addresses both these
+issues but fails to describe other plasma phenomena such as the demagnetization of elec-
+trons in regions of low magnetic ﬁeld which is important in collisionless reconnection.
+The two-ﬂuid MHD approach adds terms such as electron inertia which is an important
+mechanism for breaking the frozen in ﬂux condition for electrons as it acts as a “dissi-
+pation” mechanism in the absence of resistivity [6]. The quasi-neutrality condition still
+constrains the electron and ion motions, to allow complete independence of electron and
+ion motion the quasi-neutrality condition must be relaxed; the result is the ideal two-ﬂuid
+plasma system.
+Two-ﬂuid effects are important in the generation of turbulence through microinstabil-
+ities. Most plasmas are turbulent at some scale, however the simplest ﬂuid model, ideal
+MHD, describes plasmas physics that is more or less laminar where the two-ﬂuid model
+produces turbulent phenomena. This can be explained in part by the ﬂuid description
+of electrons. In a two-ﬂuid model both the electrons and the ions may become unstable
+independently. In particular, electrons carry most of the current in an MHD plasma. This
+current may produce a large amount of differential motion in the electron ﬂuid when
+magnetic ﬁeld gradients are present even if the plasma is in a static MHD equilibrium.
+The generation of microturbulence through processes such as the lower hybrid drift in-
+stability and the modiﬁed two-stream instability may be important in both Z-pinch and
+theta-pinch plasmas. These instabilities are frequently cited as sources of anomalous re-
+sistivity [7], magnetic diffusion and heating and in certain cases may ultimately drive
+macroscopic MHD instabilities [8].
+A particularly good application of the two-ﬂuid plasma model is the fusion Z-pinch
+[9]. Many plasma experiments last a few seconds whereas the shortest plasma times
+scale, the electron plasma oscillation, can occur on the scale of pico seconds. However, in
+the case of the fusion Z-pinch these time scales can be compressed to about 4 orders of
+magnitude between the shortest time scale, the electron plasma period the MHD insta-
+bility growth time, which puts two-ﬂuid Z-pinch simulations in the range of numerical
+
+3
+methods. Conceptual Z-pinch fusion reactors are high density with extremely strong
+magnetic ﬁelds which makes the two-ﬂuid plasma system particularly applicable [10].
+Furthermore the radius of the pinch can be 1000 Debye lengths in some designs [11]
+which means Debye length scales could be resolved in very high resolution simulations.
+Artiﬁcially increasing the electron mass to ion mass ratio and increasing the ratio of the
+Alfven speed to the speed of light can make the Z-pinch problem more computationally
+tractable while maintaining the relevant physics. The analysis of microinstabilities such
+as the lower hybrid drift instability may be important in progressing towards a better
+understanding of Z-pinch physics.
+Algorithms have been designed for various ﬂuid plasma models including MHD
+[12,13], Hall MHD [14–17] various forms of electrostatic two-ﬂuid plasma models [18–20]
+and the ideal two-ﬂuid system [1, 21, 22]. The ﬁrst well described two-ﬂuid plasma al-
+gorithm was the ANTHEM [21, 22] code. It was used to simulate fast phenomena in
+high density plasmas inaccessible to PIC codes, the applications included simulations of
+plasma opening switches and the fast igniter concept. ANTHEM used a ﬂux corrected
+transport (FCT) type algorithm for the ﬂuids and an FDTD type algorithm for the ﬁelds.
+This type of algorithm is difﬁcult to extend to general geometries because of the staggered
+scheme used for Maxwell’s equations. In [1] a full two-ﬂuid algorithm using the ﬁnite
+volume method for both ﬂuids and ﬁelds was described for one-dimensional problems.
+An issue with the ﬁnite volume algorithm was the decay of equilibrium solutions due to
+the low order of accuracy which resulted from the source term integration and diffusive
+limiters used. Major improvements on the ﬁnite volume technique have been made with
+the help of various divergence cleaning techniques and careful attention to source term
+treatment. An improved ﬁnite volume approach is described in [23].
+The purpose of the paper is to develop a numerical algorithm for the ideal 5 moment
+two-ﬂuid plasma system using the discontinuous Galerkin method so that it can be easily
+generalized to arbitrary geometries and to arbitrarily high order accuracy to help capture
+plasma instabilities. TVB discontinuous Galerkin methods are described in [24–26]. They
+are extended to the multi-dimensional Euler equations in [27] and to Maxwell’s equations
+in [28,29]. The two-ﬂuid system of equations consists of two sets of Euler equations, one
+for the electrons and the other for the ions, and the complete Maxwell’s equations. The
+ideal two-ﬂuid system differs from the ideal MHD equations in that it is composed of
+three separate (but well understood) hyperbolic systems coupled through source terms.
+The MHD equations are, on the other hand, a unique hyperbolic system. A discontinuous
+Galerkin method for the MHD equations was developed in [30] and for two temperature
+MHD in [31]. The technique is used in a Vlasov-Maxwell algorithm in [32], numerous
+other applications can be found in [33].
+In section 2 the ideal 5-moment two-ﬂuid model is described and the equations are
+presented. In section 3 a scalar model problem is derived from the two-ﬂuid systems
+which helps to illustrate some of the numerical issues with the system. In section 4 the
+discontinuous Galerkin method applied to the two-ﬂuid plasma system is presented. In
+section 5 simulations are presented including an electron acoustic pulse for validation
+
+4
+of code accuracy, an electrostatic shock, the two-ﬂuid electromagnetic shock [1], and the
+GEM challenge magnetic reconnection problem [2] where the reconnected magnetic ﬂux
+can be compared to published results. Finally, in section 6 the conclusions are discussed.
+2
+Two-Fluid Model
+The full two-ﬂuid plasma model consists of a set of ﬂuid equations for the electrons and
+ions plus the complete Maxwell’s equations including displacement current. The ﬂuid
+and electromagnetic systems are coupled by Lorentz forces and current sources. In the
+following equations, E is the electric ﬁeld, B is the magnetic ﬁeld, qs is the species charge
+(subscript s is i for ions and e for electrons), ρs is the species density, ms is the species
+mass, Us is the species velocity, Ps is the species pressure and es is the species total energy
+with es = 1
+2ρsU2
+s +
+1
+1−γs ps. The species number density is deﬁned as ns = ρs
+ms , ϵ0 is the
+permittivity and µ0 is the permeability of free space. Maxwell’s equations are presented
+in SI units. The complete Ampere’s law is used
+∂tE−c2(∇×B)=−1
+ϵ0 ∑
+s
+qs
+ms
+ρsUs,
+(2.1)
+and the complete Faraday’s law
+∂tB+(∇×E)=0.
+(2.2)
+The magnetic ﬂux equation,
+∇·B=0
+(2.3)
+and Poisson’s equation (2.4),
+∇·E= 1
+ϵ0 (qini+qene)
+(2.4)
+are constraint equations which can be derived from Ampere’s law (2.1), Faraday’s law (2.2)
+as well as the species continuity equation given below in (2.11) under the assumption that
+the constraints are satisﬁed initially. A simple way to reduce the error in the constraint
+equations is to use the perfectly hyperbolic Maxwell’s equations where equations (2.1),
+(2.2), (2.3), (2.4) are modiﬁed, so that Ampere’s law becomes
+∂tE−c2(∇×B)+∇ψE =−1
+ϵ0 ∑
+s
+qs
+ms
+ρsUs,
+(2.5)
+Faraday’s law becomes
+∂tB+(∇×E)+∇ψB =0.
+(2.6)
+The magnetic ﬂux equation becomes,
+1
+Γ2
+B
+∂ψB
+∂t +∇·B=0
+(2.7)
+
+5
+and Poisson’s equation becomes,
+1
+Γ2
+E
+∂ψE
+∂t +∇·E= 1
+ϵ0 (qini+qene).
+(2.8)
+Where ψB and ψE are correction potentials and ΓB, ΓE are the correction potential wave
+speeds which propagate errors in the divergence constraints out at the speeds ΓB and ΓE.
+The correction potential wave speeds can be set to zero for problems where the correction
+terms are not necessary. Details of the correction potential technique are described in
+[34] and used in our previous work [23]. In many problems of experimental interest
+electrons ﬂow from a surface into the simulation domain. In these situations we believe
+more sophisticate divergence preservation will be required. It’s important to maintain
+exact charge conservation especially when the emission is space charge limited. For this
+type of problem a constrained transport approach should be taken. Charge conserving
+constrained transport is frequently used in particle in cell (PIC) codes [35], [36], [37].
+In addition, ∇·B = 0 preserving constrained transport is frequently used in the MHD
+system [38], [39], [40], [41].
+The ﬂuid equations are simply the inviscid Navier Stokes equations with Lorentz
+force source terms. Each ﬂuid species has its own equation for energy,
+∂tes+∇·(Us(es+Ps))= qs
+ms
+ρsE·Us,
+(2.9)
+momentum,
+∂t (ρsUs)+∇α(ρsUα
+s Us)+∇α
+
+δαβPs
+
+= qs
+ms
+ρs(E+Us×B),
+(2.10)
+and continuity,
+∂tρs+∇·(ρsUs)=0.
+(2.11)
+This means that each species has its own temperature, velocity and number density. As
+a result, quasi-neutrality is not assumed and things like electron plasma waves and ion
+subshocks should be observed numerically. This system is identical to the system used
+in [1].
+The ideal two ﬂuid plasma system can be written as three systems of balance laws,
+∂Qe
+∂t +∇·Fe(Qe)=ψe(Qe,Qem),
+(2.12)
+for the electron equations,
+∂Qi
+∂t +∇·Fi(Qi)=ψi(Qi,Qem),
+(2.13)
+for the ion equations, and
+∂Qem
+∂t
++∇·Fem(Qem)=ψem(Qi,Qe),
+(2.14)
+
+6
+for Maxwell’s equations. These balance laws, Eqns.(2.12)-(2.14), are given in full form by,
+∂
+∂t
+
+
+
+
+
+
+ρs
+ρsUxs
+ρsUys
+ρsUzs
+es
+
+
+
+
+
+
++∇·
+
+
+
+
+
+
+ρsUxs
+ρsUys
+ρsUzs
+ρsUxsUxs+Ps
+ρsUxsUys
+ρsUxsUzs
+ρsUysUxs
+ρsUysUys+Ps
+ρsUysUzs
+ρsUzsUxs
+ρsUzsUys
+ρsUzsUzs+Ps
+Uxs(es+Ps)
+Uys(es+Ps)
+Uzs(es+Ps)
+
+
+
+
+
+
+=
+
+
+
+
+
+
+0
+qsns
+ Ex+UysBz−UzsBy
+
+qsns
+ Ey+UzsBx−UxsBz
+
+qsns
+ Ez+UxsBy−UysBx
+
+qsns
+ ExUxs+EyUys+EzUzs
+
+
+
+
+
+
+
+(2.15)
+∂
+∂t
+
+
+
+
+
+
+
+
+Bx
+By
+Bz
+Ex
+Ey
+Ez
+
+
+
+
+
+
+
+
++∇·
+
+
+
+
+
+
+
+
+0
+Ez
+−Ey
+−Ez
+0
+Ex
+Ey
+−Ex
+0
+0
+−c2Bz
+c2By
+c2Bz
+0
+−c2Bx
+−c2By
+c2Bx
+0
+
+
+
+
+
+
+
+
+=
+
+
+
+
+
+
+
+
+
+0
+0
+0
+−1
+ϵ0 (qeneUxe+qiniUxi)
+−1
+ϵ0
+ qeneUye+qiniUyi
+
+−1
+ϵ0 (qeneUze+qiniUzi)
+
+
+
+
+
+
+
+
+
+(2.16)
+3
+Derivation of a Scalar Model Problem
+The ideal 5-moment two-ﬂuid system is unusual in that the source terms act as harmonic
+oscillators, the source terms are purely dispersive without dissipation or ampliﬁcation.
+This fact is important when considering numerical methods to use, as the source term
+integration should introduce as little dissipation as feasible in order to avoid damping
+these oscillations. It frequently occurs in a two-ﬂuid plasma that convective forces are in
+balance with oscillating sources to produce an equilibrium. With this in mind, a simple
+model problem is derived which may help one choose a proper numerical method for
+the two-ﬂuid system.
+Linearizing the electron x-momentum equation (2.10) and Ampere’s law (2.1) while
+assuming a constant background ion density and assuming that B=0, a partial differen-
+tial equation for electron plasma oscillations can be derived which takes the form
+∂2u
+∂t2 =−ω2
+peu,
+(3.1)
+
+7
+where u is the perturbed x velocity and ωpe is the electron plasma frequency. This can be
+transformed to a ﬁrst order equation in complex variables by making the transformation
+ωpev= ∂u
+∂t and letting Q=v+iu.
+∂Q
+∂t =iωpeQ.
+(3.2)
+By transforming variables Q(x,t) →Q(η,t) where η = x+at, Equation(3.2) becomes an
+advection oscillation equation
+∂Q
+∂t +a∂Q
+∂η =iωpeQ,
+(3.3)
+where a is the wave propagation speed and ωpe is the oscillation frequency. Any algo-
+rithm that is stable to the two-ﬂuid system should be stable when applied to Eqn(3.3).
+This equation has solutions Q= Aei(kη−ωt) where ω=ak−ωpe. In particular(3.3) admits a
+steady state solution Q= Aeikη on an inﬁnite domain where the source term is in balance
+with the ﬂux. It is important to note that there are an inﬁnite number of equilibria which
+differ by a continuous range of scalar factors A. This point is important when considering
+numerical methods for this system since a numerical method with too much dissipation
+could conceivably move a steady state solution from one equilibrium to another all the
+while moving towards a state where A = 0. This loss of amplitude is also observed in
+equilibrium type problems in the two-ﬂuid system. An effective numerical algorithm
+must be both stable to the advection equation and oscillation equation and must have
+low dissipation in equilibrium type problems. The discontinuous Galerkin method is an
+ideal candidate for solving the two-ﬂuid system. Its accuracy can easily be increased to
+reduce numerical dissipation while being stable to both the advection equation and the
+oscillation equation.
+4
+Runge-Kutta Discontinuous Galerkin Method
+Discontinuous Galerkin methods are high order extensions of upwind schemes using a
+ﬁnite element formulation where the elements are discontinuous at cell interfaces. Details
+of the method are discussed in [24–27] and reproduced here for our particular case. The
+balance law
+∂Q
+∂t +∇·F(Q)=ψ(Q)
+(4.1)
+is multiplied by the set of basis functions {vr} and integrated over the ﬁnite volume
+element K. For second order spatial accuracy the basis set on a unit square reference
+element is
+{vr}={v0,vx,vy}={1,x,y}.
+(4.2)
+For third order spatial accuracy
+{vr}={v0,vx,vy,vxy,vxx,vyy}={1,x,y,xy,x2−1
+3,y2−1
+3}
+(4.3)
+
+8
+is used. The equation is written,
+Z
+K
+∂Q
+∂t vrdV+
+Z
+K(∇·F)vrdV =
+Z
+KψvrdV.
+(4.4)
+Integrate by parts to get
+Z
+K
+∂Q
+∂t vrdV+
+Z
+∂K
+  ˜F·n
+
+vrdΓ−
+Z
+K F·(∇vr)dV =
+Z
+KψvrdV.
+(4.5)
+The surface ﬂux ˜F·n is a numerical approximation of the exact ﬂux F·n across the inter-
+face. The discrete conserved variable Q is deﬁned as a linear combination of the basis
+functions inside an element K, with
+Q=∑
+r
+vrQr.
+(4.6)
+The integral R
+K
+∂Q
+∂t vrdV = ∂Qr
+∂t CV where C is the constant 1
+V
+R
+K v2
+r dV and V is the volume
+of the element. Using these deﬁnitions we get the discrete equation
+∂Qr
+∂t CV+∑
+e ∑
+l
+wl
+  ˜Fl·n
+
+vrlΓe−∑
+m
+wmFm·(∇vrm)V =∑
+m
+wmψmvrmV,
+(4.7)
+when the integrals are replaced by appropriate Gaussian quadratures. Γe is the surface
+area of the cell face in consideration, e refers to an element face, l are quadrature points
+on a face with wl the associated weight. m refer to quadrature points in the volume with
+wm the associated weight. Functions with subscript l or m are evaluated at the lth face
+quadrature points and mth volume quadrature points respectively. For a second order
+method the edge integrals are replaced by a two point Gaussian quadrature
+Z 1
+−1 f (x)dx≈f
+ 1
+√
+3
+
++ f
+
+−1
+√
+3
+
+(4.8)
+A four point quadrature is used for the volume integral given by,
+Z 1
+−1
+Z 1
+−1 f (x,y)dxdy≈f
+ 1
+√
+3
+, 1
+√
+3
+
++ f
+
+−1
+√
+3
+, 1
+√
+3
+
++
+f
+
+−1
+√
+3
+,−1
+√
+3
+
++ f
+ 1
+√
+3
+,−1
+√
+3
+
+.
+(4.9)
+The discrete equations for the second order scheme using the basis functions given in (4.2)
+become
+∂Q0
+∂t V+∑
+e ∑
+l
+wl
+  ˜Fl·ne
+
+v0lΓe =∑
+m
+wmψmv0mV,
+(4.10a)
+∂Qx
+∂t V+3∑
+e ∑
+l
+wl
+  ˜Fl·ne
+
+vxlΓe−3∑
+m
+wmFm·(∇vxm)V =3∑
+m
+wmψmvxmV,
+(4.10b)
+
+9
+∂Qy
+∂t V+3∑
+e ∑
+l
+wl
+  ˜Fl·ne
+
+vymΓe−3∑
+m
+wmFm·
+ ∇vym
+
+V =3∑
+m
+wmψmvymV.
+(4.10c)
+The derivatives of the basis functions can be calculated analytically since the polynomial
+basis functions are known. The discontinuous Galerkin method is applied to each bal-
+ance law (2.12)(2.13)(2.14) at every time step. For the third order space method the edge
+integrals are done using a 3 point quadrature
+Z 1
+−1 f (x)dx≈8
+9 f (0)+ 5
+9
+ 
+f
+ √
+3
+5
+!
++ f
+ 
+−
+√
+3
+5
+!!
+(4.11)
+The volume integrals are performed using a 9 point quadrature which can be calculated
+by doing a 3 point integration in the x direction and then a 3 point integration in the y
+direction. This produces the following approximate integral
+Z 1
+−1
+Z 1
+−1 f (x,y)dxdy≈64
+81 f (0,0)+
+25
+81
+"
+f
+ √
+3
+5 ,
+√
+3
+5
+!
++ f
+ 
+−
+√
+3
+5 ,
+√
+3
+5
+!
++ f
+ 
+−
+√
+3
+5 ,−
+√
+3
+5
+!
++ f
+ √
+3
+5 ,−
+√
+3
+5
+!#
++
+40
+81
+"
+f
+ 
+0,
+√
+3
+5
+!
++ f
+ √
+3
+5 ,0
+!
++ f
+ 
+0,−
+√
+3
+5
+!
++ f
+ 
+−
+√
+3
+5 ,0
+!#
+(4.12)
+For the 3rd order scheme the following discrete equations must be updated in addition
+to those given by the second order scheme (4.10) using the basis functions deﬁned in (4.3)
+becomes,
+∂Qxy
+∂t V+9∑
+e ∑
+l
+wl
+  ˜Fl·ne
+
+vxylΓe−9∑
+m
+wmFm·
+ ∇vxym
+
+V =9∑
+m
+wmψmvxylV,
+(4.13a)
+∂Qxx
+∂t V+ 45
+4 ∑
+e ∑
+l
+wl
+  ˜Fl·ne
+
+vxxlΓe−45
+4 ∑
+m
+wmFm·(∇vxxl)V = 45
+4 ∑
+m
+wmψmvxxmV, (4.13b)
+∂Qyy
+∂t V+ 45
+4 ∑
+e ∑
+l
+wl
+  ˜Fl·ne
+
+vyylΓe−45
+4 ∑
+m
+wmFm·
+ ∇vyym
+
+V= 45
+4 ∑
+m
+wmψmvyymV. (4.13c)
+Though the spatial discretization uses a ﬁnite element approach, the time integration
+uses standard ﬁnite difference methods which are described in the next section. The
+algorithm described is an explicit ﬁnite element method, data is only exchanged between
+neighboring cells. The solution does not need to be continuous at cell interfaces which is
+particularly useful for problems with shocks.
+
+10
+4.1
+Time Integration Schemes
+Time integration schemes that are stable for the advection equation must also be stable to
+the oscillation equation if they are to be stable in general to the two-ﬂuid system. In this
+paper the 3rd order TVD Runge-Kutta method [24] is used,
+Q1 =Qn+∆tL[Qn]
+(4.14a)
+Q2 = 3
+4Qn+ 1
+4
+
+Q1+∆tL
+h
+Q1i
+(4.14b)
+Qn+1 = 1
+3Qn+ 2
+3
+ Q2+∆tL
+
+Q2
+,
+(4.14c)
+The time integration scheme is applied to each Qr at every time step to evolve the solu-
+tion. The term L[Qn] represents the entire “left hand side” which is everything but the
+time derivative evaluated at Qn. It is important to note that all two step second order
+Runge-Kutta schemes are unstable to the oscillation equation [42].
+4.2
+Evaluating ˜F·n
+The ﬂux ˜F·n can be evaluated a number of different ways. The local Lax ﬂux is used in
+this paper and is computed at each face as
+˜F·n= 1
+2
+ F+
+i +F−
+i+1
+·n−1
+2|λ|i+1/2
+ Q+
+i −Q−
+i+1
+·n,
+(4.15)
+where |λ|i+1/2 is the maximum eigenvalue of the particular system based on the averages,
+Q0, of the conserved variables at the centers of cell i and i+1. The local Lax ﬂux is a well
+known ﬂux function that can be used in the discontinuous Galerkin method [24]. For the
+ﬂuid systems |λ|i+1/2 =
+
+|uα|+
+
+γα
+pα
+ρα
+ 1
+2 
+i+1/2
+is used. For Maxwell’s equations |λ|= c.
+The superscripts + and −mean that the Q is evaluated at the upper or lower edge of the
+cell.
+4.3
+Limiting
+High resolution schemes typically use limiting to prevent spurious oscillations near dis-
+continuities and for stabilization of non-linear systems [43]. Limiters can also be used in
+the discontinuous Galerkin method, though instead of being TVD, minmod limiters pro-
+duce a scheme that is TVDM or TVD in the mean. This means that the solution is TVD in
+Q0, but not necessarily in Q.
+Following the procedure described in [25] the conserved variables Q can be limited in
+terms of characteristics or in terms of components. To limit Q in terms of characteristics
+the Q are ﬁrst transformed to characteristic variables g where g = LQ and L is the left
+eigenvector matrix of the ﬂux Jacobian calculated from Q0. The left eigenvector matrix
+
+11
+is also applied to the differences L
+
+Qi+1
+0
+−Qi
+0
+
+=∆+g0 and L
+
+Qi
+0−Qi−1
+0
+
+=∆−g0. Limit-
+ing is performed directly on transformed variables and then the solution is immediately
+transformed back to determine the limited form of Qx,
+¯Qx = L−1m
+ gx,∆+g0,∆−g0
+
+(4.16)
+where m is the minmod limiter deﬁned by
+m(a,b,c)=
+
+
+
+
+
+max(a,b,c)
+if sign(a)=sign(b)=sign(c)=−
+min(a,b,c)
+if sign(a)=sign(b)=sign(c)=+
+0
+otherwise
+.
+(4.17)
+The minmod limiter Eqn. (4.17) is typically used for each of the ﬂuid equations Eqn.(2.12)(2.13)
+while the modiﬁed minmod limiter can be used to reduce the dissipation
+¯m(a,b,c)=
+(
+a
+if |a|< Mdx2
+m(a,b,c)
+otherwise
+,
+(4.18)
+where M is a constant.
+Component limiting is done in a similar manner except no
+transformation is necessary, so that the limiter is directly applied to the variables Q.
+Component limiting has the advantage that it is faster than characteristic limiting and
+it does not introduce machine precision errors that can result during the transforma-
+tion Q = L−1(LQ). The disadvantage of component limiting is that the approach is not
+TVDM [25] and unphysical oscillations can appear in the solution. In this paper charac-
+teristic limiting is used.
+When a 3rd order DG method is used, two types of limiters can be used. The ﬁrst
+method follows the procedure of second order method and is described in [26] where
+if ¯Qx ̸= Qx then all higher order coefﬁcients are set to zero. This method is simple to
+implement and is used in this paper.
+A different and potentially better 3rd order limiter is that of [44]. In this method, the
+linear terms, Qx, Qy, Qz are limited in the same way as the second order method while
+the higher order terms Qxy, Qxx and Qyy are limited as follows.
+¯Qi
+xx =m
+
+Qi
+xx, 1
+2
+
+Qi+1
+x
+−Qi
+x
+
+, 1
+2
+
+Qi
+x−Qi−1
+x
+
+(4.19)
+and
+¯Qj
+yy =m
+
+Qj
+yy, 1
+2
+
+Qj+1
+y
+−Qj
+y
+
+, 1
+2
+
+Qj
+y−Qj−1
+y
+
+(4.20)
+ﬁnally, the term Qxy is limited by setting it to zero if either Qxx or Qyy is limited. In [26]
+it was suggested that the high order terms could be limited by simply setting them to
+zero if the linear terms are limited. The justiﬁcation is that oscillations in the higher order
+terms would only be important when oscillations in the linear terms exist.
+
+12
+4.4
+Stability
+The stability limits of the numerical algorithm just described are deﬁned by the highest
+oscillation frequency of the system or by the CFL condition based on the speed of light.
+Typically the highest oscillation frequency is the electron plasma frequency wpe=
+
+neq2
+e
+ϵ0me
+ 1
+2
+and a time step is chosen for which the time integration scheme is stable to this frequency
+of oscillation, this time step is typically ∆t<
+1
+wpe . When the CFL condition dominates the
+time step ∆t< 1
+6
+∆x
+c is used for the second order spatial discretization in 2D and ∆t< 1
+10
+c
+∆x
+for the third order spatial discretization in 2D.
+5
+Simulations
+The two-ﬂuid system describes many dispersive waves including the electron acoustic
+wave. In a plasma the electron acoustic wave is coupled to the plasma frequency produc-
+ing a wave that is essentially stationary for sufﬁciently long wavelengths or sufﬁciently
+cold plasmas. In the following a dispersion relation for the electron acoustic wave in a
+warm plasma is derived from linearized two-ﬂuid equations. The dispersion relation is
+used to calculate an analytic solution to the propagation of an approximate square pulse
+in a two-ﬂuid plasma. The numerical two-ﬂuid solution using the 2nd and 3rd order
+discontinuous Galerkin method is compared to the analytic solution using various grid
+resolution. The order accuracy of the algorithm in the L2 norm is calculated from these
+results.
+In real kinetic plasmas damping such as Landau damping may result in the damping
+of waves observed in simulations such as this. These results are meant to illustrate veri-
+ﬁcation that we are solving the correct system in addition to showing we can achieve the
+desired accuracy.
+Assume inﬁnitely massive ions with a background number density n0 for both elec-
+trons and ions and charge qi = −qe. Furthermore, assume background electron and ion
+pressures P0 while all other background quantities are zero. A perturbed electron ve-
+locity u1
+e =U0ei(kn x+wnt) is assumed. Corresponding perturbed electric ﬁeld, density and
+pressure proﬁles can be derived from Poisson’s equation, the continuity equation and the
+energy equation so that the perturbed electric ﬁeld E1
+xn =
+i
+ϵ0wn n0qeu1
+e, perturbed electron
+pressure, P1
+en = −
+
+kn
+wn
+
+γeP0u1
+e, and perturbed electron density, ρ1
+en = −
+
+kn
+wn
+
+ρ0eu1
+e. The
+electron acoustic dispersion relation is
+wn =±
+γeP0
+ρ0e
+
+k2
+n+
+ n0q2
+e
+ϵ0me
+ 1
+2
+.
+(5.1)
+The positive root deﬁnes waves that travel to the left. A square pulse on a periodic do-
+
+13
+main is deﬁned by taking linear combinations of these waves,
+u1
+e (x,t)=−U0
+∞
+∑
+n=0
+i
+2n+1ei(kn x+wnt).
+(5.2)
+As a practical matter, an approximate square pulse is used since the high wave numbers
+cannot be resolved numerically unless the spatial resolution is sufﬁciently high. Figures
+1 and 2 illustrate this dramatically. Figure 1 shows the initial square pulse initialized with
+5000 wave modes. Figure 1 shows the analytic solution after t = 1000 steps. Since there
+is no dissipation in the system and the system is dispersive the high frequency modes in
+the initial conditions play an important role in the ﬁnal solution; this makes the issue of
+convergence in shock-type problems that start out with discontinuities difﬁcult to assess.
+As a result, in the simulations and analytic solutions that follow, n = 9 is the highest
+mode included in the expansion and kn =2πn. Finally, only the real part of all perturbed
+quantities are used in the initial conditions, thus,
+E1
+x(x,t)=
+9
+∑
+n=0
+E1
+xn
+(5.3)
+P1
+e (x,t)=
+9
+∑
+n=0
+P1
+en
+(5.4)
+ρ1
+e (x,t)=
+9
+∑
+n=0
+ρ1
+en
+(5.5)
+In this simulation qi=−qe=10, ϵ0=1, n0=1, P0=1, me=1, mi=∞, γe=2 for convenience.
+To ensure that the solution is in the linear regime U0 must be set to a small value. For
+these simulations U0 = 1×10−8. The domain is periodic with length 1. Electromagnetic
+waves do not exist in this problem, but the speed of light c = 1. The simulations are
+run to time t = 3 at several different resolutions and 20,000 time steps are taken for the
+highest resolution simulation which has 320 cells. The initial conditions for the electron x-
+velocity perturbation are shown in ﬁgure 3. An approximate square wave is used to excite
+several wave modes to test the algorithms performance effectively. A problem in the
+linear regime is used for two reasons. First of all, analytic solutions exist and are easy to
+calculate, secondly, in the linear regime the limiters can be turned off so the solution can
+be observed without the added dissipation which can reduce overall accuracy making it
+much easier to compute numerically the accuracy of the algorithm. Ultimately, problems
+in the non-linear regime, problems with large U0 for example, require limiters and the
+overall accuracy of the numerical solution is reduced. The design of effective limiters
+may be the most important problem in gaining computational efﬁciency from 3rd order
+or higher discontinuous Galerkin methods for the two-ﬂuid system when compared to
+the 2nd order method.
+
+14
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+−2
+−1.5
+−1
+−0.5
+0
+0.5
+1
+1.5
+2
+x 10
+−8
+x
+ue
+initial condition
+Figure 1: Electron velocity of a square electron acoustic square pulse at time t=0
+
+15
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+−2
+−1.5
+−1
+−0.5
+0
+0.5
+1
+1.5
+2
+x 10
+−8
+ue
+x
+analytic solution at t = 1000
+Figure 2: Analytic solution of the electron velocity of a square electron acoustic pulse at time t=1000. This plot
+illustrates the dispersive, non-diﬀusive nature of the two-ﬂuid system that makes it numerically diﬃcult even in
+the linear regime. The high frequency modes still contribute signiﬁcantly to the amplitude of the solution late
+in time and they always will because there is no physical diﬀusion. The dispersive, non-diﬀusive nature of the
+two-ﬂuid system can make it appear that our numerical solutions suﬀer from signiﬁcant numerical dispersion
+errors when they are actually correctly capturing dispersion described by the model.
+
+16
+After 3 time units the square pulse shape has disappeared due to wave dispersion.
+Plots of the numerical solution verses the analytic solution at various grid resolutions are
+shown in ﬁgures 4, 5, and 6 at 3 time units. In ﬁgure 4 there are 40 cells in the domain
+and the 3rd order method shows evidence of resolving the highest order mode. The 2nd
+order method only captures the bulk features. In ﬁgure 5 there are 80 cells in the domain
+and the 3rd order method captures the amplitude of the highest modes and matches the
+analytic solution very well. The 2nd order method still struggles to resolve the highest
+mode (note the solution at the two skinniest spikes). In ﬁgure 6 there are 160 cells in the
+domain and the 2nd order method still does not match the amplitude of the highest order
+mode and does not match the amplitudes much better than the 3rd order method at 40
+grid cells. Figure 7 shows a plot of the convergence history of the numerical solutions
+along with calculated order of accuracy. In both cases the calculated order of accuracy
+varies from less than 1 for low resolution where the high frequency modes are barely
+resolved to better than the order of the scheme when the solution is nearly converged.
+The 3rd order method performs substantially better than the 2nd order in this lin-
+earized problem when limiter are not needed. In particular, the 3rd order method pre-
+serves amplitude much better than the 2nd order, this same phenomena has been ob-
+served in certain equilibrium type non-linear problems.
+
+17
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+−1
+−0.8
+−0.6
+−0.4
+−0.2
+0
+0.2
+0.4
+0.6
+0.8
+1
+x 10
+−8
+x
+ue
+exact initial condition
+Figure 3: Exact electron x velocity at t=0. Initial conditions are chosen so that all waves travel to the left as
+time increases. Since the waves are dispersive the initial “square wave” disappears when the solution is allowed
+to evolve.
+
+18
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+−2
+−1.5
+−1
+−0.5
+0
+0.5
+1
+1.5
+2
+x 10
+−8
+x
+ue
+exact
+2nd order space
+3rd order space
+Figure 4: Numerical solution using 2nd and 3rd order discontinuous Galerkin spatial discretizations with a 3rd
+order time discretization compared to the exact solution at t=3. The grid has 40 cells so the highest wave
+number mode is barely resolved with the 2nd order method. The 2nd and 3rd order solutions diﬀer substantially
+from the analytic solution.
+
+19
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+−2
+−1.5
+−1
+−0.5
+0
+0.5
+1
+1.5
+2
+x 10
+−8
+x
+ue
+exact
+2nd order space
+3rd order space
+Figure 5: Numerical solution using 2nd and 3rd order discontinuous Galerkin spatial discretizations with a 3rd
+order time discretization compared to the exact solution at t=3. The grid has 80 cells across the domain. The
+2nd order solution diﬀers substantially from the analytic solution, only capturing the lower order modes. The
+3rd order solution matches the analytic solution well.
+
+20
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+−2
+−1.5
+−1
+−0.5
+0
+0.5
+1
+1.5
+2
+x 10
+−8
+x
+ue
+exact
+2nd order space
+3rd order space
+Figure 6: Numerical solution using 2nd and 3rd order discontinuous Galerkin spatial discretizations with a 3rd
+order time discretization compared to the exact solution at t=3. The grid has 160 cells across the domain. The
+2nd order solution resolves the high order modes at this resolution. At higher resolution the numerical solutions
+are visually indistinguishable from the analytic solution.
+
+21
+−6
+−5.5
+−5
+−4.5
+−4
+−3.5
+−3
+−2.5
+−30
+−29
+−28
+−27
+−26
+−25
+−24
+−23
+−22
+−21
+log(∆ x)
+log(L2)
+2nd order space
+3rd order space
+0.45 
+2.6 
+3.8 
+2.9 
+2.5 
+1.4 
+1 
+.7 
+Figure 7: Natural log of the L2 norm verses natural log of grid spacing for the numerical solutions to the
+electron acoustic wave dispersion problem. The solutions were calculated using 2nd and 3rd order discontinuous
+Galerkin spatial discretizations with a 3rd order Runge-Kutta time discretization. The numbers near each line
+give the slope of the line and hence the measured order of accuracy of the scheme. The 3rd order method gives
+substantially better accuracy than the second order method. Grid resolutions used to construct this plot are
+1/20, 1/40, 1/80, 1/160, and 1/320. The measured accuracy was computed at t=3.
+
+22
+5.1
+Two-Fluid Electromagnetic Plasma Shock
+The two-ﬂuid electromagnetic plasma shock is an extension of the Brio and Wu shock [45]
+to the two-ﬂuid plasma model. The simulation was ﬁrst performed in [1,46] and is used
+in the current paper as a benchmark. The ideal two-ﬂuid system has no dissipative terms
+however an artiﬁcial viscosity exists due to the numerical discretization. Wave steep-
+ening of the two-ﬂuid solution is limited by physical wave dispersion, when wave dis-
+persion is not sufﬁcient to limit the steepening, artiﬁcial viscosity limits the steepening.
+In real collisionless shocks in experiments and in space, kinetic effects limit the wave
+steepening when dispersion is not sufﬁcient to limit the steepening. This simulation is
+meaningful since it illustrates the range of physics that the two-ﬂuid system describes.
+In this paper the shock will be presented differently than in [1]. The initial discontinu-
+ity is allowed to evolve in time until the shock structure spans 1000rgi where rgi is the ion
+Larmor radius. Time is measured in terms of light transit times across the entire domain,
+τc =
+1000rgi
+c
+. Snapshots of the shock earlier in time correspond to larger characteristic ion
+Larmor radius,
+rgi
+L < 1000 where L is the span of the shock, and so the solution evolves
+from a “gas dynamic” regime of short time scales and large characteristic ion Larmor
+radius
+rgi
+L ≫1 to an “MHD” regime of long time scales and small characteristic Larmor
+radii
+rgi
+L ≪1. Parameters used are, qi = 10, qe = −10, and ϵ0 = 1, µ0 = 1, c = 1, γe = γi = 5
+3,
+mi =1, me =
+1
+1836. The initial conditions on the left half of the domain are given by,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ne
+Uex
+Uey
+Uez
+Pe
+ni
+Uix
+Uiy
+Uiz
+Pi
+Bx
+By
+Bz
+Ex
+Ey
+Ez
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+le f t
+=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1.0
+0
+0
+0
+0.5×10−4
+1.0
+0
+0
+0
+0.5×10−4
+0.75×10−2
+1.0×10−2
+0
+0
+0
+0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+,
+and
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ne
+Uex
+Uey
+Uez
+Pe
+ni
+Uix
+Uiy
+Uiz
+Pi
+Bx
+By
+Bz
+Ex
+Ey
+Ez
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+right
+=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0.125
+0
+0
+0
+0.05×10−4
+0.125
+0
+0
+0
+0.05×10−4
+0.75×10−2
+1.0×10−2
+0
+0
+0
+0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.
+(5.6)
+The spatial units of ﬁgures 8, 9, 10, 11, 12, 13 are measured in ion Larmor radii rgi based
+on the initial conditions in the left half of the domain. The Debye length is λd =
+1
+100 rgi
+also based on the initial conditions on the left half of the domain. The results in ﬁgure
+8 correspond to a less accurate solution to that published in [1] ﬁgure 8. The domain of
+
+23
+ﬁgure 8 has only 500 cells in the domain corresponding to 1000 degrees of freedom (5,000
+time steps to reach this point in the simulation) while the published solution using a
+ﬁnite volume method has 4000 cells or 4000 degrees of freedom. In ﬁgure 10 the solution
+is higher resolution than the corresponding solution published in ﬁgure 9 of [1] as can be
+seen by the resolution of the oscillations to the left of the rarefaction wave. At this scale
+there are 5000 cells in the domain corresponding to 10,000 degrees of freedom (50,000
+time steps to reach this point in the simulation) while there are 4000 degrees of freedom
+in the previously published solution. At the ﬁnal time ﬁgure 12, the solution has moved
+beyond those published and signiﬁcant oscillations to the left of the shock are observed.
+Most of these waves are resolved in several hundred grid cells, and the entire domain of
+ﬁgure 12 is 50,000 cells (500,000 time steps to reach this point in the simulation).
+Due to the dispersive, non-diffusive nature of the system, the shocks solutions show
+more complexity as resolution is increased in time and space. To illustrate this ﬁgures 9,
+11, 13 show solutions using a time step based ∆t=1/ωpe compared to the solution with
+∆t = 1/(2ωpe). These results show the large amount of damping in the ∆t = 1/ωpe case
+that results from temporally unresolved simulations, however, many of the essential fea-
+tures of the solution still remain. Similarly, increasing the spatial resolution adds higher
+frequency dispersive waves without signiﬁcantly changing the overall shape. The ﬁnal
+solution 12 took roughly two days on 64 processors so higher resolution solutions were
+not attempted.
+
+24
+−5
+−4
+−3
+−2
+−1
+0
+1
+2
+3
+4
+5
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+1.1
+x
+mass density
+Two−Fluid
+MHD
+Figure 8: Electromagnetic shock solution using the two-ﬂuid equations and the MHD equations at t=0.01τc.
+At this time the domain spans 10 ion Larmor radii or 1000 Debye lengths. It is in this regime that the two-ﬂuid
+solution diﬀers most signiﬁcantly from the MHD or the “gas dynamic” solution. This regime has practical
+applications to Z-Pinches and FRC’s due to the weak magnetization of the ions.
+
+25
+−10
+−5
+0
+5
+10
+x
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+mass density
+∆t = 1/ωp e
+∆t = 1/(2ωp e)
+Figure 9: Comparison of 10 ion Larmor radius solution when the plasma frequency is just resolved compared to
+a solution with half the time step. Time step close to the stability limit signiﬁcantly damps the high frequency
+waves virtually eliminating the trailing wave train.
+
+26
+−50
+−40
+−30
+−20
+−10
+0
+10
+20
+30
+40
+50
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+1.1
+x
+mass density
+Two−Fluid
+MHD
+Figure 10: Electromagnetic shock solution using the two-ﬂuid equations and the MHD equations at t=0.1τc.
+At this time the domain spans 100 ion Larmor radii or 10000 Debye lengths. Major diﬀerences from previously
+published results (Figure 9 in [1] include the large oscillations to the left of the rarefaction wave which are
+dispersive plasma waves. The diﬀerences are a result of the higher grid resolution and better accuracy of the
+algorithm used in this paper.
+
+27
+−40
+−20
+0
+20
+40
+x
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+mass density
+∆t = 1/ωp e
+∆t = 1/(2ωp e)
+Figure 11: Comparison of 100 ion Larmor radius solution when the plasma frequency is just resolved compared
+to a solution with half the time step.
+
+28
+−500
+−400
+−300
+−200
+−100
+0
+100
+200
+300
+400
+500
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+1.1
+x
+mass density
+Two−Fluid
+MHD
+Figure 12: Electromagnetic shock solution using the two-ﬂuid equations and the MHD equations at t=1τc. At
+this point in the simulation the solution is very MHD like. However, key diﬀerences remain as a result of the
+fact that the two-ﬂuid system models dispersive MHD waves. The most major diﬀerences are the post shock
+and post rarefaction wave oscillations. Both look numerical, but these waves are resolved in several hundred
+grid cells and are a result of dispersive plasma waves described in the model. Moving from lower resolution to
+higher resolution runs show more high frequency waves with less diﬀusion. This simulations was the highest
+resolution performed using 50,000 cells. In this regime the Hall MHD model should be used since if one uses
+the full two-ﬂuid model one needs to approximately resolve the Debye length scales to get good shock solutions.
+The desire to resolve the Debye length in this simulation means that extremely high resolution was used.
+
+29
+−300
+−200
+−100
+0
+100
+200
+300
+x
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+mass density
+∆t = 1/ωp e
+∆t = 1/(2ωp e)
+Figure 13: Comparison of 1000 ion Larmor radius solution when the plasma frequency is just resolved compared
+to a solution with half the time step. It’s very important to resolve he plasma frequency in order to get the full
+dynamics of this simulation.
+
+30
+5.2
+Magnetic Reconnection
+In ideal MHD the ﬂuid is frozen to the magnetic ﬁeld lines and this prevents one ﬁeld line
+from connecting with another. The addition of non-ideal terms such as resistivity results
+in ﬂuid moving across ﬁeld lines allowing magnetic reconnection to occur. Classical re-
+sistivity leads to much slower reconnection rates than are observed in collisionless space
+and fusion plasmas. Non-ideal, collisionless terms such as electron inertia and the elec-
+tron pressure gradient are partially responsible for the fast reconnection that is observed
+to occur in the earths magnetotail and fusion plasmas. In this section we show that the
+two-ﬂuid algorithm developed in this paper produces magnetic reconnection rates that
+agree with those described of the GEM challenge magnetic reconnection problem as de-
+scribed in [2].
+The GEM challenge magnetic reconnection problem is non-dimensionalized as in [2]
+where lengths are normalized by the ion inertial length d=c/wpi=c
+
+e2n0
+ϵ0mi
+−1
+2 time is non-
+dimensionalized by the ion-cyclotron time mi
+eB0 where B0 is the magnetic ﬁeld at inﬁnity.
+The velocities are normalized by the Alfven velocity Va =
+
+B2
+0
+µ0min0
+ 1
+2 . Finally current den-
+sity is non-dimensionalized by J0=
+B0wpi
+µ0c and E by E0=VaB0. The domain is (−6.4d,6.4d)
+and the simulation is run out to 40/wci. Conducting walls are used on the y boundaries
+and periodic boundaries are used on the x boundaries. λ=0.5d, the ion to electron mass
+ratio is taken to be 25 and the speciﬁc heat ratio γ= 5
+3. The speed of light is c=10Va. The
+reconnection rates do not change noticeably when the ratio of the speed of light to the
+Alfven speed is increased to c =100Va as was done in [47]. The initial number densities
+are given by,
+ne =ni =n0
+1
+5 +sech2 y
+λ
+
+.
+(5.7)
+The electron and ion temperatures differ slightly, but are constant throughout the do-
+main, this gives the following electron pressure, Pe,
+Pe =
+1
+12µ0
+B2
+0
+ne
+n0
+(5.8)
+and ion pressure Pi
+Pi =
+5
+12µ0
+B2
+0
+ni
+n0
+.
+(5.9)
+The electron and ion pressure balance the magnetic ﬁeld which is given by
+Bx = B0tanh
+ y
+λ
+
++ B0
+10
+π
+Lx
+cos
+2πx
+Lx
+
+sin
+πy
+Ly
+
+(5.10)
+By = B0
+10
+2π
+Lx
+
+sin
+2πx
+Lx
+
+cos
+πy
+Ly
+
+(5.11)
+
+31
+The magnetic ﬁeld is in equilibrium with with the electron current Jze,
+Jze = µ0B0
+λ
+sech2 x
+λ
+
+.
+(5.12)
+The simulations are run at two resolutions, 128×64 and 512×256 using a second or third
+order discontinuous Galerkin method with third order TVD Runge Kutta time stepping.
+At a resolution of 512×256, 80 thousand time steps are taken and at a resolution of 128×
+64, 20 thousand time steps are taken. In ﬁgure 14 low resolution solutions to the GEM
+challenge problem are plotted at t = 25/ωci. The second order solution shows stable
+island formation while in the third order method no island forms. In this simulation the
+TVB limiter constant M = 0 is used to eliminate the formation of an unstable island in
+the third order method. Solutions to the GEM challenge problem are highly susceptible
+to bifurcation [48] which is the formation of magnetic islands at or near the x-point (the
+center of the domain in this case). The development of these islands may be due to
+excessive dissipation applied at the x-point; however, the development of islands can be
+unpredictable and in the case of the 3rd order method, increased dissipation can actually
+eliminate the island.
+The islands are unstable and any small perturbation in the location or ﬁelds in the
+island will cause the island to slip and merge with one of the lobes. Small perturbations
+can arise from machine precision error and this is particularly true at locations near equi-
+librium where two nearly equal but opposing forces are added, the number that remains
+may depend signiﬁcantly on the precision of the numbers used. It has been observed that
+increasing machine precision can change the direction that an unstable island slips off to.
+The second order solution shows the formation of a stable island presumably due to the
+extra dissipation of the second order method.
+In ﬁgure 15 the high resolution solutions are plotted at t=25/ωci with the TVB limiter
+constant M = 25. At this resolution the second and third order methods produce very
+similar results. In this case no island formation is visible in either the second or third
+order schemes, however at time t = 30/ωci a very small unstable island forms in the
+3rd order method and combines with the left lobe before t = 35/ωci. In ﬁgure 16 the
+reconnected magnetic ﬂux 1
+2
+R |By|dx along the x axis is plotted for several solutions. At
+grid resolution of 512×256 the second and third order methods produce similar results.
+At a resolution of 128×64 the third order method produces results which are in much
+better agreement with the high resolution results than does the second order method.
+In ﬁgure 17 the reconnected ﬂux up to time t=60/ωci is shown illustrating the satura-
+tion of the numerical solution beyond the published time interval in the GEM challenge
+results [2].
+Flows appear late in time which are turbulent as shown in ﬁgure 18 at time t=40/ωci.
+The 3rd order method shows considerably more asymmetry than the 2nd order method,
+but asymmetry has begun to develop in the 2nd order solution. This asymmetry develops
+out of machine precision errors that are initiated in the current layer at the x-point from
+the balancing of source terms and ﬂuxes. The only dissipation present is numerical so
+
+32
+Figure 14: GEM challenge comparing |Jz| using the 2nd and 3rd order method on a 128×64 grid at time
+t=25/wci. At this resolution an island forms in the 2nd order method and grows as the simulation progresses.
+Both methods use 3rd order TVD Runge-Kutta time stepping.
+
+33
+Figure 15: GEM challenge comparing |Jz| using the 2nd and 3rd order method on a 512×256 grid at time
+t =25/wci. At this resolution the 2nd and 3rd order method look similar. Both methods use 3rd order TVD
+Runge-Kutta time stepping. Instabilities develop out of the ﬂuid jets that emerge from the x-point when they
+collide with the slow moving ﬂuids in the lobes.
+
+34
+0
+5
+10
+15
+20
+25
+30
+35
+40
+0
+1
+2
+3
+4
+5
+6
+t//ωci
+Reconnected Flux
+128X64 DG2
+128X64 DG3
+512X256 DG2
+512X256 DG3
+Figure 16: Plot of reconnected ﬂux vs time for 2nd and 3rd order spatial discretizations at resolutions of 128×64
+and 512×256. The reconnected ﬂux diﬀers substantially for the two methods at 128×64, though the 3rd order
+method better matches the high order solutions. At 512×128 the 2nd and 3rd order methods are in close
+agreement.
+
+35
+0
+10
+20
+30
+40
+50
+60
+0
+0.5
+1
+1.5
+2
+2.5
+3
+3.5
+4
+4.5
+t//ωci
+Reconnected Flux
+512X256 DG2
+Figure 17: Plot of reconnected magnetic ﬂux to time t=60/ωci for a 512X256 solution. This ﬁgure shows that
+the two-ﬂuid solution does saturate as would be expected with conducting walls and ﬁnite ﬂux in the domain.
+
+36
+the second order method tends smooth out the errors produced by the ﬁnite precision
+more than the 3rd order method. As a result of the low dissipation in the 3rd order
+method these errors result in the excitation of unstable modes which eventually effect
+the macroscopic solution. The magnitude of electron momentum can differ by as much
+as 10 percent by moving from 64 bit numbers to 80 bit numbers at t=40/ωci; fortunately
+these regions tend to be localized.
+Notice the pair of shocks in ﬁgure 18, the positions differ in the two solutions. The
+positions differ because the onset of the fast growth stage is slightly different for the two
+methods. As the fast growth begins, shocks form in the ion ﬂuid as it is accelerated along
+the x axis. Eventually the two jets of shocked ion ﬂuid collided and two shock that spans
+the y axis are formed which continues to propagate through the domain as the solution
+evolves. If the onset of fast growth differs slightly initially, then these shocks will appear
+at different locations for a given time.
+
+37
+Figure 18: Plot of total ion momentum at t =40/ωci at a resolution of 512×256 using the second and third
+order DG methods.
+
+38
+6
+Discussion
+A discontinuous Galerkin method for the ideal 5-moment two-ﬂuid plasma system is
+developed. A scalar model problem of the ideal two-ﬂuid system is derived to illustrate
+the character of the full system. An analytic two-ﬂuid solution to an electron acoustic
+square pulse in the linear regime is derived and the numerical solution using the fully
+non-linear two-ﬂuid system is calculated showing convergence for the 2nd and 3rd order
+discontinuous Galerkin methods. The algorithm is benchmarked against the two-ﬂuid
+electromagnetic shock originally published in [1]. The 2nd and 3rd order algorithms
+are tested on the GEM challenge magnetic reconnection problem and produces results
+comparable to those generated by particle codes, hybrid codes, and a Hall MHD code in
+[49]. The discontinuous Galerkin method offers a straight forward method for solving the
+ideal 5-moment two-ﬂuid system. This same algorithm could be applied to 10 and higher
+moment two-ﬂuid systems. The algorithm can be easily generalized to three dimensions
+and general geometries.
+Acknowledgments
+This work was supported by AFOSR Grant No. F49620-02-1-0129
+References
+[1] U. Shumlak, J. Loverich, Approximate riemann solver for the two-ﬂuid plasma model, Jour-
+nal of Computational Physics 187 (2003) 620–638.
+[2] J. Birn, et al., Geospace environmental modeling (gem) magnetic reconnection challenge,
+Journal of Geophysical Research 106 (A3) (2001) 3715–3719.
+[3] J. P. Freidberg, Ideal Magnetohydrodynamics, Plenum Press, 1987.
+[4] P. M. Bellan, Spheromaks, Imperial College Press, 2000.
+[5] A. Hakim, U. Shumlak, Two-ﬂuid physics and ﬁeld-reversed conﬁgurations, Physics of Plas-
+mas 14 (5) (2007) 055911.
+[6] J. W. Connor, Pressure gradient turbulent transport and collisionless reconnection, Plasma
+Physics and Controlled Fusions 35 (1993) 757–763.
+[7] N. A. Krall, P. C. Liewer, Low-frequency instabilities in magnetic pulses, Physical Review A
+4 (5) (1971) 2094–2103.
+[8] R. C. Davidson, N. T. Gladd, Anomalous transport properties associated with the lower-
+hybrid-drift instability, The Physics of Fluids 18 (10) (1975) 1327–1335.
+[9] J. Loverich, U. Shumlak, Nonlinear full two-ﬂuid study of m = 0 sausage instabilities in an
+axisymmetric z pinch, Physics of Plasmas 13 (8) (2006) 082310.
+[10] L. Solovev, Dynamics of a cylindrical z pinch, Soviet Journal of Plasma Physics 10 (5) (1984)
+602–605.
+[11] M. Haines, The physics of the dense z-pinch in theory and in experiment with application
+to fusion reactor, Physica Scripta T2/2 (1982) 380–390.
+[12] O. S. Jones, U. Shumlak, D. S. Eberhardt, An implicit scheme for nonideal magnetohydro-
+dynamics, Journal Of Computational Physics 130 (1997) 231–242.
+
+39
+[13] C. Sovinec, et al., Nonlinear magnetohydrodynamics simulation using high-order ﬁnite ele-
+ments, Journal of Computational Physics 195 (2004) 355–386.
+[14] A. Bhattacharjee, Center for magnetic reconnection studies: Present status, future plans,
+PSACI PAC Presentation, Princeton (June 2003).
+[15] J. Breslau, S. Jardin, A parallel algorithm for global magnetic reconnection studies, Com-
+puter Physics Communications 151 (2003) 8–24.
+[16] J. D. Huba, Hall magnetohydrodynamics - a tutorial, in: M. S. J. Buchner, C.T. Dunn (Ed.),
+Space Plasma Simulation, Springer, 2003, pp. 166–192.
+[17] W. Park, et al., Plasma simulation studies using multilevel physics models, Physics of Plas-
+mas 6 (5) (1999) 1796–1803.
+[18] S. Baboolal, Finite-difference modeling of solitons induced by a density hump in a plasma
+multi-ﬂuid, Mathematics and Computers in Simulation 55 (2001) 309–316.
+[19] R. Schneider, C. D. Munz, The approximation of two-ﬂuid plasma ﬂow with explicit upwind
+schemes, International Journal of Numerical Modelling: Electronic Networks, Devices and
+Fields 8 (1995) 399–416.
+[20] P. Rambo, J. Denavit, Time-implicit ﬂuid simulation of collisional plasmas, Journal Of Com-
+putational Physics 98 (1991) 317–331.
+[21] R. Mason, An electromagnetic ﬁeld algorithm for 2d implicit plasma simulation, Journal of
+Computational Physics 71 (1987) 429–473.
+[22] R. Mason, C. Cranﬁll, Hybrid two-dimensional electron transport in self-consistent electro-
+magnetic ﬁelds, IEEE Transactions on Plasma Science 14 (1) (1986) 45–52.
+[23] A. Hakim, J. Loverich, U. Shumlak, A high resolution wave propagation scheme for ideal
+two-ﬂuid plasma equations, J. Comput. Phys. 219 (1) (2006) 418–442.
+[24] B. Cockburn, C.-W. Shu, Tvb runge-kutta local projection discontinuous galerkin ﬁnite ele-
+ment method for conservation laws ii: General framework, Mathematics of Computation 52
+(1989) 411–435.
+[25] B. Cockburn, S.-Y. Lin, C.-W. Shu, Tvb runge-kutta local projection discontinuous galerkin
+ﬁnite element method for conservation laws iii: One-dimensional systems, Journal of Com-
+putational Physics 84 (1989) 90–113.
+[26] B. Cockburn, S. Hou, C.-W. Shu, The runge-kutta local projection discontinuous galerkin ﬁ-
+nite element method for conservation laws iv: Multidimensional case, Mathematics of Com-
+putation 54 (1990) 545–581.
+[27] B. Cockburn, C.-W. Shu, The runge-kutta discontinuous galerkin method for conservation
+laws v: Multidimensional systems, Journal of Computational Physics 141 (1998) 199–224.
+[28] J. S. Hesthaven, T. Warburton, Nodal high-order methods on unstructured grids, Journal of
+Computational Physics 181 (2002) 186–221.
+[29] B. Cockburn, F. Li, C.-W. Shu, Locally divergence-free discontinuous galerkin methods for
+maxwell’s equations, Journal of Computational Physics 194 (2004) 588–610.
+[30] T. C. Warburton, G. E. Karniadakis, A discontinuous galerkin method for the viscous mhd
+equations, Journal of Computational Physics 152 (1999) 608–641.
+[31] G. Lin, G. Karniadakis, A discontinuous galerkin method for two-temperature plasmas,
+Comput. Methods Appl. Mech. Engrg. 195 (2006) 3504–3527.
+[32] A. Mangeney, F. Califano, C. Cavazzoni, P. Travnicek, A numerical scheme for the integra-
+tion of the vlasov-maxwell system of equations, Journal of Computational Physics 179 (2002)
+495–538.
+[33] B. Cockburn, G. E. Karniadakis, C.-W. Shu (Eds.), Discontinuous Galerkin Methods,
+Springer, 2000.
+
+40
+[34] C. D. Munz, R. Schneider, U. Vos, A ﬁnite-volume method for the maxwell equations in the
+time domain, Siam Journal of Scientiﬁc Computing 22 (2000) 449–475.
+[35] T. Umeda, Y. Omura, T. Tominaga, H. Matsumoto, A new charge conservation method in
+electromagnetic particle-in-cell simulations, Computer Physics Communications 156 (2003)
+73–85.
+[36] J. Villasenor, O. Buneman, Rigorous charge conservation for local electromagnetic ﬁeld
+solvers, Computer Physics Communications 69 (2-3) (1992) 306–316.
+[37] P. J. Mardahl, J. P. Verboncoeur, Charge conservation in electromagnetic PIC codes; spectral
+comparison of Boris/DADI and Langdon-Marder methods, Computer Physics Communi-
+cations 106 (1997) 219–229.
+[38] S. Li, High order central scheme on overlapping cells for magneto-hydrodynamic ﬂows with
+and without constrained transport method, J. Comput. Phys. 227 (15) (2008) 7368–7393.
+[39] D. S. Balsara, Divergence-free reconstruction of magnetic ﬁelds and weno schemes for mag-
+netohydrodynamics, J. Comput. Phys. 228 (14) (2009) 5040–5056.
+[40] T. A. Gardiner, J. M. Stone, An unsplit godunov method for ideal mhd via constrained trans-
+port in three dimensions, J. Comput. Phys. 227 (8) (2008) 4123–4141.
+[41] P. Londrillo, L. D. Zanna, On the divergence-free condition in godunov-type schemes for
+ideal magnetohydrodynamics: the upwind constrained transport method, J. Comput. Phys.
+195 (1) (2004) 17–48.
+[42] D. Durran, Numerical Methods for Wave Equations in Geophysical Fluid Dynamics,
+Springer, 1998.
+[43] R. J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge University
+Press, 2002.
+[44] R. Biswas, K. D. Devine, J. E. Flaherty, Parallel, adaptive ﬁnite element methods for conser-
+vation laws, Applied Numerical Mathematics 14 (1994) 255–283.
+[45] M. Brio, C. C. Wu, An upwind differencing scheme for the equations of ideal magnetohy-
+drodynamics, Journal Of Computational Physics 75 (1988) 400–422.
+[46] J. Loverich, A ﬁnite volume algorithm for the two-ﬂuid plasma system in one dimension,
+Masters thesis, University of Washington (2003).
+[47] J. Loverich, U. Shumlak, A discontinuous galerkin method for the full two-ﬂuid plasma
+model, Computer Physics Communications 169 (2005) 251–255.
+[48] M. Hesse, J. Birn, M. Kusnetsova, Collisionless magnetic reconnection: Electron processes
+and transport modeling, Journal of Geophysical Research 106 (2001) 3721–3735.
+[49] M. A. Shay, J. F. Drake, B. N. Rogers, R. E. Denton, Alfvenic collisionless magnetic reconnec-
+tion and the hall term, Journal of Geophysical Research 106 (2001) 3759–3772.

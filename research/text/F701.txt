@@ -1,0 +1,1484 @@
+PAPER • OPEN ACCESS
+W7-X and the sawtooth instability: towards realistic simulations of
+current-driven magnetic reconnection
+To cite this article: Alessandro Zocco et al 2021 Nucl. Fusion 61 086001
+ 
+View the article online for updates and enhancements.
+This content was downloaded from IP address 192.103.13.173 on 23/07/2021 at 02:18
+
+International Atomic Energy Agency
+Nuclear Fusion
+Nucl. Fusion 61 (2021) 086001 (14pp)
+https://doi.org/10.1088/1741-4326/ac077d
+W7-X and the sawtooth instability: towards
+realistic simulations of current-driven
+magnetic reconnection
+Alessandro Zocco1,∗
+, Alexey Mishchenko1
+, Carolin N¨uhrenberg1
+,
+Axel Könies1
+, Ralf Kleiber1
+, Matthias Borchardt1
+, Christoph Slaby1,
+Marco Zanini1
+, Torsten Stange1
+, Heinrich Peter Laqua1,
+Kian Rahbarnia1
+, Henning Thomsen1
+, R.C. Wolf1
+, Per Helander1
+,
+Roman Hatzky2
+and Michael D. J. Cole3
+1 Max-Planck-Institut f¨ur Plasmaphysik, Wendelsteinstraße 1, D-17491 Greifswald, Germany
+2 Max-Planck-Institut f¨ur Plasmaphysik, Boltzmannstraße 2, 85748 Garching bei M¨unchen, Germany
+3 PPPL, 100 Stellarator Road, Princeton, United States of America
+E-mail: alessandro.zocco@ipp.mpg.de
+Received 19 February 2021, revised 30 April 2021
+Accepted for publication 2 June 2021
+Published 24 June 2021
+Abstract
+Magnetic reconnection in W7-X is studied by means of global numerical simulations in a
+series of models of increasing complexity. The magnetic geometry ranges from that of a
+cylinder to the full three-dimensional field of W7-X, and the equations solved range from ideal
+magnetohydrodynamics (MHD) to gyrokinetics. We simulate plasmas from the first operation
+phase with electron cyclotron current drive (ECCD). These are characterized by an
+equilibrium magnetic field featuring an ECCD-distorted ‘humped’ profile of the rotational
+transform ι, with ι = 1 in two radial locations. Such plasmas generally show sawtooth activity,
+hence motivating the present study. We pay particular attention to the role of equilibrium
+current density gradients in the destabilization of reconnecting modes. When the equilibrium
+temperature and density gradients are artificially suppressed (to eliminate the pressure gradient
+drive), the perturbed electrostatic potential is radially localized between the locations at which
+ι = 1. This is shown with a purely collisionless gyrokinetic model, in cylindrical geometry. In
+the real toroidal geometry of W7-X, for a non-ideal MHD model including a uniform
+resistivity, electron inertia and (numerical) viscosity, the same qualitative behaviour is
+observed. In particular, even if a resonant (m, n) = (1, −1) perturbation is initialized, the most
+unstable mode is the (m, n) = (−4, 4), where m and n are the poloidal and toroidal mode
+numbers, respectively. Other modes are destabilized due to geometric coupling. The growth
+rate of this instability scales as η1/3, where η is the plasma resistivity, thus suggesting that
+ECCD drives ideal MHD stable W7-X plasmas towards non-ideal marginality. An ideal
+magnetohydrodynamic analysis confirms the result. A fluid-kinetic hybrid version of the
+EUTERPE code shows that gyrokinetic ions have a stabilizing effect on these modes. For
+W7-X relevant collisionalities, the growth rate scales linearly with the electron skin depth, de.
+Implications of our results for sawtoothing W7-X operation are discussed.
+∗Author to whom any correspondence should be addressed.
+Original content from this work may be used under the
+terms of the Creative Commons Attribution 4.0 licence.
+Any further distribution of this work must maintain attribution to the
+author(s) and the title of the work, journal citation and DOI.
+1741-4326/21/086001+14$33.00
+1
+© 2021 IAEA, Vienna
+Printed in the UK
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Keywords: magnetic reconnection, stellarator, sawtooth instability
+(Some figures may appear in colour only in the online journal)
+1. Introduction
+Wendelstein 7-X [1–3] is a superconducting optimized stel-
+larator [4], and, as such, not only enjoys low levels of neoclas-
+sical transport [5], but is also expected to feature favourable
+ideal magnetohydrodynamics (MHD) stability properties.
+Transport studies have been undertaken to quantify the quality
+of energy confinement [6–9], but enough heating power is not
+yet available to access the pressure (β) limit in most magnetic
+configurations, which is of the order of ⟨β⟩∼5% [10].
+W7-X is a device conceptually rooted in certain key com-
+putational and theoretical ideas [11], in particular quasi-
+isodynamicity and optimization of MHD equilibrium and
+stability, but the experimental programme sometimes poses
+additional operational complications. For instance, periodic
+and repetitive crashes of the central electron temperature, sim-
+ilar to sawtooth crashes in tokamaks, emerged during divertor
+strikeline control experiments with electron cyclotron current
+drive (ECCD) [12]. Measurements from soft x-ray tomogra-
+phy and electron cyclotron emission showed that the crashes
+are preceded by weak oscillating precursors and a displace-
+ment of the plasma core consistent with an (m, n) = (1, −1)
+mode, with m and n being the dominant poloidal and toroidal
+Fourier harmonics. This displacement occurs within 100 μs,
+followed by expulsion and redistribution of the core into the
+external part of the plasma. Furthermore, two types of crashes,
+with different frequencies and amplitudes were detected.
+The emergence of sawteeth [13–16] in W7-X has therefore
+generated new interest in magnetic reconnection in stellara-
+tors. Strumberger and G¨unter have presented comprehensive
+linear stability studies of resistive modes for W7-X-type stel-
+larator equilibria with ECCD [17]. Nonlinear simulations of
+W7-X-like ι-profiles in a cylinder have also been performed
+with a two-fluid model [18]. The same type of ι-profiles have
+been investigated to study the possibility of kinetic destabi-
+lization of infernal modes [19] (thus renewing interest also for
+kinetic studies of q-profiles with reversed shear in tokamaks
+[20]). Nikulsin et al [21] have proposed an extension of the
+JOREK code [22] to stellarator geometry,in order address non-
+linear magnetic reconnection physics in W7-X, and the non-
+ideal reduced MHD equations for stellarator geometry have
+also been studied analytically [23].
+W7-X was optimized for ideal MHD stability, but the ques-
+tion of non-ideal stability can also be important, in the light
+of the experimental observations mentioned above. Resistive
+and two-fluid effects [24–26] affect the linear stability thresh-
+old and are sometimes able to predict nonlinear saturated
+magnetic islands correctly [27, 28], but are not sufficient to
+capture certain kinetic phenomena like collisionless heating
+[28, 29] or the collisionless damping of the shear Alfv´en con-
+tinuum [30]. W7-X plasmas are hot enough [19] that the resis-
+tive reconnection scale, δη ≈5 × 10−3 cm, is much smaller
+than the ion Larmor radius ρi ≈0.2 cm and the electron
+skin depth de ≈0.2 cm. A realistic description of magnetic
+reconnection in W7-X should therefore be kinetic.
+A key ingredient in magnetic reconnection studies is played
+by the profile of the rotationaltransform ι, which indicates how
+many poloidal turns a field line makes during each toroidal
+turn around the flux surface. Reconnection occurs when ι is
+rational, and the current density gradient then provides one of
+the two drives for reconnecting instabilities (the other being
+the pressure gradient). Knowledge of the actual experimental
+ι-profile is difficult to obtain, particularly in a stellarator, since
+it is a global quantity that depends on the field-line geometry
+throughout the entire plasma volume. Fortunately, however,
+numerical transport modelling of the toroidal current evolu-
+tion resulting from ECCD and the bootstrap current can pro-
+vide some guidance. Such calculations suggest that ECCD can
+result in a profile where two resonant flux surfaces with ι = 1
+appear within the plasma, see e.g. the equivalent of our figure
+3 in reference [12].
+In the development of sawtooth dynamics in W7-X, which
+is sudden and characterized by two different types of crashes
+[12], the ι-evolution seems to regulate the access to differ-
+ent, but co-existing, unstable scenarios. In this article, we
+focus on the effect of the equilibrium current density gradients
+for a resonant ι-profile. The study of pressure-gradient-driven
+modes (not necessarily restricted to low mode numbers), is left
+for a future companion article, where kinetic effects will be
+investigated further.
+In this work, by using the global codes GYGLES [31, 32]
+and EUTERPE [33], we simulate typical plasmas from the first
+operation phase in W7-X with ECCD. Our simulations fea-
+ture several levels of complexity, both concerning physics and
+geometry. In addition to ideal MHD computations, we have
+used a purely collisionless gyrokinetic model in cylindrical
+geometry,and a non-ideal fluid model including uniform resis-
+tivity, electron inertia, (numerical) viscosity and gyrokinetic
+ions, in real W7-X geometry.
+With two kinetic species, and in cylindrical geometry, it is
+found that the instability occurs after collisionless damping of
+the shear Alfv´en continuum takes place. The radial positions
+at which ι = 1 play an important role in the mode localiza-
+tion, and for the strength of the instability. Qualitatively the
+same localization are observed in cylindrical and stellarator
+geometry. With the non-ideal fluid model, in W7-X, long-
+wavelength reconnecting instabilities for an ECCD-distorted
+ι-profile show growth rates that follow the scaling [34] η1/3,
+where η is the plasma resistivity, thus suggesting that ECCD
+drives ideally MHD stable W7-X plasmas towards non-ideal
+marginality. This hypothesis is confirmed by an ideal MHD
+study performed with the stability code CAS3D [35], which
+indeed predicts ideal stability in W7-X. Moreover, the ideal
+2
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+mode closest to marginality evaluated with CAS3D is the dom-
+inant non-ideal instability evaluated by the code EUTERPE.
+A fluid-kinetic hybrid version of the EUTERPE code shows
+that gyrokinetic ions have a stabilizing influence on these
+modes, but do not suppress them. For W7-X relevant colli-
+sionalities, the mode transitions to a collisionless regime with
+a growth rate scaling linearly with the electron skin depth, de,
+reproducing the typical low-β cylindrical result [23].
+The article is structured as follows. Ideal MHD stabil-
+ity properties of the plasma equilibria, subsequently stud-
+ied within the gyrokinetic picture, are discussed in section
+2. Kinetic equations and numerical methods are presented in
+section 3. Numerical results are given in section 4. Here, we
+first discuss the effect of the ‘humped’ rotational transform in
+a cylindrical plasma with two kinetic species. We then present
+our magnetic reconnection study for the true W7-X geometry.
+Conclusions are summarized in the final section.
+2. Preliminaries: ideal MHD stability for W7-X-like
+ECCD ι-profiles
+Before presenting our gyrokinetic and nonideal analysis, we
+must ask ourselves what does ideal MHD say about W7-X-
+like ι-profiles modified by ECCD, and whether that is enough
+to understand the real W7-X stability properties under saw-
+toothing conditions. Let us therefore consider the stability of
+two types of plasma equilibria by linear ideal mode analysis
+based on the ideal MHD energy principle [36, 37]. Magnetic
+equilibria are evaluated with the VMEC equilibrium code [38,
+39], whereas the stability analysis is performed with the eigen-
+value code CAS3D [35]. Both codes are used in their free-
+boundary versions. A detailed description of the combined
+equilibrium/stability analysis procedure is given in reference
+[40].
+Firstly, the stability properties of an internal kink are stud-
+ied in a screw-pinch equilibrium with all basic parameters cho-
+sen similar to W7-X values. While it is known that toroidal
+geometry has a critical impact on the stability of the linear
+ideal MHD kink mode [41], the cylindrical limit is still impor-
+tant if one aims at a non-ideal understanding of the sawtooth
+phenomenon in W7-X, let alone to disentangle the small scales
+present in the system [23]. The full equilibrium description is
+given in appendix A, where table 2 summarizes the parameters
+of the rotational transform profile in (A1) including the ι-hump
+modelling ECCD. Notice that in all the MHD simulations the
+pressure gradient is not artificially suppressed. For the screw
+pinch studied here, the rotational transform is given by
+ι(r) = 0.88 + 0.115(r/a)2 + fexp exp[−(r/a −sc)2/σ], (1)
+with r/a the normalized minor radius and sc the center
+of the hump. The resonance condition in straight-field-line
+coordinates, k∥= m ι + n = 0, shows that perturbations with
+poloidal and toroidal Fourier harmonics,m = −n, are resonant
+at the two locations where ι = 1. Due to the cylindrical geom-
+etry and the linear nature of the equations, all perturbation har-
+monics may be studied separately in the stability calculation.
+Here, the focus is on m = 1 modes. Variations of the rota-
+tional transform are studied by changing (i) the radial location
+sc and (ii) the height of the of the ι-hump controlled by fexp.
+The parameter σ is adjusted to have the locations of ι = 1 at a
+distance of 0.2 in the normalized minor radius. The various set-
+tings of these ι-profile parameters are summarized in table 2.
+The correspondingprofiles are shown in the left frame of figure
+1, with the ι-hump centers at the radial locations sc ≈0.3, 0.4,
+and 0.5, fixing fexp to 0.2. By way of example, the normal dis-
+placementfor the latter case, sc ≈0.5, is shown, too, with clear
+signatures of an internal kink mode being confined between
+the resonances and having steep gradients at these locations.
+The convergence of the instability growth rate with the radial
+grid size is shown in the right frame of figure 1. The closer
+the ι-hump comes to the magnetic axis, the smaller the growth
+rate becomes. In the cases considered here it varies between
+1.4 (ms)−1 for sc ≈0.5 and 0.86 (ms)−1 for sc = 0.3. Obvi-
+ously, reducing the height of the ι-hump also has a stabilising
+effect. With sc ≈0.5 the growth rate decreases to 0.95 (ms)−1
+when changing fexp from 0.2 to 0.12, a reference value of the
+gyrokinetic calculation of section 4.1. Transforming the ideal-
+MHD growth rate to the units used in the kinetic case, yields
+950 s−1. As we shall see, this compares well to the gyrokinetic
+result, the ideal MHD result being more unstable.
+Secondly, with the parameter set-up described in appendix
+A, a finite-plasma-β W7-X-type equilibrium is considered for
+its ideal MHD properties. In section 4.2, this equilibrium will
+again be studied using a hybrid fluid-kinetic model. Three
+characteristic plasma cross-sections of the equilibrium are
+shown in figure 7, at the beginning, at a quarter, and half of
+a field period of the five-periodic plasma domain.
+Unlike the screw-pinch, stellarator fields possess rotational
+transform already without a net toroidal current (black dotted
+line in figure 2). This rotational transform profile is modified
+with an ι-hump, which is here centered at the radial location
+sc ≈0.4 and with ιmax = 1.02, to again model ECCD (solid
+black line in figure 2). The result of a free-boundary calcula-
+tion in which the plasma boundaryis allowed to move is shown
+in figure 2. Each of the three scalar displacement components
+is approximated employing 166 Fourier harmonics belonging
+to the so-called N = 1 mode family [10], with the poloidal
+Fourier harmonics 0 ⩽m ⩽19, the toroidal Fourier harmon-
+ics −16 ⩽n ⩽11, and 500 flux intervals. The energy in the
+perturbed magnetic field is used as norm for the eigenmodes,
+facilitating the determination of stability limits without the
+interference of the stable ideal MHD continua [42]. The equi-
+librium is found to be stable with the chosen parameter setting
+concerningflux- and Fourier resolution and mode family of the
+perturbations. Figure 2 shows the ten largest Fourier harmon-
+ics of the mode closest to marginal stability, among them the
+m = −n = 6, 4, 9, and 11amplitudes are strongest. Stellarator-
+type helical equilibrium terms couple the m = −n = 6 and
+m = −n = 11 harmonics and, likewise, the m = −n = 4 and
+m = −n = 9 harmonics. Comparing the m = −n = 6 and
+m = −n = 11 amplitudes, the latter is smaller only because
+of the finite size of the perturbation Fourier table. In figure
+2, the dominant harmonics show clear signs of an internal
+kink with only small side-bands. The most important of the
+side-bands with amplitudes about a factor of ten smaller than
+3
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Figure 1. Ideal MHD results for a straight, cylindrical plasma with minor radius a = 0.55m, aspect ratio A = L/a = 2π × 10, B0 = 2.5 T
+(compare appendix A). (Left) Rotational transform profiles (black), each with two intersections of ι = 1, and normal displacements (red),
+ξ · ∇s, with m = 1, n = −1 for the sc = 0.5 profiles. (Right) Dependence of the growth rate in units of (ms)−1 on the number of flux
+intervals. Legend for both sub-frames: sc = 0.5 and fexp = 0.2 (solid); sc = 0.4 and fexp = 0.2 (dotted); sc = 0.3 and fexp = 0.2 (dashed);
+sc = 0.5 and fexp = 0.12 (dash-dotted). Code used: CAS3D. Model: ideal MHD, cylindrical geometry.
+Figure 2. Ideal MHD result for a W7-X plasma: Normal
+displacement harmonics of a stable, free-boundary mode versus
+normalized effective minor radius. Smaller side-bands are indicated
+too. Rotational transform profiles are also shown (black): without
+(dotted) and with (solid) ECCD-model contribution. Colour legend:
+ξs
+6,−6 (red), ξs
+4,−4 (dark violet), ξs
+9,−9 (blue), ξs
+11,−11 (green).
+Computation parameters: 500 flux intervals, 166 perturbation
+harmonics, ι-hump with sc ≈0.4, fexp ≈0.15, and σ ≈0.024, see
+table 2. Code used: CAS3D. Model: ideal MHD, W7-X geometry.
+the maximum represent tokamak-type couplings invoked by
+toroidicity, e.g. (m, n) = (7, −6) coupled to (m, n) = (6, −6)
+or (m, n) = (10, −9) to (m, n) = (9, −9). As indicated by the
+small amplitudes of the normal displacement harmonics near
+the plasma boundary, r/a = 1, this mode does not exploit the
+boundary condition but is essentially a fixed-boundary mode.
+With the ι-hump relatively far from the plasma boundary, this
+is understandable and is confirmed by the nearly identical
+result from the corresponding fixed-boundary stability anal-
+ysis, in which the ideal MHD displacement leaves the plasma
+boundary unchanged.
+We conclude that, while the cylindrical ideal case (where
+the rotational transform is entirely generated by plasma cur-
+rent) is useful to infer unstable mode structures, its ideal MHD
+stability properties are different from those for a similar ι-
+profile in true W7-X geometry, where most of the rotational
+transform is produced by external currents and only stable
+ideal modes are found.
+3. Kinetics: equations and methods
+Having seen that an ECCD-distorted ι-profile is not enough
+to destabilise W7-X in ideal MHD, we now proceed to a
+gyrokinetic description of the plasma.
+The standard formulation of the gyrokinetic equations for
+current-driven modes in the Hamiltonian p∥-formulation has
+been described in detail in [30, 43]. For derivation of the fluid
+equations, considered below, it is more convenient to use the
+v∥-formulation of the gyrokinetic theory. To assess the current
+driven modes, we choose the equilibrium electron distribution
+function to be a Maxwellian that is shifted in velocity space by
+an amount corresponding to the parallel current:
+F0e = n0
+ me
+2πTe
+3/2
+exp
+
+−me(v∥−u)2
+2Te
+
+× exp
+
+−mev2
+⊥
+2Te
+
+.
+(2)
+Here u = −j(0)
+∥/(en0) and μ0 j(0)
+∥= (B/B) · (∇× B) with B the
+equilibrium magnetic field. The ion equilibrium distribution is
+assumed to be a stationary Maxwellian, so that all equilibrium
+current is carried by the electrons.
+The perturbed distribution function δ fs of each species s is
+found from the gyrokinetic equation:
+∂δ fs
+∂t
++
+·
+R · ∂δ fs
+∂R +
+·v∥
+∂δ fs
+∂v∥
+= −δ
+·
+R · ∂F0s
+∂R −δ
+·v∥
+∂F0s
+∂v∥
+, (3)
+where δ f s ≪F0s, with F0s the equilibrium distribution func-
+tion, and v∥= ˆb · v. Here ˆb = B/B and v is the particle veloc-
+ity. The coefficients in equation (3) are determined by the
+equations of motion of gyrocentres
+˙
+R = v∥b + 1
+qs
+
+μ
+B∗b×∇B +
+msv2
+∥
+B∗b × κ
+
++ v∥
+B∗b × κ⟨δA∥⟩+ 1
+B∗b × ∇⟨δφ −v∥δA∥⟩
+≡˙R(0) + δ ˙R,
+(4)
+4
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+and
+ms ˙v∥= −μ∇B·
+
+ˆb + ms
+qs
+v∥
+B∗ˆb × κ
+
+−qs
+
+ˆb · ∇⟨δφ⟩+ ∂
+∂t
+	
+δA∥
+
+
+−msv∥
+B∗ˆb × κ·∇⟨δφ⟩
+−1
+B∗μ∇B·
+
+∇⟨A∥⟩× ˆb + ⟨A∥⟩ˆb × κ
+
+≡−μ∇B·
+
+ˆb + ms
+qs
+v∥
+B∗ˆb × κ
+
++ msδ ˙v∥,
+(5)
+where ms is the particle mass, μ = msv2
+⊥/(2B2) the magnetic
+moment, with v2
+⊥= v2 −v2
+∥, and δφ and δA∥are the perturbed
+electrostatic and parallel magnetic potentials. Here ⟨·⟩is the
+gyroaverage, B∗is given by B∗= B +
+
+ms
+qs v∥+ δA∥
+
+ˆb · (∇×
+ˆb) and the curvature is κ = b · ∇b. Physically, gyrocentres
+move along the total magnetic field with the velocity v∥under
+the influence of the magnetic mirror force and the perturbed
+electric field in equation (5). Across the field, the movement
+is given by the sum of grad-B, curvature, and perturbed E × B
+drifts. The system of equations is closed by the quasineutrality
+equation and Amp`ere’s law:
+ q2
+i F0i
+Ti
+(δφ −⟨δφ⟩)δ(R + ρ −x)d6Z =
+
+s
+qsn1s, (6)
+−∇2
+⊥δA∥= μ0
+
+s
+j∥1s, (7)
+where n1s =
+
+d6Z δ f sδ(R + ρ −x) is the gyrocentre density
+and
+j∥1s = qs
+
+d6Zδ f sv∥δ(R + ρ −x)
+the gyrocentre current. Here, qs is the electric charge,
+d6Z = B∗
+∥dR dv∥dμ dθ is the phase-space volume element and
+ρ is the gyroradius vector.
+Note that the polarization density in equation (6) is given
+by an integral operator and includes a non-local effect of
+the ion gyro-orbit. In this work, we use the long-wavelength
+approximation of the polarisation density.
+For gyrokinetic simulations, we employ the global code
+GYGLES [31, 32], which features the mixed-variable formu-
+lation [44, 45], that is, the vector potential is expressed as
+a sum δA∥= δA(h)
+∥+ δA(s)
+∥, where the time derivative of the
+‘symplectic part’ δA(s)
+∥is taken to be given by the ideal Ohm’s
+law [44, 45] of the magnetic potential:
+∂
+∂tδA(s)
+∥+ ˆb · ∇δφ = 0.
+(8)
+Furthermore, a mixed velocity is introduced as u∥= v∥+
+(es/ms)
+
+δA(h)
+∥
+
+. The perturbedpart of the distribution function
+is then discretised by a total of Np markers:
+δ f s(R, u∥, μ, t) =
+Np
+
+ν=1
+wsν(t)δ(R −Rν)δ(u∥−p∥ν)δ(μ −μν),
+(9)
+where (Rν, u∥ν, μν) are the marker phase-space coordi-
+nates and wsν is their weight. The electrostatic and mag-
+netic potentials are discretised with the finite-element method
+(Ritz–Galerkin scheme):
+δφ(x) =
+Ns
+
+l=1
+δφlΛl(x)
+δA∥(x) =
+Ns
+
+l=1
+alΛl(x),
+(10)
+where Λl(x) are finite elements (tensor products of B splines
+[46, 47]), Ns is the total number of the finite elements, and
+δφl and al are the spline coefficients. Homogeneous Dirichlet
+boundary conditions are applied for δφ and δA∥at the plasma
+edge. For further numerical details, see references [31, 32,
+48–51].
+All our gyrokinetic calculations are performed in a screw-
+pinch geometry for two kinetic species: ions and electrons.
+For W7-X, however, the complexity of the geometry, and the
+nature of the reconnection instabilities that we study (global
+in nature and yet mediated by small physical scales), compel
+us to resort to a hybrid version of the kinetic code EUTERPE
+[33], whose equations are derived in the following way.
+We follow Cole et al [52], and form the first two fluid
+moments of the gyrokinetic equation. By taking the velocity-
+space integral of equation (3) for electrons, one obtains the
+electron continuity equation [52]
+∂δne
+∂t
++ n0B · ∇
+u∥e
+B
+
+= n0
+B
+ˆb × ∇
+
+δφ −2
+n0eδpe
+
+· ∇B
+B
++ ∇× B
+B2
+·
+
+n0∇δφ −1
+e ∇δpe
+
+−BvE · ∇
+n0
+B
+
+−
+
+∇× δA∥ˆb
+
+· ∇
+n0
+B u(0)
+∥e
+
+,
+(11)
+where vE = B−1ˆb × ∇δφ, when finite electron Larmor radius
+effects are neglected and an isotropic pressure tensor with
+δpe = n−1 
+d3vmev2
+∥δ f e is assumed. By evaluating the par-
+allel velocity moment of the electrons, one obtains the gener-
+alised Ohms’s law
+∂
+∂t
+
+δA∥−d2
+e∇2δA∥
+
+= −b · ∇δφ −1
+qen
+b · ∇δpe
++
+b · ∇B
+enB
+×
+
+d3vv∥μδ f e
+−Te
+qeB
+b × ∇pe
+pe
+· ∇δA∥,
+(12)
+where pe = nTe and d2
+e = me/(μ0ne2) denotes the electron
+skin depth. For homogeneous magnetic equilibria, equations
+(11) and (12) are the fluid components of the linear limit of
+the KREHM model [28, 29] with equilibrium background gra-
+dients [53, 54]. The KREHM model treats kinetic electrons
+in a fluid fashion, by allowing higher order moments of the
+5
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Figure 3. (Left) A set of W7-X like rotational transform with two resonant flux surfaces modelling the late-time ι behaviour with ECCD.
+(Right) Comparison of the low-shear W7-X like rotational transform profiles to a typical sawtoothing tokamak case.
+perturbed distribution function to evolve following a recur-
+sive equation, their effect being encapsulated in the pressure
+term δpe. The system of equations is closed by using quasineu-
+trality with the ion density δni =  d3vδ f i and the perturbed
+ion distribution function δ f i. Practically, one only needs to
+replace δni in the electron continuity equation just evalu-
+ated. Such a model, with isothermal electrons, δT⊥= δT∥e =
+
+d3vv2
+∥δ f e ≡0, has been implemented and will be the refer-
+ence hybrid model for future kinetic studies with finite equilib-
+rium pressure gradients. In this work, we retain the continuity
+equation for the electrons, (11), while the ions are treated either
+fully gyrokinetically or using a reduced non-ideal MHD model
+that is derived in the following way.
+We evaluate the continuity equation for the ions, and sub-
+tract the result from the electron continuity equation, to obtain
+∂δn
+∂t + ∇·
+
+n0ˆbu∥+ 1
+eB j(0)
+∥ˆb × ∇δA∥
+−1
+eB2 j(0)
+∥
+
+ˆb × ∇B + (∇× B)⊥
+
+δA∥
+−
+2
+eB2
+
+ˆb × ∇B + (∇× B)⊥
+
+δp
+
+= 0,
+(13)
+with δn = δne −Zδni, δp = δpi + δpe, u∥= u∥e −Zu∥i, and
+μ0 j(0)
+∥= ˆb · ∇× B. Ohm’s law is taken to be consistent with
+the isothermal limit of the true electron parallel momentum
+equation, equation (12),
+∂
+∂t
+
+δA∥−d2
+e∇2δA∥
+
+= −ˆb · ∇δφ + η
+μ0
+∇2
+⊥δA∥,
+(14)
+where we have added a resistive term proportional to the
+Spitzer resistivity, η, and we have specialized to flat pressure
+profiles. Notice that we also neglect the ion FLR correction
+1/(qen)ˆb · ∇Teδne, for reasons that will become apparent. A
+relation between u∥and A∥is given by the parallel component
+of Amp´ere’s law
+u∥=
+1
+μ0n0e∇· ∇⊥δA∥.
+(15)
+The electrostatic potential is determined by the quasineutrality
+condition
+∇·
+min0
+B2 ∇⊥δφ
+
+= eδn,
+(16)
+and the system is closed using the flat-density pressure
+equation of reduced MHD [23]
+∂δp
+∂t = −vE · ∇p0 + ν∇2
+⊥δp,
+(17)
+where a viscosity, ν, is added for reasons of numerical stabil-
+ity. Equations (13)–(17) form the fundamental model studied
+below.
+A higher-fidelity model is obtained by solving the gyroki-
+netic equation for the ions and inserting their density perturba-
+tion on the right-hand side of equation (16),
+∇·
+min0
+B2 ∇⊥δφ
+
+= eδne −Ze ⟨δni⟩,
+(18)
+and equation (15) with
+u∥e =
+1
+en0
+δ j∥i +
+1
+μ0n0e∇· ∇⊥δA∥,
+(19)
+wherethe quantities δni and δ j∥i are evaluated as velocity space
+integrals of the perturbed ion distribution function, obtained
+from equation (3). In this case, δne follows equation (11), with
+δpe determined by [52]
+∂δpe
+∂t
+= −vE · ∇pe + ν∇2
+⊥δpe.
+(20)
+The hybrid kinetic model closed by equation (20) has provento
+work well for nearly Alfv´enic perturbations in W7-X, and for
+kink instabilities in cylindricaland tokamak geometry [52, 55].
+It is here adopted on the basis of its success in these con-
+texts. There is a small inconsistency in treating ions gyrokineti-
+cally and whilst neglecting the ion finite-Larmor-radiusterm in
+the parallel momentum equation for the electrons. (This term
+comes from the density perturbation, which is taken from the
+ions, in the perturbed electron pressure.) While this could seem
+an issue, in reality is a useful simplification which allows us to
+formally explore some regimes of interest for the instabilities
+that we are discussing. The correction to Ohm’s law due to the
+6
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Figure 4. (Left) Mode structure of the ‘double-kink’ instability for the rotational transform shown (corresponding to sc = 0.3, 0.4 and 0.5).
+Right: evolution of the instability. One can see how the shear Alfv´en wave continuum decays and the unstable ‘double-kink’ mode emerges.
+The growth rate is larger when the resonant flux surfaces are shifted towards the plasma edge. Code used: GYGLES. Model: gyrokinetics,
+two species, cylindrical geometry.
+full ion Larmorradius response is known,it can even be treated
+analytically [56, 57], and would only add some unnecessary
+subtleties which are not particularly interesting at this point. In
+particular, we would obtain a collisionless scaling for a grow-
+ing m = 1 mode of the type γ ∝d1/3
+e
+ρ2/3
+i
+, rather than γ ∝de
+[29, 58]. However, one new interesting aspect of ion kinetics
+in reconnecting modes theory has been recently pointed out by
+Connor et al [59], and is the effect of ion Landau damping. The
+ion kinetic model here used includes this physics.
+We conclude this section by noting that the equations are
+solved with the Fourier version of the EUTERPE solver. This
+is based on a discrete Fourier transform accomplished through
+the projection of the perturbed equations over a finite set of B-
+splines for the radial, s, poloidal, θ, and toroidal, ϕ, variables.
+7
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Figure 5. (Left) Mode structure of the ‘double-kink’ instability for the rotational transform shown. Only the internal ιpl is used for the
+ambient parallel current, see equation (27). Right: evolution of the instability. One can see how the shear Alfv´en wave continuum decays and
+the unstable ‘double-kink’ mode emerges. The mode drive appears to be even stronger than in the previous case shown in figure 4. Code
+used: GYGLES. Model: gyrokinetics, two species, cylindrical geometry.
+4. Results
+4.1. Gyrokinetic treatment in cylindrical geometry
+Let us now consider internal kink instabilities in a straight
+cylinder with low-shear rotational transform profiles that pos-
+sess a local maximum, such as those shown in figure 3. Note
+that two resonant flux surfaces with ι = 1 appear within the
+plasma. It is then reasonable to expect a destabilization of
+current-driven internal kink modes, just as in tokamaks.
+As in W7-X, we take the minor radius to be a = 0.55 m, the
+major radius R0 = 5.5 m, the magnetic field B0 = 2.5 T, and
+the rotational transform (ρ = r/a)
+ι = 0.88 + 0.12ρ2 + 0.12 exp
+
+−(ρ −sc)2
+0.02
+
+(21)
+The flux surface sc corresponds to the maximum of the rota-
+tional transform profile distortion by the plasma current. We
+assume a flat density profile n0 = 2 × 1019 m−3, flat ion and
+electron temperatures, Ti = 2 keV and Te = 5 keV. The radial
+variation has been set to zero in order to isolate current-driven
+modes in these simulations, but otherwise similar plasma den-
+sities and temperatures have been measured in recent W7-X
+experimental campaigns [1].
+In figure 4, we show the linear evolution of the electrostatic
+potential calculated by GYGLES [32] in the configuration con-
+sidered. One sees how the most unstable mode grows after the
+decay of the shear Alfv´en wave continuum. This mode is radi-
+ally localized to the region where ι is resonant and its structure
+is that of the ideal mode of figure 1. This is somewhat obfus-
+cated by the fact that here we are showing the electrostatic
+potential, whereas in figure 1 we show the contravariant com-
+ponent of the plasma displacement. We stress that one should
+not expect complete quantitative agreement between the ideal
+and the kinetic computations, if kinetic effects are not negli-
+gible [30]. The growth of the instability is stronger when the
+resonant flux surfaces are shifted towards the plasma edge,
+i.e. for sc = 0.5 in equation (21), and ι exceeds unity, as for
+the ideal-MHD case of section 2. The mode is driven by the
+gradient of the parallel plasma current density.
+The usual relation between the equilibrium parallel plasma
+current and the rotational transform in screw pinch geometry
+follows from the equations
+B = ∇ψ × ∇ϕ + F(ψ)∇ϕ, ψ(r) = B0r2
+2 , F(r) = B0r2
+R0
+ι(r)
+(22)
+j∥=
+1
+μ0r
+dF
+dr =
+B0
+μ0R0
+ι(2 −s) =
+B0
+μ0R0
+(2ι + rι′),
+s = −rι′
+ι .
+(23)
+Notice that our angles are kept consistent with a toroidal sys-
+tem, thus the traditional ‘poloidal’ angle of a screw pinch is
+here our ϕ.
+This cylindrical model differs in an important way from
+W7-X, where a large part of ι is provided by currents in
+external coils rather than by the plasma current:
+ι = ιext + ιpl,
+ιext ≫ιpl.
+(24)
+One may therefore question whether the plasma current itself
+can provide enough rotational transform for instability to
+occur. The drive for the instability comes from the gradient
+in the current density, which contributes to the magnetic shear
+ι′
+pl(r), whereas the shear ι′
+ext(r) in the external transform does
+not drive the instability. The magnetic shear is mostly due
+to plasma currents since the vacuum magnetic field has little
+shear in W7-X:
+ι′ = ι′
+ext + ι′
+pl,
+ι′
+pl ≫ι′
+ext,
+ι′′
+pl ≫ι′′
+ext.
+(25)
+To better mimic stellarator behaviour, we split the rota-
+tional transform into an ‘external’ (vacuum) and an ‘internal’
+(plasma) parts as follows:
+ιext = 0.88 + 0.12ρ2
+ιpl = 0.12 exp
+
+−(ρ −0.5)2
+0.02
+
+.
+(26)
+8
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Figure 6. Mode structure (on the left) and mode evolution (on the right) for more complicated rotational transform profiles with several
+maxima or crossing ι = 1 from above. Such profiles can be generated by the current drive in W7-X. One can see how the shear Alfv´en wave
+continuum decays and the unstable ‘multiple-kink’ mode emerges in all cases. Code used: GYGLES. Model: gyrokinetics, two species,
+cylindrical geometry.
+A similar treatment was introduced in reference [18]. When
+evaluating the magnetic field in equation (22), we then con-
+sider the total ι = ιext + ιpl, but we prescribe a plasma current,
+equation (23), entirely caused by ιpl, so that
+F(r) = B0r2
+R0
+
+ιext(r) + ιpl(r)
+
+, but j∥(r) = B0
+μ0R0
+(2ιpl + rι′
+pl).
+(27)
+In this way, we obtain the same resonant flux surfaces pro-
+duced by the total rotational transform (27), but the plasma
+current is kept small, consistent with the internal part of the
+rotational transform. The derivatives of ιpl are dominant in
+the evaluation of the derivatives of the total current. Indeed,
+we see in figure 5 that the double-kink instability is driven
+stronger in the ‘stellarator-like’ case with γ = 2603.1 s−1,
+when equation (27) is valid. When the total ι is used to evaluate
+the parallel current, equation (23), the growth rate is smaller
+9
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Figure 7. W7-X magnetic-flux surfaces at three characteristic cross sections, ϕ being the angle of the cylindrical coordinates (R, ϕ, Z). The
+magnetic axis (+) defines the r = 0 location, the outermost contour corresponds to r/a = 1, where a is the average minor radius. The
+magnetic equilibrium is evaluated by using the model ι and density and temperature profiles from the appendix. Code used: VMEC.
+(γ = 854.5 s−1 for the case with sc = 0.5 shown in figure
+4), likely due to a smaller ι′ in this case for s < 0.5 where
+|ι′
+pl| exceeds |ι′
+ext + ι′
+pl|. Overall, the gyrokinetic results give a
+milder instability, since in the ideal case we had γ = 950 s−1.
+In conclusion, we note that even more complicated rota-
+tional transform profiles are potentially possible for ECCD
+plasmas in W7-X. In figure 6, we study the model cases with
+two or three humps on the rotational transform profile (cor-
+responding to four or six crossings of ι = 1) as well as the
+case with ι = 1 crossed from above (also possible in some
+scenarios). In all cases studied, we observe the kink instabil-
+ity emerging from the decaying shear Alfv´en continuum with
+the mode structure closely following the rotational transform
+profile.
+4.2. Hybrid fluid-kinetic treatment in real W7-X geometry
+We are now ready to consider non-ideal instability in real W7-
+X geometry. As in the previous section, the density and tem-
+perature gradients are set to zero to eliminate their contribution
+to the instability drive, the study of which we leave for future
+work.
+We initialize a series of long-wavelength modes, among
+which the (m, n) = (1, −1) is the largest,
+δφ(ρ, θ, ϕ) = ei(θ−ϕ) e
+−1
+2
+ ρ−0.4
+0.1
+2
+,
+(28)
+and simulate a spectrum with −19 ⩽m ⩽11, and −26 ⩽n ⩽
+24, where m and n are the poloidal and toroidal wave-number,
+respectively.These values are chosen to allow no instability to
+grow for the highest mode numbers simulated. In all cases,
+the poloidal and toroidal resolution is 1/64, whereas the radial
+resolution is either 1/ns = 1/256 or 1/ns = 1/512. In order
+to eliminate the pressure-gradient drive, we artificially set
+to zero the equilibrium density and temperature gradients,
+hence obtaining purely current-gradient-driven modes. Thus,
+for n(0) = 2 × 1019 m−3, and νei/Ωi = 10−2, we observe the
+destabilisation of a robust long-wavelength mode (m, n) =
+(−4, 4), followed by higher mode numbers, see figure 8. Here
+we plot the amplitude of the radial integral of the electro-
+static potential evaluated at ϕ = 0, (where ϕ = 0 defines the
+poloidal cut shown in the left sub-frame of figure 7) for some
+relevant poloidal mode numbers. An additional spectral diag-
+nostic shows that the unstable mode m = −4 is indeed char-
+acterised by a toroidal mode number n = 4, thus resonating
+at the locations where ι = 1. The mode belongs to the set
+of harmonics that dominate the solution of the global ideal
+MHD eigenvalue problem (for the plasma radial displace-
+ment) with the smallest eigenvalue, as evaluated in section
+2, and we infer that this is a marginally stable ideal mode
+destabilised by non-ideal effects. The growth rate is γ−4 =
+4.276 × 104 s−1. The (m, n) = (1, −1) mode, whose nonlin-
+ear counterpart is experimentally observed during large saw-
+tooth crashes in W7-X [12], is not the one most susceptible
+to linear instability, despite the presence of two resonant loca-
+tions for which ι = 1. Presumably, the (m, n) = (1, −1) mode
+experimentally observed is the outcome of nonlinear interac-
+tion between other, linearly more unstable, modes of the same
+mode family. A linear analysis could not capture such type
+of interaction. Nevertheless, additional linear effects, such as
+magnetic compressibility, can also play an additional role [60].
+A further comment here is in order. The most unstable
+eigenmode of the system generally involves many different
+poloidal and toroidal harmonics. In a global setting such an
+eigenmode may therefore be resonant (ι(r) = n/m) at sev-
+eral radial locations and cause magnetic islands to grow on
+several resonant surfaces. (We remind the reader that we do
+not impose any particular parity on the perturbations at res-
+onant locations, hence electromagnetic micro-instabilities can
+cause magnetic reconnection [61]). All our simulations are lin-
+ear and, our ‘most unstable mode’ is simply the one with the
+largest growth rate. Any such an eigenmode usually involves
+many Fourier harmonics but may be characterised by the dom-
+inant one. In the case of figure 8, this is the (m, n) = (−4, 4),
+but we notice that an unstable (m, n) = (1, −1) mode is also
+present. This, as our results indicate, will eventually grow,
+after undergoing some oscillations, with a growth rate virtu-
+ally indistinguishable from that of the (m, n) = (−4, 4) mode.
+We are not in the position to predict whether this subtle inter-
+play between long wavelength instabilities can be observed
+experimentally. We also notice moderate high-mode-number
+10
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Figure 8. Most relevant modes destabilized by the equilibrium
+current gradient only. The complete spectrum simulated retains
+−19 ⩽m ⩽11, and −26 ⩽n ⩽24, where m and n are the poloidal
+and toroidal wave-number, respectively. The most susceptible to
+instability is the (m, n) = (−4, 4). The (m, n) = (1, −1) undergoes
+oscillations and is eventually destabilized. Moderate high-mode
+numbers are present. In particular one can see the m = −10. An
+alternative spectral diagnostic gives that this specific unstable mode
+is the m = −10, n = 9. Here Ωi = 2.298 × 108 s−1 is the ion
+cyclotron frequency. Code used: EUTERPE. Model: two fluids with
+finite resistivity, W7-X geometry.
+instabilities. For instance, the m = −10 mode grows with a
+growth rate γ−10 = 3.875 × 104 s−1 and its dominant toroidal
+mode number is n = 9. The role of these moderate high-mode-
+number instabilities will be investigated in a future companion
+article, where the equilibriumtemperaturegradientwill also be
+considered.
+The long-wavelength mode shows the same qualitative
+structure as in the cylindrical case. In figure 9 we see the
+m = −4 component of the electrostatic potential being local-
+ized between the locations at which ι = 1. The modes m = 1
+and m = 6 are also plotted, for comparison.This type of modes
+was also found by Strumberger and G¨unter, for similar ι pro-
+files, with a linear resistive MHD code [17]. To characterise
+the instability, we perform a scaling with plasma collisional-
+ity. Figure 10 shows such a scaling for the m = −4 mode in
+the case of flat profiles. For finite collisionality, the result fol-
+lows an η1/3 scaling, thus suggesting that the ECCD-perturbed
+ι-profile here investigated is non-ideally marginally unstable,
+the equivalent of the ‘large Δ′-regime’ in cylindrical geome-
+try. For an infinitesimally small collisionality, an instability is
+obtained (for reasonable radial resolution) only if the electron
+mass is artificially increased. We performed a numerical test
+with νei/Ωi = 10−6, setting mNUM
+e
+/mi = 5 × 10−3 and rescal-
+ing the final growth rate by a factor
+
+me/mNUM
+e
+. The result
+produces the correct collisionless asymptotic limit of γ−4 for
+νei ≪1. At the same time, in this way, we prove that the
+growth rate of the current-gradient-driven instability scales as
+γ−4 ∼de, for νei ≪1, [23], a result similar to the cylindrical
+one [58]. The hybrid version of the code is furtherused to study
+the effect of kinetic ions on this instability, which is seen to be
+Figure 9. Radial structure of the electrostatic potential, evaluated at
+the specific toroidal angle ϕ = 0 defining the poloidal cut of the left
+sub-frame of figure 7, for modes with poloidal numbers
+m = −4, 6, 1 as destabilised in figure 8 for t = 40[103/Ωi]. Here
+Ωi = 2.298 × 108 s−1 is the ion cyclotron frequency. Code used:
+EUTERPE. Model: two fluids with finite resistivity, W7-X geometry.
+Figure 10. Scaling with collisionality, ˆνei ≡νei/Ωi, for the
+(m, n) = (−4, 4) mode for flat profiles. The Coppi scaling is
+recovered. W7-X is in the collisionless regimes
+ˆνei(Te ≈5 keV) = 10−5, since νei(Te ≈5 keV, n ≈2 × 1019 m−3)
+≈2.26 × 103 s−1, and Ωi(B = 2.5 T) ≈2.4 × 108 s−1. Code used:
+EUTERPE. Model: two fluids and hybrid with gyrokinetic ions,
+W7-X geometry.
+stabilizing in figure 10. This is likely due to ion Landau damp-
+ing setting a threshold for the destabilisation of reconnecting
+modes, similar to the one recently predicted by Connor et al
+[59]. This kinetic mechanism requires the reconnecting mode
+to have an oscillating component. While the study of fluctua-
+tions during sawtoothing operations in W7-X is possible, and
+has been documented [62], a detailed comparison of kinetic
+simulations and experiments is left for future work.
+11
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Table 1. Summary of main results for each physics model and geometry.
+Cylinder (sc = 0.5)
+W7-X
+Physics model
+Mode numbers
+Growth rates
+Mode numbers
+Growth rates
+Ideal MHD
+(m, n) = (1, −1)
+γ = 950 s−1
+(m, n) = (4, −4)
+γ = 0−s−1
+Two fluids
+(m, n) = (4, −4)
+γ ∝η1/3, νei > γ
+Unstable
+γ ∝de, νei < γ
+Two GK species
+(m, n) = (1, −1)
+γ = 854.5 s−1
+Hybrid
+(m, n) = (4, −4)
+γ < γ(two fluids)
+Unstable
+ω ̸= 0(Landau damping)
+5. Discussion and perspectives
+In this article we have studied current-gradient-driven long-
+wavelength reconnectingmodes for W7-X relevant conditions,
+applying a hierarchy of numerical codes to describe the broad
+range of relevant physical properties characterising sawtooth-
+ing plasmas. On the most complete level, gyrokinetics was
+applied to all species to investigate the role of the rotational
+transform, ι, in driving magnetic reconnection. This was done
+with the gyrokinetic (radially) global code GYGLES, in cylin-
+drical geometry. In this case, we can observe the destabiliza-
+tion of a ‘double-kink’ mode, emerging after the decay of the
+shear Alfv´en continuum excited through the initial condition.
+The instability is more violent, the more plasma is involved,
+that is when the resonant location is increasingly far from the
+magnetic axis. This property derives from the MHD character
+of the instability, as the ideal MHD computations of section 2
+show. The same qualitative mode structure is also found in real
+W7-X geometry. For this case we used the gyrokinetic (radi-
+ally) global code EUTERPE, in its reduced and hybrid-fluid
+versions. The scaling of the long-wavelength reconnecting
+instability with collisionality and electron mass is the derived.
+It follows the typical scaling laws of the cylindrical limit, as
+recently derived also for stellarators [23]. More importantly,
+the scaling suggests that W7-X, when operating with ECCD,
+is driven close to ideal marginality, and therefore becomes
+susceptible to non-ideal instabilities. An ideal MHD analysis
+performed with the CAS3D code confirms this results. Specifi-
+cally, the dominant Fourier harmonics of the ideal mode found
+by CAS3D to be closest to marginality are those first observed
+with the code EUTERPE to be non-ideally destabilised. This is
+useful to know, especially for future studies of pressure-driven
+instabilities (whether reconnecting or not). Preliminary com-
+putations suggest that the pressure-gradient drive can be quite
+significant in plasmas with rotational transform profiles of the
+type considered above. When kinetic effects are accounted
+for, the instability threshold can be below the ideal one. A
+summary of the most important results is given in table 1.
+The existence of the instabilities investigated in this paper
+has several practical implications. Firstly, they limit the param-
+eter space available for safe device operation, if ECCD is
+present, since the very largest crashes encompass the entire
+plasma. For a crash of this type, the diamagnetic plasma
+current suddenly disappears and a corresponding current in
+any surrounding conductors is induced. Ensuing forces could
+cause damage, and they should be assessed. Secondly, smaller-
+amplitude sawtooth oscillations cause a degradation of con-
+finement, just like in tokamaks, by expelling the hot plasma
+from the plasma core. Thirdly, for future stellarators the exis-
+tence of reconnectinginstabilities raises the concern that a low-
+shear device is, in a sense, a delicate object, which can easily
+be affected by a small amount of an externally driven toroidal
+current, in particular if the latter is radially localized. However,
+we must point out that, in the absence of a current drive, the
+presence of an ι = 1 surface within the plasma does not pose
+a limit, nor a risk, for plasma operations. This has been proven
+in a series of ι−scan experiments in W7-X, in which the pres-
+ence of rational surfaces affects, or even improves, but does
+not limit confinement [63]. Finally, we must point out that the
+understanding of the physics of crashes offers also the oppor-
+tunity to control them, with all their properties. The clearest
+examples in which sawtooth crashes can be useful would be
+the removal of impurities from the core, or their exploitation
+for improved edge plasma fueling.
+Data availability statement
+The data that support the findings of this study are available
+from the corresponding author upon reasonable request. This
+work has been carried out within the framework of the EURO-
+fusion Consortium and has received funding from the Euratom
+research and training programme 2014–2018 and 2019–2020
+under Grant Agreement No. 633053. The views and opin-
+ions expressed herein do not necessarily reflect those of the
+European Commission.
+Appendix A. Equilibrium parameters
+In sections 2 and 4.1, straight screw-pinch equilibria are stud-
+ied. The basic parameters are chosen in accordance to W7-X
+parameters, i.e. the minor radius a = 0.55 m, the aspect ratio
+A = L/a = 2π × 10, and the magnetic field B0 = 2.5 T. We
+recall the model rotational transform, thus embedding (21),
+ι(ρ) = ι0 + ι2ρ2 + ι4ρ4 + f exp exp
+
+−(ρ −sc)2
+σ
+
+,
+(A1)
+12
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+Table 2. Parameters of a humped rotational transform profile as function of
+the normalized minor radius, as given in equation (A1).
+Case
+Section
+ι0
+ι2
+ι4
+fexp
+sc
+σ
+Cylinder
+2
+0.88
+0.115
+0
+0.2
+0.4922
+0.0125
+0.88
+0.115
+0
+0.2
+0.393
+0.0145
+0.88
+0.115
+0
+0.2
+0.2945
+0.0165
+0.88
+0.115
+0
+0.12
+0.4772
+0.0357
+4.1
+0.88
+0.12
+0
+0.12
+0.5
+0.02
+0.88
+0.12
+0
+0.12
+0.4
+0.02
+0.88
+0.12
+0
+0.12
+0.3
+0.02
+W7-X
+2
+0.86
+0.042
+0.072
+0.1545
+0.40283
+0.02399
+4.1
+0.86
+0.042
+0.072
+0.1545
+0.4
+0.025
+Figure 11. W7-X profiles used to evaluate the magnetic equilibrium of section 4.2: density profile (left), temperature profiles (right).
+with ρ = r/a the normalized minor radius, sc the center of
+the ι-hump modeling ECCD, and fexp and σ controlling its
+height and width. Table 2 summarizes the values of these
+parameters as used in sections 2 and 4.1. A flat density pro-
+file n0 = 2 × 1019 m−3, and flat ion and electron temperatures,
+Ti = 2 keV and Te = 5 keV complete the equilibrium descrip-
+tion for section 4.1. But for the flat profile shape, this choice
+uses plasma densities and temperatures values as measured in
+the recent W7-X experimental campaign [1]. Assuming quasi-
+neutrality, a central pressure of p0 = n0(Ti + Te) is used for
+the ideal MHD calculations, section 2.
+In sections 2 and 4.2, W7-X-type equilibria are considered
+using the equilibrium number density
+n0 = n0(0)
+
+1 −0.7ρ4
+,
+(A2)
+and the electron and ion temperatures
+Te = Te(0)
+
+1 −1.5ρ2 + 0.5 ρ4
+(A3)
+and
+Ti = Ti(0)
+
+1 −0.6ρ2 −0.4 ρ4
+,
+(A4)
+with n0(0) = 2 × 1019 m−3, Te(0) = 5 keV, Ti(0) = 2 keV.
+These profiles are shown in figure 11. They are models
+designed to reproduce typical ones, see [12]. For a W7-X-
+type equilibrium with effective minor radius a = 0.55 m and
+aspect ratio A = R/a = 10, the resulting average plasma-β
+is ⟨β⟩≈0.004 with a peaking factor of β(axis)/⟨β⟩≈2.46.
+Unlike screw-pinch plasmas, stellarator plasmas possess rota-
+tional transform already without a net toroidal current. For
+a net-current-free W7-X standard case with 5/6 < ι < 5/5,
+enclosed toroidal flux Φedge = 1.95 V s, and the pressure pro-
+file p0 = n0(Ti + Te) resulting from (A2)–(A4), the rotational
+transform is determined in a free-boundary VMEC [38, 39]
+calculation, giving the polynomial part of ι in (A1) with the
+parameters ι0, ι2, and ι4 in table 2, rows referring to W7-X.
+Similarly to figure 3, this rotational transform profile is mod-
+ified with an ι-hump, parameters fexp, sc, and σ in table 2, so
+as to mimic the effect of ECCD [12].
+13
+
+Nucl. Fusion 61 (2021) 086001
+A. Zocco et al
+ORCID iDs
+Alessandro Zocco
+https://orcid.org/0000-0003-2617-3658
+Alexey Mishchenko
+https://orcid.org/0000-0003-1436-
+4502
+Carolin N¨uhrenberg
+https://orcid.org/0000-0002-3568-
+2035
+Axel Könies
+https://orcid.org/0000-0003-4306-9000
+Ralf Kleiber
+https://orcid.org/0000-0002-2261-2855
+Matthias
+Borchardt
+https://orcid.org/0000-0003-4514-
+7391
+Marco Zanini
+https://orcid.org/0000-0002-8717-1106
+Torsten Stange
+https://orcid.org/0000-0003-4154-1455
+Kian Rahbarnia
+https://orcid.org/0000-0002-5550-1801
+Henning Thomsen
+https://orcid.org/0000-0002-6835-1494
+R.C. Wolf
+https://orcid.org/0000-0002-2606-5289
+Per Helander
+https://orcid.org/0000-0002-0460-590X
+Roman Hatzky
+https://orcid.org/0000-0003-4616-9568
+Michael D. J. Cole
+https://orcid.org/0000-0001-9682-989X
+References
+[1] Wolf R.C. et al 2019 Phys. Plasmas 26 082504
+[2] Klinger T. et al 2017 Plasma Phys. Control. Fusion 59
+014018
+[3] Pedersen T.S. et al 2019 Plasma Phys. Control. Fusion 61
+014035
+[4] Grieger G. et al 1992 Phys. Fluids B 4 2081
+[5] Dinklage A. et al 2018 Nat. Phys. 14 855
+[6] Hirsch M. et al 2017 Nucl. Fusion 57 086010
+[7] Fuchert G. et al 2018 Nucl. Fusion 58 106029
+[8] Bozhenkov S. et al 2020 Nucl. Fusion 60 066011
+[9] Wegner T. et al 2020 Nucl. Fusion 60 124004
+[10] N¨uhrenberg C. 1996 Phys. Plasmas 3 2401
+[11] N¨uhrenberg J. and Zille R. 1988 Phys. Lett. A 129 113–7
+[12] Zanini M. et al 2020 Nucl. Fusion 60 106021
+[13] Wesson J. 2011 Tokamaks 4th edn (Oxford: Oxford University
+Press) ch 6.13
+[14] Hastie R.J. 1997 Astrophys. Space Sci. 256 177
+[15] Porcelli F., Boucher D. and Rosenbluth M.N. 1996 Plasma Phys.
+Control. Fusion 38 2163
+[16] Jardin S.C., Krebs I. and Ferraro N. 2020 Phys. Plasmas 27
+032509
+[17] Strumberger E. and G¨unter S. (The W7-X team) 2020 Nucl.
+Fusion 60 106013
+[18] Yu Q. et al 2020 Nucl. Fusion 60 076024
+[19] Zocco A., Mishchenko A. and Koenies A. 2019 J. Plasma Phys.
+85 905850607
+[20] Ishida Y., Ishizawa A., Imadera K., Kishimoto Y. and Nakamura
+Y. 2020 Phys. Plasmas 27 092302
+[21] Nikulsin N., Hoelzl M., Zocco A., Lackner K. and G¨unter S.
+2019 Phys. Plasmas 26 102109
+[22] Czarny O. and Huysmans G. 2008 J. Comput. Phys. 227 7423
+[23] Zocco A., Helander P. and Weitzner H. 2020 Plasma Phys.
+Control. Fusion 63 025001
+[24] Schep T.J., Pegoraro F. and Kuvshinov B.N. 1994 Phys. Plasmas
+1 2843
+[25] Yu Q., G¨unter S. and Scott B.D. 2003 Phys. Plasmas 10 797
+[26] Halpern F.D., L¨utjens H. and Luciani J. 2011 Phys. Plasmas 18
+102501
+[27] Loureiro N.F., Cowley S.C., Dorland W.D., Haines M.G. and
+Schekochihin A.A. 2005 Phys. Rev. Lett. 95 235003
+[28] Loureiro N.F., Schekochihin A.A. and Zocco A. 2013 Phys. Rev.
+Lett. 111 025002
+[29] Zocco A. and Schekochihin A.A. 2011 Phys. Plasmas 18
+102309
+[30] Mishchenko A. and Zocco A. 2012 Phys. Plasmas 19 122104
+[31] Fivaz M., Brunner S., de Ridder G., Sauter O., Tran T.M.,
+Vaclavik J., Villard L. and Appert K. 1998 Comput. Phys.
+Commun. 111 27
+[32] Hatzky
+R.,
+Kleiber
+R.,
+Könies
+A.,
+Mishchenko
+A.,
+Borchardt M., Bottino A. and Sonnendr¨ucker E. 2019
+J. Plasma Phys. 85 905850112
+[33] Kornilov V., Kleiber R., Hatzky R., Villard L. and Jost G. 2004
+Phys. Plasmas 11 3196
+[34] Ara G., Basu B., Coppi B., Laval G., Rosenbluth M. and
+Waddell B. 1978 Ann. Phys., NY 112 443
+[35] Schwab C. 1993 Phys. Fluids B 5 3195
+[36] Bernstein I.B., Frieman E.A., Kruskal M.D. and Kulsrud R.M.
+1958 Proc. R. Soc. A 244 17
+[37] Hain K., L¨ust R. and Schl¨uter A. 1957 Z. Naturforsch. A 12 833
+[38] Hirshman S.P. and Whitson J.C. 1983 Phys. Fluids 26 3553
+[39] Hirshman S., van RIJ W.I. and Merkel P. 1986 Comput. Phys.
+Commun. 43 143
+[40] N¨uhrenberg C. 2016 Nucl. Fusion 56 076010
+[41] Bussac M.N., Pellat R., Edery D. and Soule J.L. 1975 Phys. Rev.
+Lett. 35 1638
+[42] N¨uhrenberg C. and Boozer A.H. 2003 Phys. Plasmas 10 2840
+[43] Hornsby W.A, Migliano P., Buchholz R., Kroenert L., Weikl A.,
+Peeters A.G., Zarzoso D., Poli E. and Casson F.J. 2015 Phys.
+Plasmas 22 022118
+[44] Mishchenko A., Cole M., Kleiber R. and Könies A. 2014 Phys.
+Plasmas 21 052113
+[45] Mishchenko A., Könies A., Kleiber R. and Cole M. 2014 Phys.
+Plasmas 21 092110
+[46] de Boor C. 1978 A Practical Guide to Splines (New York:
+Springer)
+[47] Höllig K. 2003 Finite Element Methods with B-Splines
+(Philadelphia, PA: Society for Industrial and Applied
+Mathematics)
+[48] Mishchenko A., Hatzky R. and Könies A. 2004 Phys. Plasmas
+11 5480
+[49] Mishchenko A., Könies A. and Hatzky R. 2004 Proc. Joint
+Varenna-Lausanne Int. Workshop 30 August-3 Septembe
+Varenna, Italy (Bologna: Societ`a Italiana di Fisica)
+[50] Mishchenko A., Könies A. and Hatzky R. 2005 Phys. Plasmas
+12 062305
+[51] Hatzky R., Könies A. and Mishchenko A. 2007 J. Comput. Phys.
+225 568
+[52] Cole
+M.,
+Mishchenko
+A.,
+Konies
+A.,
+Kleiber
+R.
+and
+Borchardt M. 2014 Phys. Plasmas 21 072123
+[53] Zocco A., Loureiro N.F., Dickinson D., Numata R. and
+Roach C.M. 2015 Plasma Phys. Control. Fusion 57 065008
+[54] Loureiro N., Dorland W., Fazendeiro L., Kanekar A., Mallet A.,
+Vilelas M. and Zocco A. 2016 Comput. Phys. Commun. 206
+45
+[55] McClenaghan J., Lin Z., Holod I., Deng W. and Wang Z. 2014
+Phys. Plasmas 21 122519
+[56] Pegoraro F., Porcelli F. and Schep T.J. 1989 Phys. Fluids B 1
+364
+[57] Connor J.W., Hastie R.J. and Zocco A. 2012 Plasma Phys.
+Control. Fusion 54 035003
+[58] Porcelli F. 1991 Phys. Rev. Lett. 66 425
+[59] Connor J.W., Ham C.J., Hastie R.J. and Zocco A. 2019 J. Plasma
+Phys. 85 905850204
+[60] Graves J.P., Zullino D., Brunetti D., Lanthaler S. and
+Wahlberg C. 2019 Plasma Phys. Control. Fusion 61 104003
+[61] Connor J.W., Hastie R.J. and Zocco A. 2013 Plasma Phys.
+Control. Fusion 55 125003
+[62] Rahbarnia K. et al 2020 Plasma Phys. Control. Fusion 63
+015005
+[63] Adreeva T. 2021 (Greifswald: Institute for Plasma Physics)
+private communication
+14

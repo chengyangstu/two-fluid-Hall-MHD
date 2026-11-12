@@ -1,0 +1,1910 @@
+
+===== PDF PAGE 1 =====
+         A structure-preserving numerical method for the compressible
+                              Resistive-Hall-MHD system⋆
+
+
+                            Murtazo Nazarova, Rafael Rodriguez-Velascoa, Ignacio Tomasb
+
+                                   aDepartment of Information Technology, Uppsala University, Sweden
+                                     bDepartment of Mathematics & Statistics Texas Tech University
+
+
+
+
+
+                 Abstract
+
+                    In this paper, we present a structure-preserving method for the compressible resistive
+                  Hall-magnetohydrodynamics (MHD) model. The differential operator is split into two
+                      parts: a hydrodynamic part consisting of the compressible Euler equations, and a mag-
+                      netic part consisting of a system coupling the Lorentz force and the induction equation.2026
+                The method uses continuous Lagrange elements for the Euler part and a curl-conforming
+                         finite element space for the magnetic part. The hydrodynamic part preserves the positiv-Jul                 ity of the density and internal energy, the conservation of total energy, and the minimum
+15               principlepart preservesfor thethespecificdivergenceentropy.involutionOwingconstraint.to the choiceThe offluidfinitepartelements,is solved usingthe magneticexplicit
+                      strong-stability-preserving Runge–Kutta (SSP-RK) methods, whereas the magnetic part
+                           is solved by Crank-Nicholson method, which requires using Newton’s method. Coerciv-
+                        ity estimates for the Jacobian of the corresponding Newton iteration are presented. We
+                    introduce a high-order artificial resistivity to improve the conditioning of the nonlinear
+                      residual and the invertibility of the Jacobian. Several challenging benchmarks, includ-
+                     ing a smooth whistler wave, the Orszag–Tang vortex for comparing resistive MHD with
+                        resistive Hall-MHD, and a magnetic reconnection problem, are solved to validate the[math.NA]              robustness and accuracy of the method.
+
+                  Keywords:  Resistive Hall MHD, structure preserving, invariant domain, involution
+                      constraints, energy-stability, magnetic reconnection
+
+
+
+
+
+                        ⋆Authors are listed alphabetically.
+                        Email addresses: murtazo.nazarov@it.uu.se (Murtazo Nazarov),
+                      rafael.rodriguez-velasco@it.uu.se (Rafael Rodriguez-Velasco), igtomas@ttu.edu (Ignacio Tomas)arXiv:2607.14286v1
+
+===== PDF PAGE 2 =====
+1. Introduction
+
+  In this work we consider the numerical solution of the compressible Hall-MHD system:
+
+
+                           ∂tρ + div m = 0 ,                                      (1a)
+         ∂tm + div (ρ−1mm⊤+ Ip) = µcurl H × H                           (1b)
+               ∂tE + div mρ (E + p) = µ(curl H × H) · mρ + r|curl H|2 ,          (1c)
+                ∂tH −curl ( mρ × H) = −curl ( µcurlr   H + diρ curl H × H)         (1d)
+where ρ ∈R is the density, m ∈R3 is the momentum, I ∈R3×3 is the identity matrix,
+E ∈R is the total mechanical energy, and H ∈R3 is the magnetic field. Here the constant
+r is the resistivity while di = miqi : the constant mi > 0 is the specific ion mass while
+qi > 0 is the specific ion charge, see for instance [38, p. 90]. The term curl (rcurl H) in
+the right hand side of (1d) is resistive term, while the term curl ( diρ curl H × H) is the
+Hall term. Note that resistive effects introduce the source of heat r|curl H|2 in the right
+hand side of (1c).
+  The MHD equations are widely used in astrophysics applications as well as in nuclear
+fusion research [36, 29], where it is used to study instabilities in plasma confinement
+[34, 57]. The MHD system can be understood as a formal asymptotic limit of the two-
+fluid Euler-Maxwell model. More precisely it is the limit obtained under the assumptions
+of infinite speed of light (equivalently, zero electric permittivity, that is ϵ0 →0+) and
+zero electron mass. Most frequently, the Hall term is neglected during the derivation of
+the ideal MHD model. The importance of the Hall term was first pointed out by James
+Lighthill in [45]. Derivations of the Hall-MHD system can be found in [1, 2]. Since the
+early 2000s there has been a growing body of scientific literature indicating that Resistive
+and Hall terms are fundamental to reproduce magnetic reconnection rates [11, 56, 53, 35]
+observed in practice.
+  Numerical solutions of the MHD system are vital to predict phenomena in various
+scientific fields such as plasma physics and astrophysics. Furthermore, when perform-
+ing numerical simulations of the MHD system, it is crucial to ensure the preservation
+of essential structure of the solution, such as positivity properties, conservation of to-
+tal energy, entropy-dissipation, and involution constraints. For instance, the works of
+[6, 17, 64, 65], along with references provided therein, represent just a subset of the com-
+prehensive research dedicated to achieving positivity-preserving approximations for the
+compressible ideal MHD system.
+  Another very important property preserved by the ideal-MHD and Resistive-Hall-MHD
+systems is the involution constraint of the magnetic field, that is, the invariance of the
+magnetic field’s divergence.  Time-invariance of the magnetic field implies that  if the
+magnetic field is zero at initial time, then, it should remain zero for all time. With-
+out making any claim of completeness, some references advancing numerical techniques
+that preserve some aspect of the involution (e.g. locally divergence-free and divergence
+cleaning methods) are [23, 44, 7, 47].
+  Overall, the literature on structure preserving methods for the ideal compressible MHD
+system is reasonably developed. On the other hand, the list mathematical references1
+
+  1By mathematical we mean: indexed by MathSciNet database
+                                      2
+
+===== PDF PAGE 3 =====
+advancing numerical schemes for the compressible Resistive-Hall-MHD system is notice-
+ably small. A fairly complete list of references obtained from MathSciNet database, with
+specific focus on compressible Resistive-Hall-MHD, is [63, 20, 54, 24, 59, 4, 14]. To the
+best of our knowledge, there is no literature with a focus on structure preservation of the
+compressible Resistive-Hall-MHD system.
+  The development of numerical methods for the MHD systems is inextricably associated
+to the divergence formulation. The divergence formulation of the ideal MHD system
+offers a few challenges that are hard to ignore. Among them, the divergence formulation
+is not Galilean invariant, it is not symmetrizable, and its Jacobian is defective (it does
+not possess a full set of eigenvectors). From the purely computational perspective, the
+Riemann problem of the ideal MHD in divergence form is not well defined unless the
+condition [[B]] · n = 0 holds across discontinuity surfaces [62]. Computationally, some
+of these problems may be alleviated with the inclusion of modifications of the scheme,
+for instance, with the use of constraint transport techniques, see for instance [55] and
+references therein.
+  Regarding the existence of solutions for compressible Hall-MHD models very little is
+known. An extensive literature search reveals that most, if not all, the Analysis literature
+is limited to short-time existence of strong solutions [27, 26, 30, 61, 40].  Notably, to
+the best of our knowledge, there are no existence results for the compressible Hall-MHD
+model without resistivity. On the other hand, the role of resistivity, for the incompressible
+Hall-MHD model, is well understood: resistivity is fundamental to achieve well-posedness
+of the incompressible Hall-MHD model. In a series of highly cited publications [15, 16, 37]
+it was proven that the incompressible Hall-MHD model without resistivity is ill-posed.
+Based on this record of Analysis results, it may be reasonable to assume that resistivity
+is fundamental to guarantee well-posedness of the compressible Hall-MHD model as well.
+  The current work is a continuation of the ideas advanced in [22]. In that work, the
+authors advanced a proof of the minimum principle of the specific entropy as well as
+entropy-dissipation inequalities that do not involve viscous regularization of the magnetic
+field. These results indicate that the ideal MHD is not a conservation law in the vanishing-
+viscosity sense of [41, 18, 10]. Inspired by this result, we developed a numerical scheme
+that decomposes the ideal MHD system into Euler’s equation and a purely Hamiltonian
+PDE that couples the Lorentz force and the induction equation. Such scheme is capable
+of preserving positivity properties, total energy, involution constraints, and entropy-
+dissipation inequalities with no divergence-cleaning or related tools. Most importantly,
+the induction equation is not stabilized in any form or fashion: which is entirely consistent
+with the vanishing-viscosity argument.
+  In this paper, we extend the ideas of [22] to the case of the Resistive-Hall-MHD model.
+We develop a new scheme that preserves positivity of the density, positivity of the internal
+energy, total mechanical energy, minimum principle of the specific entropy. We also prove
+that the scheme preserves entropy-dissipation inequalities if the numerical method used
+to solve Euler’s system preserves such a property. The scheme is semi-implicit: Euler’s
+system is advanced explicitly, while the source system consisting of the Lorentz force
+coupled to the induction equation is advanced in a time-implicit fashion.
+  One of the most important differences between the present work and [22] is the be-
+haviour of nonlinear solvers. In our previous work we used Newton’s method to solve
+the nonlinear residual associated to the coupled system involving Lorentz force and the
+induction equation. In that work, nonlinear performance turned out to be exceptional
+                                      3
+
+===== PDF PAGE 4 =====
+across several tests and mesh types: Newton’s solver never exceeded 4 iterations per
+time-step. The addition of the Resistive term is benign and does not change the be-
+haviour/performance of Newton’s scheme. However, the addition of the Hall terms is
+rather delicate. Our initial computations for the Resistive-Hall-MHD system, using uni-
+form structured meshes, delivered comparable performance along the lines of at most 4-5
+Newton iterations per time step. However, such results did not translate to other mesh
+types. Nonlinear solver performance turned out to be rather inconsistent across several
+types of meshes: either too many Newton iterations were required or the Jacobian was
+severely ill-conditioned. This is not strictly speaking a defect of the scheme, but rather
+a problem associated with our choice of nonlinear solver.  Since we were unwilling to
+give up Newton’s method2 and its second-order convergence, we decided to modify the
+scheme. Coercivity analysis of the Jacobian reveals a loss of invertibility whenever the
+electron speed is too large. Therefore, we devised an artificial resistivity for the induction
+equation that improves well-posedness of the Jacobian, thereby stabilizing the behaviour
+of nonlinear Newton iterations.
+  One of the most important aspects of scientific computing is Verification and Validation
+[5]. Generally speaking, verification consists in checking that the method is convergent.
+The standard quantitative test is computation of convergence rates (or log-log plots)
+using exact solutions3. However, exact analytical solutions for the compressible-Resistive-
+MHD model are not available at this point in time. This makes quantitative evaluation
+of the scheme very difficult. On the other hand, qualitative tests are just limited to
+graphical comparison.  Again, given the extremely rarefied body of literature on this
+model, there are just a few meaningful computational results, most of which use very
+coarse meshes to be considered reference results.  For instance, with the exception of
+[14], pretty much every computation of the Resistive-Hall-MHD model available in the
+literature uses 128×128 cells for the GEM challenge problem.
+  In this regard, one of our most important contributions is the development of both
+quantitative tests and reference computational results. We present a quantitative test
+consisting of a smooth-traveling wave, in the linear resistive regime that allows us to
+verify some aspects of the accuracy of the method. We illustrate the computation of
+the GEM challenge with resolutions of up to 1024×1024 elements. Our long-term goal
+is to make the corresponding data available to the wider scientific community. We also
+advance direct comparisons of Resistive-MHD vs Resistive-Hall-MHD with Orzag-Tang
+vortex test using resolutions of up to 724×724 cells. Finally, to the best of our knowledge,
+there are no computations of the Resistive-Hall-MHD model using unstructured meshes,
+with most,  if not all results using structured cartesian meshes.  It is well-known that
+most numerical methods use to solve hyperbolic-like problems are very sensitive to mesh-
+imprint artifacts. In this work, we present a series of results using structured isotropic
+meshes, structured anisotropic, fully unstructured quasi-uniform meshes, and criss-cross
+meshes, showing that our method delivers comparable results regardless of the choice of
+mesh.
+
+
+   2For instance, we could have replaced Newton’s method with some form of accelerated fixed-point
+method.
+  3An alternative approach is using the method of manufactured solutions. However, such an approach
+does not evaluate the ability of the scheme to approximate autonomous dynamics. Overall, in the context
+of nonlinear hyperbolic-like problems, manufactured solutions is not a highly regarded approach for code
+verification.
+                                      4
+
+===== PDF PAGE 5 =====
+  The paper is organized as follows: in Section 2 we present a splitting of the differential
+operator (1), prove the properties preserved by each operator and show that the splitting
+is compatible with the sequential preservation of such properties.  In Section 3.1 we
+summarize the notation related to the space discretization. In Section 3.2 we provide
+the space and time discretization of the source-system associated to the Lorentz force
+and the induction equation (containing the ideal, Hall, and resistive terms). The main
+theoretical results of this scheme are independent of the choice of numerical scheme used
+to solve Euler’s system. Therefore, in Section 3.3 we outline the main assumptions made
+about the hyperbolic solver. The precise choice of hyperbolic solver used for all our
+computations is described in Appendix B of our previous work [22]. In Section 3.4 we
+elaborate our motivations for the development of an artificial viscosity. In Section 3.5
+we make precise the artificial viscosity used for all our computations. In Section 3.6 we
+provide an algorithmic summary of the whole operator splitting scheme. In Section 4 we
+present our numerical results.
+  Finally, we mention that this paper has three appendices. Appendix A contains a
+summary of thermodynamic properties which are used in the context of Sections 1 and
+3.2. Appendix B contains the derivation of the Jacobian and its coercivity analysis: this
+appendix and its contents play a very important role in this paper. Appendix C describes
+the implementation of the 2.5-space dimensions implementation.
+
+
+2. Splitting of the differential operator
+
+ We start by splitting (1) into two differential operators
+
+                              ∂tρ + div m = 0 ,
+                        ∂tm + div (ρ−1mm⊤+ Ip) = 0                
+                  Operator #1          m                                (2)
+                                ∂tE + div  ρ (E + p) = 0 ,
+                                  ∂tH = 0
+
+and
+
+                                                       ∂tρ = 0 ,
+                                      ∂tm −µcurl H × H = 0                 Operator #2                     m                       (3)
+                               ∂tE −µ(curl H × H) · ρ −r|curl H|2 = 0
+                   m          ∂tH −curl (                                     ρ × H) + curl ( µcurlr   H + diρ curl H × H) = 0
+
+We briefly discuss the properties preserved by each operator. We will assume that the
+pressure is computed from a complete Equation of State (EOS) as described by (A.2).
+In particular, we assume that the EOS satisfies the assumptions (A.3) and (A.4), see
+Appendix A for more details.  In Section 3 we outline the development of numerical
+schemes that preserve such properties in the fully-discrete setting.
+
+Proposition 2.1 (Properties preserved by Operator #1). Let t1 < t2, consider
+the time interval [t1, t2] and that m·n = 0 in the entirety of the boundary ∂Ω, compactly
+supported initial data, and that t2 −t1 is small enough such that no wave reaches the
+
+                                      5
+
+===== PDF PAGE 6 =====
+boundary for any t ∈[t1, t2]. Alternatively, assume periodic boundary conditions. Then,
+the solution operator (2) satisfies the following properties:
+
+         Z            Z            Z             Z
+             ρ(x, t2) dx =    ρ(x, t1) dx ,    m(x, t2) dx =   m(x, t1) dx
+         Ω            Ω            Ω             Ω                    (4)
+        Z             Z             Z             Z
+           E(x, t2) dx =   E(x, t1) dx ,    H(x, t2) dx =   H(x, t1) dx
+         Ω            Ω             Ω            Ω
+
+Note that the conservation properties on the magnetic field follow trivially since H(x, t2)
+≡H(x, t1) in the context of Operator #1. Therefore, we also have that
+
+           Z            µ             Z            µ
+              E(x, t2) + 2 |H(x, t2)|2 dx =   E(x, t1) + 2 |H(x, t1)|2 dx           (5)
+           Ω                       Ω
+
+  Regarding pointwise properties: we have that
+
+                                          inf     ρ(x, t) ≥0 ,                              (6)
+                                      (x,t)∈Ω×[t1,t2]
+
+provided that the initial data ρ(x, t1) ≥0 for all x ∈Ω, for the specific entropy we have
+that:
+
+               x∈Ωs(ρ(x,inf         t2), e(u(x, t2)) ≥infx∈Ωs(ρ(x, t1), e(u(x, t1))
+
+and the mathematical entropy satisfies
+
+                  ∂tη(u) + div q(u) ≤0  for all (x, t) ∈Ω× [t1, t2]                 (7)
+
+where {η, q} = {−ρs, −ms} is the entropy-flux pair. Integration on Ωof the pointwise
+estimate (7) naturally leads to the inequality:
+
+                    Z               Z
+                          η(u(x, t2)) dx ≤   η(u(x, t1)) dx
+                    Ω              Ω
+
+ We do not advance a proof of this proposition since it is a recollection of well-known
+results about Euler’s system. Conservation properties (4) are just a consequence of the
+divergence theorem. The non-negativity of the density (6) is proved, for instance, in
+[33]. For the specific case of the ideal gas equation of state, the minimum principle of
+the specific entropy was proved for the first time in [60].  For the case of (arbitrary)
+thermodynamically stable4 equations of state, a proof of the minimum principle of the
+specific entropy can be found in [33]. The entropy-dissipation inequality (7) is a con-
+sequence of the vanishing viscosity principle and the convexity of η(u) with respect to
+u = [ρ, m, E]⊤, see for instance [31].
+
+  The following proposition makes significant use the thermodynamics summary in Ap-
+pendix A. The reader unfamiliar with the basics of thermodynamics is encouraged to
+read the Appendix before reading Proposition 2.1.
+
+
+  4An equation of state is thermodynamically stable if the specific internal energy e = e(s, v) is a convex
+function with respect to the specific entropy s and specific volume v. See Appendix A for more details.
+                                      6
+
+===== PDF PAGE 7 =====
+Proposition 2.2 (Properties preserved by Operator #2). Let t1 < t2, assume that
+the initial data is such that
+                  ρ(x, t1) > 0 ,  e(x, t1) := (E −12ρ|v|2)(x, t1) > 0
+                                                                                       (8)                                       ∂      1           −1
+        and  θ(ρ(x, t1), e(x, t1)) :=  ∂es( ρ(x,t1), e(x, t1))  > 0  for all x ∈Ω,
+
+here θ(ρ(x, t1), e(x, t1)) is the temperature at time t1. Then, Operator #2 as described
+in (3), preserves the following properties:
+
+         Z   1       µ
+               ( 2ρ|v|2 + 2 |H|2)(x, t2) dx
+         Ω
+            Z t2 Z                              µdi
+        +           rcurl H −µ(v × H) +  ρ curl H × H   · (H × n) dsdt        (9)
+                       t1  ∂Ω
+             Z   1       µ              Z t2 Z
+        =    ( 2ρ|v|2 + 2 |H|2)(x, t1) dx −         r|curl H|2 dxdt
+             Ω                                         t1  Ω
+                                          Z t2
+        (E −12ρ|v|2)(x, t2) = (E −12ρ|v|2)(x, t1) +     r|curl J|2dt              (10)
+                                                                           t1
+          θ(ρ(x, t2), e(x, t2)) ≥θ(ρ(x, t1), e(x, t1))                                 (11)
+          s(ρ(x, t2), e(x, t2)) ≥s(ρ(x, t1), e(x, t1))                                 (12)
+          η(ρ(x, t2), e(x, t2)) ≤η(ρ(x, t1), e(x, t1))                                 (13)
+
+Note that properties (10)-(13) are pointwise properties, that is, they hold for every x ∈Ω.
+
+Proof 2.1. We start by noting that since ∂tρ = 0, Operator #2 can be rewritten as:
+
+                                        ρ∂tv −µcurl H × H = 0              (14a)
+                       ∂tE −µ(curl H × H) · v −r|curl H|2 = 0             (14b)
+               ∂tH + curl ( µcurlr   H −v × H + diρ curl H × H) = 0              (14c)
+
+Now, we multiply (14a) by v and (14c) by µH and integrate in space to obtain:
+
+                           Z      1
+                                        ∂t 2ρ|v|2 −µ(curl H × H) · v dx = 0        (15)
+                            Ω
+         Z  1                                      µdi
+              2µ|H|2 + curl (rcurl H −µv × H +  ρ curl H × H) · H dx = 0 .
+          Ω
+Now, integrating by parts this last equation we obtain:
+
+          Z  1                                 µdi
+               2µ|H|2 + (rcurl H −µv × H +  ρ curl H × H) · curl H dx
+           Ω                                                                   (16)
+              Z                           µdi
+         +    (rcurl H −µv × H +  ρ curl H × H) · (H × n) ds = 0 ,
+                ∂Ω
+adding (15) to (16) we obtain:
+
+  ∂ Z  1       µ
+  ∂t    2ρ|v|2 + 2 |H|2 dx
+    Ω                                                                            (17)
+     Z                              µdi                        Z
+  +      rcurl H −µ(v × H) +  ρ curl H × H   · (H × n) ds = −    r|curl H|2 dx
+      ∂Ω                                            Ω
+                                      7
+
+===== PDF PAGE 8 =====
+Integrating this expression in time between time t1 and t2 then (9) follows. Now we
+multiply (14a) by v and subtract the result from (14b) to obtain
+
+
+                                  ∂t                               ∂ E −12ρ|v|2 = r|curl J|2.                          (18)
+
+Integrating (18) in time between time t1 and t2 then (10) follows. Since ∂tρ = 0 in the
+context of Operator #2, we can divide (18) by ρ to obtain:
+
+                            ∂e
+                               ∂t = ∂t∂  Eρ −12|v|2 = ρ|curlr      J|2 ,                       (19)
+
+therefore the specific internal energy can only increase during the evolution of Operator
+#2. Since ∂tρ = 0 and ∂θ∂e ≥0, see convexity Assumption (A.4)-(A.5), then (19) implies
+that the temperature θ can only increase during the evolution of Operator #2. More
+precisely, using the fundamental theorem of calculus, the chain rule, the thermodynamic
+relationships in (A.2), and identity (19) we have that:
+
+                 θ(ρ(x, t2), e(x, t2)) −θ(ρ(x, t1), e(x, t1))
+                   Z t2           Z t2 ∂θ ∂e
+            =     ∂tθ(ρ, e)dt =          dt
+                                  t1                      t1  ∂e ∂t
+                   Z t2 ∂ h∂s i−1 ∂e      Z t2 h∂s i−2 ∂2s ∂e                (20)            =                  dt = −                  dt
+                                  t1  ∂e ∂e    ∂t            t1  ∂e    ∂2e ∂t
+                    Z t2   ∂2s r
+            = −     θ2           J|2dt ≥0   for all x ∈Ω                                     t1    ∂2e ρ|curl
+
+                                                                       ∂2s
+where the last inequality follows from the convexity assumption  ∂2e ≤0, see (A.5).
+Combining assumption (8) with (20) establishes that θ(ρ(x, t), e(u(x, t))) can only take
+strictly positive values in the interval [t1, t2]. Similarly, since ∂tρ = 0 in the context of
+Operator #2, using the thermodynamic relationship ∂e∂s = θ,1 and identity (19) we obtain:
+
+             s(ρ(x, t2), e(u(x, t2))) −s(ρ(x, t1), e(u(x, t1)))
+               Z t2           Z t2 ∂s ∂e    Z t2 1 r                        (21)
+         =     ∂ts(ρ, e)dt =          dt =             J|2dt ≥0                            t1                      t1  ∂e ∂t         t1  θ ρ|curl
+
+where the inequality follows from the fact that θ can only take positive values in the
+interval [t1, t2]. Therefore (21) leads to the proof of (12). Now, reorganizing (21) and
+multiplying both sides of the equality by −ρ(x, t1) we obtain:
+
+         −ρ(x, t1)s(ρ(x, t2), e(u(x, t2)))
+                                              Z t2 1 r                 (22)
+        = −ρ(x, t1)s(ρ(x, t1), e(u(x, t1))) −ρ(x, t1)             J|2dt                                                                                 t1  θ ρ|curl
+
+Since η = −ρs and ρ(x, t1) = ρ(x, t2), then (22) can be rewritten in a more compact
+form as:
+
+                                Z t2 1 r
+                           η2 = η1 −ρ1             J|2dt                         (23)                                                         t1  θ ρ|curl
+
+which proves (13).
+                                      8
+
+===== PDF PAGE 9 =====
+Corollary 2.1 (Total energy balance). We note that global balance (9) and pointwise
+property (10) imply a global balance of total energy. More precisely, integrating (10) in
+space we obtain:
+   Z                     Z                     Z Z t2
+     (E −12ρ|v|2)(x, t2) dx =   (E −12ρ|v|2)(x, t1) dx +         r|curl J|2dt dx   (24)
+    Ω                    Ω                    Ω  t1
+
+Now, adding (24) to (9) yields:
+
+         Z      µ
+          (E + 2 |H|2)(x, t2) dx
+         Ω
+            Z t2 Z                              µdi
+        +           rcurl H −µ(v × H) +  ρ curl H × H   · (H × n) dsdt
+                       t1  ∂Ω
+             Z      µ
+        =   (E + 2 |H|2)(x, t1) dx
+             Ω
+which is the balance of total energy.  In particular,  if we consider periodic boundary
+conditions, or H × n ≡0 on the entirety of the boundary, it becomes clear that Operator
+#2 will preserve total energy.
+
+
+3. Numerical scheme
+
+3.1. Space discretization preliminaries
+  In this subsection we outline the space discretization used for Euler’s components
+{ρ, m, E} and the magnetic field H. Let Ω⊂Rd, with d = 2 or d = 3, we consider a
+simplicial mesh Th and a corresponding scalar-valued continuous finite element space Vh
+for each component of Euler’s system:
+              Vh =  vh(x) ∈C0(Ω)  vh(T K(bx)) ∈P1(bK) ∀K ∈Th  .            (25)
+Here, T K(bx) : bK →K denotes a diffeomorphism mapping from the unit simplex bK to
+the physical element K ∈Th, and P1(bK) is polynomial space of at most first degree
+on the reference element. We define V =  1  : dim(Vh)  as the index-set of global,
+scalar-valued degrees of freedom (DOF) corresponding to Vh.  Similarly, we introduce
+the set of global shape functions {ϕi(x)}i∈V and the set of collocation points {xi}i∈V
+satisfying the property ϕi(xj) = δij for all i, j ∈V. We assume that the partition of
+unity property Pi∈V ϕi(x) = 1 holds true for all x ∈Ω. We introduce a number of
+matrices that will be used for the algebraic discretization. We define the consistent mass
+matrix entries mij ∈R, lumped mass matrix mi ∈R, and the discrete divergence-matrix
+entries cij ∈Rd:
+
+                 Z               Z             Z
+             mij =   ϕiϕj dx , mi =    ϕi dx ,  cij =   ∇ϕjϕi dx .           (26)
+                  Ω              Ω            Ω
+Note that the definition of mij and the partition of unity property Pi∈V ϕi(x) = 1 imply
+that Pj∈V mij = mi. Given two scalar-valued finite element functions uh = Pi∈V uiϕi ∈
+Vh and vh = Pi∈V viϕi ∈Vh we define the lumped inner product as:
+
+                                 ⟨uh, vh⟩= X miuivi .                            (27)
+                                           i∈V
+                                      9
+
+===== PDF PAGE 10 =====
+Similarly, we define the space of vector-valued finite element functions [Vh]d. For the
+case of vector-valued functions uh = Pi∈V uiϕi ∈[Vh]d and vh = Pi∈V viϕi ∈[Vh]d the
+lumped inner-product is defined as ⟨uh, vh⟩= Pi∈V miui · vi.
+ We define the curl-conforming finite-dimensional space:
+      Hh = Xh ∈H(curl, Ω) [∇bxT K(bx)]⊤Xh(T K(bx)) ∈[P1(bK)]d ∀K ∈Th      (28)
+which will be used to discretize the magnetic field H. The finite element space Hh is
+known as the “rotated” or curl-conforming BDM1 space. The primary motivation to
+use this space is that it is the simplest curl-conforming finite element that spans all
+the vector-valued polynomial space [P1]d, therefore full second-order accuracy should be
+expected in the Lp-norm, for 1 ≤p ≤∞, when using this element. We note in passing,
+that definition (28) involves the covariant Piola transform, see [25, Chapter 9].
+  Finally, we define the space
+            Wh =  ωh ∈C0(Ω) ωh(T K(bx)) ∈P2(bK) ∀K ∈Th   .             (29)
+It is easy to prove that the space Wh satisfies the inclusion ∇Wh ⊂Hh, more precisely,
+these two spaces are part of a discrete exact sequence, see [3]. The space Wh is used to
+define the weak divergence-free property, see Proposition 3.1. For the specific case that
+we may want to enforce tangential boundary conditions on the solution we also define
+the finite element spaces
+
+                    Hh0 = Xh ∈Hh Xh × n = 0 on ∂Ω  ,
+                   Wh0 =  ωh ∈Wh ωh = 0 on ∂Ω  .
+
+Note again that the inclusion ∇Wh0 ⊂Hh0 holds true. Finally, we note that it is possible
+to develop compatible construction of finite element spaces Vh, Hh and Wh of higher
+polynomial degree for both simplices as well as quadrilateral/hexahedral elements. The
+reader is referred to Remark 3.1 in [22].
+  Given an arbitrary vector-valued function w(x) ∈[L2(Ω)]d we define the lumped
+projection ΠLVh : [L2(Ω)]d →[Vh]d as:
+
+                                                1 Z
+         ΠLVh[w(x)] := X wiϕi(x) where wi :=      w(x)ϕi(x) dx         (30)
+                                         mi  Ω                           i∈V
+We will use the operator ΠLVh in Section 3.5 to define an artificial resistivity.
+
+3.2. Source-system scheme
+  The first step is elucidating a proper variational formulation for Operator #2. We
+start by multiplying (14a) and (14c) by smooth vector-valued test functions, z and X
+respectively, and integrate by parts to obtain:
+
+  Z             Z
+     ρ∂tv · z dx −µ   (curl H × H) · z dx = 0
+   Ω             Ω
+  Z                          Z                      µdi
+    µ∂tH · X + µ(curl X × H) · v +    rcurl H · curl X +  ρ (curl H × H) · curl X + dx
+   Ω                         Ω
+      Z                                µdi
+   +    −µ(v × H) + rcurl H +  ρ (curl H × H)  · (X × n) ds = 0 .
+       ∂Ω
+                                                                                  (31)
+
+                                     10
+
+===== PDF PAGE 11 =====
+Therefore, for the specific case when we use boundary conditions H × n ≡0 on ∂Ωwe
+propose the fully discrete scheme: find {vn+1h    , Hn+1h  } ∈V3h × Hh0 such that
+
+                                                                  1
+                                                                  2                                             n+ 21
+                                                                                ), zh)L2(Ω) = 0                              × Hh      ⟨ρnh(vn+1h  −vnh), zh⟩−τnµ((curl Hhn+
+                                                                                      1                                                                             1                                                   n+                                                                             2                                                                                ), v                                                                                      2 )L2(Ω)           µ(Hn+1h  −Hnh, Xh)L2(Ω) + τnµ((curl Xh × Hhn+                                                            h                                                 1                                                 (32)
+                        n+ 2                                     curl                                                      ,         +                  τn(rn                                     Xh)L2(Ω)                       hcurl                Hh
+                                                 1                                                            1                            n+                                   n+                             1                                                 2 ×                  H                       H         +                              (curl                  τnµdi                                       h                                         h                           ρn                                                            2 ), curl Xh L2(Ω) = 0                             h
+
+                             n+ 12     1            n+ 21     1for all {zh, Xh} ∈V3h ×Hh0, where v h   := 2(vnh + vn+1h   ), Hh   := 2(Hnh + Hn+1h   ), and
+rnh ≥r is the finite element function associated to the resistivity. For the purposes of this
+section, the reader only needs to know rnh(x) is purely explicit, meaning: rnh(x) will be a
+function of solution fields from the previous time steps. More precisely, it will depend on
+{ρnh, vnh, Hn}, {ρn−1h    , vn−1h    , Hn−1}, and the time-step size τn−1, see Sections 3.4 and 3.5
+for more details. Note that unknown field in (32) is vn+1h  (x) = Pi∈V ϕi(x)vn+1i     . Once
+we solve for vn+1h  (x) we have to define the function:
+            mn+1h  (x) := X ϕi(x)mn+1i    with mn+1i   := ρni vn+1i                (33)
+                              i∈V
+
+Finally, we compute the total mechanical energy at each node as:
+
+
+                                                                            1                         1 |mn+1i    |2    |mni |2     n+          En+1i  = Eni +      −1    + τnJi   2  for all i ∈V,          (34)
+                         2   ρni      2  ρni
+
+where
+                     n+ 21     1 Z         n+ 12                    Ji   :=       rnh|curl Hh   |2ϕi dx.                     (35)
+                          mi  Ω
+
+                                                           n+ 21
+Note that, in essence, (34) is a discrete interpretation of (10), while Ji      is just a
+weighted-average or lumped-projection of the Joule heat-power. The coupled nonlinear
+system (32) is meant to be solved first, once {mn+1h    , Hn+1h  } are computed they can be
+plugged into (34) and (35) to compute En+1i    at each node i ∈V. See Section 3.6 for
+the actual algorithmic summary. We now state the properties satisfied by the scheme
+described by (32), (33), (34), and (35).
+
+Proposition 3.1 (Properties preserved by the source-update scheme). Assume
+that the initial data is such that
+         ρni > 0 ,  eni := Enρnii −12|vni |2                   ∂    1                      > 0 and θni := [ ∂es( ρni , ei)]−1 > 0 ,        (36)
+
+  The scheme (32)-(35) satisfies the energy estimate:
+
+                                                                                       2 ∥2L2(Ω)    X mi  12ρni |vn+1i    |2 + µ2 ∥Hn+1h  ∥2L2(Ω) + τ∥ p rnhcurl Hn+h  1
+            i∈V                                                                   (37)
+               = X mi  12ρni |vni |2 + µ2 ∥Hnh∥2L2(Ω)
+                             i∈V
+                                     11
+
+===== PDF PAGE 12 =====
+which combined with (33), (34), and (35) implies that the total conservation of energy:
+
+     X miEn+1i  + µ2 ∥Hn+1h  ∥2L2(Ω) = X miEni + µ2 ∥Hnh∥2L2(Ω).           (38)
+               i∈V                             i∈V
+
+We have that the following nodewise/pointwise properties hold true:
+
+               ρn+1i  = ρni  ,  e(un+1i   ) ≥e(uni ) ,  θ(un+1i   ) ≥θ(uni ) ,
+                                                                                  (39)
+                      s(un+1i   ) ≥s(uni ) ,  η(un+1i   ) ≤η(uni ).
+
+Finally, we also have the preservation of the following involution property:
+
+             (Hn+1h    , ∇ωh)L2(Ω) = (Hnh, ∇ωh)L2(Ω)  for all ωh ∈Wh0.            (40)
+
+                                           n+ 12          n+ 12
+Proof 3.1. The proof of (37) follows by taking zh = v h   and Xh = Hh    in (32) and
+adding both equations:
+
+    X 2mi|vn+11        i    |2 + µ2 ∥Hn+1h  ∥2L2(Ω)
+            i∈V
+                                                                                       2 ∥2L2(Ω).          = X 2mi|vn1        i |2 + µ2 ∥Hnh∥2L2(Ω) −τn∥ prnhcurl Hn+h  1
+                     i∈V
+
+Now, multiplying (34) by mi and adding for all i in V we obtain:
+
+                                                                                            i |2                                                i    |2                                                          n+ 12                                                                                                                          .      (41)                      = X mi Eni −1 |mn   X mi En+1i  −1 |mn+1                                    + τnmiJi
+                       2   ρni        i∈V         2  ρni          i∈V
+
+Adding (37) to (41), then (38) follows as a consequence of definition (35). More precisely,
+definition (35) implies that:
+
+                                                                              2 ,                                                   2 ∥2L2(Ω) = X miJin+ 1                      ∥p rnhcurl Hn+h  1
+                                                  i∈V
+
+which follows as a consequence of the partition of unity property Pi∈V ϕi(x) = 1.
+  Now, since ∂tρ in the context of Operator #2, then ρn+1i  = ρni  as detailed in (39).
+Now, reorganizing (34) we obtain:
+
+                                                                        i |2                                          i    |2                                            n+ 12                                                                 for all i ∈V,                   = Eni −1 |mn                                      +τnJi           En+1i  −1 |mn+1
+                    2   ρni           2  ρni
+              |                      {z                               }   |  = ρn{zi eni   }             = ρn+1i                         en+1i
+
+Therefore, we divide the previous expression by ρn+1i  = ρni which yields:
+
+                                       n+ 12
+                                      Ji                             en+1i  = eni + τn          .                                           ρn
+
+      n+ 21Since Ji  ≥0 by construction, see expression (35), and ρn > 0 by assumption (36),
+we conclude that en+1i  ≥eni . Regarding inequalities θ(un+1i   ) ≥θ(uni ), s(un+1i   ) ≥s(uni )
+                                     12
+
+===== PDF PAGE 13 =====
+and η(un+1i   ) ≤η(uni ) in (39): they follow by similar arguments to those outlined in (20),
+(21), (22) and (23).
+  Finally, involution property (40) follows by taking Xh := ∇ωh, with ωh ∈Wh0, in the
+induction equation in (32) and noting that curl ∇ωh ≡0.
+
+Remark 3.1 (Three dimensional nature of the model). We note that Operator #2
+is intrinsically three-dimensional: the Hall term leads to non-zero time derivative of the
+third component of the magnetic field H, which in turn leads to a 3-dimensional Lorentz
+force, and ultimately a three-dimensional momentum.
+  This poses the question of how to do computations without actually committing to a
+fully three-dimensional code. This issue has been considered in the existing literature in
+what is usually called the 2.5-space dimensions formulation [50, 39]. The 2.5-dimensional
+implementation assumes zero gradients in the z-direction and enlarges the magnetic field
+with a third component that does not need to be discretized with specialized finite element
+spaces.  Say, for instance, the third component could be purely nodal if we wish. The
+details of the 2.5-dimensional implementation are presented in Appendix C.
+
+3.3. Hyperbolic solver: assumptions
+  Following the same structure of our previous work [22], we place no particular emphasis
+on the actual choice of hyperbolic solver used to solve Operator #1. The central ideas
+advanced in this paper are compatible with most of the existing numerical methods used
+to solve Euler’s equation of gas dynamics. With that being said, this Section is almost
+identical to Section 3.2 of [22] and it is only provided for the sake of completeness.
+  Given some initial data uh = [ρnh, mnh, Enh]⊤, a numerical approximation to the so-
+lutions of u(x, t) = [ρ(x, t), m(x, t), E(x, t)]⊤at time tn, we have at hand a numerical
+procedure to compute the updated state as
+
+         {ρn+1h    , mn+1h    , En+1h    , τn} := euler_system_update({ρnh, mnh, Enh}),       (42)
+
+where {ρn+1h    , mn+1h    , En+1h  } is the approximate solution at time tn + τn. Note that as
+described in (42), τn is a return argument of the procedure euler_system_update. In
+other words, euler_system_update determines the time-step size on its own. We may
+at times, need to prescribe the time-step size used by euler_system_update, in such
+case the interface of the method might look as:
+
+         {ρn+1h    , mn+1h    , En+1h  } := euler_system_update({ρnh, mnh, Enh, τn}),
+
+where τn is supplied to euler_system_update.
+  Regarding more specific properties of the method euler_system_update we may as-
+sume it is formally second-order accurate, and most importantly, the following structural
+properties hold:
+
+   ⋄Collocated/nodal discretization. We assume that all the components of Euler’s
+     system (2) are discretized in a collocated fashion meaning
+
+           ρh(x) = X ρiϕi(x) , mh(x) = X miϕi(x) , Eh(x) = X Eiϕi(x) ,
+                     i∈V                    i∈V                    i∈V
+
+                                     13
+
+===== PDF PAGE 14 =====
+     where ρi ∈R, mi ∈R3, Ei ∈R, and {ϕi(x)}i∈V is the basis of the scalar-valued
+       finite element space Vh defined in (25).
+    The use of a nodal basis plays a role in the energy-stability analysis, see Proof 3.1.
+    More precisely, our proof recovers an estimate for the kinetic energy as a discrete
+    sum on the nodes:  see for instance update formula (34), energy estimate (37),
+     and Corollary 2.1. In essence the proof works because the degrees of freedom are
+      associated to full-fledged states ui = [ρi, mi, Ei].  It is not clear, at this point in
+      time, that the same proof will work in the case of, for instance, a monomial basis.
+   ⋄Conservation of linear invariants. In the context of periodic boundary conditions
+     the hyperbolic solver preserves the linear invariants:
+
+      X miρn+1i  = X miρni  , X mimn+1i  = X mimni  ,
+                    i∈V           i∈V         i∈V            i∈V
+                                                                                  (43)
+          X miEn+1i  = X miEni ,
+                                  i∈V            i∈V
+
+     where mi was defined in (26).
+   ⋄Admissibility. We assume that if the initial data uni = [ρni , mni , Eni ]⊤is admissible,
+     meaning uni ∈A for all i ∈V, where the set A is defined as
+
+          A =   [ρ, m, E]⊤∈Rd+2 | ρ > 0 and E −12ρ|m|2 > 0    ,         (44)
+
+     then the updated state un+1i  = [ρn+1i     , mn+1i     , En+1i   ]⊤, as defined in (42), is admis-
+      sible for all i ∈V as well.
+
+    We highlight that, in this paper, we use (44) as a minimal requirement of pointwise
+      stability for a scheme solving Euler’s equation. Beyond the simplistic case of the
+      ideal gas law, admissibility, as described in (44), is necessary but not sufficient
+      to guarantee hyperbolicity [49, 48].  For instance, the Nobel-Abel-Stiffened-Gas
+     Equation of State, provided as an example in Appendix A, requires the condition
+     e > q + ρ−1p∞(1 −ρb) > 0 to guarantee hyperbolicity. A much more stringent
+      request than (44) would involve preservation of hyperbolicity, positivity of temper-
+     ature and minimum principle of the specific entropy [60, 33]. However, we want
+      to avoid delving into technical aspects related to equations of state which are not
+      central to the main ideas advanced in this paper.
+   ⋄Entropy dissipation inequality. We may assume that the scheme preserves a global
+     entropy inequality, meaning
+
+          X miη(un+1i   ) ≤ X miη(uni ),                     (45)
+                               i∈V              i∈V
+
+      in the context of periodic boundary conditions.
+
+  The hyperbolic solver used for all our computations is described in Appendix B of our
+previous work [22].
+
+
+
+
+                                     14
+
+===== PDF PAGE 15 =====
+3.4. Motivations for the artificial resistivity: well-posedness of the Newton iteration.
+  In this section we provide some background and heuristics that guided the design of
+the artificial viscosity advanced in Section 3.5. We have several motivations to introduce
+artificial resistivity into the scheme. But we are primarily motivated by solvability issues
+found in our early computational experiments:
+
+  1.  Nonlinear solver robustness across several types of meshes. We have observed (com-
+      putationally) that the scheme delivers satisfactory results, with great performance
+      of the Newton scheme (at most 4 Newton iterations), when using no artificial resis-
+       tivity on uniform meshes. However, such performance did not carry over to other
+     types of meshes. In the context of non-uniform meshes we have that: either New-
+      ton’s method required either too many iterations, or the Jacobian turned out to be
+     extremely ill-conditioned, or very small time-step sizes were required when using
+     no artificial resistivity.
+
+    To the best of our knowledge, all the literature on Resistive-Hall-MHD is limited to
+      cartesian uniform meshes. However, our goal is to raise this standard and having
+     a scheme that delivers comparable performance across uniform meshes, isotropic
+     non-uniform meshes, anisotropic meshes, and so-called criss-cross meshes5.
+  2.  Invertibility of the Jacobian (B.2). It is possible to add enough resistivity to guar-
+     antee the invertibility of the Jacobian, see for instance the coercivity estimate
+      (B.7).
+  3.  Taming the behaviour of advective instabilities. The induction equation is mostly
+     an advective-like PDE that may benefit from some artificial viscosity.
+
+ We expand with some technical details in relation to bullets 1, 2 and 3 listed above.
+The source system (32) is solved using Newton’s method. We derived and analyzed the
+coercivity of the Jacobian in Appendix B. In particular, the reader might want to take a
+look at the variational problem that has to be solved at each Newton iteration (B.2), the
+bilinear form associated to the Jacobian (B.3), Proposition Appendix B.1 states sufficient
+conditions to guarantee invertibility of the Jacobian, and Remark Appendix B.1. In order
+to save some time to the reader, we summarize the findings:
+
+  (i) Estimate (B.6) reveals that invertibility of the Jacobian can always be recovered
+     by using sufficiently small time-step size τ (without adding any artificial viscosity).
+ (ii) On the other hand, estimate (B.7) shows that a proper combination of moderately
+     small time-step size and artificial resistivity can yield invertibility of the Jacobian.
+
+These two bullets hint at two strategies at our disposal to recover well-posedness of
+the Newton iteration:  (i) sheer brute force (i.e.  using tiny time-step sizes), or (ii)
+a combination of both moderate time-step sizes combined with some form of artificial
+viscosity. We will pursue an approach aligned with strategy (ii). But we will not use a
+viscosity strong enough to unconditionally guarantee invertibility of the Jacobian. Such
+approach would necessarily lead to an over-diffusive first-order scheme. Our goal is more
+modest: we want to add a mild (but well-informed) regularization of the residual to
+improve the differentiability of the residual and invertibility of the Jacobian.
+
+
+   5See for instance [12] for more information on criss-cross meshes and their pathological behaviour.
+                                     15
+
+===== PDF PAGE 16 =====
+  From estimates (B.6) and (B.7), in particular estimate (B.6), we gather that Jacobian
+invertibility might be lost if the pointwise value of one of the following:
+
+                                       |curl Hh(x)| or |ve|                              (46)
+                           with ve := v −diρ curl Hh(x)                         (47)
+
+is too large. We note in passing that ve, as defined in (47), is the electron velocity,
+see for instance [32]. On the other hand, the induction equation (1d) may be rewrit-
+ten/reorganized as:
+
+                   ∂tH −curl ve × H = −curl ( µcurlr    H).
+
+Therefore, we may interpret ve as the advective velocity of the magnetic field.
+  From our previous work [22], we know that |curl Hh(x)| shows up in the coercivity anal-
+ysis of the Jacobian of ideal MHD. However, in practice, the magnitude of |curl Hh(x)|
+appears to be of no concern: we have yet to find a test case where the Jacobian of ideal
+MHD turns out to be singular. Therefore, our best guess is that, in most cases of prac-
+tical interest, the electron speed ve is the most likely culprit for the loss of coercivity of
+the Jacobian, while coercivity-loss risk associated to |curl Hh(x)| is not that important.
+It is also important to remember that ve is large near vacuum conditions. Therefore, in
+the next section we devise a first-order scheme using |ve| as an estimate of the maximum
+wavespeed of propagation.
+
+3.5. Artificial resistivity
+  In this section we define two artificial resistivities:
+
+     - A low-order artificial resistivity that yields very robust but sometimes over-diffused
+      results.
+     - A high-order residual-based resistivity that gets triggered in non-smooth regions of
+     the domain, but is, otherwise very small.
+
+In practice these two resistivities are blended in order to localize the resistive effects only
+where it is necessary. More precisely, we define the resistivity finite element function
+rnh(x) used in scheme (32) as:
+
+           rnh(x) = X riϕi(x) ∈Vh where  ri = max{r, min{rlowi   , rresi  }} ,
+                     i∈V
+
+here r > 0 is the value of the physical resistivity, rlowi   the value of a first-order artificial
+resistivity, and rresi   is a high-order residual-based resistivity. We now explain how rlowi
+and rresi  are computed. The low-order resistivity is defined as
+                                     rlowi  = clowhiλlowi   ,
+
+where clow is an empirical non-dimensional constant of O(1), hi is a measure of the grid-
+size in the vicinity of the node xi, and λlowi    is an approximation to the local maximum
+speed of propagation. Here clow and hi can be chosen quite loosely. Our computations
+use the simple choices:
+
+                                clow = 0.25 and  hi = m1/di    ,                         (48)
+                                     16
+
+===== PDF PAGE 17 =====
+where mi = R Ωϕi dx is the i-th lumped mass entry. While the speed of propagation λlowi
+is defined as as:
+
+                           λlowi  = |veh(xi)|  for each i ∈V
+                  where veh(xi) := vh(xi) −diρ ΠLVh[curl Hh](xi),
+
+which is an approximation to the electron velocity as defined in formula (47).  Note
+that the lumped L2-projector ΠLVh is necessary since curl Hh ∈H(div) might not have
+well-defined pointwise values.
+  In order to define the residual of the induction equation we run again into the problem
+that curl Hh is not sufficiently smooth. We resort again to the use of the L2-projector
+and define the residual as:
+      Rnh(x) = Hnh(x) −Hn−1h  (x) −τn−1curl (v hn−12 × Hn−12 )
+                                                                                  (49)
+                                                                                 2 ](x) × Hnh(x)),       + τn−1curl ( rnµ ΠLVh[curl Hn−1h                                                   2 ](x) −diρ ΠLVh[curl Hn−1h
+
+where lumped L2-projector ΠLVh was defined in (30). Note that the residual Rnh(x) ∈
+L2(Ω) belongs to neither space [Vh]d nor Hh. Since we want to recover point values of
+the residual we compute its L2-projection onto the nodal vector-valued space [Vh]d:
+
+                      Rnh(x) := ΠLVh[Rnh(x)]                             (50)
+
+and define the re-scaled residual as:
+
+                 Rnh(x)                            1 Z                                       where Hh(x) =                                               Hnh(x) dx.    (51)    bRnh(x) =                                                                 |Ω| Ω          maxx∈Ω|Hnh(x) −Hnh(x)|ℓ2(Rd)
+
+Finally, we define the residual-based resistivity as:
+
+                                        rresi = cresh2i bRnh(xi).                             (52)
+
+Here again, cres is a constant of O(1). In practice we use cres = 1.0 for all our computa-
+tions.
+
+
+
+
+
+                                     17
+
+===== PDF PAGE 18 =====
+3.6. Algorithmic summary.
+
+Algorithm 1 momentum_and_h_field_update({ρnh, mnh, Hnh, τ})
+
+
+                                                   i ϕi         Define: vnh := X mnρni
+                         i∈V
+         Find:{vn+1h    , Hn+1h  } ∈Vdh × Hh0 such that
+                                                                               1                                              n+
+                                                                    2 × H                                                                               2 ), zh)L2(Ω) = 0                                                       h       ⟨ρnh(vn+1h  −vnh), zh⟩−τµ((curl Hn+h  1
+                                                                                        1                                                    n+
+                                                                               2 ), v                                                                                        2 )L2(Ω)             µ(Hn+1h  −Hnh, Xh)L2(Ω) + τµ((curl Xh × Hhn+ 1                                                              h       
+                         n+ 21                                       curl                                                         ,           +                                      Xh)L2(Ω)                    τ(rnhcurl                 Hh
+                                                   1                             n+                               1                                    n+ 21                                                   2 ×                   H                                (curl                   τµdi         +                                  h                        Hh                            ρn                                                                 ), curl Xh L2(Ω) = 0                              h
+               n+ 12     1                n+ 12     1         where v h   := 2(vnh + vn+1h   ) and Hh   := 2(Hnh + Hn+1h   ).
+         Define: mn+1h   := X(vn+1i   ρni )ϕi
+                             i∈V
+        Return:{mn+1h    , Hn+1h  }
+
+Comments: this algorithm corresponds with the solution of the source sytem (32). Here
+it is important to note that the actual computational implementation requires a change
+of variables: note the definition of the velocity finite element function vnh at the very
+beginning. Similarly, by the end of the algorithm we also have to return to the original
+dependent variable (momentum) and define the finite element function mn+1h    , which is
+a return argument of the method.
+
+
+Algorithm 2 source_update({ρnh, mnh, Enh, Hnh, τ})
+
+       {mn+1h    , Hn+1h  } := momentum_and_h_field_update({ρnh, mnh, Hnh, τ})
+        for  i ∈V
+           ρn+1i   := ρni
+           n+ 12     1 Z         n+ 12          Ji   :=       rnh|curl Hh   |2ϕi dx                                  (53)
+                 mi  Ω
+                                                                      i |2                                           n+ 12                        1 |mn+1i    |2 −1 |mn          En+1i  = Eni +                            + τ Ji
+                        2   ρni      2  ρni
+        end for
+        Return:{ρn+1h    , mn+1h    , En+1h    , Hn+1h  }
+
+Comments: here source_update  defines the procedure used to approximate the whole
+evolution described by Operator #2, see (3). The assignments within the for-loop cor-
+respond with the total mechanical energy update as described in (34)-(35). The method
+momentum_and_h_field_update is described in Algorithm 1.
+
+                                     18
+
+===== PDF PAGE 19 =====
+Algorithm 3 hall_mhd_update({ρnh, mnh, Enh, Hnh})
+
+              {ρ1h, m1h, E1h, τn} := euler_system_update({ρnh, mnh, Enh})
+                     H1h := Hnh
+              {ρ2h, m2h, E2h, H2h} := source_update({ρ1h, m1h, E1h, H1h, 2τn})
+          {ρn+1h    , mn+1h    , En+1h  } := euler_system_update({ρ2h, m2h, E2h, τn})
+                    Hn+1h   := H2h
+                    Return : {ρn+1h    , mn+1h    , En+1h    , Hn+1h  }
+
+Comments: the procedure euler_system_update represents an Euler’s solver satisfying
+the assumptions described in Section 3.3. On the other hand, the implementation of
+source_update is described in Algorithm 2. Note that the time-step size τn is determined
+during the first call to euler_system_update, then the method source_update and the
+second call to euler_system_update have to comply with such time-step size. Finally,
+note that the return argument un+1h  = [ρn+1h    , mn+1h    , En+1h    , Hn+1h  ]⊤represents the solution
+at time tn+1 = tn + 2τ n.
+
+
+  For the sake of completeness we summarize the properties satisfied by the method
+hall_mhd_update as defined in Algorithm 3 in the following proposition.
+
+Proposition 3.2 (Properties preserved by the method hall_mhd_update). For the
+sake of simplicity that boundary conditions m · n = 0 and H × n = 0 are satisfied. Then
+
+  ⋄Energy stability. If we assume the method used to solve Euler’s equation
+     euler_system_update satisfies the conservation assumption (43), then the output
+     produced by method hall_mhd_update satisfies the total conservation of energy
+      property
+
+      X miEn+1i  + µ2 ∥Hn+1h  ∥2L2(Ω) = X miEni + µ2 ∥Hnh∥2L2(Ω).
+                  i∈V                             i∈V
+
+   ⋄Admissibility.  If the method used to solve euler_system_update satisfies the ad-
+      missibility requirements outlined in the second bullet of Section 3.3, then the result-
+      ing solution hall_mhd_update is admissible as well. That is,
+                   un+1i  = [ρn+1i     , mn+1i     , En+1i     ] ∈A  for all i ∈V
+
+     where the set A was defined in (44).
+   ⋄Entropy-dissipation properties.  If the method euler_system_update satisfies the
+      entropy-dissipation inequality (45) then the method hall_mhd_update satisfies the
+     entropy dissipation inequality as well. In particular we have that
+
+          X miη(un+1i   ) ≤ X miη(uni )
+                                i∈V              i∈V
+
+   ⋄Involution constraints. The method hall_mhd_update satisfies the following invo-
+      lution constraint:
+                (Hn+1h    , ∇ωh)L2(Ω) = (Hnh, ∇ωh)L2(Ω)  for all ωh ∈Wh0          (54)
+                                     19
+
+===== PDF PAGE 20 =====
+Proof 3.2. The proofs mostly boil down to invoking Proposition 3.1, the assumptions
+on the hyperbolic solver described in Section 3.3, and the sequential nature of operator
+splitting:
+
+  ⋄Energy stability. It follows by a sequential argument: just use assumption (43) for
+      the hyperbolic solver and and the discrete energy property (38) of Operator #2.
+   ⋄Admissibility. Again it follows by the sequential nature of operator splitting. Re-
+     garding Operator #1 we invoke the assumption in the third bullet of Section 3.3:
+      the hyperbolic solver preserves admissibility.  Regarding Operator #2 we invoke
+      pointwise properties (39) which show that specific internal energy, temperature and
+       specific entropy only increase during discrete evolution of Operator #2.
+   ⋄Entropy-dissipation. Let’s assume that the hyperbolic solver satisfies the entropy-
+      dissipation property (45). On the other hand, the the algorithm source_update
+       satisfies the inequality η(u2i ) ≤η(u1i ), see expression (39).  Multiplying this in-
+      equality by mi and adding for all i ∈V we obtain that the source-update scheme
+       satisfies:
+
+          X miη(u2i ) ≤ X miη(u1i ).
+                                 i∈V            i∈V
+
+    The global entropy-dissipation property follows by a sequential argument.
+   ⋄Involution constraints. We start by noting that the magnetic field Hh does not get
+      modified during the evolution of Operator #1. On the other hand, source_update
+      preserves the involution property (54) as detailed in Proposition 3.1 formula (40).
+      Therefore, it follows by the sequential nature of operator splitting that the method
+     hall_mhd_update preserves the involution constraint.
+
+
+4. Numerical results
+
+  In this section, we demonstrate the validity and robustness of the proposed scheme. We
+first verify the solver by reproducing the whistler-wave dispersion relation and obtaining
+high-order convergence for the linearized equations (Section 4.1), before validating it in
+the nonlinear regime using the GEM challenge problem (Section 4.2). Finally, we present
+novel simulations of the Orszag–Tang vortex (Section 4.3) and conclude with a study of
+mesh sensitivity and the robustness of the proposed scheme (Section 4.4).
+  Throughout this section, we use P 1 polynomials, ideal Equation of State with adiabatic
+constant γ = 5/3 and artificial resistivity constants clow = 0.25 and cres = 1.  The
+CFL constant is taken 0.5 for all the simulations except for those in Section 4.3. The
+equations are expressed in nondimensional form, with velocities scaled by the Alfvén
+speed vA = H0 pµ/ρ0, pressure by p0 = µH20 and lengths scaled by the ion skin depth
+di. Consequently, di denotes a non-dimensional parameter in this section.
+
+4.1. Whistler wave
+  The simplest manifestation of the Hall term is the propagation of whistler waves. The
+linearized Hall resistive MHD equations admit theoretical wave solutions under uniform
+density and pressure, which can be used to perform an error convergence test. Similar
+
+                                     20
+
+===== PDF PAGE 21 =====
+tests have been carried out for the case of pure Hall MHD, see for example [14, 8]. Here,
+we also take resistivity into consideration.
+  More precisely, we choose a background field along the e0 direction and assume a small
+transverse wave perturbation propagating along e0:
+
+           H = H0 e0 + δH,   δH =  0, δH, δH  ei(kx0−ωt).
+
+Inserting this ansatz into the induction and momentum equations leads to the following
+dispersion relation for a right-hand polarized whistler wave
+
+             ωH + p ω2H + 4ω2A             ωH   !          ω =               −irk2  1 +         + O(r2),         (55)
+                        2            2   p ω2H + 4ω2A
+
+with ωH := dik2H0/ρ and ω2A := k2H20/ρ. The corresponding wave solution is
+
+         v1 = −δv eℑ(ω)t cos(kx0 −ℜ(ω)t),  H1 =  δH eℑ(ω)t cos(kx0 −ℜ(ω)t),
+                                                                                  (56)
+         v2 =  δv eℑ(ω)t sin(kx0 −ℜ(ω)t),  H2 = −δH eℑ(ω)t sin(kx0 −ℜ(ω)t),
+
+where δv is related to δH through the momentum equation as
+
+                                  kH0
+                                 δv =     δH.
+                                ωρ
+
+We follow a setup analogous to that of [21], with a doubly periodic domain [−Lx, Lx] ×
+[−Ly, Ly] with Lx = 80/3 and Ly = 20 with a propagation direction e0 forming an
+angle φ = arctan(4/3) with respect to the x-axis. In the computational frame, the initial
+perturbation phase becomes Φ(x, y) = k(x cos φ + y sin φ). This results in the following
+set of initial conditions
+
+       vx =  δv sin φ cos Φ,      Hx = H0 cos φ −δH sin φ cos Φ,      ρ = ρ0,
+       vy = −δv cos φ cos Φ,      Hy = H0 sin φ + δH cos φ cos Φ,      p = p0,
+        vz =  δv sin Φ,           Hz = −δH sin Φ.
+
+We set ρ0 = 1, H0 = 0.2, p0 = 5.12 × 10−4, di = 1, r = 0.001 and λ = 2π/k = 32.
+The initial perturbation δH = 0.0001 is taken small enough such that nonlinear effects of
+the PDE are negligible. The relative L2 norm error is computed between the numerical
+solution and the theoretical solution (56) after a full period T = 2π/ℜ(ω).
+  The convergence results over several mesh sizes are collected in Table 1 and plotted in
+Figure 1 along reference rate 2 lines, corresponding to the expected convergence for P1
+polynomials. The rates are computed using least squares. The method achieves near-
+optimal convergence rates for all the components, successfully capturing the characteristic
+dispersion relation for whistler waves.
+
+4.2. GEM magnetic reconnection challenge
+  For a nonlinear verification of the scheme, we consider the Geospace Environmen-
+tal Modeling (GEM) magnetic reconnection challenge.  First introduced by [11], it is
+markedly the standard and most well-studied test for Hall MHD, as it is designed to
+                                     21
+
+===== PDF PAGE 22 =====
+                  Figure 1: L2 relative error for the whistler wave convergence test
+
+Table 1: Whistler wave L2 relative errors for the components of H and m. The mesh consists of Nx ×Ny
+rectangular cells, each split in two elements.
+
+                     L2 error in H                 L2 error in m
+     Mesh      Hx       Hy       Hz      mx      my      mz
+     64 × 48    9.10E-05   5.12E-05   1.83E-01   1.97E-01   1.97E-01   1.84E-01
+     96 × 72    4.21E-05   2.37E-05   8.44E-02   9.13E-02   9.13E-02   8.52E-02
+    144 × 108   1.87E-05   1.05E-05   3.78E-02   4.08E-02   4.08E-02   3.83E-02
+    216 × 162   8.44E-06   4.75E-06   1.71E-02   1.85E-02   1.85E-02   1.75E-02
+    324 × 243   3.74E-06   2.10E-06   7.59E-03   8.35E-03   8.35E-03   7.95E-03
+    486 × 364   1.65E-06   9.26E-07   3.33E-03   3.84E-03   3.84E-03   3.67E-03
+    729 × 546   7.04E-07   3.96E-07   1.41E-03   1.81E-03   1.81E-03   1.74E-03
+      Rates      1.998      1.998      1.995      1.938      1.938      1.923
+
+
+reproduce magnetic reconnection on a perturbed Harris sheet, where the Hall contribu-
+tion is known to be critical to obtain fast reconnection rates. Although no exact solution
+is known for this problem, extensive numerical research has been carried out, and the
+reconnection rates produced can be compared quantitatively.
+ We consider a rectangular domain [0, Lx] × [0, Ly] with Lx = 25.6 and Ly = 12.8 with
+periodic boundary conditions for the x-axis. For the y-axis, we use homogeneous natural
+boundary conditions6 by dropping the boundary terms arising from integration by parts
+in the weak formulation, see expression (31). The resistivity and ion-skin depth are taken
+
+
+
+   6Sometimes referred to as perfectly conducting boundary conditions, since it implies a zero tangential
+electric field at the boundary.
+
+
+
+                                     22
+
+===== PDF PAGE 23 =====
+to be r = 0.005 and di = 1, respectively. We use the following set of initial conditions:
+
+                   y −y0                                                       y −y0
+                                                         0 tanh2                                                                                                              ,    v = 0,      ρ = ρ0 sech2                 + ρ∞,    p = p0 −H2
+                  λ                       2         λ
+                   y −y0    ψ0      2πx      π(y −y0)
+    Hx = H0 tanh      +   π cos         sin                     ,
+                  λ      Ly      Lx         Ly
+     Hy = −ψ0 2π sin  2πx  cos  π(y −y0)    ,
+           Lx       Lx         Ly
+     Hz = 0,
+
+where ρ0 = 1, ρ∞= 0.2, H0 = 1, p0 = 0.6, λ = 0.5, y0 = 6.4 and ψ0 = 0.1. Four
+snapshots are illustrated in Figure 2 for the out-of-plane current density Jz = (curl H)z
+using a mesh of 1024×1024 elements. Starting from the perturbed Harris equilibrium,
+the current sheet thins around the center of the domain until it collapses into an X-line.
+The reconnection rate begins to increase at t ≈18.5 [panel (a)], marking the onset of
+fast, Hall-mediated reconnection. The precise location of the onset time is particularly
+sensitive to space and time discretization. This is notable for the cases of coarse meshes
+that do not fully resolve high-frequency whistler waves, and for the case of anisotropic
+meshes where the onset can be delayed.  After the onset, magnetic energy is rapidly
+converted into kinetic and thermal energy, driving an outflow jet away from the X-line
+[panel (b)]. Once the jet reaches the periodic boundary, it thickens and interacts with
+itself, and the current density at the center reverses sign [panels (c)–(d)].
+                               Lx
+  The reconnected flux, Ψ(t) = R                                  Hy(x, y = Lx/2) dx is plotted in Figure 3 for both                                Lx/2
+Hall-resistive MHD and only resistive MHD. The rate of reconnection is considerably
+larger for the Hall simulation, agreeing with the results in, for instance, [11, 59, 14].
+
+4.3. Orszag–Tang vortex
+  The Orszag–Tang vortex is a standard benchmark for ideal MHD [51], as it evaluates
+the capability of a numerical scheme to resolve nonlinear shocks and turbulence behavior.
+The Orszag–Tang vortex has rarely been considered in the context of Hall MHD. While
+there exist studies adopting a quasi-incompressible formulation [28, 52, 58], investigations
+in the compressible regime remain limited. Bard et al. [8] simulated the compressible
+Hall MHD Orszag–Tang problem, but without explicit resistivity, therefore lacking a
+mechanism to trigger reconnection. Multi-component kinetic frameworks [46] have been
+shown to recover the compressible Hall-resistive structures asymptotically in the fluid
+limit. However, to the best of our knowledge, this work presents the first macroscopic
+simulation of the fully compressible, resistive Hall-MHD equations for the Orszag–Tang
+vortex, systematically evaluating the flow across a wide range of non-dimensional ion
+skin depth values, from purely resistive MHD to strongly Hall-dominated regimes, up to
+t = 1.
+  The setup for the Orszag–Tang vortex test consists of a periodic square domain Ω=
+[0, 1] × [0, 1] with initial data
+
+                  25                         5               sin(4πx)     (ρ, v, p, H) =          , (−sin(2πy), sin(2πx), 0),       ,  −sin(2πy)√       , √        , 0      ,
+                36π                      12π       4π      4π
+
+                                     23
+
+===== PDF PAGE 24 =====
+                     (a) t = 18.5                                             (b) t = 25
+
+
+
+
+
+                       (c) t = 30                                              (d) t = 40
+
+Figure 2: GEM magnetic reconnection challenge out-of-plane component of the current density for
+1024 × 1024 elements at times t = 18, 25, 30, and 40. Contour plots of the magnetic field H are shown
+in black.
+
+
+We choose a resistivity r = 0.001, sufficiently small for resistive diffusion to remain
+subdominant compared to the Hall term. Previous studies have shown that the recon-
+nection rate is largely insensitive to the particular mechanism responsible for breaking
+the frozen-in condition [11], and the values of di employed here are sufficient for the Hall
+effects to trigger reconnection, as discussed later. Although r = 0.005 is commonly used
+in the GEM setup and already produces reconnection, we have (intentionally) adopted
+a smaller value in order to assess the robustness of the solver under more demanding
+conditions.
+  The density fields at t = 0.5 and t = 1 are displayed in Figure 4 for a 256 × 256
+nodes grid, and several values of the ion skin depth. We include di = 0 as a purely
+resistive reference case, di = 256/10 such that the characteristic Hall scale is resolved
+by approximately 10 grid points, and di = 0.1, 0.25, 0.5 to illustrate a strongly Hall-
+dominated regime. We stress that these di values are relatively large and make the
+problem numerically demanding. For instance, when di = 0.5, the Hall term operates on
+a length scale comparable to half the domain size, much larger than in typical benchmark
+configurations. Under these conditions, the electron velocity is between one and two
+orders of magnitude greater than the ion velocity. The Jacobian becomes less coercive,
+which can impose very restrictive time-step constraints; see Appendix B for details. For
+di = 0.25 and 0.5, the CFL constant was lowered to 0.1.
+  The results shown in Figure 4 reveal that in the purely resistive case [first column], the
+solution resembles a more diffusive version of the ideal case, as magnetic reconnection
+
+                                     24
+
+===== PDF PAGE 25 =====
+     4         Hall MHD
+ Ψ
+                Resistive MHD
+  ﬂux 3
+
+
+     2
+
+
+     1        Reconnected
+
+     0
+          0         5        10        15        20        25        30        35        40
+                                Time t
+
+
+Figure 3: Reconnection rate comparison between resistive MHD with and without the Hall term for
+GEM magnetic reconnection challenge.
+
+
+occurs at a significantly slower rate compared to Hall simulations. When increasing the
+strength of di and consequently the scale of Hall dynamics, the solution is affected rather
+drastically. A low-density core forms at the center of the domain, and a different shock
+distribution emerges.
+  To better illustrate the solution in the so-called magnetically dominated regime, Fig-
+ure 5 shows a fine-mesh computation with 724 × 724 elements of the density and out-of-
+plane current distributions for the highest value of the ion skin depth tested, di = 0.5. A
+CFL of 0.05 was required to guarantee coercivity of the Jacobian. Under these conditions,
+magnetic reconnection develops almost immediately: at t = 0.02 an X-point geometry
+has already formed and the current density reaches its maximum value of the simulation,
+with |Jz| ∼84. As reconnection proceeds, the magnetic energy is converted into kinetic
+and thermal energy, producing a low-density core and a GEM-like outflow jet structure
+emanating from the central reconnection site, as seen in t = 0.36. Finally, by t = 1 the
+flow has transitioned into a fully turbulent state: the density field shows a rich collection
+of fine-scale filaments and shear layers. The peak current density remains comparable to
+that at earlier times, and its evolution stabilizes. Overall, the evolution of the magnetic
+topology is qualitatively consistent with the reconnection geometries reported by Liu and
+Xu [46].
+
+4.4. Mesh behaviour study
+  Magnetic reconnection is a process that involves large, localized gradients and steep
+hyperbolic fronts in reduced regions of the computational domain. In addition, the Hall
+term introduces a highly asymmetric and nonlinear contribution to the dynamics. For
+that reason, we assess the sensitivity of the numerical scheme with respect to mesh-
+imprint artefacts by executing the GEM magnetic reconnection challenge across four
+distinct mesh configurations with a comparable number of degrees of freedom:
+
+ #1 Criss-cross structured mesh. Completely symmetric. The mesh consists of 256×256
+      rectangular cells, each divided into two elements in an alternating, symmetrical
+      fashion, giving a total of 65,792 DOF for the scalar finite element space Vh.
+
+                                     25
+
+===== PDF PAGE 26 =====
+Figure 4: Density distribution of the Orszag–Tang vortex on a mesh with 256 × 256 nodal points at
+times t = 0.5 and t = 1 for ion skin depth values di = 0, 10/256, 0.1, 0.25 and 0.5.
+
+
+ #2 Directionally-biased structured mesh. Also built from 256×256 rectangular cells,
+     each subdivided into two triangular elements, with all diagonals oriented to the
+      right.
+ #3 Isotropic unstructured mesh. Generated with a Frontal-Delaunay algorithm, yield-
+      ing nearly equilateral triangles throughout the domain. The number of degrees of
+     freedom is 65,444 DOF for the scalar finite element space Vh.
+ #4 Anisotropic unstructured mesh. Generated with a Delaunay algorithm under an
+      anisotropic sizing field, so that triangles are stretched to approximately 0.1 wide
+     by 0.05 tall, matching the 2:1 aspect ratio used in the structured meshes. This
+      resulted in 72,918 DOF for the scalar finite element space Vh.
+
+The 2:1 aspect ratio is chosen deliberately: the diffusion layer that develops along the
+y-axis requires finer resolution in that direction to capture accurate reconnection rates,
+so meshes #1, #2, and #4 all preserve this anisotropy while mesh #3, which is isotropic,
+does not.
+  Figure 6 shows a snapshot of GEM at t = 35 for the four described meshes. Qual-
+itatively, differences can be observed for each mesh. The directionally-biased mesh #2
+breaks the symmetry of the reconnected structures, mirroring the orientation of the mesh
+diagonals. The anisotropic unstructured mesh #4 struggles to form a single, well-defined
+X-line: the current sheet appears more elongated, and two X-points form symmetrically
+about the domain center before eventually merging, after which the reconnection region
+settles with a slight offset from the center. We also note that the reconnected region is
+(somewhat) more singular in mesh #1 than meshes #2, #3 and #4. The singular nature
+of this solution caught our attention in our early attempts at computing this solution
+without artificial viscosity, requiring a significant number of Newton iterations.
+  The reconnected flux for each mesh is shown in Figure 7.  Despite the differences
+noted above, all four meshes eventually produce comparable reconnection rates. The
+main sensitivity is found in the onset of fast reconnection. Mesh #4 shows the most
+
+                                     26
+
+===== PDF PAGE 27 =====
+Figure 5: Snapshots of the density and out-of-plane current density for the Orszag–Tang simulation at
+t = 0.02, 0.36, and 1.0 on a mesh with 724 × 724 elements using di = 0.5. Rapid magnetic reconnection
+produces a primary X-point and intense current sheets at early times (left). As reconnection proceeds,
+a low-density core and GEM-like outflow jets develop (middle). By t = 1.0, the flow has transitioned
+into a fully turbulent state characterized by asymmetric density filaments and persistent current sheets
+(right).
+
+
+pronounced delay, consistent with the transient double-X-point behavior: the merging of
+the two X-points postpones the onset of fast reconnection relative to meshes #1 and #2.
+Mesh #3 shows a smaller, secondary delay, which we attribute to its isotropic triangles
+under-resolving the diffusion layer relative to the anisotropic meshes, despite having a
+comparable overall number of degrees of freedom.
+
+
+5. Acknowledgments
+
+  IT wants to acknowledge the continuous support of NSF grant DMS-2409841; Sandia
+National Laboratories LDRD contract agreement #1964744, award number #2644205;
+and Simons Foundation Travel Award for Mathematicians. MN and RV are supported
+by the Swedish Research Council (VR) under grant numbers 2021-04620.
+
+
+
+
+                                     27
+
+===== PDF PAGE 28 =====
+          (a) Criss-cross structured mesh                      (b) Directionally-biased structured mesh
+
+
+
+
+
+           (c) Isotropic unstructured mesh                         (d) Anisotropic unstructured mesh
+
+Figure 6: Comparison of the GEM magnetic reconnection challenge for three mesh topologies at t = 35.
+The number of degrees of freedom used for (a) and (b) is 65,792, while 65,444 for (c) and 72,918 for (d).
+
+
+Appendix A. Thermodynamics and equations of state
+
+ A thermal Equation of State7  is a 2-dimensional manifold embedded in R3. More
+precisely, such a manifold is given by the set of points [13, 43]:
+
+                                       (v, e, s(v, e)) ⊂R3                            (A.1)
+
+where v = ρ1  is the specific volume, e = Eρ −12|v|2 is the specific internal energy, and
+s(v, e) : R+ × R+ →R is the specific entropy. From expression (A.1) it is tacitly un-
+derstood that v and e are the independent variables while s is the dependent variable.
+For any practical purpose, we may say that the specific entropy s(v, e) is the EOS,
+since it is all you need to describe the manifold (A.1). For instance, for the case of the
+Nobel-Abel-Stiffened-Gas, the specific entropy is given by [42]:
+
+                       −q) + p∞(ρb −1)            (γ −1)cvρ       s(ρ, e) = cv ln  (γ −1)ρ(e               −cvγ ln        + s0.
+                                 1 −ρb                   1 −ρb
+
+where cv > 0, 0 ≤b < +∞, q > 0, p∞∈R, and 1 < γ ≤53. For the very specific case
+of b = 0, q = 0 and p∞= 0, the NASG EOS becomes the well-known ideal gas specific
+entropy. In broad terms, an EOS describes all thermodynamically accessible states of
+
+
+  7The widely used acronym for the Equation of State is EOS.
+
+                                     28
+
+===== PDF PAGE 29 =====
+                Criss-cross structured Ψ 4
+               Right-biased structured
+  ﬂux 3          Isotropic unstructured
+               Anisotropic unstructured
+
+     2
+
+
+     1        Reconnected
+
+     0
+          0         5        10        15        20        25        30        35        40
+                                Time t
+
+
+Figure 7: Reconnection rate comparison between different mesh topologies for GEM magnetic recon-
+nection challenge: Criss-cross structured, right-biased structured, isotropic unstructured and anisotropic
+unstructured.
+
+
+the substance or fluid:  i.e. not every triple of points (v, e, s) ∈R+ × R+ × R represents
+an accessible thermodynamical state.
+  The pressure formula is a direct consequence of the Gibbs identity (an exact differential,
+see [13]). More precisely, we have that the Gibbs identity is given by:
+
+                           1     p
+                      ds = θde + θ dv where s = s(v, e) ,
+
+which immediately implies that:
+
+           ∂s   1      ∂s   p                         ∂s h∂s i−1         =   and   =    therefore p = p(v, e) = −ρ2                 .       (A.2)
+           ∂e   θ      ∂v   θ                        ∂ρ ∂e
+
+In this paper we assume that the pressure is computed from its corresponding specific
+entropy as described in (A.2). The precise formula of the specific entropy s(v, e) should
+be compatible with basic thermodynamic constraints. We will make use of the following
+standard assumptions:
+
+   ⋄Positivity of the temperature. We assume that:
+
+          ∂s   1
+        =  > 0  for every  (v, e) ∈R+ × R+  in the domain of s(v, e)     (A.3)
+          ∂e   θ
+
+     Note, that in general, the domain of the specific entropy s(v, e) maybe a strict
+     subset of the positive quadrant R+ × R+, see [49] for more details.
+  ⋄Thermodynamic stability. We assume that the specific entropy is concave with
+      respect to v and e. More precisely, we have that the following properties should
+     hold [13, 43]:
+
+                   ∂2s       ∂2s          ∂2s ∂2s     ∂2s   2
+               ≤0 ,    ≤0 and      −      ≥0          (A.4)
+                   ∂2v       ∂2e          ∂2v ∂2e    ∂v∂e
+
+
+                                     29
+
+===== PDF PAGE 30 =====
+    The condition ∂2e∂2s ≤0 is particularly relevant in this paper, since it implies that
+     the monotonicity condition:
+
+                                  ∂
+                                     ∂eθ(v, e) ≥0                            (A.5)
+
+     holds true. Monotonicity condition (A.5) implies that our equation of state is such
+     that an increase in specific internal energy, at constant density, can only produce
+     a non-negative increment of temperature.
+
+
+Appendix B. Jacobian of the Newton Iteration and its properties
+
+ We may rewrite the scheme (32) as: find {vn+1h    , Hn+1h  } ∈Vdh × Hh0 satisfying
+
+   a([vn+1h    , Hn+1h    ], [zh, Xh]) = f([vnh, Hnh], [zh, Xh])  for all  [zh, Xh] ∈Vdh × Hh0   (B.1)
+
+where a([vn+1h    , Hn+1h    ], [zh, Xh]) is a nonlinear map defined by:
+      a([vn+1h    , Hn+1h    ], [zh, Xh]) := ⟨ρnhvn+1h    , zh⟩+ µ(Hn+1h    , Xh)L2(Ω)
+    −14τµ(curl Hn+1h  × Hnh, zh)L2(Ω) −14τµ(curl Hn+1h  × Hn+1h    , zh)L2(Ω)
+    −14τµ(curl Hnh × Hn+1h    , zh)L2(Ω) + 14τµ(curl Xh × Hnh, vn+1h   )L2(Ω)
+    + 4τµ(curl1      Xh × Hn+1h    , vnh)L2(Ω) + 14τµ(curl Xh × Hn+1h    , vn+1h   )L2(Ω)
+    + 2τ(rhcurl1       Hn+1h    , curl Xh)L2(Ω) + 14µdiτ  ρn1h curl Hnh × Hn+1h    , curl Xh L2(Ω)
+    + 14µdiτ  ρn1h curl Hn+1h  × Hnh, curl Xh L2(Ω)
+    + 4µdiτ1      ρn1h curl Hn+1h  × Hn+1h    , curl Xh L2(Ω)
+while f([vnh, Hnh], [zh, Xh]) is defined by
+
+       f([vnh, Hnh], [zh, Xh]) := ⟨ρnhvnh, zh⟩+ µ(Hnh, Xh)L2(Ω)
+      + 14τµ(curl Hnh × Hnh, zh)L2(Ω) −14τµ(curl Xh × Hnh, vnh)L2(Ω)
+      −12τ(rhcurl Hnh, curl Xh)L2(Ω) −14µdiτ  ρn1h curl Hnh × Hnh, curl Xh L2(Ω)
+
+The solution process of problem (B.1) may be achieved using Newton’s method, which
+consists of computing the corrections of the k-th iteration state [vkh, Hkh] as
+
+                      [vk+1h    , Hk+1h    ] := [vkh + △vkh, Hk+1h  + △Hkh]
+
+where [△vkh, △Hkh] is the solution of the following linear variational problem:
+
+         a([vkh, Hkh], [zh, Xh]) + j([△vkh, △Hkh], [zh, Xh]) = f([vnh, Hnh], [zh, Xh]) ,
+
+or equivalently reorganized as:
+
+   (find {△vkh, △Hkh} ∈Vdh × Hh0 satisfying
+                                                                                (B.2)
+      j([△vkh, △Hkh], [zh, Xh]) = f([vnh, Hnh], [zh, Xh]) −a([vkh, Hkh], [zh, Xh]) .
+                                     30
+
+===== PDF PAGE 31 =====
+Here j([△vkh, △Hkh], [zh, Xh]) is the Jacobian, a bilinear form defined as:
+
+                      j([△vkh, △Hkh], [zh, Xh]) := g′(s)|s=0
+                where g(s) = a([vkh + s△vkh, Hkh + s△Hkh], [zh, Xh]).
+
+Using this definition we obtain:
+
+    j([△vkh, △Hkh], [zh, Xh]) := ⟨ρnh△vkh, zh⟩+ µ(△Hkh, Xh)L2(Ω)
+   −14τµ(curl △Hkh × Hnh, zh)L2(Ω) −14τµ(curl Hkh × △Hkh, zh)L2(Ω)
+   −14τµ(curl △Hkh × Hkh, zh)L2(Ω) −14τµ(curl Hnh × △Hkh, zh)L2(Ω)
+   + 14τµ(curl Xh × Hnh, △vkh)L2(Ω) + 14τµ(curl Xh × △Hkh, vnh)L2(Ω)
+   + 14τµ(curl Xh × Hkh, △vkh)L2(Ω) + 14τµ(curl Xh × △Hkh, vkh)L2(Ω)             (B.3)
+   + 12τ(rhcurl △Hkh, curl Xh)L2(Ω) + 14µdiτ  ρn1h curl Hnh × △Hkh, curl Xh L2(Ω)
+   + 14µdiτ  ρn1h curl △Hkh × Hnh, curl Xh L2(Ω)
+   + 14µdiτ  ρn1h curl Hkh × △Hkh, curl Xh L2(Ω)
+   + 4µdiτ1      ρn1h curl △Hkh × Hkh, curl Xh L2(Ω).
+
+We would like to understand the coercivity properties of the Jacobian j([△vkh, △Hkh], [zh, Xh]).
+Setting [zh, Xh] = [△vkh, △Hkh] in the previous expression we obtain:
+
+       j([△vkh, △Hkh], [△vkh, △Hkh]) :=
+        ⟨ρnh△vkh, △vkh⟩+ µ(△Hkh, △Hkh)L2(Ω) + 12τ(rhcurl △Hkh, curl △Hkh)L2(Ω)
+     −14τµ(curl Hnh × △Hkh, △vkh)L2(Ω) −14τµ(curl Hkh × △Hkh, △vkh)L2(Ω)
+     + 14τµ(curl △Hkh × △Hkh, vnh)L2(Ω) + 14τµ(curl △Hkh × △Hkh, vkh)L2(Ω)
+     + 14µdiτ  ρn1h curl Hnh × △Hkh, curl △Hkh L2(Ω)
+     + 14µdiτ  ρn1h curl Hkh × △Hkh, curl △Hkh L2(Ω).
+
+With the aid of properties of the triple product this can be further rewritten as:
+
+     j([△vkh, △Hkh], [△vkh, △Hkh]) :=
+      ⟨ρnh△vkh, △vkh⟩+ µ(△Hkh, △Hkh)L2(Ω) + 12τ(rhcurl △Hkh, curl △Hkh)L2(Ω)
+    −14τµ(curl Hnh × △Hkh, △vkh)L2(Ω)
+                                                                                (B.4)
+    −14τµ(curl Hkh × △Hkh, △vkh)L2(Ω)
+    + 4µτ1    ( ρndih curl Hnh −vnh) × △Hkh, curl △Hkh L2(Ω)
+    + 14µτ ( ρndih curl Hkh −vkh) × △Hkh, curl △Hkh L2(Ω)
+
+Clearly, the first three terms in the right-hand side of (B.4) are positive. However, the last
+four trilinear forms are unsigned. Despite this, it is possible to show that there always ex-
+ists a sufficiently small time-step size such that the bilinear form j([△vkh, △Hkh], [zh, Xh])
+                                     31
+
+===== PDF PAGE 32 =====
+is coercive. We will need to use the norm equivalence:
+
+              cm∥vh∥L2(Ω) ≤⟨vh, vh⟩ 1                                                  2 ≤cM∥vh∥L2(Ω)  for all vh ∈Vdh          (B.5)
+
+in order to prove this statement. The proof of (B.5) is standard and can be found in
+numerous references such as [19, 9].
+
+Proposition Appendix B.1. Assume that the following holds true:
+
+                    ∥curl Hnh∥L∞(Ω) ≤ch and  ∥curl Hkh∥L∞(Ω) ≤ch ,
+           ∥diρnh curl Hnh −vnh∥L∞(Ω) ≤ce and  ∥diρnh curl Hnh −vkh∥L∞(Ω) ≤ce ,
+
+for some positive bounded constants ch < +∞and ce < +∞. Then we have that the
+following coercivity estimate holds:
+
+ j([△vkh, △Hkh], [△vkh, △Hkh]) ≥  c2mρnmin −14τµch ∥△vkh∥2L2(Ω)
+                                   1                                             1                   (B.6)
+                                                                                2 ∥curl △Hkh∥2L2(Ω)   + µ 1 −14(chτ + ceτ                                   2 ) ∥△Hkh∥2L2(Ω) + 12τ rmin −12µceτ
+
+where
+
+                     ρnmin = min ρni  and  rmin = min rh(x)
+                                i∈V                x
+
+Proof Appendix B.1. The proof is elementary and follows using Cauchy-Schwarz and
+Young’s inequality estimates on the last four terms of (B.4):
+
+ 14τµ(curl Hnh × △Hkh, △vkh)L2(Ω) ≤14τµch  ϵ12 ∥△Hkh∥2 + 2ϵ11 ∥△vkh∥2
+ 4τµ(curl1      Hkh × △Hkh, △vkh)L2(Ω) ≤14τµch  ϵ22 ∥△Hkh∥2 + 2ϵ21 ∥△vkh∥2
+| 14µτ ( ρndih curl Hnh −vnh) × △Hkh, curl △Hkh L2(Ω)| ≤14µτce  ϵ32 ∥curl △Hkh∥2 + 2ϵ31 ∥△Hkh∥2
+| 14µτ ( ρndih curl Hkh −vkh) × △Hkh, curl △Hkh L2(Ω)| ≤14µτce  ϵ42 ∥curl △Hkh∥2 + 2ϵ41 ∥△Hkh∥2
+
+Then we choose:
+                              ϵ1 = 1 ,  ϵ2 = 1 ,  ϵ3 = ϵ4 = √τ
+
+Inserting these estimates, multiplied by −1 into the right-hand side of (B.4), using the
+estimate ⟨ρnh△vkh, △vkh⟩≥ρnmin⟨△vkh, △vkh⟩together with lumping estimate (B.5), and
+grouping the terms yields the result.
+
+  In essence, estimate (B.6) is telling us that there always exists a time step size suffi-
+ciently small, such that the matrix corresponding to the bilinear form (B.3) is positive
+definite. The last line of estimate (B.6) also motivates us to consider the development
+of artificial resistivities proportional to ch and ce. That is, an artificial resistivity that
+improves local coercivity8 should be proportional to |curl H| and/or |vkh −diρnh curl Hnh|.
+
+
+   8Thereby, stability of the scheme
+                                     32
+
+===== PDF PAGE 33 =====
+  Knowing that it is possible to reduce the time-step size in order to guarantee invert-
+ibility of the Jacobian is somewhat comforting, but it’s not perfectly satisfactory. Such
+an approach could lead to a minuscule time-step size.  It would be interesting to know
+that we have other options at our disposal to enforce invertibility of the Jacobian. In
+this regard, we note that estimate (B.6) is just a consequence of the choice of parameters
+ϵ1, ϵ2, ϵ3 and ϵ4.  Ultimately, there is no optimal choice of parameters. By changing
+the options of parameters; ϵ1, ϵ2, ϵ3 and ϵ4; we may be able to arrive to a different
+understanding of what it takes to guarantee invertibility of the Jacobian and stabilize
+the scheme. In this vein, we have the following remark.
+
+Remark Appendix B.1 (Alternative estimate). By changing the choice of param-
+eters; ϵ1, ϵ2, ϵ3 and ϵ4; we can obtain an estimate that is slightly different from (B.6).
+More precisely, if we choose ϵ1 = ϵ2 = ϵ3 = ϵ4 = 1 we obtain the following (alternative)
+estimate:
+   j([△vkh, △Hkh], [△vkh, △Hkh]) ≥  c2mρnmin −14µchτ ∥△vkh∥2L2(Ω)
+                                                                                (B.7)
+     + µ 1 −14µ(ch + ce)τ ∥△Hkh∥2L2(Ω) + 12τ rmin −12µce ∥curl △Hkh∥2L2(Ω)
+
+Note that in this case shrinking the time step size may only have a limited effect. More
+precisely, from the first and second line of (B.7) we gather than if we choose τ sufficiently
+small we can guarantee coercivity for the terms ∥△vkh∥2L2(Ω) and ∥△Hkh∥2L2(Ω). However,
+from the last line in (B.7), we realize that we can only obtain a lower bound on the term
+∥curl △Hkh∥2L2(Ω) if the resistivity is sufficiently large. More precisely the resistivity has
+to satisfy the bound rmin ≥ 12µce.  Therefore, estimate (B.7) hints at the idea that a
+combination of a sufficiently small time-step and a sufficiently large artificial viscosity
+should yield the right compromise.
+
+
+Appendix C. Two and a half space dimensions implementation
+
+  The physics induced by the Hall term is intrinsically three-dimensional: even for an
+initial magnetic field lying in a plane, the Hall term generates a component normal to
+that plane. While the scheme described in Section 3 is fully compatible with d = 3, it
+is customary in the literature to use the so-called 2.5-d formulation, which we adopt for
+the numerical results presented in our work.  It consists of a hybrid approach between
+two and three dimensions that uses a planar computational domain Ω⊂R2 but keeps
+full three-component vector fields m and H, with vanishing out-of-plane derivative. Let
+x = (x, y) ∈Ωand z be the out-of-plane coordinate. Then
+
+                  Hx                  mx 
+                Hxy                   mxy
+       H(x, t) =    =  Hy      m(x, t) =     = my       ∂z ≡0.                Hz     ,            mz     ,
+                        Hz                     mz
+
+Here, Hxy and mxy are 2-vectors fields representing the in-plane part, whereas Hz is the
+scalar out-of-plane part. The action of the curl and div operators becomes
+
+                 ∂yHz   
+         curlxyH :=    −∂xHz         divxyH := div Hxy = ∂xHx + ∂yHy.                        ,
+                   ∂xHy −∂yHx
+                                     33
+
+===== PDF PAGE 34 =====
+In particular, divxyH depends only on Hxy, and is independent of Hz. Therefore, accord-
+ing to Proposition 3.1, it is only required for the in-plane part Hxy to be discretized in
+a H(curl )-conforming space for the involution constraint to hold. Thus, we can approx-
+imate Hz in the standard C0 Lagrange space Vh. Note that although curlxyH involves
+only Hz in its in-plane components, the nonlinear Hall terms curlxyH×H couple all three
+components of H nontrivially through the cross product, and must be assembled using
+the full three-component field. We therefore define the joint magnetic field spaces
+
+           H2.5h = H2h ⊕Vh = Xh = (Xxy,h, Xz,h)  Xxy,h ∈H2h, Xz,h ∈Vh  ,
+           H2.5h0 = Xh ∈H2.5h  Xh × n = 0 on ∂Ω  ,
+
+here H2h denotes the two-dimensional BDM space, see Section 3.1. The weak formulation
+is then posed as: Find {vn+1h    , Hn+1h  } ∈V3h × H2.5h0 such that
+
+                                                                   1
+                                                                   2                                              n+ 21
+                                                                                 ), zh)L2(Ω) = 0                              × Hh     ⟨ρnh(vn+1h  −vnh), zh⟩−τnµ((curlxyHhn+
+                                                    n+ 21
+                                                                        )L2(Ω)           µ(Hn+1h  −Hnh, Xh)L2(Ω) + τnµ((curlxyXh × Hn+h  1                                                                              2 ), v h     
+                         n+ 12         +                 τn(rn                                   curlxyXh)L2(Ω)                    hcurlxyH                             h     ,
+                                                  1                                                             1                             n+                                   n+                            1                                                  2 × H         +                         (curlxyH                 τnµdi                                       h                                          h                          ρn                                                             2 ), curlxyXh L2(Ω) = 0                            h
+
+for all {zh, Xh} ∈V3h × H2.5h0 .
+
+
+References
+
+ [1] Marion Acheritogaray, Pierre Degond, Amic Frouvelle, and Jian-Guo Liu.  Ki-
+     netic formulation and global existence for the Hall-Magneto-hydrodynamics system.
+     Kinet. Relat. Models, 4(4):901–918, 2011.
+
+ [2] Bettina Albers and Krzysztof Wilmanski.  Continuum thermodynamics. Part II.
+     Applications and examples, volume 85 of Series on Advances in Mathematics for
+    Applied Sciences. World Scientific Publishing Co. Pte. Ltd., Hackensack, NJ, 2015.
+
+ [3] Douglas N Arnold and Anders Logg.  Periodic table of the finite elements. Siam
+    News, 47(9):212, 2014.
+
+ [4] Lukas Arnold, Jürgen Dreher, and Rainer Grauer. A semi-implicit Hall-MHD solver
+     using whistler wave preconditioning. Comput. Phys. Comm., 178(8):553–557, 2008.
+
+ [5] Ivo Babuska and J. Tinsley Oden.  Verification and validation in computational
+     engineering and science:  basic concepts.  Comput. Methods Appl. Mech. Engrg.,
+    193(36-38):4057–4066, 2004.
+
+ [6] Dinshaw S. Balsara.  Self-adjusting, positivity preserving high order schemes for
+    hydrodynamics and magnetohydrodynamics. J. Comput. Phys., 231(22):7504–7517,
+     2012.
+
+ [7] Dinshaw S. Balsara, Tobias Rumpf, Michael Dumbser, and Claus-Dieter Munz. Effi-
+     cient, high accuracy ADER-WENO schemes for hydrodynamics and divergence-free
+    magnetohydrodynamics. J. Comput. Phys., 228(7):2480–2516, 2009.
+                                     34
+
+===== PDF PAGE 35 =====
+ [8] C. Bard and J. Dorelli. High-performance computational magnetohydrodynamics
+    with python. Computer Physics Communications, 322:110077, 2026.
+
+ [9] Sören Bartels. Numerical methods for nonlinear partial differential equations, vol-
+   ume 47 of Springer Series in Computational Mathematics. Springer, Cham, 2015.
+
+[10] Stefano Bianchini and Alberto Bressan. Vanishing viscosity solutions of nonlinear
+     hyperbolic systems. Ann. of Math. (2), 161(1):223–342, 2005.
+
+[11] J Birn, JF Drake, MA Shay, BN Rogers, RE Denton, M Hesse, M Kuznetsova,
+   ZW Ma, A Bhattacharjee, A Otto, et al. Geospace environmental modeling (gem)
+    magnetic reconnection challenge. Journal of Geophysical Research: Space Physics,
+    106(A3):3715–3719, 2001.
+
+[12] Daniele Boffi. Finite element approximation of eigenvalue problems. Acta Numer.,
+     19:1–120, 2010.
+
+[13] Herbert B Callen. Thermodynamics and an Introduction to Thermostatistics. John
+     wiley & sons, 1991.
+
+[14] L. Chacón. A scalable multidimensional fully implicit solver for Hall magnetohydro-
+    dynamics. J. Comput. Phys., 526:Paper No. 113789, 20, 2025.
+
+[15] Dongho Chae,  Pierre Degond, and Jian-Guo  Liu.   Well-posedness  for  Hall-
+    magnetohydrodynamics. Ann. Inst. H. Poincaré C Anal. Non Linéaire, 31(3):555–
+     565, 2014.
+
+[16] Dongho Chae and Shangkun Weng.  Singularity formation for the incompressible
+    Hall-MHD equations without resistivity.  Ann. Inst. H. Poincaré C Anal. Non
+     Linéaire, 33(4):1009–1022, 2016.
+
+[17] Yue Cheng, Fengyan Li, Jianxian Qiu, and Liwei Xu. Positivity-preserving DG and
+     central DG methods for ideal MHD equations. J. Comput. Phys., 238:255–280, 2013.
+
+[18] K. N. Chueh, C. C. Conley, and J. A. Smoller.  Positively invariant regions for
+    systems of nonlinear diffusion equations.  Indiana Univ. Math. J., 26(2):373–392,
+     1977.
+
+[19] Philippe G. Ciarlet. The finite element method for elliptic problems. Studies in Math-
+    ematics and its Applications, Vol. 4. North-Holland Publishing Co., Amsterdam-New
+    York-Oxford, 1978.
+
+[20] Lars K. S. Daldorff, Gábor Tóth, Tamas  I. Gombosi, Giovanni Lapenta, Jorge
+    Amaya, Stefano Markidis, and Jeremiah U. Brackbill. Two-way coupling of a global
+     Hall magnetohydrodynamics model with a local implicit particle-in-cell model.  J.
+    Comput. Phys., 268:236–254, 2014.
+
+[21] Lars K. S. Daldorff, Gábor Tóth, Tamas  I. Gombosi, Giovanni Lapenta, Jorge
+    Amaya, Stefano Markidis, and Jeremiah U. Brackbill. Two-way coupling of a global
+     Hall magnetohydrodynamics model with a local implicit particle-in-cell model.  J.
+    Comput. Phys., 268:236–254, 2014.
+
+                                     35
+
+===== PDF PAGE 36 =====
+[22] Tuan Anh Dao, Murtazo Nazarov, and Ignacio Tomas. A structure preserving nu-
+     merical method for the ideal compressible MHD system. J. Comput. Phys., 508:Pa-
+    per No. 113009, 25, 2024.
+
+[23] A. Dedner, F. Kemm, D. Kröner, C.-D. Munz, T. Schnitzer, and M. Wesenberg. Hy-
+     perbolic divergence cleaning for the MHD equations. J. Comput. Phys., 175(2):645–
+     673, 2002.
+
+[24] Dominik Derigs, Andrew R. Winters, Gregor J. Gassner, Stefanie Walch, and Marvin
+    Bohm.  Ideal GLM-MHD: about the entropy consistent nine-wave magnetic field
+     divergence diminishing ideal magnetohydrodynamics equations. J. Comput. Phys.,
+    364:420–467, 2018.
+
+[25] Alexandre Ern and Jean-Luc Guermond.  Finite elements I—Approximation and
+     interpolation, volume 72 of Texts in Applied Mathematics. Springer, Cham, [2021]
+    ©2021.
+
+[26] Jishan Fan, Bashir Ahmad, Tasawar Hayat, and Yong Zhou. On well-posedness and
+    blow-up for the full compressible Hall-MHD system. Nonlinear Anal. Real World
+     Appl., 31:569–579, 2016.
+
+[27] Jishan Fan, Ahmed Alsaedi, Tasawar Hayat, Gen Nakamura, and Yong Zhou. On
+     strong solutions to the compressible Hall-magnetohydrodynamic system. Nonlinear
+    Anal. Real World Appl., 22:423–434, 2015.
+
+[28] Raffaello  Foldes, Emmanuel Lévêque,  Raffaele Marino, Ermanno Pietropaolo,
+    Alessandro De Rosis, Daniele Telloni, and Fabio Feraco.  Efficient kinetic lattice
+    boltzmann simulation of three-dimensional hall-mhd turbulence. Journal of Plasma
+     Physics, 89(4):905890413, 2023.
+
+[29] J. P. Freidberg.  Ideal magnetohydrodynamic theory of magnetic fusion systems.
+    Rev. Mod. Phys., 54:801–902, Jul 1982.
+
+[30] Jincheng Gao and Zheng-An Yao.   Global existence and optimal decay rates
+     of solutions for compressible Hall-MHD equations.  Discrete Contin. Dyn. Syst.,
+    36(6):3077–3106, 2016.
+
+[31] Edwige Godlewski and Pierre-Arnaud Raviart. Numerical approximation of hyper-
+     bolic systems of conservation laws, volume 118 of Applied Mathematical Sciences.
+     Springer-Verlag, New York, 1996.
+
+[32] JP Hans Goedbloed and Stefaan Poedts. Principles of magnetohydrodynamics: with
+     applications to laboratory and astrophysical plasmas. Cambridge university press,
+     2004.
+
+[33] Jean-Luc Guermond and Bojan Popov. Viscous regularization of the Euler equations
+    and entropy principles. SIAM J. Appl. Math., 74(2):284–305, 2014.
+
+[34] M. Hoelzl, G.T.A. Huijsmans, S.J.P. Pamela, M. Bécoulet, E. Nardon, F.J. Ar-
+     tola, B. Nkonga, C.V. Atanasiu, V. Bandaru, A. Bhole, D. Bonfiglio, A. Cathey,
+
+                                     36
+
+===== PDF PAGE 37 =====
+    O. Czarny, A. Dvornova, T. Fehér, A. Fil, E. Franck, S. Futatani, M. Gruca, H. Guil-
+     lard, J.W. Haverkort, I. Holod, D. Hu, S.K. Kim, S.Q. Korving, L. Kos, I. Krebs,
+     L. Kripner, G. Latu, F. Liu, P. Merkel, D. Meshcheriakov, V. Mitterauer, S. Mochal-
+     skyy, J.A. Morales, R. Nies, N. Nikulsin, F. Orain, J. Pratt, R. Ramasamy, P. Ramet,
+    C. Reux, K. Särkimäki, N. Schwarz, P. Singh Verma, S.F. Smith, C. Sommariva,
+    E. Strumberger, D.C. van Vugt, M. Verbeek, E. Westerhof, F. Wieschollek, and
+     J. Zielinski. The JOREK non-linear extended MHD code and applications to large-
+     scale instabilities and their control in magnetically confined fusion plasmas. Nuclear
+     Fusion, 61(6):065001, may 2021.
+
+[35] Holger Homann and Rainer Grauer. Bifurcation analysis of magnetic reconnection
+     in Hall-MHD-systems. Phys. D, 208(1-2):59–72, 2005.
+
+[36] Stephen C. Jardin. MHD simulations for fusion applications. In Numerical models
+     for fusion, volume 39/40 of Panor. Synthèses, pages 177–235. Soc. Math. France,
+     Paris, 2013.
+
+[37] In-Jee Jeong and Sung-Jin Oh. On the Cauchy problem for the Hall and electron
+    magnetohydrodynamic equations without resistivity I: Illposedness near degenerate
+     stationary solutions. Ann. PDE, 8(2):Paper No. 15, 106, 2022.
+
+[38] Nicholas A Krall, Alvin W Trivelpiece, and KR Symon. Principles of plasma physics.
+   IEEE Transactions on Plasma Science, 2(3):196–196, 1974.
+
+[39] Fabian Laakmann, Kaibo Hu, and Patrick E Farrell.  Structure-preserving and
+     helicity-conserving finite element approximations and preconditioning for the hall
+   mhd equations. Journal of Computational Physics, 492:112410, 2023.
+
+[40] Suhua Lai, Xinying Xu, and Jianwen Zhang. On the Cauchy problem of compressible
+      full Hall-MHD equations. Z. Angew. Math. Phys., 70(5):Paper No. 139, 22, 2019.
+
+[41] P. D. Lax. Hyperbolic systems of conservation laws. II. Comm. Pure Appl. Math.,
+    10:537–566, 1957.
+
+[42] Olivier Le Métayer and Richard Saurel. The noble-abel stiffened-gas equation of
+     state. Physics of Fluids, 28(4):046102, 04 2016.
+
+[43] G. Lebon, D. Jou, and J. Casas-Vázquez. Understanding non-equilibrium thermo-
+    dynamics. Springer-Verlag, Berlin, 2008. Foundations, applications, frontiers.
+
+[44] Fengyan Li and Chi-Wang Shu.  Locally divergence-free discontinuous Galerkin
+    methods for MHD equations. J. Sci. Comput., 22/23:413–442, 2005.
+
+[45] M. J. Lighthill. Studies on magneto-hydrodynamic waves and other anisotropic wave
+    motions. Philos. Trans. Roy. Soc. London Ser. A, 252:397–430, 1960.
+
+[46] Chang Liu and Kun Xu. A unified gas kinetic scheme for continuum and rarefied
+     flows v:  Multiscale and multi-component plasma transport.  Communications in
+    Computational Physics, 22(5):1175–1223, 2017.
+
+
+
+                                     37
+
+===== PDF PAGE 38 =====
+[47] P. Londrillo and L. Del Zanna. On the divergence-free condition in Godunov-
+    type schemes for ideal magnetohydrodynamics: the upwind constrained transport
+    method. J. Comput. Phys., 195(1):17–48, 2004.
+
+[48] Ralph Menikoff. Empirical equations of state for solids. In ShockWave Science and
+    Technology Reference Library, pages 143–188. Springer, 2007.
+
+[49] Ralph Menikoff and Bradley J. Plohr. The riemann problem for fluid flow of real
+     materials. Rev. Mod. Phys., 61:75–130, Jan 1989.
+
+[50] David Montgomery and Leaf Turner. Two-and-a-half-dimensional magnetohydrody-
+    namic turbulence. The Physics of Fluids, 25(2):345–349, 1982.
+
+[51] Steven A. Orszag and Cha-Mei Tang.  Small-scale structure of two-dimensional
+    magnetohydrodynamic turbulence.  Journal of Fluid Mechanics, 90(1):129 – 143,
+     1979. Cited by: 471.
+
+[52] TN Parashar, MA Shay, PA Cassak, and WH Matthaeus. Kinetic dissipation and
+     anisotropic heating in a turbulent collisionless plasma. Physics of Plasmas, 16(3),
+     2009.
+
+[53] PL Pritchett.  Geospace environment modeling magnetic reconnection challenge:
+    Simulations with a full particle electromagnetic code. Journal of Geophysical Re-
+     search: Space Physics, 106(A3):3783–3798, 2001.
+
+[54] Xin Qian, Jorge Balbás, Amitava Bhattacharjee, and Hongang Yang. A numerical
+    study of magnetic reconnection: a central scheme for Hall MHD.  In Hyperbolic
+     problems:  theory, numerics and applications, volume 67 of Proc. Sympos. Appl.
+    Math., pages 879–888. Amer. Math. Soc., Providence, RI, 2009.
+
+[55] James A. Rossmanith.  An unstaggered,  high-resolution constrained transport
+    method for magnetohydrodynamic flows. SIAM J. Sci. Comput., 28(5):1766–1797,
+     2006.
+
+[56] MA Shay, JF Drake, BN Rogers, and RE Denton. Alfvénic collisionless magnetic
+    reconnection and the hall term. Journal of Geophysical Research: Space Physics,
+    106(A3):3759–3772, 2001.
+
+[57] A. Sitenko and V. Malnev. Plasma physics theory, volume 10 of Applied Mathematics
+    and Mathematical Computation. Chapman & Hall, London, 1995.
+
+[58] Julia E Stawarz and Annick Pouquet. Small-scale behavior of hall magnetohydro-
+    dynamic turbulence. Physical Review E, 92(6):063102, 2015.
+
+[59] Marek Strumik and Krzysztof Stasiewicz. Multidimensional Hall magnetohydrody-
+    namics with isotropic or anisotropic thermal pressure: numerical scheme and its
+     validation using solitary waves. J. Comput. Phys., 330:846–862, 2017.
+
+[60] Eitan Tadmor. A minimum entropy principle in the gas dynamics equations. Appl.
+    Numer. Math., 2(3-5):211–219, 1986.
+
+
+                                     38
+
+===== PDF PAGE 39 =====
+[61] Qiang Tao, Ying Yang, and Zheng-an Yao. Global existence and exponential sta-
+     bility of solutions for planar compressible Hall-magnetohydrodynamic equations. J.
+     Differential Equations, 263(7):3788–3831, 2017.
+
+[62] M. Torrilhon. Non-uniform convergence of finite volume schemes for Riemann prob-
+    lems of ideal magnetohydrodynamics. J. Comput. Phys., 192(1):73–94, 2003.
+
+[63] Gábor Tóth, Yingjuan Ma, and Tamas I. Gombosi. Hall magnetohydrodynamics on
+     block-adaptive grids. J. Comput. Phys., 227(14):6967–6984, 2008.
+
+[64] Kailiang Wu. Positivity-preserving analysis of numerical schemes for ideal magne-
+    tohydrodynamics. SIAM J. Numer. Anal., 56(4):2124–2147, 2018.
+
+[65] Kailiang Wu and Chi-Wang Shu.  A provably positive discontinuous Galerkin
+    method for multidimensional ideal magnetohydrodynamics. SIAM J. Sci. Comput.,
+    40(5):B1302–B1329, 2018.
+
+
+
+
+
+                                     39

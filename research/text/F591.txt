@@ -1,0 +1,1272 @@
+arXiv:0803.3415v1  [astro-ph]  24 Mar 2008
+Development of a Turbulent Outﬂow During Electron-Positron
+Magnetic Reconnection
+M. Swisdak, Y. H. Liu, and J. F. Drake1
+IREAP, University of Maryland, College Park, MD 20740-3511
+swisdak@umd.edu
+ABSTRACT
+The mass symmetry between the two species in electron-positron (pair) plasmas has inter-
+esting consequences for collisionless magnetic reconnection because the Hall term, which plays
+a crucial role in supporting fast reconnection in electron-proton plasmas, vanishes. We perform
+kinetic simulations of pair reconnection in systems of various sizes, show that it remains fast,
+and identify the reason why this occurs. For suﬃciently large systems a Weibel-like temperature
+anisotropy instability develops in the outﬂow from the X-point that causes the current layer to
+broaden and form a Petschek-like open outﬂow. We discuss the parameter regimes in which pair
+reconnection should be fast and the implications for astrophysical pair plasmas.
+Subject headings: magnetic ﬁelds — methods: numerical — plasmas
+1.
+Introduction
+The energy density of magnetic ﬁelds can be
+signiﬁcant, and even dominant, in certain as-
+trophysical systems and so the question as to
+which processes act as sinks and convert that
+energy into other forms naturally arises. Obser-
+vations (including in situ measurements) show
+that magnetic reconnection, in which topological
+changes in an embedded ﬁeld lead to increases
+in a plasma’s kinetic and thermal energy, plays
+such a role in the terrestrial magnetosphere, the
+solar wind, and the solar corona.
+(Mozer et al.
+2002; Phan et al. 2006; Masuda et al. 1994) The
+natural extension to other astrophysical locations
+has led to the consideration of the role of recon-
+nection in accretion disks (Eardley and Lightman
+1975; Miller and Stone 1997), gamma-ray bursts
+(Drenkhahn and Spruit 2002) and pulsar winds
+(Coroniti 1990; Michel 1994; Zenitani and Hoshino
+2001).
+Unlike the heliosphere, positrons, rather
+than protons, can comprise the positively charged
+species in the plasmas of these systems. The equal-
+ity of the electron and positron masses introduces
+1SSL, University of California, Berkeley, CA 94720-7450
+a symmetry that can have a potentially large eﬀect
+on the development and role of reconnection.
+Parker and Sweet (Parker 1957; Sweet 1958)
+proposed the ﬁrst model of electron-proton recon-
+nection, a magnetohydrodynamic (MHD) formula-
+tion that attempted to explain the fast timescales
+associated with solar ﬂares. However contempora-
+neous observations suggested that magnetic ﬂux
+reconnected much faster than the model predicted
+(on timescales of minutes, not weeks). Relaxing
+the assumptions of classical resistive MHD by in-
+voking an anomalously large and localized resis-
+tivity, perhaps driven by turbulence, resolved the
+theoretical discrepancy, but no model of the pro-
+cess garnered widespread support.
+Later work focused on Hall MHD, an exten-
+sion of MHD that includes the decoupling of the
+motions of protons and electrons at small spa-
+tial scales — on the order of the ion skin depth,
+di ≡c/ωpi, where ωpi is the proton plasma fre-
+quency.
+The GEM Challenge, a collaboration
+within the reconnection simulation community,
+showed that various algorithms including the Hall
+term (the simplest new term arising in Hall MHD)
+all reconnected at approximately the same rate:
+vin ≈0.1vA, where vin is the speed at which
+1
+
+plasma ﬂows into the X-point and vA is the lo-
+cal Alfv´en speed (Birn et al. 2001).
+A resistive
+MHD code simulating the same problem recon-
+nected ﬂux at a rate several orders of magnitude
+slower.
+Although the GEM Challenge demonstrated
+that inclusion of the Hall term is a suﬃcient re-
+quirement for fast reconnection, the question of
+whether it is a necessary requirement remains
+open. Pair reconnection provides an excellent test
+because one eﬀect of the mass symmetry is the
+disappearance of the Hall term from the govern-
+ing equations. If it is necessary for fast reconnec-
+tion then pair plasmas will reconnect slowly, on
+Sweet-Parker timescales, and magnetic reconnec-
+tion will be an ineﬃcient mechanism for releasing
+the magnetic energy in pair plasmas.
+Despite this interesting limit the simulation
+community has only recently begun to consider
+pair
+reconnection.
+Bessho and Bhattacharjee
+(2005,
+2007)
+observed fast
+pair
+reconnection
+in a small system and attributed it to a lo-
+calized resistivity-like eﬀect caused by the oﬀ-
+diagonal
+components
+of
+the
+pressure
+tensor.
+Daughton and Karimabadi (2007) did a careful
+examination of pair reconnection in large systems
+and arrived at similar conclusions for the early,
+impulsive phase of reconnection.
+Over longer
+periods they suggested that generation of large
+numbers of magnetic islands served to localize
+the current layer and support fast reconnection.
+Zenitani and Hoshino
+(2001),
+Jaroschek et al.
+(2004), and Fujimoto (2006) explored other as-
+pects of pair reconnection but, although they
+observed fast reconnection, did not advance any
+causal explanations.
+We also ﬁnd that fast reconnection occurs in
+pair plasmas. However, we reach diﬀerent conclu-
+sions from Daughton and Karimabadi (2007) on
+the role of magnetic islands. In the initial phase
+of electron-positron reconnection many magnetic
+islands typically form, especially if the ratio of the
+initial width of the current layer to the length of
+the system is very small.
+These islands have a
+transient inﬂuence on the development of recon-
+nection until they convect downstream. Secondary
+islands also form later in time, and in greater num-
+bers than in electron-proton reconnection.
+But,
+we ﬁnd that these islands do not seem to control
+the overall length of the current layer and there-
+fore the rate of reconnection. Based on our simu-
+lations we instead propose that the outﬂow jet in
+large pair plasma systems opens as a result of tur-
+bulence. We show that as the system size grows
+the current layer lengthens, just as Hall-less Sweet-
+Parker theory predicts.
+Interestingly the recon-
+nection rate remains constant during this change
+for small systems because other parameters, pri-
+marily the speed of the outﬂow jet, also vary.
+This cannot continue for arbitrarily large boxes
+because of the Alfv´enic limitation on the outﬂow
+speed.
+Instead, once the system is big enough
+(and the current layer long enough) an electromag-
+netic pressure-anisotropy instability similar to the
+Weibel mode begins to grow in the outﬂow jet.
+The outﬂow jet becomes strongly turbulent and
+the outﬂow layer broadens downstream as pro-
+posed by Petschek (Petschek 1964). We present
+a simple analytic argument that suggests that as
+a result of this turbulence the rate of reconnection
+should take on a constant value, independent of
+system size.
+In Section 2 of this paper we describe the details
+of our computations. Section 3 outlines the role
+of the Hall term and how it disappears in pair
+plasmas. We discuss the simulations in Section 4
+and the instability and its consequences in Section
+5. Finally, Section 6 explores some implications of
+our ﬁndings.
+2.
+Computational Details
+We use p3d, a massively parallel particle-in-cell
+(PIC) code (Zeiler et al. 2002) to perform our sim-
+ulations.
+As in other PIC codes we divide the
+computational domain into cells, track the electro-
+magnetic ﬁelds only on the gridpoints, and allow
+the particles to move freely.
+During a timestep
+the Boris algorithm advances the Lorentz equa-
+tion of motion for each particle: the electric ﬁeld
+E provides an acceleration for half a timestep,
+the magnetic ﬁeld B rotates the velocity vector,
+and E accelerates for the second half-timestep.
+An explicit trapezoidal-leapfrog method employ-
+ing second-order spatial derivatives in Faraday’s
+and Amp`ere’s Laws advances the ﬁelds in time.
+We use uniform, square computational cells that
+force ∇·B = 0. However our discretization scheme
+leads to a discrepancy between ∇· E and 4πρ. To
+address this problem we use a multigrid algorithm
+2
+
+to solve Poisson’s equation for a correction term
+to E. Our particles do not directly interact and,
+in particular, no electron-positron annihilation oc-
+curs.
+To help elucidate the underlying physics we
+write the code equations in normalized units.
+Masses are normalized to the ion mass mi, mag-
+netic ﬁelds to the asymptotic value of the reversed
+ﬁeld, and the density to the value at the center
+of the current sheet.
+Other normalizations de-
+rive from these: velocities to the Alfv´en speed vA,
+lengths to the ion inertial length c/ωpi, times to
+the inverse ion cyclotron frequency Ω−1
+ci , and tem-
+peratures to miv2
+A. In electron-positron plasmas
+me/mi = 1.
+In our coordinate system the inﬂow and outﬂow
+for an X-point lie parallel to ˆy and ˆx, respectively.
+The reconnection electric ﬁeld is parallel to ˆz. In
+the simulations presented here we assume out-of-
+plane derivatives vanish, i.e., ∂/∂z = 0; this choice
+eliminates any structure in the ˆz direction. The
+reasonableness of simulating pair plasmas with
+this restriction remains unknown.
+For electron-
+proton plasmas, a comparison of 2D and 3D recon-
+nection simulations suggests that the qualitative
+features remain unchanged (Hesse et al. 2001).
+However for many instabilities that can have large
+eﬀects on the out-of-plane structure, e.g., the drift-
+kink, the onset threshold varies with the mass ra-
+tio, and so further simulations are needed to ex-
+plore their importance in the me/mi = 1 limit.
+The initial equilibrium consists of two Harris
+current sheets (Harris 1962) superimposed on a
+ambient population of uniform density. The re-
+connecting magnetic ﬁeld is given by Bx/B0 =
+tanh[(y −Ly/4)/w0] −tanh[(y −3Ly/4)/w0] −1,
+where w0 and Ly denote the half-width of the
+current sheets and the box size in the ˆy direc-
+tion respectively.
+This conﬁguration allows us
+to use fully periodic boundary conditions. Both
+species have the same uniform initial tempera-
+ture, Te = Ti = 0.25. Pressure balance uniquely
+determines the density proﬁle, aside from a uni-
+form background population that can have arbi-
+trary density (here nb = 0.2); in this equilib-
+rium n(y = Ly/4) = n(y = 3Ly/4) = 1.2.
+At
+t = 0 we perturb the magnetic ﬁeld — eBx/B0
+varies with system size but is always < 0.07 —
+to seed X-points at (x, y) = (Lx/4, 3Ly/4) and
+(3Lx/4, Ly/4).
+We set the speed of light (in normalized units)
+to 5. The spatial resolution is such that there are
+> 4 gridpoints per inertial length and ≈1 per De-
+bye length. The Courant condition determines the
+particle timestep; we substep the advancement of
+the electromagnetic ﬁelds. A typical cell contains
+∼200 particles and our largest simulation follows
+> 109 particles.
+All of our simulations conserve
+energy to better than 1 part in 200.
+3.
+The Hall Term
+The current theory of electron-proton reconnec-
+tion emphasizes the role of the Hall term in the
+generalized Ohm’s Law.
+By combining the col-
+lisionless ﬂuid momentum equations for electrons
+and a singly charged positive ion species of mass
+mi we can write
+(1 + µ) E = −1 + µ
+c
+v × B
++ 1 −µ
+nec J × B
+−1
+ne ∇· (Pe −µPi)
++ me
+ne2
+∂J
+∂t + ∇·
+
+Jv + vJ −1
+ne
+1 −µ
+1 + µ JJ
+
+(1)
+where µ = me/mi, v = (meve + mivi)/(me + mi)
+is the velocity in the center of mass frame, P is the
+pressure tensor, and we assume quasi-neutrality,
+ni = ne = n. For electron-proton plasmas µ ≈0.
+By scaling equation 1 one can show that
+the ﬁrst term on the right-hand side dominates
+at large lengthscales.
+The MHD model, and
+hence Sweet-Parker theory, discards the remaining
+terms. The second term on the right-hand side is
+the Hall term; it becomes important for length-
+scales equal to or smaller than di. With the addi-
+tion of the Hall term the principal wave mode on
+these scales changes from the Alfv´en wave of MHD
+(ω ∝k) to the dispersive (ω ∝k2) whistler wave.
+The localization of the current layer along the out-
+ﬂow direction due to the action of dispersive waves
+has been proposed as the mechanism that facili-
+tates fast reconnection in electron-proton plasmas
+(Birn et al. 2001; Rogers et al. 2001). The terms
+proportional to the diagonal portion of the pres-
+sure tensor can be important for systems with
+large guide ﬁelds (since they are the source of ki-
+netic Alfv´en waves), while the oﬀ-diagonal terms
+3
+
+and ﬁnal inertial term matter only on electron
+scales, de = c/ωpe, and likely play only a small
+role outside the immediate vicinity of the X-point
+and magnetic separatrices.
+In pair plasmas µ = 1 and equation 1 simpliﬁes
+to the form derived in Bessho and Bhattacharjee
+(2005):
+E = −1
+c v × B
+−
+1
+2ne ∇· (Pe −Pi)
++ me
+2ne2
+∂J
+∂t + ∇· (Jv + vJ)
+
+(2)
+The mass symmetry eliminates the Hall term, and
+with it the usual dispersive modes, including the
+whistler. If we make the reasonable assumption
+that v vanishes at a steady-state X-point, equation
+2 becomes
+E = −1
+2ne ∇· (Pe −Pi)
+(3)
+Hence a non-zero reconnection electric ﬁeld (Ez)
+requires an asymmetry between the two species,
+Pe ̸= Pi. In our quasi-two-dimensional system the
+balance must come from the oﬀ-diagonal compo-
+nents of the pressure tensors, which describe the
+transport of momentum away from the X-point.
+4.
+Simulations
+4.1.
+Overview
+Figure 1 shows the steady-state behavior of a
+typical simulation of pair reconnection in a large
+domain.
+The top panel displays magnetic ﬁeld
+lines superimposed on the component of the elec-
+tron velocity in the ˆx direction; the positron ve-
+locity (not shown) is basically identical. The solid
+and dashed portions of the ﬁeld lines indicate pos-
+itive and negative signs of Bx, the reconnecting
+component of the ﬁeld. The tension in the highly
+bent ﬁeld lines to the left and right of the X-point
+(x = 0, y = 0) accelerates the plasma downstream
+until it reaches the local Alfv´en velocity (≈1 in
+our normalization). A more gradual inﬂow with
+speed ≈0.1 (not shown) replenishes the plasma.
+Panel (b) shows the out-of-plane component of
+the magnetic ﬁeld Bz. The quadrupolar Bz pat-
+tern that is one of the signatures of Hall reconnec-
+tion is not present. Instead Bz becomes large and
+highly structured farther downstream from the X-
+point where the current layer opens up. We dis-
+cuss the turbulence, the instability responsible for
+it, and its linkage to the structure of the outﬂow
+jet later.
+Although Ey has a structure similar to Bz in
+the turbulent outﬂow, along the thin central por-
+tion of the current layer it exhibits a narrow bipo-
+lar feature. Panel (c) shows a vertical cut of Ey
+averaged over the region −50 < x < 50. The cen-
+tral structure has a width of ≈2de and breaks the
+symmetry between the electrons and positrons. It
+grows from the ambient noise in all of our simula-
+tions, regardless of box size, but the sign (whether
+electrons or positrons accelerate toward the cur-
+rent layer) appears to arise spontaneously.
+In
+this case electrons are accelerated toward, and
+positrons repelled from, the center, which leads
+to an asymmetry in the respective particle dis-
+tribution functions.
+The bipolar signal appears
+much earlier in the simulations than the temper-
+ature anisotropy instability we discuss later, and
+it appears in runs for which this other instability
+is absent. Instead, the counter-streaming inﬂow-
+ing plasma likely triggers a two-stream instability
+at the current layer in which the polarity of Ey is
+determined randomly.
+To maintain this ﬁeld the species’ number
+densities exhibit a slight asymmetry (i.e., quasi-
+neutrality is slightly violated). Panel (d) displays
+the distribution of vy for the electrons (green) and
+positrons (blue) within the box |x| < 50, |y| < 2
+and shows the eﬀects of this ﬁeld. The vz distri-
+butions in panel (e) are mirror-symmetric due to
+the eﬀect of Ez (the reconnection electric ﬁeld)
+on the oppositely charged electrons and positrons.
+The vx distributions are the same for both species
+because Ex is small. They are plotted in black.
+In some of our preliminary simulations the long
+initial current layers produced a larger number of
+islands that played a transient role before being
+swept away. We ﬁnd that varying the thickness
+of the initial layer aﬀects the initial rate of island
+production, with a broader layer producing fewer
+islands. At the time of Figure 1 these initial is-
+lands have all disappeared downstream. However,
+we also ﬁnd that secondary islands self-generated
+on the current layer remain a common occurrence
+in pair reconnection and are much more prevalent
+than in reconnection with me ≪mi (Shay et al.
+4
+
+2007). Two such islands (at x ≈20 and x ≈−80)
+appear in Figure 1. These remnant islands, how-
+ever, are not responsible for the turbulent ﬂuctu-
+ations in Bz in Figure 1. The island at x ≈20,
+occurs in a region with no turbulence and has no
+Bz signature while the other, at x ≈−80, lies in
+the turbulent outﬂow where any independent Bz
+signature (if it exists) is diﬃcult to distinguish.
+4.2.
+Scaling of the Reconnection Rate
+Fast reconnection ultimately arises from the lo-
+calization of the current layer (Biskamp and Schwarz
+2001). This can be seen from a straightforward
+analysis of the ﬂuid continuity equation
+∂n
+∂t + ∇· (nv) = 0
+(4)
+In a steady state the time derivative vanishes, leav-
+ing a term that the divergence theorem transforms
+into a surface integral. For one quadrant of a rect-
+angular domain with length (parallel to ˆx) 2∆and
+width (parallel to ˆy) 2δ centered on the X-point,
+the surface integrals imply that
+vin = vout
+ δ
+∆
+ nout
+nin
+
+(5)
+where the subscripts “in” and “out” refer to
+inﬂowing and outﬂowing plasmas, respectively.
+Both the outﬂow speed, which approaches the lo-
+cal Alfv´en speed, and the density ratio nout/nin,
+which does not radically change from its initial
+value, are O(1). If, as seems a reasonable assump-
+tion, the inﬂow scale δ equals an intrinsic kinetic
+scale-length such as de and remains roughly con-
+stant as the system size changes then vin scales
+inversely with the outﬂow dimension ∆. In par-
+ticular, if, as in the Sweet-Parker picture, ∆scales
+with the size of the system, vin should decrease for
+larger and larger simulation domains. In electron-
+proton reconnection the Hall term keeps ∆ﬁxed,
+regardless of the system size, and maintains a
+fast reconnection rate vin/vout ∼δ/∆∼O(0.1)
+(Shay et al. 1999, 2007).
+If the Hall term is the only mechanism that
+can localize the current layer then pair reconnec-
+tion should feature current sheets that scale with
+the system size.
+In order to test this behavior
+we began with a relatively small system and then
+doubled the size repeatedly. Table 1 contains the
+parameters of the four runs we discuss in this pa-
+per; Figure 1 comes from run d. Because of com-
+putational constraints we doubled Lx but not Ly
+between c and d, and so the latter’s aspect ratio
+diﬀers from the other three runs.
+Earlier work
+showed that if the system is large enough to reach
+a steady state the reconnection rate in a double
+tearing mode conﬁguration is independent of the
+aspect ratio (Shay et al. 1999).
+Figure 2 shows the steady state current layers
+for the four runs. In the smallest simulations (pan-
+els (a) and (b)) the current layers lengths approach
+the system size. But, when the system size dou-
+bles between panels (b) and (c) the current layer
+does not; it lengthens moderately, but the turbu-
+lence evident at both ends of the layer broadens
+it along the y direction and prevents the narrow
+portion of the layer from expanding further. A ﬁ-
+nal lengthwise doubling of the system, panel (d),
+barely increases the length of the current layer.
+In Figure 3 we show the reconnection rates
+as a function of time.
+To measure this rate we
+ﬁrst integrate the magnetic ﬂux between the ini-
+tial X-point and the large magnetic island formed
+by the reconnected ﬁeld.
+(The large island is a
+consequence of our periodic boundaries and is not
+shown in the ﬁgures.) We check for the growth of
+other X-points, but ﬁnd that the initially seeded
+one remains dominant throughout the runs, de-
+spite the formation of secondary magnetic islands.
+Figure 3 shows the (unsmoothed) temporal deriva-
+tive of the reconnected ﬂux.
+The vertical lines
+mark the times of the snapshots of vez displayed
+in Figure 2. All of the runs exhibit essentially the
+same behavior: after an initial quiescent period
+the reconnection rate rises to an asymptotic value
+of ≈0.1 and remains there. Given enough time
+the separatrices bounding the magnetic island on
+the simulation’s other current layer approach the
+X-points shown in Figure 2 and we halt the run.
+The ﬁrst eﬀects of this interaction can be seen in
+the slight increases in the reconnection rates no-
+ticeable at the end of each panel in Figure 3.
+So, despite the lack of a Hall term, pair re-
+connection remains fast when the system size in-
+creases. A more quantitative description of the re-
+connection can be found in Table 2, which lists the
+various quantities from equation 5 for each run.
+The vin,sim column contains the inﬂow speed mea-
+sured in the simulation while vin,calc is the value
+5
+
+calculated from the other data using equation 5.
+For our smallest domain, run a, 2∆≈35 ap-
+proaches Lx/2 = 50.
+(The periodic boundaries
+in our simulations restrict the maximum current
+sheet length to Lx/2. In practice ∆never reaches
+this maximum because the transition from out-
+ﬂow to island has a ﬁnite scale.)
+Even though
+the current layer stretches to the system size in
+a Sweet-Parker-like manner, reconnection remains
+fast (vin ∼O(0.1)) because the box is relatively
+small. In fact the outﬂow velocity does not even
+reach the Alfv´en speed. Thus, exploring the scal-
+ing of reconnection in pair plasmas requires much
+larger simulation domains than in normal recon-
+nection. In a simulation domain of this size (mea-
+sured in ion inertial lengths) the ion outﬂow ve-
+locity would have reached the full Alfv´en speed.
+After doubling the box size (run b), the current
+layer length ∆also increases by a factor of two.
+However the larger box contains more room for
+the acceleration of the outﬂow and so vout also in-
+creases. The densities, both upstream and down-
+stream, as well as the thickness of the current layer
+remain relatively constant between these two runs,
+and all of our other runs. The net eﬀect of the
+variation of ∆and vout is to leave the reconnec-
+tion rate unchanged. Since the outﬂow speed has
+an upper limit, the Alfv´en speed, this progression
+cannot continue indeﬁnitely.
+After the next doubling (run c) the outﬂow ve-
+locity reaches its expected Alfv´enic limit. Since
+the increase was less than a factor of 2 (1.3/0.8 ≈
+1.6) a Sweet-Parker-like doubling of ∆would be
+accompanied by a decrease in the reconnection
+rate.
+Instead of doubling, however, ∆only in-
+creases by a factor of 120/80 ≈1.5 and the recon-
+nection rate stays approximately constant. Since
+the Hall term cannot halt this increase, some other
+process must be at work.
+As a check we again doubled the length of
+the box (but not its width) for run d.
+Unlike
+in the previous doublings the outﬂow speed can-
+not increase further.
+Its maximum value is the
+Alfv´en speed based on the downstream density
+and the upstream magnetic ﬁeld; in these simu-
+lations max(vout) ≈1.3. Absent any other localiz-
+ing eﬀect the current layer length should approx-
+imately double and the reconnection rate should
+halve.
+Instead the current layer length and the
+reconnection rate remain basically unchanged. In
+Section 5 we argue that the length of the current
+sheet is limited by the development of an instabil-
+ity driven by a temperature anisotropy. The in-
+stability develops in the outﬂow from the X-point
+before eventually growing strong enough to open
+the layer.
+5.
+Anisotropy Instability
+In suﬃciently large simulations the outﬂow
+from the X-point is subject to a temperature
+anisotropy instability.
+The top panel of Figure
+4 shows a view Bz from run c at t = 450, soon
+after the instability develops. In the second panel
+we plot two of the diagonal components of the
+positron temperature tensor, Txx and Tyy, along
+the line y = −1. (The inﬂuence of the Ey feature
+shown in Figure 1 makes the anisotropy somewhat
+weaker exactly on the symmetry axis.) At the X-
+point (x = 0) the plasma temperature is isotropic
+and equal to the initial value of 0.25.
+As the
+plasma moves away from the X-point Txx increases
+sharply while Tyy remains nearly unchanged, lead-
+ing to an anisotropy that reaches a peak value of
+≈4. At |x| ≈50 the disturbance in Bz becomes
+visible, indicating onset of an instability. Further
+downstream the Bz pattern strengthens and the
+anisotropy simultaneously weakens. Movies of Bz
+(not shown) demonstrate that the disturbances
+propagate with the mean ﬂow of the plasma in
+the outﬂow jet.
+In order to investigate the source of the
+anisotropy we show the 1-D velocity distributions
+taken between the dashed lines in panel (b) and
+−2 < y < −1 in the ﬁnal three panels. Two pop-
+ulations intermingle in this region, the inﬂowing
+plasma with vx ≈0 and a jet with vx < 0 moving
+outward from the X-point. As can be seen in panel
+(c) the superposition of these populations results
+in a wide, hot distribution of vx.
+Meanwhile,
+since the sample box is upstream of the bipolar
+Ey signal, the vy distributions remain essentially
+unchanged from their initial Maxwellians. A mix-
+ture of the inﬂowing ambient plasma and plasma
+accelerated by the reconnection electric ﬁeld form
+the vz distributions. The ﬁnal result is a plasma
+with Tx > Ty ≈Tz.
+Plasmas with hot bimaxwellian distribution
+functions are typically stable to electrostatic per-
+turbations (the thermal spread stabilizes the elec-
+6
+
+trostatic ion-ion streaming instability), but unsta-
+ble to electromagnetic instabilities. One possibil-
+ity is that the magnetic perturbations in Figures
+1 and 4 result from the ﬁrehose instability. If that
+were the case the perturbed motion of the plasma
+in the z direction with k = kxˆx would produce per-
+turbations in Bz. We can rule out this instability,
+however, since along the symmetry axis (y = 0)
+motion of the plasma in z would not produce a
+perturbation of Bz since the equilibrium ﬁeld Bx
+is zero in this region.
+The simulations clearly
+have large perturbations of Bz centered at y = 0.
+Instead the anisotropy is suﬃciently large that
+the magnetic ﬁeld in the region around y = 0 is
+negligible and the instability is a Weibel-like mode
+that self generates the magnetic ﬁeld perturbation
+by separating the electrons and positrons moving
+in opposite direction to create a current in the
+x-direction that varies with y.
+To demonstrate
+the viability of the instability we begin with a tri-
+maxwellian plasma described by the distribution
+function
+f =
+Y
+α=x,y,z
+
+m
+2πkBTα
+1/2
+exp
+
+−
+
+m
+2πkBTα
+
+v2
+α
+
+(6)
+with, in general, Tx ̸= Ty ̸= Tz, and look for insta-
+bilities with eBz and eEx varying as exp(ikyy−iωt).
+Following the method of Krall and Trivelpiece
+(1986), the instability condition for a pair plasma
+is
+Tx
+Ty
+−1
+
+> k2
+yc2
+2ω2p
+(7)
+Setting the plasma dielectric function to zero, we
+obtain the dispersion relation relating the growth
+rate γ = −iω and the wavenumber:
+kyc2 + γ2 + 2ω2
+p
+
+1 −Tx
+Ty
+
+= 2ω2
+p
+Tx
+Ty
+ζ Z(ζ)
+(8)
+where the thermal speed vth enters through
+ζ =
+ω
+ky
+p
+2Ty/m
+≡
+ω
+kyvth
+(9)
+and Z(ζ) is the plasma dispersion function
+Z(ζ) =
+1
+√π
+Z ∞
+−∞
+exp(−t2)
+t −ζ
+dt
+(10)
+In the limit |ζ| ≫1 equation 8 has a solution for
+the growth rate of
+γ ≈kyvth,x
+ωp
+q
+k2yc2 + 2ω2p
+(11)
+where vth,x =
+p
+2Tx/m. Thus, the growth rate
+asymptotes to γ ∼vth,x/de for kyde >
+√
+2. Taking
+|ζ| ≫1 is only possible if the anisotropy is strong,
+Tx/Ty ≫1. Equation 11 can also be derived in
+the ﬂuid limit by considering the stability of a cold
+plasma beam.
+Strictly speaking these results apply only to the
+case of a homogeneous inﬁnite plasma, while in
+the case under consideration here the instability
+develops within a thin (width 2δ ≈5de) current
+layer. To further explore the behavior of this in-
+stability, particularly the behavior of its growth
+rate, we again turn to simulations. First, in or-
+der to test our code’s ability to reproduce the re-
+sults of equation 8, we consider a homogeneous
+electron-positron system with a bimaxwellian dis-
+tribution (for both species), no initial magnetic
+ﬁeld, and a constant particle density, n = 1.2. We
+seed the system with the theoretical fastest grow-
+ing wavenumber (with kx = 0) and monitor the
+growth of the instability. In panel (c) of Figure 5
+we plot the growth rates calculated from the simu-
+lations (stars) compared with the values predicted
+by equation 8 (solid curve). The two are in near
+perfect agreement.
+In order to study the eﬀect of the narrow cur-
+rent layer on the development of the instability we
+next turn to a more complicated system. We begin
+with a Harris sheet equilibrium similar to that dis-
+cussed in Section 2 except that one component of
+the temperature, Tx, increases along with the den-
+sity in the center of the current layer. Note that
+Tx does not aﬀect force balance in the y direction
+and therefore does not aﬀect the initial equilib-
+rium. For our usual box sizes this equilibrium is
+also unstable to the tearing mode, so we consider
+narrow domains (e.g., Lx = 4, Ly = 50) where
+the tearing mode is stabilized but the temperature
+anisotropy mode is not. In panel (d) of Figure 5
+we show the growth rates (marked by the stars)
+for the instability in this geometry (again with
+kx = 0) compared with the homogeneous growth
+rate (solid curve). In general the growth rates are
+only reduced around 20 % from the homogeneous
+values. Thus, neither the ﬁnite geometry of the
+7
+
+current layer nor the ﬁnite magnetic ﬁeld in the
+layer signiﬁcantly aﬀect the growth of the insta-
+bility, conﬁrming that the Weibel instability can
+exist in a magnetically supported current layer.
+In panels (a) and (b) of Figure 5 we show the
+nonlinear development of the instability in a 2-D
+homogeneous system with no initial magnetic ﬁeld
+and Tx/Ty = 4. The system is seeded with a mag-
+netic perturbation corresponding to the fastest
+growing mode that dominates the structure at
+early time. At late time the dominant mode de-
+velops a ﬁnite value of kx (kx = 0.25, ky = 1.0), as
+also occurs in the reconnection simulations. The
+amplitude of the late-time perturbations of Bz is
+about 0.5; compared with the turbulence seen in
+the reconnection simulations these perturbations
+are at somewhat longer wavelength and have mod-
+estly larger amplitudes. These diﬀerences may re-
+ﬂect constraints on the turbulence due to the ﬁ-
+nite width (in the y direction) of the temperature
+anisotropy in the reconnection simulations.
+For the full reconnection simulation a typical
+temperature anisotropy in the outﬂow is ≈3 (see
+Figure 4), which corresponds to a typical growth
+rate of γ ≈0.2. (The density in the reconnection
+outﬂow is ≈4 times smaller than in the insta-
+bility simulations, which, since γ ∝ωp, implies a
+factor of 2 decrease in the growth rate.) In plasma
+traveling at the typical outﬂow velocity of vout ≈1
+the lengthscale associated with one e-folding of the
+instability is ℓ≈vout/γ = 5. A current layer of
+half-length ∆= 60 can then ﬁt ∆/ℓ≈12 growth
+periods within it, more than enough to amplify
+any initial ﬂuctuations to non-linear amplitudes.
+A fundamental question is whether the dynam-
+ics of the Weibel instability scale in a manner such
+that the resultant length of the current layer can
+produce reconnection rates insensitive to the size
+of the computational domain. A complete model
+should incorporate the development of the temper-
+ature anisotropy in the outﬂow from the X-point
+by using the full dispersion relation of equation 8.
+We consider instead a cruder model in which we
+ignore the anisotropy threshold. That is, we take
+the plasma near the X-point to be cold so that the
+Weibel mode is unstable as soon as the anisotropy
+develops downstream. Strictly speaking this as-
+sumption does not apply near the X-point and
+will lead to an overstatement of the mode’s growth
+rate. But since the principal eﬀects of the instabil-
+ity manifest themselves in the downstream region,
+the key result derived from this simpler approach
+— the independence of the reconnection rate on
+the system size — should remain valid in a more
+complete theory.
+In its most primitive form, neglecting onset
+thresholds, the growth rate of the Weibel is given
+by γ = vth,x/de. In Figure 4 we show that the ef-
+fective electron thermal speed in the x-direction
+is related to the relative drift between the ba-
+sically stationary upstream plasma crossing into
+the outﬂow jet and the high speed particles ac-
+celerated from the X-point.
+Hence vth,x is sim-
+ply one-half the drift speed of those fast particles,
+which implies γ = vx/2de.
+As discussed previ-
+ously, the amplitude of the turbulent ﬂuctuations
+is controlled by the convective ampliﬁcation of the
+initial electromagnetic perturbations. The num-
+ber of e-foldings between the X-point and an po-
+sition x downstream is therefore given by
+Γ =
+Z x
+0
+γ dx
+vx
+.
+(12)
+But the growth rate γ is itself proportional to vx,
+so vx drops out of the calculation and
+Γ = x/2de.
+(13)
+If we assume that Γ0 is the number of e-foldings
+required to amplify initial ﬂuctuations to the val-
+ues of order unity required to broaden the current
+layer, we obtain the length of the current layer
+∆= 2Γ0de.
+The resulting rate of reconnection
+can then be calculated from equation 5 (ignoring
+density changes and any variations in the current
+layer width) to be
+vin ∼vA/Γ0.
+(14)
+The rate of reconnection resulting from the broad-
+ening of the current layer by Weibel generated tur-
+bulence should therefore remain fast, independent
+of system size, and independent of kinetic scales,
+as we see in our simulations
+6.
+Discussion
+We have shown that reconnection in a pair
+plasma remains fast despite the absence of the
+Hall term. For small systems, up to 100de along
+the outﬂow direction, the length of the current
+8
+
+layer that develops during reconnection scales with
+the size of the system, as expected based on the
+classical Sweet-Parker model with no dispersive
+waves.
+When the domain size exceeds ≈200de
+a Weibel-like instability develops that forces the
+development of a turbulent outﬂow jet and lim-
+its the length of the narrow current layer, allow-
+ing reconnection to remain fast.
+Note that, de-
+spite being big enough to show the transition to
+system-size independent reconnection, our simula-
+tion boxes remain small in astrophysical terms. A
+scale of L = 103 inertial lengths, modestly larger
+than our biggest boxes, corresponds to
+L ∼5 × 103
+1 cm−3
+ne
+1/2
+km
+(15)
+The length ∆≈70 de and width δ ≈5 de of the
+current layer are even smaller still. The wide sep-
+aration of scale between the system size and the
+scale where the important reconnection physics
+occurs is a well-known phenomenon in magneto-
+spheric physics where in situ satellite measure-
+ments have studied the inner scales near the X-
+point (Mozer et al. 2002).
+Although fast pair reconnection has been noted
+in previous work, the underlying cause was at-
+tributed to diﬀerent mechanisms.
+In particu-
+lar Daughton and Karimabadi (2007) suggest that
+the generation and ejection of magnetic islands
+play an important role by continually disrupting
+the growth of a current layer that would other-
+wise scale with the system size. Magnetic islands
+form in our simulations, but appear to play little
+or no role in maintaining the length of the cur-
+rent layer. Figure 6 shows snapshots at intervals
+of Ωciδt = 25 of the out-of-plane electron velocity
+for run d, beginning at Ωcit = 600. During this
+period the reconnection rate remains steady and
+fast.
+In the ﬁrst four panels the instability de-
+scribed in section 5 does not have enough room to
+grow and the current layer lengthens, in a process
+analogous to what occurs in our smaller simula-
+tion domains. In the second column the current
+layer grows long enough for the Weibel-like insta-
+bility to saturate and stop further lengthening of
+the narrow portion of the current layer. Although
+several islands form and travel downstream during
+this time, they do not appear to have any signif-
+icant eﬀect on the length of the current layer or
+on the system’s reconnection rate (see Figure 3).
+However, several factors may play a role in island
+generation in numerical simulations including the
+initial width of the current sheet, the strength of
+the initial perturbation, the number of simulated
+particles, and the size of the grid.
+The relative
+importance of these various eﬀects, and what they
+imply about island generation in real plasmas, re-
+mains unknown.
+A surprise of the simulations of pair reconnec-
+tion shown here and in earlier work is that, just
+as in the electron-proton system, the inﬂow ve-
+locity is O(0.1cA). This agreement is unexpected
+since diﬀerent mechanisms are clearly at play in
+the two cases — while there is some turbulence in
+the outﬂow jets of electron-proton reconnection,
+the amplitude is far smaller than in the pair sys-
+tem. However, since the growth of the Weibel in-
+stability appears to be crucial for maintaining fast
+reconnection in our pair plasma simulations, any
+suppression of the growth rate would serve to slow
+the process. One possible mechanism for doing so
+is the addition of a constant guide ﬁeld component,
+Bz. Such a ﬁeld would tend to isotropize the tem-
+peratures in the current layer (Tx ≈Ty) simply
+by keeping the particles on Larmor orbits and ei-
+ther substantially decrease or stabilize the growth
+of the instability. On the other hand, we also can-
+not rule out the possibility that another instabil-
+ity would develop when a guide ﬁeld is present. It
+seems clear that any elongated current layer will
+ultimately develop strong pressure anisotropies,
+and in the presence of a guide ﬁeld the parallel
+pressure p∥will likely become much larger than
+that perpendicular to the magnetic ﬁeld p⊥. For
+randomly oriented magnetic ﬁelds most reconnec-
+tion is guide ﬁeld reconnection, so the anti-parallel
+geometry we consider here is in some sense a spe-
+cial case. But, if guide ﬁeld reconnection is slow
+due to the suppression of the anisotropy instabil-
+ities, anti-parallel reconnection, even if rare, may
+dominate in pair plasmas.
+Even
+during
+anti-parallel
+reconnection
+the
+Weibel instability will be suppressed for large
+enough asymptotic plasma temperatures. As can
+be seen in Figure 4 a large T can minimize the
+eﬀects of the extra heating provided by the beam
+of outgoing plasma in the current layer.
+The
+critical temperature can be roughly estimated as
+Tcrit ≈mv2
+d/2 where vd ∼cA is the drift velocity
+of the outﬂowing electrons. Thus for asymptotic
+9
+
+temperatures T > Tcrit ≈mc2
+A or β > 1, the in-
+stability should be stabilized. Further simulations
+in this regime are being performed.
+After submitting this paper we became aware
+that Zenitani and Hesse also concluded that
+the Weibel instabilty plays a similar role dur-
+ing reconnection in very relativistic pair plasmas
+(Zenitani and Hesse 2008).
+REFERENCES
+Bessho, N., and A. Bhattacharjee (2005), Col-
+lisionless reconnection in an electron-positron
+plasma, Phys. Rev. Lett., 95(24), 245001, doi:
+10.1103/PhysRevLett.95.245001.
+Bessho, N., and A. Bhattacharjee (2007), Fast
+collisionless reconnection in electron-positron
+plasmas, Phys. Plasmas, 14(05), 056503, doi:
+10.1063/1.2714020.
+Birn, J., et al. (2001), Geospace Environmental
+Modeling (GEM) magnetic reconnection chal-
+lenge, J. Geophys. Res., 106(A3), 3715–3719.
+Biskamp, D., and E. Schwarz (2001), Localiza-
+tion, the clue to fast magnetic reconnection,
+Phys. Plasmas, 8(11), 4729–4731, doi:10.1063/
+1.1412600.
+Coroniti, F. V. (1990), Magnetically striped rel-
+ativistic magnetohydrodynamic winds:
+The
+Crab nebula revisited, Astrophys. J., 349, 538–
+545.
+Daughton, W., and H. Karimabadi (2007), Col-
+lisionless magnetic reconnection in large-scale
+electron-positron plasmas, Phys. Plasmas, 14,
+072303, doi:10.1063/1.2749494.
+Drenkhahn, G., and H. C. Spruit (2002), Ef-
+ﬁcient acceleration and readiation in Poynt-
+ing ﬂux powered GRB outﬂows, Astronomy
+& Astrophysics, 391, 1141–1153, doi:10.1051/
+0004-6361:20020839.
+Eardley, D. M., and A. P. Lightman (1975), Mag-
+netic viscosity in relativistic accretion disks,
+Astrophys. J., 200, 187–203.
+Fujimoto, K. (2006), Time evolution of the elec-
+tron diﬀusion region and the reconnection rate
+in fully kinetic and large system, Phys. Plas-
+mas, 13(7), 072904, doi:10.1063/1.2220534.
+Harris, E. G. (1962), On a plasma sheet sepa-
+rating regions of oppositely directed magnetic
+ﬁeld, Nuovo Cim., 23, 115.
+Hesse, M., M. Kuznetsova, and J. Birn (2001),
+Particle-in-cell simulations of three-dimensional
+collisionless magnetic reconnection, J. Geophys.
+Res., 106(A12), 29,831–29,842.
+Jaroschek, C. H., R. A. Treumann, H. Lesch, and
+M. Scholer (2004), Fast reconnection in rela-
+tivistic pair plasmas: Analysis of particle ac-
+celeration in self-consistent full particle simu-
+lations, Phys. Plasmas, 11(3), 1151–1163, doi:
+10.1063/1.1644814.
+Krall, N. A., and A. W. Trivelpiece (1986), Prin-
+ciples of Plasma Physics, chap. 9, pp. 483–494,
+San Francisco Press, Inc.
+Masuda, S., T. Kosugi, . H. H, S. Tsuneta, and
+Y. Ogawara (1994), A loop-top hard x-ray
+source in a compact solar ﬂare as evidence for
+magnetic reconnection, Nature, 371, 495–497,
+doi:10.1038/371495a0.
+Michel, F. C. (1994), Magnetic structure of pulsar
+winds, Astrophys. J., 431, 397–401.
+Miller,
+K.
+A.,
+and
+J.
+M.
+Stone
+(1997),
+Magnetohydrodynamic simulations of stellar
+magnetosphere-accretion disk interaction, As-
+trophys. J., 489, 890–902.
+Mozer, F. S., S. D. Bale, and T. D. Phan (2002),
+Evidence of diﬀusion regions at a subsolar mag-
+netopause crossing, Phys. Rev. Lett., 89, doi:
+10.1103/PhysRevLett89.015002.
+Parker, E. N. (1957), Sweet’s mechanism for merg-
+ing magnetic ﬁelds in conducting ﬂuids, J. Geo-
+phys. Res., 62(4), 509–520.
+Petschek, H. E. (1964), Magnetic ﬁeld annihila-
+tion, in Proc. AAS-NASA Symp. Phys. Solar
+Flares, NASA-SP, vol. 50, pp. 425–439.
+Phan, T. D., et al. (2006), A magnetic reconnec-
+tion X-line extending more than 390 Earth radii
+in the solar wind, Nature, 439, 175–178, doi:
+10.1038/nature04393.
+10
+
+Rogers, B. N., R. E. Denton, J. F. Drake, and
+M. A. Shay (2001), The role of dispersive waves
+in collisionless magnetic reconnection, Phys.
+Rev. Lett., 87(19), 195,004.
+Shay, M. A., J. F. Drake, B. N. Rogers, and
+R. E. Denton (1999), The scaling of collision-
+less, magnetic reconnection for large systems,
+Geophys. Res. Lett., 26(14), 2163–2166.
+Shay, M. A., J. F. Drake, and M. Swisdak (2007),
+Two-scale structure of the electron dissipation
+region during collisionless magnetic reconnec-
+tion, Phys. Rev. Lett., 99, 155002, doi:10.1103/
+PhysRevLett.99.155002.
+Sweet, P. A. (1958), Electromagnetic Phenomena
+in Cosmical Physics, p. 123, Cambridge Uni-
+versity Press, New York.
+Zeiler, A., D. Biskamp, J. F. Drake, B. N. Rogers,
+M. A. Shay, and M. Scholer (2002), Three-
+dimensional particle simulations of collision-
+less magnetic reconnection, J. Geophys. Res.,
+107(A9), 1230, doi:10.1029/2001JA000287.
+Zenitani, S., and M. Hoshino (2001), The gener-
+ation of nonthermal particles in the relativistic
+magnetic reconnection of pair plasmas, Astro-
+phys. J. Lett., 562, L63–L66.
+Zenitani, S., and M. Hesse (2008), The role of the
+Weibel instability at the reconnection jet front
+in relativistic pair plasma reconnection, Phys.
+Plasmas, in press.
+This 2-column preprint was prepared with the AAS LATEX
+macros v5.2.
+11
+
+Fig. 1.— Reconnection overview. Panel (a): vex
+overplotted with magnetic ﬁeld lines.
+The solid
+and dashed portions of the lines indicate the direc-
+tion of the reconnecting magnetic ﬁeld Bx. Panel
+(b): Bz at the same time. Panel (c): Cut of Ey
+averaged horizontally over −50 < x < 50. Panel
+(d): Distribution of vy over the region −50 < x <
+50, −2 < y < 2. Electrons are green, positrons
+blue.
+Panel (e): vz and vx distributions.
+vx is
+plotted in black and is essentially the same for
+both species.
+12
+
+Fig. 2.— Out-of-plane electron velocities for the
+simulations of Table 1, showing the evolution of
+the current layer with system size.
+Each panel
+shows about one-fourth of the total simulation do-
+main.
+13
+
+Fig. 3.— Reconnection rate versus time for the
+runs listed in Table 1. The vertical lines indicate
+the times of the snapshots shown in Figure 2. Note
+the diﬀerent scales on the horizontal axes. Diﬀer-
+ences in the strength of the initial perturbation
+and the initial width of the current layer account
+for the diﬀerences in ramp-up times between the
+panels.
+14
+
+Fig. 4.— Panel (a): Bz at t = 450, soon after
+the instability develops, for run c. Panel (b): Two
+components, Txx and Tyy, of the positron temper-
+ature tensor along the line y = −1. Panels (c)–
+(e): The velocity distributions taken between the
+dashed lines in panel (b) and −1.5 < y < −0.5.
+Electrons are green, positrons blue. In panels (c)
+and (d) the two curves are nearly identical.
+15
+
+Fig.
+5.— Panels (a)-(b):
+The structure of Bz
+during the linear phase of the instability and af-
+ter saturation in an initially homogeneous plasma
+with Tx/Ty = 4.
+Panel (c): Theoretical (line)
+and measured (star) growth rate versus temper-
+ature anisotropy for the fastest growing insta-
+bility in a homogeneous plasma (ﬁnite ky with
+kx = 0). Panel (d): Growth rate in a Harris-sheet
+background. Stars indicate the measured values,
+the line the theoretical value in a homogeneous
+medium.
+16
+
+Fig. 6.— Out-of-plane electron velocity at δt = 25
+intervals beginning at t = 600 for run d.
+17
+
+Table 1: Simulation parameters.
+Run Label
+Domain Size
+Gridpoints
+w0
+a
+100 × 50
+512 × 256
+2
+b
+200 × 100
+1024 × 512
+2
+c
+400 × 200
+2048 × 1024
+4
+d
+800 × 200
+4096 × 1024
+4
+Note.—w0 is the initial half-width of the current sheet.
+Table 2: Simulation results.
+Run Label
+nin
+nout
+2δ
+2∆
+vout
+vin,meas
+vin,calc
+a
+0.16
+0.27
+4.0
+35
+0.5
+0.13
+0.10
+b
+0.12
+0.32
+4.0
+80
+0.8
+0.15
+0.11
+c
+0.13
+0.33
+4.5
+120
+1.3
+0.16
+0.12
+d
+0.13
+0.30
+5.0
+135
+1.3
+0.13
+0.11
+Note.—2δ and 2∆denote the smaller and larger spatial extents, respectively, of the current sheet. vin,meas and vin,calc are
+the measured and calculated (from equation 5) velocities of plasma into the X-point.
+18

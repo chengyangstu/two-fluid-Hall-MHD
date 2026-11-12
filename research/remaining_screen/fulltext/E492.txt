@@ -1,0 +1,702 @@
+
+===== PDF PAGE 1 =====
+Ann. Geophys., 39, 991–1003, 2021
+https://doi.org/10.5194/angeo-39-991-2021
+© Author(s) 2021. This work is distributed under
+the Creative Commons Attribution 4.0 License.
+
+
+
+
+Magnetotail reconnection asymmetries in an ion-scale,
+Earth-like magnetosphere
+
+Christopher M. Bard and John C. Dorelli
+
+Geospace Physics Lab, NASA Goddard Space Flight Center, Greenbelt, MD 20771, USA
+
+Correspondence: Christopher M. Bard (christopher.bard@nasa.gov)
+
+Received: 21 June 2021 – Discussion started: 28 June 2021
+Revised: 6 October 2021 – Accepted: 2 November 2021 – Published: 6 December 2021
+
+
+Abstract. We use a newly developed global Hall magneto-     the magnetotail. At Earth, a number of studies have found
+hydrodynamic (MHD) code to investigate how reconnection     magnetotail duskward biases in several magnetic phenom-
+drives magnetotail asymmetries in small, ion-scale magneto-     ena: ﬂux rope occurrence (Slavin et al., 2005; Imber et al.,
+spheres. Here, we consider a magnetosphere with a similar     2011), dipolarization fronts (Liu et al., 2013), energetic parti-
+aspect ratio to Earth but with the ion inertial length (δi) ar-     cle injections (Gabrielse et al., 2014), and reconnection (e.g.,
+tiﬁcially inﬂated by a factor of 70: δi is set to the length of    Asano et al., 2004; Genestreti et al., 2014). Additionally, the
+the planetary radius. This results in a magnetotail width on     current sheet was found to be thinner on the duskside (Arte-
+the order of 30δi, slightly smaller than Mercury’s tail and    myev et al., 2011; Vasko et al., 2015). Similarly, at Mer-
+much smaller than Earth’s with respect to δi. At this small     cury, Poh et al. (2017b) used MESSENGER data to ﬁt the
+size, we ﬁnd that the Hall effect has signiﬁcant impact on the     Harris sheet model to 234 tail current sheet crossings and
+global ﬂow pattern, changing from a symmetric, Dungey-like    found a bias towards dusk having thinner current sheets (by
+convection under resistive MHD to an asymmetric pattern   ≈10 %–30 %). In contrast, however, other MESSENGER
+similar to that found in previous Hall MHD simulations of     studies (Sun et al., 2016; Dewey et al., 2018) found dawn-
+Ganymede’s subsonic magnetosphere as well as other sim-    ward biases in dipolarization events and reconnection front
+ulations of Mercury’s using multi-ﬂuid or embedded kinetic     locations.
+physics. We demonstrate that the Hall effect is sufﬁcient to      The general existence of tail asymmetry is thought to be
+induce a dawnward asymmetry in observed dipolarization    a result of sub-ion-scale effects (Lu et al., 2018; Liu et al.,
+front locations and ﬁnd quasi-periodic global-scale dipolar-     2019), though there is still some uncertainty about the exact
+izations under steady, southward solar wind conditions. On     manifestation and causes of speciﬁc asymmetries. It is de-
+average, we ﬁnd a thinner current sheet dawnward; however,     bated whether Hall electric ﬁelds are sufﬁcient to reproduce
+the measured thickness oscillates with the dipolarization cy-      this or if other ion-/electron-scale physics are required. Al-
+cle. During the ﬂux-pileup stage, the dawnward current sheet    though some authors argue that electron-scale physics is re-
+can be thicker than the duskward sheet. This could be an ex-     quired (Chen et al., 2019), we show in this paper that Hall ef-
+planation for recent observations that suggest Mercury’s cur-     fects are sufﬁcient to cause an asymmetry in some observed
+rent sheet is actually thicker on the duskside: a sampling bias     features. Furthermore, it is unknown exactly why Mercury
+due to a longer lasting “thick” state in the sheet.               and Earth observe different asymmetries; it is hypothesized
+                                                                      that system-size effects (relative to the ion inertial length δi)
+                                                             play a key role (Lu et al., 2016, 2018; Liu et al., 2019).
+                                                                Several studies have proposed mechanisms to explain how
+1  Introduction                                             Hall reconnection induces asymmetry in the magnetotail.
+                                               Lu et al. (2016, 2018) (hereafter Lu+), in studying Earth’s
+In the magnetospheres of Mercury and Earth, observations     magnetotail with global hybrid simulations and localized
+of plasmoids, ﬂux bundles, and dipolarization fronts (DFs)     particle-in-cell (PIC) simulations, showed that the decou-
+demonstrate a marked asymmetry in their distribution across
+
+
+Published by Copernicus Publications on behalf of the European Geosciences Union.
+
+===== PDF PAGE 2 =====
+992                                                            C. M. Bard and J. C. Dorelli: Tail asymmetries
+
+pling of ions and electrons within the current sheet (the Hall     cells per δi was necessary (within the context of their nu-
+effect; e.g., Sonnerup, 1979) creates an electric ﬁeld and as-     merical viscosity) in order to observe fast Hall reconnection.
+sociated tail current density. The resulting E × B drift is    This is much greater than the 5–10 cells per δi typically used
+sufﬁcient to create tail asymmetries and indeed may be the     in simulations (Dorelli et al., 2015; Dong et al., 2019; Chen
+primary cause. The duskside magnetic ﬂux is preferentially      et al., 2019). This suggests that, although artiﬁcially inﬂating
+evacuated via electron transport dawnward, which leads to a      δi allows the Hall effect to emerge and have a global impact,
+smaller normal Bz and thinner current sheet on the duskside.    much higher resolution is required to observe the universally
+  In a similar study, Liu et al. (2019) (hereafter Liu+), us-      fast (∼0.1vA) reconnection observed in kinetic simulations.
+ing local PIC simulations of embedded, thin current sheets,     Finally, Bard and Dorelli (2018) found qualitatively different
+conﬁrmed that the Hall effect creates electron E × B and     behavior for varying ratios of system size to δi: large systems
+diamagnetic drifts which transport magnetic ﬂux dawnward    can produce bursty reconnection (with a low average recon-
+within the current sheet. However, they found that, although     nection rate) even when δi is sufﬁciently resolved to produce
+the preexisting tail Bz initially suppresses the onset of dawn-     “fast”, instantaneous reconnection. Ultimately, the combined
+side reconnection, the reconnection Bz drives outﬂows to-     requirements of high resolution and large system size create a
+wards dawn and thins out the current sheet on that side. This     computational requirement beyond what is currently possible
+creates an “active region” of reconnection on the dawnside,     for magnetospheres. Indeed, we are only setting a resolution
+which has a thinner current sheet and stronger tail current jy.     appropriate to 5 cells per solar wind δi in this work, though
+After analyzing both these studies, Liu+ proposed that, al-     local density ﬂuctuations in the tail may allow up to 10–20
+though the Lu+ model provides a explanation for a duskward     cells per δi.
+bias in the initial reconnection onset, the Liu+ active region     One possible method for dealing with this issue may be to
+provides an explanation for dawnward biases within local, in-    use graphics processing units (GPUs), which have proven to
+progress magnetotail reconnection. We test several aspects of    be robust and viable for scientiﬁc computing. Indeed, several
+this general picture within this paper.                         groups have already utilized GPUs to accelerate plasma sim-
+  Unfortunately, simulating large magnetospheres such as     ulations throughout heliophysics, astrophysics, and plasma
+Earth (few hundred δi) while properly resolving the small-     physics (Bard and Dorelli, 2014; Benítez-Llambay and Mas-
+scale Hall physics requires grid sizes in the billions of cells.      set, 2016; Fatemi et al., 2017; Bard and Dorelli, 2018; Schive
+Several strategies have been proposed to evade this con-      et al., 2018; Grete et al., 2019; Liska et al., 2019; Wang
+straint; one is to embed regions of detailed kinetic physics      et al., 2019). GPUs take advantage of parallelism in order to
+within large-scale Hall magnetohydrodynamic (MHD) sim-    have a higher throughput for ﬂoating point operations. Finite-
+ulations (Chen et al., 2019). This allows for reproduction of    volume schemes are massively parallel: the calculation of
+kinetic effects within certain regions of the magnetosphere    how a computational cell evolves from t to t + 1t is inde-
+without having to run an expensive, fully kinetic simulation.    pendent of similar calculations for other cells. This makes
+However, these simulations assume no kinetic effects outside     explicit Hall MHD schemes (such as presented in this paper)
+the embedded regions, which are limited to certain regions     quite amenable to GPU acceleration.
+in the dayside and/or the tail. It is unclear whether or not       In this paper, we undertake a numerical experiment de-
+this methodology, including boundary handling, affects the     signed to assess the role of the Hall effect on global mag-
+local-global feedback dynamics in the magnetosphere. Fu-     netospheric structure and dynamics within a “small” ion-
+ture studies will eventually be needed to compare magneto-     scale magnetosphere, speciﬁcally focusing on how  it in-
+spheres from Hall MHD, kinetic, and combined kinetic–Hall    duces asymmetry in the magnetotail. We present a mag-
+simulations to ascertain these effects.                          netosphere simulation code which accelerates the explicit
+  Another strategy suggests that we need only set the Hall   MHD solver algorithm via GPUs. We simulate an Earth-like
+scale to some length sufﬁcient to capture the essential physics    analogue magnetosphere which has a similar bow shock–
+of Hall reconnection without having to fully resolve the phys-    magnetopause distance and magnetotail width as Earth’s (rel-
+ical length scale. In these simulations, the Hall length is     ative to the planetary radius); however, δi is artiﬁcially in-
+set to ≈3% of the global-scale length (Tóth et al., 2017),    ﬂated to the planetary radius (RE). In other words, we are
+which is sufﬁcient to capture the out-of-plane ﬂows and the     self-similarly scaling Earth from its current size relative to
+quadrupolar magnetic ﬁeld structure induced by the Hall     ion scales (magnetotail width ≈600δi) to a size closer to
+effect. However, recent research in 2D island coalescence     the ion scale (magnetotail width ≈30δi). In this “ion-scale
+(Bard and Dorelli, 2018) suggests that although including     Earth”, Hall physics plays a greater role in magnetosphere
+the Hall term in MHD simulations is sufﬁcient in itself to    dynamics, and we are able to more readily observe global
+generate these signatures of Hall reconnection, the actual re-     Hall MHD effects. We view this work as a ﬁrst step in the
+connection rate depends on resolution and numerical resis-     study of the system-size dependence of Hall MHD magnetic
+tivity. Although the Hall term is present, the reconnection     reconnection in Earth-like magnetospheres; future system-
+itself may be Sweet–Parker-like and slow (unlike fast Hall     size studies can be performed by making δi smaller relative
+reconnection). Bard and Dorelli (2018) observed that 20–25
+
+
+Ann. Geophys., 39, 991–1003, 2021                                         https://doi.org/10.5194/angeo-39-991-2021
+
+===== PDF PAGE 3 =====
+C. M. Bard and J. C. Dorelli: Tail asymmetries                                                          993
+
+                                                 ∂E        ρv2    γ
+to the planetary radius and increasing the resolution to sufﬁ-     + ∇·    +        v + B21vT + (B0 · B1)vTciently cover the ion scales.                                      ∂t          2    γ −1p
+  This paper is presented as follows: Sect. 2 provides a brief
+overview of the Hall MHD algorithm as implemented using      −(vT · B1)(B0 + B1) = 0,                          (4)
+GPUs; Sect. 3 provides the initial condition and setup of the
+                                                 ∂B1
+simulation; and Sect. 4 presents tail asymmetries in the sim-     + ∇· [vT B −BvT ] + ∇ψ = 0,                     (5)
+ulation and discusses them in the context of observations and      ∂t
+proposed theoretical explanations.                    ∂ψ                 h                                                        −c2 ψ,                                 (6)                                    + c2h∇· B =
+                                                                 ∂t                      c2p
+
+2  Methods and code                                                        where E = ρv2/2 + p/(γ −1) + B21/2 is the total energy
+                                                                    density, γ is the ratio of speciﬁc heats (taken to be 5/3 in all
+We take a Hall MHD code accelerated by GPUs using the
+                                                               of our simulations), and vT = v + vH combines the bulk ve-
+MPI library and the NVIDIA CUDA API (Bard and Dorelli,
+                                                                     locity (v) with the normalized Hall velocity vH = −δiJ/ρ.
+2014; Bard, 2016; Bard and Dorelli, 2018) and adapt it to                                                 p4πn0e2 is normalized                                                   The ion inertial length δi = c√mi/
+simulate planetary magnetospheres. We review the underly-
+                                                                   to the reference length such that δi = δi/L0. The normal-
+ing mathematical equations and algorithms in this section.
+                                                               ized δi in our simulation is a ﬁxed parameter that can be
+  Following Tanaka (1994) and Powell et al. (1999), we
+                                                       changed at runtime. We evaluate the normalized current den-
+split the magnetic ﬁeld vector B into a background com-
+                                                                        sity (J = ∇× B1) at cell centers and linearly interpolate to
+ponent B0 and a perturbed, evolving component B1 such                                                                the cell edges when needed.
+that B = B1 +B0. The embedded B0 is assumed to be static                                       ψ is a scalar function whose evolution is designed to be
+(∂B0/∂t = 0), divergence-free (∇· B0 = 0), and curl-free                                                                equivalent to ∇· B; ch and cp are parameters for the propa-
+(∇× B0 = 0). This allows for more accurate handling of the                                                               gation and dissipation of local B divergence errors, respec-
+magnetic ﬁeld, especially near the planet where the dipole
+                                                                            tively. Following Dedner et al. (2002), we set ch as the global
+ﬁeld is very strong. In order to preserve the divergence-free
+                                             maximum wave speed over the individual cells and set cp
+constraint on the evolved magnetic ﬁeld, we solve the Gen-
+                                                         such that c2p/ch = 0.36. Although Dedner et al. (2002) rec-eralized Lagrangian Multiplier (GLM) formulation of MHD
+                                               ommended c2p/ch = 0.18, and this value works very well to(Dedner et al., 2002), with an additional Hall term added via
+                                                                 control the magnetic divergence in non-magnetospheric sim-Ohm’s law.
+                                                                     ulations, we ﬁnd that some level of tweaking is required  The ideal MHD Ohm’s law is extended with the Hall term
+                                                          because of the accumulation of divergence errors at the in-such that the electric ﬁeld E is given by
+                                                             ner boundary. To ameliorate further complications caused by
+     × B  J × B                                               this issue, we separate the momentum equation into a non-E = −v   +         ,                                  (1)
+         c      nec                                      magnetic ﬂux and a magnetic source term:
+with c the speed of light, e the elementary charge, n the    ∂ρv + ∇· ρvv + pI = J × (B1 + B0),                (7)
+plasma number density, v the plasma bulk velocity vector,      ∂t
+and J = 4πc ∇× B the current density vector. We note that    which prevents divergence errors from inducing a nonphys-
+since the background magnetic ﬁeld B0 is curl-free in our      ical acceleration along magnetic ﬁeld lines (Brackbill and
+formulation, the current density is taken to be the curl of the                                                             Barnes, 1980) but with some loss of accuracy across shock
+perturbation B1.                                            jumps.
+  We normalize the density (ρ), magnetic ﬁeld, and length                                                    The overall system is evolved via a time-explicit second-
+scale to reference values ρ0, Bw, and L0, respectively. v is     order Runge–Kutta scheme coupled with a simple HLL Rie-
+normalized to v0 = vA,0 = Bw/√4πρ0, the pressure P  to    mann solver (Harten et al., 1983; Toro, 1999) and a mono-
+P0 = B2w/(4π), and the time t to t0 = L0/v0. The normal-     tonized central limiter (e.g., Tóth et al., 2008) with the slope-
+                          P0   can be used in place of settingized plasma beta β0 =                                                                  limiting parameter β set to 1.25. For numerical stability, the                          B2w/8π
+P0 directly; the conversion between the two is β0 = 2 P0.         explicit time step is determined by the global Courant con-
+  This results in the set of equations:                              dition: 1t = C1xmin/vmax. The Courant parameter is C =
+                                                              0.325, 1xmin = 0.2 RE is the smallest cell length in the sim-
+∂ρ
+  + ∇· (ρv) = 0,                                       (2)     ulation, and vmax is the maximum wave speed in the simula-
+∂t                                                                      tion. For Hall MHD, vmax,i = |v|+|vf |+|vw| is estimated in
+                      !∂ρv                                                         each grid cell i using the fast magnetosonic (vf) and whistler                  B21                                          I   + ∇· ρvv + p +               + B0 · B1
+ ∂t                   2                             wave (vw) speeds (Huba, 2003; Tóth et al., 2008):
+
+                                                                                                                         1/2
+                                          q
+   −B1B1 −B0B1 −B1B0 = 0,                      (3)     vf =  0.5  v2A + v2s +  (v2A + v2s )2 −4vAvs       ;       (8)
+
+
+https://doi.org/10.5194/angeo-39-991-2021                                  Ann. Geophys., 39, 991–1003, 2021
+
+===== PDF PAGE 4 =====
+994                                                            C. M. Bard and J. C. Dorelli: Tail asymmetries
+
+       π||B||
+vw = δi         ,                                           (9)    −3000), such that ∥B0∥= 3000Bw = 0.3G on the magnetic
+      ρ1x                                                             equator at r = 1 RE. This satisﬁes the requirement that B0 be
+with v2A = B2/ρ the normalized Alfvén speed and v2s =    both curl-free and divergence-free.
+                                                 As a summary, the dimensionless parameters for  thisγ P/ρ the normalized sound speed. The highest value of
+                                                            experimental magnetosphere are MA = 4.09; βsw = 0.305;vmax,i across all cells is used to set the global time step.
+                                               ∥B0∥/∥Bsw∥= 3000; δi = 1. For Earth, δi ≈1/70 and the
+                                                                other parameters would be the same. For Mercury, the dimen-
+3  Problem initialization                                       sionless parameters would be, e.g., MA = 6.; βsw = 0.65;
+                                               ∥B0∥/∥Bsw∥= 15; δi = 1/65.
+For our simulation setup, we choose normalized solar wind      At the inner boundary, we had difﬁculties with density de-
+and terrestrial magnetic ﬁeld parameters such that the mag-     pletion causing large local Alfvén speeds and small global
+netopause standoff distance matches that of Earth’s magneto-    time steps. We tried several types of inner boundaries, ex-
+sphere (≈10 RE), the bow shock standoff distance is ≈3 RE     perimenting with different combinations of ﬂoating (zero-
+beyond the magnetopause, and δi is equivalent to the plane-     gradient) and ﬁxing the plasma variables. Ultimately, al-
+tary radius.                                               though the following inner boundary conditions are not en-
+  These relative distances can be controlled by setting four      tirely realistic, they allow for a stable evolution of the mag-
+dimensionless parameters1:                                   netosphere in both the dayside and the tail. We set the inner
+  1. MA = vsw/vA,sw, the solar wind Alfvénic Mach num-    boundary at a radius of 3 RE; in these ghost cells, we ﬁx the
+     ber;                                                       density at 4 ρ0, ﬂoat the pressure, ﬂoat the radial magnetic
+                                                                 ﬁeld, set the tangential B to zero, and set the velocity to zero.
+  2. βsw = 8πPsw/B2sw, the solar wind plasma beta;            For the divergence cleaning, we ﬁnd that simply setting the
+                                                            ghost ψc = 0 works better than having a ﬂoating condition.  3. ∥B0∥/∥Bsw∥, the ratio of the dipole ﬁeld strength at
+                                        We note that in more realistic magnetospheres, cold plasma
+    1 RE to the solar wind magnetic ﬁeld;
+                                                      from the ionosphere may ﬂow out to the tail and impact the
+  4.  δi, the ion inertial length.                               dynamics. We will leave this topic for future studies.
+                                                           For the outer boundaries, the left edge of the simulation
+Since only the ﬁrst three of these parameters control the mag-
+                                                    domain ﬁxes the conservative variables to the background
+netopause and bow shock standoff distances, we can arbitrar-
+                                                                   solar wind condition; the rest of the box has zero-derivative
+ily set δi to control the relative Hall scale. This allows our
+                                                            boundaries for all variables.
+theoretical magnetosphere to be simultaneously “Earth-like”
+                                                    The simulation coordinates are deﬁned with −x pointing
+(in a relative physical sense) and ion-scale (relative to δi).
+                                                           towards the Sun, z along the planetary magnetic dipole axis,
+  Thus, we  choose  our  reference  values  as  follows:
+                                                      and +y (−y) towards the dusk (dawn) completing the or-L0 = RE = 6.371 × 108 cm = 6371 km, n0 = 5 cm−3, ρ0 =
+                                                            thogonal set. Although the planet does not rotate, dawn andmin0 with the mass of each ion mi = 6.546 × 10−21 g =
+                                                       dusk are used assuming the sun rises in the east. In order3942.18amu, and Bw = 10−4 G = 10 nT. From these, we de-
+                                                                   to resolve the artiﬁcially inﬂated δi, we choose 5 cells perrive v0 = 97.5 × 105 cms−1 = 97.5kms−1, t0 ≈65s, P0 =
+                                                                                δi, giving a minimum resolution of 1x,1y,1z = 0.2 RE.7.96 × 10−10 Ba = 0.0796nPa, and δi = 6371km = 1 L0 =
+                                                           This resolution is set within the range −20 RE < x < 20 RE;1 RE.
+                                            −15 RE < y, z < 15 RE; beyond this the cell length increases  The solar wind is initialized with values ρsw = 1 ρ0, vsw =
+                                                    by 7 % with each additional cell up to a maximum of 5 RE or4.09v0 = 400 kms−1, and wind plasma βsw = 0.305 such
+                                                                       until it hits the boundary. The total size of the grid is 290 ×
+that Psw = 0.1526 P0. The wind magnetic ﬁeld is initially
+                                                    253 × 253 (just over 18 million cells), covering a domain of
+set to Bsw = (-0.174,0,0.985)Bw for a northward interplan-
+                                                   −35.6 RE < x < 122 RE, −86.4 RE < y, z < 86.4 RE.etary magnetic ﬁeld (IMF) with magnitude Bsw = 1Bw; we
+                                          We start the simulation in ideal MHD (δi = 0) with alater ﬂip the IMF by setting Bz = −0.985.
+                                                         northward IMF (Bsw given above) for 120t0 and then ﬂip  The planetary background magnetic ﬁeld (B0) is approxi-
+                                                              Bz,sw for the southward IMF case and run  it for anothermated with a magnetic dipole
+                                                             120t0. At this point, we turn on the Hall term by setting
+     3(m · r)r −m∥r∥2                                               δi = 1 and run it for another 12t0 in order to allow the per-
+B0 =                        ,                             (10)            ∥r∥5                                               turbations induced by the abrupt change of physics to settle.
+                                                From this point on, the simulation was run for 45t0 under
+with r the position vector from the center at (0,0,0) and the                                                            continuous pure southward IMF and with the Hall term on.
+planetary dipole moment m = (Mx,My,Mz) taken as (0, 0,                                                   The main results discussed below come from this ﬁnal por-
+   1In resistive MHD, there is a ﬁfth dimensionless parameter:     tion of the run with the Hall term enabled.
+the Lundquist number S, which sets the resistive dissipation scale.
+However, we do not explicitly deﬁne resistivity in this code; thus,
+we will not consider S here and instead leave this for future studies.
+
+
+Ann. Geophys., 39, 991–1003, 2021                                         https://doi.org/10.5194/angeo-39-991-2021
+
+===== PDF PAGE 5 =====
+C. M. Bard and J. C. Dorelli: Tail asymmetries                                                          995
+
+
+
+
+
+Figure 1. Cross-tail velocity Vy in the tail plane perpendicular to reconnection for both ideal (a) and Hall (b) MHD, normalized to v0 =
+97.9 kms−1. Streamlines show in-plane velocity. Purple lines in the right ﬁgure surround the highest resolution regions: 1x,1y = 0.2 RE
+(solid); 1x,1y ≤0.515 RE (dot-dashed). A typical Dungey-like, symmetric convection pattern induced by numerical resistivity is clearly
+demonstrated in ideal MHD. Adding the Hall term induces out-of-reconnection-plane ﬂows, which drives an asymmetric convection pattern;
+this is similar to what has been simulated for Ganymede (Dorelli et al., 2015; Tóth et al., 2016; Wang et al., 2018).
+
+
+
+
+
+Figure 2. Normalized current density magnitude ∥J∥in the simulation xz plane at y = 0 for both ideal (a) and Hall (b) MHD. Streamlines
+show in-plane magnetic ﬁeld. Adding the Hall term induces out-of-reconnection-plane ﬂows (Fig. 1); the resulting tail convection causes the
+magnetotail current sheet to vary along the x direction across the tail width (y) (see, e.g., Figs. 7 and 9 for examples of ∥J∥spatial variation
+in the xy plane).
+
+
+4  Results and discussion                                      ulations of Mercury (Dong et al., 2019; Chen et al., 2019).
+                                                   Our simulation supports the idea that this Hall-induced drift
+4.1  Hall-induced asymmetry                                        is sufﬁcient to produce an asymmetry: kinetic effects are not
+                                                                  required, but they may manifest different kinds of asymme-
+                                                                                 try.
+Prior to turning on the Hall term, the magnetospheric convec-
+                                                                        Finally, since our choice of min1x,1y,1z = 0.2 RE istion is of Dungey-type. Turning the Hall term on, however,
+                                                         based on the normalized δi = 1 RE, we check here that weinduces an out-of-reconnection-plane E × B force which
+                                                                are able to correctly resolve δi in the tail. As Fig. 3 illustrates,breaks that symmetry and drives convection in a preferred
+                                                                the local value of δi exceeds 1 RE in the magnetotail and maydirection (Fig. 1). This convection also modiﬁes the current
+                                                            reach up to 5 RE. Thus, we are appropriately resolving thesheet structure between ideal and Hall MHD (Fig. 2) and
+                                                             Hall length scales in the tail.
+causes  it to vary in length along the x−direction across
+the tail y coordinate. For smaller magnetospheres, this effect
+was ﬁrst seen in nonideal MHD simulations of Ganymede
+(Dorelli et al., 2015; Tóth et al., 2016; Wang et al., 2018);
+this was later seen in 10-moment and embedded kinetic sim-
+
+
+https://doi.org/10.5194/angeo-39-991-2021                                  Ann. Geophys., 39, 991–1003, 2021
+
+===== PDF PAGE 6 =====
+996                                                            C. M. Bard and J. C. Dorelli: Tail asymmetries
+
+
+
+
+
+                                                                                                                                                                                                        .
+Figure 3. Density (a, c) and local value of δi (b, d) calculated via δi,local = √1/ρ in the xy (a, b) and xz planes (c, d), taken from an example
+snapshot during the ﬁnal Hall MHD portion of the run. Density is normalized via n0 = 5cm−3 and mi = 3942amu; δi is normalized via
+L0 = RE. Purple lines denote same regions as Fig. 1: solid lines denote region with 1x,1y,1z = 0.2 RE; dashed lines denote 1x,1y,1z ≤
+0.515 RE. Most of the near-tail region (within purple boxes; x > 0) has > 5 cells per local δi
+
+
+
+
+
+Figure 4. Cross-tail convection in the reconnection plane at z = 0 for ions (a) and electrons (b), with the background color (orange) illus-
+trating normalized current sheet density magnitude. Blue (green) streamlines indicate direction of electron (ion) velocity (normalized via
+v0 = 97.9kms−1), with line sizes proportional to the magnitude of the maximum electron (ion) velocity in the plane. The electron velocity
+(in normalized units) is calculated from ve = v −J/ρ.
+
+
+
+Ann. Geophys., 39, 991–1003, 2021                                         https://doi.org/10.5194/angeo-39-991-2021
+
+===== PDF PAGE 7 =====
+C. M. Bard and J. C. Dorelli: Tail asymmetries                                                          997
+
+
+
+
+
+Figure 5. Formation and evolution of a global dipolarization over 5t0 ≈5.4 min, as seen in the evolution of magnetotail normal magnetic
+ﬁeld Bz (red: out-of-page; blue: into page). Displayed times are relative to upper left image; t = 0 here corresponds to 6t0 after the start of
+the 45t0 Hall MHD simulation period. Bz has been normalized via Bw = 10−4 G.
+
+
+
+
+
+Figure 6. Formation and evolution of a global dipolarization due to locally reconnecting magnetic ﬁeld lines in the xy and xz planes, as seen
+in the evolution of magnetotail current density (∥J∥) and normal magnetic ﬁeld Bz. ∥J∥is normalized via J0 = Bw/L0; Bz is normalized
+via Bw = 10−4 G. Displayed times are relative to the sequence shown in Fig. 5. The dashed cyan lines in (a) and (d) mark the y position of
+the xz cuts in (b), (c), (e), and (f).
+
+
+
+
+https://doi.org/10.5194/angeo-39-991-2021                                  Ann. Geophys., 39, 991–1003, 2021
+
+===== PDF PAGE 8 =====
+998                                                            C. M. Bard and J. C. Dorelli: Tail asymmetries
+
+
+
+
+
+Figure 7. Example of Bx sampling and Harris sheet ﬁt (b) as described in text (Eq. 11). χ2 = 0.004 for this ﬁt. Bx has been normalized via
+Bw = 10−4 G. Panel (a) shows the magnetotail current sheet magnitude (normalized via J0 = Bw/L0) in the simulation z = 0 plane; the Bx
+sampling box domain boundaries are shown in cyan, with the small cross showing the location of the example sample. The box boundaries
+are 12 < x < 16 and −15 < y < 15.
+
+
+                                                                nates over a large region within the tail, there is a signiﬁcant
+                                                               pileup leading to a reconnecting, active region of plasmoid
+                                                            formation on the dawnside. This pileup–reconnection mech-
+                                                       anism may be a general cause of dipolarizations in ion-scale
+                                                         magnetospheres (like Mercury, e.g., Sundberg et al., 2012).
+                                                       Although the drifting electrons themselves do not cause dipo-
+                                                                     larization events, they can affect where events occur. We
+                                                               speculate that increasing the system size relative to δi will
+                                                                     limit the extent of dawnward ﬂux transport via current sheet
+                                                                 electrons and cause the ﬂux pileup to shift closer to tail cen-
+                                                                          ter (or duskward). In other words, this type of asymmetry we
+                                                           observe here may be more pronounced in δi-scale magneto-
+                                                             spheres and weaker in larger magnetospheres. However, it is
+                                                  unknown how this mechanism will interact with the overall
+                                                            Hall-induced duskward ion convection, which will begin to
+                                                        dominate electron convection at scales ≫δi.
+Figure 8. Best-ﬁt current sheet half-thicknesses (LCS) derived by      During the 45t0 ≈48 min duration of our simulation,
+ﬁtting Eq. (11) to 5037 cuts of Bx along the z direction. These cuts     there were seven events visually observed on the dawnside
+were randomly sampled in the tail xy plane and over the simulation                                                         (none on the duskside) which followed the general substorm
+time period (see text). There is a bias towards the current sheet being
+                                                                  pattern of a buildup/loading phase followed by an unloading
+thinner on the dawnside. However, the dawnside also sees a larger
+                                                                   (or expansion/relaxation) phase (Rostoker et al., 1980). Forspread in thicknesses: this is a result of temporal effects (see main
+                                                         each event, we observed pileup of the normal Bz magnetictext for discussion).
+                                                  ﬂux over a period of several minutes, followed by a burst of
+                                                             reconnection and the subsequent ejection of plasmoids tail-
+                                                     ward (Figs. 5 and 6). Three of the seven events produced
+4.2  Dipolarizations
+                                                                  large plasmoids (on the order of 10 RE = 10δi), while the rest
+                                                                  resulted in smaller ones (≤5 RE; ≤5δi). The larger ejectaIn our simulation, the Hall electric ﬁeld induced by tail re-
+                                                          appeared to build up and release on timescales of around
+connection accelerates ions towards the duskside and the
+                                                    10 min, while the smaller events had shorter timescales ofelectrons towards dawn. Since δi = RE here, the reconnection
+                                                         around 5 min. Most events originated at a down-tail distance
+current sheet spans a signiﬁcant fraction across the tail; this
+                                             ≈13–16 RE; after ejection, their resulting plasmoids traveledmeans that the ions are decoupled from the magnetic ﬁeld
+                                                                   to about 30 RE down-tail over several minutes before dissi-during much of their in-plane convection duskward (green
+                                                                   pating.
+arrows in Fig. 4). The electrons, being coupled to the mag-
+                                                    The observed dawnward bias in dipolarization events for
+netic ﬁeld, carry the reconnected, normal Bz ﬂux dawnward
+                                                           our ion-scale magnetosphere corroborates similar dawnward
+(blue arrows). Because the reconnected magnetic ﬂux origi-
+
+
+Ann. Geophys., 39, 991–1003, 2021                                         https://doi.org/10.5194/angeo-39-991-2021
+
+===== PDF PAGE 9 =====
+C. M. Bard and J. C. Dorelli: Tail asymmetries                                                          999
+
+
+
+
+
+Figure 9. Cross-comparison of current sheet density magnitude (a, d), current sheet Bz ﬂux pileup (b, e; same parameters as Fig. 5) and
+sampled thicknesses (c, f) during (a, b, c) and after (d, e, f) a global dipolarization event. Current sheet ﬁts are sampled from the area within
+the wedges (13 RE < R < 17 RE). The current sheet is thick where the Bz ﬂux has piled up and thin where the ﬂux has been unloaded. There
+is a 2.25t0 ≈2.4 min time difference between the snapshots of the top and bottom rows.
+
+
+
+
+
+Figure 10. 1D cuts of tail magnetic ﬁeld Bz (a) and current density magnitude ∥J∥(b) taken from x = 15 RE, −15 RE < y < 15 RE in the
+z = 0 equatorial plane. ∥J∥is normalized via J0 = Bw/L0; Bz is normalized via Bw = 10−4 G. Colors denote times relative to t = 0 in
+Fig. 5 (top left panel). Arrows highlight where local pileup of Bz on dawnside thickens the current sheet, resulting in a lower current density
+and impeding local reconnection.
+
+
+
+https://doi.org/10.5194/angeo-39-991-2021                                  Ann. Geophys., 39, 991–1003, 2021
+
+===== PDF PAGE 10 =====
+1000                                                           C. M. Bard and J. C. Dorelli: Tail asymmetries
+
+
+biases found in MESSENGER observations (Sun et al., 2016;    and a “thin state” immediately following the ﬂux unloading
+Dewey et al., 2018) and global simulations of Mercury (Dong    and plasmoid ejection. This is demonstrated in Fig. 9, where
+et al., 2019; Chen et al., 2019). It is interesting to note that     ﬁtted CS thicknesses during both ﬂux loading and unload-
+our results are under a steady, southward solar wind condi-     ing stages are plotted along with snapshots of the Bz state.
+tion. As long as there is Hall-driven convection in the tail,    During the loading stage, the piled up ﬂux on the dawn-
+the competition between dawnside Bz pileup and reconnec-     side (5 RE < y < 12 RE) fattens the current sheet; here, the
+tion drives this cycle. At the moment, it is not clear whether    sampled dawn thicknesses are comparable to and can exceed
+this process is unique to our ion-scale Earth, since its strong     the dusk thicknesses. However, after the unloading stage,
+planetary dipole ﬁeld means that ﬂux piles up over a large     the current sheet on the dawnside is much thinner where
+swath of the tail. It is possible that a similar process may oc-     the ﬂux has been evacuated (bottom right plot; R > 15 RE).
+cur at Mercury (which has a weaker dipole ﬁeld), i.e., that     Interestingly, we can see that where the Bz ﬂux remains
+its observed dipolarizations are indeed akin to global sub-    (R < 15 RE), the current sheet continues to be thick. Com-
+storms (Kepko et al., 2015). Further investigation is needed     bining all the sample ﬁts over several cycles of loading and
+to determine how varying the magnetospheric parameters (as    unloading results in the picture shown in Fig. 8: a dawnward
+presented in Sect. 3) affects these observations, especially as     current sheet moving between thick and thin states depend-
+system size increases relative to δi.                             ing on the level of ﬂux pileup. Indeed, this is a common pat-
+  We note that, at Earth, there are additional localized (not     tern throughout the simulation: where there is ﬂux pileup, the
+global) dipolarization fronts resulting from current sheet in-     current sheet is thicker, and the current density is lower (e.g.,
+stabilities or transient reconnection events (e.g., Runov et al.,     Fig. 10).
+2009; Sitnov et al., 2009). We do not see these small-scale       This cycle may explain the apparent contradiction between
+fronts in our ion-scale Earth; this may be because we do not     the Liu+ prediction of thinner dawnward current sheets in
+have enough down-tail resolution to observe localized cur-     ion-scale magnetospheres and the Poh et al. (2017b) space-
+rent sheet instabilities which form them.                           craft observation of thicker dawnward sheets at Mercury.
+                                                   Even though, on average, the current sheet is thinner dawn-
+4.3  Current sheet thickness                            ward (as Liu+ predicts), the sampling of measurements
+                                                           could be producing the opposite result. As shown in Figs. 8
+Another test of the active region picture is the predicted                                                      and 9, the sampled sheet thickness can greatly depend on
+thickness asymmetry of the tail current sheet: Liu+ predicted                                                      where and when the craft crosses the tail. In our simulation,
+that the sheet would be thinner on the dawnside. We follow                                                                the current sheet is continuously morphing between thick
+Poh et al. (2017a) and estimate the current sheet thickness in                                                      and thin states; both types of regions exist simultaneously
+our model by using a Harris sheet (Harris, 1962):                                                             within the dawnside. Most points in the tail preferentially see
+                                                                  thicker sheets over time, though some preferentially see thin-        Z −Z0
+Bx = Ba tanh    + offset,                         (11)     ner sheets. It is possible that these effects combine to produce
+           LCS
+                                                           a sampling bias in time and space towards thicker sheets. We
+where Ba  is the asymptotic lobe ﬁeld, Z0  is the current     note that this is speculation and will require more investiga-
+sheet center, LCS is the current sheet half-thickness, and the     tion with respect to the various solar wind driving conditions
+offset allows for asymmetry between the north and south    and seasons that MESSENGER experiences at Mercury.
+Bx lobes on either side of the current sheet. We take 6000
+one-dimensional cuts of Bx along the north–south direc-
+tion between z = ±10 RE in a volume covering the current    5  Conclusions
+sheet from 12 RE < x < 16 RE and −15 RE < y < 15 RE,
+randomly sampled across the box plane and during the ﬁ-   We have simulated a small, ion-scale Earth in which the
+nal 45t0 ≈48 min period (example shown in Fig. 7). These     standoff distance and magnetotail width are akin to Earth’s
+cuts are ﬁt to Eq. (11) using the Levenberg–Marquardt least-     as measured in planetary radii but with the solar wind ion-
+squares algorithm in scipy.curveﬁt (Virtanen et al., 2020); in-     scale length δi set to 1 RE. The resulting tail plasma behavior
+stances that do not ﬁt well (χ2 > 0.01) or that return non-    was more similar to Mercury’s magnetosphere than Earth’s.
+sensical results (LCS < 0) are rejected. This results in 5037    Along with Chen et al. (2019) and Dong et al. (2019), our
+samples of the current sheet thickness across the magnetotail     results support the idea that tail asymmetry is a universal
+(Fig. 8). This distribution shows that the dawnward current    consequence of the Hall effect in ion-scale magnetospheres.
+sheet is thinner on average than the duskward sheet. How-     Essentially, it is the relative size of the magnetosphere com-
+ever, there is a signiﬁcant scatter in this result; the dawn sheet    pared to δi, not the absolute size (planetary radii), that con-
+covers a wider range of thicknesses. This variation is caused      trols the importance and inﬂuence of Hall-induced conse-
+by the dawnside pileup–reconnection mechanism.              quences. We ﬁnd that Hall effects are sufﬁcient to gener-
+  The current sheet oscillates with the dipolarization cy-     ate tail asymmetries in dipolarization, plasmoids, and cur-
+cle (Sect. 4.2) between a “thick state” due to the Bz pileup     rent sheet thickness. No electron-scale kinetic effects are re-
+
+
+Ann. Geophys., 39, 991–1003, 2021                                         https://doi.org/10.5194/angeo-39-991-2021
+
+===== PDF PAGE 11 =====
+C. M. Bard and J. C. Dorelli: Tail asymmetries                                                         1001
+
+
+quired, though they may contribute to or modify asymme-     Competing interests. The contact author has declared that neither
+tries. However, we emphasize that we did not simulate the     they nor their co-author has any competing interests.
+same magnetosphere as Chen et al. (2019): our ion-scale
+Earth is smaller relative to δi than Mercury and has differ-
+ent magnetospheric parameters (Sect. 3). There may be ad-     Disclaimer. Publisher’s  note: Copernicus  Publications remains
+ditional effects not being considered, especially with regards      neutral with regard to jurisdictional claims in published maps and
+                                                                               institutional afﬁliations.to how varying the dimensionless magnetospheric parame-
+ters affects the manifestation of tail asymmetries.
+  In general, our simulation appears to corroborate the Liu+
+                                                               Acknowledgements. Christopher M. Bard  thanks Alex Glocer
+picture of tail asymmetry in ion-scale magnetospheres; how-
+                                                                           for useful discussions concerning simulation techniques. Christo-
+ever, the Lu+ ﬁnding that the transported tail Bz thickens                                                                 pher M. Bard thanks Ryan Dewey for helpful discussions con-
+the current sheet is readily manifested here. Although the re-                                                                    cerning Mercury tail asymmetries and MESSENGER observations.
+connected Bz does drive outﬂows and thin current sheets on      Plots were created using matplotlib (Hunter, 2007). The authors
+the dawnside, we see that it can pile up and thicken current     thank Gabor Toth and the anonymous referee for very helpful com-
+sheets. There is a continuous cycle between the dawnward     ments which improved this paper. Observational data were not used,
+transport of Bz leading to pileup (which thickens the current     nor created for this research; the model algorithm and simulation
+sheet) and reconnection (which thins the current sheet); this     parameters are described above.
+manifests in an oscillating current sheet thickness. On aver-
+age, we ﬁnd the current sheet is thinner on the dawnside, but
+it can occasionally be thicker in some regions depending on     Financial support. Christopher M. Bard’s software development
+the level of ﬂux pileup.                                          has been partly supported by an appointment to the NASA Post-
+                                                                       doctoral Program at NASA Goddard Space Flight Center, admin-  Further study will be required to conﬁrm or contrast this
+                                                                            istered by the Universities Space Research Association under con-
+picture for magnetospheres with system size ≫δi. Since our
+                                                                                  tract with NASA. This research has been supported by the Goddard
+simulation is of a experimental magnetosphere, several ques-
+                                                             Space Flight Center (Internal Scientist Funding Model; grant no.
+tions concerning more realistic magnetotails remain:                                                          HISFM18-0009).
+
+  – How  does  the  weaker,  offset  dipole  of Mercury
+     affect  the amount  of  magnetic ﬂux  available  for
+                                                             Review statement. This paper was edited by Minna Palmroth and
+     transport/pileup and  the  resulting plasmoid forma-
+                                                                reviewed by Gabor Toth and one anonymous referee.
+     tion/ejection?
+
+  – Are the observed dipolarizations at Mercury actually
+     “global”, like substorms?
+                                                        References
+  – How does increasing the system size / δi ratio affect
+                                                               Artemyev, A. V., Petrukovich, A. A., Nakamura, R., and Zelenyi,
+    asymmetry formation, tail convection, transport of Bz,
+                                                                      L. M.: Cluster statistics of thin current sheets in the Earth mag-
+    and plasmoid and DF formation?
+                                                                                   netotail: Speciﬁcs of the dawn ﬂank, proton temperature proﬁles
+                                                               and electrostatic effects, J. Geophys. Res.-Space, 116, A09233,
+  – What other effects  (e.g.,  kinetic, ionosphere) cause
+                                                                       https://doi.org/10.1029/2011JA016801, 2011.
+     asymmetries, and how do they interact with the Hall ef-                                                              Asano, Y., Mukai, T., Hoshino, M., Saito, Y., Hayakawa, H., and
+     fect and one another?                                                                     Nagai, T.: Current sheet structure around the near-Earth neutral
+                                                                                 line observed by Geotail, J. Geophys. Res.-Space, 109, A02212,
+We look forward to future studies which will investigate
+                                                                       https://doi.org/10.1029/2003JA010114, 2004.
+these questions in greater detail.                                                                  Bard, C.: Tools for Studying Magnetospheric-Wind Interactions,
+                                                   PhD thesis, The University of Wisconsin – Madison, 2016.
+                                                                  Bard, C. and  Dorelli,  J.  C.: On  the  role of system  size  in
+Code and data availability. Observational data were not used, nor        Hall MHD magnetic reconnection, Phys. Plasmas, 25, 022103,
+created for this research. The model algorithm is described above        https://doi.org/10.1063/1.5010785, 2018.
+and in the references, and simulation parameters are given for re-     Bard, C. M. and  Dorelli,  J.  C.: A  simple GPU-accelerated
+producing the magnetosphere.                                        two-dimensional MUSCL-Hancock  solver  for  ideal  mag-
+                                                                   netohydrodynamics,   J.  Comput.   Phys.,   259,  444–460,
+                                                                            https://doi.org/10.1016/j.jcp.2013.12.006, 2014.
+Author contributions. CMB developed the code, analyzed the sim-     Benítez-Llambay,   P.  and  Masset,   F.   S.:  FARGO3D: A
+ulation results, wrote the manuscript and produced the ﬁgures. JCD     New  GPU-oriented MHD  Code,  Astrophys.   J.,  223,  11,
+edited the manuscript and provided computing resources. Both au-        https://doi.org/10.3847/0067-0049/223/1/11, 2016.
+thors conceptualized the research goals and guided the direction of      Brackbill, J. U. and Barnes, D. C.: The effect of nonzero product of
+inquiry.                                                           magnetic gradient and B on the numerical solution of the mag-
+
+
+https://doi.org/10.5194/angeo-39-991-2021                                  Ann. Geophys., 39, 991–1003, 2021
+
+===== PDF PAGE 12 =====
+1002                                                           C. M. Bard and J. C. Dorelli: Tail asymmetries
+
+
+  netohydrodynamic equations, J. Comput. Phys., 35, 426–430,        ing solar minimum,  J. Geophys. Res.-Space, 116, A02201,
+   https://doi.org/10.1016/0021-9991(80)90079-0, 1980.                  https://doi.org/10.1029/2010JA016026, 2011.
+Chen, Y., Tóth, G.,  Jia, X., Slavin,  J. A., Sun, W., Markidis,     Kepko, L., Glassmeier, K. H., Slavin, J. A., and Sundberg, T.: Sub-
+   S., Gombosi,  T.   I., and  Raines,  J.  M.:  Studying Dawn-       storm Current Wedge at Earth and Mercury, in: Magnetotails in
+  Dusk Asymmetries of Mercury’s Magnetotail Using MHD-        the Solar System, Geophysical Monograph Series, 207, 361–372,
+  EPIC Simulations,  J. Geophys. Res.-Space, 124, 8954–8973,        https://doi.org/10.1002/9781118842324.ch21, 2015.
+   https://doi.org/10.1029/2019JA026840, 2019.                        Liska, M., Chatterjee, K., Tchekhovskoy, A. e., Yoon, D., van Eij-
+Dedner,  A., Kemm,  F.,  Kröner,  D., Munz,  C.-D.,  Schnitzer,         natten, D., Hesp, C., Markoff, S., Ingram, A., and van der Klis,
+   T.,  and  Wesenberg,  M.:  Hyperbolic  Divergence  Cleaning       M.: H-AMR: A New GPU-accelerated GRMHD Code for Ex-
+   for the MHD Equations,  J. Comput. Phys., 175, 645–673,        ascale Computing With 3D Adaptive Mesh Reﬁnement and Lo-
+   https://doi.org/10.1006/jcph.2001.6961, 2002.                           cal Adaptive Time-stepping, arXiv e-prints, arXiv:1912.10192,
+Dewey, R. M., Raines, J. M., Sun, W., Slavin, J. A., and Poh,       2019.
+   G.: MESSENGER Observations of Fast Plasma Flows in Mer-     Liu, J., Angelopoulos, V., Runov, A., and Zhou, X. Z.: On the cur-
+   cury’s Magnetotail, Geophys. Res.  Lett., 45, 10110–10118,         rent sheets surrounding dipolarizing ﬂux bundles in the magneto-
+   https://doi.org/10.1029/2018GL079056, 2018.                                  tail: The case for wedgelets, J. Geophys. Res.-Space, 118, 2000–
+Dong, C., Wang, L., Hakim, A., Bhattacharjee, A., Slavin, J. A.,       2020, https://doi.org/10.1002/jgra.50092, 2013.
+   DiBraccio, G. A., and Germaschewski, K.: Global Ten-Moment     Liu, Y.-H., Li, T. C., Hesse, M., Sun, W.  J., Liu,  J., Burch,
+  Multiﬂuid Simulations  of  the  Solar Wind  Interaction with           J., Slavin,  J. A., and Huang, K.: Three-Dimensional Mag-
+  Mercury: From the Planetary Conducting Core  to the Dy-         netic Reconnection With a Spatially Conﬁned X-Line Extent:
+  namic Magnetosphere, Geophys. Res. Lett., 46, 11584–11596,        Implications for Dipolarizing Flux Bundles and the Dawn-
+   https://doi.org/10.1029/2019GL083180, 2019.                    Dusk Asymmetry,  J. Geophys. Res.-Space, 124, 2819–2830,
+Dorelli, J. C., Glocer, A., Collinson, G., and Tóth, G.: The role of        https://doi.org/10.1029/2019JA026539, 2019.
+   the Hall effect in the global structure and dynamics of planetary     Lu,  S., Lin, Y., Angelopoulos, V., Artemyev, A. V., Pritchett,
+  magnetospheres: Ganymede as a case study, J. Geophys. Res.-          P. L., Lu, Q., and Wang, X. Y.: Hall effect control of mag-
+   Space, 120, 5377–5392, https://doi.org/10.1002/2014JA020951,         netotail dawn-dusk asymmetry: A three-dimensional global hy-
+  2015.                                                                   brid simulation, J. Geophys. Res.-Space, 121, 11,882–11,895,
+Fatemi,  S., Poppe, A. R., Delory, G.  T., and  Farrell, W. M.:        https://doi.org/10.1002/2016JA023325, 2016.
+  AMITIS: A 3D GPU-Based Hybrid-PIC Model for Space and     Lu, S., Pritchett, P. L., Angelopoulos, V., and Artemyev, A. V.:
+  Plasma Physics, in: Journal of Physics Conference Series, J.       Formation of Dawn-Dusk Asymmetry  in  Earth’s Magneto-
+   Phys. Conf.  Ser., 837, 012017, https://doi.org/10.1088/1742-          tail Thin  Current  Sheet: A Three-Dimensional  Particle-In-
+  6596/837/1/012017, 2017.                                            Cell Simulation,  J. Geophys. Res.-Space, 123, 2801–2814,
+Gabrielse, C., Angelopoulos, V., Runov, A., and Turner, D. L.: Sta-        https://doi.org/10.1002/2017JA025095, 2018.
+   tistical characteristics of particle injections throughout the equa-     Poh, G., Slavin, J. A., Jia, X., Raines, J. M., Imber, S. M., Sun,
+   torial magnetotail,  J. Geophys. Res.-Space, 119, 2512–2535,         W.-J., Gershman, D. J., DiBraccio, G. A., Genestreti, K. J., and
+   https://doi.org/10.1002/2013JA019638, 2014.                         Smith, A. W.: Mercury’s cross-tail current sheet: Structure, X-
+Genestreti, K.  J.,  Fuselier,  S.  A.,  Goldstein,  J.,  Nagai,  T.,         line location and stress balance, Geophys. Res. Lett., 44, 678–
+  and Eastwood,  J.  P.: The  location and  rate of occurrence        686, https://doi.org/10.1002/2016GL071612, 2017a.
+   of near-Earth magnetotail reconnection as observed by Clus-     Poh, G., Slavin, J. A., Jia, X., Raines, J. M., Imber, S. M., Sun, W.-J.,
+   ter and  Geotail,  J. Atmos.  Sol.-Terr.  Phys.,  121, 98–109,       Gershman, D. J., DiBraccio, G. A., Genestreti, K. J., and Smith,
+   https://doi.org/10.1016/j.jastp.2014.10.005, 2014.                   A. W.: Coupling between Mercury and its nightside magneto-
+Grete, P., Glines, F. W., and O’Shea, B. W.: K-Athena: a perfor-        sphere: Cross-tail current sheet asymmetry and substorm cur-
+  mance portable structured grid ﬁnite volume magnetohydrody-         rent wedge formation, J. Geophys. Res.-Space, 122, 8419–8433,
+  namics code, arXiv e-prints, arXiv:1905.04341, 2019.                  https://doi.org/10.1002/2017JA024266, 2017b.
+Harris, E. G.: On a plasma sheath separating regions of oppo-     Powell, K. G., Roe,  P.  L., Linde, T.  J., Gombosi, T.  I., and
+   sitely directed magnetic ﬁeld, Il Nuovo Cimento, 23, 115–121,      De Zeeuw, D. L.: A Solution-Adaptive Upwind Scheme for
+   https://doi.org/10.1007/BF02733547, 1962.                             Ideal Magnetohydrodynamics, J. Comput. Phys., 154, 284–309,
+Harten, A., Lax, P., and van Leer, B.: On upstream differencing and        https://doi.org/10.1006/jcph.1999.6299, 1999.
+  Godunov type methods for hyperbolic conservation laws, SIAM     Rostoker,  G.,  Akasofu,  S.  I.,  Foster,  J., Greenwald,  R.  A.,
+   Rev., 25, 35–61, 1983.                                         Kamide,  Y.,  Kawasaki,  K.,  Lui,  A.  T.  Y.,  McPherron,
+Huba, J. D.: Hall Magnetohydrodynamics – A Tutorial, in: Space       R. L., and Russell, C. T.: Magnetospheric substorms-deﬁnition
+  Plasma Simulation, edited by: Büchner, J., Dum, C., and Scholer,       and  signatures,   J.  Geophys.  Res.-Space,  85,  1663–1668,
+  M., Lecture Notes in Physics, Vol. 615, 166–192, SAO/NASA        https://doi.org/10.1029/JA085iA04p01663, 1980.
+   Astrophysics Data System, 2003.                               Runov,  A., Angelopoulos,  V.,  Sitnov, M.  I.,  Sergeev, V.  A.,
+Hunter, J. D.: Matplotlib: A 2D graphics environment, Comput. Sci.        Bonnell,  J., McFadden, J. P., Larson, D., Glassmeier, K. H.,
+   Eng., 9, 90–95, https://doi.org/10.1109/MCSE.2007.55, 2007.         and  Auster,  U.: THEMIS  observations  of  an  earthward-
+Imber, S. M., Slavin,  J. A., Auster, H. U., and Angelopoulos,        propagating  dipolarization  front,  Geophys.  Res.  Lett.,  36,
+   V.: A THEMIS survey of ﬂux ropes and traveling compres-       L14106, https://doi.org/10.1029/2009GL038980, 2009.
+   sion regions: Location of the near-Earth reconnection site dur-     Schive, H.-Y., ZuHone, J. A., Goldbaum, N. J., Turk, M. J., Gas-
+                                                                                    pari, M., and Cheng, C.-Y.: GAMER-2: a GPU-accelerated
+
+
+
+Ann. Geophys., 39, 991–1003, 2021                                         https://doi.org/10.5194/angeo-39-991-2021
+
+===== PDF PAGE 13 =====
+C. M. Bard and J. C. Dorelli: Tail asymmetries                                                         1003
+
+
+   adaptive mesh reﬁnement code – accuracy, performance, and     Tóth, G., Jia, X., Markidis, S., Peng,  I. B., Chen, Y., Daldorff,
+   scalability, Mon.  Not.  R.  Astron.  Soc.,  481,  4815–4840,        L. K.  S., Tenishev, V. M., Borovikov, D., Haiducek,  J. D.,
+   https://doi.org/10.1093/mnras/sty2586, 2018.                       Gombosi, T. I., Glocer, A., and Dorelli, J. C.: Extended mag-
+Sitnov, M.   I.,  Swisdak,  M.,  and  Divin, A.  V.:  Dipolariza-       netohydrodynamics with embedded particle-in-cell simulation
+   tion  fronts  as  a  signature  of  transient  reconnection  in        of Ganymede’s magnetosphere, J. Geophys. Res.-Space, 121,
+   the  magnetotail,   J.  Geophys.  Res.-Space,  114,  A04202,       1273–1293, https://doi.org/10.1002/2015JA021997, 2016.
+   https://doi.org/10.1029/2008JA013980, 2009.                       Tóth,  G.,  Chen,  Y.,  Gombosi,  T.   I.,  Cassak,  P.,  Markidis,
+Slavin,  J. A., Tanskanen, E.  I., Hesse, M., Owen, C.  J., Dun-         S.,  and  Peng,   I.  B.:  Scaling  the  Ion  Inertial  Length
+   lop, M. W., Imber, S., Lucek, E. A., Balogh, A., and Glass-       and  Its Implications  for Modeling Reconnection  in Global
+   meier, K. H.: Cluster observations of traveling compression re-        Simulations,   J.  Geophys.  Res.-Space,  122,  10336–10355,
+   gions in the near-tail, J. Geophys. Res.-Space, 110, A06207,        https://doi.org/10.1002/2017JA024189, 2017.
+   https://doi.org/10.1029/2004JA010878, 2005.                      Vasko, I. Y., Petrukovich, A. A., Artemyev, A. V., Nakamura, R.,
+Sonnerup, B. U. Ö.: Magnetic ﬁeld reconnection, Solar System       and Zelenyi, L. M.: Earth’s distant magnetotail current sheet near
+  Plasma Physics, 3, 45–108, 1979.                                 and beyond lunar orbit, J. Geophys. Res.-Space, 120, 8663–8680,
+Sun, W.  J.,  Fu,  S.  Y.,  Slavin,  J.  A.,  Raines,  J. M., Zong,        https://doi.org/10.1002/2015JA021633, 2015.
+  Q. G., Poh, G. K., and Zurbuchen, T. H.: Spatial distribution     Virtanen, P., Gommers, R., Oliphant, T. E., Haberland, M., Reddy,
+   of Mercury’s ﬂux ropes and reconnection fronts: MESSEN-          T., Cournapeau, D., Burovski, E., Peterson, P., Weckesser, W.,
+  GER observations, J. Geophys. Res.-Space, 121, 7590–7607,        Bright, J., van der Walt, S. J., Brett, M., Wilson, J., Jarrod Mill-
+   https://doi.org/10.1002/2016JA022787, 2016.                      man, K., Mayorov, N., Nelson, A. R. J., Jones, E., Kern, R., Lar-
+Sundberg, T., Slavin, J. A., Boardsen, S. A., Anderson, B. J., Ko-        son, E., Carey, C., Polat, ˙I., Feng, Y., Moore, E. W., Vand erPlas,
+   rth, H., Ho, G. C., Schriver, D., Uritsky, V. M., Zurbuchen, T. H.,           J., Laxalde, D., Perktold, J., Cimrman, R., Henriksen, I., Quin-
+   Raines, J. M., Baker, D. N., Krimigis, S. M., McNutt, Ralph L.,         tero, E. A., Harris, C. R., Archibald, A. M., Ribeiro, A. H., Pe-
+    J., and Solomon, S. C.: MESSENGER observations of dipolar-        dregosa, F., van Mulbregt, P., and Contributors, S.: SciPy 1.0:
+   ization events in Mercury’s magnetotail, J. Geophys. Res.-Space,       Fundamental Algorithms for Scientiﬁc Computing in Python,
+   117, A00M03, https://doi.org/10.1029/2012JA017756, 2012.           Nat. Method., 17, 261–272, https://doi.org/10.1038/s41592-019-
+Tanaka,  T.:  Finite  Volume TVD  Scheme  on  an  Unstruc-        0686-2, 2020.
+   tured  Grid  System  for  Three-Dimensional MHD  Simula-    Wang,   L.,  Germaschewski,   K.,  Hakim,   A.,  Dong,   C.,
+   tion  of  Inhomogeneous  Systems  Including  Strong  Back-        Raeder,   J.,  and  Bhattacharjee,  A.:  Electron  Physics  in
+  ground  Potential  Fields,  J. Comput.  Phys.,  111, 381–389,      3-D  Two-Fluid  10-Moment  Modeling   of  Ganymede’s
+   https://doi.org/10.1006/jcph.1994.1071, 1994.                       Magnetosphere,  J.  Geophys.  Res.-Space,  123,  2815–2830,
+Toro, E. F.: Riemann solvers and numerical methods for ﬂuid dy-        https://doi.org/10.1002/2017JA024761, 2018.
+  namics: A practical introduction, Springer-Verlag, 1999.           Wang,  Y., Feng,  X., Zhou,  Y., and Gan,  X.: A multi-GPU
+Tóth, G., Ma, Y., and Gombosi, T. I.: Hall magnetohydrodynam-        ﬁnite volume solver  for magnetohydrodynamics-based  solar
+   ics on block-adaptive grids, J. Comput. Phys., 227, 6967–6984,       wind simulations, Comput. Phys. Commun., 238, 181–193,
+   https://doi.org/10.1016/j.jcp.2008.04.010, 2008.                         https://doi.org/10.1016/j.cpc.2018.12.003, 2019.
+
+
+
+
+
+https://doi.org/10.5194/angeo-39-991-2021                                  Ann. Geophys., 39, 991–1003, 2021

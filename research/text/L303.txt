@@ -1,0 +1,703 @@
+1 
+ 
+Effective resistivity for magnetohydrodynamic simulation of collisionless magnetic 
+reconnection 
+H. W. Zhang1, 2, *, Z. W. Ma2, *, and T. Chen2 
+1Max Planck Institute for Plasma Physics, Boltzmannstr. 2, 85748 Garching b. M., Germany 
+2Institute for Fusion Theory and Simulation, School of Physics, Zhejiang University, 310027, Hangzhou, 
+China 
+ 
+*Corresponding authors: H. W. Zhang (haowei.zhang@ipp.mpg.de); Z. W. Ma (zwma@zju.edu.cn) 
+ 
+Key points: 
+• We derive an effective resistivity model for collisionless magnetic reconnection and apply it 
+to magnetohydrodynamic simulations 
+• The effective resistivity improves the reconnection rate to the order of 0.1𝐵0𝑣𝐴 
+• The properties of the simulated current sheets are quite consistent with the particle-in-cell 
+simulations 
+ 
+ 
+
+2 
+ 
+Abstract 
+The electron inertia and the off-diagonal electron pressure terms are well-known for the frozen-in 
+condition breakdown in collisionless magnetic reconnection, which are naturally kinetic and difficult 
+to employ in magnetohydrodynamic (MHD) simulations. Considering the limitations of MHD and Hall 
+MHD in neglecting the important electron dynamics such as the inertia and the nongyrotropic 
+pressure, the kinetic characteristics of electrons and ions in the diffusion region are studied, and an 
+effective resistivity model involving dynamics of charged particles is proposed (Ma et al. 2018 Sci. Rep. 
+8 10521). The amplitude of the effective resistivity is mainly determined by electrons in most realistic 
+situations with large ion-electron mass ratios. In this work, the effective resistivity model for 
+collisionless magnetic reconnection without the guide field is successfully applied in the 2.5D MHD 
+and Hall MHD simulations, which remarkably improves the simulation results compared with 
+traditional MHD models. For the MHD case, the effective resistivity significantly increases the 
+reconnection rate to a reasonable value of ∼0.1𝐵0𝑣𝐴. For the Hall MHD case with effective resistivity, 
+the peak reconnection rate is ∼0.25𝐵0𝑣𝐴, and the major structures of the reconnecting field and 
+the current sheet agree well with the particle-in-cell (PIC) and hybrid simulations. 
+ 
+Plain Language Summary 
+Magnetic reconnection is a fundamental process in space and laboratory plasmas. Despite the 
+collisionless nature of many of these systems, magnetic reconnections occur rapidly, thereby 
+indicating the presence of an effective or anomalous resistivity in the reconnection region. A lot of 
+theoretical and experimental research has been conducted to explain the mechanism of collisionless 
+reconnection, and a consensus has emerged regarding the key role of charged particle dynamics in 
+the reconnection region. In this study, we quantitatively estimate the effective resistivity based on 
+the kinetic behaviour of particles and successfully implement it in magnetohydrodynamic (MHD) 
+simulations, which are much more efficient than particle-in-cell (PIC) simulations. The effective 
+resistivity model replicates the reasonable reconnection rate and improves the current sheet 
+structure in MHD simulations, closely matching PIC simulations. This work bridges the gap between 
+subtle small-scale dynamics and practical large-scale models, and contributes to the development of 
+extended MHD models for more efficient and accurate study of collisionless plasmas. 
+
+3 
+ 
+1 
+Introduction 
+Magnetic reconnection, characterized by energy conversion and transport processes, plays an 
+important role in the topological evolution of magnetized plasmas in both space and laboratory 
+systems. The concept of magnetic reconnection was first suggested by Giovanelli (1946), and the first 
+well-known model was proposed by Sweet (1958) and Parker (1957). However, the predicted 
+reconnection rate with the Y-type geometry of the Sweet-Parker model is too low to explain explosive 
+phenomena, such as solar flares, magnetospheric substorms (Eugene Newman Parker, 1979), and 
+tokamak disruptions (Taylor, 1986). In contrast, the Petschek model predicts a much faster 
+reconnection rate by considering the X-type structure in a smaller diffusion region (Petschek, 1964). 
+Though the Petschek-type configuration has been confirmed in various simulations by including, for 
+example, locally enhanced resistivity (Ugai, 1995) and Hall effect (Ma et al., 2015), a critical issue is 
+that such a tiny structure can hardly form in most high-S collisionless plasma simulations. 
+Resistivity or equivalent magnetic diffusion mechanism is critical for breaking the frozen-in 
+condition and triggering magnetic reconnection. For example, the impact of the localized resistivity 
+with different magnitudes and profiles on the reconnection was studied via MHD simulations 
+(Jiménez et al., 2022), which predicts a highest normalized reconnection rate of approximately 0.25 . 
+However, in collisionless plasmas, the Spitzer resistivity (Spitzer, 2006) based upon electron-ion 
+collision is too small to explain the fast magnetic reconnection (Speiser, 1970). A number of studies 
+have been carried out to investigate the anomalous resistivity in collisionless magnetic reconnection. 
+The effective conductivity determined by the inertia and the gyromotion of the particles rather than 
+the particle-particle collisions or wave-particle collisions, i.e., the lifetime of particles in the diffusion 
+region and the gyro period outside the diffusion region, was first studied for the current sheet in the 
+geomagnetic tail (Speiser, 1970). Fast reconnection was obtained in simulations by setting resistivity 
+as functions of relative electron-ion drift velocity (Ugai, 1995; Yokoyama and Shibata, 1994). The 
+anomalous resistivity model depending on plasma current was studied in magnetohydrodynamic 
+(MHD) and Hall MHD simulations (Otto, 2001). The chaos-induced effective resistivity by analyzing 
+the chaotic motion of particles around the X-point was suggested (Numata and Yoshida, 2002). The 
+off-diagonal plasma pressure tensor terms were found to be responsible for relaxing the frozen-in 
+condition (Drake and Shay, 2007) with particle-in-cell (PIC) simulations (Cai and Lee, 1997; Pritchett, 
+2001) and hybrid simulations (Kuznetsova et al., 2001). The critical role of electron inertia in Hall MHD 
+simulations of collisionless reconnection was confirmed (Andrés et al., 2014). Recently, a kinetic 
+physics-motivated effective resistivity model based on the full Ohm’s law derived from first principles 
+but expressed by fluid quantities was proposed and implemented in 2D resistive relativistic MHD 
+simulations for electron-positron pair plasma (Bugli et al., 2025; Selvi et al., 2023) and it was further 
+
+4 
+ 
+improved by the empirical prescription based on PIC simulations (Moran et al., 2025). Besides the 
+simulation efforts, the Sweet-Parker model was refined by incorporating the compressibility, the 
+downstream pressure, and the effective resistivity to explain the results of the Magnetic 
+Reconnection Experiment (MRX) (Ji et al., 1999). 
+Consensus has been reached on the significance of electron dynamics in frozen-in condition 
+breakdown within the diffusion region (Drake and Shay, 2007). The limitations of MHD and Hall MHD 
+models in neglecting the electron inertia term and nongyrotropic pressure, result in challenges in 
+describing small-scale kinetic effects in the diffusion region. In this context, our previous work 
+theoretically studied the kinetic mechanism of effective or anomalous resistivity in collisionless 
+magnetic reconnection based on characteristic motions of electrons and ions in the diffusion region, 
+and an effective resistivity model has been suggested (Ma et al., 2018). The mechanism of the 
+effective resistivity is mainly determined by electron dynamics in most realistic cases with large ion-
+electron mass ratios. The estimated effective resistivity has been compared against the values from 
+PIC simulations, which shows quantitative agreement. 
+In this work, the proposed effective resistivity model is successfully applied in 2.5D MHD and 
+Hall MHD simulations without the guide magnetic field. With the effective resistivity, the 
+reconnection rate, the topologies of the reconnecting field and the current sheet are significantly 
+improved in both MHD and Hall MHD simulations. Specifically, the MHD simulation with effective 
+resistivity predicts the reconnection rate at a reasonable level of 0.1 𝐵0𝑣𝐴  (Comisso and 
+Bhattacharjee, 2016). The Hall MHD simulation results with effective resistivity are much more 
+consistent with the PIC and hybrid simulation results, with a reconnection rate of ∼0.25𝐵0𝑣𝐴. The 
+results further demonstrate the importance of electron dynamics in the diffusion region. 
+The remainder of this paper is organized as follows. In Section 2, the effective resistivity model 
+(Ma et al., 2018) is briefly reviewed. The extended MHD model, including the Hall term and the 
+effective resistivity, is introduced in Section 3. Section 4 presents the comparisons of the MHD 
+simulations with and without effective resistivity. Similarly, Section 5 compares the Hall MHD 
+simulation cases with and without effective resistivity. The summary and discussion are presented in 
+Section 6. 
+ 
+2 
+The effective resistivity model 
+For magnetic reconnection in 2.5D slab geometry without the guide field (Harris equilibrium), 
+the out-of-plane flow (in the 𝑦 direction) of charged particles determines the topology and intensity 
+of the central current sheet. Accordingly, the main idea of Ma et al. (2018) is to analyze the 
+characteristic motion of charged particles in the reconnecting field. As shown in Figure 2 (or the 
+
+5 
+ 
+schematic by Figure 1 in (Ma et al., 2018)), the bulk velocity and current of plasma in the diffusion 
+region are mainly in the out-of-plane direction. The Lorentz force by the bending magnetic field tends 
+to change the motion direction of charged particles downstream (𝑥 direction), which is equivalent 
+to scattering the particles away from the diffusion region and preventing the particle from being 
+continuously accelerated by the out-of-plane reconnecting electric field. As a result, the bending 
+magnetic field induced pitch-angle scattering determines a characteristic timescale on the electric-
+particle acceleration. The statistical effect for all particles is equivalent to the enhancement of out-of-
+plane resistivity. 
+To estimate the effective resistivity induced by pitch-angle scattering, we investigate the kinetic 
+motions of charged particles in electromagnetic field around the X-point. Without loss of generality, 
+we first consider the electron, the motion equation of electrons due to electromagnetic force is 
+𝑑𝐯𝑒
+𝑑𝑡= −𝑒
+𝑚𝑒
+(𝐯𝑒× 𝐁
+𝑐
++ 𝐄). 
+(1) 
+Perform the first-order expansions for the magnetic field around an arbitrary point (𝑥0, 𝑧0) near the 
+X-point in the 𝑥 -𝑧 plane (the initial magnetic field is in the 𝑥 direction, and the magnetic field 
+strength changes in the 𝑧 direction) 
+𝐁= 𝐵𝑥(1 + 𝑧−𝑧0
+𝐿𝑥𝑧
++ 𝑥−𝑥0
+𝐿𝑥𝑥
+) 𝒙̂ 
+                    +𝐵𝑧(1 + 𝑥−𝑥0
+𝐿𝑧𝑥
++ 𝑧−𝑧0
+𝐿𝑧𝑧
+) 𝒛̂ + 𝐵𝑦𝒚̂, 
+(2) 
+𝐿𝑖𝑗= 𝐵𝑖/𝜕𝑗𝐵𝑖, (𝑖, 𝑗= 𝑥, 𝑧), 
+(3) 
+where 𝐿𝑖𝑗 is the characteristic length for 𝐵𝑖 in the 𝑗 direction. 
+To simplify the derivation, several assumptions for the diffusion region are given. First, the 
+dominant reconnecting electric field is out-of-plane (𝐸𝑦), and the shear magnetic field is in-plane 
+(without the guide magnetic field). Therefore, the in-plane electric field and out-of-plane magnetic 
+field parts are omitted in Eq. (1). Second, the evolutionary timescale for the central current is much 
+longer than the characteristic timescale of pitch-angle scattering. Then, we can estimate the averaged 
+out-of-plane electron speed by 𝑒𝑣̅𝑒𝑦/𝑚𝑒= 𝐽𝑒𝑦/𝜌𝑒 and replace 𝑣𝑒𝑦 by 𝑣̅𝑒𝑦 in Eq. (1). Thirdly, due 
+to the directional nature of Lorentz force, the terms with 𝐿𝑥𝑧, 𝐿𝑧𝑥 outweigh those with 𝐿𝑥𝑥, 𝐿𝑧𝑧 
+much more. Finally, the sheared 𝐵𝑥 leads to a quasi-oscillation in the 𝑧 direction, while 𝐵𝑧 results 
+in the electron scattering in the 𝑥 direction, the two processes being almost independent of each 
+other. Thus, the effective resistivity by pitch-angle scattering is mainly contributed by the 
+reconnecting field component 𝐵𝑧. Combing Eqs. (1) - (2) and the above assumptions, the electron 
+motion Eq. (1) can be reduced into the 𝑥 component 
+𝑑2𝑥
+𝑑𝑡2 = 𝐽𝑒𝑦𝐵𝑧
+𝜌𝑒𝐿𝑧𝑥𝑐(𝐿𝑧𝑥+ 𝑥−𝑥0). 
+(4) 
+
+6 
+ 
+An effective time scale for electric acceleration 𝜏𝑒 is defined as the duration that the electron 
+spends on leaving the 𝐿𝑧𝑥 downstream away from the initial point by the pitch-angle scattering 
+process. We obtain the analytical solution 𝑥(𝑡) and 𝜏𝑒 for |𝑥(𝜏𝑒) −𝑥0| = 𝐿𝑧𝑥 (Ma et al., 2018). 
+Through further approximation by ignoring 𝑣𝑥0 around the X-point, 𝜏𝑒 is represented by 
+𝜏𝑒≈√𝜌𝑒𝐿𝑧𝑥𝑐/𝐽𝑒𝑦𝐵𝑧. 
+(5) 
+The out-of-plane variation tendencies of electron velocity 𝑣𝑒𝑦 and the current density 𝐽𝑒𝑦 around 
+the X-point due to electric field 𝐸𝑦 during 𝜏𝑒 are 
+𝛿𝑣𝑒𝑦= 𝑒𝜏𝑒𝐸𝑦/𝑚𝑒, 
+(6) 
+𝛿𝐽𝑒𝑦= 𝑛𝑒𝑒2𝜏𝑒𝐸𝑦/𝑚𝑒. 
+(7) 
+Eq. (7) indicates the effective resistivity around the X-point for 𝐽𝑒𝑦 in 𝑦 direction as 
+𝜂𝑒= 𝑚𝑒
+2/𝑒2𝜌𝑒𝜏𝑒. 
+(8) 
+The similar effective resistivity for ions can be derived by considering the ion current density 𝐽𝑖𝑦. 
+Besides, the electric field 𝐸𝑦  equals to the products of effective resistivity 𝜂𝑠  (neglecting the 
+collisional Spitzer resistivity based on collisionless assumption) and current density 𝐽𝑠𝑦 for each 
+species (character 𝑠 indicating ion and electron), the electron and ion effective resistivities satisfy 
+𝜂𝑒
+𝜂𝑖
+= 𝐽𝑖𝑦
+𝐽𝑒𝑦
+≈√
+𝑚𝑒𝐽𝑒𝑦
+𝑚𝑖𝐽𝑖𝑦
+. 
+(9) 
+The total effective resistivity 𝜂𝑒𝑓𝑓 around the X-point is 
+𝜂𝑒𝑓𝑓≈
+1
+1 + √𝑚𝑒𝐽𝑒𝑦/𝑚𝑖𝐽𝑖𝑦
+𝜂𝑒≈
+𝑚𝑒
+2/𝑒2𝜌𝑒
+1 + √𝑚𝑒𝐽𝑒𝑦/𝑚𝑖𝐽𝑖𝑦
+√𝐽𝑒𝑦𝐵𝑧
+𝜌𝑒𝐿𝑧𝑥𝑐. 
+(10) 
+With 𝑚𝑖/𝑚𝑒≈1836 and combining Eqs. (9) - (10), we have 
+𝜂𝑒𝑓𝑓≈0.9𝜂𝑒. 
+(11) 
+Eq. (11) demonstrates that in most realistic situations with a high ion-electron mass ratio, the 
+electron dynamics plays the leading role in the total effective resistivity. According to Eq. (10), the 
+effective resistivity strongly depends on the spatial characteristic of reconnecting magnetic field 
+around the X-point (𝐵𝑧/𝐿𝑧𝑥) . When magnetic reconnection occurs, 𝐵𝑧  increases and 𝐿𝑧𝑥 
+decreases, leading to the enhancement of the effective resistivity. Detailed derivation and the 
+quantitative verification for the effective resistivity by PIC simulations are reported in (Ma et al., 2018). 
+ 
+3 
+Extended MHD simulation model and the initial equilibrium 
+The compressible 2.5D (uniform in the 𝑦 direction, i.e., 𝜕/𝜕𝑦= 0 ) extended MHD model, 
+including the Hall effect and the effective resistivity, is employed. The simulations are performed in 
+the Cartesian coordinate system within a rectangular box of −𝐿𝑥≤𝑥≤𝐿𝑥 , −𝐿𝑧≤𝑧≤𝐿𝑧 . The 
+
+7 
+ 
+magnetic field is represented by the magnetic flux 𝜓(𝑥, 𝑧, 𝑡) 
+𝐁= 𝒚̂ × ∇𝜓(𝑥, 𝑧, 𝑡) + 𝐵𝑦(𝑥, 𝑧, 𝑡)𝒚̂. 
+(12) 
+The compressible Hall MHD equations are (Ma and Bhattacharjee, 2001)  
+𝜕𝜌
+𝜕𝑡= −∇⋅(𝜌𝐯), 
+(13) 
+𝜕(𝜌𝐯)
+𝜕𝑡
+= −∇⋅[𝜌𝐯𝐯+ (𝑝+ 𝐵2/2 )𝐈−𝐁𝐁], 
+(14) 
+𝜕𝜓
+𝜕𝑡= −𝐯⋅∇𝜓+ 1
+𝑆𝑡𝑜𝑡
+𝐽𝑦+ 𝑑𝑖
+𝜌(𝐉× 𝐁)𝑦, 
+(15) 
+𝜕𝐵𝑦
+𝜕𝑡= −∇⋅(𝐵𝑦𝐯) + 𝐁⋅∇𝑣𝑦+
+1
+𝑆𝑠𝑝𝑧
+∇2𝐵𝑦
+−𝑑𝑖∇[∇× (𝐉× 𝐁−∇𝑝
+𝜌
+)]
+𝑦
+, 
+(16) 
+𝜕𝑝
+𝜕𝑡= −∇⋅(𝑝𝐯) −(𝛾−1)𝑝∇⋅𝐯+ 1
+𝑆𝑡𝑜𝑡
+𝐽𝑦
+2 +
+1
+𝑆𝑠𝑝𝑧
+(𝐽𝑥
+2 + 𝐽𝑧
+2). 
+(17) 
+where v, B, J, 𝜓, 𝜌, p, I are plasma velocity, magnetic field, current density, flux function, plasma 
+mass density, thermal pressure, and unit tensor, respectively. All variables are normalized by: 
+𝐁/𝐵0 →𝐁 , 𝒙/𝑑𝑖→𝒙 , 𝐯/𝑣𝐴→𝐯 , 𝑡/𝜏𝐴→𝑡 , 𝜓/(𝐵0𝑑𝑖) →𝜓 , 𝜌/𝜌0 →𝜌 , and 𝑝/(𝐵0
+2/4𝜋) →𝑝 , 
+where 𝐵0  is the initial asymptotic magnetic strength, 𝑑𝑖  is the ion inertial length, 𝑣𝐴=
+𝐵0/(4𝜋𝜌0)1/2 is the Alfvén velocity, 𝜏𝐴= 𝑑𝑖/𝑣𝐴= 𝜔𝑐𝑖
+−1 is the Alfvén time (equivalent to the inverse 
+of the ion cyclotron frequency), 𝜌0 is the asymptotic mass density, 𝛾= 5/3 is the ratio of specific 
+heats of plasma. The relative change of 𝑑𝑖 from 0 to 1 in Eqs. (15) - (16) represents the intensity of 
+Hall effect included in the simulation.  
+Due to the anisotropy of effective resistivity, two different Lundquist numbers 𝑆𝑡𝑜𝑡(𝑠𝑝𝑧) =
+𝜏𝑅,𝑡𝑜𝑡(𝑠𝑝𝑧)/𝜏𝐴  are applied out-of-plane [𝜏𝑅,𝑡𝑜𝑡= 4𝜋𝑑𝑖
+2/𝑐2(𝜂𝑠𝑝𝑧+ 𝜂𝑒𝑓𝑓)   and in-plane (𝜏𝑅,𝑠𝑝𝑧=
+4𝜋𝑑𝑖
+2/𝑐2𝜂𝑠𝑝𝑧), respectively, where 𝜂𝑠𝑝𝑧 and 𝜂𝑒𝑓𝑓 are the Spitzer resistivity and effective resistivity, 
+𝑐 is the speed of light. For the Spitzer resistivity, a large constant Lundquist number (𝑆𝑠𝑝𝑧= 1000) 
+indicating low collisionality is adopted in all simulations. The effective resistivity induced 𝑆𝑒𝑓𝑓 is 
+calculated in the following manner. 
+As shown by Figure 2, for a typical reconnecting magnetic field pattern with the X-point at 
+(𝑥0 = 0, 𝑧0 = 0), two symmetrical extreme points of 𝐵𝑧 can be found in the left and right half panels, 
+marked as (±𝑥1, 𝑧1 = 0) . Then, a specified point with the location (𝑥2 = 𝑥1/2, 𝑧2 = 0) at the 
+halfway from the X-point to the right extreme point of 𝐵𝑧 is chosen to estimate the spatial variation 
+of 𝐵𝑧 around X-point. The value of 𝐵𝑧/𝐿𝑧𝑥 in Eq. (10) is estimated with 𝛿𝐵𝑧/(𝑥2 −𝑥0), where 𝛿𝐵𝑧 
+is the 𝑧 component of the magnetic field strength at (𝑥2, 0). Based on the assumption of similar 
+
+8 
+ 
+average kinetic energies of electrons and ions, we can estimate the value of 𝜂𝑒𝑓𝑓 from Eq. (10). Using 
+the same normalization as above, 𝑆𝑒𝑓𝑓(𝑥, 𝑧, 𝑡) at each point can be estimated by 
+1
+𝑆𝑒𝑓𝑓(𝑥, 𝑧, 𝑡) ≈𝜅⋅√|
+𝐽𝑦𝛿𝐵𝑧
+𝜌3(𝑥2 −𝑥0)|
+⋅exp [−(𝑧−𝑧0
+𝜆𝑏
+)
+2
+−( 𝑥−𝑥0
+𝑥2 −𝑥0
+)
+2
+]. 
+(18) 
+The coefficient 𝜅≈0.9√𝑚𝑒/𝑚𝑖 is a constant calculated based on the mass ratio and Eqs. (10) - (11), 
+for example, 𝜅≈0.02 for 𝑚𝑖/𝑚𝑒≈1836. The spatial scales of the effective resistivity are the real-
+time half-width 𝜆𝑏  of the current sheet and characteristic length 𝐿𝑧𝑥= 𝑥2 −𝑥0  of the 
+reconnecting magnetic field 𝐵𝑧. 
+The initial plasma velocity is zero. The asymptotic plasma beta 𝛽= 0.1. The thermal pressure is 
+obtained by solving the equilibrium equation 
+𝑝= (1 + 𝛽)𝐵0
+2/2 −𝐵2/2. 
+(19) 
+A classical Harris current sheet with a half-width of 𝜆𝑏 is chosen as the initial state 
+𝐵𝑥= 𝐵0 tanh(𝑧/𝜆𝑏) , 𝐵𝑦= 𝐵𝑧= 0. 
+(20) 
+The initial mass density profile is given by 
+𝜌(𝑧) = 𝜌0 + 𝜌1 sech2(𝑧/𝜆𝜌). 
+(21) 
+The mass density is set as 𝜌0 = 1.0 and 𝜌1 = 0.2. The characteristic scales for magnetic field and 
+mass density are 𝜆𝑏= 𝜆𝜌= 0.5. 
+Eqs. (13) - (17) are solved with the fourth-order Runge-Kutta method in time and the fourth-
+order finite difference method in space. The time step Δ𝑡 is determined by the Courant–Friedrichs–
+Lewy (CFL) condition. The simulation box is −12.8 ≤𝐿𝑥≤12.8  and −6.4 ≤𝐿𝑧≤6.4 , with 
+640×1000 grid points uniformly distributed in the 𝑥 direction and nonuniformly distributed in the 
+𝑧  direction (𝑑𝑥= 0.04, 𝑑𝑧𝑚𝑖𝑛= 0.01, 𝑑𝑧𝑚𝑎𝑥= 0.02) . Periodic boundary condition in the 𝑥 
+direction and free boundary condition in the 𝑧 direction are adopted.  
+The reconnection rate 𝛾𝑟𝑎𝑡𝑒 is calculated by the time derivation of the flux function or the 
+product of resistivity and out-of-plane current density at the X-point, which should be almost 
+equivalent in the absence of numerical diffusion, that is 
+𝛾𝑟𝑎𝑡𝑒= 𝜕𝜓/𝜕𝑡≃𝜂𝐽𝑦. 
+(22) 
+The reconnection process is triggered with a small magnetic perturbation (𝛿𝜓0 = 0.01) 
+𝛿𝜓= 𝛿𝜓0 cos(𝜋𝑥/𝐿𝑥) cos(𝜋𝑧/2𝐿𝑧). 
+(23) 
+ 
+ 
+
+9 
+ 
+4 
+MHD simulation results 
+First, we apply the effectivity resistivity model of Eq. (18) in the resistive MHD model without Hall 
+effect (𝑑𝑖= 0). For the case without effective resistivity (𝜂𝑠𝑝𝑧 case), the coefficient 𝜅 in Eq. (18) is 
+set to 0 such that only the constant Spitzer resistivity (1/𝑆𝑠𝑝𝑧= 0.001) is considered. For the case 
+with the effective resistivity (𝜂𝑒𝑓𝑓 case), 𝜅 is set to 0.02 based on previous estimation (𝑚𝑖/𝑚𝑒≈
+1836). 
+ 
+Figure 1. (MHD) Time evolution results for (left) the 𝜂𝑠𝑝𝑧 case with 𝜅= 0 and (right) the 𝜂𝑒𝑓𝑓 
+case with 𝜅= 0.02: (top) reconnection rate calculated by 𝜕𝜓/𝜕𝑡 (solid line) and 𝜂𝐽𝑦 (dashed line); 
+(middle) the out-of-plane current density 𝐽𝑦 at the X-point; (bottom) the total resistivity 𝜂𝑡𝑜𝑡. The 
+dashed lines mark the moments of peak reconnection, 𝑡𝑝𝑒𝑎𝑘= 180𝜏𝐴 for 𝜂𝑠𝑝𝑧 case and 𝑡𝑝𝑒𝑎𝑘=
+41𝜏𝐴 for 𝜂𝑒𝑓𝑓 case, respectively. 
+ 
+The time evolutions of the reconnection rate, the current density, and the total resistivity at the 
+X-point are shown in Figure 1. The moments of peak reconnection rate (𝑡𝑝𝑒𝑎𝑘) are marked out with 
+red lines, respectively, 𝑡𝑝𝑒𝑎𝑘= 184𝜏𝐴 for the 𝜂𝑠𝑝𝑧 case and 𝑡𝑝𝑒𝑎𝑘= 41𝜏𝐴 for the 𝜂𝑒𝑓𝑓 case. 
+With the effective resistivity, the peak reconnection rate (∼0.1𝐵0𝑣𝐴) is increased by more than an 
+order of magnitude compared with the 𝜂𝑠𝑝𝑧  case (∼0.01𝐵0𝑣𝐴) . The numerical diffusion is 
+ignorable in the 𝜂𝑒𝑓𝑓 case as the 𝛾𝑟𝑎𝑡𝑒 calculated by 𝜕𝜓/𝜕𝑡 (solid line) and 𝜂𝐽𝑦 (dashed line) in 
+Figure 1 (d) are almost the same. In contrast, the 𝜂𝑠𝑝𝑧  case contains considerable numerical 
+diffusion as indicated by Figure 1 (a). On the other hand, as the resistivity in the 𝜂𝑠𝑝𝑧 case shown in 
+Figure 1 (c) is a constant, the increase of reconnection rate requires an enhancement of the out-of-
+
+10 
+ 
+plane current density 𝐽𝑦 at the X-point [with a peak value of 6.8 compared with the initial value of 
+2.0, see Figure 1 (b) . However, the situation in Figure 1 (e) is totally different for the 𝜂𝑒𝑓𝑓 case, the 
+current density shows a slow increase to the peak value of about 2.3 in the linear stage, and after the 
+start of fast reconnection (𝑡≈23𝜏𝐴), 𝐽𝑦 decreases quickly to a steady low level (≈1.6). As shown 
+by Figure 1 (f), the total resistivity for the 𝜂𝑒𝑓𝑓 case lags a little behind the reconnection rate but 
+exhibits a synergistic growth, and finally reaches a value of 0.08, about a hundred times larger than 
+the Spitzer resistivity. 
+The 2D distributions of out-of-plane current density with the magnetic field lines at the peak 
+reconnection rate moments are plotted in Figure 2, exhibiting significant topological differences for 
+the current sheets. In the 𝜂𝑠𝑝𝑧 case, the current sheet is strongly compressed to a long and sharp 
+line with the peak value of 6.8 at the X-point, corresponding to a typical Y-type reconnection. In the 
+𝜂𝑒𝑓𝑓 case, the current sheet width is wider, or almost the same as the initial equilibrium. This is 
+because the resistive dissipation region increases significantly after applying the effective resistivity, 
+as predicted by the Sweet-Parker model (𝜆𝑏≈𝐿𝑆𝐿
+−1/2). Besides, the separatrix angle of the 𝜂𝑒𝑓𝑓 
+case is much larger around the X-point but smaller downstream far from the diffusion region if 
+compared with the 𝜂𝑠𝑝𝑧 case, that is, the magnetic field topology tends to change from the Y-type 
+into X-type, which in turn increases the effective resistivity around the X-point and further improves 
+the reconnection rate. 
+ 
+Figure 2. (MHD) The distributions of out-of-plane current density with magnetic field lines at the 
+moment of peak reconnection rate, respectively, for (a) the 𝜂𝑠𝑝𝑧 case at 𝑡𝑝𝑒𝑎𝑘= 180𝜏𝐴 and (b) 
+the 𝜂𝑒𝑓𝑓 case at 𝑡𝑝𝑒𝑎𝑘= 41𝜏𝐴. 
+ 
+Figure 3 shows the contribution of each term in Ohm’s law to the out-of-plane electric field 
+[𝐸𝑦= −(𝐯× 𝐁)𝑦+ 𝜂𝐽𝑦] at the neutral line (𝑧= 0) at the peak reconnection rate moment of the 
+𝜂𝑒𝑓𝑓 case. The out-of-plane electric field is mainly sustained by 𝜂𝐽𝑦 around the X-point where the 
+magnetic field vanishes, while outside the diffusion region, −(𝐯× 𝐁)𝑦 plays the leading role.  
+
+11 
+ 
+ 
+Figure 3. (MHD) Contributions in 𝐸𝑦= −(𝐯× 𝐁)𝑦+ 𝜂𝐽𝑦 at the neutral line (𝑧= 0) for the out-of-
+plane electric field at the peak reconnection time (𝑡𝑝𝑒𝑎𝑘= 41𝜏𝐴) of the 𝜂𝑒𝑓𝑓 case. 
+ 
+Through the above comparisons, the traditional resistive MHD model merely considering the low 
+Spitzer resistivity results in the abnormal growth of current density at the X-point and compression 
+on the current sheet, leading to an unexpected reinforcement of the shear field (𝐵𝑥∝𝐽𝑦𝜆𝑏) . 
+However, with the effective resistivity, the reconnection rate depends on more factors as shown by 
+Eq. (10), such as the spatial characteristic of the reconnecting field. Moreover, the effective resistivity 
+generally increases the resistive dissipation, and the enhanced reconnecting field 𝐵𝑧 is equivalent 
+to generating a negative 𝐽𝑦 in the diffusion region, which is consistent with the decrease of current 
+density at the X-point during fast reconnection. 
+ 
+5 
+Hall MHD simulation results 
+In this section, we report the simulation results based on the Hall MHD model with and without 
+effective resistivity. All parameters for the 𝜂𝑠𝑝𝑧 case (𝜅= 0) and 𝜂𝑒𝑓𝑓 case (𝜅= 0.02) with Hall 
+effect are the same as above except that the full Hall term is retained with 𝑑𝑖= 1.0. 
+The time evolutions of the reconnection rate, the current density, and the total resistivity for the 
+𝜂𝑠𝑝𝑧 case and the 𝜂𝑒𝑓𝑓 case are shown in Figure 4. The employment of effective resistivity in Hall 
+MHD model does not change a lot in the peak reconnection rate calculated by 𝜕𝜓/𝜕𝑡, both cases 
+show values about 0.25𝐵0𝑣𝐴. However, the reconnection rates calculated by 𝜂𝐽𝑦 [dashed lines in 
+Figure 4 (a) and (d)  exhibit significant differences. For the 𝜂𝑠𝑝𝑧 case, the peak value of 𝜕𝜓/𝜕𝑡∼
+0.25𝐵0𝑣𝐴  is much larger than 𝜂𝐽𝑦∼0.01𝐵0𝑣𝐴 . The difference indicates that huge numerical 
+diffusion has been introduced at the X-point for the 𝜂𝑠𝑝𝑧 case, which mainly originates from the 
+numerical smoothing performed to stabilize the Hall MHD simulation. However, the situation in 𝜂𝑒𝑓𝑓 
+case is much better. The peak reconnection rates in Figure 4 (d) represented by 𝜕𝜓/𝜕𝑡≈0.25𝐵0𝑣𝐴 
+and 𝜂𝐽𝑦≈0.2𝐵0𝑣𝐴  are comparable with each other. Therefore, the numerical diffusion is 
+
+12 
+ 
+significantly reduced after applying the effective resistivity. In addition, the effective resistivity slightly 
+shortens the timescale to reach the peak reconnection rate by about 12𝜏𝐴. Changing the coefficient 
+𝜅 from 0.1 to 0.5 (corresponding to 𝑚𝑖/𝑚𝑒 from 300 to 5000) only modifies the timescale to reach 
+the peak reconnection rate but makes little difference on the peak reconnection rate in Hall MHD 
+simulations with the effective resistivity (not shown), consistent with the previous conclusion that the 
+peak reconnection rate weakly depends on the mass ratio (Pritchett, 2001; Shay et al., 2007). The 
+evolution of resistivity in the 𝜂𝑒𝑓𝑓 case is quantitatively consistent with previous PIC simulation, as 
+shown by Figure 2 (d) in (Ma et al., 2018). Specifically, the PIC case with a mass ratio of 400 predicts 
+the peak value of effective resistivity between 0.12 (direct statistical result, i.e., 𝜂𝑠𝑡𝑎𝑡= 𝐸𝑦/𝐽𝑦) and 
+0.18 (based on the effective resistivity model, i.e., 𝜂𝑒𝑓𝑓), while the Hall MHD simulation with effective 
+resistivity yield the similar effective resistivity around 0.15 (with the same normalization procedure). 
+The differences in the X-point current density [Figure 4 (b) and (e)  and the total resistivity [Figure 4 
+(c) and (f)  for the 𝜂𝑠𝑝𝑧 case and the 𝜂𝑒𝑓𝑓 case are similar to the situation of the MHD simulations 
+in Section 4. Therefore, we will not repeat the discussion.  
+ 
+Figure 4. (Hall MHD) Time evolution results for (left) the 𝜂𝑠𝑝𝑧 case with 𝜅= 0 and (right) the 𝜂𝑒𝑓𝑓 
+case with 𝜅= 0.02: (top) reconnection rate calculated by 𝜕𝜓/𝜕𝑡 (solid line) and 𝜂𝐽𝑦 (dashed line); 
+(middle) the out-of-plane current density at the X-point; (bottom) the total resistivity. The dashed 
+lines mark the moments of peak reconnection, 𝑡𝑝𝑒𝑎𝑘= 39𝜏𝐴 for 𝜂𝑠𝑝𝑧 case and 𝑡𝑝𝑒𝑎𝑘= 27𝜏𝐴 for 
+𝜂𝑒𝑓𝑓 case, respectively. 
+ 
+Figure 5 and Figure 6 show the 2D distributions of the current sheet and quadrupole magnetic 
+
+13 
+ 
+field with magnetic field lines at the time of the peak reconnection rate for the 𝜂𝑠𝑝𝑧 case and the 
+𝜂𝑒𝑓𝑓 case, respectively. Both cases show obvious X-type magnetic field geometries, consistent with 
+the high reconnection rate of about 0.25𝐵0𝑣𝐴. Meanwhile, the difference of the quadrupole magnetic 
+field 𝐵𝑦 between two cases is negligible, which is mainly determined by the Hall effect outside the 
+diffusion region. Nonetheless, topologies of the current sheets are notably different from each other, 
+a wider current sheet is maintained in the 𝜂𝑒𝑓𝑓 case due to larger resistive dissipation, as shown in 
+Figure 5 (b), while a sharp current singularity forms at the X-point in the 𝜂𝑠𝑝𝑧 case in Figure 5 (a). 
+Besides, the local accumulation of current sheet downstream (𝑥≈±5)  in the 𝜂𝑒𝑓𝑓  case is 
+observed, quite similar to the PIC (Fujimoto and Sydora, 2008; Hesse et al., 2001a; Hesse and Winske, 
+1998) and hybrid (Kuznetsova et al., 2001) simulation results. 
+ 
+Figure 5. (Hall MHD) The distributions of out-of-plane current density with magnetic field lines at the 
+moment of peak reconnection rate, respectively, for (a) the 𝜂𝑠𝑝𝑧 case at 𝑡𝑝𝑒𝑎𝑘= 39𝜏𝐴 and (b) the 
+𝜂𝑒𝑓𝑓 case at 𝑡𝑝𝑒𝑎𝑘= 27𝜏𝐴. 
+ 
+Figure 6. (Hall MHD) The distributions of quadrupole magnetic field 𝐵𝑦 with magnetic field lines at 
+the moment of peak reconnection rate, respectively, for (a) the 𝜂𝑠𝑝𝑧 case at 𝑡𝑝𝑒𝑎𝑘= 39𝜏𝐴 and (b) 
+the 𝜂𝑒𝑓𝑓 case at 𝑡𝑝𝑒𝑎𝑘= 27𝜏𝐴. 
+ 
+We further investigate the different roles played by electrons and ions in the diffusion region. 
+The electron and ion flow velocities are estimated by 𝐯𝑒≈𝐯−𝐉/𝑒𝑛 and 𝐯𝑖≈𝐯, respectively. Then, 
+the out-of-plane current densities at the X-point for ions and electrons are estimated to be 𝐽𝑒𝑦≈
+0.95𝐽𝑦 and 𝐽𝑖𝑦≈0.05𝐽𝑦. Therefore, the current density and effective resistivity are dominated by 
+electron dynamics at the X-point, consistent with the PIC simulation results with a large ion-electron 
+
+14 
+ 
+mass ratio (Hesse et al., 2001a; Pritchett, 2001). The in-plane electron and ion flows are plotted in 
+Figure 7 in the upper and lower half-plane, respectively. In the upstream outside the diffusion region, 
+both electrons and ions are magnetized and moving inward by following the field lines or crossing 
+field due to the 𝐄× 𝐁 drift. However, as closer to the ion diffusion region (|𝑧| ≈𝑑𝑖= 1), the ions 
+first deviate from the magnetic field lines and are accelerated downstream, while the electrons are 
+still frozen to the field lines and moving much closer to the X-point before leaving the diffusion region, 
+which also explains why the out-of-plane current density at the X-point is dominated by electrons. 
+The electron flows mainly follow the separatrix, leading to the quadrupole field of 𝐵𝑦 in Hall MHD 
+or PIC simulations, as shown in Figure 6. Inside the diffusion region, where the frozen-in condition 
+(𝐄+ 𝐯𝑒× 𝐁= 0) breaks down, due to the bending of the reconnecting field 𝐵𝑧, the electrons are 
+scattered away from the X-point with the characteristic time scale of 𝜏𝑒 of Eq. (5). As a result, the 
+electrons are not allowed undergo continuous out-of-plane electrical acceleration in the diffusion 
+region, which is equivalent to generating an effective resistivity.  
+ 
+Figure 7. (Hall MHD) The in-plane flows of electrons (red, in the upper half plane) and ions (black, in 
+the lower half plane) of the 𝜂𝑒𝑓𝑓 case at 𝑡𝑝𝑒𝑎𝑘= 27𝜏𝐴. The (ion) diffusion region (|𝑧| ≈𝑑𝑖= 1) 
+is marked by the green box. 
+ 
+Figure 8 shows the contribution of each term to the out-of-plane electric field [𝐸𝑦=
+−(𝐯𝑒× 𝐁)𝑦+ 𝜂𝐽𝑦]  for the 𝜂𝑒𝑓𝑓  case at the neutral line (𝑧= 0)  at the moment of peak 
+reconnection rate. The out-of-plane electric field is mainly contributed by 𝜂𝐽𝑦 at the X-point, while 
+outside the diffusion region, −(𝐯𝑒× 𝐁)𝑦 dominates. The discontinuity of 𝐸𝑦 in the vicinity of X-
+point is marked out with an ellipse, where a gap of 𝛥𝐸𝑦≈0.05 compared with the asymptotic value 
+is seen, close to the difference between the two proxies of the reconnection rate (𝜕𝜓/𝜕𝑡 and 𝜂𝐽𝑦) 
+in Figure 4 (d). It is mainly caused by the numerical diffusion from the smoothing procedure for the 
+numerical stability in the Hall MHD simulation. That is, a numerical resistivity 𝜂𝑛𝑢𝑚 should be 
+considered in the diffusion region to satisfy (𝜂𝑒𝑓𝑓+ 𝜂𝑠𝑝𝑧+ 𝜂𝑛𝑢𝑚)𝐽𝑦= 𝜕𝜓/𝜕𝑡. It can be expected 
+
+15 
+ 
+that in the ideal case without numerical diffusion, the distribution of 𝐸𝑦 will be much smoother.  
+ 
+Figure 8. (Hall MHD) Contributions in 𝐸𝑦= −(𝐯𝑒× 𝐁)𝑦+ 𝜂𝐽𝑦 at the neutral line (𝑧= 0) for the 
+out-of-plane electric field at the peak reconnection time (𝑡𝑝𝑒𝑎𝑘= 27𝜏𝐴) of the 𝜂𝑒𝑓𝑓 case. 
+ 
+6 
+Conclusion and discussion 
+The MHD models usually omit the electron inertial term and the anisotropy of electron pressure, 
+thereby losing important electron dynamics during the reconnection process inside the diffusion 
+region. To improve the traditional (Hall) MHD model in collisionless magnetic reconnection 
+simulations, we consider the kinetic features of electrons in a typical reconnecting field and suggest 
+an effective resistivity model (Ma et al., 2018), which is simple and applicable in MHD simulations. 
+The MHD simulations without Hall effect demonstrate the effectiveness of this new resistivity model 
+in speeding up the reconnection process and improving the peak reconnection rate to ∼0.1𝐵0𝑣𝐴. 
+The topologies of the reconnecting field (tending to be X-type) and current sheet (wider and weaker) 
+are more reasonable compared with the traditional MHD situation. With both the Hall term and 
+effective resistivity, the peak reconnection rate is further enhanced up to ∼0.25𝐵0𝑣𝐴, close to the 
+PIC results (Hesse et al., 2001a; Kuznetsova et al., 2001). The X-type magnetic geometry, the current 
+sheet splitting, and the ion-electron separation phenomena are consistent with the existing PIC 
+results. 
+In convectional MHD simulations even with the effective resistivity, the reconnection rate (∼
+0.1𝐵0𝑣𝐴) is still much lower than that of the Hall MHD simulation (∼0.25𝐵0𝑣𝐴), which indicates the 
+kinetics of electrons and ions play an equally important role in collisionless magnetic reconnection. 
+In Hall MHD simulations, the breakdown of frozen-in condition of ions just outside the diffusion region 
+roughly determines the peak reconnection rate. Specifically, the Hall term improves the reconnection 
+rate mainly by including the charge separation effect in the presence of Hall current outside the 
+diffusion region, where the electrons are still frozen in the magnetic field lines but the ions become 
+demagnetized. Moreover, the electron dynamics inside the diffusion region are on an equal footing 
+
+16 
+ 
+and have been verified by this study and some previous ones, for example, in the form of the off-
+diagonal electron pressure terms in generalized Ohm’s law by PIC simulations (Cai and Lee, 1997; 
+Drake and Shay, 2007; Hesse et al., 2001b; Pritchett, 2001) and laboratory experiments (Fox et al., 
+2017). Due to the asynchronous demagnetization of different charges, the ions and electrons play the 
+major role respectively in the Hall region and diffusion region. The Hall effect and the effective 
+resistivity work together to enhance the collisionless magnetic reconnection rate. The comparisons 
+for Hall MHD simulation results with and without the effective resistivity indicate the preliminary 
+success of replacing electron kinetic effects in the diffusion region using the analytical effective 
+resistivity model. 
+The basic theory and the successful application of the effective resistivity model could provide 
+new insights into the anomalous resistivity problem in breaking down the frozen-in condition during 
+the collisionless magnetic reconnection. The influence of the guide field has been preliminarily 
+studied by considering it as a correction to the present effective resistivity model, which requires a 
+more comprehensive calibration with PIC simulations and is beyond the scope of the current paper. 
+Due to the positive feedback nature between the effective resistivity and the reconnection rate, the 
+application of the effective resistivity model in more general magnetic scenarios will require a reliable 
+X-point positioning method to avoid triggering artificial magnetic reconnections. In a practical sense, 
+the effective resistivity model could be applied in global simulations by combining with X-point search 
+methods (Smiet et al., 2020), helping refine the MHD and Hall MHD models, which used to be 
+inadequate for describing the separated ion-electron dynamics, especially in the reconnection 
+diffusion region.  
+ 
+Acknowledgments 
+The author H. W. Zhang would like to acknowledge M. Hoelzl for valuable suggestions and J. S. Wang 
+and J. C. Ren for fruitful discussions. This work is supported by the National MCF Energy R&D Program 
+No. 2022YFE03100001 and 2019YFE03030004. 
+ 
+Data Availability Statement 
+The source data for the MHD simulation results in this paper is available at Zhang et al., 2025. 
+ 
+References 
+Andrés, N., L. Martin, P. Dmitruk, and D. Gómez (2014), Effects of electron inertia in collisionless 
+magnetic reconnection, Phys. Plasmas, 21(7), doi:10.1063/1.4890021. 
+Bugli, M., E. F. Lopresti, E. Figueiredo, A. Mignone, B. Cerutti, G. Mattia, L. Del Zanna, G. Bodo, 
+and V. Berta (2025), Relativistic reconnection with effective resistivity, A&A, 693, A233, 
+doi:10.1051/0004-6361/202452277. 
+
+17 
+ 
+Cai, H.-J., and L. Lee (1997), The generalized Ohm’s law in collisionless magnetic reconnection, Phys. 
+Plasmas, 4(3), 509-520, doi:10.1063/1.872178. 
+Comisso, L., and A. Bhattacharjee (2016), On the value of the reconnection rate, J. Plasma Phys., 
+82(6), 595820601, doi:10.1017/S002237781600101X. 
+Drake, J., and M. Shay (2007), Basic theory of collisionless reconnection, Reconnection of Magnetic 
+Fields. Cambridge University Press, New York, NY, 87-166, doi:10.1017/CBO9780511536151. 
+Fox, W., F. Sciortino, A. v. Stechow, J. Jara-Almonte, J. Yoo, H. Ji, and M. Yamada (2017), 
+Experimental Verification of the Role of Electron Pressure in Fast Magnetic Reconnection with a 
+Guide Field, Phys. Rev. Lett., 118(12), 125002, doi:10.1103/PhysRevLett.118.125002. 
+Fujimoto, K., and R. D. Sydora (2008), Electromagnetic particle-in-cell simulations on magnetic 
+reconnection with adaptive mesh refinement, Comput. Phys. Commun., 178(12), 915-923, 
+doi:10.1016/j.cpc.2008.02.010. 
+Giovanelli, R. (1946), A theory of chromospheric flares, 
+Natur, 158(4003), 81-82, 
+doi:10.1038/158081a0. 
+Hesse, M., J. Birn, and M. Kuznetsova (2001a), Collisionless magnetic reconnection: Electron 
+processes and transport modeling, Journal of Geophysical Research: Space Physics, 106(A3), 3721-
+3735, doi:10.1029/1999JA001002. 
+Hesse, M., M. Kuznetsova, and J. Birn (2001b), Particle-in-cell simulations of three-dimensional 
+collisionless magnetic reconnection, Journal of Geophysical Research: Space Physics, 106(A12), 
+29831-29841, doi:10.1029/2001JA000075. 
+Hesse, M., and D. Winske (1998), Electron dissipation in collisionless magnetic reconnection, Journal 
+of Geophysical Research: Space Physics, 103(A11), 26479-26486, doi:10.1029/98JA01570. 
+Ji, H., M. Yamada, S. Hsu, R. Kulsrud, T. Carter, and S. Zaharia (1999), Magnetic reconnection with 
+Sweet-Parker characteristics in two-dimensional laboratory plasmas, Phys. Plasmas, 6(5), 1743-1750, 
+doi:10.1063/1.873432. 
+Kuznetsova, M. M., M. Hesse, and D. Winske (2001), Collisionless reconnection supported by 
+nongyrotropic pressure effects in hybrid and particle simulations, Journal of Geophysical Research: 
+Space Physics, 106(A3), 3799-3810, doi:10.1029/1999JA001003. 
+Ma, Z., L. Wang, and L. Li (2015), Reconnection dynamics with secondary tearing instability in 
+compressible Hall plasmas, Phys. Plasmas, 22(6), 062104, doi:10.1063/1.4922057. 
+Ma, Z. W., and A. Bhattacharjee (2001), Hall magnetohydrodynamic reconnection: The Geospace 
+Environment 
+Modeling 
+challenge, 
+J 
+Geophys 
+Res-Space, 
+106(A3), 
+3773-3782, 
+doi:10.1029/1999ja001004. 
+Ma, Z. W., T. Chen, H. W. Zhang, and M. Y. Yu (2018), Effective Resistivity in Collisionless Magnetic 
+Reconnection, Scientific Reports, 8(1), 10521, doi:10.1038/s41598-018-28851-7. 
+Moran, A., L. Sironi, A. Levis, B. Ripperda, E. R. Most, and S. Selvi (2025), Effective Resistivity in 
+Relativistic Reconnection: A Prescription Based on Fully Kinetic Simulations, The Astrophysical 
+Journal Letters, 978(2), L45, doi:10.3847/2041-8213/ada158. 
+Numata, R., and Z. Yoshida (2002), Chaos-induced resistivity in collisionless magnetic reconnection, 
+Phys. Rev. Lett., 88(4), 045003, doi:10.1103/PhysRevLett.88.045003. 
+Otto, A. (2001), Geospace Environment Modeling (GEM) magnetic reconnection challenge: MHD 
+and Hall MHD—constant and current dependent resistivity models, Journal of Geophysical Research: 
+Space Physics, 106(A3), 3751-3757, doi:10.1029/1999JA001005. 
+Parker, E. N. (1957), Sweet's mechanism for merging magnetic fields in conducting fluids, J. Geophys. 
+
+18 
+ 
+Res., 62(4), 509-520, doi:10.1029/JZ062i004p00509. 
+Parker, E. N. (1979), Cosmical magnetic fields: Their origin and their activity, Oxford, Clarendon 
+Press; New York, Oxford University Press, 1979, 858 p. 
+Pérez-Coll Jiménez, J., P. Tenfjord, M. Hesse, C. Norgren, N. Kwagala, H. M. Kolstø, and S. F. 
+Spinnangr (2022), The Role of Resistivity on the Efficiency of Magnetic Reconnection in MHD, 
+Journal 
+of 
+Geophysical 
+Research: 
+Space 
+Physics, 
+127(6), 
+e2021JA030134, 
+doi:10.1029/2021JA030134. 
+Petschek, H. E. (1964), Magnetic field annihilation, NASAS, 50, 425. 
+Pritchett, P. L. (2001), Geospace Environment Modeling magnetic reconnection challenge: 
+Simulations with a full particle electromagnetic code, J Geophys Res-Space, 106(A3), 3783-3798, 
+doi:10.1029/1999ja001006. 
+Selvi, S., O. Porth, B. Ripperda, F. Bacchini, L. Sironi, and R. Keppens (2023), Effective Resistivity 
+in Relativistic Collisionless Reconnection, The Astrophysical Journal, 950(2), 169, doi:10.3847/1538-
+4357/acd0b0. 
+Shay, M., J. Drake, and M. Swisdak (2007), Two-scale structure of the electron dissipation region 
+during 
+collisionless 
+magnetic 
+reconnection, 
+Phys. 
+Rev. 
+Lett., 
+99(15), 
+155002, 
+doi:10.1103/PhysRevLett.99.155002. 
+Smiet, C. B., G. J. Kramer, and S. R. Hudson (2020), Mapping the sawtooth, Plasma Phys. Control. 
+Fusion, 62(2), 025007, doi:10.1088/1361-6587/ab5073. 
+Speiser, T. (1970), Conductivity without collisions or noise, Planet. Space Sci., 18(4), 613-622, 
+doi:10.1016/0032-0633(70)90136-4. 
+Spitzer, L. (2006), Physics of fully ionized gases, Courier Corporation. 
+Sweet, P. (1958), in Electromagnetic Phenomena in Cosmical Physics, edited by B. Lehnert, p. 123, 
+Cambridge University Press, New York. 
+Taylor, J. (1986), Relaxation and magnetic reconnection in plasmas, Rev. Mod. Phys., 58(3), 741, 
+doi:10.1103/RevModPhys.58.741. 
+Ugai, M. (1995), Computer studies on plasmoid dynamics associated with the spontaneous fast 
+reconnection mechanism, Phys. Plasmas, 2(9), 3320-3328, doi:10.1063/1.871165. 
+Yokoyama, T., and K. Shibata (1994), What is the condition for fast magnetic reconnection?, 
+Astrophysical Journal Letters, 436, L197-L200, doi:10.1086/187666. 
+Zhang, H., Z. Ma, and T. Chen (2025), Effective resistivity for magnetohydrodynamic simulation of 
+collisionless magnetic reconnection [Dataset], https://doi.org/10.5281/zenodo.15618732. 
+ 

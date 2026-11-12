@@ -1,0 +1,610 @@
+
+
+=== PAGE 1 ===
+         FAST RECURSIVE RECONNECTION AND THE HALL EFFECT:
+                 HALL-MHD SIMULATIONS
+
+
+                                             SUBMITTED TO ARXIV
+
+
+                               Chen Shi                           Anna Tenerani
+                              Earth, Planetary, and Space Sciences                   Department of Physics
+                             University of California, Los Angeles             The University of Texas at Austin
+                           Los Angeles, CA 90095, USA                 TX 78712, USA2019                            cshi1993@g.ucla.edu
+Jul                                           Marco Velli
+19                                              UniversityEarth, Planetary,of California,and SpaceLosSciencesAngeles
+                                               Los Angeles, CA 90095, USA
+
+
+                                                    San Lu
+                                                       Earth, Planetary, and Space Sciences
+                                                     University of California, Los Angeles
+                                               Los Angeles, CA 90095, USA
+
+
+
+                                                   March 15, 2021[astro-ph.SR]
+
+                                     ABSTRACT
+
+                    Magnetohydrodynamic (MHD) theory and simulations have shown that reconnection is triggered via a
+                            fast “ideal" tearing instability in current sheets whose inverse aspect ratio decreases to a/L ∼S−1/3,
+                     with S is the Lundquist number deﬁned by the half-length L of the current sheet (of thickness 2a).
+                        Ideal tearing, in 2D sheets, triggers a hierarchical collapse via stretching of X-points and recursive
+                            instability. At each step, the local Lundquist number decreases, until the subsequent sheet thickness
+                          either approaches kinetic scales or the Lundquist number becomes sufﬁciently small. Here we carry
+                       out a series of Hall-MHD simulations to show how the Hall effect modiﬁes recursive reconnection
+                    once the ion inertial scale is approached. We show that as the ion inertial length becomes of the
+                       order of the inner, singular layer thickness at some step of the recursive collapse, reconnection
+                          transits from the plasmoid-dominant regime to an intermediate plasmoid+Hall regime and then to
+                        the Hall-dominant regime. The structure around the X-point, the reconnection rate, the dissipation
+                       property and the power spectra are also modiﬁed signiﬁcantly by the Hall effect.arXiv:1906.05961v2
+           Keywords magnetic reconnection — magnetohydrodynamics (MHD)
+
+          1  Introduction
+
+             Magnetic reconnection is one of the most important processes in astrophysical plasmas. By allowing changes in the
+              topology of the magnetic ﬁeld it allows conversion of magnetic energy into the thermal and kinetic energies of the
+             ambient plasma as well as particle acceleration. The study of magnetic reconnection started in the 1950s, when [25]
+            and [17] established the resistive, stationary, MHD model known as the Sweet-Parker current sheet model, where a
+             uniform resistivity is responsible for reconnecting magnetic ﬁeld lines carried into a current sheet by a plasma inﬂow.
+            The thickness (or the aspect ratio) of the current sheet is determined by the resistivity, that by locally diffusing the
+              inwardly convected magnetic ﬁeld, allows a stationary state to be achieved. However, because astrophysical plasmas
+               are typically nearly-collsionless, Lundquist numbers are enormous, and Sweet-Parker type current sheets are very
+
+=== PAGE 2 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+thin, limiting the speed of reconnection to extremely small values: deﬁning the Lundquist number of the Sweet-Parker
+current sheet as S = LVA/η where 2L, VA and η are the length of the current sheet, the asymptotic upstream Alfvén
+speed and the magnetic diffusivity respectively, the inverse aspect ratio a/L and the normalized reconnection rate
+R = uin/VA scale as a/L ∼S−1/2 and R ∼S−1/2, where 2a is the thickness of the current sheet and uin is the
+inﬂow speed. For nearly-collisionless plasma, S →∞and as a result a/L, R →0. Thus the Sweet-Parker model is
+unable to explain the explosive phenomena observed in space and astrophysical contexts, such as solar and stellare
+ﬂares and coronal mass ejections (CMEs). A more promising resistive MHD model for fast reconnection was proposed
+by [18] who hypothesized that a small diffusion region should develop inside the large scale background with an
+exhaust outﬂowing from the x-point with a much larger opening angle, leading to a fast reconnection rate R ∼(ln S)−1.
+However, resitive-MHD simulations since showed that the Petschek model cannot be achieved with a uniform resistivity,
+but rather requires a region of enhanced dissipation at the x-point [2].
+
+With the improvements of computational capabilities, numerical studies of magnetic reconnection have reached beyond
+the MHD regime, exploring Hall-MHD - to remain within the ﬂuid description-, as well as hybrid and direct particle-
+in-cell (PIC) simulations [1, e.g.]. The main result stemming from such works is that once two-ﬂuid effects (i.e. the
+Hall effect) are included, a fast reconnection rate is reached with a value R ∼0.1, regardless of the speciﬁc numerical
+model used. Many PIC simulations have been carried out [7, e.g.] over the last two decades and our understanding
+of the electron-scale physics has been improved signiﬁcantly not only thanks to these numerical simulations but
+also to new observations from the Magnetospheric Multiscale (MMS) mission, whose data provides insight into the
+electron diffusion region (EDR) near the reconnection site, i.e. the X-point (or X-line) [4]. Interestingly, the increase
+in resolution of ﬂuid simulations has also lead to new discoveries, altering the resistive-MHD theory reconnection.
+After [2] ﬁrst noted that at high enough S the Sweet-Parker sheet appeared to become unstable, [23] proposed the
+idea of “fractal reconnection”: the macroscopic current sheet, due to tearing instability, breaks into multiple X-points,
+which then dynamically lengthen to form secondary current sheets. These secondary current sheets then become tearing
+unstable themselves as secondary plasmoids are generated. This recursive process proceeds until some microscopic
+mechanism stops it. [14] showed that the linear growth rate of the tearing mode inside Sweet-Parker type current sheets,
+i.e. current sheets whose inverse aspect ratio obeys a/L ∼(LVA/η)−1/2 = S−1/2, scales with a positive power of
+the Lundquist number: γτA ∼S1/4 in the limit S →∞where τA = L/VA is the Alfvén crossing time. [19] carried
+out more generalized scaling analysis and showed that the current sheet can only thin to a/L ∼S−1/3 at which point
+the growth rate of the tearing mode becomes independent of the Lundquist number (the so called “ideal tearing”)
+with growth rates of order 1 (γτA ∼1). Note that in the analysis by [23], the same result a/L ∼S−1/3 was derived
+by arguing that the current sheet becomes tearing unstable only when the linear growth time of the fastest-growing
+mode t ≈1/γmax becomes shorter than the time it takes for the Alfvénic outﬂow to evacuate the reconnected ﬁeld
+from the x-point, t ∼L/VA. [27] carried out 2D resistive-MHD simulation of a collapsing macroscopic current sheet
+and developed the recursive reconnection model further, ﬁnding some differences with respect to to [23]. They also
+conﬁrmed that the tearing instability happens when a current sheet becomes as thin as a/L ∼S−1/3. These results are
+summarized in [24].
+
+One question within the recursive reconnection picture is what dynamical process intervenes to stop the generation of
+ever smaller scales: one possible mechanism is the stabilization of the tearing instability due to the decrease of the
+Lundquist number. It has been shown by early MHD simulations [2] that below a threshold Sc ∼104 the Sweet-Parker
+type current sheets are tearing-stable and the inhomogeneous background ﬂow plays the stabilizing role [3, 22, see].
+Another possible mechanism to stop recursive reconnection is the kinetic effect. In astrophysical and experimental
+plasmas, e.g. the solar wind, the Earth’s magnetotail and the Magnetic Reconnection Experiment (MRX), the ion inertial
+length di can be comparable to the current sheet thickness or the inner layer thickness of the tearing mode [20, see].
+Even if di is much smaller than the thickness of the initial current sheet, the thickness of the current sheets formed during
+subsequent steps in the recursive collapse may become comparable to di, well before the Lundquist number reaches the
+Sc required for stabilization. It has been shown by collisional-PIC and Hall-MHD simulations that when the thickness
+of a current sheet approaches the ion inertial length, the reconnection rate is enhanced signiﬁcantly due to the Hall
+effect [6, 21]. Here we carry out a series of Hall-MHD simulations to investigate how recursive reconnection is altered
+once the Hall term takes effect. We show that, as di increases from values smaller to greater than the tearing mode inner,
+or singular, layer thickness, reconnection transits from a plasmoid-generating dominant pattern to a Hall-dominant
+pattern. We also show that, during the nonlinear stage, the structure around the X-point, the reconnection rate, the
+energy dissipation and the power spectra of various quantities are all signiﬁcantly modiﬁed by the Hall effect.
+
+The paper is organized as follows: In Section (2) we describe the numerical setup of the simulations, including the
+numerical model and the choice of parameters. In Section (3) we show the simulation results and in Section (4) we
+summarize this work and discuss the possible future works.
+
+
+
+
+                                               2
+
+=== PAGE 3 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+2  Numerical Setup
+
+The code we use is a 2.5D Hall-MHD code based on the following equation set:
+
+                                 ∂ρ
+                         = −u · ∇ρ −(∇· u)ρ                                         (1a)
+                                       ∂t
+                           ∂u                   1                       = −u · ∇u −1  +  × B                                   (1b)                                   ∂t          ρ∇p   ρj
+                         ∂ψ                      =  u × B −di j × B  + η∇2ψ                                   (1c)
+                                  ∂t             ρ         z
+                        ∂Bz                    = ∇×  u × B −di j × B   + η∇2Bz                            (1d)
+                              ∂t                  ρ          z
+                                 ∂p
+                         = −u · ∇p −κ(∇· u)p                                        (1e)
+                                      ∂t
+where j = ∇× B is the current density and ψ is the z component (the out-of-plane component) of the magnetic vector
+potential such that
+                                  ∂ψ                                                                                 ,  By = −∂ψ                                            (2)                              Bx =
+                                       ∂y         ∂x
+and ∇· B = 0 is conserved automatically. κ = 5/3 is the adiabatic index. The code is double-periodic and
+derivatives are calculated by spectral method. Explicit 3rd order Runge-Kutta method is used for time integral and
+Courant-Friedrichs-Lew condition determines the time step.
+
+The initial condition is a pressure-balanced Harris current sheet:
+                                         −yc                             B0 = B0 tanh(y       )ˆex                                         (3a)
+                                                       a0
+                                     B20      −yc                                      ρ0 = ρ∞+    sech2(y      )                                     (3b)
+                                             2T0        a0
+where the asymptotic density ρ∞, the temperature T0 and the asymptotic magnetic ﬁeld B0 are constants:
+
+                      ρ∞= 1,  T0 = 1,  B0 = 1                                          (4)
+
+a0 is the thickness of the initial current sheet and is set to be
+
+                                              a0 = 0.02                                                    (5)
+
+The domain size is Lx × Ly = 8 × 0.8 and because of the periodicity along y, a double Harris current is used so
+practically Ly = 0.4. The number of the uniform grid points is nx × ny = 4096 × 2048, i.e. the resolution is
+∆x = 1.95 × 10−3, ∆y = 3.91 × 10−4. Random noises of mode N = 1 −128 (i.e. kN = LxN ˆex) are added to the
+center of the initial current sheet. Note that “random” here means that the phase of each mode is generated randomly
+but for all the simulations in this work the initial perturbations are exactly the same. The resistivity is η = 1 × 10−5, i.e.
+the Lundquist number S = 105.
+
+7 runs are carried out with the ion inertial length di to be the only varying parameter:
+                                           di = [0, 1, 2, 3, 4, 5, 10] × 10−3                                         (6)
+
+and we will refer to them as Run 0-5 and Run 10 for convenience hereinafter. Note that, the critical thickness of the
+current sheet to trigger the “ideal tearing” is estimated to be
+
+                                    a ∼S−1/3 = 0.0215                                              (7)
+
+and the inner layer thickness of the tearing mode is estimated to be
+
+                                         δ ∼S−1/2 = 3.16 × 10−3                                            (8)
+
+Eqs. (7 & 8) help guide the choice of a0 and di: a0 = 0.02 allows ideal tearing to be triggered and as di varies from
+values below to above δ we expect to observe the transition from a plasmoid dominated regime to the Hall regime when
+an inner layer is formed with a thickness on the order of di. Run 10 is an extreme case where di is on the scale of a0 for
+comparison.
+
+
+                                               3
+
+=== PAGE 4 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+3  Results
+
+3.1  Time evolution and the structure of the current sheet
+
+The left and middle columns of Figure 1 show the out-of-plane current density in Run 0, i.e. the MHD case. Left
+column shows the time evolution of Jz inside the domain x ∈[2.0, 3.0] and y ∈[0.15, 0.25] where one X-point appears
+but note that there are multiple X-points formed along the current sheet. The evolution is similar to what is observed
+in the simulations by [27]. The initial perturbation grows into a sequence of X-points which evolve nonlinearly into
+secondary current sheets stretched along the outﬂow direction (t = 3.2 and t = 5.6). During the dynamic lengthening,
+the thickness of the secondary current sheet is observed to be nearly constant and is a1 ≈0.002, close to the predicted
+inner layer thickness of the tearing mode. At time t = 5.6, secondary tearing is triggered after which the secondary
+current sheet breaks into a series of small current sheets and plasmoids (t = 6.4). This process continues recursively
+until the end of the simulation at t = 9. The middle column of Figure 1 shows the hierarchic structure of Jz at t = 7.20.
+Top panel is the whole simulation domain. Middle and bottom panels are blow-ups as marked by the boxes and arrows.
+It is clearly seen from the bottom panel that at x ≈2.70 a tiny plasmoid is being generated out of a micro current sheet
+whose thickness is on grid scale: an ≈∆y < 0.001. The right column shows the time-averaged power spectra in this
+run and will be discussed in Section 3.3.
+
+
+
+
+
+Figure 1: Out-of-plane current density Jz and the power spectra in Run 0. Left column: time evolution of Jz inside the
+domain x ∈[2.0, 3.0] and y ∈[0.15, 0.25]. Middle column: the hierarchic structure of the current sheet (color is Jz) at
+t = 7.20. Top panel is the whole simulation domain. Middle and bottom panels are blow-ups as marked by the boxes
+and arrows. Right column: time-averaged power spectra of the magnetic ﬁeld B, the electric ﬁeld E, the current density
+J and the density ρ calculated at the central line of the current sheet y = 0.2 in log-log scale. The blue, orange and
+green lines represent the x, y and z components of the vector ﬁelds respectively and the black lines are the sum of the 3
+components in the ﬁrst three panels. The dashed and dotted lines are linear ﬁts for the spectra of By, Ez, Jz and ρ. The
+kx ranges for the ﬁts are marked by the vertical dashed lines and the slopes of the ﬁts are written in the legends. The
+time period for averaging the spectra is written at the top of the column.
+
+Figure 2 is the similar plot with Figure 1 for Run 1, i.e. di = 0.001. The evolution is similar with Run 0 at t ≤5: a
+secondary current sheet is formed and stretched along x direction with thickness a1 ≈0.0016. Then the secondary
+current sheet breaks into small plasmoids at t ≈5, earlier than Run 0 as expected: tearing instability has larger growth
+rate with Hall term [20]. Very soon after the break up of the secondary current sheet, a single X-point conﬁguration,
+which is a typical structure of Hall-reconnection, is formed (between t = 5.2 and t = 5.6). But instead of a steady
+X-point structure, plasmoids are consecutively generated at the X-point. The bottom-left panel and the middle column
+of Figure 2 clearly show a chain of wedges on each side of the X-point at t = 7.2 and these wedges are the ejected
+
+
+                                               4
+
+=== PAGE 5 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+plasmoids. As shown in the bottom panel of the middle column, there is one plasmoid being generated and ejected
+toward the left at x ≈2.52. Figure 3 and Figure 4 are plots similar to those shown in Figure 1 but for Run 2 and Run 5,
+respectively. As di increases, the Hall-reconnection stage is triggered faster and the plasmoid generation is suppressed.
+In Run 2 we can still see generation of plasmoids (see the second panel on the left column and the bottom panel on the
+middle column of Figure 3) while for Run 5 there is no plasmoid observed.
+
+
+
+
+
+Figure 2: Out-of-plane current density Jz and the power spectra in Run 1. Left column: time evolution of Jz inside the
+domain x ∈[2.0, 3.0] and y ∈[0.15, 0.25]. Middle column: the hierarchic structure of the current sheet (color is Jz) at
+t = 7.20. Top panel is the whole simulation domain. Middle and bottom panels are blow-ups as marked by the boxes
+and arrows. Right column: time-averaged power spectra of the magnetic ﬁeld B, the electric ﬁeld E, the current density
+J and the density ρ calculated at the central line of the current sheet y = 0.2 in log-log scale. The blue, orange and
+green lines represent the x, y and z components of the vector ﬁelds respectively and the black lines are the sum of the 3
+components in the ﬁrst three panels. The dashed and dotted lines are linear ﬁts for the spectra of By, Ez, Jz and ρ. The
+kx ranges for the ﬁts are marked by the vertical dashed lines and the slopes of the ﬁts are written in the legends. The
+time period for averaging the spectra is written at the top of the column.
+
+By comparing the middle-bottom panels of Figure 2-4, which show the simulation domains of the same size (0.2×0.02),
+we observe that the opening angle of the exhaust increases and the size of the X-point shrinks as di enlarges. In Figure
+5, we show the opening angle of the exhaust and the half length of the current sheet at the X-point as functions of
+di. The two quantities are calculated for each of Run 1-5 and for Run 10, when the X-point structure is steady. The
+opening angle increases almost linearly with di from about 10 degrees for di = 0.001 to about 28 degrees for di = 0.01.
+The half-length of the current sheet decreases with di quite fast for di ≤0.003 and then begins to converge, possibly
+because the resolution ∆x ≈0.002 is approached.
+
+
+3.2  Reconnection rate and dissipation
+
+In Figure 6 we plot in the top panel the reconnected magnetic ﬂux ψ as a function of time for all runs. The curves from
+right to left correspond to Run 0,1,2,3,4,5 and 10 respectively. For each run, we conﬁne the calculation to be within the
+area x ∈[2.0, 3.0] and y ∈[0.15, 0.25]. As the code evolves the z-component of the vector potential ψ instead of the
+in-plane magnetic ﬁeld, the reconnected magnetic ﬂux is easily acquired by recording the value of ψ at the X-point,
+deﬁned as the point at which ψ peaks. The time at which we begin to record ψ is t ≲0.8 after the dominant X-point
+in this area is formed. All runs go through a slowly-growing initial phase with slightly different reconnection rate
+which increases with di and the initial phase corresponds to the evolution of the ﬁrst tearing. For Run 1-5 and 10, fast
+reconnection is triggered simultaneously with the formation of the Hall-like conﬁguration, e.g. at t ∼5 for Run 1 and
+t ∼4 for Run 2. The larger di, the earlier the fast-reconnection phase is entered. Then the reconnection rate remains
+
+
+                                               5
+
+=== PAGE 6 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+
+
+Figure 3: Out-of-plane current density Jz and the power spectra in Run 2. Left column: time evolution of Jz inside the
+domain x ∈[2.0, 3.0] and y ∈[0.15, 0.25]. Middle column: the hierarchic structure of the current sheet (color is Jz) at
+t = 5.60. Top panel is the whole simulation domain. Middle and bottom panels are blow-ups as marked by the boxes
+and arrows. Right column: time-averaged power spectra of the magnetic ﬁeld B, the electric ﬁeld E, the current density
+J and the density ρ calculated at the central line of the current sheet y = 0.2 in log-log scale. The blue, orange and
+green lines represent the x, y and z components of the vector ﬁelds respectively and the black lines are the sum of the 3
+components in the ﬁrst three panels. The dashed and dotted lines are linear ﬁts for the spectra of By, Ez, Jz and ρ. The
+kx ranges for the ﬁts are marked by the vertical dashed lines and the slopes of the ﬁts are written in the legends. The
+time period for averaging the spectra is written at the top of the column.
+
+
+
+
+steady during the fast-reconnecting stage. However, for Run 0, i.e. the MHD case, the process is different from the
+other runs. First, the reconnection rate increases when the secondary tearing happens, i.e. when the secondary current
+sheet breaks up at t ∼6, instead of the formation of a Hall-like structure. Second, the reconnection does not maintain a
+steady rate throughout the fast-reconnection stage. At t 8, the reconnection rate increases once again due to the third or
+higher-order tearing (see bottom panel on the middle column of Figure 1). The dashed lines in the top panel of Figure 6
+are linear ﬁts of the ψ(t) curves and the slopes of the ﬁtted lines are written in the legend. In the middle panel we plot
+the reconnection rate calculated from the linear ﬁts as a function of di. For Run 1-5, the reconnection rate increases
+with di roughly linearly and its value is around 0.03 −0.05. For Run 10, the reconnection rate is 0.058, lower than the
+linear extrapolation of Run 1-5 as shown by the dashed line, indicating a convergence of the reconnection rate as di
+increases. The reconnection rates of these runs are consistent with previous Hall-reconnection simulations [16]. The
+triangles correspond to the two reconnection rates before and after the second acceleration of the reconnection in Run 0.
+Note that the fastest reconnection rate in the MHD case is even larger than that of the di = 0.001 run. If the resolution
+of the simulation is good enough to resolve smaller-scale current sheets, the reconnection rate is supposed to increase
+further. In the bottom panel of Figure 6 we plot the reconnection rate as a function of the opening angle for Run 1-5
+and 10. This plot indicates that as the opening angle of the exhaust increases, the reconnection rate goes up when the
+opening angle is small but does not go up all the way: there is a maximum reconnection rate allowed in the system. [13]
+discussed this problem by a simple model where the micro-scale diffusion region is embedded inside the large-scale
+MHD region. As the exhaust opens up, the magnetic ﬁeld right upstream the diffusion region is reduced because of
+the balance between the magnetic pressure gradient force and the magnetic tension force in the MHD-scale upstream
+region. As a consequence, the outﬂow speed and the reconnection rate are also reduced. In their estimate, the opening
+angle corresponding to the maximum reconnection rate is α = 2 × arctan (0.31) = 0.60 = 34o which is not reached
+by our simulations but from the bottom panel of Figure 6 we can see the trend of a saturated reconnection rate as the
+opening angle increases toward 30o.
+
+
+                                               6
+
+=== PAGE 7 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+
+
+Figure 4: Out-of-plane current density Jz and the power spectra in Run 5. Left column: time evolution of Jz inside the
+domain x ∈[2.0, 3.0] and y ∈[0.15, 0.25]. Middle column: the hierarchic structure of the current sheet (color is Jz) at
+t = 4.00. Top panel is the whole simulation domain. Middle and bottom panels are blow-ups as marked by the boxes
+and arrows. Right column: time-averaged power spectra of the magnetic ﬁeld B, the electric ﬁeld E, the current density
+J and the density ρ calculated at the central line of the current sheet y = 0.2 in log-log scale. The blue, orange and
+green lines represent the x, y and z components of the vector ﬁelds respectively and the black lines are the sum of the 3
+components in the ﬁrst three panels. The dashed and dotted lines are linear ﬁts for the spectra of By, Ez, Jz and ρ. The
+kx ranges for the ﬁts are marked by the vertical dashed lines and the slopes of the ﬁts are written in the legends. The
+time period for averaging the spectra is written at the top of the column.
+
+
+In the top panel of Figure 7 we show the time evolution of the dissipation rate averaged over the whole simulation
+domain:
+                                          1  Z         1  Z
+                 D = ηJ2 =        ηJ2 =       J · E′                                 (9)
+                                      nxny         nxny
+
+where
+                                        E′ = E + ue × B                                           (10)
+
+is the electric ﬁeld in electron frame. The evolution of the dissipation rate is different from that of the reconnected
+magnetic ﬂux (top panel of Figure 6). The reconnection rate increases abruptly when either the second tearing or the
+Hall-reconnection is triggered while the dissipation rate increases more smoothly with time due to the averaging over
+the whole domain. In addition, the dissipation rate at the end of the simulation decreases with di for di ≥0.003: as di
+increases, the total time of reconnection shortens due to the ﬁnite magnetic ﬂux in the simulation domain and faster
+reconnection rate, leading to the decrease of the amplitude of the current density at the end of the simulation. In the
+middle panel we show the ratio between the Hall-current dissipation rate
+
+                                  Dxy =  η J2x + J2y                                            (11)
+
+and the total dissipation rate D as a function of time for each run. For the MHD case this ratio remains 0 as there is no
+Hall current while for di ̸= 0, the signiﬁcance of the Hall-current dissipation grows with time once the Hall-reconnection
+stage initiates and the ratio tends to saturate. Even for di = 0.001, the Hall-current dissipation accounts for ∼40% of
+the total dissipation at the end of the simulation. As di increases, this ratio converges to ∼55%, i.e. the dissipation by
+the Hall current becomes more important than that of the out-of-plane current. We also check the ratio between the
+parallel dissipation rate ηJ2∥and the total dissipation rate where J∥= J · B/B and show this ratio in the bottom panel.
+It evolves similarly with the Hall-dissipation ratio and converges to a value ∼45% as di increases.
+
+
+                                               7
+
+=== PAGE 8 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+
+
+Figure 5: Top: opening angle of the exhaust as a function of di. Bottom: half-length of the current sheet at the X-point
+as a function of di.
+
+
+
+3.3  Power spectra
+
+It is expected that the nonlinear recursive generation of plasmoids leads to an energy cascade from large to small
+scales, leading to well-developed power-law spectra. The development of turbulence with an extended inertial range
+is important both to energization [15] and scattering of particles [9]. In the MHD case, a phenomenological model
+based on the recursive tearing mode developed by [26] leads to a spectrum |By(kx)|2 ∝k−4/5x      . In the kinetic regime,
+i.e. below the ion inertial length, the power spectra of the turbulence generated are different due to the presence of
+kinetic mechanisms, as discussed below. We inspect the power spectra of various quantities: the magnetic ﬁeld B, the
+electric ﬁeld E, the current density J and the density ρ. The right columns of Figure 1-4 are the spectra for Run 0, 1, 2,
+5 respectively. The spectra are calculated at the central line of the current sheet y = 0.2 and are averaged over the time
+periods of steady and fast reconnection. The time periods for averaging the spectra are written at the top of the columns.
+The blue, orange and green lines are the x, y and z components of the vector ﬁelds respectively. The black lines in the
+top three panels are the sum of the 3 components. Note that in some panels the total power spectrum is covered by
+the dominant component, e.g. in Run 0 (Figure 1) Ez overlap with the total power of E as Ex and Ey are exactly 0
+in this run. We ﬁt the powers of By, Ez, Jz and ρ over k ranges marked by the vertical dashed lines where obvious
+exponential relations exist. The ﬁts are shown by the dashed and dotted lines whose slopes are written in the legends.
+
+We ﬁrst look at the power spectra of B in Figure 1-4. At the center of the current sheet, the dominant component is By
+as shown by the orange lines. We see that the power spectra peak around kx ≈0.6 −0.8 in all of the runs shown in
+Figure 1-4. This peak corresponds to the 5-6 large-scale plasmoids in all these runs as shown in the top panels on the
+middle columns of Figure 1-4. Note that the number of the large plasmoids is a nonlinear effect related probably to
+the initial condition and the domain size rather than the fastest-growing linear mode. For Run 0 and Run 1, a clear
+two-segment power spectrum of By is seen with the break point at kx ≈20, i.e. λ ≈0.05. This value of λ is close to
+
+
+                                               8
+
+=== PAGE 9 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+
+
+Figure 6: Top: reconneced magnetic ﬂux at the X-point as a function of time. Dashed lines are linear ﬁts whose slopes
+are shown in the legend. Blue, orange, green, red, purple, brown and pink lines (from right to left) are Run 0, 1, 2, 3, 4,
+5, 10 respectively. Middle: reconnection rate calculated by the linear ﬁts as a function of di. Note that for Run 0 there
+are two growth rates corresponding to the two fast-growing stages as shown in the top panel. Bottom: reconnection rate
+as a function of the opening angle for Run 1-5 and 10.
+
+
+the length of the third-order current sheets in Run 0 (see the panel t = 6.40 on the left column of Figure 1) and the
+length of the current sheet at the X-point in Run 1, which is around 0.03 −0.04 (see the bottom panel of Figure 5).
+Below the break point, the spectral index (deﬁned as the absolute value of the slope) is smaller than 1, while above the
+break point the spectral index is very close to 2. Especially, in Run 0 the slope of By spectrum below the break point is
+approximately −4/5, the value estimated by [26], indicating that in the low-kx range the spectra are controlled by the
+recursive plasmoid generation. In high-kx range the −2 slope is mainly due to the discontinuities near the boundaries of
+the plasmoids. For Run 2, the By spectrum becomes smooth. Although we can still see that the slope of the spectrum
+changes with kx, we are unable to ﬁnd a break point. For Run 5, the By spectrum is almost a straight line with a slope
+−2.22. The change of the shape of By spectra is related to the formation of the X-point structure due to the Hall effect.
+As di increases, the recursive growth of plasmoids is suppressed. As a result, the shallow part of the By spectrum,
+which represents the recursive generation of plasmoids, is gradually taken over by the steeper spectrum indicating more
+discontinuities/shocks produced in the Hall cases. The second panels on right columns of Figure 1-4 show the power
+
+
+                                               9
+
+=== PAGE 10 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+
+
+Figure 7: Top: dissipation rate ηJ2 averaged over the whole simulation domain. Middle: the ratio between the
+Hall-current dissipation rate η J2x + J2y  and the total dissipation rate ηJ2. Bottom: the ratio between the parallel
+dissipation rate and the total dissipation rate.
+
+
+
+
+
+spectra of E and we calculate the spectral indices for Ez, the out-of-plane electric ﬁeld. For Run 0 and Run 1, Ez is
+dominant and the power spectrum of Ez consists of two segments like By though the high-k part of Ez spectrum is
+steeper than By with slopes around -2.3. For Run 2, Ez still shows a two-segment power spectrum while By does not.
+For Run 5, Ez power spectrum is almost a straight line with slope −1.53, ﬂatter than that of By. We also notice that, as
+di increases, the energy in the Hall electric ﬁeld Ex (the blue lines) exceeds the energy in Ez at small scales (see Figure
+3 and 4). In Run 5, Ex dominates the electric energy at scales kx > 5, i.e. the Hall electric ﬁeld is the major contributor
+to the electric energy at scales λ < 0.2. The third panels of Figure 1-4 show the power spectra of the current density J
+and we calculate the spectral indices for Jz. We see that Jz dominates the power of J in all runs except at quite small
+scales in Run 2 and Run 5. For Run 0-2, the Jz power spectra are similar with spectral indices around 1.5 −1.8 while
+for Run 5, the Jz power spectrum has a break point at kx ∼10 −20 below which the spectral index is around 2 and
+above which the spectral index is around 1. The bottom panels of Figure 1-4 show the power spectra of the density ρ
+and we see that the 4 runs are very similar with slopes around −2, indicating that the Hall effect does not change the
+compressional properties signiﬁcantly in this di range. For comparison, we plot the spectra for Run 10 in Figure 8. We
+see that B, E and J show similar power spectra with Run 5 though Ez spectrum is steeper and it is hard to calculate the
+spectral index for Jz at large scales due to the strong oscillation. The density has a signiﬁcantly steeper power spectrum
+in Run 10 with slope −2.75, indicating a stronger damping of the compressible ﬂuctuations in this run.
+
+
+                                              10
+
+=== PAGE 11 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+
+
+Figure 8: Power spectra averaged from t = 2.4 to t = 3.4 for Run 10 in log-log scale. The spectra are calculated at the
+central line of the current sheet y = 0.2. From top-left to bottom-right panels are the magnetic ﬁeld B, the electric ﬁeld
+E, the current density J and the density ρ. The blue, orange and green lines are the x, y and z components of the vector
+ﬁelds respectively. The black lines are the sum of the 3 components in panels for B, E and J. The dashed lines are the
+ﬁts for By, Ez, Jz and ρ over kx ranges marked by the vertical dashed lines. The slopes of the ﬁts are shown in the
+legends.
+
+
+4  Summary
+
+
+In this work, we have carried out a series of 2.5D Hall-MHD simulations to study the transition from resistive-MHD
+reconnection to Hall-reconnection. We show that as the ion inertial length increases from 0 to above the inner-layer
+thickness of the ideal tearing mode, the evolution and the structure of the current sheet change signiﬁcantly. For di = 0
+(or di ≪δT I where δT I is the inner layer thickness of the tearing mode), the reconnection is purely plasmoid-dominant,
+consistent with the recursive reconnection picture [23, 27, e.g.]. When di ≫δT I, the reconnection evolves into the
+Hall-dominant regime soon after the ﬁrst tearing: a single X-point with exhaust opened up. When di ≲δT I, we see an
+intermediate state: an X-point with ﬁnite length is formed and plasmoids continue to be generated and ejected out from
+the X-point. The steady-nonlinear reconnection rate for Hall reconnection is around 0.03 −0.06, increasing with di and
+with a trend toward a maximum value around 0.06 in our simulations. The resistive-MHD case is also able to give fast
+nonlinear reconnection rate (0.034) and this rate increases with time as higher-order tearing happens. The Hall effect
+changes the energy dissipation signiﬁcantly. The Hall current system accounts for a large portion (40%) of the total
+dissipation even in our Run 1 where the reconnection is the intermediate plasmoid+Hall state and as di increases this
+portion converges to a value ≳50%. Last, the Hall term changes the power spectra of various quantities a lot, especially
+the electromagnetic ﬁelds B and E. For instance, the reconnecting magnetic ﬁeld component By shows two-segment
+power spectra with slopes around −0.6 ∼−0.8 at small kx and slopes around −2 at large kx in Run 0 and 1 while in
+Run 2-5 and 10 its power spectra are one-segment and become steeper and steeper as di increases. This change of the
+spectra is related to the suppression of the recursive plasmoid generation and the formation of Petschek-like X-points as
+the Hall effect becomes stronger.
+
+In the Hall-MHD model, the temperature anisotropy is absent but it is known that it develops in ion scale current sheets
+[8]. This temperature anisotropy may facilitate the formation of slow shocks so that the structure of the reconnection
+becomes Petschek-like more easily [12]. Besides, the formed temperature anisotropy may lead to the growth of various
+instabilities, e.g. ﬁre-hose instability capable of perturbing the outﬂow regions [10].
+
+[5] propose that “bistability” exists in Hall-MHD reconnection: the Sweet-Parker and Hall solutions are both stable.
+However, their result is not applicable to many astrophysical environments where the resistivity is so small that the
+Sweet-Parker current sheet cannot form in the ﬁrst place. [11] observe the bounce between the Hall-like X-point and
+the Sweet-Parker-like long current sheet in their simulations of two coalescing magnetic islands. However, in our
+simulations we do not observe such phenomenon. In our Run 1 we see a stable status where plasmoids are generated
+
+
+                                              11
+
+=== PAGE 12 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+out of the X-point continuously but we do not see the transition from the X-point structure back to a long current sheet.
+The reason may be that our initial conﬁguration is a pressure-balanced Harris current sheet rather than two coalescing
+magnetic islands. In the simulations by [11], the large coalescing islands may possibly “squeeze” the current sheet in
+between and destroy the opened-up exhaust of the Hall-like structure.
+
+In the solar wind and the solar corona, the relation between di, a0 and δT I may be similar to the setup in this work
+[20, see]. Thus our study may help us understand the reconnection process in these environments. As the Parker Solar
+Probe (PSP) is collecting data in the inner heliosphere and solar corona , it will be of great interest to combine the
+numerical study with the PSP data analysis in the future. In addition, the simulations in the current study are 2.5D and
+it is necessary to extend this work to 3D.
+
+5  Acknowledgments
+
+We would like to thank Fulvia Pucci and Yi Qi for many useful discussions. Chen Shi would also like to thank Kun
+Zhang for her support. We acknowledge support from the NASA LWS Grant No. NNX15AF34G and the NSF-DOE
+Partnership in Basic Plasma Science and Engineering Award No. 1619611. This work used the Extreme Science and
+Engineering Discovery Environment (XSEDE) [28] Comet at the San Diego Supercomputer Center through allocation
+TG-AST160007. XSEDE is supported by National Science Foundation grant number ACI-1548562.
+
+References
+
+[1] Birn, J., Drake, J. F., Shay, M. A., et al. 2001, J. Geophys. Res, 106, A3, 3715-3719
+[2] Biskamp, D. 1986, PhFl, 29(5), 1520-1531
+[3] Bulanov, S. V., Syrovatskii, S. I., & Sakai, J. 1978, JETP Letters, 28, 177-179
+[4] Burch, J. L., Moore, T. E., Torbert, R. B., et al. 2016, Space Sci Rev, 199, 5-21
+[5] Cassak, P. A., Shay, M. A. & Drake, J. F. 2010, PhPl, 17, 062105
+[6] Daughton, W., Roytershteyn, V., Albright, B. J., et al. 2009, PRL, 103, 065004
+[7] Daughton, W., Scudder, J. & Karimabadi, H. 2006, PhPl, 13, 072101
+[8] Drake, J. F., Swisdak, M., Phan, T. D., et al. 2009, J. Geophys. Res., 114, A05111
+[9] Giacalone, J., Jokipii, J. R. & Mazur, J. E., 2000, ApJ, 532, L75-78
+[10] Hietala, H., Drake, J. F., Phan, T. D., et al. 2015, Geophys. Res. Lett., 42, 7239–7247
+[11] Huang, Y. M., Bhattacharjee, A. & Sullivan, B. P. 2011, PhPl, 18, 072109
+[12] Liu, Y.-H., Drake, J. F. & Swisdak, M. 2011, Phys. Plasmas, 18, 062110
+[13] Liu, Y.-H., Hesse, M., Guo, F., et al. 2017, PRL, 118, 085101
+[14] Loureiro, N. F., Schekochihin, A. A., & Cowley, S. C., 2007, PhPl, 14, 100703
+[15] Lu, S., Angelopoulos, V., Artemyev, A. V., et al. 2019, ApJ, 878, 109
+[16] Ma, Z. W. & Bhattacharjee, A. 2001, J. Geophys. Res, 106, A3, 3773-3782
+[17] Parker, E. N. 1957, J. Geophys. Res, 62, 509
+[18] Petschek, H. E. 1964, Magnetic Field Annihilation, in The Physics of Solar Flares, Proceedings of the AAS-NASA
+   Symposium held 28–30 October 1963 at the Goddard Space Flight Center, Greenbelt, MD, p. 425
+[19] Pucci, F. & Velli, M. 2014, ApJL, 780, L19
+[20] Pucci, F., Velli, M. & Tenerani, A. 2017, ApJ, 845, 25
+[21] Shepherd, L. S. & Cassak, P. A. 2010, PRL, 105, 015004
+[22] Shi, C., Marco, V. & Tenerani, A. 2018, ApJ, 859, 83
+[23] Shibata, K. & Tanuma, S. 2001, Earth Planets Space, 53, 473-482
+[24] Sing, A., Pucci, F., Tenerani, A., Shibata, K., Hillier, A. and Velli, M., 2019, arXiv:1904.00755v1
+[25] Sweet, P. A. 1958 in IAU Symp. 6, Electromagnetic Phenomena in Cosmical Physics, ed. B. Lehnert (Cambridge:
+   Cambridge Univ. Press), 123
+[26] Tenerani, A. & Velli, M. 2019, Spectral signatures of recursive magnetic ﬁeld reconnection, arXiv:1907.05243
+    [physics.space-ph]
+
+
+                                              12
+
+=== PAGE 13 ===
+                                                     HALL RECONNECTION, SHI ET AL.
+
+
+
+[27] Tenerani, A., Velli, M., Rappazzo, A. F., & Pucci, F., 2015, ApJL, 813, L32
+[28] Towns, J., Cockerill, T., Dahan, M., et al. 2014, Computing in Science and Engineering, vol.16, no. 5, pp. 62-74,
+    doi:10.1109/MCSE.2014.80
+
+
+
+
+
+                                              13

@@ -1,0 +1,799 @@
+Nonlin. Processes Geophys., 19, 145–153, 2012
+www.nonlin-processes-geophys.net/19/145/2012/
+doi:10.5194/npg-19-145-2012
+© Author(s) 2012. CC Attribution 3.0 License.
+Nonlinear Processes
+in Geophysics
+Collisionless magnetic reconnection in a plasmoid chain
+S. Markidis1,2, P. Henri1, G. Lapenta1, A. Divin1, M. V. Goldman3, D. Newman3, and S. Eriksson4
+1Centrum voor Plasma-Astrofysica, Departement Wiskunde, Katholieke Universiteit Leuven, Belgium
+2PDC Center for High Performance Computing, KTH Royal Institute of Technology, Stockholm, Sweden
+3Department of Physics and CIPS, University of Colorado, Boulder, Colorado 80309, USA
+4Laboratory for Atmospheric and Space Physics, University of Colorado, Boulder, Colorado 80309, USA
+Correspondence to: S. Markidis (markidis@pdc.kth.se)
+Received: 30 September 2011 – Revised: 3 February 2012 – Accepted: 11 February 2012 – Published: 27 February 2012
+Abstract. The kinetic features of plasmoid chain formation
+and evolution are investigated by two dimensional Particle-
+in-Cell simulations.
+Magnetic reconnection is initiated in
+multiple X points by the tearing instability. Plasmoids form
+and grow in size by continuously coalescing. Each chain
+plasmoid exhibits a strong out-of plane core magnetic ﬁeld
+and an out-of-plane electron current that drives the coalesc-
+ing process. The disappearance of the X points in the co-
+alescence process are due to anti-reconnection, a magnetic
+reconnection where the plasma inﬂow and outﬂow are re-
+versed with respect to the original reconnection ﬂow pattern.
+Anti-reconnection is characterized by the Hall magnetic ﬁeld
+quadrupole signature. Two new kinetic features, not reported
+by previous studies of plasmoid chain evolution, are here
+revealed. First, intense electric ﬁelds develop in-plane nor-
+mally to the separatrices and drive the ion dynamics in the
+plasmoids. Second, several bipolar electric ﬁeld structures
+are localized in proximity of the plasmoid chain. The anal-
+ysis of the electron distribution function and phase space re-
+veals the presence of counter-streaming electron beams, un-
+stable to the two stream instability, and phase space electron
+holes along the reconnection separatrices.
+1
+Introduction
+Magnetic reconnection is believed to be the key engine to
+conversion of magnetic energy into heating and accelera-
+tion of space and astrophysical plasmas.
+Energy is typi-
+cally stored as magnetic energy, then suddenly released in
+form of violent plasma jets and non-thermal particle accel-
+eration. Magnetic reconnection is a basic plasma physics
+phenomenon triggering space weather events such as magne-
+tospheric substorms or solar ﬂares. Because of the ubiquity
+of this phenomenon in nature and because it is at the base
+of macroscopic solar physics and magnetospheric events,
+many theoretical, computational and experimental studies
+have been devoted to explain the origin and the dynamics
+of magnetic reconnection. However, one main question has
+still no certain answer. It is unclear why magnetic reconnec-
+tion in nature proceeds on faster time scale than the resistive
+diffusion timescale predicted by the Sweet-Parker model in
+the magnetohydrodynamics (MHD) framework. It has been
+shown the all simulation models including the Hall physics,
+based the decoupling of electrons and ions at ion skin depth
+scale, enable reconnection to occur over faster time period
+(Birn et al., 2001). It has been proposed recently that recon-
+nection occurring in multiple points and secondary plasmoid
+generation can lead to fast reconnection in the MHD context
+also via stochastic plasmoid chain formation (Lazarian and
+Vishniac, 1999; Kowal et al., 2009; Lapenta, 2008; Bhat-
+tacharjee et al., 2009; Uzdensky et al., 2010). The present
+paper studies the combination of these two mechanisms to
+achieve fast reconnection: a kinetic model of plasma, where
+Hall physics is a built-in feature, is used to study plasmoid
+chain magnetic reconnection.
+The goal of this paper is to study the formation and evo-
+lution of plasmoid chain structures in the kinetic framework
+by two dimensional Particle-in-Cell simulations. Plasmoids
+are high density structures forming from the outﬂow plasma
+accelerated in magnetic reconnection (Hones Jr., 1977). A
+closed magnetic loop develops in correspondence of the
+plasmoids, this is why the expression magnetic island is
+often used instead of plasmoid.
+The boundary layer be-
+tween the plasmoid and the inﬂow plasma is called sepa-
+ratrix. If magnetic reconnection occurs in multiple points,
+the outﬂow plasmas from adjacent reconnection sites form
+multiple plasmoids, organized as beads in a chain.
+Plas-
+moid chains are highly dynamic conﬁgurations: plasmoids
+can coalescence forming larger plasmoids (Bhattacharjee
+et al., 1983), bounce (Intrator et al., 2009; Karimabadi et al.,
+2011) and eject smaller plasmoids (Daughton et al., 2009).
+Observational studies of solar and magnetospheric plasmas
+conﬁrmed the presence of plasmoids (ﬂux ropes in three
+Published by Copernicus Publications on behalf of the European Geosciences Union & the American Geophysical Union.
+
+146
+S. Markidis et al.: Plasmoid chain reconnection
+dimensions) in magnetospheric and solar environments. The
+plasmoid chains have been observed in sun corona (Bempo-
+rad, 2008) and in Earth magnetopause and magnetotail (Lin
+et al., 2008; Khotyaintsev et al., 2010).
+The formation and evolution of plasmoid chain are a topic
+of many recent theoretical and computational investigations.
+Early simulations studied the occurrence of plasmoid chain
+by MHD simulations (Biskamp, 1986; Malara et al., 1992).
+Theoretical models and simulations showed how the occur-
+rence of secondary plasmoids affects magnetic reconnec-
+tion and and how fast reconnection in low resistivity plas-
+mas can be achieved in the MHD framework via stochastic
+magnetic reconnection (Lazarian and Vishniac, 1999; Kowal
+et al., 2009; Loureiro et al., 2005, 2007; Lapenta, 2008;
+Bhattacharjee et al., 2009; Cassak et al., 2009; Uzdensky
+et al., 2010). The realization of fast magnetic reconnection
+has also been investigated by Hall MHD simulations (Baal-
+rud et al., 2011). Collisionless Particle-in-Cell simulations
+(Tajima et al., 1987; Pritchett, 2008; Oka et al., 2010b,a;
+Tanaka et al., 2010) studied the dynamics of plasmoid chain.
+The focus of previous Particle-in-Cell studies was primarily
+on the mechanisms that lead electron acceleration to rela-
+tivistic energies. Differently from previous works on colli-
+sionless plasmoid chain, the goal of this paper is to study the
+general properties of magnetic reconnection in a plasmoid
+chain in the kinetic framework, giving a broad picture of the
+plasmoid formation and evolution. Two new results are here
+reported. First, an intense electrostatic activity driving the
+ion dynamics is detected along the reconnection separatrices
+in the plasmoid chain. Second, counter-streaming electron
+beams along the separatrices are unstable to the two-stream
+instability and electron phase space holes appear as a result
+of this instability.
+The paper is organized as follows. First, the simulation
+model is presented.
+Second, the formation and evolution
+of plasmoid chain, the magnetic and electric ﬁeld conﬁgu-
+rations are analyzed; a study of ion and electron distribu-
+tion functions and phase space are presented to unveil pos-
+sible acceleration mechanisms and the presence of micro-
+instabilities in proximity of the plasmoid chains. Third, the
+simulation results are discussed and compared with those of
+previous works. Finally, the results are summarized and fu-
+ture work is outlined in the conclusion section.
+2
+Simulation set-up
+Particle-in-Cell simulations are carried out in a two dimen-
+sional space, the X −Y plane with Z as ignorable direc-
+tion, with three components for particle velocities and ﬁeld
+components. The x, y coordinates correspond to the −xGSM
+(Earth-Sun direction in magnetotail), zGSM (North-South di-
+rection in magnetotail) coordinates in the Geocentric Solar
+Magnetospheric (GSM) system.
+A double current sheet with reversing magnetic ﬁeld in the
+X direction is initialized as:
+Bx/B0 = tanh(y −Ly/4
+λ
+)−tanh(y −3Ly/4
+λ
+)−1.
+(1)
+A uniform guide ﬁeld is present along the out-of-plane Z
+direction and equal to B0/2. The initial density proﬁle is a
+double Harris current sheet with a superimposed background
+plasma with density nb:
+n(y) = 0.2 n0
+
+cosh−2 y −Ly/4
+λ
+
++cosh−2 y −3Ly/4
+λ
+
+,
+(2)
+where n0 is the reference density and nb = 0.2 n0; Lx =
+200 di, Ly = 30 di and λ = 0.5 di are the simulation box
+lengths in the X and Y directions and the half-width of the
+double current sheet respectively. The lengths are normalized
+to di = c/ωpi, the ion inertial length, with c the speed of light
+in vacuum and ωpi =
+p
+(4πn0e2/mi). The ratio between the
+ion plasma and cyclotron frequencies is ωpi/ci = 1030.9.
+The ion mass mi is taken 256 larger than electron mass me
+and e is the elementary charge. The plasma is initialized with
+a Maxwellian velocity distribution. The electron thermal ve-
+locity is chosen vthe/c = (Te/(mec2))1/2 = 0.0045. Ion tem-
+perature is Ti = 5 Te. The simulation parameters are chosen
+to mimic the plasma characteristics in the solar wind current
+sheets as observed by Wind and Cluster spacecrafts (Eriksson
+et al., 2012). In order to speed-up the occurrence of magnetic
+reconnection, instead of using a perturbation as in previous
+studies, the initial system conﬁguration is chosen not in equi-
+librium. The initial current is 20 % of the current necessary
+to support consistently the initial magnetic ﬁeld conﬁgura-
+tion. As result of this non-equilibrium, the plasma is initially
+accelerated toward the double current sheet to establish a cur-
+rent consistent with the initial magnetic ﬁeld conﬁguration,
+accelerating the reconnection initiation.
+The simulation time step is ωpi1t = 0.3.
+The grid is
+composed of 2560 × 384 cells, resulting in a grid spacing
+1x = 1y = 0.078 di. In total 7×108 computational parti-
+cles are in use. Periodic boundary conditions for particles
+and ﬁelds are applied in the X and Y directions. Simula-
+tions are carried out with the parallel implicit Particle-in-
+Cell iPIC3D code (Markidis et al., 2010). These simulations
+would be extremely difﬁcult to be carried out with explicit
+Particle-in-Cell codes because of the size of the simulation
+box and the simulated time period. If compared with typi-
+cal parameters in explicit Particle-in-Cell simulations, large
+time step, grid spacing and ion to electron mass ratio have
+been used. Numerical stability is retained, thanks of the im-
+plicit discretization in time of the Particle-in-Cell govern-
+ing equations (Lapenta et al., 2006).
+In fact, a time step
+1t = 0.3 ω−1
+pi = 4.8 ω−1
+pe makes the explicit Particle-in-Cell
+method unstable in these parameters regime. Moreover, the
+grid spacing in use is approximately 277 Debye lengths. The
+possibility of using grid spacings that are much larger than
+Debye length still avoiding aliasing instabilities, such as the
+Nonlin. Processes Geophys., 19, 145–153, 2012
+www.nonlin-processes-geophys.net/19/145/2012/
+
+S. Markidis et al.: Plasmoid chain reconnection
+147
+Fig. 1. The stack plot of the out-of-plane vector potential compo-
+nent Az along the line y = 22.5 di is shown in (a). The reconnection
+rate in (b) is calculated as derivative in time of the reconnected ﬂux
+ψ (solid line) and as Ez (dashed lines), for different X points (col-
+ored lines in a).
+ﬁnite-grid instability, is a property of the implicit Particle-
+in-Cell. Moreover, an ion to electron mass ratio equal to
+256 is here used, instead of 25 and 100 in previous stud-
+ies with explicit Particle-in-Cell codes (Pritchett, 2008; Oka
+et al., 2010b,a; Tanaka et al., 2010). The effect of the im-
+plicit numerical scheme is to damp artiﬁcially the unresolved
+waves, such as the light and Langmuir waves (Brackbill and
+Forslund, 1985; Markidis and Lapenta, 2011). The implicit
+Particle-in-Cell algorithm still correctly describes phenom-
+ena evolving on time scales that are larger than the time step.
+Magnetic reconnection occurs over time period of tens of
+−1
+ci , approximately ten thousand times the simulation time
+step, and the implicit numerical scheme does not alter its evo-
+lution.
+3
+Plasmoid chain formation and evolution
+A tearing instability rapidly occurs out of particle noise and
+generates several plasmoids. The reconnected ﬂux for the
+single plasmoid ψ is calculated as the difference of the out-
+of-plane component of the vector potential Az at X and O
+points along the line y = 3/4 Ly = 22.5 di (center of the top
+current sheet). Figure 1a shows a stack plot of the out-of-
+plane component of the vector potential Az, normalized us-
+ing the background ion skin depth and the asymptotic mag-
+netic ﬁeld B0. An Az minimum identiﬁes an X point (green
+Fig. 2. Contour plots of the electron density, normalized to the back-
+ground density nb, at different times. The plot shows the formation
+and the progressive growth of relatively high density regions, the
+plasmoids, by coalescence.
+and red colors in Fig. 1a, while a maximum (black color) in-
+dicates an O point. The plot illustrates multiple plasmoids
+collapse, forming larger plasmoids. The reconnection rate is
+used to characterize the speed at which magnetic reconnec-
+tion occurs. A separate analysis of the reconnection rate at
+different reconnection sites is required, because magnetic re-
+connection develops in a large number of points. In addition,
+the reconnection sites move in time, it is therefore necessary
+to identify the reconnection site and follow them during the
+simulation. The reconnection rate is calculated for each re-
+connection site, indicated with solid lines in Fig. 1a. The
+reconnection rate can be computed in two ways: (i) the time
+derivative of the reconnected ﬂux ψ (solid lines in Fig. 1b)
+(ii) the reconnection electric ﬁeld Ez in the upstream region,
+normalized to the Alfv´en velocity VA and B0 (dashed lines
+in Fig. 1b). The two measures of reconnection rates are in
+agreement in each site. The reconnection rate evolves very
+similarly for all the X points: it grows very rapidly until time
+cit = 1.5, when it reaches the 0.3 peak value, then decreases
+reaching the range 0.01–0.08 for different X points.
+As result of magnetic reconnection, several high density
+structures are formed by the outﬂow plasmas of adjacent
+X points (Fig. 2, time cit = 3.5). The electron plasmoid
+density is approximately four times the background density.
+At time cit = 3.5, plasmoids are large 5 di and progres-
+sively grow by merging and forming larger plasmoids. Low
+density layers, called cavities (Pritchett, 2008), form along
+the reconnection separatrices. During the simulation, the ex-
+pulsion and formation of smaller plasmoids are not observed.
+Because secondary islands are not produced during magnetic
+reconnection, the plasmoids have approximately the same
+spatial size and very large plasmoids, such as monster plas-
+moids (Uzdensky et al., 2010), do not appear. The hierarchi-
+cal self-similar structure of the plasmoid-dominated current
+sheet is not detected in the Particle-in-Cell simulations (Uz-
+densky et al., 2010).
+www.nonlin-processes-geophys.net/19/145/2012/
+Nonlin. Processes Geophys., 19, 145–153, 2012
+
+148
+S. Markidis et al.: Plasmoid chain reconnection
+Fig. 3. Contour plots of the out-of-plane magnetic ﬁeld without
+the guide ﬁeld, Bz −Bg, normalized to B0 at different times. Each
+magnetic island is characterized by an out-of-plane core magnetic
+ﬁeld, whose value is approximately equal to the guide ﬁeld Bg =
+0.5B0.
+All the plasmoids develop a relatively strong out-of-plane
+core magnetic ﬁeld, as shown in the Bz contour plot in Fig. 3.
+The core magnetic ﬁeld is unipolar and in the same direction
+for the plasmoids of both current sheets. The intensity of
+Bz magnetic ﬁeld without the guide ﬁeld is approximately
+0.5 B0, that is the value of the guide ﬁeld in the proposed
+simulation.
+As noted in previous works (Karimabadi et al., 1999), the
+core magnetic ﬁeld is not uniform over the plasmoids, but
+it presents a complex pattern. The S-shaped Bz regions, that
+were found in hybrid simulations of multiple X points recon-
+nection, are present also in the Bz contour plot in Fig. 4. The
+coalescence process drives the anti-reconnection (Oka et al.,
+2010b; Tanaka et al., 2010), where magnetic reconnection in-
+ﬂow and outﬂow are reverted. The inﬂow is directed in the
+X direction, while the outﬂow direction in anti-reconnection
+is along the Y direction (white arrows in Fig. 4). The signa-
+ture of anti-reconnection is visible in the typical quadrupo-
+lar structure of the Hall magnetic ﬁeld in the white dashed
+squares in Fig. 4. The quadrupole Hall magnetic ﬁeld is ro-
+tated 90◦with respect to the typical reconnection Hall mag-
+netic ﬁeld and generates the S-shaped regions, observed pre-
+viously in multiple X points reconnection hybrid simulations
+(Karimabadi et al., 1999).
+The out-of-plane current component of the current drives
+the coalescence process. In fact, plasmoids act as wires car-
+rying current in the same direction attracting each other, co-
+alescing one plasmoid into another one. The total current
+is supported only by the electrons: the intensity of electron
+current is seven times higher than the ion current, developing
+in the opposite direction (Fig. 5). This result is in agree-
+ment with the three-dimensional kinetic simulations of ﬂux
+ropes, where the axial current is supported only by electrons
+(Markidis et al., 2011a).
+Fig. 4. Contour plots of the out-of-plane magnetic ﬁeld without the
+guide ﬁeld, Bz −Bg, normalized to B0 at time cit = 26.77. The
+core magnetic ﬁeld shows a complex pattern. The S-shaped regions
+are visible in the coalescing area. The quadrupole structure of the
+Hall magnetic ﬁeld in the coalescence-driven anti-reconnection is
+enclosed in white dashed rectangles. The white arrows indicate the
+outﬂow direction in anti-reconnection.
+Fig. 5. Contour plot of the out-of plane electron and ion currents,
+Jze and Jzi, normalized to en0c, at time cit = 18.62. The total
+current is supported only by the electrons while the the ions generate
+a current in the opposite direction.
+The most intense electric ﬁelds are in-plane and localized
+along the separatrices or in the plasmoids, as shown in Fig. 6.
+The maximum value of the electric ﬁeld is ∼2 VAB0/c, that
+is approximately 10 times the peak reconnection rate.
+The electric ﬁeld conﬁguration in a plasmoid region is
+shown in detail in an enlargement of an area occupied by
+a plasmoid at time cit = 18.62 in Fig. 7. A strong inward
+electric ﬁeld is present in its center. Along the separatrices,
+the electric ﬁeld is normal to the separatrices (black line in
+panel b): it is directed inward inside the separatrix, while it
+is outward just outside the separatrix. Thus, ions in the plas-
+moid are accelerated inward, while electrons are accelerated
+outward and reﬂected back in the plasmoid. The ion bulk
+ﬂow in a plasmoid is presented in Fig. 7b. In guide ﬁeld re-
+connection, the reconnection jets are not completely directed
+along the X direction, but their directions are tilted by the
+guide ﬁeld (Goldman et al., 2011). Thus, the reconnection
+jets from different X points do not run head-to-head, but
+stream one over the other. The strong ion bulk ﬂow is local-
+ized inside the plasmoid. An analysis of the ion phase space
+vx and vy vs. x in a 0.234 di thick region along y = 22.5 di
+Nonlin. Processes Geophys., 19, 145–153, 2012
+www.nonlin-processes-geophys.net/19/145/2012/
+
+S. Markidis et al.: Plasmoid chain reconnection
+149
+Fig. 6. Quiver plot and contour plot of the electric ﬁeld, normalized
+to the reconnection electric ﬁeld VAB0/c, at time cit = 18.62. The
+electric ﬁeld is mainly in-plane and is localized around and inside
+the magnetic islands.
+(blue dashed line in panel b) shows that ions are accelerated
+towards the plasmoid center, and in the −Y and Y directions
+for small and large X values respectively. This combined
+motion generates a rotation of the ion bulk ﬂow in the coun-
+terclockwise direction. Outside the separatrix line, a weak
+ion ﬂow rotates in the opposite direction. This ion bulk ve-
+locity system is consistent with the ion current pattern, pre-
+sented in Fig. 5b.
+In magnetic reconnection studies, the bipolar electric ﬁeld
+signatures are regarded as ﬂag of electron micro-instabilities
+(Lapenta et al., 2011).
+An investigation of the parallel
+electric ﬁeld E// = E × B/|B| in Fig. 8 reveals that there
+are several bipolar parallel electric ﬁeld structures inside
+the plasmoids and along the separatrices. These signatures
+have maximum and minimum values ±0.3B0VA/c, approxi-
+mately equal to peak reconnection electric ﬁeld.
+An enlargement of the same region presented in Fig. 7
+shows that bipolar electric ﬁeld structures are aligned along
+the magnetic ﬁeld lines, suggesting the presence of a beam
+instability.
+The electron distribution function is analyzed
+to verify this hypothesis.
+The electron distribution func-
+tions, fe(vx,vy), in four different locations are presented in
+Fig. 9a. The four different regions, black boxes in the cen-
+tral subpanel, have been chosen along the separatrix (red line
+in the E// contour plot in the central subpanel), covering a
+0.234 di × 0.234 di wide area. A comparative analysis of
+the four electron distribution functions shows the presence of
+counter-streaming electron beams along the magnetic ﬁeld.
+In subpanel (I), the electron distribution is taken in proximity
+of an X point and is approximately Maxwellian. In subpanel
+(II), the distribution function shows an electron core popula-
+tion at positive vx and vy, a beam moving from left to right
+along the magnetic ﬁeld direction (red line in the subpanels).
+An electron beam at negative vx and vy is present also. Sub-
+panels (III) and (IV) conﬁrm the presence of two beams, one
+at positive vx and vy and one at negative vx and vy, moving
+in opposite directions.
+Figure 9b shows the electron phase space along a separa-
+trix, x// vs. v// (curvilinear coordinate along the magnetic
+ﬁeld line vs the parallel velocity). For high and low x// val-
+ues, two electron beams are visible as two electron popu-
+lations moving at opposite speeds. The interaction of two
+Fig. 7. Enlargement of a simulation region, x = 84–93, y = 15–
+30 enclosing a plasmoid at time cit = 18.62. A quiver plot of
+the electric ﬁeld and ion bulk ﬂow are shown in (a) and (b). The
+length of the arrows indicates the intensity. The red arrows shows
+the direction of the ion bulk ﬂow. The phase-space plots, vx and vy
+vs. x at y = 22.5 (blue dashed line in b) is shown (c).
+beams results in the formation of phase space electron holes,
+in white dashed lines in Fig. 9b. There is clear indication
+that electron holes are generated by two-stream instabilities
+of the two electron beams along the separatrices.
+www.nonlin-processes-geophys.net/19/145/2012/
+Nonlin. Processes Geophys., 19, 145–153, 2012
+
+150
+S. Markidis et al.: Plasmoid chain reconnection
+Fig. 8. Contour plot of the parallel electric ﬁeld E// = E×B/|B|, normalized to the reconnection electric ﬁeld B0VA/c with superimposed
+magnetic ﬁeld lines in black at time cit = 18.62 and enlargement of of a simulation region, x = 84–93, y = 15–30 enclosing a plasmoid.
+Bipolar parallel electric ﬁeld signatures are localized in proximity of the magnetic separatrices.
+4
+Discussion
+Magnetic reconnection in a plasmoid chain has been stud-
+ied by kinetic simulations. Magnetic reconnection is initially
+triggered by the tearing instability in multiple X points. Sev-
+eral plasmoids originate from the outﬂow plasma of magnetic
+reconnection. The reconnection rate calculated for different
+points reaches a maximum in a very short period cit = 1.5.
+After a very fast transient, the plasmoid chain dynamics is
+dominated by plasmoid coalescence. In this second phase,
+the reconnection rate decreases rapidly reaching an asymp-
+totic values range 0.01–0.08 for different X points.
+Several high density regions, the plasmoids develop as a
+result of the initial tearing instability. Plasmoids grow in size
+by merging. At a given time, the plasmoid are approximately
+the same size. Secondary plasmoid formation and ejection
+of smaller plasmoids are not observed. The self-similar plas-
+moid hierarchy in the plasmoid chain (Uzdensky et al., 2010)
+is not present in the reported simulation. This is in contrast
+with previous plasmoid chain Particle-in-Cell simulation re-
+sults (Oka et al., 2010b,a), where secondary plasmoids were
+indeed detected. The difference between previous Particle-
+in-Cell simulations with the here presented results, might
+be explained by the use of different simulation box lengths,
+plasma temperatures, and ion to electron mass ratios. It is im-
+portant to note that collisionless Particle-in-Cell simulations
+with realistic mass ratio do not report the formation of sec-
+ondary plasmoids (Lapenta et al., 2010; Lapenta et al., 2011).
+Further studies are necessary to identify which simulation pa-
+rameters determine the occurrence of secondary plasmoids in
+Particle-in-Cell simulations.
+An out-of-plane core magnetic ﬁeld develops in corre-
+spondence of the plasmoids. The strong core magnetic ﬁeld
+has been observed several times in satellite observations.
+ISSE 3 and GEOTAIL missions reported the presence of
+cross-tail magnetic ﬁeld in the Earth’s magnetotail (Slavin
+et al., 1989). Moreover, MHD (Hesse et al., 1996) and hy-
+brid simulations (Karimabadi et al., 1999) conﬁrmed the for-
+mation of a plasmoid core ﬁeld and proposed a formation
+mechanisms in terms of Hall-generated currents. Moreover,
+hybrid simulations (Karimabadi et al., 1999) revealed that
+the core magnetic ﬁeld has a complex structure originating
+from the complex ﬂow pattern in the plasmoid. In multi-
+ple X points reconnection hybrid simulation, S-shaped Bz
+regions were found. The fully kinetic simulation in this pa-
+per conﬁrms the formation of unipolar core magnetic ﬁeld
+and complex Bz pattern. Some of these structures, such as
+S-shaped regions, can be explained as a result of the Hall
+magnetic ﬁeld in anti-reconnection.
+The most intense electric ﬁelds develop in-plane, reach-
+ing a peak value that is approximately ten times the maxi-
+mum reconnection electric ﬁeld. They are localized along the
+separatrices: the electric ﬁelds point inward/(resp. outward)
+inside/(resp. outside) the plasmoid. Intense normal electric
+ﬁelds have been observed in magnetotail and an ion accel-
+eration mechanism due by repetitive ion reﬂections between
+Nonlin. Processes Geophys., 19, 145–153, 2012
+www.nonlin-processes-geophys.net/19/145/2012/
+
+S. Markidis et al.: Plasmoid chain reconnection
+151
+Fig. 9. Electron distribution functions, x// vs. v// (curvilinear coordinate along the red line in (a) vs. the parallel velocity), at four different
+locations (black boxes) at time cit = 18.62 in (a). The red line in the distribution functions shows the direction of the magnetic ﬁeld.
+Electron phase space along the red line of (b) with phase space holes, encircled in white dashed lines. The electron distribution functions
+show the presence of counter-streaming electron beams, while the phase space plots reveal the presence of electron phase pace holes along
+the separatrices.
+the separatrices have been proposed (Wygant et al., 2005).
+The kinetic simulations in this paper shows an electric ﬁeld
+conﬁguration, that can support such acceleration mechanism
+(Wygant et al., 2005) and is agreement with the results of
+Particle-in-Cell studies (Markidis et al., 2011b,c). The ki-
+netic study of plasmoid chain reveals that the separatrices
+are regions populated by counter-streaming electron beams,
+eventually driving the two-stream instability. An analysis of
+the electron distribution functions and phase space along the
+separatrix shows the presence of electron beams along the
+separatrices and the formation of electron phase space holes.
+Bipolar electric ﬁeld structures were previously observed in
+(Drake et al., 2005). In this study, it is proven that bipo-
+lar electric ﬁeld structures are associated with electron phase
+space holes, produced by the two-stream instability of elec-
+tron beams along the separatrices. The two-stream instability
+could generate the electron holes observed in plasmoid em-
+bedded in the magnetotail current sheet (Khotyaintsev et al.,
+2010).
+5
+Conclusions
+The general properties of magnetic reconnection in a plas-
+moid chain in the kinetic framework have been studied by an-
+alyzing two dimensional Particle-in-Cell simulation results.
+A plasmoid chain is rapidly formed by the tearing instabil-
+ity and plasmoids coalescence progressively in larger plas-
+moids. Secondary islands are not formed and plasmoids are
+www.nonlin-processes-geophys.net/19/145/2012/
+Nonlin. Processes Geophys., 19, 145–153, 2012
+
+152
+S. Markidis et al.: Plasmoid chain reconnection
+approximately the same size with no hierarchical self-similar
+structure. This is probably a result of the chosen simulation
+parameters. Future work will investigate which quantities
+regulate the secondary plasmoid generation in Particle-in-
+Cell simulations. Each plasmoid is characterized by a core
+out-of-plane magnetic ﬁeld and an out-of-plane electron cur-
+rent that drives the coalescence. The quadrupolar structure of
+the Hall magnetic ﬁeld is the signature of anti-reconnection.
+Bipolar electric ﬁeld structures are present along the plas-
+moid separatrices. The analysis of the electron distribution
+functions and phase space show counter-streaming electron
+beams, unstable to the two-stream instability, and electron
+phase space holes along the reconnection separatrices.
+The plasmoid chain formation and evolution have been
+presented in two dimensional simulations. The reduced ge-
+ometry allows to simulate the plasmoid chains with realis-
+tic parameters in relative large systems (hundreds di), but
+the physical phenomena developing in the third direction
+are neglected. In real three dimensional systems, the mag-
+netic islands correspond to extended ﬂux ropes, interact-
+ing in a variety of complex ways non possible in two di-
+mensional geometries.
+The comparison of two and three
+dimensional MHD simulation results show signiﬁcant dif-
+ferences in the evolution of turbulent reconnection (Kulpa-
+Dybeł et al., 2010; Kowal et al., 2009). In the kinetic frame-
+work, micro-instabilities in the third dimensions, such as the
+lower hybrid instabilities (Ricci et al., 2005), are not included
+in the model. In fact, recent three-dimensional simulations
+of magnetic reconnection with guide ﬁeld (Daughton et al.,
+2010, 2011) show that oblique tearing modes can generate
+turbulence along the reconnection separatrices. Future three
+dimensional studies are necessary to evaluate the effect of
+ﬂux rope interaction and waves propagating in the third di-
+rection on the plasmoid chain evolution.
+Acknowledgements. The present work is supported by the NASA
+MMS Grant NNX08AO84G, by the Onderzoekfonds KU Leuven
+(Research Fund KU Leuven) and by the European Commission’s
+Seventh
+Framework
+Programme
+(FP7/2007-2013)
+under
+the
+grant agreement no. 263340 (SWIFF project, www.swiff.eu).
+Simulations were conducted on the resources of the NASA
+Advanced Supercomputing Division (NAS), of the NASA Center
+for Computational Sciences Division (NCCS).
+Edited by: A. Lazarian
+Reviewed by: two anonymous referees
+References
+Baalrud, S. D., Bhattacharjee, A., Huang, Y.-M., and Ger-
+maschewski, K.: Hall magnetohydrodynamic reconnection in
+the plasmoid unstable regime, Phys. Plasmas, 18, 092108,
+doi:10.1063/1.3633473, 2011.
+Bemporad, A.: Spectroscopic Detection of Turbulence in Post-
+CME Current Sheets, Astrophys. J., 689, 572–584, 2008.
+Bhattacharjee, A., Brunel, F., and Tajima, T.: Magnetic reconnec-
+tion driven by the coalescence instability, Phys. Fluids, 26, 3332–
+3337, 1983.
+Bhattacharjee,
+A.,
+Huang,
+Y.-M.,
+Yang,
+H.,
+and Rogers,
+B.:
+Fast reconnection in high-Lundquist-number plasmas
+due to the plasmoid instability, Phys. Plasmas, 16, 112102,
+doi:10.1063/1.3264103, 2009.
+Birn, J., Drake, J. F., Shay, M. A., Rogers, B. N., Denton, R.
+E., Hesse, M., Kuznetsova, M., Ma, Z. W., Bhattacharjee, A.,
+Otto, A., and Pritchett, P. L.: Geospace Environmental Modeling
+(GEM) magnetic reconnection challenge, J. Geophys. Res., 106,
+3715–3720, 2001.
+Biskamp, D., Magnetic reconnection via current sheets, Phys. Flu-
+ids, 29, 1520–1531, 1986.
+Brackbill, J. and Forslund, D.:Simulation of low-frequency, elec-
+tromagnetic phenomena in plasmas, in: Multiple Time Scales,
+edited by: Brackbill, J. U. and Cohen, B., Academic Press Or-
+lando, 1985.
+Cassak, P. A., Shay, M. A., and Drake, J. F.: Scaling of Sweet-
+Parker reconnection with secondary islands, Phys. Plasmas, 16,
+120702, doi:10.1063/1.3274462, 2009.
+Daughton, W., Roytershteyn, V., Albright, B. J., Karimabadi, H.,
+Yin, L., and Bowers, K. J.: Transition from collisional to kinetic
+regimes in large-scale reconnection layers, Phys. Rev. Lett., 103,
+065004, doi:10.1103/PhysRevLett.103.065004, 2009.
+Daughton, W. , Roytershteyn, V., Karimabadi, H., Yin, L., Albright,
+B. J., Bergen, B., and Bowers, K. J.: Role of electron physics in
+the development of turbulent magnetic reconnection in collision-
+less plasmas, Nat. Phys., 7, 539–542, 2011.
+Daughton, W. S., Roytershteyn, V., Karimabadi, H., Quest, K. B.,
+Yin, L., Albright, B. J., and Bowers, K. J.: Is Guide Field Re-
+connection Inherently Turbulent?, AGU Fall Meeting Abstracts,
+p. D5, 2010.
+Drake, J. F., Shay, M. A., Thongthai, W., and Swisdak, M.: Produc-
+tion of energetic electrons during magnetic reconnection, Phys.
+Rev. Lett., 94, 095001, doi:10.1103/PhysRevLett.94.095001,
+2005.
+Eriksson, S., Markidis, S., Newman, D. L., Eastwood, J. P.,
+Khotyaintsev, Yu. V., Lavraud, B., Phan, T. D., Mozer, F.,
+Gosling, J. T., Lapenta, G., Goldman, M. V., Andr´e, M., R`eme,
+H., and Ergun, R. E.: On the Presence of Hall Magnetic Fields at
+a Reconnecting Solar Wind Current Sheet, in preparation, 2012.
+Goldman, M. V., Lapenta, G., Newman, D. L., Markidis, S.,
+and Che, H.: Jet deﬂection by very weak guide ﬁelds dur-
+ing magnetic reconnection, Phys. Rev. Lett., 107, 135001,
+doi:10.1103/PhysRevLett.107.135001, 2011.
+Hesse, M., Birn, J., Kuznetsova, M. M., and Dreher, J.: A sim-
+ple model of core ﬁeld generation during plasmoid evolution, J.
+Geophys. Res., 1011, 10797–10804, 1996.
+Hones Jr., E. W.: Substorm processes in the magnetotail – Com-
+ments on “On hot tenuous plasmas, ﬁreballs, and boundary lay-
+ers in the earth’s magnetotail” by L. A. Frank, K. L. Ackerson,
+and R. P. Lepping, J. Geophys. Res., 82, 5633–5640, 1977.
+Intrator, T. P., Sun, X., Lapenta, G., Dorf, L., and Furno, I.: Ex-
+perimental onset threshold and magnetic pressure pile-up for 3D
+reconnection, Nat. Phys., 5, 521–526, 2009.
+Karimabadi, H., Krauss-Varban, D., Omidi, N., and Vu, H. X.:
+Magnetic structure of the reconnection layer and core ﬁeld gener-
+ation in plasmoids, J. Geophys. Res., 1041, 12313–12326, 1999.
+Nonlin. Processes Geophys., 19, 145–153, 2012
+www.nonlin-processes-geophys.net/19/145/2012/
+
+S. Markidis et al.: Plasmoid chain reconnection
+153
+Karimabadi, H., Dorelli, J., Roytershteyn, V., Daughton, W., and
+Chac´on, L.: Flux pileup in collisionless magnetic reconnection:
+Bursty interaction of large ﬂux ropes, Phys. Rev. Lett., 107,
+025002, doi:10.1103/PhysRevLett.107.025002, 2011.
+Khotyaintsev, Y. V., Vaivads, A., Andr´e, M., Fujimoto, M., Retin`o,
+A., and Owen, C. J.: Observations of slow electron holes at
+a magnetic reconnection site, Phys. Rev. Lett., 105, 165002,
+doi:10.1103/PhysRevLett.105.165002, 2010.
+Kowal, G., Lazarian, A., Vishniac, E. T., and Otmianowska-Mazur,
+K.: Numerical Tests of Fast Reconnection in Weakly Stochastic
+Magnetic Fields, Astrophys. J., 700, 63–85, 2009.
+Kulpa-Dybeł, K., Kowal, G., Otmianowska-Mazur, K., Lazarian,
+A., and Vishniac, E.: Reconnection in weakly stochastic B-
+ﬁelds in 2D, Astron. Astrophys., 514, A26, doi:10.1051/0004-
+6361/200913218, 2010.
+Lapenta,
+G.:
+Self-feeding
+turbulent
+magnetic
+reconnection
+on macroscopic scales,
+Phys. Rev. Lett.,
+100,
+235001,
+doi:10.1103/PhysRevLett.100.235001, 2008.
+Lapenta, G., Brackbill, J. U., and Ricci, P.: Kinetic approach to
+microscopic-macroscopic coupling in space and laboratory plas-
+mas, Phys. Plasmas, 13, 055904, doi:10.1063/1.2173623, 2006.
+Lapenta, G., Markidis, S., Divin, A., Goldman, M., and Newman,
+D.: Scales of guide ﬁeld reconnection at the hydrogen mass ratio,
+Phys. Plasmas, 17, 082106, doi:10.1063/1.3467503, 2010.
+Lapenta, G., Markidis, S., Divin, A., Goldman, M. V., and Newman,
+D. L.: Bipolar electric ﬁeld signatures of reconnection separatri-
+ces for a hydrogen plasma at realistic guide ﬁelds, Geophys. Res.
+Lett., 38, L17104, doi:10.1029/2011GL0485722011, 2011.
+Lazarian, A. and Vishniac, E. T.:
+Reconnection in a Weakly
+Stochastic Field, Astrophys. J., 517, 700–718, 1999.
+Lin, J., Cranmer, S. R., and Farrugia, C. J.: Plasmoids in recon-
+necting current sheets: Solar and terrestrial contexts compared, J.
+Geophys. Res., 113, A11107, doi:10.1029/2008JA013409, 2008.
+Loureiro, N. F., Cowley, S. C., Dorland, W. D., Haines, M. G., and
+Schekochihin, A. A.: x-point collapse and saturation in the non-
+linear tearing mode reconnection, Phys. Rev. Lett., 95, 235003,
+doi:10.1103/PhysRevLett.95.235003, 2005.
+Loureiro, N. F., Schekochihin, A. A., and Cowley, S. C.: Instability
+of current sheets and formation of plasmoid chains, Phys. Plas-
+mas, 14, 100703, doi:10.1063/1.2783986, 2007.
+Malara, F., Veltri, P., and Carbone, V.: Competition among non-
+linear effects in tearing instability saturation, Phys. Plasmas, 4,
+3070–3086, 1992.
+Markidis, S. and Lapenta, G.: The energy conserving particle-in-
+cell method, J. Comput. Phys., 230, 7037–7052, 2011.
+Markidis, S., Lapenta, G., and Rizwan-uddin: Multi-scale simu-
+lations of plasma with iPIC3D, Math. Comput. Simulation, 80,
+1509–1519, 2010.
+Markidis, S., Henri, P., and Lapenta, G.: Kinetic simulations of kink
+instability in an inﬁnite ﬂux rope, European Physical Meeting
+2011, 2011a.
+Markidis, S., Lapenta, G., Bettarini, L., Goldman, M. V., Newman,
+D., and Andersson, L.: Kinetic simulations of magnetic recon-
+nection in presence of a background O+ population, J. Geophys.
+Res., 116, A00K16, doi:10.1029/2011JA016429, 2011b.
+Markidis, S., Lapenta, G., Goldman, M. V., Newman, D., and An-
+dersson, L.: Three dimensional density cavities in guide ﬁeld col-
+lisionless magnetic reconnection, under review, Physics of Plas-
+mas, 2011c.
+Oka,
+M.,
+Fujimoto,
+M.,
+Shinohara,
+I.,
+and Phan,
+T. D.:
+Island surﬁng mechanism of electron acceleration during
+magnetic
+reconnection,
+J.
+Geophys.
+Res,
+115,
+A08223,
+doi:10.1029/2010JA015392, 2010a.
+Oka, M., Phan, T.-D., Krucker, S., Fujimoto, M., and Shinohara, I.:
+Electron Acceleration by Multi-Island Coalescence, Astrophys.
+J., 714, 915–926, 2010b.
+Pritchett,
+P.
+L.:
+Energetic
+electron
+acceleration
+during
+multi-island
+coalescence,
+Phys.
+Plasmas,
+15,
+102105,
+doi:10.1063/1.2996321, 2008.
+Ricci, P., Brackbill, J. U., Daughton, W., and Lapenta, G.: New role
+of the lower-hybrid drift instability in the magnetic reconnection,
+Phys. Plasmas, 12, 055901, doi:10.1063/1.1885002, 2005.
+Slavin, J. A., Baker, D. N., Fairﬁeld, D. H., Craven, J. D., Frank, L.
+A., Elphic, R. C., Galvin, A. B., Hughes, W. J., Manka, R. H.,
+and Smith, E. J.: CDAW 8 observations of plasmoid signatures
+in the geomagnetic tail – An assessment, J. Geophys. Res., 941,
+15153–15175, 1989.
+Tajima, T., Sakai, J., Nakajima, H., Kosugi, T., Brunel, F., and
+Kundu, M. R.: Current loop coalescence model of solar ﬂares,
+Astrophys. J., 321, 1031–1048, 1987.
+Tanaka, K. G., Yumura, T., Fujimoto, M., Shinohara, I., Bad-
+man, S. V., and Grocott, A.: Merging of magnetic islands as
+an efﬁcient accelerator of electrons, Phys. Plasmas, 17, 102902,
+doi:10.1063/1.3491123, 2010.
+Uzdensky, D. A.,Loureiro, N. F., and Schekochihin, A. A.: Fast
+magnetic reconnection in the plasmoid-dominated regime, Phys.
+Rev. Lett., 105, 235002, doi:10.1103/PhysRevLett.105.235002,
+2010.
+Wygant, J. R., Cattell, C. A., Lysak, R., Song, Y., Dombeck, J.,
+McFadden, J., Mozer, F. S., Carlson, C. W., Parks, G., Lucek,
+E. A., Balogh, A., Andre, M., Reme, H., Hesse, M., and
+Mouikis, C.: Cluster observations of an intense normal com-
+ponent of the electric ﬁeld at a thin reconnecting current sheet
+in the tail and its role in the shock-like acceleration of the ion
+ﬂuid into the separatrix region, J. Geophys. Res., 110, A09206,
+doi:10.1029/2004JA010708, 2005.
+www.nonlin-processes-geophys.net/19/145/2012/
+Nonlin. Processes Geophys., 19, 145–153, 2012

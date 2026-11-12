@@ -1,0 +1,973 @@
+
+=== PAGE 1 ===
+LA-UR-16-20171 (Accepted Manuscript)
+
+
+
+Hybrid simulations of magnetic reconnection with kinetic ions and
+fluid electron pressure anisotropy
+
+
+Le, Ari Yitzchak
+Daughton, William Scott
+Karimabadi, Homa
+Egedal, Jan
+
+
+
+
+
+Provided by the author(s) and the Los Alamos National Laboratory (2016-04-05).
+
+
+To be published in: Physics of Plasmas
+
+
+DOI to publisher's version: 10.1063/1.4943893
+
+
+Permalink to record: http://permalink.lanl.gov/object/view?what=info:lanl-repo/lareport/LA-UR-16-20171
+
+
+
+
+
+Disclaimer:
+Approved for public release. Los Alamos National Laboratory, an affirmative action/equal opportunity employer, is operated by the Los Alamos
+National Security, LLC for the National Nuclear Security Administration of the U.S. Department of Energy under contract DE-AC52-06NA25396.
+Los Alamos National Laboratory strongly supports academic freedom and a researcher's right to publish; as an institution, however, the
+Laboratory does not endorse the viewpoint of a publication or guarantee its technical correctness.
+
+=== PAGE 2 ===
+ Hybrid Simulations of Magnetic Reconnection with Kinetic Ions
+
+           and Fluid Electron Pressure Anisotropy
+
+              A. Le,1 W. Daughton,1 H. Karimabadi,2 and J. Egedal3
+
+        1Los Alamos National Laboratory, Los Alamos, New Mexico 87545, USA
+          2University of California—San Diego, La Jolla, California 92093 USA
+          3University of Wisconsin—Madison, Madison, Wisconsin 53706, USA
+
+                               Abstract
+
+ We present the ﬁrst hybrid simulations with kinetic ions and recently developed equations of
+
+state for the electron ﬂuid appropriate for reconnection with a guide ﬁeld.  The equations of
+
+state account for the main anisotropy of the electron pressure tensor. Magnetic reconnection is
+
+studied in two systems, an initially force-free current sheet and a Harris sheet. The hybrid model
+
+with the equations of state is compared to two other models, hybrid simulations with isothermal
+
+electrons and fully kinetic simulations. Including the anisotropic equations of state in the hybrid
+
+model provides a better match to the fully kinetic model. In agreement with fully kinetic results,
+
+the main feature captured is the formation of an electron current sheet that extends several ion
+
+inertial lengths. This electron current sheet modiﬁes the Hall magnetic ﬁeld structure near the
+
+X-line, and it is not observed in the standard hybrid model with isotropic electrons. The saturated
+
+reconnection rate in this regime nevertheless remains similar in all three models. Implications for
+
+global modeling are discussed.
+
+
+
+
+
+                                      1
+
+=== PAGE 3 ===
+I. INTRODUCTION
+
+
+   Magnetic reconnection plays a central part in the dynamics of the magnetosphere, the
+
+solar wind, the solar corona, and a variety of other space plasmas where particle collisions
+
+are negligible [1].  In these collisionless plasmas, kinetic eﬀects may strongly modify the
+
+evolution of reconnecting current sheets. Observing the small-scale layers, typically referred
+
+to as diﬀusion regions, where kinetic eﬀects are essential is a main goal of NASA’s MMS
+
+mission [2]. As higher-resolution observations become available, it is more important to
+
+accurately reproduce the ﬁne details of the reconnection layers when comparing numerical
+
+simulations to measurements.
+
+   Resolving all of the kinetic scales in simulations of very large systems or in global models
+
+is generally not feasible. For this reason, a variety of reduced models have been considered for
+
+simulating magnetic reconnection [3]. While the Hall MHD model was found to be a minimal
+
+model that allows reconnection to proceed at a fast rate comparable to observations, Hall
+
+MHD does not reproduce the details of the reconnection region. One proposal to capture
+
+these details is to use higher-order ﬂuid moment equations that retain pressure anisotropy,
+
+pressure agyrotropy, and thermal heat ﬂuxes [4–7]. In general, however, it remains unclear
+
+how to correctly truncate the ﬂuid hierarchy of equations for collisionless systems, and these
+
+simulations typically rely on tuned transport parameters to match fully kinetic simulations.
+
+   Another approach is to only retain the ion kinetic eﬀects. Hybrid modeling, in which
+
+the ions are treated kinetically and the electrons are treated as a ﬂuid, oﬀers a means
+
+of studying the ion kinetics of reconnection [8–10] without resolving the electron kinetic
+
+scales. A number of hybrid codes have been used to study ion kinetic eﬀects in magnetic
+
+reconnection, some including ad hoc treatments of the electron pressure tensor [11–19]. The
+
+importance of treating the ions kinetically was demonstrated in a recent comparison of ﬂuid,
+
+hybrid, and fully kinetic models of magnetic island merging, where reconnection was found
+
+to be qualitatively diﬀerent between kinetic and ﬂuid ion models even on MHD scales [20].
+
+   In hybrid codes, the question remains of what closure to employ for the electron ﬂuid.
+
+Anisotropic equations of state for the main components of the electron pressure tensor, pe∥
+
+along the local magnetic ﬁeld and pe⊥perpendicular to the ﬁeld, have been derived for
+
+conditions typical of reconnection with a guide magnetic ﬁeld [21]. A primary mechanism
+
+for generating the electron pressure anisotropy is the adiabatic trapping of electrons in a
+
+
+                                      2
+
+=== PAGE 4 ===
+parallel electric ﬁeld structure [22, 23]. While this anisotropy is not capable of breaking
+
+the frozen ﬂux condition in itself [24], the electron pressure anisotropy strongly modiﬁes the
+
+structure of the current layers that develop in the reconnection layer [25–28]. Depending
+
+on the strength of the guide magnetic ﬁeld and the electron βe, several diﬀerent regimes
+
+are possible for the reconnection region [26]. The anisotropy is especially important in a
+
+regime with a range of intermediate guide magnetic ﬁelds, where the electron anistropy with
+
+pe∥> pe⊥drives a current sheet that extends several di from the X-line and is not limited to
+
+electron kinetic scales. This regime has so far only been produced in fully kinetic simulations
+
+with high mass ratios mi/me ≳400 [26], and it is therefore not yet possible to study this
+
+regime in large 3D systems with a fully kinetic treatment.
+
+   Here, we implement the anisotropic electron equations of state in the hybrid code H3D
+
+[17] and simulate the reconnection of a force-free current sheet and a Harris sheet, both
+
+including a guide magnetic ﬁeld. While the reconnection of a force-free sheet has previ-
+
+ously been studied in a two-ﬂuid framework including the electron equations of state [25],
+
+the simulations presented are the ﬁrst to additionally include ion kinetics. Simulating the
+
+reconnection of a Harris sheet with the electron equations of state entails additional compli-
+
+cations, and such simulations have not previously been performed. In each case, the hybrid
+
+model including electron anisotropy reproduces details of the reconnection region observed
+
+in fully kinetic simulations. In particular, extended electron current sheets develop in the
+
+exhaust in the hybrid model with electron anisotropy that are comparable to the fully ki-
+
+netic results, while the current layer remains short in the the hybrid model with isotropic
+
+electrons. The current sheet modiﬁes the structure of the Hall magnetic ﬁelds, while the
+
+the saturated reconnection rate remains similar in both hybrid models and the fully kinetic
+
+model.
+
+
+
+II. HYBRID MODEL AND EQUATIONS OF STATE
+
+
+   In the hybrid code H3D [17], ions are treated kinetically by the particle-in-cell method.
+
+The electrons are treated as a massless ﬂuid, and the electron dynamics enter through an
+
+Ohm’s law for the electric ﬁeld of the form:
+
+                                1           E = −ui × B +   × B −1    Pe + ηJ −ηH∇2J                 (1)                           neJ     ne∇·
+
+
+                                      3
+
+=== PAGE 5 ===
+where the current density is deﬁned through Ampere’s law without displacement current
+
+µ0J = ∇× B (implying the system is non-relativistic and does not resolve light waves).
+
+The magnetic ﬁeld is evolved as usual with Faraday’s law ∂B/∂t = −∇× E.
+  The equations are completed by a ﬂuid closure for the electron pressure tensor Pe. The
+
+simplest closure is found by assuming an isotropic pressure pe with an equation of state of
+the form pe ∝nγ, where quasi-neutrality is assumed and the electron density n is therefore
+
+set equal to the ion density computed from the numerical ions within each cell of the com-
+
+putational grid. A value of γ = 1 gives the isothermal limit, and γ = 5/3 is the adiabatic
+
+limit.
+
+   Anisotropy of the electron pressure tensor, however, has been found to dominate the
+
+dynamics of the diﬀusion region where electron current layers form [27], pointing to the
+
+need to capture this eﬀect in the electron ﬂuid closure. A primary mechanism for generating
+
+the electron pressure anisotropy is the adiabatic trapping of electrons in a parallel electric
+
+ﬁeld structure [21–23, 29]. This mechanism follows from a drift kinetic treatment with the
+
+additional assumption that the parallel motion of trapped electons is adiabatic. It therefore
+
+applies to general geometries with expanding or contracting ﬂux tubes, and it is not limited
+
+to the reconnection problem. For the case of reconnection, the electron trapping produces
+
+electron pressure anisotropy with components pe∥along the local magnetic ﬁeld and pe⊥
+
+perpendicular such that typically pe∥> pe⊥in the reconnection layer.
+
+  When a given magnetic ﬂux tube extends into an upstream region with uniform plasma
+
+conditions, the equations of state depend only on the local values of the density n and
+
+magnetic ﬁeld strength B normalized to their upstream values in the ﬂux tube. For upstream
+
+plasma that contains isotropic Maxwellian electrons at density n∞, pressure p∞, and an
+
+ambient magnetic ﬁeld of strength B∞, the equations of state take the approximate form
+
+[21]:
+                                       2      π˜n3  2α
+                                        ˜pe∥(˜n, ˜B) = ˜n    +                                       (2)
+                                     2 + α   6 ˜B2 2α + 1
+                                        1       α
+                                      ˜pe⊥(˜n, ˜B) = ˜n    + ˜n˜B                                  (3)
+                                      1 + α    α + 1
+where α = ˜n3/ ˜B2 and, for any quantity Q, ˜Q = Q/Q∞. These are the equations of state
+
+implemented in our hybrid code to account for electron pressure anisotropy. The expressions
+
+in Eqs. 2 and 3 above highlight two opposite limits. For α ≪1, there are essentially no
+
+trapped electrons, and the equations of state reduce to the isothermal form pe∥= pe⊥= nT∞
+
+
+                                      4
+
+=== PAGE 6 ===
+with a uniform temperature. In the opposite limit of α ≫1, most electrons are trapped
+
+and cannot carry a heat ﬂux, so the electrons follow the double adiabatic CGL equations
+of state [30] with pe∥∝n3/B2 and pe⊥∝nB. The equations of state interpolate between
+
+theses two limits based on the portion of electrons that follow trapped trajectories.
+
+
+
+III. RECONNECTION IN A FORCE-FREE SHEET
+
+
+  The ﬁrst system that we study using the hybrid code with anisotropic electron equations
+
+of state is a force-free current sheet. This conﬁguration, including the anisotropic electron
+
+equations of state, has previously been simulated using a two-ﬂuid formulation in the HiFi
+
+numerical framework [25, 31]. A main conclusion of the ﬂuid study was that including
+
+electron pressure anisotropy led to the formation of an extended electron current sheet in
+
+the exhaust, a feature observed in kinetic simulations but not captured in previous ﬂuid
+
+codes. As described below, the hybrid model with electron anisotropy also reproduces the
+
+elongated current layer, while now also resolving ion kinetic eﬀects.
+
+   It is relatively easy to implement the electron equations of state of Eqs. 2 and 3 in a
+
+force-free current sheet simulation because the initial density and magnetic ﬁeld strength
+
+are uniform, and they therefore enter the equations of state only as global constants.  In
+
+particular, the initial force-free current sheet in our simulations has magnetic ﬁeld and
+
+density proﬁles of the form:
+
+                           Bx(z) = B0 tanh(z/λ)                                    (4)
+                 q
+                           By(z) =   B2g + B20 −Bx(z)2                            (5)
+
+                           Bz(z) = 0                                                (6)
+
+                              n(z) = n0                                               (7)
+
+           p
+where we take λ = 1di =   mic2/ǫ0n0e2 and Bg/B0 = 0.3. An initial magnetic perturbation
+
+of the form
+
+                  δBx(x, z) = −δB(Lx/2Lz) cos(2πx/Lx) sin(πz/Lz)                 (8)
+
+                  δBz(x, z) = δB sin(2πx/Lx) cos(πz/Lz)                             (9)
+
+
+with δB/B0 = 0.01 seeds reconnection with a single X-line. We initialize kinetic particle
+
+populations with Maxwellian distributions.  In the fully kinetic simulation, the electron
+
+                                      5
+
+=== PAGE 7 ===
+FIG. 1: Electron currents in a reconnected force-free sheet. The out-of-plane current density at
+
+time t = 60/Ωci from (a) a fully kinetic simulation, (b) a hybrid simulation with electron pressure
+
+anisotropy, and (c) a hybrid simulation with isotropic pressure.
+
+
+Maxwellian  is drifting in order to carry the parallel current that generates the sheared
+magnetic ﬁeld. The initial uniform temperatures are chosen so that βe = 2µ0n0Te/B20 = 0.1
+and Ti/Te = 5. Simulations are performed in domains of size Lx × Lz = 40di × 20di with
+5120 × 2560 cells for the fully kinetic runs and 1024 × 1024 cells for the hybrid runs. The
+
+x boundaries are periodic, and the z boundaries are conducting and reﬂect particles. There
+
+are ∼400 particles per cell of each kinetic species, and the fully kinetic runs had a mass
+
+ratio mi/me = 400 and ωpe/Ωce = 2.
+
+  The simulation parameters were selected so that the reconnection layer would fall into
+
+Regime 3 of Ref. [26]. This regime contains a moderate guide magnetic ﬁeld that is strong
+
+enough to magnetize the electrons essentially everywhere, and the electron pressure remains
+
+anisotropic into the reconnection exhaust. An extended current layer may then form, which
+
+
+                                      6
+
+=== PAGE 8 ===
+FIG. 2: Normalized pressure anisotropy measures F = µ0(p∥−p⊥)/B2 (F = 1 is the ﬁrehose
+
+instability threshold).  Electron anisotropy from (a) a fully kinetic simulation and (b) a hybrid
+
+simulation with anisotropic electron equations of state. The ion pressure is also anisotropic in both
+
+(c) the fully kinetic run and (d) the hybrid run.
+
+
+is not limited to electron kinetic scales. As in the two-ﬂuid simulations of Ref. [25], the most
+
+apparent diﬀerence between simulations with and without electron pressure anisotropy is
+
+the formation or absence of this extended electron current sheet. The out-of-plane current
+
+density is plotted in Fig. 1 from each of the three simulations. The extended exhaust current
+
+sheet that forms in the fully kinetic simulation in Fig. 1(a) is reproduced by the hybrid run
+
+with electron anisotropy in Fig. 1(b), while it does not appear in the hybrid simulation with
+
+isotropic, isothermal electrons in Fig. 1(c).
+
+  As described previously, the extended current sheets form when the electrons approach
+the ﬁrehose instability threshold µ0(pe∥−pe⊥)/B2 ∼1 [25–27, 32, 33]. The normalized
+electron pressure measure Fe = µ0(pe∥−pe⊥)/B2 is plotted from the fully kinetic run in
+
+Fig. 2(a) and from the hybrid run with anisotropic closure in Fig. 2(b).  In both cases,
+Fe peaks around 0.7. This level of pressure anisotropy is necessary to balance the J × B
+
+tension force on the electrons, and the anisotropy drives an additional cross-ﬁeld electric
+current density Je⊥∼[(pe∥−pe⊥)/B]ˆb× ˆb·∇ˆb. This regime thus requires a guide magnetic
+
+ﬁeld strong enough the magnetize the electron orbits, but weak enough that the electron
+
+pressure anisotropy can balance the ﬁeld line tension.
+
+
+                                      7
+
+=== PAGE 9 ===
+                                                                    <E rec>/v AB0
+                                                                    0.08
+                                                                                                                                                     Fully Kinetic
+                                                                    0.07                                                     Hybrid Anisotropic EoS
+                                                                                                                                   Hybrid Isothermal EoS
+                                                                    0.06
+
+                                                                    0.05
+
+                                                                    0.04
+
+                                                                    0.03
+
+                                                                    0.02
+
+                                                                    0.01
+
+                                                              0
+                                                               0         10        20        30        40        50        60
+                                                                                                            tΩci
+
+
+FIG. 3: The reconnection rate averaged over a 2di square box centered on the X-line. The saturated
+
+rates are similar in all cases.
+
+
+   Also plotted in Fig. 2 is the ion pressure anisotropy, which is captured by the kinetic treat-
+
+ment of the ions in the fully kinetic and hybrid formulations. In larger simulation domains,
+
+the ion pressure anisotropy is found to strongly inﬂuence the reconnection dynamics. It may,
+
+for example, be as important as ion inertia for setting the outﬂow speed of the reconnection
+
+exhaust [9]. And in addition to possibly driving instabilities, strong ion pressure anisotropy
+
+modiﬁes the structure of boundary layers that may form in the exhaust [34]. The ions, how-
+
+ever, are poorly magnetized in this regime with moderate guide ﬁeld. As a result, the ion
+
+pressure is not only anisotropic in pitch angle with respect to the local magnetic ﬁeld, but it
+
+is also anisotropic, or agyrotropic, with respect to the azimuthal direction around the mag-
+netic ﬁeld. The agyrotropy measure [35] applied to the ions 2(pi⊥1−pi⊥2)/(pi⊥1+pi⊥2) > 0.3
+
+in large sections of the exhaust. It has been suggested that these ion kinetic eﬀects are re-
+
+sponsible for the discrepancy in the global evolution between kinetic (either hybrid or fully
+
+kinetic) models and Hall MHD models of reconnection during magnetic island coalescence
+
+[20].
+
+  The reconnection rates averaged over 2di boxes centered on the X-line are plotted over
+
+the course of the simulations in Fig. 3. During the initial transient phase, the reconnection
+
+rates diﬀer. One reason is that secondary magnetic islands may form, and the details of
+
+this process are extremely sensitive to the initial conditions.  In any case, the saturated
+
+reconnection rates are roughly the same for all three cases. The extended current sheet in
+
+the exhaust therefore does not in itself alter the quasi-steady reconnection rate.
+
+
+
+
+
+                                      8
+
+=== PAGE 10 ===
+FIG. 4: Electron currents in a reconnected Harris sheet from (a) a fully kinetic simulation, (b)
+
+a hybrid simulation with electron pressure anisotropy, and (c) a hybrid simulation with isotropic
+
+pressure.
+
+
+IV. RECONNECTION IN A HARRIS SHEET
+
+
+  The second system we consider is a reconnecting Harris sheet. The initial Harris sheet
+
+proﬁles are:
+
+
+                            Bx(z) = B0 tanh(z/λ)                                (10)
+
+                            By(z) = Bg                                          (11)
+
+                            Bz(z) = 0                                            (12)
+                               n(z) = nb + n0 sech2(z/λ)                           (13)
+
+
+where for our case we take λ = 1di and Bg/B0 = 0.2. The initial temperatures are chosen
+with Ti/Te = 5, while force balance across the layer now requires n0(Ti +Te) = B20/2µ0. The
+
+                                      9
+
+=== PAGE 11 ===
+background density is selected so βe∞= 2µ0nbTe/B20 = 0.1. The simulation domains are the
+same as for the force-free sheet; they are of size Lx×Lz = 40di×20di with 5120×2560 cells for
+the fully kinetic runs and 1024 × 1024 cells for the hybrid runs with periodic x boundaries
+
+and conducting z boundaries that reﬂect particles.  There are again ∼400 particles per
+
+cell of each kinetic species, and the fully kinetic runs had a mass ratio mi/me = 400 and
+
+ωpe/Ωce = 2.
+
+  The Harris sheet involves an additional complication to implement the anisotropic equa-
+
+tions of state because the initial conditions no longer contain uniform magnetic ﬁeld mag-
+
+nitude and density. The equations of state in Eqs. 2 and 3 involve quantities normalized
+
+to their upstream values, and the upstream values must now be determined independently
+
+for each ﬂux tube. The initial upstream conditions must then be tracked for each ﬂux tube
+
+as it convects, distorts, and possibly reconnects. In a 2D system, this is made possible by
+
+labeling each ﬂux tube with a ﬂux coordinate (out-of-plane vector potential component) Ψ.
+
+For the initial Harris sheet, Ψ is given by
+
+                  Ψ = −B0λ · ln[cosh(z/λ)],                            (14)
+
+and its time evolution follows from ∂Ψ/∂t = −Ey. The initial Harris sheet density and
+
+magnetic ﬁeld strength proﬁles may be written in terms of Ψ as:
+
+                                     2Ψ
+                          n(Ψ) = nb + n0 exp                                   (15)
+                                        B0λ
+               s
+                                        2Ψ
+                    B(Ψ) =  B2g + B20 −B20 exp                               (16)
+                                            B0λ
+
+As the Harris sheet reconnects and Ψ(x, z, t) evolves, the above expressions determine the
+
+initial upstream density and magnetic ﬁeld at any point.
+
+   It turns out, however, that the values of n and B given by Eqs. 15 and 16 are not
+
+appropriate to use directly in the equations of state for the upstream normalizing factors n∞
+
+and B∞. In particular, if Eqs. 15 and 16 were used as is, an unphysical pressure anisotropy
+
+would develop in the center of the Harris sheet when a perturbation of the form of Eq. 9 is
+
+included to seed reconnection. Additionally, in fully kinetic simulations, strong anistropy is
+
+not observed in the very center of the initial Harris sheet even later in the evolution. The
+
+anisotropy is typically most important once upstream plasma convects into the reconnection
+
+layer. In order to prevent this unphysical anisotropy from developing in the center of the
+
+                                      10
+
+=== PAGE 12 ===
+Harris sheet, we use the following technique. For the normalizing factor B∞that enters the
+
+equations of state, we use B(Ψ) as in Eq. 16. On the other hand, for the density normalizing
+
+factor n∞, we add an extra term δn to Eq. 15, so that n∞= n(Ψ) + δn(Ψ). The term δn
+
+may be any function strongly peaked at the center of the initial Harris sheet, and we choose
+
+the particular function
+                             "                 #
+                                                             2
+                               2Ψ
+                    δn(Ψ) = 5 exp −       −2(˜B2 −1)   .                    (17)
+                                  B0λ
+
+Note that δn does not alter the physical density proﬁle. It enters only in the normalization
+
+parameter n∞in the equations of state given by Eqs. 2 and 3. By making δn large in the
+
+center of the Harris sheet, the parameter α in the equations of state is made small, and the
+
+electrons remain in the isothermal limit in this region.
+
+  As in the case of the force-free sheet, electron pressure anisotropy allows an extended
+
+current sheet to form near the X-line. The out-of-plane current from each run is plotted in
+
+Fig. 4. Note that the current sheet is somewhat shorter in the fully kinetic run in Fig. 4(a)
+
+than the hybrid run with anisotropy in Fig. 4(b). This is in part because of the reduced
+
+mass ratio mi/me = 400, which renders the electrons only marginally magnetized in the
+                       p
+fully kinetic run.  In particular, the parameter K =   RB/ρe (where RB is the magnetic
+
+ﬁeld line radius of curvature and ρe  is the thermal electron Larmor radius) [36] dips to
+
+around 2.5 within the current sheet.  This is the approximate cutoﬀfor the electrons to
+
+be treated as fully magnetized, and the higher energy electrons do not have the adiabatic
+
+moment µ well-conserved if they cross the current sheet. The result is to somewhat reduce
+
+the electron pressure anisotropy from the levels predicted by the equations of state. At the
+
+physical proton mass ratio of mi/me = 1836 and moderate electron βe, the electrons are
+
+found to be well-magnetized at the guide ﬁeld of Bg/B0 = 0.2 used in this simulation [26].
+
+  The electron current sheet is again supported by electron pressure anisotropy close to the
+
+ﬁrehose threshold [see Fig. 5], and the current sheet exists where the anisotropy measure
+
+Fe ≳0.5. The ion pressure also becomes anisotropic as plotted in Figs. 5(c) and (d). As in
+
+the case of the force-free sheet, the ions also display substantial pressure agyrotropy.
+
+  The electron currents that are driven near the X-line by pressure anisotropy modify the
+
+structure of the Hall magnetic ﬁelds. The Hall ﬁeld component By  is plotted from each
+
+simulation in Fig. 6. The general quadrupolar structure, which results from the Hall term
+
+in the Ohm’s law that freezes the magnetic ﬁeld into the electron ﬂow, is similar in all
+
+                                      11
+
+=== PAGE 13 ===
+FIG. 5: Normalized pressure anisotropy measures F = µ0(p∥−p⊥)/B2 for the Harris sheet. Electron
+
+anisotropy from (a) a fully kinetic simulation and (b) a hybrid simulation with anisotropic electron
+
+equations of state. The ion pressure anisotropy from (c) the fully kinetic run and (d) the hybrid
+
+run.
+
+
+three cases.  Nevertheless, the electron current sheet supported by anisotropy in the fully
+
+kinetic simulation and in the hybrid simulation with an anisotropic electron closure generates
+
+additional out-of-plane ﬁeld near the X-line. This may be seen in the cuts along the mid-
+
+plane plotted in Fig. 6(d), where By is roughly 1.5-2 times as large at the X-line than its
+
+ambient value of By/Bg = 0.2 when there is electron pressure anisotropy, while it remains
+
+at approximately the background value for an isothermal electron closure. The anisotropic
+
+hybrid model does not agree precisely with the fully kinetic model both because the length
+
+of the electron current sheet is somewhat diﬀerent in the two cases and because the residual
+
+electron pressure anisotropy in the exhaust is a little stronger in the hybrid run than in the
+
+fully kinetic run. As noted in Ref. [33], the magnetic ﬁeld generated by the current sheet
+
+tempers the electron anisotropy (recall that the equations of state depend on B, and larger
+
+magnetic ﬁelds generate weaker anisotropy), so that the level of anisotropy saturates near
+
+the ﬁrehose threshold.
+
+  As seen in Fig. 7, the reconnection rate again reaches roughly the same level in all three
+
+models.  Recently, it was shown that the double-adiabatic anisotropic CGL [30] electron
+
+equations of state allowed fast reconnection to occur in two-ﬂuid simulations without the
+
+
+                                      12
+
+=== PAGE 14 ===
+FIG. 6: Out-of-plane Hall magnetic ﬁeld By proﬁle generated during the reconnection of a Harris
+
+sheet in (a) the fully kinetic simulation, (b) the hybrid simulation with electron anisotropy, and
+
+(c) the hybrid simulation with isothermal electrons. (d) Cuts through the mid-plane reveal that
+
+currents driven by electron pressure anisotropy tend to increase the magnetic ﬁeld strength near
+
+the X-line.
+
+
+Hall eﬀect [37]. The equations of state in Eqs. 2 and 3 do not lead to fast reconnection in
+
+themselves, however, and we ﬁnd in the regime considered here that the electron anisotropy
+
+has little eﬀect on the reconnection rate.
+
+
+
+
+
+                                      13
+
+=== PAGE 15 ===
+                                                                    <E rec>/v AB0
+                                                                        0.1
+                                                                    0.09               FullyHybridKineticAnisotropic EoS
+                                                                    0.08             Hybrid Isothermal EoS
+
+                                                                    0.07
+
+                                                                    0.06
+
+                                                                    0.05
+
+                                                                    0.04
+
+                                                                    0.03
+
+                                                                    0.02
+
+                                                                    0.01
+
+                                                              0
+                                                               0       10       20       30       40       50       60       70
+                                                                                                            tΩci
+
+
+FIG. 7: Harris sheet reconnection rate. The reconnection rate averaged over a 2di square box
+
+centered on the X-line. Note that the hybrid simulations used a larger initial perturbation, and
+
+the simulations were aligned in time based on total initial reconnected ﬂux.
+
+
+V. SUMMARY
+
+
+  The equations of state for the electrons during reconnection with a guide ﬁeld have been
+
+implemented in the hybrid code H3D. The equations of state account for electron pressure
+
+anisotropy that develops during reconnection and is caused by the adiabatic trapping of
+
+electrons. Simulations were performed of reconnection beginning from a force-free current
+
+sheet and from a Harris sheet with a moderate guide magnetic ﬁeld. In both cases, extended
+
+current sheets formed centered on the X-line supported by electron pressure anisotropy with
+µ0(pe∥−pe⊥)/B2 > 0.5 in both the fully kinetic code and the hybrid code with an anisotropic
+
+electron closure. The electron current sheets remained very short in simulations that used
+
+an isothermal electron closure.
+
+  The hybrid code with anisotropic electron equations of state is therefore a ﬁrst step to-
+
+wards the ability to simulate reconnection with moderate guide ﬁelds in large systems, such
+
+as global magnetosphere models, that nevertheless couple to ion kinetic length scales and
+
+where electron pressure anisotropy strongly modiﬁes the magnetic structure of the recon-
+
+nection layer. In 3D systems, the electron current sheets may be unstable and break apart
+
+into ﬂux ropes [38], which could play a role in the formation of FTEs at the magnetopause.
+
+Before our model can be applied to more complex systems such the as the magnetosphere,
+
+however, important open questions must be solved. These questions include how to treat
+
+electron anisotropy and agyrotropy at reconnection sites with negligible guide magnetic ﬁelds
+
+and how to incorporate non-local eﬀects into the electron closure in realistic 3D geometries
+
+
+                                      14
+
+=== PAGE 16 ===
+with complicated initial conditions and without well-deﬁned global ﬂux surfaces.
+
+
+
+  Acknowledgments
+
+
+   A.L. received support from the LDRD oﬃce at LANL. W.D.’s work was supported by
+
+NASA’s Heliophysics Theory Program. J.E. acknowledges support through NSF GEM award
+
+1405166 and NASA grant NNX14AC68G. Simulations were performed on Pleiades provided
+
+by NASA’s HEC Program, with LANL Institutional Computing resources, and on Mira
+
+provided by the ALCF at ANL.
+
+
+
+
+
+ [1] E. R. Priest and T. G. Forbes, Astronomy and Astrophysics Review 10, 313 (2002), ISSN
+
+     0935-4956.
+
+ [2] T. Moore, J. Burch, W. Daughton, S. Fuselier, H. Hasegawa, S. Petrinec, and Z. Pu, Journal
+
+     of Atmospheric and Solar-Terrestrial Physics 99, 32 (2013).
+
+ [3] J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton, M. Hesse, M. Kuznetsova, Z. W.
+
+    Ma, A. Bhattacharjee, A. Otto, et al., J. Geophys. Res. 106, 3715 (2001), ISSN 0148-0227.
+
+ [4] L. Wang, A. H. Hakim, A. Bhattacharjee, and K. Germaschewski, Physics of Plasmas (1994-
+
+     present) 22, 012108 (2015).
+
+ [5] M. M. Kuznetsova, M. Hesse, and D. Winske, Journal of Geophysical Research: Space Physics
+
+    105, 7601 (2000), ISSN 2156-2202, URL http://dx.doi.org/10.1029/1999JA900396.
+
+ [6] J. Ng, Y.-M. Huang, A. Hakim, A. Bhattacharjee, A. Stanier, W. Daughton, L. Wang, and
+
+    K. Germaschewski, Physics of Plasmas 22, 112104 (2015), URL http://scitation.aip.org/
+
+    content/aip/journal/pop/22/11/10.1063/1.4935302.
+
+ [7] J. U. Brackbill, Physics of Plasmas 18, 032309 (2011), URL http://scitation.aip.org/
+
+    content/aip/journal/pop/18/3/10.1063/1.3568828.
+
+ [8] S. Zenitani,  I. Shinohara, T. Nagai, and T. Wada, Physics of Plasmas (1994-present)
+
+    20, 092120 (2013), URL http://scitation.aip.org/content/aip/journal/pop/20/9/10.
+
+    1063/1.4821963.
+
+ [9] A. Le, J. Egedal, J. Ng, H. Karimabadi, J. Scudder, V. Roytershteyn, W. Daughton, and Y.-
+
+    H. Liu, Physics of Plasmas 21, 012103 (2014), URL http://scitation.aip.org/content/
+
+
+
+                                      15
+
+=== PAGE 17 ===
+    aip/journal/pop/21/1/10.1063/1.4861871.
+
+[10] Y.-H. Liu, J. F. Drake, and M. Swisdak, Physics of Plasmas 18, 062110 (pages 12) (2011),
+
+   URL http://link.aip.org/link/?PHP/18/062110/1.
+
+[11] D. Krauss-Varban and N. Omidi, Geophysical Research Letters 22, 3271 (1995), ISSN 1944-
+
+     8007, URL http://dx.doi.org/10.1029/95GL03414.
+
+[12] Y. Lin and D. W. Swift, Journal of Geophysical Research: Space Physics (1978–2012) 101,
+
+    19859 (1996).
+
+[13] N. Aunai, M. Hesse, S. Zenitani, M. Kuznetsova, C. Black, R. Evans, and R. Smets, Physics
+
+     of Plasmas (1994-present) 20, 022902 (2013).
+
+[14] R.-F. Lottermoser, M. Scholer, and A. P. Matthews, Jour. Geophys. Res. 103, 4547 (1998).
+
+[15] K. Arzner and M. Scholer, Journal of Geophysical Research: Space Physics (1978–2012) 106,
+
+    3827 (2001).
+
+[16] M. M. Kuznetsova, M. Hesse, and D. Winske, Journal of Geophysical Research: Space Physics
+
+    (1978–2012) 106, 3799 (2001).
+
+[17] H. Karimabadi, V. Roytershteyn, H. X. Vu, Y. A. Omelchenko, J. Scudder, W. Daughton,
+
+    A. Dimmock, K. Nykyri, M. Wan, D. Sibeck, et al., Physics of Plasmas 21, 062308 (2014),
+
+   URL http://scitation.aip.org/content/aip/journal/pop/21/6/10.1063/1.4882875.
+
+[18] L. Yin, D. Winske, S. Gary, and J. Birn, Geophysical research letters 28, 2173 (2001).
+
+[19] L. Yin and D. Winske, Physics of Plasmas (1994-present) 10, 1595 (2003).
+
+[20] A. Stanier, W. Daughton, L. Chac´on, H. Karimabadi, J. Ng, Y.-M. Huang, A. Hakim, and
+
+    A. Bhattacharjee, Phys. Rev. Lett. 115, 175004 (2015), URL http://link.aps.org/doi/
+
+    10.1103/PhysRevLett.115.175004.
+
+[21] A. Le, J. Egedal, W. Daughton, W. Fox, and N. Katz, Phys. Rev. Lett. 102, 085001 (2009),
+
+    ISSN 0031-9007.
+
+[22] J. Egedal, W. Fox, N. Katz, M. Porkolab, M. Oieroset, R. P. Lin, W. Daughton, and J. F.
+
+    Drake, J. Geophys. Res. 113, A12207 (2008), ISSN A12207.
+
+[23] J. Egedal, A. Le, and W. Daughton, Phys. Plasmas 20 (2013), ISSN 1070-664X.
+
+[24] V. M. Vasyliunas, Reviews of Geophysics 13, 303 (1975), ISSN 8755-1209.
+
+[25] O. Ohia, J. Egedal, V. S. Lukin, W. Daughton, and A. Le, Phys. Rev. Lett. 109, 115004
+
+     (2012), URL http://link.aps.org/doi/10.1103/PhysRevLett.109.115004.
+
+[26] A. Le, J. Egedal, O. Ohia, W. Daughton, H. Karimabadi, and V. S. Lukin, Phys. Rev. Lett.
+
+
+                                      16
+
+=== PAGE 18 ===
+    110, 135004 (2013), URL http://link.aps.org/doi/10.1103/PhysRevLett.110.135004.
+
+[27] A. Le, J. Egedal, W. Daughton, J. F. Drake, W. Fox, and N. Katz, Geophys. Res. Lett. 37,
+
+    L03106 (2010), ISSN 0094-8276.
+
+[28] M. Hesse, S. Zenitani, and A. Klimas, Phys. Plasmas 15, 112102 (pages 5) (2008).
+
+[29] L. J. Chen, N. Bessho, B. Lefebvre, H. Vaith, A. Fazakerley, A. Bhattacharjee, P. A. Puhl-
+
+    Quinn, A. Runov, Y. Khotyaintsev, A. Vaivads, et al., J. Geophys. Res. 113 (2008), ISSN
+
+     0148-0227.
+
+[30] G. F. Chew, M. L. Goldberger, and F. E. Low, Proc. Royal Soc. A 112, 236 (1956).
+
+[31] V. Lukin and M. Linton, Nonlinear Processes Geophys 18, 871 (2011).
+
+[32] S. W. H. Cowley, Planetary and Space Science 26, 1037  (1978), ISSN 0032-0633.
+
+[33] O. Ohia, J. Egedal, V. S. Lukin, W. Daughton, and A. Le, Geophysical Research Let-
+
+     ters 42, 10,549 (2015), ISSN 1944-8007, 2015GL067117, URL http://dx.doi.org/10.1002/
+
+    2015GL067117.
+
+[34] Y.-H. Liu, J. F. Drake, and M. Swisdak, Physics of Plasmas 18, 092102 (pages 13) (2011),
+
+   URL http://link.aip.org/link/?PHP/18/092102/1.
+
+[35] J. Scudder and W. Daughton, Journal of Geophysical Research: Space Physics (1978–2012)
+
+    113 (2008).
+
+[36] J. Buchner and L. Zelenyi, J. Geophys. Res. 94, 11821 (1989).
+
+[37] P. Cassak, R. Baylor,  R. Fermo, M.  Beidler, M. Shay, M. Swisdak,  J. Drake, and
+
+    H. Karimabadi, Physics of Plasmas (1994-present) 22, 020705 (2015).
+
+[38] W. Daughton, V. Roytershteyn, H. Karimabadi, L. Yin, B. J. Albright, B. Bergen, and K. J.
+
+    Bowers, Nature Physics 7, 539 (2011).
+
+
+
+
+
+                                      17

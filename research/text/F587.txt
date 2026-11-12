@@ -1,0 +1,1413 @@
+eprints@whiterose.ac.uk
+https://eprints.whiterose.ac.uk
+Universities of Leeds, Sheffield and York
+Deposited via The University of Leeds.
+White Rose Research Online URL for this paper:
+https://eprints.whiterose.ac.uk/id/eprint/104561/
+Version: Accepted Version
+Article:
+Gourgouliatos, KN and Hollerbach, R (2016) Resistive Tearing Instability in Electron-MHD: 
+Application to Neutron Star Crusts. Monthly Notices of the Royal Astronomical Society, 463
+(3). pp. 3381-3389. ISSN: 0035-8711 
+https://doi.org/10.1093/mnras/stw2309
+© 2016 The Authors. Published by Oxford University Press on behalf of the Royal 
+Astronomical Society. 
+Reuse 
+Items deposited in White Rose Research Online are protected by copyright, with all rights reserved unless 
+indicated otherwise. They may be downloaded and/or printed for private study, or other acts as permitted by 
+national copyright laws. The publisher or other rights holders may allow further reproduction and re-use of 
+the full text version. This is indicated by the licence information on the White Rose Research Online record 
+for the item. 
+Takedown 
+If you consider content in White Rose Research Online to be in breach of UK law, please notify us by 
+emailing eprints@whiterose.ac.uk including the URL of the record and the reason for the withdrawal request. 
+
+Mon. Not. R. Astron. Soc. 000, 1–10 (-)
+Printed 9 September 2016
+(MN LATEX style ﬁle v2.2)
+Resistive Tearing Instability in Electron-MHD: Application to
+Neutron Star Crusts
+Konstantinos N. Gourgouliatos⋆1 & Rainer Hollerbach1
+1Department of Applied Mathematics, University of Leeds, Leeds LS2 9JT , UK
+Accepted -. Received -; in original form -
+ABSTRACT
+We study a resistive tearing instability developing in a system evolving through the combined
+eﬀect of Hall drift in the Electron-MHD limit and Ohmic dissipation. We explore ﬁrst the
+exponential growth of the instability in the linear case and we ﬁnd the fastest growing mode,
+the corresponding eigenvalues and dispersion relation. The instability growth rate scales as
+γ ∝B2/3σ−1/3 where B is the magnetic ﬁeld and σ the electrical conductivity. We conﬁrm the
+development of the tearing resistive instability in the fully non-linear case, in a plane parallel
+conﬁguration where the magnetic ﬁeld polarity reverses, through simulations of systems initi-
+ating in Hall equilibrium with some superimposed perturbation. Following a transient phase,
+during which there is some minor rearrangement of the magnetic ﬁeld, the perturbation grows
+exponentially. Once the instability is fully developed the magnetic ﬁeld forms the character-
+istic islands and X-type reconnection points, where Ohmic decay is enhanced. We discuss the
+implications of this instability for the local magnetic ﬁeld evolution in neutron stars’ crusts,
+proposing that it can contribute to heating near the surface of the star, as suggested by models
+of magnetar post-burst cooling. In particular, we ﬁnd that a current sheet a few meters thick,
+covering as little as 1% of the total surface can provide 1042 erg in thermal energy within a
+few days. We brieﬂy discuss applications of this instability in other systems where the Hall
+eﬀect operates such as protoplanetary discs and space plasmas.
+Key words: stars: neutron, magnetars, methods: numerical, MHD, magnetic ﬁelds
+1
+INTRODUCTION
+A plethora of observations of strongly magnetised neutron stars
+(Olausen & Kaspi 2014) has revealed that their temperatures are
+higher than what conventional cooling of a hot proto-neutron star
+suggests. A solution to this puzzle is that the extra thermal energy
+needed for these systems is provided by the Ohmic decay of their
+magnetic energy reservoir (Pons & Geppert 2007). However, given
+the high conductivity of a neutron star crust, the rate of Ohmic de-
+cay is expected to be slow and the conversion of magnetic energy
+to heat ineﬃcient. This has led to the idea that the Hall eﬀect may
+be able to accelerate magnetic ﬁeld decay, as the Hall timescale is
+inversely proportional to the intensity of the magnetic ﬁeld. This
+acceleration can only be done in an indirect way, as the Hall eﬀect
+conserves magnetic ﬁeld energy.
+Several paths have been proposed in this direction. Goldre-
+ich & Reisenegger (1992) suggested that the Hall eﬀect may lead
+to the formation of smaller scale structure through cascades, which
+have reduced Ohmic decay times, a result that has been followed up
+by numerical studies exploring Hall-induced turbulence (Biskamp
+et al. 1996; Wareing & Hollerbach 2009, 2010). Another possibility
+⋆Email: K.N.Gourgouliatos@leeds.ac.uk
+is the development of instability of a state previously being in Hall
+equilibrium leading to smaller structure formation (Rheinhardt &
+Geppert 2002; Rheinhardt et al. 2004; Pons & Geppert 2010). Re-
+cent work of Wood et al. (2014) found a family of exact solutions
+for the density-shear instability in electron-MHD, requiring a co-
+varying magnetic ﬁeld and electron number density, a result that
+was studied numerically in detail by Gourgouliatos et al. (2015).
+Apart from instabilities and cascades, secular Hall evolution has
+been explored: Vainshtein et al. (2000) studied the eﬀect of the
+sharp drop of electron number in the crust, ﬁnding that the mag-
+netic ﬁeld evolution is described by a Burger’s type equation, lead-
+ing to the formation of shocks in the form of current sheets decay-
+ing on a Hall timescale rather than the slower Ohmic, and applied
+to the evolution of a toroidal ﬁeld in an axially symmetric system
+by Reisenegger et al. (2007). Once the poloidal ﬁeld is included
+(Hollerbach & R¨udiger 2002, 2004) the formation of current sheets
+is followed by an oscillatory behaviour. The consensus of axially
+symmetric crustal simulations, exploring a broad range of initial
+conditions (Pons et al. 2009; Kojima & Kisaka 2012; Vigan`o et al.
+2012; Gourgouliatos & Cumming 2014b), has concluded that the
+Hall eﬀect drastically changes the structure of the magnetic ﬁeld,
+whereas later, Hall evolution saturates (Gourgouliatos & Cumming
+2014).
+c⃝- RAS
+
+2
+K.N. Gourgouliatos & R. Hollerbach
+An intrinsic drawback of global neutron star simulations is the
+fact that they under-resolve current sheets. Current sheets form both
+in the uniform electron density case (Wareing & Hollerbach 2010)
+and even more eﬃciently in the presence of an electron density
+gradient (Vainshtein et al. 2000; Vigan`o et al. 2012). Furthermore,
+they are likely to appear near the surface of the crust, as the avail-
+able electric charges decrease dramatically from the solid crust to
+the plasma magnetosphere. In the latter case, a usual assumption
+made in simulations is that the external magnetic ﬁeld is a vacuum
+potential ﬁeld which leads to boundary eﬀects by matching the two
+conﬁgurations (Wood et al. 2014).
+In their seminal paper Furth et al. (1963) studied ﬁnite-
+resistivity instabilities of a sheet pinch ﬁnding the so-called tear-
+ing instability “a long-wave ‘tearing’ mode, corresponding to a
+breakup of the layer along the current ﬂow lines”. Linear analy-
+sis of the MHD system yields an exponential growth rate γT ∼
+τ−3/5
+O
+τ−2/5
+A
+, where τO and τA are the resistive and Alfv`en times re-
+spectively, while in the non-linear phase the growth becomes alge-
+braic (Rutherford 1973). Several applications of the tearing insta-
+bility have been considered in astrophysical contexts. Rosenbluth &
+Chang (1967) studied resistive instabilities in magnetospheric tails.
+Priest (1985) presented various applications of the tearing instabil-
+ity in relation to current sheets developing in solar and space plas-
+mas. The tearing instability is considered to be an eﬃcient mech-
+anism for powering solar ﬂares and accelerating particles therein
+(Sturrock 1966; Somov & Verneta 1989; Aschwanden 2002). Re-
+cent numerical simulations by Landi et al. (2015); Del Zanna et al.
+(2016) in general astrophysical contexts have demonstrated the de-
+velopment of the tearing instability in the limit of very high con-
+ductivity for appropriately thin current layers. Other applications
+have focused on pulsar magnetospheres, where numerical simula-
+tions agree on the presence of current sheets, either conﬁned to
+the equatorial plane as is the case in axially symmetric systems
+(Contopoulos et al. 1999; Komissarov 2006), or with more compli-
+cated geometries for the case of inclined systems (Spitkovsky 2006;
+Kalapotharakos & Contopoulos 2009). In depth study of the cur-
+rent sheets of pulsar magnetospheres by Uzdensky & Spitkovsky
+(2014), showed that they are susceptible to the tearing mode insta-
+bility leading to the formation of plasmoids with the eventual emis-
+sion of high energy radiation and non-thermal particles (Sironi &
+Spitkovsky 2014). The tearing instability has also been studied in
+the context of Relativistic MHD considering applications to mag-
+netar ﬂares and jets through explosive reconnection (Komissarov
+et al. 2007; Elenbaas et al. 2016; Barkov & Komissarov 2016).
+Motivated by the omnipresence of the tearing instability in
+current sheets and their formation in neutron star crusts through
+the Hall eﬀect, we study its development and impact. We explore
+the evolution of the magnetic ﬁeld in a conﬁguration where the tan-
+gential component changes direction by 180◦within a thin layer,
+allowing for some ﬁnite resistivity, in the inertialess electron-MHD
+formulation. We show, through linear and non-linear calculations,
+that the tearing mode instability naturally appears and enhances the
+decay of the magnetic ﬁeld.
+We note that the term Hall evolution (or drift) has the mean-
+ing of Electron-MHD when used to describe the evolution of the
+magnetic ﬁeld in the crust of neutron stars. There, only electrons
+are allowed to moved through a solid crystal lattice consisting
+of positively charged ions (Jones 1988). In principle, Hall evolu-
+tion can accommodate for the motion of more than one charged
+species whereas Electron-MHD refers to systems where only elec-
+trons move, making the latter a special case of the former. In this
+paper the term Hall-MHD is used in the limit of Electron-MHD.
+The plan of the paper is as follows: In Section 2 we formulate
+the equations of Electron-MHD. We solve these equations in the
+linear and non-linear regime in Section 3. We discuss the proper-
+ties of the instability and compare it with the conventional tearing
+instability in Section 4. We discuss the application of the tearing in-
+stability in neutron stars and other astrophysical systems in Section
+5. We conclude in Section 6.
+2
+ELECTRON-MHD FORMULATION IN NEUTRON
+STAR CRUSTS
+The crust is the outer layer of the neutron star with thickness of
+about 1km. The density at the base is 1014g cm−3 and 109g cm−3 at
+the surface. It can be approximated to good accuracy by a highly
+conducting ion Coulomb lattice with electrons having the freedom
+to move. Following the derivation of Goldreich & Reisenegger
+(1992), the crustal electric current must be carried by free elec-
+trons: j = −neeve, where j is the current density, ne the electron
+number density, e the electron charge and ve the electron veloc-
+ity. Then, from Amp`ere’s law j = (c/4π)∇× B, where c is the
+speed of light and B the magnetic induction and using Ohm’s law
+j = σ (E + (ve × B) /c) where E is the electric ﬁeld and σ the elec-
+tric conductivity, we substitute into Faraday’s law, yielding:
+∂B
+∂t = −∇×
+ 
+c
+4πene
+(∇× B) × B + c2
+4πσ∇× B
+!
+.
+(1)
+The ﬁrst term on the right hand side of the above equation describes
+the evolution under the Hall eﬀect and the second one Ohmic dis-
+sipation. Conceptually, the Hall eﬀect can be thought of as the ad-
+vection of the magnetic ﬂux by the electron ﬂuid.
+Contrary to usual MHD this equation does not assume that
+mass is displaced, as the crustal ions hold ﬁxed positions in space,
+while the moving electrons are to good approximation inertialess.
+The Lorentz forces are balanced by the elasticity of the crust. The
+only physical quantity involved in the description of the system
+is the magnetic induction B, while for instance in normal MHD
+one needs to solve for the plasma velocity through the momentum
+equation.
+It follows, from the ﬁrst term on the right hand side of equation
+(1), that a state for which the following condition is satisﬁed
+∇×
+ 
+c
+4πene
+(∇× B) × B
+!
+= 0 ,
+(2)
+corresponds to a Hall equilibrium, and will not evolve in the limit
+of zero resistivity (Cumming et al. 2004; Gourgouliatos et al. 2013;
+Fujisawa & Kisaka 2014). In the realistic case of non-zero resistiv-
+ity, however, the system will start evolving and may be pushed out
+of Hall equilibrium (Marchant et al. 2014).
+3
+TEARING INSTABILITY
+3.1
+Linear Theory
+Let us assume a background magnetic ﬁeld with components along
+the y and z directions depending only on x, and a constant electron
+number density (ne) and electric conductivity (σ):
+Bb = By(x)ˆy + Bz(x)ˆz .
+(3)
+This magnetic ﬁeld corresponds to a Hall equilibrium satis-
+fying equation (2). Consider some perturbation b(x, z, y, t)
+=
+exp
+
+γt + ikyy + ikzz
+
+(bx(x)ˆx+by(x)ˆy+bz(x)ˆz); by Gauss’s law it is
+c⃝- RAS, MNRAS 000, 1–10
+
+Resistive Tearing Instability in E-MHD
+3
+∇· b = 0, thus bz = ik−1
+z b′
+x −kyk−1
+z by where prime denotes derivative
+with respect to x. Thus the perturbation becomes:
+b = exp
+
+γt + ikyy + ikzz
+ h
+bx(x)ˆx + by(x)ˆy +
+
+ik−1
+z b′
+x −kyk−1
+z by
+
+ˆz
+i
+.
+(4)
+Substituting into equation (1) and keeping only the linear terms in
+b we obtain the following equations:
+(5)
+γbx +
+c
+4πene
+h
+k2
+z Bzby −ikzB′
+ybx
++ ky
+
+i
+n
+B′
+zbx −Bzb′
+x −kyk−1
+z Byb′
+x
+o
++
+n
+kzBy + k2
+yk−1
+z By + kyBz
+o
+by
+i
++ c2
+4πσ
+h
+k2
+y + k2
+z
+
+bx −b′′
+x
+i
+= 0 ,
+(6)
+γby +
+c
+4πene
+h
+−k2
+z Bzbx −B′′
+z bx + Bzb′′
+x
++ ky
+
+i
+n
+kyk−1
+z
+
+Byby
+′ +
+
+Bzby
+′o
+−kzBybx
++ k−1
+z
+
+Byb′
+x
+′i
++ c2
+4πσ
+h
+k2
+y + k2
+z
+
+by −b′′
+y
+i
+= 0 .
+We ﬁrst explore numerically the eigenvalue problem. To model the
+structure of a current sheet we have chosen the following proﬁle for
+the background ﬁeld:
+By = By,0sech
+ x
+x0
+!
+,
+Bz = Bz,0 tanh
+ x
+x0
+!
+,
+(7)
+assuming x0 > 0 and Bz,0 > 0. The ﬁeld becomes uniform along
+the z direction for |x| ≫x0. A choice of amplitudes By,0 = ±Bz,0
+corresponds to a Bloch wall (Bloch 1932): a magnetic ﬁeld that
+changes direction from the −z to the +z keeping its magnitude con-
+stant, within a layer of thickness scaling with x0 centred at x = 0.
+This case has been of particular interest in MHD simulations as it
+is a force-free magnetic ﬁeld (Low 1973), making it an appropri-
+ate choice for studies of resistive instabilities. However, this is an
+unnecessary constraint for Electron-MHD studies as any choice of
+By,0 amplitude is a Hall equilibrium since equation (2) is identically
+satisﬁed.
+The conﬁguration extends from −xb to xb. We impose vacuum
+boundary conditions at x boundaries, demanding that no currents
+exist outside the domain. We ensure that x0 is suﬃciently smaller
+than xb for the results to be physically meaningful, and the back-
+ground ﬁeld Bb is essentially uniform and current free close to the
+boundaries. Demanding vacuum boundary conditions ∇× b = 0
+for these equations at |x|
+> xb we obtain the following equa-
+tions: b′
+x ± k2
+z
+
+k2
+y + k2
+z
+−1/2 bx + ikyby = 0 and ikyb′
+x −
+
+k2
+y + k2
+z
+
+by =
+0. We consider an appropriate system of units so that xb = 1,
+cBz,0/(4πene) = 1 where the growth rate is measured in units of
+inverse Hall times τH = 4πenex2
+b/(cBz,0), with the characteristic
+Ohmic timescale being τO = 4πσx2
+b/c2. We deﬁne the Hall param-
+eter RH = σBz,0/(cene), the ratio of the Ohmic timescale over the
+Hall timescale. Larger RH correspond to systems where the Hall
+eﬀect dominates. In the systems we studied we have set Bz,0 = 1,
+combining it with By,0 = 0 and By,0 = 1. We have varied the thick-
+ness of the current sheet from x0 = 0.1 to x0 = 0.5, and the Hall
+parameter from RH = 100 to RH = 2000, by changing the conduc-
+tivity, see Tables 1 and 2 for the range of parameters used. Then
+we solve the linear problem to determine the fastest growing eigen-
+modes of bx and by and the corresponding eigenvalues. We do so
+by discretising the system of ordinary diﬀerential equations (5) and
+(6) and constructing the relevant matrix, whose eigenvalues allow
+us to determine γ and the eigenmodes. We have implemented this
+using a ﬁnite diﬀerence and a spectral calculation ﬁnding identi-
+cal results. We used up to a 1000 Chebyshev polynomial expansion
+in the highest RH and thinner x0 simulated for convergence, see
+chapter 7 of Boyd (2001). The results were tested against the ﬁnite
+diﬀerence calculation to ensure their validity.
+Studying the plane parallel perturbations with ky = 0, we ﬁnd
+that both the eigenvalues and eigenfunctions for By,0 = 0 are real,
+while if By,0 ̸= 0 the eigenvalues are still real but the eigenfunc-
+tions become complex indicative of phase shifting in z. Allowing
+the instability to have ky ̸= 0 leads to complex eigenvalues and
+slower growing eigenmodes for the same background ﬁeld and RH,
+Figures 1 and 2. Hereafter we will focus on the ky = 0 case.
+The maximum growth rate of the instability scales as γ ∝
+R−1/3
+H
+, Fig. 3. The wave numbers at which the maximum growth
+rate occurs are plotted in Fig. 4, and scales as R−0.15
+H
+. These scal-
+ing laws hold for narrow current sheets and high enough Hall pa-
+rameters. Thus, the corresponding minimum growth timescale for
+the tearing instability becomes τI = γ−1 ∝τ2/3
+H τ1/3
+O
+and in terms
+of the physical quantities appearing γ ∝B2/3
+z,0 σ−1/3, assuming that
+the thickness of the reversal area remains unchanged. This quasi-
+stationarity assumption holds as as long as τI ≪τO which corre-
+sponds to R2/3
+H ≫1.
+The maximum growth rate and the corresponding wave num-
+ber are higher for thinner current sheets, with the growth rate scal-
+ing approximately as x−2
+0
+and the wave number as x−1
+0 . Thus, the
+growth time of the tearing instability τI in the linear regime can be
+summarised in the following expression:
+τI = τH(10x0/xb)2(RH/100)1/3
+γZ01−1
+,
+(8)
+where γZ01−1 is the dimensionless growth rate of a system with
+RH = 100 and x0 = 0.1xb, note that τI is measured in natural units
+and is not rescaled.
+The inclusion of By has a mild stabilising eﬀect, reducing
+the growth rate for given wave number and pushing the maximum
+growth rate to a higher wave number, as shown in Fig. 5 where the
+dispersion relation is plotted. The eigenfunctions bx and by for the
+fastest growing mode with parameters x0 = 0.1 and RH = 1000
+are plotted in Fig. 6, showing that the fastest growing eigenmode
+consists of oppositely directing by components on either side of the
+current sheet and a bx component with a local minimum at x = 0.
+3.2
+Non-linear evolution
+Following the rapid exponential growth of the instability and once
+the perturbing ﬁeld becomes comparable to the background one,
+the instability evolves non-linearly. Furthermore, the background
+ﬁeld evolves as well, given the dissipation in the current sheet.
+Given these limitations that cannot be assessed by the linear model,
+we explore the full non-linear evolution of the plane-parallel prob-
+lem. We integrate numerically the full non-linear equation (1) using
+a second order Runge-Kutta scheme for the temporal evolution and
+a second order ﬁnite diﬀerence scheme for the spatial derivatives.
+We assumed vacuum boundary conditions in x and periodicity in z.
+The computational domain extends to ±1 in x and to ±2 in z. The
+resolution used for the majority of the runs was 200 × 400 points in
+x and z, and was tested against higher resolution for some particular
+cases with good agreement.
+We explore a variety of magnetic ﬁeld conﬁgurations. As ini-
+tial condition, we used the background ﬁeld given in equation (7)
+c⃝- RAS, MNRAS 000, 1–10
+
+4
+K.N. Gourgouliatos & R. Hollerbach
+Table 1. Summary of the linear stability calculation for the runs with Bz,0 =
+1, By,0 = 0 and ky = 0. The ﬁrst column is the name of the run, the second
+the thickness of the reversal area x0, the third the value of By,0, the fourth
+the Hall parameter RH, the ﬁfth the wave number at which the maximum
+growth rate occurs, and the sixth the maximum value of the growth rate.
+NAME
+x0
+By,0
+RH
+kz
+γ
+Z05-1
+0.5
+0
+100
+0.781
+0.218
+Z05-2
+0.5
+0
+200
+0.741
+0.189
+Z05-4
+0.5
+0
+400
+0.694
+0.156
+Z05-6
+0.5
+0
+600
+0.663
+0.138
+Z05-10
+0.5
+0
+1000
+0.623
+0.117
+Z05-15
+0.5
+0
+1500
+0.589
+0.102
+Z05-20
+0.5
+0
+2000
+0.567
+0.0925
+Z02-1
+0.2
+0
+100
+1.894
+1.525
+Z02-2
+0.2
+0
+200
+1.785
+1.315
+Z02-4
+0.2
+0
+400
+1.652
+1.095
+Z02-6
+0.2
+0
+600
+1.565
+0.973
+Z02-10
+0.2
+0
+1000
+1.456
+0.830
+Z02-15
+0.2
+0
+1500
+1.372
+0.728
+Z02-20
+0.2
+0
+2000
+1.319
+0.661
+Z01-1
+0.1
+0
+100
+3.757
+6.150
+Z01-2
+0.1
+0
+200
+3.530
+5.306
+Z01-4
+0.1
+0
+400
+3.255
+4.426
+Z01-6
+0.1
+0
+600
+3.086
+3.937
+Z01-10
+0.1
+0
+1000
+2.866
+3.368
+Z01-15
+0.1
+0
+1500
+2.692
+2.959
+Z01-20
+0.1
+0
+2000
+2.564
+2.693
+Table 2. Summary of the linear stability calculation for the runs with Bz,0 =
+1, By,0 = 1 and ky = 0. The columns are as in Table 1.
+NAME
+x0
+By,0
+RH
+kz
+γ
+Y05-1
+0.5
+1
+100
+0.884
+0.178
+Y05-2
+0.5
+1
+200
+0.851
+0.158
+Y05-4
+0.5
+1
+400
+0.810
+0.132
+Y05-6
+0.5
+1
+600
+0.784
+0.117
+Y05-10
+0.5
+1
+1000
+0.752
+0.0988
+Y05-15
+0.5
+1
+1500
+0.728
+0.0856
+Y05-20
+0.5
+1
+2000
+0.711
+0.0770
+Y02-1
+0.2
+1
+100
+2.067
+1.352
+Y02-2
+0.2
+1
+200
+1.958
+1.194
+Y02-4
+0.2
+1
+400
+1.825
+1.008
+Y02-6
+0.2
+1
+600
+1.735
+0.901
+Y02-10
+0.2
+1
+1000
+1.628
+0.773
+Y02-15
+0.2
+1
+1500
+1.539
+0.680
+Y02-20
+0.2
+1
+2000
+1.476
+0.619
+Y01-1
+0.1
+1
+100
+4.110
+5.433
+Y01-2
+0.1
+1
+200
+3.893
+4.800
+Y01-4
+0.1
+1
+400
+3.617
+4.061
+Y01-6
+0.1
+1
+600
+3.440
+3.632
+Y01-10
+0.1
+1
+1000
+3.209
+3.123
+Y01-15
+0.1
+1
+1500
+3.022
+2.751
+Y01-20
+0.1
+1
+2000
+2.902
+2.507
+Figure 1. Contour plot of the real part of the eigenvalues for a range of
+wavenumbers (kz, ky), using the Z02-4 proﬁle. We ﬁnd that the maximum
+eigenvalue occurs for ky = 0.
+Figure 2. Contour plot of the real part of the eigenvalues for a range of
+wavenumbers (kz, ky), using the Y02-4 proﬁle. We ﬁnd that the maximum
+eigenvalue occurs for ky = 0.
+superimposed with a small perturbation in the y component, con-
+taining up to 2×10−5 of the total energy, so that it would trigger any
+instability. We used conﬁgurations of current sheet initial thickness
+x0 = 0.1 and x0 = 0.2 combining with Hall parameters RH = 200
+and RH = 400, corresponding to Z01-2, Z01-4, Z02-2, Z02-4, Y01-
+2, Y01-4 ,Y02-2 and Y02-4 (Tables 1 and 2). According to the lin-
+ear calculation, the wavelength of the fastest growing mode corre-
+sponding to these backgrounds is smaller than the domain’s extent
+in z. In all runs, except when the Y02-2 initial condition was used,
+we noticed a growth of the perturbation and the formation of the
+island pattern of the tearing mode. In what follows we will discuss
+in detail the results of runs with initial conditions Z01-2 and Z01-
+4 which encapsulate the basic behaviour of the tearing instability.
+c⃝- RAS, MNRAS 000, 1–10
+
+Resistive Tearing Instability in E-MHD
+5
+102
+103
+RH
+1
+2
+γ/γ2000
+R −1/3
+H
+x0 =0.1, By =0
+x0 =0.2, By =0
+x0 =0.5, By =0
+x0 =0.1, By =1
+x0 =0.2, By =1
+x0 =0.5, By =1
+Figure 3. Maximum growth rate of the tearing instability, normalised to its
+value at RH = 2000, versus RH. The red crosses correspond to models Z05-
+1 up to Z05-20, the red stars to Z02-1 up to Z02-20, the red circles to Z01-1
+up to Z01-20, the green crosses correspond to models Y05-1 up to Y05-20,
+the green stars to Y02-1 up to Y02-20 and the green circles to Y01-1 up to
+Y01-20. The growth rate scales asymptotically with R−1/3
+H
+.
+102
+103
+RH
+1
+2
+kz/kz,2000
+R −0.15
+H
+x0 =0.1, By =0
+x0 =0.2, By =0
+x0 =0.5, By =0
+x0 =0.1, By =1
+x0 =0.2, By =1
+x0 =0.5, By =1
+Figure 4. The wave number at which the maximum growth rate occurs,
+normalised to its value at RH = 2000, versus RH. There is an asysmptotic
+scaling with the Hall parameter kz ∝R−0.15
+H
+dependence. The symbols are
+the same as in Fig. 3.
+The Ohmic decay of the background ﬁeld did not allow enough
+time for the growth of the instability in the case of Y02-2.
+We plot three snapshots of the magnetic ﬁeld structure in
+Fig. 7, at times t = 0 (left), t = τH (middle) and t = 2τH (right), for
+the run with initial conditions Z01-4 and some weak perturbation.
+We ﬁnd that the strength of the perturbing magnetic ﬁeld rises from
+an initial value of 0.02B0 to 0.18B0. While the instability is grow-
+ing, the background ﬁeld changes as well, in particular the current
+sheet becomes wider and consequently this has an eﬀect on the
+growth rates and wavenumbers of the dominant eigenmodes. Thus,
+the tearing instability is shifted towards longer wave lengths as the
+wavenumber scales inversely with x0. There is also some drift of the
+newly formed islands along the z direction which is caused by the
+mixing of modes with diﬀerent wavelengths and diﬀerent growth
+rates. Eventually, once the instability has fully developed it forms
+0
+1
+2
+3
+4
+5
+kz
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+γ
+Z02-4
+Y02-4
+Figure 5. The growth rate versus the wave number for Z02-4 (red) and
+Y02-4 (green), see Tables 1 and Table:2. Both of them have x0 = 0.2 and
+RH = 400, whereas the Z02-4 has By,0 = 0 and the Y02-4 has By,0 = 1. The
+case with By,0 = 1 has a smaller growth rate and the maximum is pushed
+towards a higher wave numbers.
+1.0
+0.5
+0.0
+0.5
+1.0
+x
+3
+2
+1
+0
+1
+2
+3
+b
+bx
+by
+Figure 6. The eigenfunctions bx and by for the fastest growing mode for the
+case Z01-10.
+the characteristic long-living reconnection islands, right panel of
+Fig. 7.
+To probe the instability we used the amount of energy in the
+x and y components of the magnetic ﬁeld where we plot the results
+of two runs with RH = 200 and RH = 400, and x0 = 0.1 (initial
+conditions Z01-2, Z01-4), Fig. 8. Following a short initial transi-
+tion where energy is dissipated from the perturbation, presumably
+due to damping of modes with negative growth rates (t < 0.2τH),
+we ﬁnd that the amount of energy in the x and y components rises
+almost exponentially. This phase lasts until t = 2 for the RH = 400
+run, and corresponds to a growth rate for the energy γE = 6.8 im-
+plying an approximate growth rate for the amplitude of the per-
+turbation ﬁeld γI ≈γE/2 = 3.4. This ﬁgure is smaller compared
+to 4.426 found in the linear analysis, as expected, since the for-
+mer takes into account the energy in the various other modes which
+grow at slower rates, while the latter gives the growth rate of the
+fastest mode only. The growth of the energy of the run where the
+Z01-2 initial condition was used saturates earlier and at a lower
+c⃝- RAS, MNRAS 000, 1–10
+
+6
+K.N. Gourgouliatos & R. Hollerbach
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+t
+10-5
+10-4
+10-3
+10-2
+10-1
+Ex,y/Etot
+Z01-2
+Z01-4
+Figure 8. The ratio of magnetic energy in the x and y components over the
+total magnetic energy for two runs with initial conditions that of Z01-2 (red)
+Z01-4 (green) and a perturbing ﬁeld containing 2 × 10−5 of the total energy.
+The time is expressed in units of τH.
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+t
+0.00
+0.02
+0.04
+0.06
+0.08
+0.10
+0.12
+0.14
+0.16
+0.18
+(E0−Et)/E0
+Ohmic, Z01-2
+Ohmic, Z01-4
+Hall, Z01-2
+Hall, Z01-4
+Figure 9. The diﬀerence of magnetic energy at time t, Et from the initial
+magnetic energy E0, for the runs shown in Fig. 8, solid green and red lines.
+The same quantity for runs evolving only under the Ohmic dissipation. The
+decay for the system evolving only under Ohmic dissipation is slower, and
+the diﬀerence is more profound for the higher RH.
+energy. At very early times (0.2 < t < 0.4τH) the instability at
+RH = 200 grows marginally faster than the RH = 400 due to
+γZ01−4 < γZ01−2, however this lasts for a very short time as the back-
+ground ﬁeld decays swiftly and widens the magnetic ﬁeld reversal
+area. For instance, in a run with RH = 200 and x0 = 0.1 it takes
+∼3τH for the reversal area to double its size if left to decay Ohmi-
+cally. This means that the growth rate will drop by a factor of 4 and
+the wave number of the fastest growing mode will be multiplied
+by a factor of 2. With respect to the energy decay, the inclusion of
+the instability leads to a faster rate compared to a system evolving
+solely under Ohmic dissipation with the Hall term switched-oﬀ, a
+result that is more prominent in the case of RH = 400, Fig. 9.
+4
+DISCUSSION
+Following the description of the linear and non-linear evolution, we
+conclude that this instability is a resistive tearing mode as it fulﬁls
+the criteria set by Furth et al. (1963). First it is a resistive instabil-
+ity with a clear dependence on the value of the resistivity, second
+it appears along the current sheet by breaking up the ﬁeld lines
+and third it is a long wavelength instability. We remark though that
+the physical mechanism between the tearing instability in Electron-
+MHD and the usual MHD evolution is diﬀerent. In Electron-MHD,
+a sole equation for the evolution of the system needs to be solved,
+equation (1), whereas in MHD the momentum equation needs to
+be accounted for, as well. Thus, while in the usual MHD case, the
+development of the instability results from a sequence of events in-
+volving magnetic pressure and tension and plasma pressure, in the
+Electron-MHD such a description is irrelevant, as the Lorentz force
+is balanced by the ion lattice and the entire evolution is determined
+by the magnetic induction equation alone.
+In the Hall-MHD case, the key quantity is the electron ﬂuid
+velocity advecting the magnetic ﬂux. The electron ﬂuid velocity
+is uniquely determined by the magnetic ﬁeld structure through the
+relation:
+ve = −
+c
+4πene
+∇× B .
+(9)
+The instability develops through the steps shown in Fig. 10. The by
+component is supported by a current corresponding to the motion
+of the electron ﬂuid on the plane of the ﬁgure with velocity ve, de-
+noted by blue arrows shown edge-on. Note that since the current is
+carried by electrons, its ﬂow is antiparallel to the ve; hereafter we
+are going to refer to the electron motion to avoid confusion from
+the oppositely directing current. Considering the x component of
+the electron ﬂow near the O and X points, we ﬁnd that it pushes the
+ﬁeld lines away from the O point and compresses them towards the
+X points. Whereas, in the z direction and along the current sheet the
+electron velocity is from the X point towards the O point. Thanks
+to resistivity the ﬁeld lines reconnect at the X point; these newly re-
+connected ﬁeld lines shrink around the O point, where they, again
+due to resistivity, vanish. The compression of the ﬁeld lines around
+the X point and the dilution around the O point enhance and sup-
+press the electron ﬂow that runs normal to the plane of the ﬁgure,
+respectively (blue arrow shown tail on). This velocity diﬀerence
+deforms the ﬁeld lines so that by is enhanced, closing the positive
+feedback loop. This is in agreement with the fact that the instability
+growth rate depends on both the Hall and the Ohmic timescales.
+The Hall time scale controls the rate at which the ﬁeld lines move,
+while the Ohmic times scale set the rate at which the ﬁeld lines re-
+connect and essentially controls the supply of magnetic ﬁeld lines
+that will move from the X point towards the O point.
+The results of our linear analysis show that the growth rate
+of the instability is proportional to R−1/3
+H
+as opposed to R−1/5
+H
+sug-
+gested in the analytical approach of Wood et al. (2014), while the
+corresponding wavenumber is proportional to R−0.15
+H
+as opposed to
+R−1/5
+H
+suggested there. We ﬁnd that as long as the boundaries of our
+calculations are twice as wide compared to the size of ﬁeld reversal
+area, their eﬀect on the instability is minimal. These discrepancies
+are related to the inevitable simpliﬁcations made in order to obtain
+an analytical expression for this instability and the diﬀerent pro-
+ﬁles of the background magnetic ﬁeld employed not containing a
+current sheet.
+Regarding the full non-linear calculations we ﬁnd that the in-
+stability has a considerable eﬀect on the magnetic ﬁeld decay once
+RH is large enough. This is caused by the rapid growth of the initial
+c⃝- RAS, MNRAS 000, 1–10
+
+Resistive Tearing Instability in E-MHD
+7
+Figure 7. The magnetic ﬁeld for the run using the initial conditions Z01-4 with a superimposed small perturbation in by, at time t = 0 (left), τH (middle)
+and 2τH (right), the black lines correspond to the Bx and Bz components of the ﬁeld, and the By component is shown in colour. The magnetic ﬁeld forms the
+characteristic islands in the location of the current sheet. As the system evolves and the current sheet decays, the system adopts longer wavelength modes.
+perturbation and the slow decay of the background state. In the ex-
+amples simulated we ﬁnd that for a choice of RH = 400 the decay
+rate is clearly enhanced once the instability is close to its saturation
+point, with milder eﬀect for a choice of RH = 200. Thus the role of
+the instability becomes more evident for higher RH.
+Similar to the variants of the MHD tearing instability, the
+growth timescale of the E-MHD tearing instability has a mixed
+dependence of the Hall and the Ohmic timescales. In the usual
+MHD tearing instability the growth rate of the tearing instability
+scales with τ−3/5
+O
+τ−2/5
+A
+, where τO is the resistive and τA the Alfv`en
+timescale respectively (Furth et al. 1963). In relativistic magneti-
+cally dominated plasmas the growth rate is the geometric mean of
+the Alfv`en timescale and the resistive timescale (Komissarov et al.
+2007). These diﬀerences in the growth rates and consequently on
+the wave numbers reﬂect the diﬀerent physical mechanism outlined
+above.
+The tearing instability in Electron-MHD shares some common
+properties with the Hall-drift induced magnetic instability which
+was studied in the linear approximation with uniform (Rheinhardt
+& Geppert 2002) and non-uniform (Rheinhardt et al. 2004) back-
+ground density, and by Pons & Geppert (2010) in the non-linear
+regime. Both instabilities require some non-zero resistivity to oper-
+ate, as the maximum growth rate of the Hall-drift instability scales
+as Bq
+0, q < 1, where B0 is the magnitude of the magnetic ﬁeld, thus
+for negligible resistivity the growth rate becomes zero in physical
+units. Furthermore both of them are long wavelength instabilities,
+having positive eigenvalues for 0 < k < kc where kc is some cut-oﬀ
+wavenumber. They diﬀer on that the Hall-drift instability does not
+require the presence of a current sheet, even though strong currents
+are involved, whereas the current sheet is a key element for the de-
+velopment of the tearing instability. Finally, we notice a similarity
+on the late evolution where the non-linear eﬀects have taken over:
+in both instabilities the system tends to adopt the longest wave-
+length permitted by the computational domain leading and the over-
+all dissipation is faster Pons & Geppert (2010).
+The role of the Hall eﬀect in the development of the tearing in-
+stability has been studied by numerous authors, primarily motivated
+by experimental results (i.e. Bodin & Newton (1963)). Studies of
+Figure 10. Schematic depiction of the instability. We assume a background
+ﬁeld directed to +z on the upper half and to the −z on the lower half. The
+by component of the perturbation is shown in colour contours with red used
+to point inwards and blue outwards (also denoted with ⊙and ⊗in black).
+The blue arrows show the electron velocity related to the by components,
+and the ⊗blue arrows the electron velocity perpendicular to the plane of
+the ﬁgure. The electron velocity is higher at the X point compared to the O
+point leading to positive feedback and growth of the by component. Please
+refer to the text on the Discussion section for a detailed description of the
+instability process.
+the eﬀect of Hall current on tearing mode in rotating reverse plas-
+mas of cylindrical geometry have shown that Hall currents com-
+bined with rotation of the ﬂuid can suppress tearing modes (Kap-
+praﬀet al. 1981; Finn et al. 1983; Mirin et al. 1986). Our approach
+is diﬀerent to these ones in two basic aspects. First, we consider the
+evolution under only Electron-MHD, neglecting other terms aris-
+ing from Lorentz forces, plasma pressure and inertia, assuming that
+they are balanced by the elastic forces of the ion lattice, whereas in
+these works the Hall eﬀect is included as an add-on to normal MHD
+evolution. Second, the geometry of the system is diﬀerent assuming
+a rotating cylinder whereas we study a planar system. Our results
+are in agreement with those of Fruchtman & Strauss (1993), who
+showed that the Hall eﬀect can actually lead to a tearing mode in
+an appropriate planar geometry.
+c⃝- RAS, MNRAS 000, 1–10
+
+8
+K.N. Gourgouliatos & R. Hollerbach
+5
+NEUTRON STAR CRUST HEATING AND OUTBURSTS
+Models of global magnetic evolution have shown that a usual out-
+come of Hall evolution is the development of current sheets (Vain-
+shtein et al. 2000; Hollerbach & R¨udiger 2002, 2004; Reisenegger
+et al. 2007; Geppert & Vigan`o 2014; Wood & Hollerbach 2015;
+Gourgouliatos et al. 2016). Such current sheets are more prominent
+on the natural boundaries of the crust-core interface (Lander 2013;
+Beloborodov & Li 2016) and neutron star surface (Thompson &
+Duncan 2001; Lyubarsky et al. 2002), providing potential sites for
+the tearing instability.
+As shown in the non-linear calculation, a high Hall parameter
+and a thin layer containing the current sheet are essential for the
+development of the instability. We can make an estimate of the rel-
+ative physical parameters using realistic crust models of (Potekhin
+& Yakovlev 1996; Potekhin 1999; Cumming et al. 2004), where the
+electron number density at the base of the crust is ∼2.5×1036cm−3
+and the electric conductivity 3.6 × 1024s−1, while we assume that
+the electron number density at the surface is 2.5 × 1033cm−3 and
+conductivity 3.6 × 1022s−1. Note that the solid surface may ex-
+tend to lower densities, however at these lower densities the mag-
+netic stresses will be comparable to the breaking stresses of the
+crust and the assumption of electron MHD does not hold any more
+(Gourgouliatos & Cumming 2015; Lander 2016). Using the val-
+ues mentioned above, the Hall parameter at the base of the crust
+is RH,b = 100B15 and on the surface RH,s = 1000B15, where B15
+is the magnetic ﬁeld in units of 1015G. The Hall timescale at the
+base of the crust is τH,b = 1.5 × 105B−1
+15yr, while on the surface it is
+τH,s = 1.5 × 102B−1
+15yr, where we have assumed a length-scale for
+the magnetic ﬁeld ∼1km. Finally we need to get a realistic estimate
+of the thickness of the current sheet. Numerical simulations place
+it close to their resolution limit (Hollerbach & R¨udiger 2002; Pons
+& Geppert 2007; Vigan`o et al. 2012), thus in physical dimensions
+this is ∼3m (for a resolution of 346 radial grid points of a ∼1km
+crust (Vigan`o et al. 2012) ). Therefore, using these approximations
+for the quantities appearing in expression (8) the growth rate of the
+instability near the surface (τs) and the base of the crust (τb) of the
+neutron star is:
+τs ≈18 days x2
+3B−2/3
+15
+, τb ≈23 years x2
+3B−2/3
+15
+(10)
+where x3 is the thickness of the current sheet in units of 3m. Note
+that the Ohmic decay timescale for a layer of the same thickness
+close to the surface of a neutron star will be approximately 1.5year.
+Assuming that the current sheet covers a fraction f of the surface
+of the star, whose radius is set to 10km, the energy that will be
+contained in this layer will be
+EI = 1.5 × 1044 erg B2
+15x3 f .
+(11)
+While thinner layers would lead to a faster growing instability, the
+instability layer cannot become inﬁnitesimally thin. The release of
+heat will increase the resistivity of the crust, lower the Hall param-
+eter and eventually dilute the current sheet.
+Release of such amounts of energy in shallow depths have
+been theorised in order to explain the bursting behaviour of mag-
+netar outbursts. J1822.3-1606, a low-magnetic ﬁeld magnetar (5 ×
+1013G), requires 1042erg of thermal energy to be deposited between
+6 × 108 −6 × 1010g cm−3 (Rea et al. 2012), or slightly deeper down
+to 1011g cm−3 (Scholz et al. 2012, 2014) to power its bursts and
+subsequent cooling. Modelling of SGR 0418+5729 has also sug-
+gested that a somewhat smaller amount of thermal energy (1041erg)
+in similar depth, is needed to power its bursts (Rea et al. 2013). In
+a diﬀerent magnetar, CXOU J164710.2-455216, whose magnetic
+ﬁeld is relatively weak (< 7 × 1013G), an energy deposition of
+∼4 × 1044erg at shallow depths is required to power its bursting
+events (An et al. 2013), which could be associated to a much larger
+part of the crust through a longer wavelength, or alternatively an
+extremely high magnetic ﬁeld reaching 1016G is needed. Finally,
+in 1E 1048.1-5937, a similar sequence of bursting events has been
+reported (Archibald et al. 2015) where thermal emission was en-
+hanced in a timeframe of 102 −103 days. The energies required
+by these models can be fulﬁlled by a current sheet covering as lit-
+tle as 1% of the magnetar surface. We remark that the timescales
+here are longer than the instantaneous deposition of thermal energy
+used in cooling models (Pons & Rea 2012), however, for thin cur-
+rent sheets, the generation of Ohmic heat can be as short as few
+days and will not have a major impact on the post-burst cooling of
+the magnetar. Another possibility is that this instability operates in
+conjunction or trigger other types of instabilities suggested to oper-
+ate in the outer curst, such as the thermoresistive instability (Price
+et al. 2012) or the thermoplastic instability (Beloborodov & Levin
+2014; Li et al. 2016), with the major eﬀect of the tearing mode be-
+ing on the reduction of the timescales and an increase on the energy
+eﬃciency.
+Regarding the deeper part of the crust, solutions matching the
+crustal ﬁeld to the superconducting core have found that thin cur-
+rent layers naturally form (Henriksson & Wasserman 2013; Lander
+2014), and assuming similar parameters for the thickness of the
+layer and the strength of the ﬁeld, the resulting timescale exceeds
+∼20 years and cannot be associated to any bursting events. Nev-
+ertheless, it may contribute to faster magnetic ﬁeld decay, aﬀecting
+the global evolution and quiescent thermal radiation. This eﬀect
+may be complementary to other processes that have been proposed
+to operate in the crust-core interface, such as a highly dissipative
+layer (Pons et al. 2013) and enhance the importance of Hall decay
+proposed by Dall’Osso et al. (2012).
+6
+CONCLUSIONS
+In this work we have shown that the tearing mode instability op-
+erates under the Hall eﬀect and resistivity in the Electron-MHD
+description. The appearance of the instability is similar to the usual
+MHD case, developing the characteristic reconnection islands, even
+though the mechanism is physically diﬀerent, as the usual concepts
+of magnetic pressure and tension do not apply in this context. We
+ﬁnd that the tearing instability facilitates a faster magnetic ﬁeld de-
+cay, which is more evident for high Hall parameters, without lead-
+ing to any signiﬁcant ampliﬁcation of the strength of the local mag-
+netic ﬁeld. Considering its role in neutron star magnetic ﬁeld evo-
+lution, we have found it is more likely to occur just below the sur-
+face of strongly magnetised neutron stars or close to the crust-core
+boundary. In the ﬁrst case the energetics of the instability are con-
+sistent with the amount of heat needed for a magnetar burst, which
+is likely to originate close to the surface, while the associated mag-
+netic ﬁeld strengths are suﬃcient to deform the crust. In the latter
+case, it may provide an extra channel for magnetic ﬁeld decay and
+contribute to the quiescent emission.
+We note that the tearing instability discussed here may be rel-
+evant to other systems where evolution under the Hall eﬀect and
+Electron MHD is important. Namely, the Hall eﬀect is known to
+operate in protoplanetary discs (Balbus & Terquem 2001). Lesur
+et al. (2014) showed that the inclusion of ambipolar diﬀusion and
+Ohmic decay leads to the formation of magnetic zones and recently,
+B´ethune et al. (2016) showed that the magnetic ﬁeld reverses direc-
+c⃝- RAS, MNRAS 000, 1–10
+
+Resistive Tearing Instability in E-MHD
+9
+tion within a narrow layer [c.f. Figure 7 of B´ethune et al. (2016)].
+We speculate the these reversal regions may be appropriate sites for
+the development of the tearing instability with implications for the
+overall evolution of these protoplanetary discs.
+Observations of the magnetotail has provided evidence of re-
+connection activity in the region (Nagai et al. 2001; Runov et al.
+2003; Snekvik et al. 2009) and the release of plasmoids due to the
+Hall eﬀect (Liu et al. 2013). While the system near the magneto-
+tail is more complicated than the simple Electron-MHD evolution
+described here, the basic principles described here may be still in
+operation and enhance the reconnection and the subsequent plas-
+moid formation.
+ACKNOWLEDGMENTS
+We thank our referee Matthias Rheinhardt, whose constructive
+comments have greatly improved our manuscript. We also thank
+Andrew Cumming, Paul Schloz for discussion on applications of
+the tearing instability in neutron star crusts, and Maxim Lyutikov,
+Serguei Komissarov and Gordon Ogilvie for insightful discussions
+motivating this work. This work was supported by STFC Grant No.
+ST/K000853/1.
+REFERENCES
+An H., Kaspi V. M., Archibald R., Cumming A., 2013, Astrophys.
+J., 763, 82
+Archibald R. F., Kaspi V. M., Ng C.-Y., et al., 2015, Astrophys. J.,
+800, 33
+Aschwanden M. J., 2002, Space Science Reviews, 101, 1
+Balbus S. A., Terquem C., 2001, Astrophys. J., 552, 235
+Barkov M. V., Komissarov S. S., 2016, Mon. Not. Roy. Astron.
+Soc. , 458, 1939
+Beloborodov A. M., Levin Y., 2014, Astrophys. J. Lett., 794, L24
+Beloborodov, A. M., & Li, X. 2016, arXiv:1605.09077
+B´ethune W., Lesur G., Ferreira J., 2016, Astron. Astrophys. , 589,
+A87
+Biskamp D., Schwarz E., Drake J. F., 1996, Physical Review Let-
+ters, 76, 1264
+Bloch F., 1932, Zeitschrift fur Physik, 74, 295
+Bodin H. A. B., Newton A. A., 1963, Physics of Fluids, 6, 1338
+Boyd J., 2001, Chebyshev and Fourier Spectral Methods: Second
+Revised Edition, Dover Books on Mathematics, Dover Publica-
+tions
+Contopoulos I., Kazanas D., Fendt C., 1999, Astrophys. J., 511,
+351
+Cumming A., Arras P., Zweibel E., 2004, Astrophys. J., 609, 999
+Dall’Osso S., Granot J., Piran T., 2012, Mon. Not. Roy. Astron.
+Soc. , 422, 2878
+Del Zanna L., Papini E., Landi S., Bugli M., Bucciantini N., 2016,
+Mon. Not. Roy. Astron. Soc. , 460, 3753
+Elenbaas, C., Watts, A. L., Turolla, R., & Heyl, J. S. 2016, Mon.
+Not. Roy. Astron. Soc. , 456, 3282
+Finn J. M., Manheimer W. M., Antonsen T. M., 1983, Physics of
+Fluids, 26, 962
+Fruchtman A., Strauss H. R., 1993, Physics of Fluids B, 5, 1408
+Fujisawa K., Kisaka S., 2014, in Magnetic Fields throughout Stel-
+lar Evolution, edited by P. Petit, M. Jardine, H. C. Spruit, vol. 302
+of IAU Symposium, 427–428
+Furth H. P., Killeen J., Rosenbluth M. N., 1963, Physics of Fluids,
+6, 459
+Geppert U., Vigan`o D., 2014, Mon. Not. Roy. Astron. Soc. , 444,
+3198
+Goldreich P., Reisenegger A., 1992, Astrophys. J., 395, 250
+Gourgouliatos, K. N., & Cumming, A. 2014, Physical Review
+Letters, 112, 171101
+Gourgouliatos K. N., Cumming A., 2014b, Mon. Not. Roy. As-
+tron. Soc. , 438, 1618
+Gourgouliatos K. N., Cumming A., 2015, Mon. Not. Roy. Astron.
+Soc. , 446, 1121
+Gourgouliatos K. N., Cumming A., Reisenegger A., Armaza C.,
+Lyutikov M., Valdivia J. A., 2013, Mon. Not. Roy. Astron. Soc.
+, 434, 2480
+Gourgouliatos K. N., Kondi´c T., Lyutikov M., Hollerbach R.,
+2015, Mon. Not. Roy. Astron. Soc. , 453, L93
+Gourgouliatos K. N., Wood T. S., Hollerbach R., 2016, Proceed-
+ings of the National Academy of Science, 113, 3944
+Henriksson K. T., Wasserman I., 2013, Mon. Not. Roy. Astron.
+Soc. , 431, 2986
+Hollerbach R., R¨udiger G., 2002, Mon. Not. Roy. Astron. Soc. ,
+337, 216
+Hollerbach R., R¨udiger G., 2004, Mon. Not. Roy. Astron. Soc. ,
+347, 1273
+Jones P. B., 1988, Mon. Not. Roy. Astron. Soc. , 233, 875
+Kalapotharakos C., Contopoulos I., 2009, Astron. Astrophys. ,
+496, 495
+KappraﬀJ., Grossmann W., Kress M., 1981, Journal of Plasma
+Physics, 25, 111
+Kojima Y., Kisaka S., 2012, Mon. Not. Roy. Astron. Soc. , 421,
+2722
+Komissarov S. S., 2006, Mon. Not. Roy. Astron. Soc. , 367, 19
+Komissarov S. S., Barkov M., Lyutikov M., 2007, Mon. Not. Roy.
+Astron. Soc. , 374, 415
+Lander S. K., 2013, Physical Review Letters, 110, 7, 071101
+Lander S. K., 2014, Mon. Not. Roy. Astron. Soc. , 437, 424
+Lander S. K., 2016, Astrophys. J. Lett., 824, L21
+Landi S., Del Zanna L., Papini E., Pucci F., Velli M., 2015, Astro-
+phys. J., 806, 131
+Lesur G., Kunz M. W., Fromang S., 2014, Astron. Astrophys. ,
+566, A56
+Li, X., Levin, Y., & Beloborodov, A. M. 2016, arXiv:1606.04895
+Liu C., Feng X., Guo J., Ye Y., 2013, Journal of Geophysical Re-
+search (Space Physics), 118, 2087
+Low B. C., 1973, Astrophys. J., 181, 209
+Lyubarsky Y., Eichler D., Thompson C., 2002, Astrophys. J. Lett.,
+580, L69
+Marchant P., Reisenegger A., Alejandro Valdivia J., Hoyos J. H.,
+2014, Astrophys. J., 796, 94
+Mirin A. A., O’Neill N. J., Killeen J., Bonugli R. J., Ellis M. J.,
+1986, Physics of Fluids, 29, 512
+Nagai T., Shinohara I., Fujimoto M., et al., 2001, J. Geophys. Res.,
+106, 25929
+Olausen S. A., Kaspi V. M., 2014, Astrophys. J. Supp. Ser. , 212,
+6
+Pons J. A., Geppert U., 2007, Astron. Astrophys. , 470, 303
+Pons J. A., Geppert U., 2010, Astron. Astrophys. , 513, L12
+Pons J. A., Miralles J. A., Geppert U., 2009, Astron. Astrophys. ,
+496, 207
+Pons J. A., Rea N., 2012, Astrophys. J. Lett., 750, L6
+Pons J. A., Vigan`o D., Rea N., 2013, Nature Physics, 9, 431
+Potekhin A. Y., 1999, Astron. Astrophys. , 351, 787
+c⃝- RAS, MNRAS 000, 1–10
+
+10
+K.N. Gourgouliatos & R. Hollerbach
+Potekhin A. Y., Yakovlev D. G., 1996, Astron. Astrophys. , 314,
+341
+Price S., Link B., Epstein R. I., Li H., 2012, Mon. Not. Roy. As-
+tron. Soc. , 420, 949
+Priest E. R., 1985, Reports on Progress in Physics, 48, 955
+Rea N., Israel G. L., Esposito P., et al., 2012, Astrophys. J., 754,
+27
+Rea N., Israel G. L., Pons J. A., et al., 2013, Astrophys. J., 770,
+65
+Reisenegger A., Benguria R., Prieto J. P., Araya P. A., Lai D.,
+2007, Astron. Astrophys. , 472, 233
+Rheinhardt M., Geppert U., 2002, Physical Review Letters, 88,
+10, 101103
+Rheinhardt M., Konenkov D., Geppert U., 2004, Astron. Astro-
+phys. , 420, 631
+Rosenbluth M. N., Chang D. B., 1967, Journal of Geophysical
+Research, 72, 143
+Runov A., Nakamura R., Baumjohann W., et al., 2003, Geophys.
+Res. Lett., 30, 33
+Rutherford P. H., 1973, Physics of Fluids, 16, 1903
+Scholz P., Kaspi V. M., Cumming A., 2014, Astrophys. J., 786, 62
+Scholz P., Ng C.-Y., Livingstone M. A., Kaspi V. M., Cumming
+A., Archibald R. F., 2012, Astrophys. J., 761, 66
+Sironi L., Spitkovsky A., 2014, Astrophys. J. Lett., 783, L21
+Snekvik K., Juusola L., Østgaard N., Amm O., 2009, Geophys.
+Res. Lett., 36, L08104
+Somov B. V., Verneta A. I., 1989, Solar Phys., 120, 93
+Spitkovsky A., 2006, Astrophys. J. Lett., 648, L51
+Sturrock P. A., 1966, Nature, 211, 695
+Thompson C., Duncan R. C., 2001, Astrophys. J., 561, 980
+Uzdensky D. A., Spitkovsky A., 2014, Astrophys. J., 780, 3
+Vainshtein S. I., Chitre S. M., Olinto A. V., 2000, Phys. Rev. E.,
+61, 4422
+Vigan`o D., Pons J. A., Miralles J. A., 2012, Computer Physics
+Communications, 183, 2042
+Wareing C. J., Hollerbach R., 2009, Physics of Plasmas, 16, 4,
+042307
+Wareing C. J., Hollerbach R., 2010, Journal of Plasma Physics,
+76, 117
+Wood T. S., Hollerbach R., 2015, Physical Review Letters, 114,
+19, 191101
+Wood T. S., Hollerbach R., Lyutikov M., 2014, Physics of Plas-
+mas, 21, 5, 052110
+c⃝- RAS, MNRAS 000, 1–10

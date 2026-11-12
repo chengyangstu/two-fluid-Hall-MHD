@@ -1,0 +1,204 @@
+\section{从粒子分布到流体：把前三阶矩逐项算完}
+\label{sec:tutorial-moments}
+\subsection{分布函数不是流速；先明确积分在什么空间进行}
+$f_s(\vct x,\vct v,t)\dd^3x\dd^3v$表示相空间小体积内的粒子数。固定位置$\vct x$后，对$\vct v$积分才得到该位置的数密度；同一点可以同时存在向相反方向运动的粒子。没有碰撞时也仍然可以定义平均流与压力。
+
+非相对论Vlasov--Boltzmann方程是
+\begin{equation}
+ \partial_tf_s+v_j\partial_jf_s+
+ {q_s\over m_s}(E_j+\epsilon_{jkl}v_kB_l)\partial_{v_j}f_s=C_s[f].
+ \label{eq:vlasov}
+\end{equation}
+左边依次是在固定相空间点的时间变化、粒子在真实空间的运动、Lorentz力造成的速度空间运动。右边$C_s$表示碰撞；需要电离、复合时还应增加相应源项。本节暂时假设每个物种粒子数守恒，即$\int C_s\dd^3v=0$。
+\begin{align}
+ n_s&=\int f_s\dd^3v,&
+ n_s\vel_s&=\int\vct v f_s\dd^3v,\\
+ \vct c&=\vct v-\vel_s,&
+ \int\vct c f_s\dd^3v&=0,\\
+ P_{s,ij}&=m_s\int c_ic_j f_s\dd^3v,&
+ Q_{s,ijk}&=m_s\int c_ic_jc_k f_s\dd^3v,\\
+ p_s&={1\over3}P_{s,ii},&
+ q_{s,k}&={1\over2}Q_{s,iik}.
+\end{align}
+其中$\rho_s=m_sn_s$。$\mathsf P_s$描述围绕平均流的随机运动；冷粒子束即使整体流速很大，相对于其自身平均速度的压力仍可以很小。反过来，两束方向相反的冷束总平均速度为零，总压力却不为零。
+
+\subsection{所有矩方程共同使用的一次分部积分}
+记加速度$a_j=(q_s/m_s)(E_j+\epsilon_{jkl}v_kB_l)$。由于场不依赖粒子速度，
+\begin{equation}
+ \partial_{v_j}a_j={q_s\over m_s}\epsilon_{jkl}\delta_{jk}B_l=0.
+\end{equation}
+对只依赖$\vct v$的权函数$w(\vct v)$，在速度空间半径$R$的球内先积分：
+\begin{equation}
+ \int w a_j\partial_{v_j}f_s\dd^3v
+ =\oint_{|\vct v|=R}w f_s\vct a\cdot\dd\vct S_v
+ -\int f_s a_j\partial_{v_j}w\dd^3v.
+\end{equation}
+若$f_s$衰减得足够快，使所考虑阶矩及表面通量收敛，令$R\to\infty$后表面项消失。将剩下的负项移到方程右边：
+\begin{equation}
+ \partial_t\int wf_s\dd^3v+\partial_j\int v_jwf_s\dd^3v
+ =\int f_s\vct a\cdot\grad_vw\,\dd^3v+\int wC_s\dd^3v.
+ \label{eq:tutorial-mastermoment}
+\end{equation}
+这就是取矩的通用公式。若选$w=m_sc_ic_j$，由于$\vel_s(\vct x,t)$也在$c_i$中，权函数额外依赖时空，不能直接套用这个简化式。因此下面先取原始矩$v_iv_j$，再减去平均运动，步骤更不容易出错。
+
+\subsection{零阶矩：把每一项都写出来}
+取$w=1$。时间项给$\partial_t n_s$，空间通量给$\partial_j(n_su_{s,j})$，而$\grad_vw=0$使力项为零。粒子数守恒的碰撞积分也为零，于是
+\begin{equation}
+ \partial_tn_s+\grad\cdot(n_s\vel_s)=0.
+ \label{eq:continuity}
+\end{equation}
+展开散度：
+\begin{equation}
+ \partial_t n_s+\vel_s\cdot\grad n_s+n_s\grad\cdot\vel_s=0
+ \quad\Longrightarrow\quad
+ D_sn_s=-n_s\theta_s,\quad\theta_s=\grad\cdot\vel_s.
+\end{equation}
+正散度表示小流体团膨胀，密度随之降低。这个方程并没有要求麦克斯韦分布、压强各向同性、低温或无碰撞。
+
+\paragraph{跟算例：均匀膨胀。}
+令$\vel=a(t)\vct x$，则$\theta=3a$。沿流轨迹有
+$n(t)=n(0)\exp[-3\int_0^ta(t')\dd t']$。如果空间只允许二维变化，但取$u_z=0$，则该特定流的散度是$2a$；这与速度分布仍有三个自由度并不冲突。
+
+\subsection{一阶矩：电磁力的符号从哪里来}
+对第$i$个分量取$w=m_sv_i$。由$\partial_{v_j}w=m_s\delta_{ij}$，
+\begin{align}
+ \int f_s\vct a\cdot\grad_vw\,\dd^3v
+ &=q_s\int f_s(E_i+\epsilon_{ikl}v_kB_l)\dd^3v\\
+ &=q_sn_s(E_i+\epsilon_{ikl}u_{s,k}B_l).
+\end{align}
+电子的$q_e=-e$在这一步保留；不应在得到欧姆定律后凭直觉补符号。
+再展开动量通量中的乘积：
+\begin{align}
+ m_s\int v_iv_jf_s\dd^3v
+ &=m_s\int(u_i+c_i)(u_j+c_j)f_s\dd^3v\\
+ &=\rho_su_iu_j+
+ m_su_i\int c_jf_s\dd^3v+
+ m_su_j\int c_if_s\dd^3v+
+ m_s\int c_ic_jf_s\dd^3v\\
+ &=\rho_su_iu_j+P_{s,ij}.
+\end{align}
+两个交叉项严格为零，使用的是平均速度的定义。定义碰撞动量交换$\vct R_s=m_s\int\vct vC_s\dd^3v$，得到
+\begin{equation}
+ \partial_t(\rho_s\vel_s)+
+ \grad\cdot(\rho_s\vel_s\vel_s+\mathsf P_s)
+ =q_sn_s(\E+\vel_s\times\B)+\vct R_s.
+ \label{eq:momentum}
+\end{equation}
+现在才把它变成随体形式。以$x$分量为例，
+\begin{align}
+ \partial_t(\rho u_x)+\partial_j(\rho u_ju_x)
+ &=\rho\partial_tu_x+\rho u_j\partial_ju_x
+   +u_x[\partial_t\rho+\partial_j(\rho u_j)]\\
+ &=\rho Du_x.
+\end{align}
+三个分量合起来即
+\begin{equation}
+ \rho_sD_s\vel_s=q_sn_s(\E+\vel_s\times\B)
+                  -\grad\cdot\mathsf P_s+\vct R_s.
+ \label{eq:speciesmom}
+\end{equation}
+左边的量纲是$ {\rm kg\,m^{-3}}\times{\rm m\,s^{-2}}={\rm N\,m^{-3}}$，右边每一项也必须是单位体积的力。压力沿$x$增大时$-\partial_xp<0$，流体受到指向低压侧的力，可用来检查符号。
+
+\subsection{二阶原始矩：八项乘积不能省略成一句话}
+暂省物种下标。定义
+$M_{ij}=m\int v_iv_jf\dd^3v=\rho u_iu_j+P_{ij}$。
+取$w=mv_iv_j$时
+$\partial_{v_l}w=m(\delta_{il}v_j+\delta_{jl}v_i)$，所以
+\begin{align}
+ \partial_tM_{ij}+\partial_k\mathcal Q_{ijk}
+ &=qn(E_iu_j+E_ju_i)\\
+ &\quad+{q\over m}
+ (\epsilon_{ikl}M_{kj}B_l+\epsilon_{jkl}M_{ki}B_l)
+ +\mathcal C^{(2)}_{ij},\nonumber
+\end{align}
+其中$\mathcal C^{(2)}_{ij}=m\int v_iv_jC\dd^3v$。空间通量需要三阶原始矩，逐项展开
+\begin{align}
+ v_iv_jv_k={}&u_iu_ju_k
+ +c_iu_ju_k+u_ic_ju_k+u_iu_jc_k\\
+ &+u_ic_jc_k+c_iu_jc_k+c_ic_ju_k+c_ic_jc_k.\nonumber
+\end{align}
+积分后，含一个$c$的三项为零，含两个$c$的三项留下压力，因此
+\begin{equation}
+ \mathcal Q_{ijk}
+ =\rho u_iu_ju_k+u_iP_{jk}+u_jP_{ik}+u_kP_{ij}+Q_{ijk}.
+ \label{eq:tutorial-rawthird}
+\end{equation}
+到此仍没有闭合：右侧最后一个$Q_{ijk}$是新的未知量。
+
+\subsection{减去平均动能：压力方程中的电场为何消失}
+用连续性和乘积法则得到
+\begin{equation}
+ \partial_t(\rho u_iu_j)+\partial_k(\rho u_iu_ju_k)
+ =\rho u_iDu_j+\rho u_jDu_i.
+\end{equation}
+把动量方程代入右边，其中电场部分恰为$qn(u_iE_j+u_jE_i)$；磁场的平均流部分恰为
+$(q/m)(\epsilon_{ikl}\rho u_ku_jB_l+\epsilon_{jkl}\rho u_ku_iB_l)$。
+它们分别与二阶原始矩的对应部分抵消。
+还要处理压力乘积。例如
+\begin{equation}
+ \partial_k(u_iP_{jk})-u_i\partial_kP_{jk}
+ =P_{jk}\partial_ku_i.
+\end{equation}
+另一项同理。剩下的$u_kP_{ij}$不作消去，保留成压力的对流通量。于是
+\begin{align}
+ \partial_tP_{ij}+\partial_k(u_kP_{ij})
+ +P_{ik}\partial_ku_j+P_{jk}\partial_ku_i+\partial_kQ_{ijk}
+ ={}&{q\over m}(\epsilon_{ikl}P_{kj}B_l+\epsilon_{jkl}P_{ki}B_l)
+ +C_{ij}.
+ \label{eq:pressure}
+\end{align}
+这里$C_{ij}=m\int c_ic_jC\dd^3v$。在粒子数守恒时，它等于$\mathcal C^{(2)}_{ij}-u_iR_j-u_jR_i$；因此碰撞引起的整体加速与随机能量变化已经分开。
+
+这条式子右边没有显式电场，不表示电场不能间接改变温度。电场先改变平均流，流的空间梯度再通过左侧两个压力应变项改变随机运动。热流把邻近位置的速度分布信息带入本地。
+
+\paragraph{跟算例：均匀磁场只旋转压力椭球。}
+取$\vel=0$、空间均匀、$\B=B_0\hat z$、$Q=C=0$，记带符号回旋频率$\Omega=qB_0/m$。压力方程逐分量变为
+\begin{align}
+ \dot P_{xx}&=2\Omega P_{xy},&
+ \dot P_{yy}&=-2\Omega P_{xy},&
+ \dot P_{zz}&=0,\\
+ \dot P_{xy}&=\Omega(P_{yy}-P_{xx}),&
+ \dot P_{xz}&=\Omega P_{yz},&
+ \dot P_{yz}&=-\Omega P_{xz}.
+\end{align}
+前三式相加立刻得到$\partial_t\operatorname{tr}\mathsf P=0$。磁场可以改变非对角压力，却不能通过这一旋转项增加总随机能量。电子的$\Omega<0$，旋转方向相反。
+
+\subsection{取迹得到内能：解释每一个二分之一}
+随机平动能密度为
+\begin{equation}
+ U_s={m_s\over2}\int c^2f_s\dd^3v={1\over2}P_{s,ii}.
+\end{equation}
+令压力方程$i=j$并求和。两个压力应变项相同，相加为$2P_{ik}\partial_ku_i$；磁旋转项为零，因为对称的$P_{ik}$与反对称的$\epsilon_{ikl}$缩并为零。定义$q_k=Q_{iik}/2$、$H_s=C_{s,ii}/2$，全式除以2：
+\begin{equation}
+ \partial_tU_s+\grad\cdot(U_s\vel_s)
+ +\mathsf P_s:\grad\vel_s+\grad\cdot\vct q_s=H_s.
+ \label{eq:internal}
+\end{equation}
+如果$\mathsf P=p\mathsf I$，则$U=3p/2$且$\mathsf P:\grad\vel=p\theta$。压缩时$\theta<0$，右移后的$-p\theta$为正，表示压缩做功增加内能。压力应变在无碰撞演化中可以反向，不能自动称为不可逆热化。
+
+\subsection{再把平均流能加回来，检查电磁功的去向}
+定义$K_s=\rho_su_s^2/2$。动量方程点乘$\vel_s$，并用
+\begin{equation}
+ \vel_s\cdot(\grad\cdot\mathsf P_s)
+ =\grad\cdot(\mathsf P_s\cdot\vel_s)-\mathsf P_s:\grad\vel_s
+\end{equation}
+得到
+\begin{equation}
+ \partial_tK_s+\grad\cdot(K_s\vel_s+\mathsf P_s\cdot\vel_s)
+ =q_sn_s\vel_s\cdot\E+\mathsf P_s:\grad\vel_s+\vel_s\cdot\vct R_s.
+\end{equation}
+这里$\vel_s\cdot(\vel_s\times\B)=0$。与内能方程相加，压力应变一正一负抵消：
+\begin{equation}
+ \partial_t\mathcal E_s+
+ \grad\cdot(\mathcal E_s\vel_s+\mathsf P_s\cdot\vel_s+\vct q_s)
+ =q_sn_s\vel_s\cdot\E+\vel_s\cdot\vct R_s+H_s,
+ \quad\mathcal E_s=K_s+U_s.
+ \label{eq:energy}
+\end{equation}
+所以压力应变是平均流能与内能之间的交换；电磁功连接场能与粒子总能。只有把这几条方程同时列出，才能准确判断模拟图中的“能量转换”是哪一个通道。
+
+\subsection{为什么有了这些精确方程仍然没有求解完整问题}
+密度方程含速度，动量方程含压力，压力方程含三阶矩；继续取三阶矩又会出现四阶矩。精确取矩没有减少所需信息，只是重新组织信息。设定$Q=0$、设定$\mathsf P=p\mathsf I$、采用Landau型热流，都是额外物理近似，不能由积分运算自动得到。
+
+\paragraph{自检与答案。}
+若两个等密度冷电子束分别以$\pm V\hat x$运动，总数密度为$n$，则$\vel=0$，$P_{xx}=mnV^2$，$P_{yy}=P_{zz}=0$，$p=mnV^2/3$。若此时强行改成$p\mathsf I$，总内能$3p/2$不变，但沿$x$的应力从$mnV^2$变成$mnV^2/3$，另外两个方向凭空出现压力。这说明“内能相同”不能保证重联喷流和压力支撑相同。五矩与十矩的区别正从这里开始。\citep{Wang2015,Ng2020}

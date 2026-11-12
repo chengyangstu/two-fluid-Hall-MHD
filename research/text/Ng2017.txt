@@ -1,0 +1,754 @@
+Simulations of the anti-parallel reconnection using a nonlocal heat ﬂux closure
+Jonathan Ng, Ammar Hakim, and A. Bhattacharjee
+Center for Heliophysics, Department of Astrophysical Sciences and Princeton Plasma Physics Laboratory,
+Princeton University, Princeton, NJ 08543, USA
+Adam Stanier and W. Daughton
+Los Alamos National Laboratory, Los Alamos, NM 87545, USA
+(Dated: June 8, 2017)
+The integration of kinetic eﬀects in ﬂuid models is important for global simulations of the Earth’s
+magnetosphere. In particular, it has been shown that ion kinetics play a crucial role in the dynamics
+of large reconnecting systems, and that higher-order ﬂuid moment models can account for some of
+these eﬀects. Here we use a ten-moment model for electrons and ions, which includes the oﬀdiagonal
+elements of the pressure tensor that are important for magnetic reconnection. Kinetic eﬀects are
+recovered by using a nonlocal heat ﬂux closure, which approximates linear Landau damping in the
+ﬂuid framework. The closure is tested using the island coalescence problem, which is sensitive to
+ion dynamics. We demonstrate that the nonlocal closure is able to self-consistently reproduce the
+structure of the ion diﬀusion region, pressure tensor and ion velocity without the need for ﬁne-tuning
+of relaxation coeﬃcients present in earlier models.
+Magnetic reconnection is a change in topology of the
+magnetic ﬁeld lines in a plasma [1], often followed by the
+conversion of stored magnetic energy to the kinetic en-
+ergy of accelerated particles. It is believed to play an im-
+portant role in many laboratory and astrophysical plasma
+processes, including sawtooth crashes in tokamaks, solar
+ﬂares, magnetic substorms in the Earth’s magnetosphere
+and coronal mass ejections [2–6].
+For reconnection to take place, the motion of the
+plasma must decouple from the magnetic ﬁeld lines. In
+collisionless environments such as the magnetosphere,
+this takes place in the electron diﬀusion region, and due
+to the kinetic scales involved, cannot be described purely
+by resistive magnetohydrodynamic (MHD) models such
+as the Sweet-Parker model [7, 8]. For large scale global
+numerical studies of the magnetosphere, which are cru-
+cial for accurate space weather prediction, the use of ﬂuid
+models is common due to the computational cost involved
+in simulating the large domains involved. Thus, the de-
+velopment of extended ﬂuid models incorporating colli-
+sionless eﬀects is desirable for capturing the physics of
+reconnection in large systems.
+The major issue with ﬂuid models is the closure of the
+hierarchy of ﬂuid equations obtained by taking moments
+of the kinetic equation. While increasing the number of
+moments allows more information about the distribution
+function to be captured [9], a choice must be made as to
+when to close the equations and how to treat the highest
+moment. Most closures of the moment equations involve
+an expansion in small Knudsen number in the collisional
+regime, and attempts have been made to use these models
+to simulate magnetic reconnection [10–13].
+However, in the collisionless case, kinetic eﬀects such
+as phase mixing are present and cannot be captured by
+these ﬂuid closures [14, 15]. Instead, approximations can
+be made by introducing collisionless damping coeﬃcients
+by expressing the highest moments in terms of lower mo-
+ments. Unlike the collisional case, the closure coeﬃcients
+can be complex and are nonlocal in space [14, 15]. While
+these models have been used extensively in studies of
+fusion plasmas [16, 17], they have not been applied to
+studies of magnetic reconnection.
+In this paper we describe the self-consistent implemen-
+tation of a ﬂuid closure using the ten-moment equation
+system without any adjustable parameters. We evolve
+the full pressure tensor for both electrons and ions, which
+is necessary to balance the reconnection electric ﬁeld in
+collisionless reconnection [18, 19], and close for the heat
+ﬂux using a three-dimensional extension of the Hammett-
+Perkins closure [14]. We perform simulations of the island
+coalescence problem, in which the existing Hall MHD
+ﬂuid model does not reproduce the kinetic result due
+to the absence of important ion physics [20, 21].
+We
+demonstrate here with the collisionless ﬂuid model that
+the wider ion diﬀusion region can be reproduced with-
+out the ﬁne tuning of a free parameter as was previously
+required [21].
+While the strong system-size scaling of
+the reconnection rate in kinetic and hybrid (kinetic ion,
+ﬂuid electron) simulations is not completely reproduced
+for larger scales, the new closure successfully captures
+the ion-scale structures such as agyrotropy which are not
+accounted for consistently by earlier ﬂuid models.
+The ten-moment equations are derived by taking mo-
+ments of the kinetic equation
+∂n
+∂t +
+∂
+∂xj
+(nuj) = 0
+m ∂
+∂t(nui) + ∂Pij
+∂xj
+= nq(Ej + ϵijkujBk).
+∂Pij
+∂t
++ ∂Qijk
+∂xk
+= nqu[iEj] + q
+mϵ[iklPkj]Bl,
+(1)
+where Pij and Qijk are the second and third moments of
+
+the distribution function
+Pij ≡m
+Z
+vivjfd3v
+Qijk ≡m
+Z
+vivjvkfd3v,
+(2)
+and the square brackets denote a sum over permutations
+of the indices (e.g. u[iEj] = uiEj + ujEi).
+The third
+moment tensor Qijk can be written in terms of the heat
+ﬂux tensor qijk ≡m
+R
+(vi −ui)(vj −uj)(vk −uk)fd3v
+Qijk = qijk + u[iPjk] −2mnuiujuk.
+(3)
+Earlier multi-ﬂuid models of reconnection involving
+a pressure tensor have employed a relaxation to local
+isotropy in the form ∂iqijk = nvt|k0|(Tij −T0δij). Here
+vt =
+p
+2T/m is the thermal velocity of the associated
+species and k0 is a free parameter which eﬀectively al-
+lows deviations from isotropy at length scales less than
+1/|k0| [10, 11, 13, 21]. It has been shown that simulation
+results are sensitive to the choice of k0 for each species
+[13, 21] and such free parameters are present in earlier
+eﬀorts as well [10, 11, 13].
+In order to close the equations in the collisionless limit,
+we use a three-dimensional extension of the Hammett-
+Perkins closure, which can be expressed as follows for
+both electrons and ions [14]:
+qijk(x) = n(x)ˆqijk(x)
+(4)
+where ˆqijk in Fourier space is ˜qijk and is calculated as
+˜qijk = −i vt
+|k|χk[i ˜Tjk].
+(5)
+Here ˜Tjk is the Fourier transform of the deviation of the
+local temperature tensor from the mean. The 1/|k| scal-
+ing makes this a non-local closure when expressed in real
+space [15, 16] and provides a 1 to 3 pole Pad´e approx-
+imation of various components of the dielectric tensor.
+The coeﬃcient χ =
+p
+4/9π is the best ﬁt value for the
+diagonal qiii component and reduces to the closure in
+Refs. [14, 15] in the 1-D limit. This is an unmagnetised
+closure (especially relevant to ions in this geometry in
+which there is no guide ﬁeld) which approximates lin-
+ear phase mixing, allowing the wavenumber-dependent
+damping of spurious short-wavelength oscillations which
+are present in higher moment ﬂuid models [15, 22], and
+to our knowledge, is the ﬁrst of its kind in closure studies
+of magnetic reconnection.
+The moment equations coupled to Maxwell’s equa-
+tions are implemented in the ﬁnite-volume version of the
+Gkeyll code, which uses a high-resolution wave propa-
+gation method for the hyperbolic part of the equations
+and a point implicit method for the source terms [23, 24].
+The closure is evaluated using an interface to the parallel
+FFTW library [25].
+0
+5
+10
+15
+20
+tωpe
+10-5
+10-4
+10-3
+˜E
+(a)
+Nonlocal
+No heat flux
+Exact
+0.0
+0.5
+1.0
+1.5
+t/tA
+0.0
+0.4
+0.8
+ER
+(b)
+Hall MHD
+Nonlocal
+Local
+Kinetic
+5
+10
+25
+λ/di
+0.1
+0.2
+0.4
+0.6
+ER
+ Max. reconnection
+ rate
+(c)
+Kinetic
+Nonlocal
+Local
+Hall MHD
+5
+10
+25
+λ/di
+0.05
+0.15
+0.25
+­
+ER
+®
+(d)
+Avg. reconnection rate
+FIG. 1. (a) Damping of electrostatic ﬂuctuations in 1-D ten-
+moment simulations. (b) Reconnection rates in kinetic, ten-
+moment and Hall MHD simulations. (c) Scaling of maximum
+reconnection rate with system size.
+(d) Scaling of average
+reconnection rate over 1.5tA with system size.
+We ﬁrst illustrate the eﬀects of the closure in Fig. 1(a),
+which shows the evolution of the electric ﬁeld amplitude
+for a Langmuir wave with kλde = 0.35 in a 1-D two-
+ﬂuid simulation, where λde is the electron Debye length.
+In the simulation, the measured frequency and damp-
+ing rate in terms of the electron plasma frequency ωpe
+are ω = 1.16ωpe, γ = 0.044ωpe respectively, compared
+to the exact solution from the linear Vlasov dispersion
+relation ω = 1.22ωpe, γ = 0.034ωpe. Here we note that
+the measured values are consistent with those calculated
+using the Pad´e approximant of the plasma dispersion
+function, and improved agreement with the Vlasov so-
+lution requires evolving higher ﬂuid moments [14–16]. In
+contrast, the simulation without any explicit dissipation
+is qualitatively diﬀerent and shows no damping as ex-
+pected.
+For magnetic reconnection, while the Harris sheet ge-
+ometry is a standard test problem [26], and has been
+successfully simulated using this closure (not shown), we
+focus on the island coalescence geometry in this paper
+as it has been found to be sensitive to ion rather than
+electron dynamics [20, 21], for which this closure would
+be a better approximation. This is a Fadeev equilibrium
+with initial conditions [27]
+Ay = −λB0 ln [cosh(z/λ) + ϵ cos(x/λ)]
+n = n0(1 −ϵ2)/ [cosh(z/λ) + ϵ cos(x/λ)]2 + nb.
+(6)
+Here B0 is the x-component of the magnetic ﬁeld up-
+stream of the layer, ϵ controls the island size and λ is the
+half width of the current sheet. We use the same physical
+parameters as described in previous studies [20, 21, 28],
+with ϵ = 0.4, which corresponds to an island half-width of
+approximately 1.2λ, and background density nb = 0.2n0.
+2
+
+The system size is Lx × Lz = 4πλ × 2πλ, with peri-
+odic boundary conditions in the x direction. Conducting
+walls for ﬁelds and reﬂecting walls for particles are used
+in the z direction. We use mass ratio mi/me = 25, elec-
+tron thermal speed vt,e/c = 0.35 and Ti = Te = T, and
+the value of T is set by the upstream equilibrium con-
+dition β = 1. The ratio of electron plasma frequency to
+gyrofrequency is ωpe/Ωce = 2. A 10% initial perturba-
+tion in the magnetic ﬁeld is applied to initiate merging.
+The kinetic (particle-in-cell) results in this paper are de-
+scribed in Ref. [20] and additional simulations for the
+λ/di = 5, 10 cases were performed using the particle-in-
+cell code PSC, which is described in Ref. [29].
+In MHD, multi-ﬂuid and kinetic models, the initial
+phase in which the islands approach each other is driven
+by the ideal MHD coalescence instability [30], and diﬀer-
+ences between the models only appear after the central
+current sheet begins to form [20, 21]. This can be seen in
+Fig. 1(b), which shows the normalised reconnection rate
+for simulations using the new closure and earlier kinetic,
+ten-moment and Hall MHD simulations [20, 21]. Here
+the reconnection rate ER = (1/B′V ′
+A)∂ψ/∂t is found in
+the same manner as in Refs.[20, 21, 28], where B′ and
+V ′
+A are calculated using the maximum magnetic ﬁeld be-
+tween the centres of the two islands at t = 0. The ﬂux
+within an island ψ is deﬁned as the diﬀerence between
+Ay at the X- and O-points.
+Because reconnection in this system is bursty, it is use-
+ful to consider the average as well as maximum reconnec-
+tion rates [20, 21, 28]. In Figs. 1(c-d), the scaling of the
+maximum and average (over 1.5 global Alfv´en times) re-
+connection rates with system size is shown.
+With the
+nonlocal closure, there is a stronger negative scaling of
+the average reconnection rate ∝(λ/di)−0.45 for system
+sizes up to λ/di = 25 compared to (λ/di)−0.2 for both
+Hall MHD and ten moment simulations with a local clo-
+sure.
+However, this is still weaker than the results of
+Ref. [20] where the rate scales like ∝(λ/di)−0.8 and
+(λ/di)−0.65 for kinetic and hybrid models respectively.
+The discrepancies for the ten moment systems are par-
+tially explained by the enhancement of the reconnection
+rate due to the formation of secondary islands in smaller
+systems (λ/di = 15 for the nonlocal closure, λ/di = 25
+for the local closure). In the presence of multiple islands,
+the reconnection rate is measured using the diﬀerence in
+ﬂux between the O-point and the major X-point.
+Figure 2 shows a comparison between the kinetic, ten-
+moment and Hall MHD simulations with λ = 5di at
+t = tA, which is close to the time of maximum reconnec-
+tion rate. Due to the coalescence geometry [Eq. (6)], the
+inﬂow is in the x (horizontal) direction while the outﬂow
+is in the z (vertical) direction, which is opposite to the
+usual Harris sheet. As can be seen in the bottom panel,
+the width of the current sheet in the ten-moment sim-
+ulation is comparable to that in the kinetic simulation
+5
+0
+5
+z[di]
+Kinetic
+Current density, t = tA
+5
+0
+5
+z[di]
+Nonlocal
+closure
+6
+4
+2
+0
+2
+4
+6
+5
+0
+5
+z[di]
+Hall
+ MHD
+0.00
+0.04
+0.08
+0.12
+0.16
+0.20
+0.24
+0.28
+0.32
+6
+4
+2
+0
+2
+4
+6
+x[di]
+0.0
+0.5
+1.0
+jz
+Kinetic
+Nonlocal
+Hall MHD
+FIG. 2. Current densities in kinetic, ten-moment and Hall
+MHD simulations with λ = 5di. The colour scaling of the
+Hall MHD current is reduced by a factor of two so the strongly
+peaked current sheet can be seen.
+4
+2
+0
+2
+4
+0.2
+0.0
+0.2
+0.4
+0.6
+ER
+Nonlocal
+closure
+Ion momentum equation
+E + v × B
+∇· P/nie
+midvi/dt
+4
+2
+0
+2
+4
+x[di]
+0.2
+0.0
+0.2
+0.4
+0.6
+ER
+Kinetic
+FIG. 3.
+Comparison of the decomposition of the ion mo-
+mentum equation near the x-point between the nonlocal ten-
+moment model and a kinetic simulation.
+(1.20di vs 1.15di), and is much larger than the highly
+peaked Hall MHD current sheet (0.18di). The peak cur-
+rent density is still higher than in the kinetic simulation
+due to the electron dynamics in the ten-moment model,
+which causes a more intense electron layer due to the
+isotropisation of the pressure tensor. Here the electron
+closure captures the oﬀ-diagonal terms of the pressure
+tensor which balance the reconnection electric ﬁeld in the
+electron diﬀusion region self-consistently, but produces
+weaker electron pressure anisotropy than models which
+focus on particle trapping eﬀects [31–33]; this does not af-
+fect the results of this paper as the reconnection rates are
+sensitive to the ion dynamics for this geometry [20, 21].
+The structure of the ion diﬀusion region is shown in
+Fig. 3, which contains the decomposition of the ion mo-
+mentum equation on a cut along z = 0 at t = tA. In
+3
+
+Ref. [20] it was shown that the inﬂuence of the ion ki-
+netic physics extends to a broader 2-3 di ion diﬀusion
+region, where the divergence of the pressure tensor bal-
+ances the non-ideal electric ﬁeld. This result is in contrast
+to the Hall MHD result, where the ion inertia balances
+the reconnection electric ﬁeld below di scales [20].
+While both local and nonlocal ten-moment models
+could capture the wider ion diﬀusion region, it was found
+that keeping the relaxation parameter ki = 1/de, which
+was used in the Harris sheet study [13], caused larger Hall
+MHD-like reconnection rates to be observed and a nar-
+rower ion diﬀusion region to form. Only by adjusting ki
+in the ion closure to 1/(3di), allowing the pressure tensor
+to deviate from isotropy at larger scales, could the kinetic
+reconnection rates be reproduced for small systems [21].
+In contrast, with the nonlocal closure, the wider ion
+diﬀusion region develops self-consistently without the
+need to ﬁne tune the relaxation.
+While the reconnec-
+tion rate does not match the kinetic result exactly, the
+larger region in which the divergence of the ion pressure
+tensor balances the non-ideal electric ﬁeld is reproduced,
+with the associated reduction of the reconnection rate as
+compared to that of Hall MHD or the local ten-moment
+model with larger ki [21].
+Additionally,
+due
+to
+the
+wavenumber-dependent
+damping, the model using the nonlocal closure shows
+good agreement in the ion velocity with the kinetic re-
+sults, apart from the absence of PIC noise. This is be-
+cause the new closure does not exhibit some of the spu-
+rious structures which have been observed when using
+the local closure. These are most evident along the line
+x = 0, where the ion velocity is reduced, and just up-
+stream of the reconnection region in Fig. 4. The struc-
+tures are present with the local closure due to the lower ki
+used to obtain the wider diﬀusion region, which does not
+account for the faster damping at shorter wavelengths,
+unlike the nonlocal closure, which approximates this ef-
+fect.
+Further improvements when using the nonlocal closure
+are illustrated by considering a common metric used in
+reconnection, the agyrotropy A∅, which measures the de-
+parture of the distribution function from cylindrical sym-
+metry [34]. Figure 5 shows the ion agyrotropy A∅i ob-
+served close to the central current sheet at t = tA. In
+the kinetic simulation, there is strong agyrotropy in both
+a 2-3di thick region upstream of the current sheet and
+the exhaust region and it was shown in Ref. [20] that
+this corresponds to the region where ion motion is char-
+acterised by meandering orbits and ion pressure tensor
+eﬀects contribute to momentum balance.
+With the new nonlocal closure shown in the second
+panel of Fig. 5, the structure of the agyrotropy both up-
+and downstream of the x-point is reproduced. This is a
+qualitative improvement on the local model, which shows
+two distinct upstream regions and small agyrotropy in
+the exhaust region. The improvement is due to the non-
+6
+4
+2
+0
+2
+4
+6
+z[di]
+Kinetic
+Ion fluid velocity vy, i
+6
+4
+2
+0
+2
+4
+6
+z[di]
+Nonlocal
+closure
+10
+5
+0
+5
+10
+x[di]
+6
+4
+2
+0
+2
+4
+6
+z[di]
+Local
+closure
+0.02000
+0.01375
+0.00750
+0.00125
+0.00500
+FIG. 4. Out-of-plane ion velocity in kinetic, nonlocal ﬂuid
+and local ﬂuid models. The local model uses ki = 1/(3di)
+which was chosen to match reconnection rates with the kinetic
+solution in Ref. [20].
+6
+4
+2
+0
+2
+4
+6
+z[di]
+Kinetic
+Ion agyrotropy
+6
+4
+2
+0
+2
+4
+6
+z[di]
+Nonlocal
+closure
+6
+4
+2
+0
+2
+4
+6
+x[di]
+6
+4
+2
+0
+2
+4
+6
+z[di]
+Local
+closure
+0.00
+0.04
+0.08
+0.12
+0.16
+0.20
+0.24
+0.28
+0.32
+FIG. 5. Comparison of ion agyrotropy between kinetic, non-
+local ﬂuid and local ﬂuid models.
+The local model uses
+ki = 1/(3di) which was chosen to match reconnection rates
+with the kinetic solution in Ref. [20].
+local heat ﬂux, which reduces the discrepancies in the
+diagonal components of the ion pressure tensor observed
+when only using the local model [12]. However, the val-
+ues of the agyrotropy using the nonlocal closure are still
+lower than the kinetic results, as the ﬂuid model cannot
+capture all the details of the non-gyrotropic distribution
+function caused by the meandering motion.
+To summarise, we have implemented a nonlocal ion
+closure for the two-ﬂuid, ten-moment equations that cap-
+tures linear phase mixing in a ﬂuid treatment. This pro-
+vides heat ﬂux at the x-point which is necessary for re-
+connection to take place in the collisionless ten moment
+model [12]. We demonstrate that using the new nonlo-
+cal closure gives improved agreement with kinetic results
+compared to previously implemented systems for moment
+closures and Hall MHD [13, 21], by allowing the ion pres-
+sure tensor to deviate from isotropy without introducing
+4
+
+a free relaxation parameter. This sets the structure of
+the ion diﬀusion region self-consistently, and results in
+much improved agreement highlighted by the ion velocity
+proﬁle and agyrotropy. However, the strong system-size
+dependence of the average reconnection rate observed in
+kinetic and hybrid simulations is not completely repro-
+duced [20]. The scaling is due in part to the formation
+of secondary islands in the larger ﬂuid systems, and also
+indicates that while the ion diﬀusion region physics is
+reproduced, there is still additional ion kinetic physics,
+such as the ion meandering motion and its eﬀects on the
+distribution function [20], that contributes to setting the
+reconnection rate in this system. While this system is less
+sensitive to the electron dynamics [20, 21], the nonlocal
+closure is also able to capture the oﬀdiagonal terms of the
+electron pressure tensor in the electron diﬀusion region.
+Future work could explore the extension to the strongly
+magnetised regime in a similar manner [15, 35], which
+could allow the treatment of guide-ﬁeld reconnection and
+application to large systems, in which the development of
+strong electron pressure anisotropy is also an important
+process [32, 33].
+This work was supported by NSF Grants AGS-
+0962698,
+AGS-1338944,
+DOE
+Contract
+DE-AC02-
+09CH11466 and NASA Grant NNH13AW51I. This re-
+search used resources of the National Energy Research
+Scientiﬁc Computing Center, a DOE Oﬃce of Science
+User Facility supported by the Oﬃce of Science of the
+U.S. Department of Energy under Contract No.
+DE-
+AC02-05CH11231 and Trillian, a Cray XE6m-200 super-
+computer at UNH supported by the NSF MRI program
+under grant PHY-1229408. We thank G. Hammett for
+fruitful discussions.
+[1] J. Dungey, Philosophical Magazine Series 7 44, 725
+(1953).
+[2] S. von Goeler, W. Stodiek, and N. Sauthoﬀ, Phys. Rev.
+Lett. 33, 1201 (1974).
+[3] V. M. Vasyliunas, Reviews of Geophysics 13, 303 (1975).
+[4] T. D. Phan, L. M. Kistler, B. Klecker, G. Haerendel,
+G. Paschmann, B. U. O. Sonnerup, W. Baumjohann,
+M. B. Bavassano-Cattaneo, C. W. Carlson, A. M. Dilellis,
+K. H. Fornacon, L. A. Frank, M. Fujimoto, E. Georgescu,
+S. Kokubun, E. Moebius, T. Mukai, M. Oieroset, W. R.
+Paterson, and H. Reme, Nature 404, 848 (2000).
+[5] A. Bhattacharjee, Z. W. Ma, and X. Wang, Physics of
+Plasmas 8, 1829 (2001).
+[6] M. Yamada, R. Kulsrud, and H. Ji, Rev. Mod. Phys. 82,
+603 (2010).
+[7] P. A. Sweet, in Electromagnetic phenomena in cosmic physics,
+Vol. 6 (1958) pp. 123–134.
+[8] E. N. Parker, Journal of Geophysical Research 62, 509
+(1957).
+[9] H. Grad, Communications on Pure and Applied Mathe-
+matics 2, 331 (1949).
+[10] M. Hesse, D. Winske, and M. M. Kuznetsova, Journal of
+Geophysical Research: Space Physics 100, 21815 (1995).
+[11] L. Yin, D. Winske, S. P. Gary, and J. Birn, Journal of
+Geophysical Research: Space Physics 106, 10761 (2001).
+[12] E. A. Johnson, Ph.D. thesis, University of Wisconsin-
+Madison (2011).
+[13] L. Wang, A. H. Hakim, A. Bhattacharjee, and K. Ger-
+maschewski,
+Physics
+of
+Plasmas
+(1994-present)
+22,
+012108 (2015).
+[14] G. W. Hammett and F. W. Perkins, Phys. Rev. Lett. 64,
+3019 (1990).
+[15] G. W. Hammett, W. Dorland,
+and F. W. Perkins,
+Physics of Fluids B 4, 2052 (1992).
+[16] P. B. Snyder and G. W. Hammett, Physics of Plasmas 8,
+3199 (2001).
+[17] X. Q. Xu, P. W. Xi, A. Dimits, I. Joseph, M. V.
+Umansky, T. Y. Xia, B. Gui, S. S. Kim, G. Y. Park,
+T. Rhee, H. Jhang, P. H. Diamond, B. Dudson,
+and
+P. B. Snyder, Physics of Plasmas 20, 056113 (2013),
+http://dx.doi.org/10.1063/1.4801746.
+[18] A. Ishizawa, R. Horiuchi,
+and H. Ohtani, Physics of
+Plasmas 11, 3579 (2004).
+[19] M. Hesse, S. Zenitani, and A. Klimas, Physics of Plasmas
+15, 112102 (2008), http://dx.doi.org/10.1063/1.3006341.
+[20] A. Stanier, W. Daughton, L. Chac´on, H. Karimabadi,
+J. Ng, Y.-M. Huang, A. Hakim, and A. Bhattacharjee,
+Phys. Rev. Lett. 115, 175004 (2015).
+[21] J. Ng, Y.-M. Huang, A. Hakim, A. Bhattacharjee,
+A. Stanier, W. Daughton, L. Wang,
+and K. Ger-
+maschewski, Physics of Plasmas 22, 112104 (2015).
+[22] P. J. Palmadesso, S. B. Ganguli,
+and H. G. Mitchell,
+“Multimoment ﬂuid simulations of transport processes in
+the auroral zones,” in Modeling Magnetospheric Plasma
+(American Geophysical Union, 1988) pp. 133–143.
+[23] A. Hakim, J. Loverich, and U. Shumlak, Journal of Com-
+putational Physics 219, 418 (2006).
+[24] A. Hakim, Journal of Fusion Energy 27, 36 (2008).
+[25] M. Frigo and S. G. Johnson, Proceedings of the IEEE
+93, 216 (2005), special issue on “Program Generation,
+Optimization, and Platform Adaptation”.
+[26] E. Harris, Il Nuovo Cimento (1955-1965) 23, 115 (1962),
+10.1007/BF02733547.
+[27] V. M. Fadeev, I. F. Kvartskhava, and N. N. Komarov,
+Nucl. Fusion 5 (1965).
+[28] H.
+Karimabadi,
+J.
+Dorelli,
+V.
+Roytershteyn,
+W. Daughton,
+and L. Chac´on, Phys. Rev. Lett.
+107, 025002 (2011).
+[29] K. Germaschewski, W. Fox, S. Abbott, N. Ahmadi,
+K. Maynard, L. Wang, H. Ruhl, and A. Bhattacharjee,
+Journal of Computational Physics 318, 305 (2016).
+[30] J. M. Finn and P. K. Kaw, Physics of Fluids 20, 72
+(1977).
+[31] A. Le, J. Egedal, W. Daughton, W. Fox, and N. Katz,
+Phys. Rev. Lett 102, 085001 (2009).
+[32] O. Ohia, J. Egedal, V. S. Lukin, W. Daughton,
+and
+A. Le, Phys. Rev. Lett. 109, 115004 (2012).
+[33] J. Egedal, A. Le, and W. Daughton, Physics of Plasmas
+20, 061201 (2013).
+[34] J. Scudder and W. Daughton, Journal of Geophysical
+Research: Space Physics 113, n/a (2008), a06222.
+[35] P.
+Goswami,
+T.
+Passot,
+and
+P.
+L.
+Sulem,
+Physics
+of
+Plasmas
+12,
+102109
+(2005),
+http://dx.doi.org/10.1063/1.2096582.
+5

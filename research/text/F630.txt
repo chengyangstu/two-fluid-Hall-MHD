@@ -1,0 +1,449 @@
+C. R. Physique 12 (2011) 141–150
+Contents lists available at ScienceDirect
+Comptes Rendus Physique
+www.sciencedirect.com
+Propagation and plasmas: new challenges, new applications
+Ion acceleration in antiparallel collisionless magnetic reconnection:
+Kinetic and ﬂuid aspects
+Accélération des ions dans la reconnexion magnétique antiparallèle, aspects cinétiques
+et ﬂuides
+Nicolas Aunai ∗, Gérard Belmont, Roch Smets
+Laboratoire de physique des plasmas, École polytechnique, route de Saclay 91128 Palaiseau cedex, France
+a r t i c l e
+i n f o
+a b s t r a c t
+Keywords:
+Magnetic reconnection
+Ion acceleration
+Fluid and kinetic physics
+Mots-clés :
+Reconnexion magnétique
+Accélération ionique
+Physique ﬂuide et cinétique
+Using a two-dimensional hybrid simulation code, we study the ion acceleration in the
+vicinity of the ion decoupling region of collisionless magnetic reconnection. We investigate
+the ﬂuid consequences of the observed kinetic phenomena and discuss to what extent
+it could be accounted for in ﬂuid modeling. The initial setup is an antiparallel current
+sheet in a plasma with homogeneous density. We discuss the different forces acting on
+the ion bulk and show that the two dominant ones are the Hall electric force and the
+pressure force acting against each others. A dynamic equilibrium, which might also exist
+in ﬂuid simulations, is here given by a kinetic effect. We therefore explain this pressure
+by an analysis of the ion distribution function and show that these are the result of an
+electrostatic bounce motion of the particles between the separatrices. This bounce motion
+is a characteristic of the ion decoupling region and therefore the resulting pattern of
+the pressure tensor may be considered as an additional observable feature of antiparallel
+reconnection in satellite data.
+© 2010 Published by Elsevier Masson SAS on behalf of Académie des sciences.
+r é s u m é
+A l’aide d’un code de simulation hybride bi-dimensionnel, nous étudions la zone de
+découplage ionique créée lors de la reconnexion magnétique non collisionnelle. Nous
+examinons les conséquences ﬂuides des phénomènes cinétiques observés et discutons
+dans quelle mesure ils peuvent être expliqués d’un point de vue ﬂuide. La conﬁguration
+initiale est une couche de courant antiparallèle dans un plasma de densité homogène. Nous
+discutons les différentes forces agissant sur le ﬂuide ionique et montrons que les deux
+contributions dominantes sont la force électrique Hall et la force de pression agissant l’une
+contre l’autre. L’équilibre dynamique, qui peut également se trouver dans des simulations
+ﬂuides, est ici engendré par un effet cinétique. Nous étudions donc cette force de pression
+par une analyse des fonctions de distribution et montrons que celles-ci résultent d’un
+mouvement de rebond électrostatique des ions sur les séparatrices. Ce mouvement de
+rebond est caractéristique de la zone de découplage ionique et le tenseur de pression
+* Corresponding author.
+E-mail addresses: nicolas.aunai@lpp.polytechnique.fr (N. Aunai), gerard.belmont@lpp.polytechnique.fr (G. Belmont), roch.smets@lpp.polytechnique.fr
+(R. Smets).
+1631-0705/$ – see front matter © 2010 Published by Elsevier Masson SAS on behalf of Académie des sciences.
+doi:10.1016/j.crhy.2010.11.004
+
+142
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+des ions en résultant peut alors être considéré comme une nouvelle observable de la
+reconnexion magnétique non collisionnelle dans les données obtenues par satellite.
+© 2010 Published by Elsevier Masson SAS on behalf of Académie des sciences.
+1. Introduction
+Magnetic reconnection is a plasma process by which magnetic connectivity can be changed along the ﬁeld line motion
+and magnetic energy transferred into bulk and thermal kinetic energy. It is thus of great importance in the dynamics of
+many astrophysical and laboratory systems such as the stellar/solar environments, planetary magnetospheres and Tokamak
+fusion devices. One of the key questions regarding magnetic reconnection concerns the rate at which the magnetic ﬂux
+is being reconnected for a given system. Considering the assumption of steadiness, the Sweet–Parker scaling theory [1]
+predicts, in the resistive MHD framework, that the reconnection rate, evaluated by the out-of-plane electric ﬁeld in 2D
+conﬁgurations, scales like η1/2 where η is the collisional resistivity. In space plasmas, the resistivity is usually completly
+negligible and thus the Sweet–Parker reconnection rate is throttled at unrealistic values. In collisionless systems, the suc-
+cessive decoupling of the ions and the electrons from the magnetic ﬁeld creates a completly different dynamics that has
+been observed to allow fast magnetic reconnection ([2] and references therein). While the ions decouple from the magnetic
+ﬁeld at a scale comparable to the ion skin depth δi = c/ωpi, the electrons are still magnetized and keep drifting toward the
+X point. Eventually, they decouple from the magnetic ﬁeld and are accelerated by the reconnection electric ﬁeld at much
+smaller scales. This electron acceleration and re-coupling give rise to strong currents which turn on the Hall term in the
+induction equation and drag the newly reconnected ﬁeld lines in the out-of-plane direction and eject it downstream in a
+way comparable to the whistler wave dynamics [2–4]. This property makes the reconnection rate roughly independent of
+the electron to ion mass ratio, i.e. of the electron decoupling mechanism [2]. The direct observational consequence of this
+process is the quadrupolar out-of-plane magnetic ﬁeld created around the X point, and a strong bipolar Hall electric ﬁeld
+mapping the separatrices close to the X point. In this region, the ions are not tied to the ﬁeld lines, they can thus move
+through the wide bottleneck opened by the Hall effect. It is thus the bulk ion motion and its coupling to the Hall ﬁelds that
+controls the reconnection rate. For antiparallel reconnection, it is generally found that the ions accelerate up to a fraction
+of the upstream Alfvén speed within ∼10δi no matter how large the system is [5,6]. This bulk acceleration is thought to
+be given by the Hall electric force. However some discrepancies exist between Hall MHD and kinetic models [5,7]. Kinetic
+features have also found to be ubiquitous in the ion decoupling region [8–12]. Understanding the ion physics in the vicinity
+of the decoupling region thus appears to be important, and in particular, it seems necessary to discuss the relationship
+between kinetic processes and the resulting bulk acceleration.
+Ignoring the two-ﬂuid effects, test particle simulations [13,14] and analytical studies [15] have made several predictions
+concerning the ion particle dynamics in a magnetic reconnection topology. These studies lead to the conclusion that Speiser-
+like trajectories [15] are the mechanism by which ions gain kinetic energy. In this mechanism, incoming ions are decoupled
+from the magnetic ﬁeld because their Larmor radius is larger than the ﬁeld line curvature radius. While decoupled, they
+describe a meandering motion because of the ﬁeld reversal, accelerate along the reconnection electric ﬁeld and in the mean
+time, turn away in the downstream direction because of the Lorentz force given by the normal magnetic ﬁeld. Features in
+distribution functions observed in self-consistent kinetic numerical simulations downstream of the X line [12,11,10], as well
+as the evolution of the energy of accelerated ions [16], have been interpreted as the evidences of the Speiser mechanism
+predicted earlier.
+However, when it comes to understand the ion dynamics in the decoupling region (i.e. close to the X point), things are
+likely to be different. The Hall electric ﬁeld resulting from the electronic motion of the ﬁeld lines close to the X point is
+much larger than the reconnection electric ﬁeld, and thus cannot be neglected. It has been said to be responsible for the
+bulk acceleration and particle acceleration [8]. However, these two points of view are a priori not equivalent, and if they
+are often discussed, they are rarely confronted against each other. It is not clear to what extent kinetic features are related
+to bulk motion.
+In the Earth magnetosphere, satellite data have been several times interpreted in terms of collisionless magnetic recon-
+nection. In particular, magnetic ﬁeld consistent with the Hall quadrupole and also strong bipolar electric ﬁeld have been
+observed consistently [17,21,18–20]. Wygant [20] have presented a detailed analysis of satellite data interpreted as a mag-
+netic reconnection event, and in particular discussed the ion acceleration in the decoupling region from both particle and
+ﬂuid points of view. In this event, cold ionospheric ions are accelerated by the normal Hall electric ﬁeld and describe an
+electrostatic bounce motion which produces two counterstreaming beams in the normal direction. While they did not ex-
+clude that the physics may differ from one plasma regime to another, Wygant [20] explained that the Hall electric ﬁeld
+is the primary cause for the decoupling and acceleration of ions in the event they have studied. From the ﬂuid point of
+view, the counterstreaming beams mainly create a pressure force opposed to the normal Hall electric force. Wygant [20]
+also discussed how the particles can transfer the velocity gained from the Hall ﬁeld in the downstream direction to create
+the ﬂuid jet.
+Counterstreaming beams have already been noticed in kinetic simulations of magnetic reconnection [8,10,22,11,23] as
+well as magnetotail reconnection events [20] or even solar wind reconnection events [24], but the physical phenomenon
+
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+143
+behind this feature may differ from one case to the other and is not necessarily related to the ion decoupling region
+physics. For example, Gosling et al. [24] reported an observation of solar wind reconnection. They have identiﬁed cold coun-
+terstreaming beams which were interpreted as interpenetrating populations entering the exhaust from opposite upstream
+regions. The exhaust region they have studied had an estimated width that far exceeds the upstream ion inertial length or
+Larmor radius and is thus located at a great distance from what is usually called the ion decoupling region. Drake et al.
+[25] studied the ion heating downstream of the X line as a consequence of Speiser-like trajectories of lobe ions entering the
+exhaust. Their study focused on processes far in the downstream region where the electric ﬁeld is the MHD convection ﬁeld.
+They observed counterstreaming beams and discussed them in term of Speiser-like trajectories. In the decoupling region,
+counterstreaming beams have been reported by several authors (e.g. [10,22,26,8]) and often linked to the presence of the
+Hall electric ﬁeld. Hoshino et al. [10] and Shay et al. [8] explained how ions accelerated in the decoupling region mix with
+other populations downstream and create non-Maxwellian beam features.
+In this article, we present a 2D hybrid simulation investigating ion acceleration in collisionless antiparallel magnetic
+reconnection in the vicinity of the ion decoupling region. Other effects may appear outside of this region, and are not the
+topic of this paper. The simulation results illustrate the observation made by Wygant [20] and focus on the relation between
+particle acceleration and ﬂuid acceleration/heating related to the presence of the Hall ﬁelds. The ﬁrst section of this article
+is devoted to the description of the simulation model and initial conditions. In the second section, we calculate the different
+terms contributing to the ion momentum equation and show the importance of the ion pressure force. We show that this
+ion pressure force is given in our simulation by a temperature tensor effect rather than a density compression. In particular,
+we show that the off-diagonal part of the pressure tensor exhibits a quadrupolar structure around the X point, so that the
+associated force almost balances the x component of the electric ﬁeld, not observed by Wygant [20]. In the dynamics of
+collisionless plasmas, the concept of temperature tensor is highly related to the shape of the distribution function and thus
+to microphysics. We therefore explain these pressure forces in section three by an analysis of the ion distributions in the
+decoupling region. We show by a detailed analysis of ion trajectories that the distributions and so the pressure force indeed
+comes from a bounce motion of the ions in the electrostatic potential well resulting from the Hall effect. As one moves
+further from the X point, where the bounce motion does not exist anymore, off-diagonal terms of the pressure tensor also
+exist but are related to the mixing of the local frozen-in population with a fast population accelerated in the decoupling
+region [10,8]. For steady reconnection, the pressure tensor, is therefore highly related to the ion dynamical regime and this
+property can be considered as an additional observable proxy of the decoupling region. Our ﬁndings about the ion dynamics
+in the decoupling region is directly comparable to what really happens in symmetric collisionless reconnection events [20].
+Section four summarizes our results and discusses future work.
+2. Simulation model and initial setup
+Considering the ion acceleration, we use the hybrid formalism, in which only ions are treated as particles. The numerical
+scheme is close to those described in [27,28]. The ion motion is calculated with Eq. (1), where vpi is the particle velocity.
+This equation is solved using the Boris algorithm with a standard leapfrog scheme. Electrons are considered as a ﬂuid with
+inertia, and their momentum equation (2) is providing the electric ﬁeld. The electron inertia is added using the standard
+method of the pseudo ﬁelds [29,30] and the resulting elliptic equation is solved with an iterative method using the parallel
+PETSc library.1 In Eq. (2), the total current is given by Ampere’s law (4) where we have neglected the displacement current.
+The magnetic ﬁeld is updated via Faraday’s equation (3). The electron ﬂuid is supposed to be isothermal and isotropic. The
+electromagnetic ﬁelds are solved on two uniform cartesian staggered grids. The equations are discretized with a second
+order ﬁnite differences method and updated with the predictor-corrector scheme.
+mi
+dvpi
+dt = e(vpi × B + E)
+(1)
+E = −vi × B + 1
+ne(j × B −∇Pe) −me
+e
+dve
+dt
+(2)
+∂B
+∂t = −∇× E
+(3)
+∇× B = μ0(vi −ve)
+(4)
+Distances are normalized to the ion inertial length δi = c/ωpi = V A/Ωci and time to the inverse of the ion cyclotron
+frequency Ω−1
+ci . The magnetic ﬁeld and density are normalized to arbitrary values B0 and n0 which in this paper are the
+asymptotic values. In these units, the simulation domain is a rectangle (xm, ym) = (280, 40) with nx = 1024 and ny = 512
+cells in x and y directions. We set about 100 particles per cell initially, that is about 4000 particles per δ2
+i . The ion to
+electron mass ratio is set to mi/me = 50, so that the electron inertial length is δe = 0.14δi. Perfect conducting boundary
+conditions are used at y borders and periodic in the x direction. It is well known that periodic boundary conditions can
+limit the time during which the simulation is valid. For that reason we pay attention to the fact that the box is long enough
+1 http://www.mcs.anl.gov/petsc.
+
+144
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+in the downstream direction (x) and wide enough in the upstream direction (y), so that neither recirculation effect or
+depletion of inﬂowing magnetic ﬂux changes the reconnection process.
+The initial magnetic ﬁeld proﬁle is antiparallel (with no guide ﬁeld) and B = B0 tanh((y −0.5ym)/λ)ex with the half-
+width λ = 1 and B0 = 1. The density is uniform with n0 = 1. The total β of the plasma is set to 0.1 and the electron
+temperature is uniform and set to Te = 0.005. Ions are loaded in a local Maxwellian distribution function, their temperature
+is chosen to balance the total pressure. The asymptotic ion temperature is thus Ti = 0.045 and the sheet temperature is Ti =
+0.545. For the sake of observational comparison, let’s note that if one takes B0 = 15nT , n0 = 0.25 cm−3, the ion temperature
+is 250 eV and 2.4 keV in the asymptotic region and sheet, respectively. This initial condition is not a Vlasov–Maxwell
+equilibrium and small waves are emitted from the current sheet at the very beginning of the simulation (Ωci < 1). These
+wave are the consequence of the kinetic relaxation of the current sheet, propagate in the y direction and are eventually
+reﬂected back to the sheet from the conducting walls at a time long compared to the X point dynamics (	tΩci ≈50).
+Finally, in order to have one major X point in the simulation box, we impose a magnetic perturbation localized at the
+center of the domain. Let us note that some comparable wave activity has been reported before (e.g. [31]), although the
+authors have initialized their simulation with the Harris equilibrium [32]. This is likely to be due to the initial magnetic
+perturbation inevitably, leading to wave emission as long as one does not know how to create one proper eigenmode of the
+current sheet.
+3. Fluid acceleration
+It is generally accepted that the ion outﬂow velocity scales like the Alfvén speed based on the upstream plasma param-
+eters. In the collisionless antiparallel case, a comparable speed is found to be reached within a microscopic distance which
+might not depend on the system size [9]. This strong bulk acceleration is generally said to result from the interaction with
+the Hall electric ﬁeld that develops on the separatrices [8,5]. However, when the simulation domain is large enough so
+that neither artiﬁcial pile-up nor recirculation effect changes the outﬂow velocity, it has been noticed in kinetic simulations
+that the outﬂow velocity is signiﬁcantly below the upstream Alfvén speed [33,5]. Moreover, Shay et al. [5] compared Hall
+MHD and hybrid results and showed that, for the same reconnection rate, the hybrid outﬂow channel is twice as wide as
+the MHD one, and the outﬂow speed is half that of the MHD case. The key point for proton dynamics is to understand
+the physics involved in the transfer of electromagnetic energy into bulk and thermal energy. The goal of this section is to
+investigate the coupling of the Hall electric ﬁeld to the ions and the resulting bulk acceleration. The ion acceleration is given
+by the ion momentum equation (5), where vi is the ion ﬂuid velocity, n is the density, mi the ion mass, E and B the electric
+and magnetic ﬁeld, and Pi is the full ion pressure tensor.
+min∂vi
+∂t + minvi · ∇vi = −∇· Pi + ne E + ne vi × B
+(5)
+The Hall electric ﬁeld −ve × B is dominantly directed toward the center of the current sheet, but has a small component
+pointing in the downstream region. This small Ex component is color coded in Fig. 1.a whereas E y is shown in Fig. 1.b.
+Ex is located around the X point, with a magnitude about 0.1V A B0. E y is stronger around the X point (∼0.7V A B0) and still
+exists further away with a weaker amplitude. Close to the X point, the electric ﬁeld is mostly associated to the motion of
+the magnetic ﬁeld lines frozen in the electron ﬂuid while further away it is related to the ﬁeld line motion frozen in the
+whole plasma [11,25]. Fig. 2.a is a slice of the different terms of Eq. (5) in the x direction at t = 100 and x = 148.5. The
+choice of the location x = 148.5 has been motivated by the fact that the Hall electric ﬁeld still exists, and the contribution
+of each separatrix can there be distinguished properly thanks to their separation. However, the behavior of the ﬂuid is found
+to be the same (not shown) down to the X point. The time t = 100 is chosen because the unsteady region associated to the
+leading piled-up reconnected ﬁeld line is far enough so that it is believed not to perturbate the physics in the decoupling
+region. At this time however, a large amount of magnetic ﬂux has already been reconnected so that the upstream density
+and magnetic ﬂux are signiﬁcantly below the initial values. The consequence is that the raw reconnection rate is smaller
+than at the beginning of the simulation. This does however not change the present qualitative discussion nor the ratios
+between the different terms in the ion momentum equation. In addition, one has to notice that small magnetic islands (of
+size ∼3δi) are regularly ejected from the reconnection region (not shown) and change locally the force balance. We will
+not discuss this effect any further since we are, in this paper, only interested about quasi-steady features (compared to the
+simulation duration). In satellite data, depending on their production rate, these islands might complicate the observation
+of the steady structure we are discussing about.
+Back in Fig. 2.a, we observe as expected a strong and positive electric force ne Ex located on the separatrices (green
+curve). The magnetic force en(viy Bz −viz By) is also strong at this location making the ﬂuid turn around the magnetic ﬁeld.
+This does not provide kinetic energy but nevertheless transfers the acquired velocity between different directions. One can
+note that there is a signiﬁcant pressure force also located on the separatrices but with negative values (solid blue line).
+If we write the pressure tensor Pi in the form Pi ≡nTi, we can separate the role of the density of particles n from the
+role of the shape of the distribution function related to the microphysics/particle dynamics, the latter being described by
+the macroscopic tensor Ti. The surprise here is that this pressure force does not correspond to a density gradient located
+on the separatrices, but is rather a kinetic effect since it is dominantly given by the off-diagonal part of the ion pressure
+tensor. This can be observed by comparing the dashed blue curve (−∂y Pixy) to the solid one (−∇x · Pi). Fig. 2.b is a slice of
+
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+145
+Fig. 1. a (top): y component of the electric ﬁeld, b (bottom): x component of the electric ﬁeld. In both panels the black lines represents the in-plane
+magnetic ﬁeld lines. The boxes are the locations where the ion distribution functions shown in Fig. 4 are evaluated. Both ﬁgures are made at tΩci = 100.
+Fig. 2. Slice of the different terms in the ion momentum equation (5): a, in the x direction (left) and b, y direction (right). The green curve is the electric
+force en E, the red curve is the Lorentz force en vi × B, and the solid blue curve is the total pressure force −∇Pi. The off diagonal contribution −∂y Pixy
+(right: −∂x Pixy) to this pressure force is represented by the dashed blue line. The solid black line represents the steady acceleration minvi · ∇vi while the
+local acceleration min∂tvi is the dashed black curve.
+the different terms of Eq. (5) in the y direction at the same location. The large inward electric force clearly appears to be
+balanced by the diagonal term of the pressure tensor −∂y Piyy. It appears in both Figs. 2.a and 2.b that the acceleration is
+approximatly steady (∂tv ≈0) and that the electric force is almost entirely balanced by the pressure force for both in-plane
+components. Our simulation allows to explain the form of the pressure tensor, but the same pressure force is necessary
+whatever the ﬂuid modeling. When a ﬁeld line arrives on the separatrix, it is dragged at a great velocity by a fast steady
+
+146
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+Fig. 3. Color coded Pixy at t = 100. Black lines represent in-plane magnetic ﬁeld lines. See text for details about region A and B.
+frozen-in electron ﬂow, leading to a strong electric ﬁeld. On the ion ﬂuid point of view, the frozen-in motion stops at the
+separatrix. Too heavy to follow the sudden motion of the ﬁeld line, it however feels the resulting electric ﬁeld. This electric
+ﬁeld, pointing dominantly toward the center of the current sheet from the two opposite separatrices, compresses the ﬂuid
+in the exhaust and increases the gas pressure rather than accelerates it. The observed pressure force is thus completly
+consistent with the symmetric geometry of the Hall electric ﬁeld. However, the process supporting this pressure in a ﬂuid
+modeling depends on the closure equation, and the resulting size of the steady structure is also dependant of this closure.
+In the hybrid formalism, the ions are treated as particles so that no closure hypothesis is done. In this context, it turns
+out that particle dynamics is the most important effect for the settlement of the dynamic quasi-equilibrium. This result
+differs from what could be obtained in a ﬂuid simulation where the ﬂuid closure would force the dynamic equilibrium to
+be preferentially given by a density gradient, and thus might change the width of the outﬂow channel, as observed by Shay
+et al. [5]. On the energy point of view, one can state that a large amount of electric energy is transfered to thermal energy
+via −(∇· Pi) · vi.
+Fig. 3 represents in color code the component Pixy of the ion pressure tensor on the right side of the X point at t = 100.
+One can see in region A a bipolar signature consistent with the observed −∂y Pixy. However this structure does not extent
+all along the downstream region. The sign of this component of the pressure tensor even changes further away (region B).
+This observation is made at t = 100 but is found at all times as long as the unsteady region created by the collision of the
+jet with the ambient sheet plasma has moved away and leaves a quasi-steady-sheet behind. By symmetry around the X
+point, the Pixy component of the pressure tensor therefore has a quadrupolar structure in the vicinity of the ion decoupling
+region. The reason why its sign changes outside this region will become clear in Section 4. It is worth noting anyway that
+the quadrupolar structure of Pixy can be considered as a characteristic feature of the ion decoupling region in collisionless
+antiparallel magnetic reconnection.
+4. Particle dynamics and pressure tensor
+In order to understand the structure of the pressure force represented in Fig. 2, it is helpful examining the distribution
+function of ions at different y locations for x = 148.5. Fig. 4 represents a projection of the ion distribution function in the
+vx −v y plane located at each of the small white boxes seen in Fig. 1.a, from bottom to top. Distribution a is evaluated in
+the inﬂow region and is a cold E × B drifting Maxwellian. The in-plane ﬂuid velocity is roughly perpendicular to the local
+magnetic ﬁeld and directed toward the current sheet. Distribution b is located on the separatrix and is not Maxwellian
+anymore. The distribution consists there of two distinct populations: a small population with v y < 0 and a large one with
+v y > 0. A little bit further in the exhaust (distribution c) the two populations are even more separated and form two cold
+counterstreaming beams. At the center of the jet, the two beams are found to be equal and symmetric with respect to the
+v y = 0 axis. Because of symmetry, on the other side of the Bx = 0 line, the situation is obviously found to be reversed (not
+shown). At each location, the magnetic ﬁeld and the velocity have turned a bit more toward the normal and the outﬂow
+direction respectively. It is obvious from these ﬁgures that as one goes from upstream to the exhaust region, the appearance
+of counterstreaming beams effectively increases the temperature component Tiyy, thus creating the strong pressure gradient
+we observe in Fig. 2.b. This sudden increase of the temperature cannot be compared to a thermodynamical compression as
+in usual gases since no statistical equilibrium is reached in the exhaust. Nevertheless it still participates to the momentum
+balance in the same qualitative way than in a collisional plasma. At this point, the simulation results are comforting the
+Wygant [20] ﬂuid interpretation of approximate pressure balance in the y direction. In distributions b and c, the larger
+vx more particles are found at larger v y, thus making a small but ﬁnite positive correlation between vx and v y, which
+is exactly what Pixy is about. Of course Pixy is zero for distribution a because it is isotropic. Therefore, from position a
+to position b, there is a positive derivative ∂y Pixy explaining the negative contribution to the x pressure force. As noticed
+before, the distribution at the center of the exhaust is symmetric with respect to the v y = 0 axis so Pixy = 0 there. From
+position c to position d, there is therefore a negative derivative ∂y Pixy so the contribution to the x component of the force
+is positive.
+
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+147
+Fig. 4. Ion distribution functions evaluated in the little boxes seen in Fig. 1. Brown and blue arrows give the direction of the in-plane magnetic ﬁeld and
+in-plane ﬂuid velocity, respectively. The blue cross is the value of the in-plane Alfvén speed, the brown one represents the value of the in-plane ﬂuid
+velocity, and the red one is the local in-plane E × B drift velocity.
+To elucidate the mechanism behind the observed beams, let us look at the trajectory of particles contributing to these
+distributions, obtained self-consistently from the hybrid calculation. Fig. 5 represents the typical trajectory of a particle
+picked in the distribution b, superposed to the color coded x component of the electric ﬁeld, at time t = 100. One clearly
+sees three phases in this trajectory. The ﬁrst one consists of a magnetized drift motion. The second one begins when the
+particle reaches the top right separatrix and appears to describe a bounce motion within the exhaust region. Eventually
+on a third phase, the particle gets magnetized again, drifts with the reconnected ﬁeld line and no longer bounce on both
+separatrices. A comparable trajectory is found for all particles picked in this distribution, which explains its beam structure.
+The bounce motion of the particle is further analysed in Fig. 6 where it is represented in different planes. In this ﬁgure, one
+clearly sees that the bounce motion is strongly related to the electric force and not to the magnetic force. This illustrates the
+Wygant [20] interpretation. Ions are greatly accelerated within the Hall potential well and describe an electrostatic bounce
+motion and not a magnetic meandering motion. In distributions b and c, the large v y > 0 population consists of a mixing
+of particles that have interacted with the potential walls a different number of times: because of the divergence of the
+potential well, each reﬂection irreversibly transfer the velocity acquired from the potential from the y direction to the x
+one. The more reﬂections the particle has made, the larger its vx component is and the smaller its v y component is. This
+effect appears as a “dispersion” in velocity space in the v y > 0 population and is well seen on distribution b, c, d for v y > 0
+populations. The small population in distribution b is in a ballistic motion previously accelerated by the opposite separatrix
+and not yet reﬂected. There is thus no dispersion for this population, i.e. it more or less conserves its original circular shape
+
+148
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+Fig. 5. Trajectory of a typical particle picked in distribution b represented as a solid black line superposed on the color coded Ex electric component at
+time t = 100. The dashed black lines represent the in-plane magnetic ﬁeld lines.
+Fig. 6. Trajectory of the particle seen in Fig. 5 in the x–y plane (left), x–z plane (center) and y–z plane (right). In each panel the in-plane electric force and
+magnetic force are represented by red and blue arrows, respectively. The blue square is the location of the particle at the selection time.
+in velocity space. In distribution d, which is in the middle of the sheet, the dispersion effect can be seen on both beams.
+This kinetic dispersion explains both the general in-plane correlation of the distribution function and the shape of each
+beam. Moreover it clariﬁes the kinetic origin of the off-diagonal component of the pressure force.
+As said in Section 3, and shown in Fig. 3, the structure of the pressure component Pixy changes as one moves away
+from the ion decoupling region. This can be easily understood. In Fig. 5, one can see that the accelerated particle gets
+magnetized again and stays on the same side of the Bx = 0 line. This particle, and all the similar particles, will eventually
+mix with particles coming from outside the current sheet and frozen-in the downstream reconnected ﬁeld line. This mixing,
+also reported by Hoshino et al. [10] and Shay et al. [8], will result in a distribution that will exhibit a slow Maxwellian
+population with a fast population shifted in the parallel direction. Depending on the side of the Bx = 0 line, and thus on the
+direction of the magnetic ﬁeld, it will appear in the ion pressure tensor with a non-zero bipolar Pixy as observed in Fig. 3.
+In other words, this part of the pressure tensor in the downstream region can be seen as a consequence of the kinetic
+acceleration in the decoupling region. This effect is likely to become negligible far from the X point, when the particles
+accelerated in the decoupling region have been spread in phase space so that their contribution becomes insigniﬁcant
+compared to the particles of more local origin. In these remote regions, the exhaust boundary can be assumed to be more
+“MHD”, i.e. the differences between distribution functions just upstream and just downstream of the discontinuity become
+mainly determined by local acceleration. It is likely to be the case in solar wind reconnection observations [24] where the
+exhaust is crossed very far away from the X line. However, such large distances cannot be properly observed with periodic
+simulation domains such as ours or the one presented by Drake et al. [25]. With these domain sizes, the downstream region
+is an intermediate one, where non-local acceleration and mixing effects both participate to the kinetic temperature, followed
+by a ﬁeld piled-up region artiﬁcially created by the periodic boundaries.
+5. Summary and discussion
+In this paper, we have studied the ion interaction with the Hall electric ﬁeld in the vicinity of the ion decoupling region
+in the antiparallel case of collisionless magnetic reconnection and discussed the relation between kinetic physics and ﬂuid
+
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+149
+interpretation. Our work shows to what extent the presence of non-Maxwellian signatures can be compatible with a ﬂuid
+modeling:
+– The pressure force: Our study reveals the important role played by the pressure force in the ion momentum equation.
+Indeed, the pressure force was found to balance a great part of the Hall electric force. The increase of the pressure
+within the exhaust is a consequence of the symmetric strong inward electric force that compresses the gas rather than
+accelerate it eﬃciently toward the exit. The Hybrid formalism does not impose a closure hypothesis for the ions, and
+the process supporting the pressure increase is found to be dominantly a kinetic one.
+– Counterstreaming beams: As in previous papers, counterstreaming ion beams are found in this region. We have shown
+how these kinetic structures are related to the bulk acceleration by explaining how their shape is making the observed
+pressure force.
+– Particle dynamics: We have detailed the particle dynamics behind these beams and ﬁnd that the ions describe an
+electric bounce motion within the exhaust. This motion can be explained by their interaction with the diverging Hall
+potential well. The divergence of the well transfers the acquired velocity from the y direction to the x one. The mixing
+of particles having interacted a different number of times with the potential creates an apparent dispersion in the
+velocity space which is observed in simulated distribution functions. This ﬁnding conﬁrms that the kinetic features
+seen in the vicinity of the ion decoupling region are not related to a Speiser-like mechanism, but is rather strongly
+coupled to the presence of the Hall electric ﬁeld.
+– Observations: Finally, these results are in good agreement with the interpretation of satellite data suggested by Wygant
+[20]. The quadrupolar structure of Pixy is a characteristic feature of the ion decoupling region and thus can be consid-
+ered as a good observational proxy of this region in satellite data.
+The generality of our results may, however, be limited by several facts which should be evaluated in future works:
+– Guide ﬁeld effect: We have not considered the effect of a possible guide ﬁeld in the initial condition. With a guide
+ﬁeld, the ions may still be magnetized in the exhaust and not bounce anymore. Even if not strong enough to magnetize
+the ions, a guide ﬁeld can alter signiﬁcantly the symmetry of the Hall electric ﬁeld [34] and so change the bounce
+dynamics.
+– Symmetry: As strongly dependant of the symmetric Hall ﬁeld conﬁguration, the effects explained in this paper are
+possibly different when reconnection occurs within an asymmetric conﬁguration, like at the magnetopause or in some
+solar wind cases. In these cases, the Hall ﬁelds are no longer symmetric and the asymptotic populations present initial
+differences in temperature and density which complicates even more the kinetic structures.
+– Initial temperature: In our initial condition, the asymptotic population is rather cold compared to the potential electric
+energy of the Hall well, so that every particle is well trapped within the well. A different kinetic behavior might appear
+as one increases the asymptotic temperature. The initially cold particles are expected to behave like the ones in our
+study, but the initially hot particles may have enough energy to overcome the potential barrier and behave differently,
+perhaps by oscillating in the reversal magnetic ﬁeld as described in the Speiser mechanism.
+– Secondary islands: Several magnetic islands are created and ejected from the system as the reconnection proceeds. This
+unsteady behavior changes locally the force balance and depending on the production rate can make the observation of
+the background steady behavior quite diﬃcult, or even make its interest questionable.
+References
+[1] E.N. Parker, Journal of Geophysical Research 62 (1957) 509.
+[2] J. Birn, et al., Geospace Environmental Modeling (GEM) magnetic reconnection challenge, Journal of Geophysical Research 106 (2001) 3715–3720.
+[3] M.E. Mandt, R.E. Denton, J.F. Drake, Transition to whistler mediated magnetic reconnection, Geophysical Research Letters 21 (1994) 73–76.
+[4] J.F. Drake, M.A. Shay, M. Swisdak, The Hall ﬁelds and fast magnetic reconnection, Physics of Plasmas 15 (2008) 042306.
+[5] M.A. Shay, et al., Alfvénic collisionless magnetic reconnection and the Hall term, Journal of Geophysical Research 106 (2001) 3759–3772.
+[6] M.A. Shay, et al., The scaling of embedded collisionless reconnection, Physics of Plasmas 11 (2004) 2199–2213.
+[7] L. Yin, D. Winske, Plasma pressure tensor effects on reconnection: Hybrid and Hall-magnetohydrodynamics simulations, Physics of Plasmas 10 (2003)
+1595–1604.
+[8] M.A. Shay, et al., Structure of the dissipation region during collisionless magnetic reconnection, Journal of Geophysical Research 103 (1998) 9165–9176.
+[9] M.A. Shay, et al., The collisionless magnetic reconnection for large systems, Geophysical Research Letters 26 (1999) 2163–2166.
+[10] M. Hosino, et al., Ion dynamics in magnetic reconnection: comparison between numerical simulations and Geotail observations, Journal of Geophysical
+Research 103 (1998) 4509–4530.
+[11] K. Arzner, M. Scholer, Kinetic structure of the post plasmoid plasma sheet during magnetotail reconnection, Journal of Geophysical Research 106 (2001)
+3827–3844.
+[12] R.-F. Lottermoser, M. Scholer, A.P. Matthews, Ion kinetic effects in magnetic reconnection: Hybrid simulations, Journal of Geophysical Research 102
+(1998) 4547–4560.
+[13] L.R. Lyons, T.W. Speiser, Evidence for current sheet acceleration in the geomagnetic tail, Journal of Geophysical Research 87 (1982) 2276–2286.
+[14] R. Smets, D. Delcourt, D. Fontaine, Ion and electron distribution functions in the distant magnetotail: Modeling of Geotail observations, Journal of
+Geophysical Research 103 (1998) 20407–20417.
+[15] T.W. Speiser, Particle trajectories in model current sheets 1. Analytical solutions, Journal of Geophysical Research 70 (1965) 4219–4226.
+[16] M.M. Kuznetsova, M. Hesse, D. Winske, Ion dynamics in a hybrid simulation of magnetotail reconnection, Journal of Geophysical Research 101 (1996)
+27351–27374.
+
+150
+N. Aunai et al. / C. R. Physique 12 (2011) 141–150
+[17] T. Nagai, Geotail observations of the Hall current system: Evidence of magnetic reconnection in the magnetotail, Journal of Geophysical Research 106
+(2001) 25929–25950.
+[18] F.S. Mozer, S.D. Bale, T.D. Phan, Evidence of diffusion regions at a subsolar magnetopause crossing, Physical Review Letters 89 (2002).
+[19] A. Vaivads, et al., Structure of the magnetic reconnection diffusion region from four-spacecraft observations, Physical Review Letters 93 (2004).
+[20] J.R. Wygant, Cluster observations of an intense normal component of the electric ﬁeld at a thin reconnecting current sheet in the tail and its role in
+the shock-like acceleration of the ion ﬂuid into the separatrix region, Journal of Geophysical Research 110 (2005) 9206.
+[21] J.P. Eastwood, Multi-point observations of the Hall electromagnetic ﬁeld and secondary island formation during magnetic reconnection, Journal of
+Geophysical Research 112 (2007).
+[22] W. Pei, R. Horiuchi, T. Sato, Ion dynamics in steady collisionless driven reconnection, Physical Review Letters 87 (2001) 235003.
+[23] T. Nagai, Counterstreaming ions as evidence of magnetic reconnection in the recovery phase of substorms at the kinetic level, Physics of Plasmas 9
+(2002) 3705–3711.
+[24] J.T. Gosling, et al., Direct evidence for magnetic reconnection in the solar wind near 1 AU, Journal of Geophysical Research 110 (2005) 1107.
+[25] J.F. Drake, et al., Ion heating resulting from pickup in magnetic reconnection exhausts, Journal of Geophysical Research 114 (2009) 5111.
+[26] N. Singh, et al., Features of electron current layers: Comparison between three-dimensional particle-in-cell simulations and Cluster observations, Journal
+of Geophysical Research 115 (2010) 4203.
+[27] D.S. Harned, Quasineutral hybrid simulation of macroscopic plasma phenomena, Journal of Computational Physics 47 (1982) 452–462.
+[28] R. Smets, et al., Diffusion at the Earth magnetopause: enhancement by Kelvin–Helmholtz instability, Annales Geophysicae 25 (2007) 271–282.
+[29] A.S. Lipatov, The Hybrid Multiscale Simulation Technology, Springer, 2002.
+[30] P.A. Cassak, Catastrophe model for the onset of fast magnetic reconnection, PhD Thesis.
+[31] K. Fujimoto, R.D. Sydora, Whistler waves associated with magnetic reconnection, Geophysical Research Letters 35 (2008) 19112.
+[32] E.G. Harris, Nuovo Cimento 23 (1962) 115.
+[33] H. Karimabadi, Multiscale structure of the electron diffusion region, Geophysical Research Letters 34 (2007).
+[34] J.P. Eastwood, et al., Asymmetry of the ion diffusion region hall electric and magnetic ﬁelds during guide ﬁeld reconnection: Observations and com-
+parison with simulations, Physical Review Letters 104 (2010).

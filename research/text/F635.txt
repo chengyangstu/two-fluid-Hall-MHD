@@ -1,0 +1,1541 @@
+Counter-streaming heat-flux closure for electron-only collisionless magnetic
+reconnection
+M. C. McGrae-Menge,1, ∗J. R. Pierce,1 M. Almanza,1 A. Velberg,2 N.
+Barbour,3 W. D. Dorland,3 N. F. Loureiro,2 F. Fiuza,4 and E. P. Alves1, 5, †
+1Department of Physics and Astronomy, University of California, Los Angeles, CA 90095, USA
+2Plasma Science and Fusion Center, Massachusetts Institute of Technology, Cambridge, MA 02139, USA
+3Department of Physics, University of Maryland, College Park, Maryland 20742, USA
+4GAP/Instituto de Plasmas e Fusao Nuclear, Instituto Superior Tecnico,
+Universidade de Lisboa, 1049-001 Lisbon, Portugal
+5Mani L. Bhaumik Institute for Theoretical Physics,
+University of California at Los Angeles, Los Angeles, CA 90095, USA
+(Dated: July 9, 2026)
+In electron-only collisionless magnetic reconnection (MR), a regime of growing importance in
+turbulent space plasmas, electrons develop strongly non-Maxwellian distributions that invalidate
+conventional fluid closures based on assumptions of near local thermodynamic equilibrium. Using
+particle-in-cell (PIC) simulations, we identify the physical origin of the electron heat-flux: counter-
+streaming between electron sub-populations originating from opposite sides of the current sheet,
+with each sub-population remaining approximately adiabatic.
+This insight yields a novel fluid
+closure, which we implement in fluid simulations using two adiabatic electron fluids initialized on
+opposite sides of the current sheet. The fluid simulations capture the heat-flux, reconnecting current
+density, thermal pressure, and bulk flows as observed in PIC, within a reduced fluid description
+that conventional single-electron-fluid models fundamentally cannot reproduce. The closure is most
+accurate at low βReconn. and BGuide/BReconn., regimes relevant to Earth’s magnetotail, where it
+establishes counter-streaming as the physical origin of heat-flux in electron-only collisionless MR
+and enables its computationally efficient fluid modeling.
+I.
+INTRODUCTION
+Magnetic reconnection (MR) is the process by which
+magnetic field lines topologically rearrange, explosively
+converting stored magnetic energy into plasma heating,
+bulk flows, and energetic particles. While MR has been
+extensively studied in the electron-ion regime [1], recent
+Magnetospheric Multiscale (MMS) Mission [2] observa-
+tions across diverse turbulent space plasma environments
+have revealed distinct regions in which the reconnecting
+sheets are smaller than characteristic ion scales, prevent-
+ing ion coupling, referred to as “electron-only MR” [3].
+Electron-only MR has been identified in Earth’s mag-
+netosheath [3–6], bow shock transition region [7–9], and
+magnetotail [10–12]. Interestingly, electron-only MR is
+not simply a “scaled-down” version of electron-ion MR,
+as new features emerge without ions to regulate the dy-
+namics, including dramatically faster reconnection rates
+[13–17] and super-ion-Alfv´enic electron jets [3, 13, 18].
+Significant progress has been made in understand-
+ing kinetic electron behavior in electron-ion MR, pro-
+viding a foundation from which insights into electron-
+only MR can be drawn. One recurring and topical ki-
+netic feature is “electron counter-streaming” – two co-
+herent electron bulks with different fluid velocities re-
+siding at the same spatial location – which has been
+∗madoxmm@physics.ucla.edu
+† epalves@physics.ucla.edu
+observed inside of the electron diffusion region [19–22],
+plasma outflows/exhausts [23–25], and separatrices [26–
+29]. Electron counter-streaming drives kinetic instabil-
+ities
+[19, 26, 27], transport and heating [23, 25, 28],
+and contributes substantially to the reconnection electric
+field [22]. Yet current plasma fluid closures – which trun-
+cate the fluid hierarchy and compress kinetic physics into
+a reduced fluid description helpful for physical insight
+and computational efficiency – are unable to capture
+counter-streaming. The Hammett-Perkins heat-flux clo-
+sure [30], commonly used to model collisionless Landau
+damping in MR [31, 32], assumes near-Maxwellian distri-
+butions, broken by the strongly non-Maxwellian, multi-
+modal counter-streaming distributions.
+The Le et al.
+pressure closure [33, 34], which captures electromagnetic
+electron trapping in electron-ion MR [35–37], is derived
+for vth ≫vA, outside the low βReconn. regime in electron-
+only MR where counter-streaming dominates. Counter-
+streaming’s absence from existing fluid closures repre-
+sents a fundamental limitation in our ability to model
+electron-only MR with reduced descriptions, which we
+address in this work.
+In this Letter, using PIC simulations, we show that the
+electron heat-flux in electron-only collisionless MR arises
+almost entirely from counter-streaming between popula-
+tions originating on opposite sides of the current sheet,
+with each sub-population remaining approximately adi-
+abatic. This insight enables a fluid closure, as the heat-
+flux is fixed by their relative drift, closing the hierar-
+chy without a third-moment equation.
+We implement
+this as a two-electron-fluid closure and show in a for-
+arXiv:2607.07106v1  [physics.plasm-ph]  8 Jul 2026
+
+2
+−24
+−16
+−8
+0
+8
+16
+24
+x [de]
+8
+12
+16
+20
+24
+y [de]
+b
+c
+d
+e
+(a)
+|qxxx(t=300ω−1
+pe ,x,y)|
+0
+2
+4
+6
+q0
+−0.5
+−0.25
+0
+0.25
+0.5
+vx [c]
+0
+1
+2
+3
+4
+f(vx)
+qxxx
+q0 =−0.06
+q1xxx
+q0 =−0.06
+(b)
+−0.5
+−0.25
+0
+0.25
+0.5
+vx [c]
+0
+1
+2
+3
+4
+f(vx)
+qxxx
+q0 =0.02
+q2xxx
+q0 =0.02
+(c)
+−0.5
+−0.25
+0
+0.25
+0.5
+vx [c]
+0
+1
+2
+3
+4
+f(vx)
+qxxx
+q0 =−4.06
+q1xxx
+q0 =−0.16
+q2xxx
+q0 =0.11
+qCSxxx
+q0
+=−4.01
+(d)
+−0.5
+−0.25
+0
+0.25
+0.5
+vx [c]
+0
+1
+2
+3
+4
+f(vx)
+qxxx
+q0 =3.84
+q1xxx
+q0 =−0.06
+q2xxx
+q0 =0.04
+qCSxxx
+q0
+=3.86
+(e)
+FIG. 1.
+Heat-flux in electron-only collisionless MR arises from counter-streaming between electron sub-
+populations originating from opposite sides of the current sheet. (a) Grayscale map of |qxxx|/q0 at t = 300ω−1
+pe ,
+overlaid with representative electron trajectories from t = 200ω−1
+pe to 300ω−1
+pe . Trajectories are colored by each particle’s t = 0
+position above (red, sub-population 1) or below (blue, sub-population 2) the current sheet mid-plane at y = 16de, with opacity
+darkening toward the snapshot time. Black boxes b-e mark the locations of the velocity-space analyses shown in (b-e): elec-
+tron distributions f(vx) sampled within 0.2de × 0.2de patches at t = 300ω−1
+pe , with the total f(vx) outlined in black and the
+sub-population 1 (red) and sub-population 2 (blue) contributions shown separately. Annotated are local values of qxxx, q1xxx,
+q2xxx, qCSxxx from Equation 4.
+ward fluid simulation that it reproduces the PIC heat-
+flux, current density, pressure, and bulk flows – which a
+single-electron-fluid model fundamentally cannot.
+We use the fully-kinetic PIC code OSIRIS
+[38,
+39] to simulate electron-only collisionless MR from
+first-principles, initializing a 2D-3V force-free double
+Harris current sheet [40] with βReconn.
+=
+0.1 and
+BGuide/BReconn. = 0.1, representative of magnetotail
+reconnection conditions where βReconn. ∼0.001 −0.1
+and BGuide/BReconn. ≲0.2 [41, 42] (Simulation details
+in Appendix A). The electron fluid moments are com-
+puted directly from the PIC electron distribution func-
+tion f = f(x, v, t).
+The density n(x, t) =
+R
+fdv, the
+fluid-velocity vi(x, t) = 1
+n
+R
+vifdv, together with the cen-
+tered thermal pressure and heat-flux tensors respectively:
+pij(x, t) = me
+Z
+(vi −vi)(vj −vj)fdv
+(1)
+qijk(x, t) = me
+Z
+(vi −vi)(vj −vj)(vk −vk)fdv
+(2)
+Figure 1 presents a snapshot at t = 300ω−1
+pe , when both
+R
+|qxxx|dx and max(|qxxx|) are near their peak simulation
+values, ∼30% of the magnetic flux has reconnected, and
+the system has developed well-defined outflows, separa-
+trices, and magnetic islands.
+Fig.
+1a maps |qxxx|/q0;
+we focus on ˆx since it aligns with both the outflow and
+local B in this low-guide-field regime. Here n0 and T0
+are the initial uniform density and temperature, from
+
+3
+which we define the characteristic scales vth ≡
+p
+T0/me,
+p0 ≡men0T0, q0 ≡men0v3
+th, and J0 ≡|qe|n0c. qxxx is
+strongly concentrated in the outflows and separatrices,
+reaching values up to ∼6.6q0.
+To identify the physical origin of this heat-flux, we ex-
+amine f in {0.2de × 0.2de} spatial patches at four rep-
+resentative locations marked b, c, d, e in Fig.
+1a.
+In
+the upstream regions where heat-flux is negligible (Figs.
+1b-c), f is approximately Maxwellian, as initialized. In
+the downstream regions where heat-flux is large (Figs.
+1d-e), f is strongly non-Maxwellian, multi-modal, and
+asymmetric. We now show that a simple physical struc-
+ture underlies this apparent complexity.
+We tag each electron by its t = 0ω−1
+pe position above or
+below the sheet (Fig. 1a, red and blue) and trace repre-
+sentative trajectories to the counter-streaming locations.
+Electrons from opposite sides of the current sheet cross
+the mid-plane and converge at the same spatial location
+with opposing bulk velocities, seen directly in Figs. 1d–e
+as two well-separated peaks in f(vx) – one red, one blue
+centered at distinct vx. We find the counter-streaming
+distributions are robust to velocity-space relaxation, with
+each sub-population retaining its upstream Maxwellian
+character throughout the reconnection region. We note
+that above/below electron-fluid decompositions have pre-
+viously been used to study flow crossover
+[25] and the
+pressure supporting the reconnection electric field [22].
+However, the implications of using such decompositions
+for understanding the heat-flux or closing the fluid hier-
+archy have not been previously recognized.
+To quantify how this counter-streaming generates the
+observed heat-flux, we decompose the total distribu-
+tion into its sub-populations above and below the sheet,
+f = f1 + f2, focusing on the ˆx components (the anal-
+ysis generalizes straightforwardly to the full tensors in
+Appendix B). The total density and fluid velocity de-
+compose trivially as n = n1 + n2 and vx = n1v1x+n2v2x
+n1+n2
+.
+The higher-order centered moments, however, do not.
+Defining ∆vx ≡v1x −v2x, ∆Txx ≡T1xx −T2xx (with
+Tij ≡pij/n), and ∆n ≡n1 −n2:
+pxx = p1xx + p2xx + me
+n1n2
+n1 + n2
+∆v2
+x
+|
+{z
+}
+pCSxx
+(3)
+qxxx = q1xxx + q2xxx
++ 3n1n2
+n1 + n2
+∆vx∆Txx −me
+n1n2
+(n1 + n2)2 ∆n∆v3
+x
+|
+{z
+}
+qCSxxx
+(4)
+The total thermal pressure and heat-flux (Eqs. 3-4) ac-
+quire additional counter-streaming contributions pCSxx
+and qCSxxx that cannot be expressed in terms of either
+sub-population alone.
+These counter-streaming terms
+vanish whenever either stream is absent (n1 = 0 or
+n2 = 0) or when the streams co-move (∆vx = 0). Evalu-
+ating each term directly from the PIC data in Figs. 1d-e
+8
+12
+16
+20
+24
+1-e-Fluid
+y [de]
+(a)
+8
+12
+16
+20
+24
+2-e-Fluid
+y [de]
+(b)
+0
+1
+n1
+(b1)
+n2
+(b2)
+−24
+−16
+−8
+0
+8
+16
+24
+x [de]
+8
+12
+16
+20
+24
+PIC
+y [de]
+(c)
+0
+1
+n1
+(c1)
+n2
+(c2)
+0.5
+1
+1.5
+n
+0
+0.5
+1
+1.5
+n1
+0
+0.5
+1
+1.5
+n2
+pCSxx ≥0.1p0
+FIG. 2. We construct a 2-e-Fluid model that repro-
+duces the PIC counter-streaming dynamics inacces-
+sible to traditional 1-e-Fluid models. Electron density
+n (Grayscale) in 1-e-Fluid (a), 2-e-Fluid (b), and PIC (c) at
+t = 300ω−1
+pe .
+Purple lines indicate the boundaries of spa-
+tial regions inside of which pCSxx ≥0.1p0 (Eq. 3), identify-
+ing where counter-streaming is present. Side panels (b1, b2)
+for 2-e-Fluid and (c1, c2) for PIC show the individual sub-
+population densities n1 and n2, with their ˆx averaged profiles
+n1 and n2 plotted as a function of y. The corresponding ini-
+tial (t = 0ω−1
+pe ) state is shown in Fig. 6 (Appendix C).
+we find | q1xxx
+qxxx |, | q2xxx
+qxxx | ≲4%, while qCSxxx carries the
+vast majority of qxxx. As we show below, this general-
+izes across the reconnection region and to all 10 compo-
+nents of qijk.
+This is the central finding of our work:
+the sub-populations are individually approximately adi-
+abatic (q1ijk ≈q2ijk ≈0), and the heat-flux is generated
+almost entirely by their relative motion qijk ≈qCSijk,
+which closes the fluid hierarchy as qCSijk depends only
+on lower-order moments of the sub-populations with no
+third-order contribution. The “counter-streaming heat-
+flux closure” follows directly – partition the electrons
+above/below the current sheet into two sub-populations
+and impose adiabaticity on each.
+
+4
+12
+14
+16
+18
+20
+Jz
+y[de]
+(a)
+PIC
+(b)
+2-e-Fluid
+(c)
+1-e-Fluid
+−0.5
+−0.25
+0
+0.25
+0.5
+J0
+12
+14
+16
+18
+20
+pxx
+y[de]
+(d)
+(e)
+(f)
+0
+3
+6
+9
+p0
+12
+14
+16
+18
+20
+qxxxCS
+y[de]
+(g)
+(h)
+(i)
+−14
+−7
+0
+7
+14
+q0
+12
+14
+16
+18
+20
+qxxx
+y[de]
+(j)
+(k)
+(l)
+−14
+−7
+0
+7
+14
+q0
+−24
+−16
+−8
+0
+8
+16
+24
+x[de]
+12
+14
+16
+18
+20
+τqxxx →pxx
+y[de]
+(m)
+−24
+−16
+−8
+0
+8
+16
+24
+x[de]
+(n)
+−24
+−16
+−8
+0
+8
+16
+24
+x[de]
+(o)
+0
+5
+10
+15
+20
+ω−1
+pe
+FIG. 3. Our 2-e-Fluid model qualitatively matches PIC across current density, pressure, and heat-flux, which
+1-e-Fluid fails to capture. Snapshots at t = 300ω−1
+pe in PIC (left-column), 2-e-Fluid (middle), and 1-e-Fluid (right). Rows:
+reconnecting current density Jz (a-c), thermal pressure pxx (d-f), counter-streaming heat-flux qCSxxx (g-i), total heat-flux
+qxxx (j-l), and the pressure-modification timescale τqxxx→pxx ≡pxxde
+|qxxx| (m-o). We note that the contribution to qxxx from the
+isotropization closure is omitted from the fluid panels (k-l), as it is small relative to 2-e-Fluid qCSxxx (τIso ≫τqxxx→pxx), and
+reconstructing it from the closure would require additional assumptions since only its divergence is constrained.
+We now test whether a fluid model that explicitly re-
+solves the two sub-populations can reproduce PIC re-
+sults. We perform 10-moment collisionless, electromag-
+netic fluid simulations using the code Gkeyll [43], evolv-
+ing two electron fluids (2-e-Fluid), one for each sub-
+population, with the same electron-only MR equilibrium
+as in PIC. Each fluid carries the 10 moments n, vi, and
+the six independent components of the pressure tensor
+pij. Our closure compresses the electron description by
+a factor of ∼156: from 625 macroparticles per cell sam-
+pling 5D phase space in PIC, to just 20 fluid moments
+per cell (10 per sub-population). Our counter-streaming
+closure imposes adiabaticity on each sub-population,
+which we approach numerically through Gkeyll’s pres-
+sure isotropization scheme ∂mqijm = κvth(pij −δijp)
+with p ≡Tr(pij)/3, commonly used in electron-ion fluid
+modeling of collisionless MR [31, 44–46]. To approach
+adiabaticity, we take κ = 0.1d−1
+e
+– much smaller than
+values traditionally used, and as small as possible while
+retaining numerical stability.
+This corresponds to an
+isotropization timescale τIso ∼
+1
+κvth
+≈90ω−1
+pe , much
+longer than the counter-streaming heat-flux timescale
+shown later.
+For comparison, we run a conventional
+single-electron-fluid (1-e-Fluid) simulation evolving only
+the total electron moments under the same closure. At
+t = 0ω−1
+pe , 1-e-Fluid is initialized with uniform density n0,
+while the 2-e-Fluid model splits this density between the
+two sub-populations across the current sheet with smooth
+tanh profiles (Appendix C) that approximate the discrete
+density jump of the PIC decomposition while remaining
+numerically stable.
+Fig. 2 compares the electron density at t = 300ω−1
+pe
+across 1-e-Fluid (Fig. 2a), 2-e-Fluid (Fig. 2b), and PIC
+(Fig. 2c). The purple curves enclose the regions where
+pCSxx ≥0.1p0 (Eq. 3), marking where counter-streaming
+is active. In PIC, these regions fill the current sheet, out-
+
+5
+flows, and separatrices.
+2-e-Fluid reproduces this spa-
+tial structure in close agreement, while 1-e-Fluid con-
+tains no such regions by construction. The side panels
+show the individual sub-population densities n1 and n2
+for 2-e-Fluid (Fig. 2b1,b2) and PIC (Fig. 2c1,c2). These
+side panels show that 2-e-Fluid captures the fraction of
+each sub-population that crosses to the opposite side,
+with both the 2D sub-population densities and their ˆx-
+averaged profiles n1 and n2 matching PIC closely. 1-e-
+Fluid develops a pronounced depletion in the total den-
+sity at the sheet center, absent in 2-e-Fluid and PIC.
+Fig. 3 presents a detailed comparison at t = 300ω−1
+pe
+across physical quantities that reveal the consequences
+of missing counter-streaming in the single-fluid model.
+The reconnecting current density Jz (Fig. 3a-c) shows
+a striking qualitative failure of 1-e-Fluid: Jz is strongly
+suppressed at the center of the current-sheet (y = 16de),
+whereas both 2-e-Fluid and PIC maintain a filled current
+sheet. This is driven by an underlying density deficit al-
+ready visible in 1-e-Fluid (Fig. 2a). The origin is geomet-
+ric: at the mid-plane vy = 0 by symmetry, blocking 1-e-
+Fluid transport into the sheet, while the sub-population
+velocities v1y and v2y – present in 2-e-Fluid and PIC
+but absent by construction in 1-e-Fluid – carry plasma
+across from opposite sides supplying density to the layer.
+The thermal pressure pxx (Figs. 3d-f) exposes a second
+failure: without a heat-flux channel, 1-e-Fluid develops
+spurious pressure accumulations in the outflows that are
+absent in 2-e-Fluid and PIC. In contrast to 1-e-Fluid, the
+counter-streaming heat-flux qCSxxx (Figs. 3g-i) is large
+and spatially structured throughout the reconnection re-
+gion in both PIC and 2-e-Fluid, providing a channel that
+transports thermal energy away from the outflows and
+prevents pressure pile-up. 2-e-Fluid reproduces the spa-
+tial structure and sign of qCSxxx, albeit with a some-
+what larger amplitude. The counter-streaming heat-flux
+qCSxxx in PIC (Fig. 3g) closely resembles the total heat-
+flux qxxx in PIC (Fig.
+3j), confirming that counter-
+streaming is the dominant heat-flux mechanism across
+the entire reconnection region – not only in the local-
+ized patches examined in Fig. 1. As shown in Appendix
+B (Fig. 5), this picture also extends to all 10 indepen-
+dent components of qijk, with 2-e-Fluid reproducing the
+spatial structure and sign of PIC qCSijk, which in turn
+captures the dominant share of the total PIC heat-flux.
+We estimate the timescale on which this heat-flux mod-
+ifies the thermal pressure.
+From ∂tpxx ∼∂xqxxx with
+∂x ∼d−1
+e , this timescale is τqxxx→pxx ∼pxxde/|qxxx|.
+Figs. 3m-o show that in PIC and 2-e-Fluid, τqxxx→pxx
+reaches down to ∼4.1ω−1
+pe and ∼1.5ω−1
+pe respectively -
+comparable to the electron-kinetic timescale on which the
+system evolves - establishing counter-streaming heat-flux
+as dynamically important. In 1-e-Fluid the timescale is
+infinite.
+To map the regime of validity of the closure, we
+run a large PIC parameter scan over βReconn. and
+BGuide/BReconn., measuring the fraction of total heat-
+flux captured by the closure (Fig.
+4).
+The closure is
+0.01
+0.05
+0.1
+0.5
+1
+βReconn.
+0.01
+0.05
+0.1
+0.5
+1
+5
+10
+BGuide/BReconn.
+Counter-streaming closure accuracy
+vth/vfl =0.2
+vth/vfl =0.4
+vth/vfl =1.0
+vth/vfl =2.0
+Reference case
+0
+0.2
+0.4
+0.6
+0.8
+max(1−
+⟨|qxxx −qCSxxx|⟩xy
+⟨|qxxx|⟩xy
+)
+FIG. 4.
+Our counter-streaming closure is most ac-
+curate at low βReconn. and low BGuide/BReconn., con-
+trolled by vth/vfl. Each cell is from an independent PIC
+simulation at the indicated βReconn. (varied via vth) and
+BGuide/BReconn. (varied via BGuide).
+Color gives the time-
+maximum of 1 −⟨|qxxx −qCSxxx|⟩xy/⟨|qxxx|⟩xy, where ⟨·⟩xy
+denotes the spatial average over the 2D domain; this met-
+ric quantifies the fraction of total heat-flux captured by the
+closure, with darker red indicating better agreement. Black
+curves are contours of constant initial vth/vfl. The blue star
+marks the reference case {βReconn. = 0.1, BGuide/BReconn. =
+0.1} of Figs. 1-3.
+most accurate at low βReconn. and BGuide/BReconn. and
+degrades smoothly as either increases. The accuracy col-
+lapses onto a single parameter, the ratio of the initial elec-
+tron thermal speed to the maximum ˆx initial bulk-flow
+speed, vth/vfl – physically natural because the counter-
+streaming heat-flux scales as ∆v3
+x, while intra-population
+departures from adiabaticity scale as v3
+th, giving a ratio
+(vth/∆vx)3. Both axes lower this ratio: βReconn. via vth,
+and smaller BGuide/BReconn. via larger initial drift vfl
+from the force-free equilibrium.
+At later times, a sub-population can circulate back
+into itself within a magnetic island, developing counter-
+streaming within a single sub-population that breaks
+qijk ≈qCSijk in the 2-e-Fluid model; additional y-
+staggered fluids could help resolve this.
+The counter-
+streaming distributions are also unstable to streaming
+and pressure-anisotropy instabilities driven by pCSij,
+which scatter the sub-populations. Because these insta-
+bilities are due to counter-streaming, 2-e-Fluid can cap-
+ture their linear growth, whereas 1-e-Fluid cannot.
+In summary, electron-only collisionless MR develops
+strongly non-Maxwellian electron distributions that no
+previously known fluid closure can capture, leaving the
+regime accessible only to kinetic simulation.
+We have
+shown that this complexity is, in fact, the sum of two
+adiabatic sub-populations originating on opposite sides
+of the current sheet, whose relative motion sets the elec-
+tron heat-flux and enables an interpretable and generaliz-
+
+6
+able fluid closure. The resulting computationally efficient
+2-e-Fluid simulation reproduces the PIC heat-flux, while
+1-e-Fluid develops unphysical density depletion and pres-
+sure pile-up. This 2-e-Fluid model can potentially enable
+efficient fluid modeling of 3D electron-only collisionless
+MR [47]: the ˆz heat-flux components are already counter-
+streaming dominated (Appendix B, Fig. 5), and in 3D,
+where ∂zqijz becomes a finite source in the pressure evo-
+lution, these components will actively modify the dynam-
+ics. This approach could extend to reconnection in turbu-
+lence by dynamically identifying forming current sheets
+[48–51] and splitting the fluid across each. More broadly,
+the above/below fluid initialization and sub-population
+adiabatic closure presented here can be extended to other
+reconnection configurations and regimes, such as asym-
+metric and electron-ion reconnection.
+The authors acknowledge the OSIRIS Consortium,
+consisting of UCLA, University of Michigan, and IST
+(Portugal) for the use of the OSIRIS 4.0 framework.
+The authors would also like to acknowledge Liang Wang
+for helpful discussions regarding the Gkeyll multi-fluid-
+moment algorithm.
+This work was supported by the
+National Science Foundation Grants No. PHY-2108087
+and No. PHY-2108089. F.F. acknowledges support from
+the European Research Council (ERC-2021-CoG Grant
+XPACE No. 101045172). This research used resources
+of the National Energy Research Scientific Computing
+Center (NERSC), a Department of Energy User Facility
+using NERSC award FES-ERCAPm1157.
+Appendix A: PIC simulation setup
+We simulate electron-only collisionless magnetic recon-
+nection using the particle-in-cell code OSIRIS [38, 39].
+The 2D-3V domain spans x ∈[−Lx/2, Lx/2] and y ∈
+[0, Ly], with Lx = 48de and Ly = 64de, doubly peri-
+odic boundary conditions, resolved at ∆x = ∆y = 0.1de.
+Electron quantities are given in normalized units |qe| =
+c = me = n0 = 1, and ions form a static, uniform, neu-
+tralizing background ( mi
+me →∞). Each cell is initialized
+with 625 electron macroparticles using quadratic particle
+shapes. We choose a timestep ∆t = 0.06667ω−1
+pe , which
+satisfies the Courant condition. All simulations used for
+Fig. 4 are run to t = 1, 000ω−1
+pe .
+The equilibrium is a double force-free (ϵijkJjBk = 0)
+Harris current sheet:
+Bx(y) = BReconn.
+"
+tanh(y −Ly
+4
+λ
+) −tanh(y −3Ly
+4
+λ
+) −1
+#
+(A1)
+Bz(y) =
+q
+B2
+Reconn. + B2
+Guide −B2x(y)
+(A2)
+We use initial current-sheet width λ
+=
+1de
+and
+BReconn. = 0.5 (Ωce/ωpe = 0.5) for all simulations. All
+of the results shown are from the lower sheet centered at
+y = 16de. Reconnection is seeded by a small-amplitude
+perturbation of the form:
+By(x) = δB{sin(2πx
+Lx
+) + 1
+4 exp [−(x −Lx
+4
+Lx
+8
+)2]}
+(A3)
+We use δB = 0.01BReconn..
+The Gaussian term in
+Eq. A3 deterministically breaks the x →−x reflection
+symmetry of the equilibrium. Gkeyll has no mechanism
+to break this symmetry on its own and would remain
+exactly x-symmetric for all time, while PIC breaks it
+stochastically via discrete-particle noise; the asymmetric
+seed forces both codes to select the same reconnection
+geometry and enables a direct comparison.
+The
+electron
+fluid
+velocities
+are
+initialized
+from
+ϵijk∂jBk
+= Ji
+= qen0vi, i.e.
+electrons carry the
+entire current.
+For the reference case we choose
+BGuide = 0.1BReconn. and βReconn. = 0.1, giving vth =
+q
+βReconn.
+2
+BReconn. = 0.111803c. The PIC data and input
+deck are available on Zenodo [52].
+Appendix B: Counter-streaming decomposition of
+the full pressure and heat-flux tensors
+We generalize counter-streaming pressure and heat-
+flux tensors to full Cartesian coordinates. Using the par-
+tition f = f1 + f2, defining ∆vi ≡v1i −v2i, ∆Tij ≡
+T1ij −T2ij (with Tij ≡pij/n), and ∆n ≡n1 −n2:
+pij = p1ij + p2ij + me
+n1n2
+n1 + n2
+∆vi∆vj
+|
+{z
+}
+pCSij
+(B1)
+qijk = q1ijk + q2ijk
++
+n1n2
+n1 + n2
+∆v(i∆Tjk) −me
+n1n2
+(n1 + n2)2 ∆n ∆vi∆vj∆vk
+|
+{z
+}
+qCSijk
+(B2)
+Where parenthesized indices in Eq. B2 denote A(iBjk) ≡
+AiBjk + AjBik + AkBij. Eqs. 3-4 of the main text are
+the ij = xx and ijk = xxx components respectively.
+Figure 5 shows all 10 independent components of the
+total heat-flux qijk in PIC (left column), the counter-
+streaming heat-flux qCSijk in PIC (middle column), and
+the counter-streaming heat-flux qCSijk in 2-e-Fluid (right
+column) all at t = 300ω−1
+pe . The counter-streaming heat-
+fluxes are reconstructed from the sub-population mo-
+ments via Eq.
+B2.
+We note that 1-e-Fluid predicts
+qCSijk = 0 everywhere by construction, so no 1-e-Fluid
+column is shown. We find that across every component,
+qCSijk in PIC qualitatively carries the dominant share
+of the total PIC qijk, establishing counter-streaming as
+the dominant source of the full heat-flux tensor and a
+viable model, not just qxxx. We find that our 2-e-Fluid
+
+7
+8
+12
+16
+20
+24
+̂x ̂x ̂x
+y [de]
+(a)
+PIC: qijk
+−5
+0
+5
+(b)
+PIC: qCSijk
+−5
+0
+5
+(c)
+2-e-Fluid: qCSijk
+−10
+0
+10
+q0
+8
+12
+16
+20
+24
+̂x ̂x ̂y
+y [de]
+(d)
+−1
+0
+1
+(e)
+−1
+0
+1
+(f)
+−2
+0
+2
+q0
+8
+12
+16
+20
+24
+̂x ̂x ̂z
+y [de]
+(g)
+−3
+0
+3
+(h)
+−3
+0
+3
+(i)
+−5
+0
+5
+q0
+8
+12
+16
+20
+24
+̂x ̂y ̂y
+y [de]
+(j)
+−1
+0
+1
+(k)
+−1
+0
+1
+(l)
+−2
+0
+2
+q0
+8
+12
+16
+20
+24
+̂x ̂y ̂z
+y [de]
+(m)
+−1
+0
+1
+(n)
+−1
+0
+1
+(o)
+−1
+0
+1
+q0
+8
+12
+16
+20
+24
+̂x ̂z ̂z
+y [de]
+(p)
+−5
+0
+5
+(q)
+−5
+0
+5
+(r)
+−5
+0
+5
+q0
+8
+12
+16
+20
+24
+̂y ̂y ̂y
+y [de]
+(s)
+−1
+0
+1
+(t)
+−1
+0
+1
+(u)
+−2
+0
+2
+q0
+8
+12
+16
+20
+24
+̂y ̂y ̂z
+y [de]
+(v)
+−1
+0
+1
+(w)
+−1
+0
+1
+(x)
+−1
+0
+1
+q0
+8
+12
+16
+20
+24
+̂y ̂z ̂z
+y [de]
+(y)
+−1
+0
+1
+(z)
+−1
+0
+1
+(α)
+−2
+0
+2
+q0
+−24
+−16
+−8
+0
+8
+16
+24
+x [de]
+8
+12
+16
+20
+24
+̂z ̂z ̂z
+y [de]
+(β)
+−10
+0
+10
+−24
+−16
+−8
+0
+8
+16
+24
+x [de]
+(γ)
+−10
+0
+10
+−24
+−16
+−8
+0
+8
+16
+24
+x [de]
+(δ)
+−10
+0
+10
+q0
+FIG. 5. Counter-streaming is the dominant source of the full PIC heat-flux tensor, and the 2-e-Fluid model
+reproduces it across all 10 independent components. Snapshots at t = 300ω−1
+pe , with each row showing one of the
+10 independent heat-flux components (labeled ˆiˆjˆk). The three columns show the total qijk from PIC (left column), counter-
+streaming contribution qCSijk from PIC (middle column), and qCSijk predicted by the 2-e-Fluid simulation (right column).
+The two PIC columns share a common colorbar per row, set to the maximum of |qijk| from PIC, so amplitudes and structures
+are directly comparable. The 2-e-Fluid column is on its own per-row colorbar set to the maximum of |qCSijk| from the 2-e-Fluid
+simulation, to facilitate comparison of spatial structure and sign despite differences in magnitude.
+
+8
+model qualitatively reproduces qCSijk (and more impor-
+tantly qijk), in both spatial structure and sign across all
+10 components, with somewhat larger amplitudes that
+track the same spatial pattern. The weakest agreement
+between PIC qCSijk and total PIC qijk is localized to
+specific regions and components: the current sheet struc-
+ture for ˆxˆxˆz (panels g-h), along the separatrices for ˆyˆyˆz
+(panels v–w), and at the center of the current sheet and
+inside the plasmoid for ˆzˆzˆz (panels β-γ). Future work
+will examine why counter-streaming fails to capture the
+heat-flux in these regions.
+Appendix C: Fluid simulation setup
+The 1-e-Fluid and 2-e-Fluid simulations of electron-
+only collisionless MR are performed with the 10-moment
+electromagnetic, collisionless fluid code Gkeyll [43], in-
+heriting the PIC domain, grid, boundary conditions, and
+magnetic-field initial condition (Eqs.
+A1-A3) exactly:
+x ∈[−Lx/2, Lx/2] and y ∈[0, Ly], with Lx = 48de
+and Ly = 64de, doubly-periodic, and ∆x = ∆y =
+0.1de. As in PIC, ions are a static, uniform, neutraliz-
+ing background. The fluid equations are advanced with
+a finite-volume dimensionally-split scheme at CFL frac-
+tion 0.66667. All electron fluids are initialized with vth =
+0.111803c as in PIC. In 2-e-Fluid, both sub-populations
+share the same initial fluid velocity v1i = v2i = vi (so
+that counter-streaming develops self-consistently from
+the reconnection dynamics rather than being imposed
+by hand), and also in 1-e-Fluid the single fluid carries vi;
+this common drift is set from ϵijk∂jBk = Ji = qen0vi.
+In 1-e-Fluid the electron density is uniform at n0; in 2-
+e-Fluid the total density is partitioned between the two
+sub-populations across the current sheet using smooth
+tanh profiles:
+n1(y) = nF + (n0 −2nF
+2
+)Ψ(y)
+(C1)
+n2(y) = n0 −nF −(n0 −2nF
+2
+)Ψ(y)
+(C2)
+Ψ(y) ≡tanh(y −Ly
+4
+λS
+) −tanh(y −3Ly
+4
+λS
+)
+(C3)
+We choose the smoothing width λS = 1de and the
+density floor nF = 0.03n0; the finite floor and smooth-
+ing are needed for numerical stability and we find the
+resulting dynamics are insensitive to reasonable choices
+of λS and nF .
+These initial density profiles satisfy
+n1(y) + n2(y) = n0 exactly. Fig. 6 shows the resulting
+t = 0ω−1
+pe initialization for all three simulations, compar-
+ing the uniform 1-e-Fluid density (Fig. 6a), the smooth
+2-e-Fluid partition (Fig. 6b), and the discrete PIC den-
+sity split (Fig. 6c). The fluid data and input decks are
+available on Zenodo [52].
+8
+12
+16
+20
+24
+1-e-Fluid
+y [de]
+(a)
+8
+12
+16
+20
+24
+2-e-Fluid
+y [de]
+(b)
+0
+1
+n1
+(b1)
+n2
+(b2)
+−24
+−16
+−8
+0
+8
+16
+24
+x [de]
+8
+12
+16
+20
+24
+PIC
+y [de]
+(c)
+0
+1
+n1
+(c1)
+n2
+(c2)
+0.5
+1
+1.5
+n
+0
+0.5
+1
+1.5
+n1
+0
+0.5
+1
+1.5
+n2
+FIG. 6. Initial (t = 0ω−1
+pe ) electron density for the 1-
+e-Fluid, 2-e-Fluid, and PIC simulations. Total electron
+density n (grayscale) in 1-e-Fluid (a), 2-e-Fluid (b), and PIC
+(c). 1-e-Fluid is initialized with uniform density n0, while 2-e-
+Fluid partitions the density between the two sub-populations
+across the current sheet using the smooth tanh profiles of
+Eqs. C1,C2. Side panels (b1, b2) for 2-e-Fluid and (c1, c2)
+for PIC show the individual sub-population densities n1 and
+n2, with their ˆx averaged profiles n1 and n2 plotted as a
+function of y.
+The PIC sub-populations exhibit a discrete
+density jump at the sheet, which the 2-e-Fluid initialization
+approximates with a smooth tanh transition.
+One structural limitation of the 2-e-Fluid model is that
+the free expansion of each sub-population due to its ini-
+tial pressure gradient into the region occupied by the
+other is mediated by truncated fluid equations rather
+than by kinetic effects, and these are not equivalent –
+thermal expansion of a plasma is inherently a kinetic pro-
+cess [53] that fluid dynamics does not properly capture
+with an adiabatic closure. We note that this difference
+is subdominant when βReconn. ≪1, consistent with the
+regime where our closure is most accurate in Fig. 4, but it
+does limit the viability of the two sub-population model
+at large βReconn..
+
+9
+[1] M. Yamada, R. Kulsrud, and H. Ji, Magnetic reconnec-
+tion, Rev. Mod. Phys. 82, 603 (2010).
+[2] J. L. Burch, T. E. Moore, R. B. Torbert, and B. L. Giles,
+Magnetospheric Multiscale Overview and Science Objec-
+tives, Space Science Reviews 199, 5 (2016).
+[3] T. Phan, J. Eastwood, M. Shay, J. Drake, B. Sonnerup,
+M. Fujimoto, P. Cassak, M. Oieroset, J. Burch, R. Tor-
+bert, A. Rager, J. Dorelli, D. Gershman, C. Pollock,
+C. Haggerty, Y. Khotyaintsev, B. Lavraud, Y. Saito, and
+W. Magnes, Electron magnetic reconnection without ion
+coupling in earth’s turbulent magnetosheath, Nature 557
+(2018).
+[4] J. E. Stawarz, J. P. Eastwood, T. D. Phan, I. L. Gingell,
+M. A. Shay, J. L. Burch, R. E. Ergun, B. L. Giles, D. J.
+Gershman, O. L. Contel, P.-A. Lindqvist, C. T. Russell,
+R. J. Strangeway, R. B. Torbert, M. R. Argall, D. Fischer,
+W. Magnes, and L. Franci, Properties of the turbulence
+associated with electron-only magnetic reconnection in
+earth’s magnetosheath, The Astrophysical Journal Let-
+ters 877, L37 (2019).
+[5] J. E. Stawarz, J. P. Eastwood, T. D. Phan, I. L. Gin-
+gell, P. S. Pyakurel, M. A. Shay, S. L. Robertson, C. T.
+Russell, and O. Le Contel, Turbulence-driven magnetic
+reconnection and the magnetic correlation length: Obser-
+vations from magnetospheric multiscale in earth’s mag-
+netosheath, Physics of Plasmas 29, 012302 (2022).
+[6] D. S. Payne, M. Swisdak, J. P. Eastwood, J. F. Drake,
+P. S. Pyakurel, and J. R. Shuster, In-situ observations
+of the magnetothermodynamic evolution of electron-only
+reconnection, Communications Physics 8, 36 (2025).
+[7] I. Gingell, S. J. Schwartz, J. P. Eastwood, J. L. Burch,
+R. E. Ergun, S. Fuselier, D. J. Gershman, B. L. Giles,
+Y. V. Khotyaintsev, B. Lavraud, P.-A. Lindqvist, W. R.
+Paterson, T. D. Phan, C. T. Russell, J. E. Stawarz, R. J.
+Strangeway, R. B. Torbert, and V. Wilder, Observations
+of magnetic reconnection in the transition region of quasi-
+parallel shocks, Geophysical Research Letters 46, 1177
+(2019).
+[8] S. Wang, L.-J. Chen, N. Bessho, M. Hesse, L. B. Wil-
+son III, B. Giles, T. E. Moore, C. T. Russell, R. B. Tor-
+bert, and J. L. Burch, Observational evidence of mag-
+netic reconnection in the terrestrial bow shock transition
+region, Geophysical Research Letters 46, 562 (2019).
+[9] N. Bessho, L.-J. Chen, J. E. Stawarz, S. Wang, M. Hesse,
+I. Wilson, L. B., and J. Ng, Strong reconnection electric
+fields in shock-driven turbulence, Physics of Plasmas 29,
+042304 (2022).
+[10] R. Wang,
+Q. Lu,
+R. Nakamura,
+W. Baumjohann,
+C. Huang, C. T. Russell, J. L. Burch, C. J. Pollock,
+D. Gershman, R. E. Ergun, S. Wang, P. A. Lindqvist, and
+B. Giles, An electron-scale current sheet without bursty
+reconnection signatures observed in the near-earth tail,
+Geophysical Research Letters 45, 4542 (2018).
+[11] S. Lu, R. Wang, Q. Lu, V. Angelopoulos, R. Naka-
+mura, A. Artemyev, P. Pritchett, T. Liu, X.-J. Zhang,
+W. Baumjohann, W. Gonzalez, A. Rager, R. Torbert,
+B. Giles, D. Gershman, C. Russell, R. Strangeway, Y. Qi,
+R. Ergun, and S. Wang, Magnetotail reconnection onset
+caused by electron kinetics with a strong external driver,
+Nature Communications 11, 5049 (2020).
+[12] M. Hubbert, C. T. Russell, Y. Qi, S. Lu, J. L. Burch,
+B. L. Giles, and T. E. Moore, Electron-Only Recon-
+nection as a Transition Phase From Quiet Magnetotail
+Current Sheets to Traditional Magnetotail Reconnection,
+Journal of Geophysical Research (Space Physics) 127,
+e29584 (2022).
+[13] P. Sharma Pyakurel, M. A. Shay, T. D. Phan, W. H.
+Matthaeus, J. F. Drake, J. M. TenBarge, C. C. Haggerty,
+K. G. Klein, P. A. Cassak, T. N. Parashar, M. Swis-
+dak, and A. Chasapis, Transition from ion-coupled to
+electron-only reconnection: Basic physics and implica-
+tions for plasma turbulence, Physics of Plasmas 26,
+082307 (2019).
+[14] S. Greess, J. Egedal, A. Stanier, J. Olson, W. Daughton,
+A. Lˆe, A. Millet-Ayala, C. Kuchta, and C. Forest, Kinetic
+simulations verifying reconnection rates measured in the
+laboratory, spanning the ion-coupled to near electron-
+only regimes, Physics of Plasmas 29, 102103 (2022).
+[15] Y. Guan, Q. Lu, S. Lu, K. Huang, and R. Wang,
+Reconnection Rate and Transition from Ion-coupled
+to Electron-only Reconnection, Astrophys. J. 958, 172
+(2023).
+[16] Y.-H. Liu, P. Pyakurel, X. Li, M. Hesse, N. Bessho,
+K. Genestreti, and S. Thapa, An analytical model of
+“electron-only” magnetic reconnection rates, Communi-
+cations Physics 8 (2025).
+[17] Z. Liu, C. Silva, L. M. Milanese, M. Zhou, N. R. Man-
+dell, and N. F. Loureiro, Electron-only magnetic recon-
+nection and inverse magnetic-energy transfer at subion
+scales, Phys. Rev. Lett. 134, 155201 (2025).
+[18] F. Califano, S. S. Cerri, M. Faganello, D. Laveder,
+M. Sisti, and M. W. Kunz, Electron-only reconnection
+in plasma turbulence, Frontiers in Physics Volume 8 -
+2020, 10.3389/fphy.2020.00317 (2020).
+[19] H. Che, J. F. Drake, M. Swisdak, and P. H. Yoon, Non-
+linear development of streaming instabilities in strongly
+magnetized plasma, Phys. Rev. Lett. 102, 145004 (2009).
+[20] K. Fujimoto and R. D. Sydora, Particle description of the
+electron diffusion region in collisionless magnetic recon-
+nection, Physics of Plasmas 16, 112309 (2009).
+[21] N. Bessho, L.-J. Chen, and M. Hesse, Electron distri-
+bution functions in the diffusion region of asymmetric
+magnetic reconnection, Geophysical Research Letters 43,
+1828 (2016).
+[22] P. Suetrong, P. Pongkitiwanichakul, K. Malakit, T. Pi-
+anpanit, M. Shamir, M. A. Shay, P. A. Cassak, and
+D. Ruffolo, Electron crossover and diffusion region
+width in symmetric, collisionless magnetic reconnection,
+Physics of Plasmas 33, 052102 (2026).
+[23] J. R. Shuster, L.-J. Chen, W. S. Daughton, L. C. Lee,
+K. H. Lee, N. Bessho, R. B. Torbert, G. Li, and M. R.
+Argall, Highly structured electron anisotropy in collision-
+less reconnection exhausts, Geophysical Research Letters
+41, 5389 (2014).
+[24] M. Hesse, L. J. Chen, Y.-H. Liu, N. Bessho, and J. L.
+Burch, Population mixing in asymmetric magnetic recon-
+nection with a guide field, Phys. Rev. Lett. 118, 145101
+(2017).
+[25] T. Pianpanit,
+K. Malakit,
+P. Prapan,
+D. Ruffolo,
+P. Pongkitiwanichakul, P. Suetrong, M. A. Shay, and
+P. A. Cassak, Flow crossover and parallel outflow dur-
+ing collisionless magnetic reconnection, Phys. Rev. Lett.
+
+10
+136, 085201 (2026).
+[26] J. F. Drake, M. Swisdak, C. Cattell, M. A. Shay, B. N.
+Rogers, and A. Zeiler, Formation of electron holes and
+particle energization during magnetic reconnection, Sci-
+ence 299, 873 (2003).
+[27] C. Cattell, J. Dombeck, J. Wygant, J. F. Drake, M. Swis-
+dak, M. L. Goldstein, W. Keith, A. Fazakerley, M. Andr´e,
+E. Lucek, and A. Balogh, Cluster observations of elec-
+tron holes in association with magnetotail reconnection
+and comparison to simulations, Journal of Geophysical
+Research: Space Physics 110 (2005).
+[28] M. Hoshino, K. Hiraide, and T. Mukai, Strong electron
+heating and non-Maxwellian behavior in magnetic recon-
+nection, Earth, Planets and Space 53, 627 (2001).
+[29] P. Shi, P. Srivastav, M. H. Barbhuiya, P. A. Cassak, E. E.
+Scime, and M. Swisdak, Laboratory observations of elec-
+tron heating and non-maxwellian distributions at the ki-
+netic scale during electron-only magnetic reconnection,
+Phys. Rev. Lett. 128, 025002 (2022).
+[30] G. W. Hammett and F. W. Perkins, Fluid moment mod-
+els for landau damping with application to the ion-
+temperature-gradient instability, Phys. Rev. Lett. 64,
+3019 (1990).
+[31] L. Wang, A. H. Hakim, A. Bhattacharjee, and K. Ger-
+maschewski, Comparison of multi-fluid moment models
+with particle-in-cell simulations of collisionless magnetic
+reconnection, Physics of Plasmas 22, 012108 (2015).
+[32] J. Ng, A. Hakim, A. Bhattacharjee, A. Stanier, and
+W. Daughton, Simulations of anti-parallel reconnection
+using a nonlocal heat flux closure, Physics of Plasmas 24,
+082112 (2017).
+[33] A. Le, J. Egedal, W. Daughton, W. Fox, and N. Katz,
+Equations of state for collisionless guide-field reconnec-
+tion, Phys. Rev. Lett. 102, 085001 (2009).
+[34] A. Le, J. Egedal, W. Fox, N. Katz, A. Vrublevskis,
+W. Daughton, and J. F. Drake, Equations of state in
+collisionless magnetic reconnection, Physics of Plasmas
+17, 055703 (2010).
+[35] O. Ohia, J. Egedal, V. S. Lukin, W. Daughton, and A. Le,
+Demonstration of anisotropic fluid closure capturing the
+kinetic structure of magnetic reconnection, Phys. Rev.
+Lett. 109, 115004 (2012).
+[36] J. Egedal, A. Le, and W. Daughton, A review of pres-
+sure anisotropy caused by electron trapping in collision-
+less plasma, and its implications for magnetic reconnec-
+tion, Physics of Plasmas 20, 061201 (2013).
+[37] B. A. Wetherton, J. Egedal, A. Lˆe, and W. Daughton,
+Validation of anisotropic electron fluid closure through
+in situ spacecraft observations of magnetic reconnection,
+Geophysical Research Letters 46, 6223 (2019).
+[38] R. A. Fonseca, L. O. Silva, F. S. Tsung, V. K. Decyk,
+W. Lu, C. Ren, W. B. Mori, S. Deng, S. Lee, T. Kat-
+souleas, and J. C. Adam, Osiris: A three-dimensional,
+fully relativistic particle in cell code for modeling plasma
+based accelerators, in Computational Science — ICCS
+2002, edited by P. M. A. Sloot, A. G. Hoekstra, C. J. K.
+Tan, and J. J. Dongarra (Springer Berlin Heidelberg,
+Berlin, Heidelberg, 2002) pp. 342–351.
+[39] R. A. Fonseca, S. F. Martins, L. O. Silva, J. W. Tonge,
+F. S. Tsung, and W. B. Mori, One-to-one direct modeling
+of experiments and astrophysical scenarios: pushing the
+envelope on kinetic plasma simulations, Plasma Physics
+and Controlled Fusion 50, 124034 (2008).
+[40] E. G. Harris, On a plasma sheath separating regions of
+oppositely directed magnetic field, Il Nuovo Cimento 23,
+115 (1962).
+[41] M. Øieroset, T. D. Phan, M. Oka, J. F. Drake, S. A.
+Fuselier, D. J. Gershman, K. Maheshwari, B. L. Giles,
+Q. Zhang, F. Guo, J. L. Burch, R. B. Torbert, and R. J.
+Strangeway, Scaling of magnetic reconnection electron
+bulk heating in the high-alfv´en-speed and low-β regime
+of earth’s magnetotail, The Astrophysical Journal 954,
+118 (2023).
+[42] L. Richard, Y. V. Khotyaintsev, C. Norgren, K. Steinvall,
+D. B. Graham, J. Egedal, A. Vaivads, and R. Nakamura,
+Electron heating by parallel electric fields in magnetotail
+reconnection, Phys. Rev. Lett. 134, 215201 (2025).
+[43] L. Wang, A. H. Hakim, J. Ng, C. Dong, and K. Ger-
+maschewski, Exact and locally implicit source term
+solvers for multifluid-maxwell systems, Journal of Com-
+putational Physics 415, 109510 (2020).
+[44] J. Ng, Y.-M. Huang, A. Hakim, A. Bhattacharjee,
+A. Stanier,
+W. Daughton,
+L. Wang, and K. Ger-
+maschewski, The island coalescence problem: Scaling of
+reconnection in extended fluid models including higher-
+order moments, Physics of Plasmas 22, 112104 (2015).
+[45] M. Hesse, D. Winske, and M. M. Kuznetsova, Hybrid
+modeling of collisionless reconnection in two-dimensional
+current sheets: Simulations, Journal of Geophysical Re-
+search: Space Physics 100, 21815 (1995).
+[46] L. Yin, D. Winske, S. P. Gary, and J. Birn, Hybrid and
+hall-mhd simulations of collisionless reconnection: Dy-
+namics of the electron pressure tensor, Journal of Geo-
+physical Research: Space Physics 106, 10761 (2001).
+[47] C. Granier, S. S. Cerri, and F. Jenko, Electron-only re-
+connection and ion heating in 3d3v hybrid-vlasov plasma
+turbulence, The Astrophysical Journal 974, 11 (2024).
+[48] S. Servidio, W. H. Matthaeus, M. A. Shay, P. A. Cas-
+sak, and P. Dmitruk, Magnetic reconnection in two-
+dimensional magnetohydrodynamic turbulence, Phys.
+Rev. Lett. 102, 115003 (2009).
+[49] V.
+Zhdankin,
+D.
+A.
+Uzdensky,
+J.
+C.
+Perez,
+and
+S.
+Boldyrev,
+Statistical
+analysis
+of
+current
+sheets
+in three-dimensional magnetohydrodynamic turbulence,
+The Astrophysical Journal 771, 124 (2013).
+[50] A. Hu, M. Sisti, F. Finelli, F. Califano, J. Dargent, M. Fa-
+ganello, E. Camporeale, and J. Teunissen, Identifying
+magnetic reconnection in 2d hybrid vlasov maxwell sim-
+ulations with convolutional neural networks, The Astro-
+physical Journal 900, 86 (2020).
+[51] A. C. Azizabadi, N. Jain, and J. B¨uchner, Identifica-
+tion and characterization of current sheets in collision-
+less plasma turbulence, Physics of Plasmas 28, 052904
+(2021).
+[52] M. McGrae-Menge, Counter-streaming heat-flux clo-
+sure for electron-only collisionless magnetic reconnection,
+10.5281/zenodo.21114117 (2026).
+[53] T. Grismayer, P. Mora, J. C. Adam, and A. H´eron, Elec-
+tron kinetic effects in plasma expansion and ion acceler-
+ation, Phys. Rev. E 77, 066407 (2008).

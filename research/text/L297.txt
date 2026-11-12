@@ -1,0 +1,2422 @@
+Highlights
+Gyrofluid simulations of turbulence and reconnection
+in space plasmas
+T. Passota, S. S. Cerria, C. Granierb, D. Lavedera, P.L. Sulema, E. Tassia
+• Research highlight 1
+• Research highlight 2
+arXiv:2401.03863v1  [physics.plasm-ph]  8 Jan 2024
+
+Gyrofluid simulations of turbulence and reconnection
+in space plasmas
+T. Passota, S. S. Cerria, C. Granierb, D. Lavedera, P.L. Sulema, E. Tassia
+aUniversit´e Cˆote d’Azur, Observatoire de la Cˆote d’Azur, CNRS, Laboratoire J.L.
+Lagrange, Boulevard de l’Observatoire, CS 34229, 06304 Nice Cedex 4, France
+bMax Planck Institute for Plasma Physics, Boltzmannstraße 2 85748 Garching, Germany
+Abstract
+A Hamiltonian two-field gyrofluid model is used to investigate the dynam-
+ics of an electron-ion collisionless plasma subject to a strong ambient mag-
+netic field, within a spectral range extending from the magnetohydrodynamic
+(MHD) scales to the electron skin depth. This model isolates Alfv´en, Kinetic
+Alfv´en and Inertial Kinetic Alfv´en waves that play a central role in space
+plasmas, and extends standard reduced fluid models to broader ranges of
+the plasma parameters. Recent numerical results are reviewed, including (i)
+the reconnection-mediated MHD turbulence developing from the collision of
+counter-propagating Alfv´en wave packets, (ii) the specific features of the cas-
+cade dynamics in strongly imbalanced turbulence, including a possible link
+between the existence of a spectral transition range and the presence of co-
+propagating wave interactions at sub-ion scales, for which new simulations
+are reported, (iii) the influence of the ion-to-electron temperature ratio in
+two-dimensional collisionless magnetic reconnection. The role of electron fi-
+nite Larmor radius corrections is pointed out and the extension of the present
+model to a four-field gyrofluid model is discussed. Such an extended model
+accurately describes electron finite Larmor radius effects at small or moder-
+ate values of the electron beta parameter, and also retains the coupling to
+slow magnetosonic waves.
+Keywords:
+collisionless plasmas, Alfvenic turbulence, magnetic
+reconnection, gyrofluids
+PACS: 52.25.Xz, 94.05.-a, 52.30.Cv,, 52.35.-g, 52.35.Bj, 52.35.Mw,
+52.35.Ra, 52.35.Vd, 52.30.Gz
+MSC: 82D10, 85A30
+Preprint submitted to Fundamental Plasma Physics
+January 9, 2024
+
+1. Introduction
+The description of turbulence and reconnection in collisionless space plas-
+mas such as the solar wind or planetary magnetospheres is challenging, espe-
+cially when a wide range of scales is to be retained, or when parametric studies
+are to be performed. In such regimes, the huge computational resources re-
+quired by fully kinetic simulations are indeed at the limit, and often beyond,
+the capabilities of today’s computers. Both in astrophysical environments
+and in fusion devices, when the plasma is subject to a strong ambient field
+and the focus is on the low-frequency dynamics, an efficient tool is provided
+by gyrofluid models which, unlike usual fluid approaches, take into account
+some important kinetic effects. Due to their ability to capture the relevant
+physics at a reasonable computational cost, gyrofluid models and their fluid-
+scale reduction (namely, reduced-MHD) have been increasingly employed
+during the past decade in numerical simulations aimed at investigating the
+properties of Alfv´enic turbulence in space plasmas, in various ranges of scales,
+from the fluid ones to the kinetic ones [e.g., 1, 2, 3, 4, 5, 6, 7, 8, 9].
+The aim of this paper is to present a short review of recent results, to-
+gether with some new developments obtained by simulations based on a two-
+field Hamiltonian gyrofluid model, introduced in [10]. This model retains ion
+finite Larmor radius (FLR) corrections, parallel magnetic field fluctuations
+and electron inertia, in the regime of small βe (where βe indicates the ratio
+between equilibrium electron kinetic pressure and guide-field magnetic pres-
+sure), and arbitrary ion-to-electron temperature ratio. The model provides,
+within a unique system of equations, a description of the quasi-perpendicular
+dynamics of Alfv´en waves (AWs), kinetic-Alfv´en waves (KAWs), as well as
+of inertial kinetic-Alfv´en waves (IKAWs), such as those detected by MMS in
+the Earth’s magnetosheath [6]. Moreover, this model is suitable for studying
+collisionless reconnection at the electron scale, as observed in the Earth’s
+turbulent magnetosheath [11].
+The paper is organized as follows. After describing the two-field model
+in Section 2, we highlight in Section 3 the development of a reconnection-
+mediated regime in the three-dimensional reduced-MHD (RMHD) turbulence
+that develops from collisions of counter-propagating Alfv´en-wave packets, at
+small to moderate levels of the nonlinearity parameter.
+In Section 4, we
+discuss Alfvenic turbulent cascades that develop from the MHD to the sub-
+ion scales, when there is a strong imbalance between the energies of the
+co- and counter-propagating waves (such as observed by the Parker Solar
+2
+
+Probe (PSP) close to the Sun [12]).
+In this regime, a so-called “helicity
+barrier” [7] emerges between the MHD and the kinetic scales, which provides
+a mechanism for the development of the transition range in the magnetic-
+field spectrum across the ion scales. Such a transition was first reported from
+Cluster observations in the solar wind (see e.g [13, 14]) and more recently
+from PSP data [15, 16]. The origin of the transition zone at 1 AU observed
+by Cluster is not completely clear. It is possibly associated with ion Landau
+damping [13] and appears to be sensitive to the power of fluctuations within
+the inertial range [17]. Differently, the PSP observations made in the inner
+heliosphere indicate that the slope becomes steeper for increasing normalized
+cross helicity (a quantity that measures the imbalance between outward and
+inward propagating fluctuations) [18], in line with the gyrofluid simulations
+reported in [19]. We also show that, in regimes of weak nonlinearities, where
+the parallel dissipation remains negligible, the effect of co-propagating wave
+interactions is to induce a steeper magnetic spectrum in this range. In Section
+5, we discuss, as a function of the ratio of ion to electron temperatures, the
+development of turbulence that results from secondary instabilities in the
+nonlinear phase of two-dimensional (2D) collisionless reconnection. It turns
+out that the nature of this turbulence, which transfers energy to sub-electron
+scales, and leads to the generation of small-scale vortices, is affected by the
+presence of electron FLR corrections. This effect is studied in more detail in
+Section 6 in the framework of homogeneous two-dimensional turbulence. We
+conclude by presenting a new Hamiltonian four-field model that provides an
+accurate description of the sub-electronic scales and is not limited to small
+values of βe. It also includes the coupling to slow-magnetosonic waves and can
+thus describe the decay instability at the MHD scales. Section 7 summarizes
+these findings and provides a brief discussion of forthcoming developments
+amenable to gyrofluid descriptions. A new derivation of the two-field model
+from the four-field gyrofluid model, is presented in the Appendix.
+2. A two-field Hamiltonian gyrofluid model
+2.1. Formulation and main properties of the model
+Gyrofluid models, which are derived from a gyrokinetic model, involve
+the gyrokinetic scaling (see e.g. Howes et al. [20]) and thus prescribe an
+anisotropic dynamics with transverse scales much smaller than the parallel
+ones and frequencies small compared to the ion gyrofrequency. Fast magne-
+tosonic waves are thus averaged out.
+3
+
+The two-field reduced gyrofluid model considered in this paper was de-
+rived in [10] as a restriction of the model of Brizard [21]. An alternative
+derivation is presented in the Appendix. The model isolates the Alfv´en wave
+dynamics and describes small perturbations of a homogeneous equilibrium
+state characterized by a density n0, isotropic ion and electron temperatures
+T0i and T0e, and subject to a strong ambient magnetic field of amplitude B0
+along the z-direction. The main plasma characteristic spatial scales (inertial
+lengths dr = vA/Ωr and Larmor radii ρr = vth r/Ωr) for the ions (r = i) and
+electrons (r = e), are defined in the form
+di =
+r 2
+βe
+ρs,
+de =
+r 2
+βe
+δρs,
+ρi =
+√
+2τρs,
+ρe =
+√
+2δρs,
+(1)
+where βe = 8πn0T0e/B2
+0, τ = T0i/T0e, δ2 = me/mi is the electron to ion
+mass ratio, vth r = (2Tr/mr)1/2 are the particle thermal velocities, and vA =
+B0/(4πn0mi)1/2 = cs
+p
+2/βe is the Alfv´en speed. We normalize lengths by
+the sonic Larmor radius ρs = cs/Ωi, where cs =
+p
+T0e/mi is the so-called
+ion-sound speed, time by the inverse ion gyrofrequency Ωi = eB0/(mic), the
+parallel magnetic fluctuations Bz by B0, the electron gyrocenter density Ne
+by n0, the electric potential φ by Te/e and the parallel magnetic potential
+A∥by B0ρs. The equations for Ne and A∥then read
+∂tNe + [φ, Ne] −[Bz, Ne] + 2
+βe
+∇∥∆⊥A∥= 0
+(2)
+∂t
+
+1 −2δ2
+βe
+∆⊥
+
+A∥−
+
+φ, 2δ2
+βe
+∆⊥A∥
+
++
+
+Bz, 2δ2
+βe
+∆⊥A∥
+
++ ∇∥(φ −Ne −Bz) = 0,
+(3)
+with Bz and φ given by
+ 2
+βe
++ (1 + 2τ)(Γ0 −Γ1)
+
+Bz =
+
+1 −Γ0 −1
+τ
+−Γ0 + Γ1
+
+φ
+(4)
+Ne =
+Γ0 −1
+τ
++ δ2∆⊥
+
+φ −(1 −Γ0 + Γ1)Bz.
+(5)
+Equations (2) and (3) correspond to the continuity equation for the electron
+gyrocenter density fluctuations Ne and to Ohm’s law, respectively. The rela-
+tions (4) and (5), on the other hand, express the quasi-neutrality condition
+and the perpendicular component of Amp`ere’s law, respectively.
+4
+
+The operator ∆⊥= ∂xx+∂yy denotes the Laplacian in the plane transverse
+to the ambient field and [f, g] = ∂xf∂yg −∂yf∂xg is the canonical bracket of
+two scalar functions f and g. The (non-local) operator Γn is associated with
+the Fourier multiplier Γn(τk2
+⊥), defined by Γn(x) = In(x)e−x where In is the
+modified Bessel function of first type of order n. For a scalar function f, the
+parallel gradient operator ∇∥is defined by ∇∥f = −[A∥, f] + ∂f
+∂z .
+Writing Bz = M1φ, and Ne = −M2φ, Bz and φ can be expressed in
+terms of Ne. In the previous sentence we indicated with M1 and M2 two
+operators, (with M2, in particular, invertible) the expression of which can be
+found explicitly in Fourier space from Eqs. (4) and (5).
+Quasineutrality relates the ion and electron particle number densities ni
+and ne by ni = ne = Ne + Bz, the latter equality being only valid in the
+absence of electron inertia and FLR contributions.
+In addition to ion FLR corrections and parallel magnetic fluctuations, the
+model retains electron inertia as well as an electron FLR contribution which
+becomes relevant when the ion-electron temperature ratio τ is comparable
+to or larger than the inverse electron beta 1/βe. Furthermore, this model
+possesses a noncanonical Hamiltonian structure. It covers a spectral range
+extending from the MHD scales (large compared to di) to scales comparable
+to de but nevertheless large compared to the electron Larmor radius ρe (in
+order to prevent the full FLR electron corrections to be relevant). The latter
+condition requires that ρe/de = β1/2
+e
+be small enough, a regime where Landau
+damping can efficiently homogenize electron temperatures along the magnetic
+field lines. The present model thus assumes isothermal electrons, which is a
+good approximation when neglecting dissipation phenomena [22, 23].
+Equations (2)–(3) preserve two quadratic invariants, namely the energy
+E = 1
+2
+Z  2
+βe
+|∇⊥A∥|2 + 4δ2
+β2
+e
+|∆⊥A∥|2 −Ne(φ −Ne −Bz)
+
+d3x,
+(6)
+and the generalized cross helicity (GCH)
+C = −
+Z
+Ne
+
+1 −2δ2
+βe
+∆⊥
+
+A∥d3x.
+(7)
+At large scales, C reduces, up to a sign, to the MHD cross helicity, while at
+small scales, it identifies (up to electron-inertia corrections) with the parallel
+contribution to the magnetic helicity.
+5
+
+2.2. A few limiting regimes
+Equations (2)-(3) reduce to classical systems in various limits (see [24]
+for more details).
+• RMHD & Hall-RMHD (τk2
+⊥≪1, τ ≪1, βe ≲1, δ = 0)
+In this limit, the gyro-fluid equations reduce to the equations for disper-
+sive Alfv´en waves, i.e. the reduced-MHD regime with the Hall effect.
+This is a two-field reduction of the HRMHD model of Schekochihin
+et al. [25] when neglecting the parallel ion velocity ui and assuming
+that Bz is prescribed by the instantaneous potential φ. When consid-
+ering even larger scales (i.e., much larger that the ion-inertial length
+di), the system further reduces to the 2-field RMHD.
+• Schep et al. model (τk2
+⊥≪1, τ ≪1, βe ≪1, δ ̸= 0)
+With the same conditions on τ and τk2 as for the HRMHD regime,
+but restricting to βe ≪1 and allowing for δ ̸= 0, one easily recovers
+a two-field, cold-ion version of the model of Schep et al. [26], which
+was extensively used for studying collisionless reconnection (see, for
+instance [27, 28]).
+• Isothermal KREHM limit (τk2
+⊥∼1, τ ∼1, βe ∼δ2, δ ̸= 0)
+In this case, our gyrofluid equations recover the isothermal electron
+limit of the kinetic-reduced electron heating model (KREHM) derived
+in Zocco and Schekochihin [29].
+• Electron-RMHD (τk2
+⊥≫1, τ ∼1, βe ≲1, δ = 0)
+In this case, the model reproduces the so-called electron-reduced-MHD
+(ERMHD) regime for KAWs [25].
+• Inertial-KAW regime (τk2
+⊥≫1, τ ≫1, βe ≲1, δ ̸= 0)
+Interestingly, when τ ≫1, together with τk2
+⊥≫1, βe ≲1 and δ ̸= 0,
+the limit of inertial kinetic Alfv´en waves (IKAWs) [6, 30] is recovered.
+The system reads
+∂t
+
+1 −2δ2
+βe
+∆⊥
+
+A∥−
+
+φ, 2δ2
+βe
+∆⊥A∥
+
++ ∇∥φ = 0
+(8)
+∂t
+
+1 + 2
+βi
+−2δ2
+βe
+∆⊥
+
+φ −
+
+φ, 2δ2
+βe
+∆⊥φ
+
+−4
+β2
+e
+∇∥∆⊥A∥= 0,
+(9)
+6
+
+where βi = τβe refers to the ion beta parameter.
+In Eq.
+(9), the
+term ∂t
+
+2δ2
+βe ∆⊥φ
+
+, which in this regime arises at the dominant order,
+originates from the δ2∆⊥φ contribution in Eq. (5), which is a lower-
+order electron FLR correction and can be neglected when τ ≃1, but
+has to be kept when τ ≫1 because, in this limit, its magnitude becomes
+comparable to that of the other terms. Note however that in the latter
+case, the retained electron FLR correction also leads to subdominant
+terms in Eq. (3).
+2.3. Alternative normalization of the model equations
+The model (2)-(5) is formulated in [31] with a normalization based on
+the Alfv´en time, thus different with respect to the original reference [10].
+This helped in the comparison with several studies present in the literature,
+concerning in particular a two-field reduction of the model of Schep et al.
+[26]. Therefore, we find it appropriate to also present the gyrofluid model
+with this alternative normalization, which will also be adopted in Sec. 5 and
+in the Appendix. In this framework, the model (2)-(5) reads
+∂Ne
+∂t + [φ −ρ2
+sBz, Ne] + ∇∥∆⊥A∥= 0,
+(10)
+∂
+∂t(1 −d2
+e∆⊥)A∥−[φ, d2
+e∆⊥A∥] + ρ2
+s[Bz, d2
+e∆⊥A∥]
++ ∇∥(φ −ρ2
+sNe −ρ2
+sBz) = 0,
+(11)
+ 2
+βe
++ (1 + 2τ)(Γ0 −Γ1)
+
+Bz =
+
+1 −Γ0 −1
+τ
+−Γ0 + Γ1
+ φ
+ρ2
+s
+,
+(12)
+Ne =
+Γ0 −1
+τ
++ βe
+2 d2
+e∆⊥
+ φ
+ρ2
+s
+−(1 −Γ0 + Γ1)Bz,
+(13)
+and the normalization is given by
+t = vA
+L
+ˆt,
+x = ˆx
+L,
+y = ˆy
+L,
+z = ˆz
+L,
+de =
+ˆde
+L ,
+ρs = ˆρs
+L ,
+(14)
+Ne = L
+ˆdi
+ˆNe
+n0
+,
+φ = c
+vA
+ˆφ
+LB0
+,
+A∥=
+ˆA∥
+LB0
+,
+Bz = L
+ˆdi
+ˆBz
+B0
+,
+7
+
+where the hats denote dimensional quantities and L is a characteristic length
+of variation in the perpendicular plane. With this normalization, the operator
+Γn is associated with the Fourier symbol In(τρ2
+sk2
+⊥) exp(−τρ2
+sk2
+⊥).
+The gyrokinetic/gyrofluid ordering involves a small parameter ε = L/L∥,
+where L∥is the characteristic length scale along the guide field. This param-
+eter, which also measures the typical field amplitudes and frequencies, can
+be scaled out in the final gyrofluid equations, making all quantities of order
+unity. This choice is made in the following sections.
+3. Reconnection-mediated turbulence in the RMHD regime with-
+out imbalance: the weakly nonlinear scenario
+In this Section, we first give an overview of the ideas underlying the
+theory of the turbulent cascade at large (MHD) scales, from the concept of
+a critically balanced cascade to a regime mediated by reconnection processes
+(“tearing instability”). Then, we highlight some recent numerical evidences
+of such a regime, with a focus on a work employing the gyrofluid model
+(2)-(5).
+3.1. Alfv´enic turbulence at fluid scales without imbalance: from critical bal-
+ance to the tearing-mediated regime, through dynamic alignment
+In the presence of a background mean magnetic field B0, the cascade
+of Alfv´enic fluctuations is naturally anisotropic with respect to its direction
+already at “large” (i.e., MHD) scales. In this range of scales, the typical
+wave-vector component of the fluctuations parallel to the local mean field
+(which involves scales significantly larger than those associated with the con-
+sidered wave vector) tend to be much smaller than the perpendicular one,
+i.e., k∥≪k⊥(for the purpose of this subsection, we use the physical vari-
+ables). If critical balance (CB) between the linear and nonlinear timescales of
+the fluctuations can be assumed, Goldreich and Shridhar [32] originally pre-
+dicted a perpendicular power spectrum ∝k−5/3
+⊥
+and a wave-vector anisotropy
+k∥∝k2/3
+⊥, corresponding to a spectrum ∝k−2
+∥
+in the field-parallel direc-
+tion.
+Still within such CB scenario, Boldyrev [33] suggested that turbu-
+lent fluctuations would undergo scale-dependent alignment/anti-alignment
+in the field-perpendicular plane due to the continuous shearing produced by
+the interaction of counter-propagating AW packets; this process has been
+known as “dynamic alignment”, and is such that the angle θk⊥between mag-
+netic and kinetic turbulent fluctuations at wavenumber k⊥exhibits a scaling
+8
+
+sin θk⊥∝k−1/4
+⊥
+. The consequence of this effect is to produce 3D-anisotropic
+turbulent eddies and a cascade whose spectrum scales as k−3/2
+⊥
+, where the
+spectral anisotropy now follows a k∥∝k1/2
+⊥
+relation (here k⊥is the wave
+vector associated to the shortest length-scale λ of these three-dimensional
+eddies, and is perpendicular to both the direction of the mean magnetic field
+and of magnetic-field fluctuations); the parallel spectrum in this case still
+scales as k−2
+∥.
+The 3D nature of the eddies when dynamic alignment occurs has fun-
+damental implications for the development of current sheets and magnetic
+reconnection. In fact, it has been known since long time that the formation
+of current sheets (CSs) is another fundamental aspect of the turbulent cas-
+cade in plasmas [e.g., 34, 35, 36, 37, 38]. In most cases, the CSs that are
+formed in this way are tearing-unstable, i.e., they are disrupted by magnetic
+reconnection [e.g., 39, 40, 41]. These reconnection processes are so ubiqui-
+tous in turbulence that have been suggested to possibly mediate the energy
+transfer at both MHD [e.g., 42, 43, 44, 45, 46] and kinetic [e.g., 47, 48, 49, 50]
+scales. When this transfer at MHD scales is mediated by reconnection, the
+resulting turbulence is said to be in the “tearing-mediated” regime, and it
+is characterized by a steep k−11/5
+⊥
+spectrum. This regime naturally emerges
+in a critically balanced cascade only when dynamic alignment occurs, and
+it develops starting from a transition scale λ∗∼(k∗
+⊥)−1 when the follow-
+ing conditions are satisfied: (i) the 3D-anisotropic turbulent eddies set up a
+tearing-unstable configuration in the plane perpendicular to the mean mag-
+netic field, and (ii) this configuration evolves slowly enough to allow the
+tearing instability to grow and disrupt it (namely, when γt
+λτnl,λ ≳1, where
+γt
+λ is the tearing-instability growth rate at perpendicular scale λ and τnl,λ
+is the eddy turnover time at the same scale). The latter condition depends
+upon the plasma properties (e.g., resistivity), while the former is a direct
+consequence of the scale-dependent alignment of turbulent fluctuations (a
+process that needs to occur only up to a scale where tearing instability grows
+sufficiently fast to mediate the transfer; below such scale, reconnection will
+anyway tend to disrupt such alignment, at least locally).
+Finally, let us take a step back and consider the case in which critical
+balance is not initially satisfied at the injection scales.
+When the injec-
+tion regime is such that the large-scale nonlinear parameter, which mea-
+sures the ratio between the Alfv´en time τA,0 ∼(k∥,0 vA,0)−1 and the nonlin-
+ear timescale τnl,0 ∼(k⊥,0 δb⊥,0)−1 at injection scales (measuring magnetic-
+9
+
+field fluctuations in Alfv´enic units δb⊥= δB⊥/√4πϱ0, with ϱ0 indicat-
+ing the equilibrium mass density), is significantly smaller than unity (i.e.,
+χ0 ∼(k⊥,0/k∥,0)(δb⊥,0/vA,0) = (k⊥,0/k∥,0)(δB⊥,0/B0) < 1), then the Alfv´enic
+cascade develops in the so-called “weak regime”. In this regime, the turbu-
+lent transfer does not develop a parallel cascade (i.e., k∥∼k∥,0 ∼const.),
+and only proceeds through perpendicular scales, developing a perpendicular
+cascade with a k−2
+⊥spectrum [51, 52]. However, due to its own fluctuations’
+scaling, an initially weak cascade cannot proceed to arbitrary small scales,
+as the scale-dependent nonlinear parameter increases with decreasing scale
+as χk⊥∝k1/2
+⊥. As a result, there is a scale λ⊥,CB ∼k−1
+⊥,CB ∝(δB⊥,0/B0)2 at
+which the nonlinear parameter becomes of order unity, χk⊥,CB ∼1, and the
+cascade transitions to the critically balanced regime described above. In this
+weak-cascade scenario, however, dynamic alignment of fluctuations has not
+been included in the picture. In Cerri et al. [53] this assumption has been
+relaxed, and two different regimes with new scaling have been proposed in a
+scenario where weakly-nonlinear turbulence can undergo a scale-dependent
+alignment, namely a moderately weak, dynamically aligned cascade with a
+k−3/2
+⊥
+spectrum and an asymptotically weak regime (χ0 ≪1) in which dy-
+namic alignment produces a k−1
+⊥spectrum. Some interesting consequences of
+this new scenario is that: (i) dynamic alignment in the weak regime allows
+for a transition to a tearing-mediated cascade at scales much larger that the
+one predicted by a critically balanced case, and (ii) in the χ0 ≪1 regime, the
+cascade would never reach critical balance due to its own scaling, and only
+a tearing-mediated regime can eventually emerge and allow for a transition
+to strong turbulence. These scalings and the alignment of fluctuations at
+weak nonlinearities were indeed shown to occur by means of high-resolution
+numerical simulations employing the gyro-fluid model of Section 2 in the
+RMHD regime (see next Section 3.2).
+3.2. Tearing-mediated range in Alfv´enic turbulence from simulations
+A steeper tearing-mediated range at fluid scales (i.e., well above any
+plasma micro-scale) was clearly shown to emerge from a larger-scale tur-
+bulent cascade via 2D simulations [54]. Only very recently, the existence of
+such tearing-mediated regime was proven to exist also in fully 3D simula-
+tions by Cerri et al. [53] and, simultaneously, by Dong et al. [55]. However,
+the two works adopted different approaches in different regimes. In Dong
+et al. [55], a MHD model with broad-band injection of critically balanced
+fluctuations was employed; this approach required a really huge numerical
+10
+
+Figure 1: Parallel current density Jz (left) and perpendicular magnetic field B⊥(right) in
+the xy-plane at z = Lz/2, during the turbulent state, for different nonlinearity regimes:
+χ0 ≃1 (top row), χ0 ≃0.5 (middle row), and χ0 ≃0.1 (bottom row). In all the figures,
+the length unit is specified for the sake of clarity.
+11
+
+10−2
+10−1
+k⊥ρs
+10−7
+10−6
+10−5
+10−4
+10−3
+10−2
+10−1
+100
+EB⊥
+χ0 ≃1
+χ0 ≃0.5
+χ0 ≃0.1
+∝k−3/2
+⊥
+∝k−11/5
+⊥
+Figure 2: Energy spectra of B⊥fluctuations versus k⊥ρs arising from collisions of Alfv´en-
+wave packets at different large-scale nonlinearities χ0 (see legend). Spectra are averaged
+over the quasi-steady turbulent state, and relevant power laws are shown as a reference.
+resolution in order to meaningfully separate the reconnection scale λ∗from
+the actual dissipation scales and obtain a −11/5 spectrum over a modest
+range of k⊥(roughly a factor ∼3; see their Fig.2). In Cerri et al. [53], the
+problem was addressed from the point of view of the building blocks of the
+Alfv´enic cascade, i.e., counter-propagating Alfv´en-wave (AW) packets, and
+within the Hamiltonian two-field gyro-fluid model presented in Section 2.
+The simulations were performed in a regime βi = βe = 1 typical of solar-
+wind plasma, and a simulation box of size L⊥= Lz ≈2.1 × 103 (we remind
+the reader that here we use gyrofluid rescaled variables so that in physical
+units ˜Lz ≫˜L⊥) was discretized with 6723 uniformly distributed grid points,
+corresponding to a (fully dealiased) wavenumber range 0.003 ≲k⊥≲0.67
+(see Cerri et al. [53] for additional details on the numerical setup). In these
+simulations, due to successive collisions of these oppositely traveling packets,
+a quasi-steady turbulent state was reached with different fluctuation prop-
+erties depending on the large-scale nonlinearity parameter χ0 (Fig. 1). By
+changing the strength of the nonlinear interaction between the AWs, the
+authors were indeed able to show that dynamic alignment can occur even
+at weak nonlinearities. Moreover, this scale-dependent alignment combined
+12
+
+with a longer lifetime of the turbulent eddies at lower χ0 facilitates the tran-
+sition to a tearing-mediated regime. In fact, while at χ0 ∼1 a spectrum
+EB⊥∝k−3/2
+⊥
+clearly emerges (Fig. 2), as well as an associated fluctuations’
+alignment angle that scales as sin θk⊥∝k−1/4
+⊥
+(see Fig. 4 of Cerri et al.
+[53]), the transition to reconnection-mediated turbulence is not achieved,
+being out of reach within the employed resolution. On the other hand, a
+tearing-mediated regime with a spectrum EB⊥∝k−11/5
+⊥
+was clearly observed
+at χ0 < 1 (Fig. 2; see Fig.4 in Cerri et al. [53] and associated discussion
+for the corresponding scale-dependent alignment — and mis-alignment — in
+these regimes), and therefore such regime transition within a weakly non-
+linear, dynamically aligned cascade, occurs at even larger scales than those
+predicted within a critically balanced cascade. Notably, the spectra obtained
+within these weakly nonlinear regimes exhibited a −11/5 range over roughly
+a decade even at moderately high resolution.
+4. Direct KAW cascade with imbalance: the ion-scale transition
+range
+Alfv´en wave (AW) turbulence, that plays an important role in mag-
+netized collisionless plasmas such as the solar wind (see Bruno and Car-
+bone [56, 57]), is often imbalanced in the sense that the energies E+ =
+R +∞
+0
+dk⊥
+R +∞
+−∞E+(k⊥, k∥)dk∥and E−=
+R +∞
+0
+dk⊥
+R +∞
+−∞E−(k⊥, k∥)dk∥carried
+by the waves propagating in the forward and backward directions relatively
+to the ambient field are unequal [58, 59, 60]. Their ratio I is referred to as
+the ”imbalance parameter” (or, for short, ”imbalance”). Here, E−(k⊥, k∥)
+and E+(k⊥, k∥) is the energy spectra of the corresponding waves. The per-
+pendicular and parallel one-dimensional spectra are defined as E±
+⊥(k⊥) =
+R +∞
+−∞E±(k⊥, k∥)dk∥and E±
+∥(k∥) =
+R +∞
+0
+E±(k⊥, k∥)dk⊥, respectively.
+4.1. Helicity barrier and transition zone: strongly versus moderately nonlin-
+ear regimes
+While energy is expected to always cascade to small scales, in imbalanced
+turbulence, the GCH dynamics is the result of conflicting constraints. In fact,
+at “large” (fluid) scales, the GCH corresponds, up to a sign, to the usual
+MHD cross helicity and is expected to develop a direct cascade. At “small”
+(kinetic) scales, on the other hand, the GCH identifies with magnetic helicity,
+and is instead subject to an inverse cascade [61]. What emerges from these
+constraints is thus a picture where the GCH displays a “helicity barrier”
+13
+
+effect [7], where the k⊥-flux of GCH cascading from large MHD scales would
+not be able to cascade below the ion scales, thus getting “halted” before
+such scales—and then part of this flux may have to be somehow “redirected”
+towards the small parallel scales.
+Simulations of imbalanced turbulence that use an asymptotic form of the
+two-field gyrofluid model assuming a sufficiently small value of βe (but nev-
+ertheless larger than δ2 in order for electron inertia to be negligible), were
+performed by Meyrand et al. [7]. In these simulations, turbulence is driven
+at MHD scales by a negative damping with non-zero cross helicity. Such
+type of forcing leads to a regime of large imbalance and large nonlinearity
+parameter that actually breaks the asymptotics underlying the derivation of
+gyrofluid models. In these simulations, the helicity barrier leads to a strong
+depletion of the energy flux towards the small perpendicular scales, with a
+significant energy transfer in the parallel direction, spectrally localized at the
+ion perpendicular scale. Energy accumulates at large scales and imbalance
+increases until saturation occurs through strong parallel dissipation.
+The
+level of this saturated imbalance depends on the parallel viscosity, thus mak-
+ing it non-universal. The non-universality associated to a dissipation that
+depends upon large-scale properties and the fact that “imbalance produced
+by large-scale injection of GCH at a prescribed rate is enhanced by wave dis-
+persion” were pointed out by Passot and Sulem [24] and Miloshevich et al.
+[62]. This dynamics results in a local steepening of the transverse energy and
+magnetic spectra at a transition between the MHD and the sub-ion scales,
+thus qualitatively producing a transition range.
+In the above simulations, dissipation results only from hyper-diffusivity
+terms supplemented in each of the dynamical equations of the model. In a
+kinetic simulation by Squire et al. [63], performed with βi = βe = 0.3, dissi-
+pation is seen to originate from ion-cyclotron resonance (in combination with
+4th-order hyper-resistivity, at even smaller scales). The magnetic spectrum
+again displays an ion transition zone, with polarity change, characteristic of
+a situation where Alfv´en waves trigger the formation of the ion-cyclotron
+waves, as observed in the solar wind [64].
+Differently, in the numerical simulations of the two-field gyrofluid model
+(taken in the limit of vanishing electron inertia) presented in Passot et al.
+[19], the driving is ensured by freezing the amplitude of the modes whose
+transverse wavenumber stands in the first spectral shell and the parallel one
+corresponds to kz(L/2π) = ±1 [65], a procedure that permits simulations
+with high imbalance and a nonlinearity parameter that remains moderate,
+14
+
+Figure 3: Left: Energy spectra of B⊥fluctuations versus k⊥ρs, averaged over the time
+intervals [8000,14000] (red) and [14000:20000] (blue) (inset: same spectra, compensated
+by k3.3
+⊥). Right: perpendicular energy and cross-helicity fluxes, averaged over the time
+interval [14000:20000], and normalized to their respective maximal averaged values.
+as required by the gyrofluid asymptotics. In this setting, differently from the
+simulations by Meyrand et al. [7], the injection rates of energy and GCH are
+not prescribed (being nevertheless approximately constant when the system
+reaches a stationary regime, at t ≈8000Ω−1
+i ). They in fact just compensate
+the amount of energy and GCH transferred by the turbulence, from the frozen
+modes to smaller scales.
+Figure 3 (left) displays the energy spectrum of the transverse magnetic
+field for a simulation performed with βe = 2 and τ = 1. The imbalance is
+I = 10 and the nonlinearity parameter reached in the stationary regime is
+χ = 0.60. A main observation is that, in this setting also, the transverse
+energy spectrum of the dominant wave, and consequently, that of the trans-
+verse magnetic fluctuations displays a steep transition zone (characterized by
+a spectral exponent close to −3.3) between the Kolmogorov MHD range and
+the sub-ion range where the spectrum is consistent with the phenomenolog-
+ical prediction k−8/3
+⊥
+of (balanced) KAW turbulence [66]. Furthermore, the
+spectrum in the transition zone becomes steeper when the imbalance is in-
+creased [19], consistent with Solar Probe observations [18]. Interestingly, as
+seen in Fig. 3 (right) the time-averaged energy flux remains essentially con-
+stant in all the spectral range (with a decrease by no more than 1%), while
+it was reported to decay in Meyrand et al. [7] simulations at large χ. The
+helicity barrier is, in contrast, conspicuous on the GCH flux which displays
+a clear decay of about 17% in the transition zone and beyond. It is also
+15
+
+Figure 4:
+In the conditions of Fig.
+3, instantaneous GCH (left) and energy (right)
+fluxes when positive (blue) or their opposite when negative (green) in the time interval
+[14000:20000], together with the averaged fluxes on this interval (red).
+of interest to display the time fluctuations of the energy and GCH fluxes.
+Figure 4 shows that the fluxes can be negative in some spectral zones, espe-
+cially at large scales, but also at the dissipative scales for GCH, due to an
+imperfect pinning of the E+ and E−spectra. The magnitudes of the fluxes
+undergo large variations, which are more important for GCH at the end of
+the transition zone and beyond.
+4.2. Phenomenological modeling
+In Passot et al. [19] a phenomenological nonlinear diffusion model is de-
+rived, based on a previous work of Voitenko and De Keyser [67]. In this
+model, the existence of a transition zone is related to the development of
+nonlinear interactions between co-propagating waves, which are absent in
+the MHD range, but becomes possible at sub-ion scales because of the dis-
+persive character of KAWs. This model thus provides an alternative mech-
+anism for the formation of a transition zone between the MHD range and
+the sub-ion scales, in regimes where the nonlinear parameter is too small for
+ion-cyclotron waves to be efficiently excited. It thus seems to be relevant in
+the simulations presented in [19] which display a transition zone that persists
+when the parallel dissipation is set to zero. In the following, we briefly review
+the main elements underlying such mechanism.
+We consider a KAW characterized by a wavevector k, undergoing a triadic
+interaction with two other KAWs with wavevectors p and q. We are here
+concerned with the typical time scale of energy transfer, a crucial ingredient
+16
+
+in determining the spectral energy distribution. It is possible to estimate
+this quantity within the classical turbulence phenomenology whereby two
+KAWs with similar wavenumbers k distort each other. As detailed in Pas-
+sot et al. [10], neglecting the Bz contribution (which is a priori valid for
+small βe) and the z-derivative, the two nonlinear terms of Eq.
+(3), ∇∥φ
+and ∇∥Ne, are respectively associated with two characteristic stretching fre-
+quencies. Assuming a strong turbulent regime involving a critical balance
+between the characteristic time of the (nonlinear) transverse dynamics and
+the temporal period of the Alfv´en waves at the corresponding scale, they are
+respectively given by γSt1
+k
+≃(k3
+⊥Bk)/(M2vph) and γSt2
+k
+≃(k3
+⊥Bk)/(vph). Here,
+the quantity vph (similar to a phase velocity) is defined as vph(k) = |ωk/kz|
+where ωk is the linear frequency of a KAW of wavevector k obtained from
+the linearization of Eqs.
+(2)-(3).
+We have used the eigenmode relation
+A∥,k = (βe/2)vph(M2φk/k2
+⊥) between the parallel magnetic and the electric
+potentials in the Fourier space (see Eq. (52) of Passot et al. [10]), a relation
+that appears to be well verified numerically (with a typical accuracy of the or-
+der of 10% outside the dissipation range). The relevant nonlinear frequency
+is γSt
+k
+= max(γSt1
+k , γSt2
+k ), whose wavenumber dependence can be explicited
+in the three spectral zones defined as the large-scale range (denoted MHD,
+where k⊥≪kT), the weakly dispersive range (denoted WD, where k⊥≲kT)
+and the strongly dispersive range (denoted SD, where k⊥≫kT). Here kT
+refers to a transition wavenumber which is associated with the largest of the
+ion and sonic Larmor radii. While kT is only weakly sensitive to the level
+of imbalance, the WD zone extends to larger scales when the imbalance is
+increased. Using Table 1 of Passot and Sulem [24] to determine the spec-
+tral dependence of M2 and vph, we find that γSt ≃k⊥Bk in both the MHD
+and WD ranges, while γSt ≃k2
+⊥Bk in the SD range. In this phenomenologi-
+cal evaluation, however, the contributions from co- and counter-propagating
+waves are not separated and imbalance between the energy of forward and
+backward propagating waves is not taken into account.
+An alternative way of determining the nonlinear frequency is to explicitly
+write in Fourier space the nonlinear equations for the resonant interaction of
+a triad with wavevectors k, p and q. We shall use an approach similar (but
+17
+
+nevertheless slightly different1), to that used by Voitenko and de Keyser [68].
+The 3-wave resonance conditions simply read k = p + q and ωk = ωp + ωq,
+where the frequencies are here taken in the limit of vanishing electron inertia.
+The equations are given in Appendix A of [61], together with the growth or
+decay rate for the parametric instability of the k-wave (often called pump
+wave) when its amplitude is finite while those of the p or q waves are much
+smaller.
+If two waves (hereafter the k and p-waves) are of similar finite
+amplitude, while the q-wave is of smaller amplitude, one can still derive the
+same equation for the characteristic nonlinear frequency which reads, after
+correcting a typo in [61],
+γ2(k⊥)
+=
+1
+64
+(bz·(p × q))2
+ξ(p⊥)ξ(q⊥)
+1
+k2
+⊥p2
+⊥q2
+⊥
+ σk
+ξ(q⊥) −
+σq
+ξ(k⊥)
+  σp
+ξ(k⊥) −
+σk
+ξ(p⊥)
+
+×
+ σkk2
+⊥ξ(k⊥) + σpp2
+⊥ξ(p⊥) + σqq2
+⊥ξ(q⊥)
+2 |aσk
+k |2,
+(15)
+where ξ = (2/βe)1/2/vph, σr = ±1 according to the forward or backward
+direction of propagation of the waves, and where the eigenmode variable aσk
+k
+satisfies |aσk
+k |2 = (8/βe)B2
+k [24]. Note that, after changing the sign of σk, the
+same growth rate is recovered by exchanging p⊥and q⊥and simultaneously
+changing σp and σq into their opposite, leaving the relative direction of prop-
+agation of the waves unchanged. Without loss of generality, in the following
+we can thus fix σk = +1.
+Equation (15) provides an interesting way to analyze the co-and counter-
+propagating interactions, as required when there is a large energy imbalance
+between the waves propagating in opposite directions. We shall assume that
+the interactions are local, so that the three perpendicular wavenumbers are
+comparable. Let us consider the cases where the k and p waves are either
+co-propagating (σk = σp = 1) or counter-propagating (σk = −σp = 1). Their
+amplitude can be comparable or, differently, the p wave can have an ampli-
+tude much smaller than the k wave. In both cases, the q wave is chosen to
+have a small amplitude. We shall address the two cases σq = ±1, using paral-
+lel or antiparallel superscript arrows to characterize the nonlinear frequency
+γR(k) at the wavenumber k in range ’R’, associated with co-propagating or
+counter-propagating interacting k and p waves.
+1Instead of using the linear decay rate as in [68], which is only valid when two of the
+three waves have an asymptotically small amplitude, here we estimate the nonlinear trans-
+fer rate for three wave interaction in a situation where two waves have finite amplitude.
+18
+
+• Non-dispersive (MHD) range. In this range, the phase velocity vph
+is constant (and equal to the Alfv´en speed), vph = const. = vA.
+[↑↓] counter-propagating waves (σk = −σp = 1). When the waves k
+and p are counter-propagating, then σp/ξ(k⊥) −σk/ξ(p⊥) is a constant
+different from zero. When σq = 1, however, the interaction vanishes
+because σk/ξ(q⊥) −σq/ξ(k⊥) is zero,
+γ↑↓
+MHD
+
+σq=1 = 0 ,
+while it is non-zero when σq = −1, resulting in
+γ↑↓
+MHD
+
+σq=−1 ≃k⊥Bk ,
+thus reproducing the RMHD nonlinear frequency obtained above with
+the simple turbulence phenomenology.
+Note that, for this choice of
+parameters (σp = σq = −1), there is no parametric decay instability in
+this range since γ(k) is purely imaginary.
+[↑↑] co-propagating waves (σk = σp = 1). If the waves denoted by k
+and p belong to the MHD range, then co-propagating interactions (and
+associated rate) clearly vanish. In fact, in this range vph is constant (and
+equal to the Alfv´en speed), and thus σp/ξ(k⊥) −σk/ξ(p⊥) = 0, so
+γ↑↑
+MHD = 0 .
+• Weakly dispersive (WD) range. In this range, non-negligible cor-
+rections to vph that depend on the wavenumber start to arise, as vph(k⊥) ≃
+(1 + αk2
+⊥)1/2, where α is a constant depending on the plasma parame-
+ters.
+[↑↓] counter-propagating waves (σk = −σp = 1). If k and p are asso-
+ciated with counter-propagating waves, the term σp/ξ(k⊥) −σk/ξ(p⊥)
+is of order unity.
+Then, using the expression for vph(k⊥), the term
+σk/ξ(q⊥) −σq/ξ(k⊥) is O(k2
+⊥) when σq = 1, while it is approximately
+constant when σq = −1. As a result, the interaction rate for σq = 1
+becomes
+γ↑↓
+WD
+
+σq=1 ≃k2
+⊥Bk ,
+19
+
+whereas for σq = −1 it yields
+γ↑↓
+WD
+
+σq=−1 ≃k⊥Bk .
+Thus, when σp = σq = −1 one recovers the rate predicted above with
+the simple turbulence phenomenology.
+[↑↑] co-propagating waves (σk = σp = 1). When k and p correspond to
+co-propagating waves in the WD range, σp/ξ(k⊥) −σk/ξ(p⊥) scales as
+k2
+⊥. Then, when σq = 1, also σk/ξ(q⊥) −σq/ξ(k⊥) scales as k2
+⊥and the
+corresponding interaction rate is
+γ↑↑
+WD
+
+σq=1 ≃k3
+⊥Bk ,
+whereas for σq = −1, σk/ξ(q⊥)−σq/ξ(k⊥) is roughly constant and thus
+γ↑↑
+WD
+
+σq=−1 ≃k2
+⊥Bk .
+• Strongly dispersive (SD) range. This refers to the small-scale range
+where the phase velocity scales linearly with the perpendicular wavevec-
+tor, i.e., vph(k⊥) ≃k⊥≫1.
+[↑↓] counter-propagating waves (σk = −σp = 1). When k and p de-
+scribe counter-propagating waves in the SD range, their interaction rate
+is
+γ↑↓
+SD ≃k2
+⊥Bk ,
+for both σq = 1 or σq = −1.
+[↑↑] co-propagating waves (σk = σp = 1).
+Also in the case of co-
+propagating waves with k and p in the SD range, the result does not
+depend on σq, and the corresponding interaction rate is
+γ↑↑
+SD ≃k2
+⊥Bk .
+These scalings have been verified numerically, considering the most un-
+stable triads specified in Voitenko [69] and using the parameters of the sim-
+ulation discussed below.
+The present analysis is nevertheless incomplete as, for example, it does not
+specify the values of the nonlinear frequency, nor the details of the resonance
+20
+
+conditions that could contribute to select among the conditions σp = ±σq.
+Some constraints are however to be prescribed in order to reproduce classical
+results. For consistency with the turbulence phenomenology, it appears that
+σp = σq is a better choice for the MHD range as well as for the WD range
+for counter-propagating k and p waves.
+For co-propagating waves, most
+relevant for the present study, the case σp = σq corresponds to a coupling of
+3 co-propagating waves which, in the strong-turbulence regime with a large
+imbalance, can be the most efficient as they all have the largest amplitude.
+To summarize, the above discussion leads us to adopt the following scalings:
+• counter-propagating waves:
+γNL
+k
+≃
+
+
+
+
+
+
+
+
+
+
+
+k⊥Bk
+(MHD range)
+k⊥Bk
+(WD range)
+k2
+⊥Bk
+(SD range)
+(16)
+• co-propagating waves:
+γNL
+k
+≃
+
+
+
+
+
+
+
+
+
+
+
+0
+(MHD range)
+k3
+⊥Bk
+(WD range)
+k2
+⊥Bk
+(SD range)
+(17)
+Using the usual Kolmogorov phenomenology (and thus neglecting possible
+intermittency corrections), it is now possible to predict the magnetic spectra
+in the various ranges. We determine the perpendicular magnetic spectrum
+by writing that the energy flux ϵ ≃γTr
+k B2
+k is constant. Here, the energy
+transfer frequency is given by γTr
+k
+= γNL
+k
+in the strong turbulence regime
+or by γTr
+k
+= (γNL
+k
+)2/γLin, where γLin = kzvph, in the weak regime and γNL
+k
+refers to one of the nonlinear frequencies determined above.
+In the strong turbulence regime, γNL
+k
+B2
+k ≃ϵ ≃const. and the above scal-
+ings naturally predict a magnetic spectrum E(k⊥) ≃B2
+k/k⊥≃ϵ2/3k−5/3
+⊥
+in
+the MHD range (neglecting possible effects due to imbalance) and a spectrum
+E(k⊥) ≃ϵ2/3k−7/3
+⊥
+in the SD range.
+In the weak turbulence regime, the conditions (γNL
+k
+)2B2
+k/(kzvph) ≃ϵ ≃
+const. and kz ≃const. apply, so the spectrum is E(k⊥) ≃ϵ1/2k−2
+⊥in the MHD
+21
+
+range (where also vph is constant) [52] and it becomes E(k⊥) ≃ϵ1/2k−5/2
+⊥
+in
+the SD range (where vph ≃k⊥) [70].
+Let us now concentrate on the more delicate WD range. Assuming that
+the dominant interaction is between the co-propagating waves, we predict a
+magnetic spectrum E(k⊥) ≃ϵ2/3k−3
+⊥
+in the strong regime, while the spec-
+trum steepens to E(k⊥) ≃ϵ1/2k−4
+⊥
+in the weak regime (taking vph roughly
+constant). For counter-propagating waves, the slopes are identical to those
+in the MHD range.
+Before proceeding further in the discussion, we summarize here the pre-
+dicted scaling in the weak and strong regimes for cases dominated by counter-
+or co-propagating interactions:
+• Strong turbulence:
+1) counter-propagating-dominated interactions
+E(k⊥) ∼
+
+
+
+
+
+
+
+
+
+
+
+
+
+ϵ2/3k−5/3
+⊥
+(MHD range)
+ϵ2/3k−5/3
+⊥
+(WD range)
+ϵ2/3k−7/3
+⊥
+(SD range)
+(18)
+2) co-propagating-dominated interactions
+E(k⊥) ∼
+
+
+
+
+
+
+
+
+
+
+
+N/A
+(MHD range)
+ϵ2/3k−3
+⊥
+(WD range)
+ϵ2/3k−7/3
+⊥
+(SD range)
+(19)
+• Weak turbulence:
+1) counter-propagating-dominated interactions
+E(k⊥) ∼
+
+
+
+
+
+
+
+
+
+
+
+ϵ1/2k−2
+⊥
+(MHD range)
+ϵ1/2k−2
+⊥
+(WD range)
+ϵ1/2k−5/2
+⊥
+(SD range)
+(20)
+22
+
+2) co-propagating-dominated interactions
+E(k⊥) ∼
+
+
+
+
+
+
+
+
+
+
+
+N/A
+(MHD range)
+ϵ1/2k−4
+⊥
+(WD range)
+ϵ1/2k−5/2
+⊥
+(SD range)
+(21)
+If the imbalance is large, the dominant wave undergoes a very weak non-
+linear interaction with the counter-streaming wave due to the much smaller
+amplitude of the latter. On the other hand the co-propagating interactions
+can become dominant in the WD range, especially because the interaction
+is long lasting as the waves have a small phase velocity difference. We thus
+expect that in the WD range, a steeper magnetic spectrum will develop, as-
+sociated with a regime somewhat intermediate between genuinely weak and
+strong turbulence. In the following, we illustrate this prediction by study-
+ing the interaction between two co-propagating plane waves with different
+wavenumbers.
+A model for the time evolution of imbalanced Alfv´enic turbulence, con-
+sistent with the above estimates of the transfer times, is presented in Passot
+et al. [19]. It appears as an extension of a previously-developed diffusion
+model in spectral space [24, 62], where the effect of co-propagative waves at
+sub-ion scales is included by retaining interactions between triad wavenum-
+bers that are comparable but not asymptotically close. The importance of
+this additional coupling, is expressed as a function of the ratio of the phase
+velocity vph(k⊥) to the Alfv´en velocity, that tends to zero when approaching
+the MHD range. In the quasi-stationary regime, a closed system of equa-
+tions can be written for u± = E±(k⊥)/k⊥, where free parameters include the
+energy transfer rate (taken constant) and the GCH transfer rate assumed to
+slowly decay in the sub-ion range, in order to model the transfer and dis-
+sipation in the parallel direction observed near the ion scale in the direct
+gyrofluid simulations.
+Numerical integration of this system clearly shows
+that the energy spectrum of the most energetic wave (and thus the trans-
+verse magnetic energy spectrum) displays a transition zone whose spectral
+exponent is steeper when the strength of co-propagating waves is increased.
+On the other hand, it was consistently shown that such transition zone is not
+present when interactions between co-propagating waves are not retained in
+the model.
+23
+
+Figure 5: Contours of parallel current density Jz (left) and of perpendicular magnetic
+field B⊥(right) in a plane perpendicular to B0 generated by the interaction of counter-
+propagating (top row) and co-propagating (bottom row) kinetic-Alfv´en plane waves.
+24
+
+4.3. Testing counter- and co-propagating KAW interactions with simulations
+In order to validate the influence of the interaction between co-propagating
+waves on the existence of a transition zone, we performed numerical simula-
+tions of decaying turbulence with βi = 1/2 and βe = 1/16 (so τ = 8), when
+the initial conditions are two kinetic Alfv´en plane waves, either counter- or
+co-propagating, with wavevectors given by k−= (1
+4, 0, 1
+4), k+ = (0, 1
+2, −1
+2)
+and by k−= (1
+4, 0, 1
+4), k+ = (0, 3
+4, 1
+2), respectively (we recall to the reader
+that the background field B0 is along z). In these simulations, a box of sizes2
+L⊥= Lz ≈25 has been discretized with 4803 uniformly distributed grid
+points (corresponding to a fully dealiased spectral range 0.25 ≤k⊥≤160),
+and a combination of Laplacian (∝k2) and hyper-diffusion (∝k8) has
+been employed to properly dissipate energy at the smallest scales. As ex-
+pected, turbulence is more developed in the case of counter-propagating
+waves (Fig. 5), where the rms (root mean square) current reaches a larger
+maximum and the energy decay is much more important (not shown). Both
+simulations display a −8/3 spectrum deep in the sub-ion range (steeper than
+the −7/3 spectrum, possibly because of intermittency effects [66]), with a
+transition zone with a spectral exponent close to −4 clearly visible in the
+case of co-propagating wave (Fig. 6). Inspection of the phase velocity vph
+calculated with the parameters of the simulation shows that the transition
+above which vph ∼k⊥occurs smoothly, and a clear linear scaling is actu-
+ally achieved with a good level of accuracy (with a margin of 1.3%) only
+at a transition wavenumber k⊥≳2. This explains that the transition zone
+extends to scales as small as ρs/2, much smaller than ρi.
+These results show that a steep spectral transition range between the
+MHD cascade and sub-ion-scale turbulence can emerge from a situation
+where the energy transfer is dominated by nonlinear interactions of co-propagating
+waves, such as in imbalanced turbulence, especially in situations, like the sim-
+ulations of Section 4.1, where the energy flux is not strongly depleted (thus
+not leading to an energy accumulation at scales larger than the dispersive
+range).
+2We remind the reader that perpendicular lengths are in ρs units, while, because of the
+gyrofluid rescaling, the parallel scales in the physical variables are in fact much larger.
+25
+
+100
+101
+k⊥ρs
+10−9
+10−7
+10−5
+10−3
+10−1
+EB⊥
+k⊥ρi = 1
+counter-propagating
+co-propagating
+∝k−8/3
+⊥
+∝k−4
+⊥
+Figure 6: Energy spectra of B⊥fluctuations versus k⊥ρs due to the interaction of counter-
+propagating (red) and co-propagating (orange) kinetic-Alfv´en waves. Spectra are averaged
+over a quasi-steady turbulent state, and relevant power laws are shown as a reference.
+5.
+Turbulent regimes in the nonlinear phase of the tearing insta-
+bility at large and moderate τ
+Hamiltonian reduced fluid models are very convenient to address the prob-
+lem of collisionless magnetic reconnection for which dissipative effects, nec-
+essary for well-posedness in the turbulent regime, should be located at the
+smallest resolved scales. Previous investigations of the cold-ion regime, using
+a reduced description that appears as a limit of our two-field model, have
+shown that 2D collisionless magnetic reconnection can trigger fluid-like sec-
+ondary instabilities [71, 72, 73, 74, 75, 76]. At low-βe, Kelvin-Helmholtz (KH)
+or Rayleigh-Taylor-like instabilities (the preeminence of one or the other de-
+pending on the value of ρs/de), can lead to the development of turbulence.
+In this Section, we extend this investigation to moderate and large values
+of the parameter τ and analyze the influence of this temperature ratio on
+the nonlinear evolution of magnetic islands, as well as on the properties of
+the turbulence driven by the secondary instabilities [31]. We consider two
+cases representative of the finite-τ and large-τ regimes, namely τ = 1 and
+τ = 100, and use, for the simulations (performed with the normalization of
+26
+
+Eqs. (10)-(13) and ˆρs/L = 1), the following parameters:
+de
+ρs
+= 0.223,
+βe = 0.02,
+di
+ρs
+= 10,
+δ2 = me/mi = 5 × 10−4.
+(22)
+We consider an equilibrium current sheet given by
+φ(0) = 0,
+A(0)
+∥
+= Aeq
+∥0/ cosh2 (x) ,
+B(0)
+z
+= 0,
+(23)
+with Aeq
+∥0 = 1.299 to ensure that maxx(Beq
+y (x)) = 1, where Beq
+y (x) = −dA(0)
+∥/dx
+is the amplitude of the equilibrium magnetic field. The tearing stability pa-
+rameter [77] for this equilibrium is given by
+∆′ = 2
+ 5 −k2
+y
+  k2
+y + 3
+
+k2
+y(k2
+y + 4)1/2
+.
+(24)
+The equilibrium (23) is initially tearing unstable when ∆′ > 0, which corre-
+sponds to wave numbers ky = πm/Ly <
+√
+5.
+We use a grid of 20802 points within a 2D domain defined as −2.2π ≤x ≤
+2.2π and −1.8π ≤y ≤1.8π. To introduce numerical dissipation, we apply
+filters as described in [78]. These filters are designed to damp fluctuations at
+scales for which k⊥> 500, in such a way that the dissipation acts at scales
+much smaller than the electron Larmor radius.
+In both the cases τ = 1 and τ = 100, simulations reveal the existence of
+strong electronic velocity shears, aligned with the separatrices, that initiate
+KH instabilities. These instabilities lead to the generation of turbulence and
+to the formation of eddies in a region outside the magnetic island.
+In the case τ = 100, the linear growth rate of the tearing mode is larger
+than for the case τ = 1. In the early fast growth phase, the outflow directed
+towards the interior of the island generates a mushroom-shaped structure,
+symptomatic of a Rayleigh-Taylor instability. Electron jets collide and gen-
+erate turbulence at the center of the island, as also reported in the small-τ
+regime [71, 73, 75, 76]. The strong shear taking place at the separatrices,
+leads to stretching and distortion of the magnetic field lines, triggering re-
+connection and then the formation of magnetic eddies.
+The top panel of Fig. 7 displays, for τ = 100, the out-of-plane electron
+gyrocenter velocity Ue = ∆⊥A∥, with a number of vortex structures on a
+broad range of scales that have propagated outside the island and whose size
+is significantly larger than ρe (as shown in [31], the largest structures can
+27
+
+Figure 7: Color-scale plot of the out-of-plane electron gyrocenter velocity Ue = ∆⊥A∥,
+showing the evolution of the turbulence outside the separatrix for τ = 100 (top) and τ = 1
+(bottom), in the upper-half simulation domain.
+28
+
+be fitted with a Gaussian profile whose FWHM is about 1.3 de ≈9.2 ρe),
+indicating that their formation mechanism is insensitive to the dynamics at
+the electron Larmor scale. Similar vortices are also observed in EMHD sim-
+ulations, where electron FLR effects are absent. The precise shape of EMHD
+vortices is however different, with the presence of an inner core whose width
+appears to be influenced by dissipative effects [31]. The spectrum of mag-
+netic fluctuations developed in the present simulations has a power law shape
+at sub-de scales, with a spectral index of −4 (not shown). This observation
+is not consistent with phenomenological predictions in the strong turbulence
+regime (where a −11/3 range is expected [10, 79]), possibly reflecting an ef-
+fect of the central island and current-sheet structures. Further simulations
+in the context of homogeneous and isotropic turbulence are thus necessary
+to address this issue.
+In contrast, simulations with τ = 1, which show a similar development of
+the turbulent current layer at the edge of the islands, lead to the formation
+of smaller vortices (Fig. 7, bottom panel). Their size being closer to ρe, the
+question arises whether their formation could be associated with the presence
+of electron FLR effects. To investigate this issue, a simulation where the
+FLR term in Eq. (5) was suppressed, has been performed. Interestingly, this
+simulation required a more extended filter, indicating that FLR terms have
+a regularizing effect. In this simulation, we note a significant reduction of
+magnetic vortices and an absence of current structures of sizes similar to de
+or smaller. This point is discussed in more details in Section 6 in the context
+of homogeneous turbulence.
+6. Limitations of the two-field model
+In Section 5, it was mentioned that, when τ = 1, the formation of vor-
+tices resulting from the KH instability triggered by strong electron velocity
+shear at the edge of the magnetic island, only occurs in the presence of the
+(subdominant) electron FLR-correction terms in the two-field model. The
+size of these vortices is significantly smaller than de and in fact approaches
+ρe. Since the two-field model does not systematically take into account all
+the electron FLR effects, the dynamics that is observed at scales approach-
+ing the electron Larmor radius in these simulations is not fully trustworthy.
+In order to better understand the limitations of the model, simulations of
+homogeneous turbulence in domains of various sizes have been performed,
+with a number of collocation points equal to 40002. These simulations have
+29
+
+been carried out with the model formulated in the non-dimensional variables
+used in Eqs. (2)-(5).
+In Fig. 8, we display ∆⊥A∥at the same instant of time in a sub-domain
+of two simulations when including (left) or not (right) the electron FLR
+term. The simulations have been initialized with random fluctuations, taking
+the same parameters and a domain of similar size (here 8πρs) as in the
+τ = 1 simulation of Section 5. Similarly to the evolution of the secondary
+instabilities following the initial reconnection event in Fig. 7, also in Fig.
+8 small vortices of size comparable to ρe are formed in regions of strong
+shear in the presence of the FLR term (left panel).
+On the other hand,
+current sheets display less fragmentation when such FLR term is removed
+from the gyrofluid equations (right panel of Fig.
+8).
+In fact, increasing
+the filtering was necessary in order to run the simulation without the FLR
+term, thus supporting the observation made in the previous Section that
+FLR terms have a regularizing effect. However, the size of the domain used
+in the simulations of Fig. 8 limits the aspect ratio of the current sheets, thus
+preventing the early formation of plasmoids. This limitation is not present
+in the case where the same initial conditions are taken at a larger scale, as
+shown in Fig. 11 (left panel).
+Figure 9 displays a later time of the simulation shown in Fig. 8, when
+using the full gyrofluid model (i.e., including the FLR term), the right panel
+being a zoom of the full box (left panel). The global view on the left panel
+of Fig. 9 displays multiple current sheets brought together by the motion of
+large-scale coherent structures around which some of them are rolling up in
+a spiral shape structure. These current sheets are thickened by competing
+KH and reconnection instabilities inside the layer, leading to the formation
+of many vortices at the electron Larmor radius scale. In Fourier space, the
+magnetic energy spectrum, displayed in Fig.
+10, shows three power-laws
+associated with the sub-ion range (spectral index close to −8/3, obtained
+by Boldyrev and Perez [66] when taking into account monofractal intermit-
+tency corrections), the sub-de range (spectral index close to −11/3 predicted
+in [79]) and a sub-ρe range (spectral index of −4.5, consistent with Cluster
+observations in the terrestrial magnetosheath [80])). These findings, which
+show consistency with space plasma measurements, deserve confirmation us-
+ing a model which includes a comprehensive description of electron Larmor
+radius corrections.
+We now display in Fig. 11 two snapshots of a simulation using the full
+model with the same physical parameters as above, except that the size of
+30
+
+Figure 8: Color-scale plots of ∆⊥A∥from a simulation of decaying turbulence with (left)
+or without (right) the electron-FLR correction, for βe = 0.02, τ = 1. The simulations are
+initialized with homogeneous random fluctuations. Only a quarter of the whole computa-
+tional box [0, 8πρs] is shown, at a time (t = 1.375Ω−1
+i ) taken within the early period of
+turbulence decay. On the left panel, squares with sides πde and πρe are superimposed.
+Figure 9: Left: Color-scale plots of ∆⊥A∥in the whole computational box, from the same
+simulation of Fig. 8 at a later time t = 6. Right: zoom of the region enclosed in the square
+displayed in the left panel, along with the characteristic sizes πde, πρe as in fig. 8 (left).
+31
+
+the domain is now an order of magnitude larger, i.e., 80πρs. In this case,
+scales comparable to the electron Larmor radius are inside the dissipation
+zone.
+We note a qualitative similarity with the simulations in the cold-
+ion regime reported in [8]. The most obvious difference with the previous
+smaller-box simulation (left panel of Fig. 8) is that we now observe vortices
+at all the scales (including meso-scale plasmoid chains), resulting from the
+turbulent dynamics. In addition to the current sheets, two types of struc-
+tures are clearly visible at early times (left panel), namely plasmoids formed
+in extended current sheets as a result of reconnection (lower part of the left
+panel of Fig. 11), and smaller vortices produced by the KH instability that
+develops in the outflow of a reconnection site (top left part of the left panel
+of Fig. 11). In the late phase of the simulation (right panel), the structures
+undergo nonlinear interactions, leading to a fully developed turbulent regime
+where it is difficult to distinguish between structures originated by the two
+different processes. The associated time-averaged magnetic energy spectrum,
+displayed in Fig. 10, shows a −5/3 MHD range followed by a −8/3 sub-ion
+range, limited at small scale by dissipation. Note that this simulation, which
+is performed in the spectral range of strict validity of the model, does not re-
+solve the sub-electron scales (and especially ρe). The question arises whether
+the active dynamics observed at these scales in the previous simulation, could
+affect the evolution of meso-scale turbulence.
+In order to address a situation where dissipation acts at scales smaller
+than the electron Larmor radius, and also to extend the validity of the gy-
+rofluid model to larger values of the βe parameter, there is a need for a
+more sophisticated model taking into account both the ion and electron FLR
+effects (and also possibly the Landau damping terms, as shortly discussed
+below). It is also necessary to include the coupling to the full ion motion,
+with dynamical equations for the ion gyrocenter density and parallel veloc-
+ity. This will also make it possible to capture the coupling of AWs to ion
+acoustic waves (IAWs), necessary to describe the parametric decay instabil-
+ity at MHD scales (for βi < 1). Note that a further coupling to electron
+and ion parallel temperatures would also open the possibility to introduce
+Landau damping effects (through a Landau-fluid type of closure), particu-
+larly important when βi reaches values of order unity [81]. A 4-field gyrofluid
+model that takes into account the coupling to the parallel ion velocity and
+incorporates the full electron FLR effects is detailed in the Appendix.
+32
+
+Figure 10: Energy spectra of B⊥fluctuations versus k⊥ρs. Blue: same run as in fig. 8,
+averaged between t = 5 and t = 7. Red: same run as in fig. 11, averaged between t = 20
+and t = 30. Inset: blue spectrum, compensated by k8/3 (solid line), k11/3 (dashed line),
+k4.5 (dash-dotted line)
+Figure 11: For a decaying run in a box [0, 80πρs] with random initial fluctuations and
+βe = 0.02, τ = 1, color-scale plots of the out-of-plane electron gyrocenter velocity Ue in a
+half of the computational box, at times t = 10Ω−1
+i
+(left) and t = 24Ω−1
+i .
+33
+
+7. Conclusion
+The present paper, which includes a review together with new results,
+illustrates the capability of a relatively simple Hamiltonian two-field model
+to provide a uniform description, from the MHD to the electron scales, of
+turbulent space plasmas, when dominated by the dynamics of Alfv´en, ki-
+netic Alfv´en or inertial kinetic Alfv´en waves, and by magnetic reconnection.
+Such processes are known to constitute the building blocks of heliospheric
+turbulence. Retaining the whole range of scales within a single system of
+equations requires the use of nonlocal operators, most conveniently described
+in Fourier space, which prescribe constraints on the geometry of the compu-
+tational domain. This model is thus most suited to address fundamental
+physical processes, some of which have been reviewed in this paper.
+We
+have reported the first numerical evidence of reconnection-mediated MHD
+turbulence in three dimensional simulations in a regime of moderate and low
+nonlinearity. We then analyzed the energy and cross-helicity cascades of im-
+balanced Alfv´enic turbulence and in particular the existence of a transition
+zone at ion scales that, at moderate nonlinearity, appears to be associated
+with an helicity barrier. In the simulations presented in this paper, where
+the driving prescribes the energy and imbalance levels at the largest scales,
+there is no significant drop in the energy transfer rate at the ion scale, in
+contrast with [7], and the transition zone results from the local dominance
+of co-propagating interactions in this range. This effect is illustrated by new
+numerical simulations initialized by co- or counter-propagating plane waves.
+Simulations of 2D collisionless reconnection at moderate and large values of
+the ion-electron temperature ratio τ are also reported, pointing out the on-
+set of turbulence as a result of secondary instabilities that develop at the
+boundaries of the magnetic island formed by the primary tearing instability
+of an initially unstable current sheet. Simulations of 2D homogeneous tur-
+bulence in same physical conditions are used to point out the role of electron
+FLR corrections on the generation and the characteristic size of the vortices
+emerging from the development of a secondary KH instability. The latter ob-
+servations suggest the need for a model providing a complete description of
+both ion and electron FLR corrections. A new four-field model, presented in
+the Appendix, is introduced to meet these requirements. This model, which
+is also Hamiltonian, does not prescribe conditions on βe and is consistent
+with the linear theory in regimes where the ion gyrocenters can be viewed as
+adiabatic and the electrons as isothermal. Perspectives involve simulations of
+34
+
+low-frequency turbulence and collisionless reconnection with this new model
+in both 2D and 3D frameworks.
+Appendix A. Derivation of the two-field gyrofluid model from a
+four-field gyrofluid model
+In this Appendix, we provide a derivation of the model (10)-(13), which is
+slightly different and more detailed with respect to the one presented in the
+original reference [10]. The starting point for the present derivation indeed
+differs from that of [10] and corresponds to the four-field gyrofluid model
+∂Ne
+∂t + [G10eφ −ρ2
+s2G20eBz, Ne] −[G10eA∥, Ue] + ∂Ue
+∂z = 0,
+(A.1)
+∂
+∂t(G10eA∥−d2
+eUe) + [G10eφ −ρ2
+s2G20eBz, G10eA∥−d2
+eUe] + ρ2
+s[G10eA∥, Ne]
++ ∂
+∂z(G10eφ −ρ2
+s(2G20eBz + Ne)) = 0,
+(A.2)
+∂Ni
+∂t + [G10iφ + τρ2
+s2G20iBz, Ni] −[G10iA∥, Ui] + ∂Ui
+∂z = 0,
+(A.3)
+∂
+∂t(G10iA∥+ d2
+i Ui) + [G10iφ + τρ2
+s2G20iBz, G10iA∥+ d2
+i Ui] −τρ2
+s[G10iA∥, Ni]
++ ∂
+∂z(G10iφ + ρ2
+s(τ2G20iBz + Ni)) = 0,
+(A.4)
+G10iNi −G10eNe = 1 −Γ0
+τ
+φ
+ρ2
+s
+−(Γ0 −Γ1)Bz −(G2
+10e −1) φ
+ρ2
+s
++ G10e2G20eBz,
+(A.5)
+∆⊥A∥= G10eUe −G10iUi,
+(A.6)
+Bz = −βe
+2
+
+τ2G20iNi + (Γ0 −Γ1) φ
+ρ2
+s
++ 2τ(Γ0 −Γ1)Bz
++2G20eNe −G10e2G20e
+φ
+ρ2
+s
++ 4G2
+20eBz
+
+.
+(A.7)
+As discussed in Sec. 6, this model has an interest of its own. Indeed, while
+still being relatively simpler than gyrokinetic models, it does not assume,
+unlike the two-field model (10)-(13), that βe and de are small parameters.
+Consequently, it retains the coupling with ion gyrocenter density and parallel
+velocity dynamics, as well as electron FLR effects.
+35
+
+Equations (A.1)-(A.2) and (A.3)-(A.4) correspond to the continuity and
+parallel momentum equations for electron and ion gyrocenters, respectively.
+Equations (A.5), (A.6) and (A.7) represent quasi-neutrality, parallel and per-
+pendicular components of Amp`ere’s law, respectively. The model is formu-
+lated according to the normalization (14). The additional expressions Ni, Ue
+and Ui, corresponding to the ion density and to the electron and ion paral-
+lel velocity gyrocenter fluctuations, respectively, are present in Eqs. (A.1)
+-(A.7). Their normalization is given by
+Ni = L
+ˆdi
+ˆNi
+n0
+,
+Ue,i = L
+ˆdi
+ˆUe,i
+vA
+.
+(A.8)
+Also, the gyroaverage operators G10e = 2G20e and G10i = 2G20i corre-
+spond, in Fourier space, to operators multiplying Fourier coefficients by
+exp(−(βe/4)d2
+ek2
+⊥) and by exp(−τρ2
+sk2
+⊥/2), respectively. We point out that
+these expressions correspond to those obtained by exact integration in [21].
+Alternative expressions, providing a better agreement with linear theory for
+large values of (βe/4)d2
+ek2
+⊥and (τ/2)ρ2
+sk2
+⊥, could also be used, as discussed,
+for instance, in [82, 83, 84].
+Unlike the parent gyrofluid model [21] used for the derivation in Ref. [10],
+the four-field model (A.1)-(A.7) is a closed system. The gyrofluid model in
+[21] evolves also parallel and perpendicular gyrocenter pressures and accounts
+for nonuniform equilibrium magnetic, density and temperature equilibria.
+Expressions for the heat fluxes and fourth-order moments are not specified,
+as the closure problem is not addressed. The four-field model (A.1)-(A.7) can
+be derived from δf gyrokinetic equations such as those presented in [25, 85].
+In particular, the hierarchy of the resulting electron gyrofluid equations is
+truncated by imposing a quasi-static closure, as described in Ref. [81]. In
+the present case, in which the hierarchy is truncated at the level of the
+parallel momentum equation, the quasi-static closure amounts to imposing
+an isothermal electron fluid. The ion gyrofluid hierarchy, on the other hand,
+is truncated using the closure described in [86, 87]. This closure is based on
+retaining a finite number (two, in our case) of coefficients in the Hermite-
+Laguerre expansion of a generalized perturbed distribution function and in
+simplifying nonlinear terms involving gyroaverage operators, in such a way
+that the resulting gyrofluid system, if the closure is applied to all species,
+conserves energy. In Ref. [87] it is shown that such closure also preserves the
+Hamiltonian character of the parent gyrokinetic model. It also emerges that
+36
+
+that the model (A.1) -(A.7) is Hamiltonian, although two different closures
+are adopted for electrons and ions.
+We also remark that the differences
+between the two closures emerge not in the evolution equations, but rather
+in the different treatments of ion and electron terms in the static relations
+(A.5)-(A.7).
+If one looks at the linear dispersion relation of the parent gyrokinetic
+model, it turns out that the closures imposed on the moments of higher order
+with respect to density and parallel momentum fluctuations are compatible
+with the regime
+vthi ≪ω
+kz
+≪vthe.
+(A.9)
+The inequality vthi ≪ω/kz leads to the closure relation for the ions and
+is compatible with an adiabatic closure for the ion gyrocenter fluid. The
+inequality ω/kz ≪vthe, on the other hand, concerns the electron fluid and,
+as above stated, is compatible with an isothermal electron fluid.
+The derivation of the two-field model from the four-field model proceeds
+by first identifying a small parameter which we take to be the square root of
+the mass ratio
+δ = (me/mi)1/2.
+(A.10)
+This will allow in particular to neglect most of the electron FLR effects.
+Corrections of order δ with respect to the leading order will however be
+retained in the model. This will make it possible, in particular, to retain
+electron inertia effects in the parallel electron momentum equation, thus
+allowing for magnetic reconnection.
+A further assumption is to take
+βe
+2 = O(δ)
+(A.11)
+as δ →0. This will help to make electron FLR terms subdominant with
+respect to electron inertia terms at finite τ. Also, parallel magnetic pertur-
+bations (which, at the leading order, are proportional to βe) will be retained
+as corrections one order smaller in δ.
+We also require that the two-field model retains ion FLR effects, and in
+particular that it reduces to known reduced models (see Sec. 2) in the small
+and large τ limits.
+All these requirements can be met by retaining, from the parent model,
+(A.1) -(A.7) only the leading order terms, as well as their first order cor-
+rections in δ, on the basis of two scalings. The final model is obtained by
+37
+
+considering the union of all the terms present in the reduced models obtained
+from the two scalings.
+More precisely, we first introduce the following
+Scaling I
+∂t = O(εδ1/2),
+∂x = O(1),
+∂y = O(1),
+∂z = O(εδ1/2),
+(A.12)
+ρs = O(1),
+d2
+e = O(δ),
+d2
+i = O(1/δ),
+βe
+2 = O(δ),
+τ = O(1)
+(A.13)
+Ne,i = ε(δ1/2Ne,i0 + δ3/2Ne,i1 + O(δ5/2)),
+(A.14)
+Ue = ε(δ1/2Ue0 + δ3/2Ue1 + O(δ5/2)),
+(A.15)
+Ui = ε(δ2Ui0 + δ3Ui1 + O(δ4)),
+(A.16)
+φ = ε(δ1/2φ0 + δ3/2φ1 + O(δ5/2)),
+(A.17)
+A∥= ε(δ1/2A∥0 + δ3/2A∥1 + O(δ5/2)),
+(A.18)
+Bz = ε(δ3/2Bz0 + δ5/2Bz1 + O(δ7/2))
+(A.19)
+and
+Scaling II
+∂t = O(εδ1/2),
+∂x = O(1),
+∂y = O(1),
+∂z = O(εδ),
+(A.20)
+ρs = O(1),
+d2
+e = O(δ),
+d2
+i = O(1/δ),
+βe
+2 = O(δ),
+τ = O(1/δ),
+(A.21)
+Ne,i = ε(δ3/2Ne,i0 + δ5/2Ne,i1 + O(δ7/2)),
+(A.22)
+Ue = ε(δUe0 + δ2Ue1 + O(δ3)),
+(A.23)
+Ui = ε(δ2Ui0 + δ3Ui1 + O(δ4)),
+(A.24)
+φ = ε(δ1/2φ0 + δ3/2φ1 + O(δ5/2)),
+(A.25)
+A∥= ε(δA∥0 + δ2A∥1 + O(δ3)),
+(A.26)
+Bz = ε(δ3/2B∥0 + δ5/2B∥1 + O(δ7/2)).
+(A.27)
+38
+
+In Eqs. (A.12)-(A.19) and (A.20)-(A.27) we used the parameter
+ε = L
+L∥
+≪1,
+(A.28)
+already introduced in Sec. 2. This parameter accounts for the gyrokinetic
+ordering but in practice it will play no role in the derivation, because all
+terms in the evolution equations are of quadratic order in ε and no further
+expansion is carried out in this parameter.
+Scalings I and II are consistent (taking into account the different normal-
+ization) with those of Ref. [10], although we take this opportunity to point
+out a misprint in Eq. (18) of Ref. [10], where the correct expression should
+be A∥∼∂z = O(δε).
+We begin by deriving a reduced model according to the scaling I, which
+concerns the case of finite τ. If we insert the relations (A.12)-(A.19) into
+Eqs. (A.5)-(A.7) we can write
+G10iNi −Ne = 1 −Γ0
+τ
+φ
+ρ2
+s
+−(Γ0 −Γ1 −1)Bz + O(εδ5/2),
+(A.29)
+∆⊥A∥= Ue + O(εδ2),
+(A.30)
+Bz = −βe
+2
+
+τ2G20iNi + (Γ0 −Γ1 −1) φ
+ρ2
+s
++ (1 + 2τ(Γ0 −Γ1)Bz
++Ne) + O(εδ7/2).
+(A.31)
+Note that electron FLR corrections are all included in the terms of the form
+”O( )”, which we refer to as ”unspecified quantities”. In particular, for a
+function f assumed of order unity, one has G10ef = 2G20ef = f + O(δ2).
+Therefore, electron FLR corrections are at least of order δ2 smaller than the
+dominant contribution in each equation.
+If we neglect the unspecified terms in each equation we obtain
+G10iNi −Ne = 1 −Γ0
+τ
+φ
+ρ2
+s
+−(Γ0 −Γ1 −1)Bz,
+(A.32)
+∆⊥A∥= Ue,
+(A.33)
+Bz = −βe
+2
+
+τ2G20iNi + (Γ0 −Γ1 −1) φ
+ρ2
+s
++ (1 + 2τ(Γ0 −Γ1))Bz + Ne
+
+.
+(A.34)
+39
+
+Note, however, that by neglecting the unspecified terms, not all the correc-
+tions which are δ2 smaller than the dominant contribution have been elimi-
+nated. In fact, the whole expansions, in powers of δ of the fields, are retained.
+For instance, in Eq. (A.33), using Eqs. (A.15) and (A.18), one finds
+εδ1/2∆⊥A∥0+εδ3/2∆⊥A∥1+O(εδ5/2) = εδ1/2Ue0+εδ3/2Ue1+O(εδ5/2). (A.35)
+All terms at the leading order O(εδ1/2) and at the next order O(εδ3/2) are
+correctly present. However, terms of order O(εδ5/2) are in principle retained
+in Eq. (A.33), although the unspecified terms of order O(εδ2) (which are
+of lower order) have been neglected. With this approach, therefore, some
+subdominant terms are retained. More generally, each equation of the final
+model will turn out to be correct at the leading order, at the next order in
+δ but will also contain some subdominant higher order terms. It is there-
+fore assumed that such subdominant terms do not play a major role in the
+dynamics. As discussed in Ref. [31], this assumption fails, as expected, at
+sufficiently small scales, typically of the order of the electron Larmor radius.
+On the other hand, the advantage of this approach is that it is significantly
+simpler than the standard consistent approach, where equations are solved
+order by order and only terms of the same order are retained in the final
+model equations.
+Inserting the expansions (A.12)-(A.19) into the evolution equations (A.1)-
+(A.4) yields
+∂Ne
+∂t + [φ −ρ2
+sBz, Ne] −[A∥, Ue] + ∂Ue
+∂z + O(ε2δ3) = 0,
+(A.36)
+∂
+∂t(A∥−d2
+eUe) + [φ −ρ2
+sBz, A∥−d2
+eUe] + ρ2
+s[A∥, Ne]
++ ∂
+∂z(φ −ρ2
+s(Bz + Ne)) + O(ε2δ3) = 0,
+(A.37)
+∂Ni
+∂t + [G10iφ + τρ2
+s2G20iBz, Ni] + O(ε2δ5/2) = 0,
+(A.38)
+∂
+∂t(G10iA∥+ d2
+i Ui) + [G10iφ + τρ2
+s2G20iBz, G10iA∥] + [G10iφ, d2
+i Ui] −τρ2
+s[G10iA∥, Ni]
++ ∂
+∂z(G10iφ + ρ2
+s(τ2G20iBz + Ni)) + O(ε2δ5/2) = 0.
+(A.39)
+Note that, in Eq. (A.37), the term [ρ2
+sBz, d2
+eUe], which is of order ε2δ3, has
+been explicitly retained, although it is δ2 smaller than the leading order terms
+40
+
+in the equation. It can be verified a posteriori, that, in the presence of such
+term, the model possesses a Hamiltonian structure, which is a property that
+we require for our model.
+Again, neglecting the unspecified terms, Eqs. (A.36)-(A.39) can be writ-
+ten as
+∂Ne
+∂t + [φ −ρ2
+sBz, Ne] + ∇∥Ue = 0,
+(A.40)
+∂
+∂t(A∥−d2
+eUe) −[φ −ρ2
+sBz, d2
+eUe] + ∇∥(φ −ρ2
+sNe −ρ2
+sBz) = 0,
+(A.41)
+∂Ni
+∂t + [G10iφ + τρ2
+s2G20iBz, Ni] = 0,
+(A.42)
+∂
+∂t(G10iA∥+ d2
+i Ui) + [G10iφ + τρ2
+s2G20iBz, G10iA∥] + [G10iφ, d2
+i Ui] −τρ2
+s[G10iA∥, Ni]
++ ∂
+∂z(G10iφ + ρ2
+s(τ2G20iBz + Ni)) = 0.
+(A.43)
+We can then take
+Ni = 0
+(A.44)
+as solution of Eq. (A.42). This shows a posteriori, that in scaling I, one
+could have alternatively assumed Ni = ε(δ5/2Ni0 +δ7/2Ni1 +O(δ9/2)). Either
+way, Ni becomes negligible in Eqs. (A.32) and (A.34). Also, Ui has been
+neglected in the approximated parallel Amp`ere’s law (A.33). Thanks to these
+decouplings, from Eqs. (A.40), (A.41), (A.33), (A.34), one obtains a closed
+two-field system given by
+∂Ne
+∂t + [φ −ρ2
+sBz, Ne] + ∇∥∆⊥A∥= 0,
+(A.45)
+∂
+∂t(A∥−d2
+e∆⊥A∥) −[φ −ρ2
+sBz, d2
+e∆⊥A∥] + ∇∥(φ −ρ2
+sNe −ρ2
+sBz) = 0,
+(A.46)
+Ne = Γ0 −1
+τ
+φ
+ρ2
+s
+−(1 −Γ0 + Γ1)Bz,
+(A.47)
+Bz = −βe
+2
+
+(Γ0 −Γ1 −1) φ
+ρ2
+s
++ (1 + 2τ(Γ0 −Γ1))Bz + Ne
+
+,
+(A.48)
+where we also made use of Eq. (A.33) to replace Ue in favour of ∆⊥A∥.
+The same procedure is then applied to the parent four-field model with
+scaling II. We just point out that, in the case of scaling II, which deals
+41
+
+with τ ≫1, the decoupling of Ni and Ui occurs due to the ion gyroaverage
+operators, which damp Ni and Ui exponentially.
+The two-field model resulting from scaling II reads
+∂Ne
+∂t + [φ −ρ2
+sBz, Ne] + ∇∥∆⊥A∥= 0,
+(A.49)
+∂
+∂t(A∥−d2
+e∆⊥A∥) −[φ −ρ2
+sBz, d2
+e∆⊥A∥] + ∇∥(φ −ρ2
+sNe −ρ2
+sBz) = 0,
+(A.50)
+Ne =
+
+−1
+τ + βe
+2 d2
+e∆⊥
+ φ
+ρ2
+s
+−Bz,
+(A.51)
+Bz = −βe
+2
+
+−φ
+ρ2
+s
++ Bz + Ne
+
+.
+(A.52)
+The evolution equations look identical to those obtained from scaling I, al-
+though formally, the leading order terms in Eqs.
+(A.49) and (A.50) are
+O(ε2δ2) and O(ε2δ3/2), respectively, whereas leading order terms in Eqs.
+(A.45) and (A.46) are both O(ε2δ). We emphasize the presence of the only
+electron FLR correction appearing in our model, and given by the term
+(β/2)d2
+e∆⊥φ/ ρ2
+s in Eq. (A.51). This term emerges for τ ≫1 as correction
+of order δ smaller, and is thus retained in the quasi-neutrality relation. The
+importance of this term for vortex formation has been discussed in Sec. 5.
+The final two-field gyrofluid model consists of the two evolution equations
+∂Ne
+∂t + [φ −ρ2
+sBz, Ne] + ∇∥∆⊥A∥= 0,
+(A.53)
+∂
+∂t(1 −d2
+e∆⊥)A∥−[φ −ρ2
+sBz, d2
+e∆⊥A∥] + ∇∥(φ −ρ2
+sNe −ρ2
+sBz) = 0,
+(A.54)
+obtained from both scalings, and given by Eqs. (A.45)-(A.46) or, equiva-
+lently, by Eqs. (A.49)-(A.50). These equations correspond indeed to Eqs.
+(10)-(11).
+These two evolution equations are complemented by two static relations
+obtained taking the union of all the terms in the static relations obtained
+from the two scalings, i.e. Eqs. (A.47)-(A.48) and (A.51)-(A.52). In this
+way, one can recover the appropriate limit of the static relations, by applying
+42
+
+the corresponding scaling. This procedure yields
+Ne =
+Γ0 −1
+τ
++ βe
+2 d2
+e∆⊥
+ φ
+ρ2
+s
+−(1 −Γ0 + Γ1)Bz,
+(A.55)
+Bz = −βe
+2
+
+(Γ0 −Γ1 −1) φ
+ρ2
+s
++ (1 + 2τ(Γ0 −Γ1))Bz + Ne
+
+.
+(A.56)
+Making use of Eq. (A.55), from Eq. (A.56) one can obtain
+ 2
+βe
++ (1 + 2τ)(Γ0 −Γ1)
+
+Bz =
+
+1 −Γ0 −1
+τ
+−Γ0 + Γ1
+ φ
+ρ2
+s
+.
+(A.57)
+Note that, in the right-hand side of Eq. (A.57), a term −(βe/2)d2
+e∆⊥φ/ρs has
+been neglected. Within our approach this is legitimate, because such term
+would only contribute to terms which are of order δ2 smaller than the leading
+terms in each equation. As above explained, our model is not accurate at
+the level of such terms.
+We can now summarize by pointing out that Eqs. (A.53), (A.54), (A.55)
+and (A.57) correspond to Eqs. (10), (11), (13) and (12), respectively. This
+concludes the derivation of the model.
+Acknowledgments
+This work was performed using HPC resources from GENCI - CINES/TGCC
+(Grants 2020 - A0090407042 and 2021 - A0110407042), and using HPC
+resources from GENCI-TGCC (Grant 2022 - A0130413794).
+Part of the
+computations have also been done on the “Mesocentre SIGAMM” machine,
+hosted by Observatoire de la Cˆote d’Azur.
+References
+[1] J. C. Perez, S. Boldyrev, Numerical Simulations of Imbalanced Strong
+Magnetohydrodynamic Turbulence, Astrophys. J. Lett. 710 (2010).
+[2] C. H. K. Chen, A. Mallet, T. A. Yousef, A. A. Schekochihin, T. S. Hor-
+bury, Anisotropy of Alfv´enic turbulence in the solar wind and numerical
+simulations, Mon. Notices Royal Astron. Soc. 415 (2011) 3219–3226.
+[3] J. C. Perez, J. Mason, S. Boldyrev, F. Cattaneo, On the energy spectrum
+of strong magnetohydrodynamic turbulence,
+Phys. Rev. X 2 (2012)
+041005.
+43
+
+[4] J. C. Perez, B. D. G. Chandran,
+Direct numerical simulations of
+reflection-driven, reduced magnetohydrodynamic turbulence from the
+sun to the Alfv´en critical point, Astrophys. J. 776 (2013) 124.
+[5] S. Boldyrev, J. C. Perez, Spectrum of kinetic Alfv´en turbulence, Astro-
+phys. J. Lett. 758 (2012) L44.
+[6] C. H. K. Chen, S. Boldyrev, Nature of kinetic scale turbulence in the
+Earth’s magnetosheath, Astrophys. J. 842 (2017) 122.
+[7] R. Meyrand, J. Squire, A. A. Schekochihin, W. Dorland, On the viola-
+tion of the zeroth law of turbulence in space plasmas, J. Plasma Phys.
+87 (2021) 535870301.
+[8] D. Borgogno, D. Grasso, B. Achilli, M. Rom´e, L. Comisso, Coexistence
+of Plasmoid and Kelvin-Helmholtz Instabilities in Collisionless Plasma
+Turbulence, Astrophys. J. 929 (2022) 62.
+[9] M. Zhou, Z. Liu, N. F. Loureiro, Spectrum of kinetic-Alfv´en-wave turbu-
+lence: intermittency or tearing mediation?, Mon. Notices Royal Astron.
+Soc. 524 (2023) 5468–5476.
+[10] T. Passot, P. L. Sulem, E. Tassi, Gyrofluid modeling and phenomenology
+of low-βe Alfv´en wave turbulence, Phys. Plasmas 25 (2018) 042107.
+[11] T. D. Phan, J. P. Eastwood, M. A. Shay, J. F. Drake, B. U. ¨O. Sonnerup,
+M. Fujimoto, P. A. Cassak, M. Øieroset, J. L. Burch, R. B. Torbert,
+A. C. Rager, J. C. Dorelli, D. J. Gershman, C. Pollock, P. S. Pyakurel,
+C. C. Haggerty, Y. Khotyaintsev, B. Lavraud, Y. Saito, M. Oka, R. E.
+Ergun, A. Retino, O. Le Contel, M. R. Argall, B. L. Giles, T. E.
+Moore, F. D. Wilder, R. J. Strangeway, C. T. Russell, P. A. Lindqvist,
+W. Magnes, Electron magnetic reconnection without ion coupling in
+Earth’s turbulent magnetosheath, Nature 557 (2018) 202–206.
+[12] C. H. K. Chen, S. D. Bale, J. W. Bonnell, D. Borovikov, T. A. Bowen,
+D. Burgess, A. W. Case, B. D. G. Chandran, T. D. de Wit, K. Goetz,
+P. R. Harvey, J. C. Kasper, K. G. Klein, K. E. Korreck, D. Larson,
+R. Livi, R. J. MacDowall, D. M. Malaspina, A. Mallet, M. D. McManus,
+M. Moncuquet, M. Pulupa, M. L. Stevens, P. Whittlesey, The evolution
+and role of solar wind turbulence in the inner heliosphere, Astrophys.
+J. Supp. 246 (2020) 53.
+44
+
+[13] F. Sahraoui, M. L. Goldstein, G. Belmont, P. Canu, L. Rezeau, Three
+dimensional anisotropic k spectra of turbulence at subproton scales in
+the solar wind, Phys. Rev. Lett. 105 (2010) 131101.
+[14] O. Alexandrova, C. H. K. Chen, L. Sorriso-Valvo, T. S. Horbury, S. D.
+Bale, Solar wind turbulence and the role of ion instabilities, Space Sci.
+Rev. 178 (2013) 101–139.
+[15] T. A. Bowen, A. Mallet, S. D. Bale, J. W. Bonnell, A. W. Case, B. D. G.
+Chandran, A. Chasapis, C. H. K. Chen, D. Duan, T. Dudok de Wit,
+K. Goetz, J. S. Halekas, P. R. Harvey, J. C. Kasper, K. E. Korreck,
+D. Larson, R. Livi, R. J. MacDowall, D. M. Malaspina, M. D. McManus,
+M. Pulupa, M. Stevens, P. Whittlesey, Constraining ion-scale heating
+and spectral energy transfer in observations of plasma turbulence, Phys.
+Rev. Lett. 125 (2020) 025102.
+[16] T. A. Bowen, S. D. Bale, B. D. G. Chandran, A. Chasapis, C. H. K.
+Chen, T. Dudok de Wit, A. Mallet, R. Meyrand, J. Squire, Mediation
+of collisionless turbulent dissipation through cyclotron resonance, arXiv
+e-prints (2023) arXiv:2306.04881.
+[17] R. Bruno, L. Trenchi, D. Telloni,
+Spectral slope variation at proton
+scales from fast to slow solar wind, Astrophys. J. Lett. 793 (2014) L15.
+[18] S. Y. Huang, F. Sahraoui, N. Andr´es, L. Z. Hadid, Z. G. Yuan, J. S. He,
+J. S. Zhao, S. Galtier, J. Zhang, X. H. Deng, K. Jiang, L. Yu, S. B. Xu,
+Q. Y. Xiong, Y. Y. Wei, T. Dudok de Wit, S. D. Bale, J. C. Kasper, The
+ion transition range of solar wind turbulence in the inner heliosphere:
+Parker solar probe observations, Astrophys. J. Lett. 909 (2021) L7.
+[19] T. Passot, P. L. Sulem, D. Laveder,
+Direct kinetic Alfv´en wave en-
+ergy cascade in the presence of imbalance, J. Plasma Phys. 88 (2022)
+905880312.
+[20] G. G. Howes, S. C. Cowley, W. Dorland, G. W. Hammett, E.Quataert,
+A. A. Schekochihin,
+Astrophysical gyrokinetics: basic equations and
+linear theory, Astrophys. J. 651 (2006) 590–614.
+[21] A. Brizard,
+Nonlinear gyrofluid description of turbulent magnetized
+plasmas, Phys. Fluids B 4 (1992) 1213–1228.
+45
+
+[22] E. Tassi, P. L. Sulem, T. Passot, Reduced models accounting for parallel
+magnetic perturbations: gyrofluid and finite Larmor radius-Landau fluid
+approaches, J. Plasma Phys. 82 (2016) 705820601.
+[23] P. L. Sulem, T. Passot, D. Laveder, D. Borgogno, Influence of the non-
+linearity parameter on the solar wind sub-ion magnetic energy spectrum:
+FLR-Landau fluid simulations, Astrophys. J. 818 (2016) 66.
+[24] T. Passot, P. L. Sulem,
+Imbalanced kinetic Alfv´en wave turbulence:
+from weak turbulence theory to nonlinear diffusion models for the strong
+regime, J. Plasma Phys. 85 (2019) 905850301.
+[25] A. A. Schekochihin, S. C. Cowley, W. Dorland, G. W. Hammett, G. G.
+Howes, E. Quataert, T. Tatsuno, Astrophysical gyrokinetics: kinetic
+and fluid turbulent cascades in magnetized weakly collisional plasmas,
+Astrophys. J. Suppl. 182 (2009) 310–377.
+[26] T. J. Schep, F. Pegoraro, B. N. Kuvshinov, Generalized two-fluid theory
+of nonlinear magnetic structures, Phys. Plasmas (1994) 2843–2852.
+[27] E. Cafaro, D. Grasso, F. Pegoraro, F. Porcelli, A. Saluzzi, Invariants and
+geometric structures in nonlinear Hamiltonian magnetic reconnection,
+Phys. Rev. Lett. 80 (1998) 4430–4433.
+[28] H. Betar, D. Del Sarto, M. Ottaviani, A. Ghizzo, Microscopic scales of
+linear tearing modes: a tutorial on boundary layer theory for magnetic
+reconnection, J. Plasma Phys. 88 (2022) 925880601.
+[29] A. Zocco, A. A. Schekochihin, Reduced fluid-kinetic equations for low-
+frequency dynamics, magnetic reconnection, and electron heating in low-
+beta plasmas, Physics of Plasmas 18 (2011) 102309–102309.
+[30] T. Passot, P. L. Sulem, E. Tassi, Electron-scale reduced fluid models
+with gyroviscous effects, J. Plasma Phys. 83 (2017) 715830402.
+[31] C. Granier, E. Tassi, D. Laveder, T. Passot, P. L. Sulem,
+Influence
+of ion-to-electron temperature ratio on tearing instability and resulting
+subion-scale turbulence in a low-βe collisionless plasma, Phys. Plasmas
+(2023) submitted.
+46
+
+[32] P. Goldreich, S. Shridhar, Toward a theory of interstellar turbulence. 2:
+Strong Alfvenic turbulence, Astrophys. J. 438 (1995) 763–775.
+[33] S. Boldyrev, Spectrum of magnetohydrodynamic turbulence, Phys. Rev.
+Lett. 96 (2006) 115002.
+[34] H. Politano, A. Pouquet, P. L. Sulem, Current and vorticity dynamics
+in three-dimensional magnetohydrodynamic turbulence, Phys. Plasmas
+2 (1995) 2931–2939.
+[35] D. Biskamp, W.-C. M¨uller,
+Scaling properties of three-dimensional
+isotropic magnetohydrodynamic turbulence,
+Phys. Plasmas 7 (2000)
+4889–4900.
+[36] V. Zhdankin, D. A. Uzdensky, J. C. Perez, S. Boldyrev,
+Statistical
+analysis of current sheets in three-dimensional magnetohydrodynamic
+turbulence, Astrophys. J. 771 (2013) 124.
+[37] K. D. Makwana, V. Zhdankin, H. Li, W. Daughton, F. Cattaneo, Energy
+dynamics and current sheet structure in fluid and kinetic simulations of
+decaying magnetohydrodynamic turbulence, Phys. Plasmas 22 (2015)
+042902.
+[38] M. Sisti, S. Fadanelli, S. S. Cerri, M. Faganello, F. Califano, O. Agullo,
+Characterizing current structures in 3D hybrid-kinetic simulations of
+plasma turbulence, Astron. Astrophys. 655 (2021) A107.
+[39] S. Servidio, P. Dmitruk, A. Greco, M. Wan, S. Donato, P. A. Cassak,
+M. A. Shay, V. Carbone, W. H. Matthaeus, Magnetic reconnection as an
+element of turbulence, Nonlin. Processes Geophys. 18 (2011) 675–695.
+[40] V. Zhdankin, D. A. Uzdensky, S. Boldyrev, Temporal analysis of dis-
+sipative structures in magnetohydrodynamic turbulence, Astrophys. J.
+811 (2015) 6.
+[41] J. A. Agudelo Rueda, D. Verscharen, R. T. Wicks, C. J. Owen,
+G. Nicolaou, A. P. Walsh, I. Zouganelis, K. Germaschewski, S. Vargas
+Dom´ınguez, Three-dimensional magnetic reconnection in particle-in-cell
+simulations of anisotropic plasma turbulence, J. Plasma Phys. 87 (2021)
+905870228.
+47
+
+[42] V. Carbone, P. Veltri, A. Mangeney, Coherent structure formation and
+magnetic field line reconnection in magnetohydrodynamic turbulence,
+Phys. Fluids 2 (1990) 1487–1496.
+[43] S. Boldyrev, N. F. Loureiro, Magnetohydrodynamic Turbulence Medi-
+ated by Reconnection, Astrophys. J. 844 (2017) 125.
+[44] A. Mallet, A. A. Schekochihin, B. D. G. Chandran, Disruption of sheet-
+like structures in Alfv´enic turbulence by magnetic reconnection, Mon.
+Notices Royal Astron. Soc. 468 (2017) 4862–4871.
+[45] L. Comisso, Y.-M. Huang, M. Lingam, E. Hirvijoki, A. Bhattacharjee,
+Magnetohydrodynamic turbulence in the plasmoid-mediated regime, As-
+trophys. J. 854 (2018) 103.
+[46] A. Tenerani, M. Velli, Spectral signatures of recursive magnetic field
+reconnection, Mon. Notices Royal Astron. Soc. 491 (2020) 4267–4276.
+[47] S. S. Cerri, F. Califano, Reconnection and small-scale fields in 2D-3V
+hybrid-kinetic driven turbulence simulations, New J. Phys. 19 (2017)
+025007.
+[48] L. Franci, S. S. Cerri, F. Califano, S. Landi, E. Papini, A. Verdini,
+L. Matteini, F. Jenko, P. Hellinger, Magnetic reconnection as a driver
+for a sub-ion-scale cascade in plasma turbulence, Astrophys. J. Lett.
+850 (2017) L16.
+[49] N. L. Loureiro, S. Boldyrev, Collisionless reconnection in magnetohy-
+drodynamic and kinetic turbulence, Astrophys. J. 850 (2017) 182.
+[50] A. Mallet, A. A. Schekochihin, B. D. G. Chandran,
+Disruption of
+Alfv´enic turbulence by magnetic reconnection in a collisionless plasma,
+J. Plasma Phys. 83 (2017) 905830609.
+[51] C. S. Ng, A. Bhattacharjee, Scaling of anisotropic spectra due to the
+weak interaction of shear-Alfv´en wave packets, Phys. Plasmas 4 (1997)
+605–610.
+[52] S. Galtier, S. V. Nazarenko, A. Newell, A. Pouquet, A weak turbulence
+theory for incompressible magnetohydrodynamics, J. Plasma Phys. 63
+(2000) 447–488.
+48
+
+[53] S. S. Cerri, T. Passot, D. Laveder, P. L. Sulem, M. W. Kunz, Turbulent
+regimes in collisions of 3D Alfv´en-wave packets, Astrophys. J. 939 (2022)
+36.
+[54] C. Dong, L. Wang, Y.-M. Huang, L. Comisso, A. Bhattacharjee, Role
+of the plasmoid instability in magnetohydrodynamic turbulence, Phys.
+Rev. Lett 121 (2018) 165101.
+[55] C. Dong, L. Wang, Y.-M. Huang, L. Comisso, T. A. Sandstrom, A. Bhat-
+tacharjee,
+Reconnection-driven energy cascade in magnetohydrody-
+namic turbulence, Sci. Adv. 8 (2022) eabn7627.
+[56] R. Bruno, V. Carbone, The solar wind as a turbulence laboratory, Living
+Rev. Solar Phys. 10 (2013) 2.
+[57] R. Bruno, V. Carbone, Turbulence in the solar wind, volume 928 of
+Lectures Notes in Physics, Springer, 2016.
+[58] C.-Y. Tu, E. Marsch, K. M. Thieme,
+Basic properties of solar wind
+MHD turbulence near 0.3 AU analyzed by means of elsasser variables,
+J. Geophys. Res. 94 (1989) 11739–11759.
+[59] E. A. Lucek, A. Balogh,
+The identification and characterization of
+Alfv´enic fluctuations in Ulysses data at midlatitudes,
+Astrophys. J.
+507 (1998) 984–990.
+[60] R. T. Wicks, D. A. Roberts, A. Mallet, A. A. Schekochihin, T. S. Hor-
+bury, C. H. K. Chen,
+Correlations at large scales and the onset of
+turbulence in the fast solar wind, Astrophys. J. 778 (2013) 177.
+[61] G. Miloshevich, D. Laveder, T. Passot, P. L. Sulem, Inverse cascade and
+magnetic vortices in kinetic Alfv´en-wave turbulence, J. Plasma Phys.
+87 (2021) 905870201.
+[62] G. Miloshevich, D. Laveder, T. Passot, P. L. Sulem,
+Modeling im-
+balanced collisionless Alfv´en wave turbulence with nonlinear diffusion
+equations, Astrophys. J. Lett. 888 (2020) L7.
+[63] J. Squire, R. Meyrand, M. W. Kunz, L. Arzamasskiy, A. A. Schekochi-
+hin, E. Quataert, High-frequency heating of the solar wind triggered by
+low-frequency turbulence, Nature Astronomy 6 (2022) 715–723.
+49
+
+[64] T. A. Bowen, B. D. G. Chandran, J. Squire, S. D. Bale, D. Duan,
+K. G. Klein, D. Larson, A. Mallet, M. D. McManus, R. Meyrand, J. L.
+Verniero, L. D. Woodham, In situ signature of cyclotron resonant heat-
+ing in the solar wind, Phys. Rev. Lett. 129 (2022) 165101.
+[65] E. Siggia, G. Patterson, Intermittency effects in a numerical simulation
+of stationary three-dimensional turbulence, J. FLuid Mech. 86 (1978)
+567–592.
+[66] S. Boldyrev, J. C. Perez, Spectrum of kinetic-Alfv´en turbulence, Astro-
+phys. J. Lett. 758 (2012) L44.
+[67] Y. Voitenko, J. De Keyser,
+MHD-kinetic transition in imbalanced
+Alfv´enic turbulence, Astrophys. J. Lett. 832 (2016) L20.
+[68] Y. Voitenko, J. de Keyser, Turbulent spectra and spectral kinks in the
+transition range from MHD to kinetic Alfv´en turbulence, Nonl. Proc.
+Geophys. 18 (2011) 587–597.
+[69] Y. M. Voitenko, Three-wave coupling and parametric decay of kinetic
+Alfv´en waves, J. Plasma Phys. 60 (1998) 497–514.
+[70] S. Galtier, A. Bhattacharjee, Anisotropic weak whistler wave turbulence
+in electron magnetohydrodynamics, Phys. Plasmas 10 (2003) 3065–3075.
+[71] D. Del Sarto, F. Califano, F. Pegoraro,
+Secondary instabilities and
+vortex formation in collisionless-fluid magnetic reconnection, Phys. Rev.
+Lett. 91 (2003) 235001.
+[72] D. Del Sarto, F. Califano, F. Pegoraro, Current layer cascade in colli-
+sionless electron-magnetohydrodynamic reconnection and electron com-
+pressibility effects, Phys. Plasmas 12 (2005) 012317.
+[73] D. Del Sarto, F. Califano, F. Pegoraro, Electron parallel compressibility
+in the nonlinear development of two-dimensional collisionless magneto-
+hydrodynamic reconnection, Mod. Phys. Lett. B 20 (2006) 931.
+[74] D. Del Sarto, C. Marchetto, F. Pegoraro, F. Califano, Finite Larmor
+radius effects in the nonlinear dynamics of collisionless magnetic recon-
+nection, Plasma Phys. Control. Fusion 53 (2011) 035008.
+50
+
+[75] D. Grasso, D. Borgogno, F. Pegoraro, Secondary instabilities in two-
+and three-dimensional magnetic reconnection in fusion relevant plasmas,
+Phys. Plasmas 14 (2007) 055703.
+[76] D. Grasso, D. Borgogno, F. Pegoraro, E. Tassi, Coupling between re-
+connection and Kelvin-Helmholtz instabilities in collisionless plasmas,
+Nonlin. Process Geophys. 16 (2009) 241.
+[77] H. Furth, J. Killeen, M. N. Rosenbluth, Finite resistivity instabilities of
+a sheet pinch, Phys. Fluids 6 (1963) 459.
+[78] S. K. Lele, Compact finite difference schemes with spectral-like resolu-
+tion, J. Comp. Phys. 103 (1992) 16.
+[79] R. Meyrand, S. Galtier, A Universal Law for Solar-wind Turbulence at
+Electron Scales, Astyrophys. J. 721 (2010) 1421–1424.
+[80] S. Y. Huang, F. Sahraoui, X. H. Deng, J. S. He, Z. G. Yuan, M. Zhou,
+Y. Pang, H. S. Fu, Kinetic turbulence in the terrestrial magnetosheath:
+Cluster observations, Astrophys. J. Lett. 789 (2014) L28.
+[81] E. Tassi, T. Passot, P. L. Sulem, A Hamiltonian gyrofluid model based
+on a quasi-static closure, J. Plasma Phys. 86 (2020) 835860402.
+[82] W. Dorland, G. W. Hammett, Gyrofluid turbulence models with kinetic
+effects, Phys. Fluids B 5 (1993) 812–835.
+[83] P. B. Snyder, G. W. Hammett, A Landau fluid model for electromagnetic
+plasma microturbulence, Phys. Plasmas 8 (2001) 3199–3216.
+[84] N. R. Mandell, W. Dorland, M. Landreman, Laguerre-Hermite pseudo-
+spectral velocity formulation of gyrokinetics, J. Plasma Phys. 84 (2018)
+905840108.
+[85] W. M. Kunz, A. A. Schekochihin, C. H. K. Chen, I. G. Abel, S. C.
+Cowley, Inertial-range kinetic turbulence in pressure-anisotropic astro-
+physical plasmas, J. Plasma Phys. 81 (2015) 325810501.
+[86] B. Scott, Derivation via free energy conservation constraints of gyrofluid
+equations with finite-gyroradius electromagnetic nonlinearities, Phys.
+Plasmas 17 (2010) 102306.
+51
+
+[87] E. Tassi, Hamiltonian gyrofluid reductions of gyrokinetic equations, J.
+Phys. A: Math. and Theor. 52 (2019) 465501.
+52

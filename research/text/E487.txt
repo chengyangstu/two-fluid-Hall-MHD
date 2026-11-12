@@ -1,0 +1,984 @@
+Study of magnetic reconnection in large-scale magnetic island coalescence via
+spatially coupled MHD and PIC simulations
+Kirit D. Makwana, Rony Keppens, and Giovanni Lapenta
+Citation: Physics of Plasmas 25, 082904 (2018); doi: 10.1063/1.5037774
+View online: https://doi.org/10.1063/1.5037774
+View Table of Contents: http://aip.scitation.org/toc/php/25/8
+Published by the American Institute of Physics
+Articles you may be interested in
+Deep learning: A guide for practitioners in the physical sciences
+Physics of Plasmas 25, 080901 (2018); 10.1063/1.5020791
+Electron acceleration by turbulent plasmoid reconnection
+Physics of Plasmas 25, 042904 (2018); 10.1063/1.5011013
+Theory of critical balance in plasma turbulence
+Physics of Plasmas 25, 092301 (2018); 10.1063/1.5041754
+Plasma mass separation
+Physics of Plasmas 25, 090901 (2018); 10.1063/1.5042845
+Scaling laws for dynamical plasma phenomena
+Physics of Plasmas 25, 100501 (2018); 10.1063/1.5042254
+Strongly localized magnetic reconnection by the super-Alfvénic shear flow
+Physics of Plasmas 25, 080701 (2018); 10.1063/1.5042539
+
+Study of magnetic reconnection in large-scale magnetic island coalescence
+via spatially coupled MHD and PIC simulations
+Kirit D. Makwana,a) Rony Keppens, and Giovanni Lapenta
+Centre for Mathematical Plasma Astrophysics, Department of Mathematics, KU Leuven, Celestijnenlaan
+200B, 3001 Heverlee, Belgium
+(Received 27 April 2018; accepted 1 August 2018; published online 23 August 2018)
+We study the process of magnetic reconnection in a coalescing magnetic island setup by means of
+numerical simulation. This process mimics ﬂux tube merging which can take place in the solar corona,
+laboratory, and astrophysical objects. Simulations are performed with magnetohydrodynamics
+(MHD), Hall-MHD, and a newly developed Coupled MHD and Particle-In-Cell (PIC) model
+(CMAP). This model treats the global simulation domain with MHD, while the region around the
+reconnection zone is treated with PIC. This CMAP code allows us to simulate larger-scale domains
+with lesser computing power compared to fully PIC simulations. CMAP reproduces the dynamics of
+fully kinetic simulations which Hall-MHD does not capture, as seen in the Hall magnetic ﬁeld and the
+reconnecting current sheet structure. For large islands in kinetic simulations, the current sheet does not
+form smoothly and shows chaotic behavior, and the magnetic islands also bounce and slosh. The cur-
+rent sheet thickness, length, and aspect ratios are calculated. They show that in the CMAP model, the
+thickness remains close to the ion skin depth, while the length changes weakly with the system size,
+giving a steady aspect ratio for the two largest system size simulations. The pressure tensor also shows
+large deviations from isotropy and gyrotropy near the current sheet. The CMAP simulations for
+smaller system sizes are compared to fully kinetic simulations, and we ﬁnd that a minimum fraction of
+area has to be provided PIC feedback in the CMAP simulations in order to produce reconnection rates
+and dynamics similar to fully kinetic simulations. The reconnection rate reduces with the increasing
+island size. For the CMAP model, this reduction is steeper compared to MHD and Hall-MHD initially,
+but for larger system sizes, the reconnection rates in CMAP simulations show a steady behavior.
+Published by AIP Publishing. https://doi.org/10.1063/1.5037774
+I. INTRODUCTION
+Magnetic reconnection is observed or believed to occur
+in a wide range of systems from Earth-based laboratories to
+the heliosphere to even interstellar environments.1,2 Magnetic
+reconnection involves rearrangement or change in topology
+of magnetic ﬁeld lines along with a conversion of magnetic
+energy into plasma kinetic or thermal energy. There are many
+aspects of this process which are mysterious and subject of
+active research. Some of the interesting questions are about
+the rate of reconnection, the geometry of reconnection in 2D
+and 3D, and the coupling of large and small scales.
+The rate of reconnection is observed to depend critically
+on a variety of aspects. Numerical simulations show that the
+physics model used for simulations affects the rate of recon-
+nection, with Hall physics playing an important role3 in
+speeding up reconnection compared to purely magnetohy-
+drodynamic (MHD) physics given by the Sweet-Parker
+rate4,5 which itself is signiﬁcantly faster than the diffusion
+rate. On the other hand, even in MHD physics, the Lundquist
+number can affect the reconnection rate and dynamics. At
+large Lundquist numbers in large size systems, the reconnec-
+tion rate can become weakly dependent on resistivity6 and
+chaotic and bursty7,8 due to secondary island formation.9,10
+Also, turbulence can affect the reconnection where it can
+speed up the rate of reconnection and make it independent of
+the resistivity.11,12 Moreover, the rate of reconnection is not
+constant but varies. In solar ﬂares, the magnetic ﬂux has to
+ﬁrst build up, implying slow reconnection, before it is
+released explosively in a ﬂare, implying a fast reconnection.
+Reconnection can also be spontaneous like in the tearing
+mode instability.13 Therefore, another aspect of reconnection
+is
+how
+does
+it
+depend
+on
+the
+driving
+environment.
+Reconnection can be driven in stable current sheets by driv-
+ing ﬂuctuations.14
+The other confounding aspect of reconnection is that it is
+multi-scale and multi-physics phenomena. It can be driven on
+large scales by global physics, whereas the reconnection zone
+is intimately affected by small-scale physics.15 For example, in
+the Earth’s magnetosphere, the solar wind driver operates at
+the scales of the magnetosphere which is of 109 m, while the
+plasma sheet which forms and reconnects is of the scale 107
+m. Furthermore, kinetic physics plays an important role in this
+reconnection where the ion skin depth scale is at 105 m and
+the electron skin depth is at 103 m. Kinetic effects such as
+anisotropic and agyrotropic pressures play an important role in
+governing this reconnection dynamics.
+The formation of current sheets is also an important pro-
+cess which affects the reconnection. Here, the question is
+how long current sheets can form in realistic plasmas? The
+aspect ratio of a current sheet controls the rate of reconnec-
+tion. Kinetic numerical studies have indicated that the length
+a)Electronic mail: kirit.makwana@kuleuven.be
+1070-664X/2018/25(8)/082904/11/$30.00
+Published by AIP Publishing.
+25, 082904-1
+PHYSICS OF PLASMAS 25, 082904 (2018)
+
+of the reconnection region remains limited to around 10 ion
+skin depths independent of the global system scale.51 Some
+other numerical studies in both kinetic and ﬂuid models have
+shown that the reconnection rate is affected by the system
+size. Since then, several studies have focused on the mag-
+netic island coalescence problem as a test case for analyzing
+these different aspects of reconnection.16–21 In the coales-
+cence of magnetic islands, the current sheet forms consis-
+tently as the islands come together. This is a test model for
+ﬂux tube merging in tokamaks23 and in the solar corona.24
+These studies have investigated the effect of the physics
+used in simulations, with differences between MHD, Hall-
+MHD, hybrid, and fully kinetic models. Previous studies
+have investigated the dependence of reconnection rates on
+the Lundquist number (S) in coalescence of magnetic islands
+and found that they become independent of S at low S.25,26
+They have also shown the dependence of the reconnection
+rate on the system size. However, simulations of these prob-
+lems are not easy because of the vastly different scales
+involved and also the different physics. While the system
+size is of the order of 100’s of di, the current sheet that forms
+is barely one di and needs to be properly resolved with
+kinetic physics. Also, these simulations proceed at Alfven
+time scales, and so, the simulation time increases with the
+system size.
+To overcome multi-scale and multi-physics difﬁculties,
+we present simulations with a new model of coupled MHD
+and PIC domains (denoted as the CMAP model hence-
+forth).28 In this model, the global simulation domain is han-
+dled efﬁciently with MHD, while the region around the
+reconnection zone is handled by the fully kinetic PIC
+method. These two domains talk to each other both ways,
+with the MHD code giving initial and boundary conditions
+to PIC, whereas the PIC code constantly updates the MHD
+solution. This saves computing power compared to fully
+kinetic simulations as only a fraction of the domain is simu-
+lated with the computationally expensive PIC model. This
+allows modeling larger system sizes with limited computing
+power. We brieﬂy describe some details of this two-way cou-
+pling in Sec. II. It describes the problem setup of magnetic
+island coalescence along with the numerical details of the
+problem setup. We are able to reproduce several results that
+have been found in kinetic simulations before with this
+CMAP model. In Sec. III, we show a comparison of the
+results produced by MHD, Hall-MHD, CMAP, and fully PIC
+simulations (for smaller system sizes). We ﬁnd that the cou-
+pled simulation saves computing time compared to a full
+PIC simulation while capturing the relevant kinetic physics
+effects which are not reproduced in MHD and Hall-MHD.
+We also show the properties of the current sheet formation
+and kinetic signatures near the current sheet. In Sec. IV, the
+reconnection rates obtained in these simulations and how we
+can get the correct reconnection rates from the coupled
+MHD-PIC approach are shown. It is shown that in the
+CMAP model, the reconnection rate drops as the system size
+increases but reaches a steady value for island sizes larger
+than 20di. Section V gives the conclusions and implications
+of this study.
+II. NUMERICAL SETUP
+We setup the problem of magnetic island coalescence
+given by the Fadeev equilibrium.29 This has the magnetic
+vector potential given as20,21
+Az ¼ B0k ln coshðy=kÞ þ  cosðx=kÞ
+½
+;
+(1)
+where  ¼ 0.4. The density is given by
+n ¼ nb þ
+n0ð1  2Þ
+coshðy=kÞ þ  cosðx=kÞ
+½
+2 :
+(2)
+The island size k is related to the system size in the x direc-
+tion as Lx ¼ 4pk. The simulation domain in the y direction is
+taken to be the same Ly ¼ Lx. The asymptotic magnetic ﬁeld
+is kept at B0 ¼ 0.1. The background density is taken as nb
+¼ 0.3n0 where the ion mass is normalized to unity and n0
+is also unity. The velocity is zero, and the pressure is given
+by p ¼ nkBðTi0 þ Te0Þ, where Ti0 þ Te0 ¼ B2
+0=ð2l0n0kBÞ to
+maintain the equilibrium. The initial condition is perturbed
+by a sinusoidal perturbation of the form given in Ref. 22 to
+initiate the coalescence of the two islands.
+This setup is implemented in the ﬂuid code MPI-
+AMRVAC.27,30 MPI-AMRVAC solves a variety of hyperbolic
+advection problems, including MHD, with conservative,
+shock-capturing ﬁnite volume and ﬁnite difference schemes.
+It offers versatility in terms of geometry of the grid, dimen-
+sionality, spatial and temporal discretization, and computer
+platform.30–32 It has the resistive MHD and Hall-MHD mod-
+ules which are critical in coupling with a kinetic code. It
+also has a grid-block based adaptive mesh reﬁnement
+scheme. In this work, we have used the Total Variation
+Diminishing Lax-Friedrich (TVDLF) spatial discretization
+with a CADA3 limiter function,33 along with a three-step
+(Runge-Kutta) RK time stepping scheme. The r  B ¼ 0
+condition is maintained by a generalized Lagrangian multi-
+plier (GLM) scheme.34 The MPI-AMRVAC simulations are
+done with the resistive MHD module and the Hall-MHD
+module. The resistive MHD solves the standard resistive
+MHD equations. The normalized resistivity is kept at g ¼
+0.003. The Hall module solves the Ohm law with an extra
+Hall term gh
+^q ^J  ^B as shown below (hatted quantities mean-
+ing that they are normalized)
+^E ¼ ^v  ^B þ gh
+^q
+^J  ^B þ g^J;
+(3)
+and this electric ﬁeld is then substituted in the induction
+equation. The value of gh depends on the normalization
+selected. If cref, Bref, Lref, and qref are the reference values for
+the normalization of velocity, magnetic ﬁeld, length, and
+density, respectively, then gh ¼ mi
+e
+Bref
+cref l0Lref qref. We use the
+Alfvenic units in the MHD simulations, i.e., a reference
+Alfven speed vA,ref for cref, ion skin depth di for the reference
+length Lref, and inverse ion cyclotron frequency x1
+c;i for
+time. These quantities are deﬁned with respect to a reference
+magnetic ﬁeld Bref. Then, gh is simply unity. The reference
+velocity is taken to be speed of light c, while the asymptotic
+magnetic ﬁeld B0 is taken to be 0.1Bref, giving an Alfven
+082904-2
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+velocity of 0.1c. This helps in conveniently making the units
+in MHD the same as units in the PIC part of CMAP which
+normalizes time with the plasma frequency (x1
+p;i ) and veloc-
+ity with the speed of light (c). The resistivity in Hall-MHD
+simulations is again kept to 0.003. For CMAP simulations,
+the resistivity in the MHD part of the model is kept zero to
+match with the collisionless nature of the PIC part. For the
+MHD and Hall-MHD simulations, the boundary conditions
+are symmetric for the density, pressure, tangential velocity,
+and normal magnetic ﬁeld component, while they are anti-
+symmetric for the normal velocity and tangential magnetic
+ﬁeld along the x-boundaries. It is continuous for the density
+and pressure, symmetric for the tangential velocity and tan-
+gential magnetic ﬁeld, while antisymmetric for the normal
+velocity and magnetic ﬁeld in the y-boundaries.
+The island coalescence setup for smaller system sizes
+(Lx  120di) is also implemented in iPIC3D. iPIC3D is a
+semi-implicit moment method for PIC simulations of
+plasmas.35,36 It solves a linearized version of the implicit
+Ampe`re law to advance the electric ﬁeld. Then, the magnetic
+ﬁeld is obtained from the induction equation, and the particles
+are also moved implicitly. As a result of this semi-implicit
+scheme, iPIC3D can take larger grid spacing (10–50) and
+larger time steps (5–10) compared to explicit PIC codes.
+The magnetic ﬁeld is initialized as given by Eq. (1) plus the
+perturbation, while the electric ﬁeld is zero. The particles are
+initialized with a Maxwellian distribution in each cell, having
+a density given by Eq. (2), and the temperature ratio between
+the two species is Ti0/Te0 ¼ 5. The mass ratio is taken to be
+reduced to mi/me ¼ 25.
+This setup is also simulated with a coupled MHD and
+PIC model (CMAP). This model spatially couples MPI-
+AMRVAC with iPIC3D, with an iPIC3D region embedded
+within a global MPI-AMRVAC domain. This follows similar
+coupling between MHD and PIC codes.37,38 The details of
+this CMAP model can be found in Refs. 28 and 40. Brieﬂy,
+in this coupling, the global domain is simulated with MPI-
+AMRVAC. At some time step, a region within the global
+domain is selected by the user to be simulated with iPIC3D.
+In MHD to PIC coupling, information from MPI-AMRVAC
+is used to provide initial conditions to iPIC3D to start the
+simulation. The primitive variables of MHD, namely, density
+(q), pressure (p), velocity (v), and magnetic ﬁeld (B), are sup-
+plied to iPIC3D. Using this, the electromagnetic ﬁelds are
+initialized. The particles are initialized with a Maxwellian dis-
+tribution using the thermal velocity derived from MHD pres-
+sure and the drift velocity derived from MHD velocity and
+current density. After this, MPI-AMRVAC is advanced by one
+time step, and the time averaged state at the interface between
+MHD and PIC is supplied to iPIC3D as the boundary condi-
+tions for its time step. After iPIC3D advances its state to the
+next time step, moments of the distribution function are gath-
+ered to obtain the MHD primitive variables. In PIC to MHD
+coupling, this information from iPIC3D is used to update the
+MPI-AMRVAC solution. The MHD solution is overwritten by
+a weighted average of the PIC solution and the MHD solution
+in the PIC domain. The weight function varies smoothly across
+the interface region such that the updated MHD solution
+smoothly changes from purely MHD at the edge to purely PIC
+in the interior. This is the two-way coupling method.
+These simulations are carried out with varying system
+sizes. For the larger system size simulations, we make use of
+the mesh reﬁnement ability of MPI-AMRVAC, with an
+increase in the mesh resolution as we get closer to the central
+reconnection zone. Table I shows the box sizes for the differ-
+ent simulations performed going from 60di up to 480di. All
+these 5 simulations are performed with MHD, Hall-MHD,
+and CMAP. The box is centered at the origin, and so, the
+x-coordinates go from Lx/2 to Lx/2 and the same for y-coor-
+dinates. The number of reﬁnement levels is also shown,
+which are the same for MHD, Hall-MHD, and CMAP simu-
+lations. In the case of CMAP simulations, the table also
+speciﬁes the size of the domain where the PIC simulation
+operates and gives feedback to MPI-AMRVAC. This box is
+also a square and centered around the origin. For example, in
+the case of simulation R2, a PIC domain of size 96 means
+that iPIC3D works in the domain 48di  x  48di; 48di
+ y  48di. The base resolution and the number of reﬁne-
+ment levels are chosen such that the highest level of reﬁne-
+ment always has a resolution of Dx ¼ Dy ¼ 0.1di. The
+embedded PIC domain always lies in the center around
+the central reconnecting zone, and it is always covered by
+the highest resolution MHD grid. The time step in MHD and
+Hall-MHD simulations is limited by the CFL condition. It is
+found that this time step is always slightly larger than
+Dt ¼ 0:2x1
+p;i . Therefore, in the CMAP model, the time step
+is limited to this value, and the iPIC3D time step is also cho-
+sen to match this value. The iPIC3D time step is constrained
+by the thermal velocity. The ion thermal velocity in the PIC
+domain here is uth,i  0.066c, and the electron thermal veloc-
+ity is uth,e  0.15c. This satisﬁes the accuracy constraint
+of uth < dx/dt for both the species with dx ¼ 0.1di and
+dt ¼ 0:2x1
+p;i . It is also close to the ﬁnite grid stability crite-
+rion for ions: uth 	 dt=dx < 0:1.
+The simulations R0 and R1 are also performed with
+purely iPIC3D, with the full domain simulated as PIC. This
+is for comparison and verifying the CMAP results. Below,
+we present this comparison and the savings in computing
+time due to CMAP compared to iPIC3D. The CMAP is
+expected to be computationally cheaper compared to PIC
+simulations of the entire domain. We found that the CMAP
+simulation of size R0 took 26% of the computing time as
+the full PIC simulation of size R0. Similarly, the CMAP
+TABLE I. List of simulation parameters. The simulation domain is a square
+with Lx ¼ Ly values given in units of ion skin depth di, which is translated
+into the island width k in the third column. The number of reﬁnement levels
+used in the AMRVAC simulation is also shown. The PIC domain is also
+square shaped, and so, its edge length is given in the last column (also speci-
+fying the number of PIC cells in the brackets).
+Run ID
+Lx/Ly(di)
+k(di)
+Ref. levels
+Size of PIC region
+R0
+60
+4.77
+1
+24 (240  240)
+R1
+120
+9.55
+2
+48 (480  480)
+R2
+240
+19.1
+3
+96 (960  960)
+R3
+360
+28.65
+3
+144 (1440  1440)
+R4
+480
+38.2
+4
+192 (1920  1920)
+082904-3
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+simulation of size R1 took 22% of the computing time as the
+full PIC simulation of size R1. The PIC domain in CMAP
+simulations has an area of 16% compared to the MHD
+domain, and so, a speedup of 5 times is close to the idealized
+speedup of 6.25 which can be expected in the limit of MHD
+and data transfer computations taking inﬁnitesimal time
+compared to PIC computations. This is also seen in the com-
+parison of CMAP time with MHD simulations, where the
+CMAP simulation takes much longer than the MHD simula-
+tion. For size R1, the CMAP simulation was 20 times more
+expensive than MHD, while for the R2 size, CMAP was 50
+times more expensive than MHD. This shows that PIC com-
+putations are much more expensive than MHD computa-
+tions, while the communication costs cause some slowdown
+compared to the ideal speedup.
+Figure 1 shows an example of a CMAP simulation. The
+8 different MHD quantities are plotted on the second (high-
+est) reﬁnement level of the R1 simulation. The black box
+shows the extent of the PIC region (24  x  24, 24  y
+ 24). The islands initially start with a separation of 60di,
+whereas in Fig. 1, they have now moved close to 40di. They
+move smoothly across the MHD-PIC interface boundary,
+which can be prominently seen in the inﬂow velocity vx, den-
+sity, and pressure plots. A more detailed analysis of the inter-
+face region shows smooth matching of the MHD-PIC
+solution at the interface.40
+III. CHARACTERISTICS OF THE RECONNECTION
+ZONE
+We compare the characteristics of the reconnection zone
+across the four different simulation models for simulation
+R1. The out-of-plane magnetic ﬁeld Bz is shown in Fig. 2.
+Resistive MHD does not produce an out-of-plane ﬁeld as it
+does not have the Hall physics. The Hall-MHD produces a
+Bz ﬁeld which is different from that produced by CMAP and
+a fully PIC simulation. It is slightly weaker in strength and
+different in its geometry. On the other hand, CMAP produces
+a result very similar to the full PIC simulation. They both
+show a stronger Bz ﬁeld compared to the Hall-MHD value.
+Figure 3 shows the out of plane current density Jz in the four
+different models for the R1 simulation. The MHD shows a
+current sheet structure that is like a sheet. The thickness of
+this sheet is resolved by the resistivity value of g ¼ 0.003,
+and lower resistivities do not resolve this current sheet. In
+the Hall-MHD run, the current sheet becomes thinner and
+shorter. However, we ﬁnd that the Hall-MHD current sheet
+is not very different from the resistive-MHD regime current
+sheet. This is seen further in the reconnection rates and
+island dynamics also. The transition from resistive MHD to
+Hall-MHD is determined by the Sweet-Parker current layer
+width, which when it becomes smaller than the ion skin
+depth transitions to the Hall-MHD regime. The theoretical
+Sweet-Parker current layer width is l ¼
+ﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃ
+gL=vA;i
+p
+, where L is
+the current layer length and vA,i is the Alfven velocity of the
+FIG. 1. The 8 MHD quantities in
+CMAP simulation R1 at time 0.6sA. (a)
+Bx, (b) By, (c) Bz, (d) q, (e) vx, (f) vy,
+(g) vz, and (h) pth. The black square
+box represents the region which has
+PIC feedback. We see that the transi-
+tion from the MHD to the PIC domain
+is smooth.
+FIG. 2. The out-of-plane magnetic ﬁeld Bz in simulation R1 performed with
+the four different models: (a) MHD, (b) Hall-MHD, (c) CMAP, and (d) fully
+PIC. This is shown at time t ¼ 1.0sA. We see that Hall-MHD produces this
+ﬁeld which MHD does not capture. However, the strength and shape of this
+ﬁeld are quite different in Hall-MHD compared to fully PIC which agrees
+very well with the CMAP model.
+082904-4
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+plasma ﬂowing into the reconnection zone. The peak recon-
+necting magnetic ﬁeld at the inﬂow site is close to B0  0.07,
+while the density at this point is close to q  2.0. This gives
+an inﬂow Alfven velocity of vA,i  0.05. Using this and the
+length of the current sheet measured in Hall-MHD simula-
+tions shown in Fig. 7(b), we ﬁnd the theoretical Sweet-
+Parker current sheet thickness. The theoretical Sweet-Parker
+widths are 0.44di, 0.67di, 1.06di, 1.4di, and 1.6di for the 5
+different Hall-MHD simulations from R0 to R4, respectively.
+So, the three largest simulations have a theoretical Sweet-
+Parker current layer thickness larger than the ion skin depth,
+while the smaller two simulations are close to it. This could
+be the reason that the Hall-MHD simulations are still very
+similar to the resistive-MHD regime. We would need to go
+to higher resolutions to be able to resolve the Hall-regime
+properly with a low enough resistivity, but this would not be
+comparable to the resolution in the CMAP simulations. The
+peak current density is also similar in MHD and Hall-MHD,
+but it is lower in the CMAP and PIC simulations. However,
+the CMAP model reproduces the full PIC results accurately
+with both the current sheet geometry and strength.
+Figure 4 shows the formation of the current sheet in the
+4 CMAP simulations R0, R1, R2, and R3. A slice is taken
+along the x-axis of the current density Jz. These slices at reg-
+ular time intervals are stacked vertically. For R0 and R1, we
+see the formation of the current sheet, and it remains steady
+in thickness after that. The thickness is close to one ion skin
+depth. In R2, the current sheet forms at around t ¼ 0.75sA,
+but soon after that, it is disrupted by formation of a plasmoid
+(this is seen more clearly in Fig. 5), and then, it forms
+again, but it is more diffuse. This is because as can be seen
+in Fig. 5, the current sheet has moved away from the center,
+and hence, the x axis does not pass through the current sheet.
+Similarly, in R3, the current sheet forms much later because
+FIG. 3. The out of plane current density Jz in simulation R1 performed with
+the 4 different models: (a) MHD, (b) Hall-MHD, (c) CMAP, and (d) fully
+PIC. These are shown at time t ¼ 1.0sA. The Hall-MHD produces a smaller
+and thinner current sheet structure compared to MHD. The CMAP and fully
+PIC simulations agree quite well while producing weaker current density
+compared to Hall-MHD.
+FIG. 4. Slices along the x axis of the
+current density Jz stacked vertically as
+a function of time. This is shown for
+the 4 simulations: (a) R0, (b) R1, (c)
+R2, and (d) R3. R0 and R1 simulations
+show a smooth current sheet formation
+process. The thickness is close to one
+ion skin depth. R2 and R3 show a cha-
+otic current sheet formation.
+082904-5
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+earlier it forms off-center and only later on passes through
+the x axis.
+Figure 5 shows the current sheet structure at different
+times in the R1, R2, and R4 simulations. We see the forma-
+tion of the reconnecting current sheet in this ﬁgure. For the
+smaller system size R1, the current sheet forms smoothly at
+the center. For the medium system size, we see formation of
+a plasmoid at the center and its ejection in the upper direc-
+tion. This could be the result of a plasmoid instability.9,10 In
+Figs. 5(e) and 2(f), we see structures of enhanced current
+density downstream of the reconnection zone which look
+like the mirror instability seen in Ref. 39. For the largest sys-
+tem size R4, the current sheet does not form smoothly. We
+see twisting and bending of the current sheet at times 0.7sA
+and 0.9sA. A steady sheet forms at 1.1sA, but it is off center.
+It moves in the downward direction at time 1.3sA. Thus, in
+the CMAP simulations, the current sheet formation process
+is not smooth for larger system sizes. On the other hand, for
+the MHD and Hall-MHD simulations, we do not see this
+behavior of the current sheets, and we see smooth formation
+of current sheets even for the largest system size.
+Following Ref. 20, we analyze the motion of the island
+centers and their separation. The island centers are identiﬁed
+by the maxima of the ﬂux function w. The separation of
+islands as a fraction of their initial separation is shown in
+Fig. 6 as a function of time. For the smallest system size R0,
+we ﬁnd that the separation reduces monotonically, although
+it slows down after t ¼ 1.0sA. For R1 simulation, the CMAP
+FIG. 5. Solution of the out-of-plane
+current density Jz in the R1, R2, and
+R4 simulations with the CMAP model
+shown in the three different rows from
+top to bottom. The columns show 4
+different times at 0.7sA, 0.9sA, 1.1sA,
+and 1.3sA from left to right. The plot
+titles specify these details. The current
+sheet formation is smooth for R1 but
+not for R2 and R4 simulations.
+FIG. 6. The time evolution of island
+separation in the ﬁve simulations. The
+separation is normalized to the initial
+separation, and so the initial separation
+is always unity. (a) MHD, (b) Hall
+MHD, and (c) CMAP. The islands
+move closer monotonically for the
+smallest system size but bounce for
+larger system sizes.
+082904-6
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+and MHD simulations show a little bounce (increase in sepa-
+ration) at around 1.5sA. For R2, R3, and R4, the island sepa-
+ration increases after t ¼ 1.0sA, indicating that the islands
+bounce. The results in this case are quite similar across the
+different models. This conﬁrms the ﬁndings of Ref. 20 that
+larger magnetic islands bounce and slosh and are unable to
+merge into one island in one go. For the two largest system
+sizes R3 and R4, the CMAP results for the island separation
+lie almost on top of each other. This indicates that the motion
+of the islands in these two simulations of CMAP is very
+similar.
+As seen in Fig. 5, it is difﬁcult to identify a smooth
+current sheet in the CMAP simulation of size R4 at earlier
+times, but at t ¼ 1.3sA, we see a steady current sheet. At this
+time, we calculate some geometrical characteristics of the
+central current sheet, which are shown in Fig. 7. To do this
+ﬁrst, the current density is smoothed to remove noise. Then,
+the maximum current density and its location are computed.
+Starting from this point of maximum current density, we
+scan along the x and y directions till we reach the points
+where the current density drops to 1/e of the maximum
+value. This deﬁnes the extent of the current sheet in the x
+and y directions, and the thickness denotes the length along x
+the direction, while length along the y direction denotes the
+length of the current sheet. There are many critical differ-
+ences between the MHD and Hall-MHD on one hand com-
+pared with the CMAP simulations on the other hand. For
+the lowest system size, all three models are quite close.
+However, as the system size increases, the thickness also
+increases in the MHD and Hall-MHD models. On the other
+hand, the CMAP model shows the current sheet thickness
+consistent with the one ion skin-depth irrespective of system
+sizes. The length also shows a stronger increase with the sys-
+tem size in the ﬂuid models compared to CMAP. In the ﬂuid
+models, the length shows almost linear growth with the sys-
+tem size. Surprisingly, the aspect ratio of the three models
+matches quite well up to the system size of R3 despite the
+different thicknesses and lengths. However, in the largest
+system size of R4, the aspect ratio of the CMAP model ﬂat-
+tens out compared to the ﬂuid models. This as we can see is
+due to the length of the current sheet ﬂattening out to around
+15–20 di in the CMAP simulations. Other kinetic simulations
+of magnetic reconnection in a Harris sheet have seen much
+larger current sheets in larger domains, supported by pres-
+sure anisotropy.41,42 We do see some pressure anisotropy
+along the separatrices for a long distance from the X-point
+although this anisotropy is not as strong as seen in Ref. 42.
+However, we do not ﬁnd similarly long current sheets in our
+CMAP simulations of island coalescence in large system
+sizes.
+Figure 8 shows the various measures of pressure tensor
+asymmetries. These are purely kinetic effects and hence
+have to be extracted from PIC simulations. These are taken
+from the PIC part of the CMAP R2 simulation. There are
+three different measures of agyrotropy, taken from the study
+by Scudder,43 Aunai,44 and Swisdak.45 For the Scudder
+prescription, we follow the simpliﬁed eigenvalue analysis
+presented in Ref. 43 where the characteristic polynomial is
+simpliﬁed by removing the eigenvalue of the pressure tensor
+corresponding to the parallel direction. Qualitatively, the
+three measures look very similar. They peak near the current
+sheet which is at the center of the simulation domain. The
+anisotropy in the pressure tensor pk=p? is also shown in Fig.
+8(d), giving a peak of more than 1.7 and a minimum of less
+than 0.7. We see similar pressure tensor asymmetries in the
+R3 and R4 CMAP simulations, but there these kinetic effects
+are not located close to the center and are not smooth fea-
+tures. Instead, they move around as the current sheet moves
+and they are spread out unevenly around the reconnection
+zone. This implies that measurements and observations of
+these kinetic features of the pressure tensor need to be spread
+out around the reconnection region.
+IV. RECONNECTION RATE CHARACTERISTICS
+The reconnection rate of the merging islands is an
+important property of the underlying physics of coalescence.
+To calculate the reconnection rate, the magnetic ﬂux along
+the x axis is deﬁned as wðxÞ ¼
+Ð x
+0 Bydx. This is calculated by
+integrating along the x-axis starting from the X-point which
+lies at the origin. The reconnection rate (ER) is calculated
+as20
+ER ¼
+1
+vAmBm
+@ðwX  wOÞ
+@t
+
+;
+(4)
+where wX and wO are the ﬂuxes at X and O points, respec-
+tively. The O-point is identiﬁed as the center of the island
+where the ﬂux is maximum. For comparison with Ref. 20, it
+is normalized to the Alfven velocity vAm and magnetic ﬁeld
+Bm at the point between the islands where the magnetic ﬁeld
+FIG. 7. The geometrical characteristics
+of the central current sheet. (a) The
+current sheet thickness as a function of
+island size k/di. (b) The current sheet
+length. (c) The aspect ratio given by
+length/thickness. The legend applies to
+all three panels.
+082904-7
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+is maximum, which is around 0.035 in our setup. For the
+simulation R0, the island size is k ¼ 4.77di. The iPIC3D sim-
+ulation shows a peak reconnection rate of ER ¼ 0.475. This is
+close to the peak reconnection rate observed in PIC simula-
+tion of island size k ¼ 5di in Ref. 20 which was ER ¼ 0.435.
+This indicates that our reconnection rate is identically nor-
+malized and the simulation is veriﬁed. Figure 9 shows the
+time evolution of the reconnection rate in the R1 simulation
+for the 4 different models. The Hall-MHD shows a larger
+reconnection rate compared to MHD, which itself shows a
+larger reconnection rate than the CMAP and PIC simula-
+tions. This is consistent with the observations in Ref. 20. The
+peak Hall-MHD value is more than twice the peak reconnec-
+tion rate in pure PIC simulations. On the other hand, the
+CMAP produces a peak reconnection rate which is closer to
+the pure PIC value but still 28% higher than this. The MHD
+and Hall-MHD codes show a non-zero reconnection rate in
+the beginning, while the CMAP and PIC simulations start
+from zero. This is because the MHD and Hall-MHD simula-
+tions are done with a ﬁnite resistivity which leads to resistive
+reconnection from the start, while the resistivity is kept zero
+in CMAP simulations in order to match the PIC simulations.
+If we reduce the value of explicit resistivity in MHD and
+Hall MHD simulations, then the initial reconnection rate also
+reduces. The time behavior of the reconnection rate is also
+similar between CMAP and PIC, where it peaks and then
+remains steady up to 1.2sA, whereas for MHD and Hall-
+MHD, the reconnection rate drops sharply after the peak. We
+have found that the CMAP reproduces the PIC dynamics
+properly if we do not take the PIC domain to be too small.
+We found that this 16% area coverage worked well for this
+problem, where if we take the PIC feedback smaller, then the
+reconnection rate behavior starts behaving more like MHD.
+With this much PIC area coverage, the average reconnection
+rate in the CMAP model is within 20% of the PIC values,
+whereas for smaller PIC-feedback domains, the reconnection
+rate diverges more.40
+Figure 10(a) plots the peak reconnection rates observed
+across the 5 different island size simulations for the three
+models MHD, Hall-MHD, and CMAP. Figure 10(b) plots
+FIG. 8. Various measures of kinetic
+effects in the pressure tensor. (a) The
+agyrotropy given by Scudder, (b)
+Aunai
+nongyrotropy
+measure,
+(c)
+Swisdak agyrotropy measure, and (d)
+pressure anisotropy pk=p?. These are
+taken from the CMAP R2 simulation
+at time t ¼ 1.0sA. The nongyrotropy
+and anisotropy are concentrated close
+to the current sheet.
+FIG. 9. The reconnection rate time evolution in R1 simulation with the 4 dif-
+ferent models.
+082904-8
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+the corresponding average reconnection rates to see the
+scaling of the reconnection rates with the system size. The
+average reconnection rate is taken between t ¼ 0.5sA and
+t ¼ 1.5sA. For the smallest size simulation R0, the difference
+between CMAP and PIC reconnection rates is somewhat
+large, but for R1, this difference reduces, indicating that
+CMAP might work well at larger system sizes. We ﬁnd that
+MHD and Hall-MHD show a similar scaling of the reconnec-
+tion rate and their reconnection rates become closer as the
+system size increases. On the other hand, the CMAP simula-
+tion shows a steeper fall in the reconnection rate with the
+system size. This is similar to the scaling observed in Ref. 20
+up to island sizes k ¼ 25di. In CMAP simulations R0, R1,
+and R2 going up to island size k ¼ 19di, the average recon-
+nection rate drops close to the (k/di)0.8 scaling. However,
+beyond that for simulations R3 and R4, it seems to ﬂatten
+and stay at around 0.09. In Ref. 19, the peak raw reconnec-
+tion rate and the average reconnection rate are reported.
+There the peak reconnection rate decreases going from island
+sizes 5di to 15di. From 15di to 100di, the peak reconnection
+rate stays close to 0.2. This is similar to what we observe for
+island sizes from 19di to 38di where the peak reconnection
+rate in CMAP simulations is also close to 0.2. The average
+reconnection rate in our simulations also stays close to 0.1
+for k > 20di, whereas they drop further in Ref. 19 as the
+island grows above 20di. One difference is that we take time
+average for 1sA around the peak reconnection time, while in
+Ref. 19, it is taken for 2sA. We recalculated the average
+reconnection rate taking the average over 1.5sA. This shows
+some drop in the average reconnection for the largest island
+size also. This might be due to the bouncing of magnetic
+islands, which might be affecting the average reconnection
+rate, since islands bounce further apart in the larger system
+sizes as seen in Fig. 6.
+These simulations show that that the reconnection rate
+in large collisionless systems might become independent of
+the system size. This has been seen in other simulations
+also.46 It has also been observed that the reconnection rate in
+a variety of kinetic simulations shows a value of 0.1 in units
+of the inﬂowing plasma Alfven speed, while the outﬂow is at
+the Alfven speed. This has been linked with a similar aspect
+ratio of the reconnecting current sheet across these different
+simulations.47,48 Although the outﬂowing plasma velocity is
+not close to Alfvenic in our coalescence simulations with no
+guide ﬁeld,39 we see a hint of something similar in CMAP
+simulations where the current sheet aspect ratio [measured at
+the time of peak reconnection, Fig. 7(c)] tapers off at larger
+island sizes and so does the peak reconnection rate. This
+needs to be explored more in future work going towards
+larger system sizes.
+V. CONCLUSIONS
+We have presented simulations of the magnetic island
+coalescence problem with a novel CMAP model which spa-
+tially couples global MHD simulations with the embedded
+PIC region. This coupling is shown to work well for this
+problem setup, with its main advantage being that it saves
+computing time signiﬁcantly compared to simulating the
+whole domain with a kinetic model. For the cases shown
+here, the CMAP simulation was typically 5 times cheaper
+than the kinetic model, with the speedup being faster for
+smaller PIC domains. However, we found that the PIC feed-
+back has to cover at least 16% of the total simulation domain
+in order to produce reconnection rates close to the fully
+kinetic results. This seems to suggest that kinetic physics is
+important in a much larger range beyond the immediate dif-
+fusion zone. Simulations with MHD and Hall-MHD modules
+of MPI-AMRVAC are also presented along with a couple of
+full PIC simulations.
+We ﬁnd similarities with previous work: the kinetic sim-
+ulation is quite different from the Hall-MHD results. The
+out-of-plane Hall magnetic ﬁeld is stronger in the CMAP
+model compared to Hall-MHD simulations. The current
+sheet structure is much larger in the MHD model, while it
+becomes smaller in Hall-MHD. On the other hand, the
+CMAP model shows a different X-point like structure of the
+current sheet which matches very well with PIC results.
+Magnetic island sloshing is observed in the CMAP model for
+large system sizes, which is not seen in the ﬂuid simulations.
+This also leads to a chaotic behavior of the reconnection
+zone, with the current sheet strengthening, then weakening,
+FIG. 10. (a) Scaling of the peak reconnection rate with the system size. (b)
+Scaling of the average reconnection rate with the system size. These are
+given for the MHD, Hall-MHD, and CMAP simulations, with PIC results
+for the two smallest system sizes R0 and R1.
+082904-9
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+and in general moving around. The current sheet geometrical
+characteristics show that the current sheet thickness in MHD
+and Hall-MHD increases with the system size. On the other
+hand, kinetic current sheets remain at the ion skin depth scale
+independent of the system size. This corroborates with other
+results of kinetic scale current sheets49,50 which have their
+thickness close to the skin depth scale. However, this does
+not necessarily imply that the ion physics sets the current
+sheet thickness. Other studies have identiﬁed the electron
+meandering length scale51 as a possible physics setting cur-
+rent sheet thickness. We calculate the electron meandering
+length scale by calculating the distance from the X-point
+along the x axis where the electron thermal gyroradius
+becomes comparable to this distance. This meandering
+length scale is around 1de, giving a current sheet thickness of
+2de. However, due to the limited mass ratio and resolution, it
+is difﬁcult to separate clearly this length scale from the ion-
+skin depth. Further scaling studies with higher mass ratios
+can clarify this issue. The MHD and Hall-MHD also show
+that the lengths of the current sheets grow almost linearly
+with the system size, whereas the lengths in the CMAP simu-
+lations grow weakly. As a result of this, the aspect ratio of
+the current sheet very closely matches between the three dif-
+ferent simulation models. This aspect ratio increases as the
+system size gets larger. However, for the largest system size,
+the CMAP model shows that the aspect ratio steadies to
+between 10 and 20.
+The CMAP model allows us to calculate the reconnec-
+tion rates for large system sizes. The reconnection rate is
+also calculated for the different simulations, and their scal-
+ings are shown. Initially, the CMAP reconnection rate drops
+rapidly as the system size gets larger, compared to the drop
+in the reconnection rate shown by the ﬂuid models.
+However, for islands larger than k > 20di, the peak recon-
+nection rate steadies at a value close to 0.2. The average
+reconnection rate also shows a steady value, although this
+may depend on the length of time averaging. This work indi-
+cates that the aspect ratio of the reconnection zone in kinetic
+simulations becomes constant at large enough system sizes,
+giving a similar maximum reconnection rate for different
+system sizes. Future work with even larger simulations will
+be needed to clarify this.
+ACKNOWLEDGMENTS
+This research was supported by the KU Leuven (GOA/
+2015-014).
+Simulations
+used
+the
+VSC
+(Flemish
+Supercomputer Center) funded by the Hercules foundation
+and the Flemish government. K.M. would like to thank Bart
+Ripperda for useful discussions.
+1E. G. Zweibel and M. Yamada, Annu. Rev. Astron. Astrophys. 47, 291
+(2009).
+2M. Yamada, R. Kulsrud, and H. Ji, Rev. Mod. Phys. 82, 603 (2010).
+3J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton, M. Hesse, M.
+Kuznetsova, Z. W. Ma, A. Bhattacharjee, A. Otto, and P. L. Pritchett,
+J. Geophys. Res. 106(A3), 3715, https://doi.org/10.1029/1999JA900449
+(2001).
+4P. A. Sweet, “Electromagnetic phenomena in cosmical physics,” in IAU
+Symposium, edited by B. Lehnert (Cambridge University Press, London,
+1958), Vol. 6, p. 123.
+5E.
+N.
+Parker,
+J.
+Geophys.
+Res.
+62,
+509,
+https://doi.org/10.1029/
+JZ062i004p00509 (1957).
+6A. Bhattacharjee, Y.-M. Huang, and B. Rogers, Phys. Plasmas 16, 112102
+(2009).
+7N. F. Loureiro, R. Samtaney, A. A. Schekochihin, and D. A. Uzdensky,
+Phys. Plasmas 19, 042303 (2012).
+8R. Keppens, O. Porth, K. Galsgaard, J. T. Frederiksen, A. L. Restante, G.
+Lapenta, and C. Parnell, Phys. Plasmas 20, 092109 (2013).
+9N. F. Loureiro, A. A. Schekochihin, and S. C. Cowley, Phys. Plasmas 14,
+100703 (2007).
+10G. Lapenta, Phys. Rev. Lett. 100, 235001 (2008).
+11A. Lazarian and E. T. Vishniac, Astrophys. J. 517, 700–718 (1999).
+12G. Kowal, A. Lazarian, E. T. Vishniac, and K. Otmianowska-Mazur,
+Astrophys. J. 700, 63–85 (2009).
+13H. P. Furth, J. Killeen, and M. N. Rosenbluth, Phys. Fluids 6, 459 (1963).
+14P. Pongkitiwanichakul, K. D. Makwana, and D. Ruffolo, Phys. Plasmas
+25, 022114 (2018).
+15M. A. Shay, J. F. Drake, and B. N. Rogers, Geophys. Res. Lett. 26,
+2163–2166, https://doi.org/10.1029/1999GL900481 (1999).
+16J. M. Finn and P. K. Kaw, Phys. Fluids 20, 72–78 (1977).
+17J. C. Dorelli and J. Birn, Phys. Plasmas 8, 4010–4019 (2001).
+18D. A. Knoll and L. Chacon, Phys. Rev. Lett. 96, 135001 (2006).
+19H. Karimabadi, J. Dorelli, V. Roytershteyn, W. Daughton, and L. Chacon,
+Phys. Rev. Lett. 107, 025002 (2011).
+20A. Stanier, W. Daughton, L. Chacon, H. Karimabadi, J. Ng, Y.-M. Huang,
+A. Hakim, and A. Bhattacharjee, Phys. Rev. Lett. 115, 175004 (2015).
+21J. Ng, Y.-M. Huang, A. Hakim, A. Bhattacharjee, W. Daughton, L. Wang,
+and K. Germaschewski, Phys. Plasmas 22, 112104 (2015).
+22W. Daughton, V. Roytershteyn, B. J. Albright, H. Karimabadi, L. Yin, and
+K. J. Bowers, Phys. Rev. Lett. 103, 065004 (2009).
+23P. K. Browning, S. Cardnell, M. Evans, F. Arese Lucini, V. S. Lukin, K.
+G. McClements, and A. Stanier, Plasma Phys. Controlled Fusion 58,
+014041 (2016).
+24E. R. Priest, J. F. Heyvaerts, and A. M. Title, Astrophys. J. 576, 533–551
+(2002).
+25D. Biskamp and H. Welter, Phys. Rev. Lett. 44, 1069 (1980).
+26I. J. D. Craig, S. M. Henton, and G. J. Rickard, Astron. Astrophys. 267,
+L39–L41 (1993).
+27O. Porth, C. Xia, T. Hendrix, S. P. Moschou, and R. Keppens, Astrophys.
+J. Suppl. Ser. 214, 4 (2014).
+28K. D. Makwana, R. Keppens, and G. Lapenta, Comput. Phys. Commun.
+221, 81–94 (2017).
+29V. M. Fadeev, I. F. Kvabtskhava, and N. N. Komarov, Nucl. Fusion 5, 202
+(1965).
+30C. Xia, J. Teunissen, I. E. Mellah, E. Chane, and R. Keppens, Astrophys.
+J. Suppl. Ser. 234, 30 (2018).
+31R. Keppens, M. Nool, G. Toth, and J. P. Goedbloed, Comput. Phys.
+Commun. 153, 317–339 (2003).
+32G. Toth, J. Comput. Phys. 138, 981–990 (1997).
+33M. Cada and M. Torrilhon, J. Comput. Phys. 228, 4118 (2009).
+34A. Dedner, F. Kemm, D. Kr€oner, C. D. Munz, T. Schintzer, and M.
+Wesenberg, J. Comput. Phys. 175, 645 (2002).
+35S. Markidis, G. Lapenta, and Rizwan-uddin, Math. Comput. Simul. 80,
+1509–1519 (2010).
+36G. Lapenta, J. Comput. Phys. 231, 795–821 (2012).
+37L. K. S. Daldorff, G. Toth, T. I. Gombosi, G. Lapenta, J. Amaya, S.
+Markidis, and J. U. Brackbill, J. Comput. Phys. 268, 236–254 (2014).
+38G. Toth, X. Jia, S. Markidis, I. B. Peng, Y. Chen, L. K. S. Daldorff, V. M.
+Tenishev, D. Borovikov, J. D. Haiducek, T. I. Gombosi, A. Glocer, and J.
+C. Dorelli, J. Geophys. Res. Space Phys. 121, 1273–1293, https://doi.org/
+10.1002/2015JA021997 (2016).
+39A. Stanier, W. Daughton, A. N. Simakov, L. Chacon, A. Le, H.
+Karimabadi, J. Ng, and A. Bhattacharjee, Phys. Plasmas 24, 022124
+(2017).
+40K. Makwana, R. Keppens, and G. Lapenta, J. Phys.: Conf. Ser. 1031,
+012019 (2018).
+41K. Higashimori and M. Hoshino, J. Geophys. Res.: Space Phys. 117,
+A01220, https://doi.org/10.1029/2011JA016817 (2012).
+42A. Le, J. Egedal, J. Ng, H. Karimabadi, J. Scudder, V. Roytershteyn, W.
+Daughton, and Y.-H. Liu, Phys. Plasmas 21, 012103 (2014).
+43J. Scudder and W. Daughton, J. Geophys. Res.: Space Phys. 113, A06222,
+https://doi.org/10.1029/2008JA013035 (2008).
+44N. Aunai, M. Hesse, and M. Kuznetsova, Phys. Plasmas 20, 092903
+(2013).
+082904-10
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)
+
+45M. Swisdak, Geophys. Res. Lett. 43, 43–49, https://doi.org/10.1002/
+2015GL066980 (2016).
+46W. Wan and G. Lapenta, Phys. Rev. Lett. 100, 035004 (2008).
+47P. A. Cassak, Y.-H. Liu, and M. A. Shay, J. Plasma Phys. 83, 715830501
+(2017).
+48L. Comisso and A. Bhattacharjee, J. Plasma Phys. 82, 595820601 (2016).
+49K. D. Makwana, V. Zhdankin, H. Li, W. Daughton, and F. Cattaneo, Phys.
+Plasmas 22, 042902 (2015).
+50K. Makwana, H. Li, F. Guo, and X. Li, J. Phys.: Conf. Ser. 837, 012004
+(2017).
+51A. Ishizawa, R. Horiuchi, and H. Ohtani, Phys. Plasmas 11, 3579
+(2004).
+082904-11
+Makwana, Keppens, and Lapenta
+Phys. Plasmas 25, 082904 (2018)

@@ -1,0 +1,763 @@
+MNRAS 000, 1–6 (2023)
+Preprint 31 May 2023
+Compiled using MNRAS LATEX style file v3.0
+Discovery of double Hall pattern associated with collisionless magnetic
+reconnection in dusty plasmas
+Shu-Di Yang,1★Liang Wang,2† and Chuanfei Dong2,3‡
+1School of Physics, Peking University, Beĳing 100871, China
+2Princeton Plasma Physics Laboratory and Department of Astrophysical Sciences, Princeton University, Princeton, New Jersey 08540, USA
+3Department of Astronomy, Boston University, Boston, Massachusetts 02215, USA
+Accepted 2023 April 30. Received 2023 April 30; in original form 2022 June 17
+ABSTRACT
+Magnetic reconnection is prevalent in magnetized plasmas in space and laboratories. Despite significant investigations on
+reconnection in electron-ion plasmas, studies of reconnection in magnetized plasmas with negatively charged dust grains are
+quite sparse. Here we report the first fully kinetic simulations of collisionless reconnection in a three-species (i.e., electron,
+proton, and negatively charged dust grain) dusty plasma, through which the discovery of double Hall pattern is made. The double
+Hall pattern consists of a traditional Hall quadruple current in between the ion and electron diffusion region, and a reversed Hall
+current in between the boundary of the ion and dust diffusion region. The analysis of the reconnection rate is also given. This
+study may be applicable to explain observations of planetary magnetospheres and the astrophysical objects, and may be realized
+in the laboratory studies of dusty plasmas.
+Key words: magnetic reconnection – plasmas – dust, extinction.
+1 INTRODUCTION
+Dusty plasma, owing to its significant role in astrophysical environ-
+ments such as in the low solar atmosphere, cometary tails (Jovanović
+et al. 2005), protoplanetary nebulae, discs around young stellar ob-
+jects (Birk 1998) and the interstellar medium (ISM), is gradually
+attracting attention and offering a new paradigm for studies on basic
+plasma physics. Dusty plasma is usually composed of three species:
+electrons, ions, and dust grains. Negatively charged dust grains by
+absorbing electrons are typically micron- and submicron-sized. The
+charges and masses of dust grains can vary in a large range for dif-
+ferent scenarios (Yaroshenko & Lühr 2018), where the dust grains
+serve as immobile background when it is very heavy or moving parti-
+cles otherwise. The dust component, therefore, influences the plasma
+by introducing new modes to waves and instabilities (Merlino et al.
+1998) as well as modifying the traditional mode properties (Morfill
+& Ivlev 2009; Ghosh et al. 2002; Debnath & Bandyopadhyay 2020).
+Among the pioneer works, the properties of a vast range of dusty
+plasmas have been addressed, including the dynamics and equilib-
+rium for different processes (Mendis & Rosenberg 1994), the basic
+MHD equations as a basis for other research (Shukla & Rahman
+1996; Birk et al. 1996), equilibrium Harris sheet (Lazerson 2011),
+and the laboratory studies of waves and instabilities (Merlino et al.
+1998).
+The characteristic parameters of dusty plasmas vary tremendously,
+ranging from space to interplanetary, astrophysical, and laboratory
+★E-mail: sdyang@pku.edu.cn
+† E-mail: lw6@princeton.edu
+‡ E-mail: dcfy@bu.edu
+environments. In general, the most important components in a dusty
+plasma are electrons, ions, and negatively charged dust grains. The
+dust number density could be as low as 10−6 cm−3 in molecular
+cloud while reach as high as 106 cm−3 in Magnetized Dusty Plasma
+Experiment (MDPX).
+Magnetic reconnection is a ubiquitous process in space, astro-
+physical, and laboratory plasmas (Zweibel & Yamada 2009; Wang
+et al. 2018; Dong et al. 2018, 2019; Raymond et al. 2018; Dong
+et al. 2022; Li et al. 2023). Whereas reconnection in electron-ion
+plasma and pair plasmas have been immensely explored (Yamada
+et al. 2010), there have not been many investigations on reconnection
+in dusty plasmas despite its prevalence in space and astrophysical
+environments. The majority of previous studies on reconnection in
+dusty plasmas focused on analytic theories in either resistive (Jo-
+vanović et al. 2005; Shukla 2002; Birk et al. 1996) or collisionless
+(Jovanović & Shukla 2002) environment. It was found that the pres-
+ence of charged dust grains modifies the properties of plasma waves
+and instabilities through quasi-neutrality, and the linear instabilities
+can be categorized into several more regimes due to the scales and
+parameters introduced by the dust species.
+Due to the limitation of analytic theory, previous studies on dusty
+reconnection are mainly focused on the growth rate of linear insta-
+bilities, without looking into the detailed structure associated with
+magnetic reconnection. However, the introduction of the dust species
+definitely leads to new complicated structures. Hall effect, intensively
+studied in electron-ion plasmas (Sonnerup 1979; Terasawa 1983;
+Shay et al. 1998; Ren et al. 2005), is one of the mechanisms to accel-
+erate the reconnection process and acts on current sheet dynamics. It
+leads to a characteristic quadruple out-of-plane magnetic field called
+the Hall field, which is now found to be exotic in dusty plasmas. In
+© 2023 The Authors
+arXiv:2206.08553v2  [physics.plasm-ph]  30 May 2023
+
+2
+S.-D. Yang, L. Wang, and C. Dong
+some dusty plasmas, the depletion of electrons and the increase of
+negatively charged dust grains reverse the Hall effect and render the
+Hall conductivity negative. The reversed Hall effect was found both
+analytically (Yaroshenko & Lühr 2018) and numerically (Kriegel
+et al. 2011), and is supported by Cassini observations in Enceladus
+plasma (Simon et al. 2011). It is, therefore, natural to conjecture that
+when electron and dust grains both play important roles and scale
+separations are clear among electron, ion, and dust diffusion regions,
+a complicated double Hall pattern may emerge. To test the conjecture
+and investigate the properties of collisionless magnetic reconnection
+in dusty plasmas, we carry out the first fully kinetic simulation for
+a three-species (i.e., electron, proton, and negatively charged dust
+grain) dusty plasma and report our findings in this study.
+This paper is organized as follows: in Sec. 2, we introduce the
+numerical model and simulation setup; Sec. 3 presents the double
+Hall pattern; in Sec. 4, the associated reconnection rate is discussed
+with respect to its time evolution, and Sec. 5 serves as a conclusion
+and outlook.
+2 NUMERICAL MODEL AND SIMULATION SETUP
+For simplicity, we consider a three-species, electron-ion-dust
+plasma in the present work. Each species is characterized by its
+own constant particle mass 𝑚𝛼and charge 𝑞𝛼, 𝛼= 𝑒, 𝑖, 𝑑. A single
+dust grain is charged to 𝑍𝑑as a consequence of the absorbed free
+electrons. Hence, 𝑞𝑖= −𝑞𝑒= 𝑒, 𝑞𝑑= −𝑍𝑑𝑒.
+The presence of dust grains introduces new spatial and temporal
+scales. Besides the characteristic scales shaped by electrons and ions,
+dusty plasmas introduce the inertial length of the dust grain 𝑑𝑑=
+𝑐/𝜔𝑝𝑑, where 𝜔𝑝𝑑= (4𝜋𝑛𝑑𝑒2𝑍2/𝑚𝑑)1/2, and the dust gyroradius
+√︁
+2𝑚𝑑𝑇𝑑𝑐/(𝑍𝑒𝐵). With other conditions fixed, the heavier the mass
+of a dust grain, the larger the dust inertial length. Generally, the
+mass difference between ions and dust grains is much larger than
+the charge difference. Increasing the density of the dust, however,
+shrinks the dust inertial length. It is natural to expect that in dusty
+plasma reconnection, there should be four regions: the outermost
+MHD region, the dust diffusion region, the ion diffusion region, and
+the electron diffusion region. These will conceivably increase the
+complexity of the reconnection process.
+We carried out 2D fully kinetic simulations of collisionless re-
+connection, with and without a uniform dust background, using
+the explicit electromagnetic particle-in-cell (PIC) code PSC (Ger-
+maschewski et al. 2016). The simulation domain is periodic in
+𝑥(0 < 𝑥< 𝐿𝑥), and is bounded by perfectly conducting walls
+in 𝑧at 𝑧= ±𝐿𝑧/2. Here 𝐿𝑥× 𝐿𝑧= 32𝑑𝑖0 × 16𝑑𝑖0, where
+𝑑𝑖0 = (4𝜋𝑛𝑖0𝑒2/𝑚𝑖)1/2 is the ion inertial length due to a reference
+density 𝑛0 defined later. Initially, the equilibrium is an antiparallel
+Harris sheet with the magnetic field
+𝐵𝑥0 = 𝐵0 tanh(𝑧/𝛿),
+(1)
+uniform species temperatures 𝑇𝛼, and density
+𝑛𝑒=𝑛0sech2 (𝑧/𝛿) + 𝑛𝑏,
+(2)
+𝑛𝑖=𝑛0sech2 (𝑧/𝛿) + 𝑛𝑏+ 𝑍𝑑𝑛𝑑,
+(3)
+where 𝑛𝑑is the uniform dust background density, 𝑛0 is the peak
+density of the current-carrying portion of the electron and ion species.
+The total out-of-plane current density J0 = ∇× B0/𝜇0 is distributed
+between the electrons and ions according to 𝐽𝑦𝛼= 𝐽𝑦𝑇𝛼/(𝑇𝑒+ 𝑇𝑖)
+due to diamagnetic drift. Perturbation is applied to the magnetic field
+𝛿B = ˆz × ∇𝜓, where
+𝜓= 𝛿𝜓cos(2𝜋𝑥/𝐿𝑥) cos(𝜋𝑦/𝐿𝑦).
+(4)
+To make a reference, we also carried out a run without dust
+grains, i.e., 𝑛𝑑= 0. The common parameters of the two runs include
+𝑚𝑖/𝑚𝑒= 100, 𝑣𝐴𝑒0/𝑐= 0.5, 𝑛𝑏/𝑛0 = 0.1, 𝛿/𝑑𝑖0 = 1, 𝛿𝜓/(𝐵0𝑑𝑖0) =
+0.15, 𝑇𝑖/𝑇𝑒= 5. The grid number is 𝑁𝑥× 𝑁𝑧= 1000 × 500 and the
+time step size is Δ𝑡𝜔𝑝𝑒0 ≈0.22. The run with dust also uses 𝑍𝑑= 1,
+𝑚𝑑/𝑚𝑖= 16, 𝑛𝑑/𝑛𝑏= 5, 𝑇𝑑/𝑇𝑒= 1. Both runs use about 7.5 × 107
+computational particles per species.
+3 THE DOUBLE HALL PATTERN
+The motion of particles in the current sheet can be described by
+the momentum equations of the three species, respectively
+𝜕
+𝜕𝑡(𝑛𝑒𝑚𝑒u𝑒) + ∇· (𝑛𝑒𝑚𝑒u𝑒u𝑒) = −∇· P𝑒−𝑒𝑛𝑒(E + u𝑒× B)
+(5)
+𝜕
+𝜕𝑡(𝑛𝑖𝑚𝑖u𝑖) + ∇· (𝑛𝑖𝑚𝑖u𝑖u𝑖) = −∇· P𝑖+ 𝑒𝑛𝑖(E + u𝑖× B)
+(6)
+𝜕
+𝜕𝑡(𝑛𝑑𝑚𝑑u𝑑)+∇·(𝑛𝑑𝑚𝑑u𝑑u𝑑) = −∇·P𝑑−𝑒𝑛𝑑𝑍𝑑(E+u𝑑×B) (7)
+The spatial characteristic scales thus divide the simulation domain
+into four regions: the outermost MHD region, where all three species
+are frozen in the magnetic field lines; the dust diffusion region, where
+the electrons and ions form charged fluids and are magnetized, with
+the dust particles demagnetized; the ion diffusion region where only
+the electron fluid is magnetized and the electron diffusion region
+where all species are demagnetized. In the electron diffusion region,
+the motion of the electrons and ions is of high frequency, and the dust
+species can be seen as an immobile background. From equations (5),
+(6), (7) combined with the magnetic induction equation, we derived
+the magnetic field genesis as follows,
+𝜕𝐵𝑦
+𝜕𝑡
+= (B · ∇)
+ 𝑛𝑖
+𝑛𝑒𝑢𝑖𝑦−𝐽𝑦
+𝑛𝑒𝑒
+
+−
+(8)
+𝑚𝑒
+𝑛𝑒𝑒2 ∇×
+n
+𝜕J
+𝜕𝑡+ ∇·
+h
+(1 −𝑛𝑖
+𝑛𝑒)𝑛𝑖uu + 𝑛𝑖
+𝑛𝑒(uJ + Ju) −JJ
+𝑛𝑒𝑒
+io
+ ˆy
+Here, the Hall term is −(B · ∇) 𝐽𝑦
+𝑛𝑒𝑒, where Jy = 𝑒(𝑛𝑖uiy −𝑛𝑒uey).
+The term (B · ∇) 𝑛𝑖𝑢𝑖𝑦
+𝑛𝑒
+is due to bulk convection. We denote the
+term −𝑚𝑒
+𝑛𝑒𝑒2 ∇× ∇·
+h
+(1 −𝑛𝑖
+𝑛𝑒)𝑛𝑖uu + 𝑛𝑖
+𝑛𝑒(uJ + Ju) −JJ
+𝑛𝑒𝑒
+i
+ ˆy as the
+quadratic term.
+On the other hand, in the outer region, the motions of the electron
+fluid and the ion fluid are coupled, serving as a positively charged
+fluid where the electric charges of the ions are partially screened by
+the electrons. Effectively, this fluid can be described by
+𝜕
+𝜕𝑡(𝑛+𝑚+u+) + ∇· (𝑛+𝑚+u+u+) = −∇· P+ + 𝑒𝑍+𝑛+(E + u+ × B) (9)
+where 𝑛+𝑚+u+ = 𝑛𝑖𝑚𝑖u𝑖+ 𝑛𝑒𝑚𝑒u𝑒, 𝑛+𝑚+u+u+ = 𝑛𝑖𝑚𝑖u𝑖u𝑖+
+𝑛𝑒𝑚𝑒u𝑒u𝑒, P+ = P𝑖+ P𝑒, 𝑒𝑍+𝑛+(E + u+ × B) = 𝑒𝑛𝑖(E + u𝑖× B) −
+𝑒𝑛𝑒(E+u𝑒×B). In this case, the effective positively charged fluid can
+be characterized by 𝑛+ ≈𝑛𝑖, 𝑚+ ≈𝑚𝑖, u+ ≈u𝑖, 𝑍+ = (𝑛𝑖−𝑛𝑒)/𝑛𝑖,
+P+ = P𝑖+ P𝑒.
+The magnetic field genesis can therefore be derived as
+𝜕𝐵𝑦
+𝜕𝑡
+= (B · ∇)
+ 𝑍𝑑𝑛𝑑
+𝑛+ 𝑢𝑑𝑦−𝐽𝑦
+𝑛+𝑒
+
+−
+(10)
+𝑚+
+𝑛+𝑒2 ∇×
+n
+𝜕J
+𝜕𝑡+ ∇·
+h
+( 𝑍𝑑𝑛𝑑
+𝑛+
+−1)𝑍𝑑𝑛𝑑uu + 𝑍𝑑𝑛𝑑
+𝑛+
+(uJ + Ju) + JJ
+𝑛+𝑒
+io
+ ˆy
+MNRAS 000, 1–6 (2023)
+
+Double Hall pattern in dusty plasmas
+3
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+With dust, By at t = 8.9918/Ωci
+−0.010
+−0.005
+0.000
+0.005
+0.010
+(a)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+No dust, By at t = 8.9918/Ωci
+−0.010
+−0.005
+0.000
+0.005
+0.010
+(b)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+With dust, By at t = 18.9827/Ωci
+−0.015
+−0.010
+−0.005
+0.000
+0.005
+0.010
+0.015
+(c)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+No dust, By at t = 18.9827/Ωci
+−0.02
+−0.01
+0.00
+0.01
+0.02
+(d)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+With dust, By at t = 42.9609/Ωci
+−0.02
+−0.01
+0.00
+0.01
+0.02
+(e)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+No dust, By at t = 42.9609/Ωci
+−0.050
+−0.025
+0.000
+0.025
+0.050
+(f)
+Figure 1. The simulated out-of-plane magnetic field, 𝐵𝑦, associated with collisionless magnetic reconnection with dust grains (left) and without dust grains
+(right) at three different time steps.
+the Hall term is −(B · ∇) 𝐽𝑦
+𝑛+𝑒, where Jy = 𝑒(𝑍+𝑛+u+𝑦−𝑍𝑑𝑛𝑑u𝑑𝑦).
+We also observe the convective term (B · ∇)
+ 𝑍𝑑𝑛𝑑
+𝑛+ 𝑢𝑑𝑦
+
+, quadratic
+term −𝑚+
+𝑛+𝑒2 ∇×∇·
+h
+( 𝑍𝑑𝑛𝑑
+𝑛+
+−1)𝑍𝑑𝑛𝑑uu + 𝑍𝑑𝑛𝑑
+𝑛+
+(uJ + Ju) + JJ
+𝑛+𝑒
+i
+ ˆy.
+Due to the mechanism for magnetic field genesis, the most exotic
+structure emerging in the three-species dusty reconnection is proba-
+bly the Hall structure. With clear scale separation for 𝑑𝑑> 𝑑𝑖> 𝑑𝑒,
+in-between the electron diffusion region and the ion diffusion region
+we expect to see a traditional Hall quadruple structure. Going beyond
+the ion diffusion region while staying inside the dust diffusion region,
+a reversed Hall structure appears. Fig. 1 shows a time series of the
+out-of-plane magnetic field 𝐵𝑦, where the left panel shows the snap-
+shots at three different time steps for the dusty plasma case and the
+right panel is the reference run without dust grains. By comparing
+the 𝐵𝑦patterns between the two columns of Fig. 1, the case with
+dust grains clearly presents a double Hall pattern. The outer Hall
+magnetic fields associated with the negatively charged dust grains
+Figure 2. The current closure pattern in collisionless magnetic reconnection
+with dust grains. We calculated the current density carried by each species
+by 𝑛𝛼𝑣𝛼𝑞𝛼, (𝛼= 𝑒, 𝑖, 𝑑) and the total current density
+Í
+𝛼=𝑒,𝑖,𝑑
+𝑛𝛼𝑣𝛼𝑞𝛼.
+exhibit opposite polarity (Fig. 1(c)), and their magnitude gradually
+intensifies with time. Interestingly, the central Hall magnetic field
+shrinks in Fig. 1(e), accompanied by the thinning of the current sheet
+MNRAS 000, 1–6 (2023)
+
+4
+S.-D. Yang, L. Wang, and C. Dong
+Figure 3. The out-of-plane magnetic genesis terms in the inner (left panel) and outer (right panel) regions, where "conv", "Hall", and "quadratic" indicates
+convection term, Hall term, and quadratic term, respectively, as defined in equations (8) and (10). The data are vertical slices taken at 𝑥= 130𝑑𝑒and 𝑡= 20/Ω𝑐𝑖
+from the run with dust grains.
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+With dust, Jy,e at t = 42.9609/Ωci
+−0.04
+−0.02
+0.00
+0.02
+0.04
+(a)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+No dust, Jy,e at t = 42.9609/Ωci
+−0.04
+−0.02
+0.00
+0.02
+0.04
+(b)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+With dust, jy,i at t = 42.9609/Ωci
+−0.04
+−0.02
+0.00
+0.02
+0.04
+(c)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+No dust, jy,i at t = 42.9609/Ωci
+−0.04
+−0.02
+0.00
+0.02
+0.04
+(d)
+0
+50
+100
+150
+200
+250
+300
+x/de
+−75
+−50
+−25
+0
+25
+50
+75
+z/de
+With dust, jy,d at t = 42.9609/Ωci
+−0.001
+0.000
+0.001
+(e)
+−60
+−40
+−20
+0
+20
+40
+60
+z/de
+0.000
+0.005
+0.010
+0.015
+0.020
+With dust, out-of-plane current densities at t = 42.9609/Ωci
+Jy,e
+Jy,i
+Jy,d
+(f)
+Figure 4. Calculated current density of different species from the cases with dust grains and without dust grains.
+MNRAS 000, 1–6 (2023)
+
+Double Hall pattern in dusty plasmas
+5
+[htbp]
+0
+10
+20
+30
+40
+50
+tΩci
+0.0
+2.5
+5.0
+7.5
+10.0
+12.5
+15.0
+Reconnected ﬂuxes ∆Ψ = Ψ(X) −Ψ(O)
+No dust
+With dust
+0
+10
+20
+30
+40
+50
+tΩci
+0.000
+0.025
+0.050
+0.075
+0.100
+0.125
+0.150
+Reconnection rate d(∆Ψ)/dt
+No dust
+With dust
+Figure 5. Calculated magnetic reconnection rate in the dusty plasma and the electron-ion plasma.
+and the growing of the outer Hall pattern. The sequence of the emer-
+gence of different structures results from the different characteristic
+time scales associated with the electron, ion, and dust dynamics.
+This Hall pattern is formed due to the central current closure
+pattern in Fig. 2, which is the combination of the inner electron-ion
+current closure and an outer dust current closure. We calculated the
+current density carried by each species by 𝑛𝛼𝑢𝛼𝑞𝛼(𝛼= 𝑒, 𝑖, 𝑑) and
+the total current
+Í
+𝛼=𝑒,𝑖,𝑑
+𝑛𝛼𝑢𝛼𝑞𝛼.
+The terms that are responsible for the out-of-plane magnetic field
+genesis can be seen in Fig. 3, where we plotted the different terms in
+the outer region and the inner region, respectively. From this figure,
+we could see that Hall terms dominate to form both the inner Hall
+pattern and the outer Hall pattern.
+Fig. 4 shows the out-of-plane current densities of different species
+from the two simulations. We plot the current density distribution
+of the three species at the time when the double Hall magnetic
+field in the last panel of Fig. 1 is established. The left panel of Fig.
+4 shows the current density carried by electrons, ions, and dusty
+grains, respectively, in the dusty run. For comparison, the top two
+figures in the right panel depict the electron and ion current density
+in the dust-free plasma. Clearly, the dust component carries the least
+electric current density compared with the other two species. The
+current density carried by electrons, however, is strongly localized
+around the electron inertial region and manifests a complex structure.
+We also plot the current decomposition of the three species along 𝑧
+at 𝑥= 160𝑑𝑒. Fig. 4(f) shows the comparison of current intensity
+among dust, ion, and electrons. In Fig. 4(f), it is clear that at the
+moment when the double Hall pattern exists, ion current density
+is the strongest, electron current sheet manifests a more complex
+pattern, and dust current density is apparently weaker than the others
+due to its large mass or, more accurately, its small charge-to-mass
+ratio.
+It can be seen from equation (8) that with fixed 𝑛𝑖, the larger 𝑛𝑒,
+the stronger the magnetic field genesis. This explains the larger 𝐵𝑦
+magnitude in the dust-free run.
+4 RECONNECTION RATE
+Having discussed the exotic double Hall pattern in dusty reconnec-
+tion, we further look at the reconnection rate in dusty plasmas. The
+reconnection rate is a defining characteristic of the process, depict-
+ing the rate at which the magnetic topology changes and the energy
+conversion occurs. The presence of dust grains inevitably influences
+the reconnection rate. The reconnected flux and reconnection rate are
+presented in Fig. 5 for comparison, where the reconnection rate is
+normalized over the ion Alfvén time 𝑣𝐴𝑖. Fig. 5 demonstrates clearly
+that the presence of dust grains severely slows down the reconnec-
+tion process. It is conceivable that in a plasma that is undergoing
+fast reconnection, if dust grains get accumulated simultaneously, fast
+reconnection could be suspended, and the procedure becomes more
+complex.
+The importance of dust species in shaping the relevant processes
+can be estimated by the characteristic spatial and temporal scales.
+The larger the difference between the dust timescale and the ion
+timescale, the slower that dust comes into play. In the limit that the
+dust is too heavy that it serves as immobile background, it will have
+little influence in the relevant processes.
+We also looked into the motion of the dust during the reconnection
+process. In Fig. 6, the dust grains gradually concentrate to the center
+of the current sheet. As the dust motion becomes pronounced, the
+dusty plasma reconnection rate starts to deviate from the dust-free
+reconnection rate (see Fig. 5). The concentration of dust grains in
+the center may also serve as a potential mechanism for dusts to
+grow in size during planetary formation (Liu & Ji 2020), where the
+electromagnetic field may help the dust grains to accumulate further.
+This is a highly nonlinear process and thus will not be explored here.
+As a result of reconnection, the dust grains are finally convected out
+of the current sheet by the outflow.
+5 CONCLUSION
+In conclusion, we reported the discovery of a novel double Hall
+pattern associated with collisionless reconnection in dusty plasmas.
+This pattern is composed of a traditional Hall magnetic field and a
+reversed Hall magnetic field, characterized by the inertial scale of
+electron, ion, and dust grain, respectively. This is unique for dusty
+MNRAS 000, 1–6 (2023)
+
+6
+S.-D. Yang, L. Wang, and C. Dong
+(a)
+(b)
+Figure 6. Motion of dust grains at two different time steps. The arrow directions represent the local velocity direction. The arrow lengths and colors are scaled
+by the local dust grain speed. The underlying thin gray lines are magnetic field lines.
+plasmas, due to alternating charge signs and clear scale separation
+where all three species participate in the dynamics. We also presented
+the current density distribution in dusty plasmas, where the current
+density carried by dust grains, though weaker than the electron and
+ion current density, plays a role in shaping relevant structures. In
+particular, the reconnection rate of a dusty plasma is slower than that
+of an electron-ion plasma with other identical parameters, indicating
+that dust formation may slow down the reconnection process. The
+scenario discussed in this study may be realized and provide ref-
+erence to the dusty plasma experiments like Laboratory for Plasma
+Nanosynthesis (LPN) and MDPX (Merlino et al. 1998).
+In the future, we may further explore the scaling laws of dust
+reconnection with respect to different mass ratios 𝑚𝑑/𝑚𝑖, different
+concentrations of dust 𝑛𝑑and different charged state 𝑍𝑑, as well
+as investigate the different regimes in dusty plasma reconnection.
+We could also study the coupling and interactions between different
+scales. The double Hall effect on dusty plasma turbulent energy
+spectra may also lead to exotic phenomena. These open questions
+remain to be explored.
+ACKNOWLEDGEMENTS
+C.D. was supported by the U.S. Department of Energy under con-
+tract number DE-AC02-09CH11466.
+DATA AVAILABILITY
+The PSC simulation code is available at https://github.com/
+psc-code/psc. The data that support the findings of this study are
+available on request from the corresponding author.
+REFERENCES
+Birk G., 1998, A&A, 330, 1070
+Birk G., Kopp A., Shukla P., 1996, Phys. Plasmas, 3, 3564
+Debnath D., Bandyopadhyay A., 2020, Astrophys. Space Sci., 365, 1
+Dong C., Wang L., Huang Y.-M., Comisso L., Bhattacharjee A., 2018, Phys.
+Rev. Lett., 121, 165101
+Dong C., Wang L., Hakim A., Bhattacharjee A., Slavin J. A., DiBraccio G. A.,
+Germaschewski K., 2019, Geophys. Res. Lett., 46, 11,584
+Dong C., Wang L., Huang Y.-M., Comisso L., Sandstrom T. A., Bhattacharjee
+A., 2022, Sci. Adv., 8, eabn7627
+Germaschewski K., Fox W., Abbott S., Ahmadi N., Maynard K., Wang L.,
+Ruhl H., Bhattacharjee A., 2016, J. Comput. Phys., 318, 305
+Ghosh S., Chaudhuri T. K., Sarkar S., Khan M., Gupta M., 2002, Phys. Rev.
+E, 65, 037401
+Jovanović D., Shukla P., 2002, Phys. Plasmas, 9, 4127
+Jovanović D., Shukla P., Morfill G., 2005, Phys. Plasmas, 12, 042904
+Kriegel H., Simon S., Motschmann U., Saur J., Neubauer F. M., Persoon
+A. M., Dougherty M. K., Gurnett D. A., 2011, J. Geophys. Res., 116,
+A10223
+Lazerson S. A., 2011, J. Plasma Phys., 77, 31
+Li D., Chen Y., Dong C., Wang L., Toth G., 2023, AIP Adv., 13, 015126
+Liu B., Ji J., 2020, Res. Astron. Astrophys., 20, 164
+Mendis D. A., Rosenberg M., 1994, ARA&A, 32, 419
+Merlino R. L., Barkan A., Thompson C., D’Angelo N., 1998, Phys. Plasmas,
+5, 1607
+Morfill G. E., Ivlev A. V., 2009, Rev. Mod. Phys., 81, 1353
+Raymond A. E., et al., 2018, Phys. Rev. E, 98, 043207
+Ren Y., Yamada M., Gerhardt S., Ji H., Kulsrud R., Kuritsyn A., 2005, Phys.
+Rev. Lett., 95, 055003
+Shay M. A., Drake J. F., Denton R. E., Biskamp D., 1998, J. Geophys. Res.,
+103, 9165
+Shukla P., 2002, Phys. Plasmas, 9, 4082
+Shukla P., Rahman H., 1996, Phys. Plasmas, 3, 430
+Simon S., Saur J., Kriegel H., Neubauer F. M., Motschmann U., Dougherty
+M. K., 2011, J. Geophys. Res., 116, A04221
+Sonnerup B. t., 1979, Magnetic Field Reconnection in Solar System Plasma
+Physics, Vol. 3. Amsterdam, North-Holland Publishing Co., 45
+Terasawa T., 1983, Geophys. Res. Lett., 10, 475
+Wang L., Germaschewski K., Hakim A., Dong C., Raeder J., Bhattacharjee
+A., 2018, J. Geophys. Res., 123, 2815
+Yamada M., Kulsrud R., Ji H., 2010, Rev. Mod. Phys., 82, 603
+Yaroshenko V., Lühr H., 2018, Phys. Plasmas, 25, 010702
+Zweibel E. G., Yamada M., 2009, ARA&A, 47, 291
+MNRAS 000, 1–6 (2023)

@@ -1,0 +1,1041 @@
+Astronomy & Astrophysics manuscript no. 19098
+c⃝ESO 2021
+November 17, 2021
+Nonlinear wave propagation and reconnection at magnetic
+X-points in the Hall MHD regime
+J. W. Threlfall1, C. E. Parnell1, I. De Moortel1, K. G. McClements2, and T. D. Arber3
+1 School
+of
+Mathematics
+and
+Statistics,
+University
+of
+St
+Andrews,
+St
+Andrews,
+Fife,
+KY16
+9SS,
+U.K.
+e-mail:
+jamest@mcs.st-and.ac.uk;clare@mcs.st-and.ac.uk;ineke@mcs.st-and.ac.uk
+2 United Kingdom Atomic Energy Authority, Culham Science Centre, Abingdon, Oxfordshire, OX14 3DB, U.K. e-mail:
+k.g.mcclements@ccfe.ac.uk
+3 Centre for Fusion, Space and Astrophysics, Department of Physics, University of Warwick, Coventry, CV4 7AL, U.K. e-mail:
+T.D.Arber@warwick.ac.uk
+ABSTRACT
+Context. The highly dynamical, complex nature of the solar atmosphere naturally implies the presence of waves in a topologically
+varied magnetic environment. Here, the interaction of waves with topological features such as null points is inevitable and potentially
+important for energetics. The low resistivity of the solar coronal plasma implies that non-MHD eﬀects should be considered in studies
+of magnetic energy release in this environment.
+Aims. This paper investigates the role of the Hall term in the propagation and dissipation of waves, their interaction with 2D magnetic
+X-points and the nature of the resulting reconnection.
+Methods. A Lagrangian remap shock-capturing code (Lare2d) is used to study the evolution of an initial fast magnetoacoustic wave
+annulus for a range of values of the ion skin depth (δi) in resistive Hall MHD. A magnetic null-point ﬁnding algorithm is also used to
+locate and track the evolution of the multiple null-points that are formed in the system.
+Results. Depending on the ratio of ion skin depth to system size, our model demonstrates that Hall eﬀects can play a key role in the
+wave-null interaction. In particular, the initial fast-wave pulse now consists of whistler and ion-cyclotron components; the dispersive
+nature of the whistler wave leads to (i) earlier interaction with the null, (ii) the creation of multiple additional, transient nulls and,
+hence, an increased number of energy release sites. In the Hall regime, the relevant timescales (such as the onset of reconnection and
+the period of the oscillatory relaxation) of the system are reduced signiﬁcantly, and the reconnection rate is enhanced.
+Key words. Plasmas - Magnetohydrodynamics (MHD) - Waves - Magnetic reconnection - Sun: corona - Sun: ﬂares
+1. Introduction
+Observations of the Sun and theoretical models have demon-
+strated that complicated geometrical and topological magnetic
+structures pervade the solar atmosphere. Furthermore, the ever-
+improving cadence and sensitivity of instruments continue to re-
+veal its highly dynamic nature through the presence of many
+types of waves (see e.g. De Moortel 2005; Nakariakov &
+Verwichte 2005; De Moortel & Nakariakov 2012). It is there-
+fore natural to expect that waves will interact with topological
+features, including magnetic null points; such interactions have
+formed the basis of many investigations in both 2D and 3D (see
+McLaughlin et al. 2011, and references therein).
+Null points, especially in 2D, are known to be important
+sites of energy release, as ﬁrst demonstrated by Dungey (1953),
+Parker (1957) and Sweet (1958), although in 3D they are not
+the only sites where reconnection may occur (initially demon-
+strated by Schindler et al. 1988; Hesse & Schindler 1988); see
+also Biskamp (2000) and Priest & Forbes (2007) for reviews
+of the considerable body of work that focuses on this process.
+Null point reconnection is suspected to play a major role in cer-
+tain types of CMEs (see e.g. the magnetic breakout models of
+Antiochos et al. 1999; Pariat et al. 2009) and solar ﬂares (see
+e.g. Fletcher et al. 2007; Masson et al. 2009, 2012).
+It is estimated that there are more than 20, 000 null points
+at any one time during solar minimum in the solar corona above
+1.5Mm (Longcope & Parnell 2009). Below this height, the tech-
+niques used to estimate the number of nulls are unreliable, how-
+ever, since the complexity of the magnetic ﬁeld is known to fall
+oﬀrapidly with height, it is anticipated that there will be consid-
+erably more magnetic null points below this height than above.
+Assuming the electrical resistivity of solar coronal plasma
+is due to electron-ion collisions, the low collisionality of such
+a plasma implies that signiﬁcant energy release can only occur
+through resistive dissipation if the current density is extremely
+high and the magnetic ﬁeld scale length is very small, thereby
+calling into question the self-consistency of resistive magneto-
+hydrodynamic (MHD) reconnection models. Moreover, resistive
+1
+arXiv:1202.3648v3  [astro-ph.SR]  16 May 2012
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+MHD generally yields reconnection rates that are too low to ac-
+count for the observed timescales of energy release in solar ﬂares
+(see e.g. Craig & McClymont 1991).
+Both theoretical considerations and observations thus moti-
+vate us to construct models of reconnection that go beyond re-
+sistive MHD. One relatively straightforward way of doing this
+is to include the Hall term in Ohm’s law. This term does not by
+itself give rise to reconnection, but it can accelerate the rate of
+reconnection in the presence of ﬁnite resistivity (Birn et al. 2001;
+Birn & Priest 2007). Generally, Hall eﬀects are expected to be-
+come signiﬁcant when length scales approach the ion skin depth,
+δi and wave frequencies approach the ion cyclotron frequency.
+In view of the low resistivity and consequently small resistive
+length scale of the coronal plasma, noted above, it is natural to
+include such eﬀects in models of reconnection (for example, in
+solar ﬂares), despite the fact that the reconnection length scales
+cannot be resolved observationally. When the plasma beta is less
+than unity, as in the upper chromosphere and corona, δi is larger
+than the thermal ion Larmor radius, and Hall MHD is then ap-
+plicable. Analytical Hall MHD models of steady incompress-
+ible reconnection (Dorelli 2003; Craig & Watson 2003) have
+been used to determine the conditions in which Hall currents
+can inﬂuence reconnection and Ohmic dissipation rates. More
+recently, Senanayake & Craig (2006) used the linearised Hall
+MHD equations to investigated numerically the energy decay of
+a perturbed line-tied X-point system. Craig & Litvinenko (2008)
+extended this linear model to obtain more detailed reconnection
+scalings, ﬁnding, unsurprisingly, that Hall eﬀects on the recon-
+nection rate diminish as the system size is increased.
+The magnetic topology, and in particular null points, have
+also been shown to aﬀect wave propagation in their vicinity
+(summarised in McLaughlin et al. 2011). Fast magnetoacoustic
+waves tend to ”wrap around” magnetic null points (McLaughlin
+& Hood 2004), and progressively decreasing length scales in the
+vicinity of the null can give rise to nonlinear eﬀects and drive
+reconnection (McLaughlin et al. 2009).
+Many studies of both reconnection and wave propagation
+in the solar context have employed a two-dimensional current-
+free magnetic X-point equilibrium with a single null (Craig &
+McClymont 1991, 1993; Craig & Watson 1992; Hassam 1992;
+Ofman et al. 1993; McClements et al. 2004; McLaughlin &
+Hood 2004, 2005, 2006; Senanayake & Craig 2006; Craig &
+Litvinenko 2008). Although this particular equilibrium conﬁgu-
+ration is somewhat idealised, it has certain merits from a theo-
+retical point of view. In addition to being current-free it is also
+scale free, and is thus characterised by no free parameters except
+for the magnitude of the magnetic ﬁeld at a speciﬁed distance
+from the null. As noted by McClements et al. (2004), the varia-
+tion of Alfv´en speed in a two-dimensional X-point conﬁguration
+guarantees that a disturbance propagating towards the null will
+steepen as it does so, until it is modiﬁed by resistivity, non-MHD
+(e.g. Hall) eﬀects, or nonlinear eﬀects. Such a conﬁguration is
+thus useful for exploring physical processes related to energy re-
+lease in 2D. Furthermore, understanding non-MHD processes in
+this 2D scenario is an essential ﬁrst step before considering more
+complex (3D) conﬁgurations.
+The primary objective of the present work is to study nu-
+merically the nonlinear dynamics of a fast Alfv´en disturbance
+propagating towards a two-dimensional X-point null, taking into
+account the Hall term in Ohm’s law. Here, we speciﬁcally seek to
+address (i) how the Hall term manifests itself in models of wave-
+driven oscillatory reconnection and (ii) whether the rate of oscil-
+latory reconnection is aﬀected by the presence of the Hall term
+(as suggested by previous models of Hall MHD reconnection).
+In Sect. 2 we outline our basic assumptions and equations, and
+the numerical setup used in simulations of fast waves propagat-
+ing towards X-type magnetic nulls. The initial behaviour of the
+wave pulses is described in Sect. 3, while the formation and evo-
+lution of complex magnetic topologies involving multiple null-
+points (in the case of simulations with ﬁnite δi) is explained in
+Sect. 4. For each value of δi the system ultimately settles settles
+into an oscillatory reconnective regime, described in Sect. 5. A
+discussion of the nature of the reconnection process is presented
+in Sect. 6, followed by a summary and conclusions in Sect. 7.
+2. Numerical model setup
+The system was modelled numerically using a two dimensional
+version of a Lagrangian remap scheme (LareXd), described by
+Arber et al. (2001), which includes an optional Hall physics
+package to incorporate the Hall term into the standard MHD sys-
+tem of equations, seen here in normalised dimensionless form:
+∂ρ
+∂t + ∇· (ρv) = 0,
+ρ
+ ∂v
+∂t + (v · ∇) v
+!
+= (∇× B) × B −∇p,
+∂B
+∂t = ∇× (v × B) −∇× (η∇× B) −λi∇×
+"1
+ρ (∇× B) × B
+#
+,
+ρ
+ ∂ϵ
+∂t + (v · ∇) ϵ
+!
+= −p∇· v + ηj2,
+for dimensionless mass density ρ, pressure p, magnetic ﬁeld
+strength B, ﬂuid velocity v, internal energy density ϵ, resistivity
+η (the reciprocal of the Lundquist number) and ion skin depth
+λi. These equations have been normalised with respect to typi-
+cal values of magnetic ﬁeld strength (B0), temperature (T0) and
+number density (n0). The velocities are scaled with the global
+Alfv´en speed cA (= B0/ √µ0mpn0, with proton mass mp and per-
+meability of free space µ0), and time t0 is scaled by the global
+Alfv´en time, t0 = l0/cA, for a typical system lengthscale l0.
+For example, adopting typical ﬂaring coronal normalisation
+values of B0 = 100G and n0 = 1016 m−3 implies velocities are
+normalised by v0 = cA ≈2 Mms−1. Adopting a typical ﬂaring
+coronal temperature, T0 = 2 × 106 K, means that β0 ≈0.007
+(where β0 is the local plasma beta, 2µ0p0/B2
+0, deﬁned at a radius
+l0 from the origin). The role of the Hall term is quantiﬁed by the
+2
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+ion skin depth, δi. The normalised dimensionless ion skin depth
+used in the numerical scheme (λi) is given by:
+λi = δi
+l0
+=
+c
+l0ωpi
+,
+with the ion plasma frequency ωpi (=
+p
+n0e2/mpϵ0 for electron
+charge e and permittivity of free space ϵ0) ﬁxed through the num-
+ber density n0. A choice of λi = 0.0072 implies a normalising
+lengthscale l0 ≈0.3 km, while increasing λi by a factor of 10
+reduces l0 by the same amount (l0 ≈32 m). Finally, the dimen-
+sionless plasma resistivity is determined using
+η =
+η0
+µ0l0v0
+,
+where η0 is the electrical resistivity (= 1/σ for electrical con-
+ductivity σ). As pointed out by Craig & Litvinenko (2002), the
+levels of resistivity in the ﬂaring corona may be as much as a
+factor of 106 higher than the collisional value. Using this en-
+hancement factor and the normalisation described above, we ﬁnd
+η = 0.0005 where λi = 0.0072, while a smaller enhancement
+(105) is produced with an identical level of η when λi = 0.072.
+2.1. Equilibrium and initial conditions
+A wide range of equilibrium magnetic ﬁeld conﬁgurations have
+been studied in investigations of wave/null-point interactions
+(see McLaughlin et al. 2011, for a detailed review). In this in-
+vestigation, our equilibrium is chosen to be
+B =
+h
+Bx, By, Bz
+i
+= −x, y, 0 .
+(1)
+Note that this equilibrium conﬁguration is curl-free (i.e. J = 0
+initially) and contains a single null-point, located at the origin. A
+common tool for providing visual representation of 2D magnetic
+ﬁelds is the magnetic vector potential A, which (for the initial
+ﬁeld conﬁguration detailed in Eq. 1) is given by
+A = [0, 0, Az] = [0, 0,C −xy],
+where C is an arbitrary constant. Lines of constant magnetic ﬂux
+can be illustrated using contours of Az, as seen in Fig. 1, however
+this ﬁgure illustrates only selected contours of Az over half of the
+simulated domain, (x, y) ∈[−10, 10].
+A 5120 × 5120 grid was used to simulate a range (x, y) ∈
+[−20, 20]. Reﬂective (zero gradient) boundary conditions were
+applied to all variables (B, ρ, ϵ) except velocities, which were
+ﬁxed to zero at all boundaries. Early studies by McLaughlin &
+Hood (2004) showed that an initially planar MHD fast wave
+disturbance would refract around and accumulate at a mag-
+netic null-point due to the decrease in Alfv´en speed. Once ac-
+cumulated at the null, the wave would essentially become az-
+imuthally symmetric, but would never actually reach the null (as
+B →0, cA →0). By initialising an azimuthally symmetric dis-
+turbance with a large amplitude, McLaughlin et al. (2009) stud-
+ied how nonlinear eﬀects would allow the wave to interact with
+Fig. 1: Initial fast wave annulus amplitude, deﬁned using ξ⊥, cen-
+tred on r = 5 with amplitude A = 1. Also overplotted are se-
+lected contours of Az (seen in red), indicating the equilibrium
+ﬁeld conﬁguration B = −x, y, 0 with the X-point location in-
+dicated in white (found using null-tracking routine of Haynes &
+Parnell 2007).
+the null. To aid direct comparison with McLaughlin et al. (2009),
+we retain their selection of natural system variables,
+ξ⊥(x, y, t) = (v × B) · ˆz = vxBy −vyBx,
+ξ||(x, y, t) = (v · B) = vxBx + vyBy,
+in order to specify similar initial conditions:
+ξ⊥(x, y, 0) = A sin [π (r −4.5)]
+4.5 ≤r ≤5.5,
+ξ||(x, y, 0) = 0,
+where r =
+p
+x2 + y2 (and also noting that velocities perpendic-
+ular and parallel to the local magnetic ﬁeld may be found by
+scaling ξ⊥and ξ||, i.e. v⊥= ξ⊥/|B| and v|| = ξ||/|B| respectively).
+A visual representation of these initial conditions can also be
+seen in Fig. 1.
+In anticipation of the annulus splitting into two wave pulses
+(which travel radially inwards and outwards) and in order to fo-
+cus only on the part of the pulse which interacts with the null,
+all system variables outside a radius r = 6 were reset to their
+equilibrium values. This was performed at t = 0.7τA, the point
+at which the waves were deemed to be suﬃciently independent
+from one another that the outer pulse may be removed without
+aﬀecting the inner pulse. At this point, a damping layer was also
+introduced for r ≥6, removing kinetic energy from any waves
+which travel outwards beyond this radius, to avoid complications
+from reﬂection at the simulation boundaries.
+3. Fast wave annulus evolution in Hall MHD
+As mentioned above, the initial fast wave annulus (shown in
+blue in Fig. 1) splits into two oppositely travelling wave pulses,
+travelling radially inwards and outwards, with each pulse ini-
+tially having amplitude 0.5A. Using the MHD case (described in
+3
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+McLaughlin et al. 2009) as a benchmark, the eﬀect of the Hall
+term on the splitting of the wave pulse is illustrated in the ﬁrst
+column of Fig. 2, for both the λi = 0.0072 and λi = 0.072 simu-
+lations.
+In particular, the behaviour of the pulse in the λi = 0.0072
+regime demonstrates many similarities with the equivalent MHD
+case; the inner pulse retains its initial proﬁle, and is subject to re-
+fraction as it approaches the null point across the magnetic ﬁeld
+lines. With no initial parallel velocity (ξ|| = 0) and our choice
+of equilibrium ﬁeld (Eq. 1), the system naturally develops an
+asymmetry in wave-speed (due to the creation of a “background
+inﬂow” in the upper-left and bottom-right quadrants, while a
+“background outﬂow” is seen in the upper-right and bottom-left
+quadrants; see Fig. 4 of McLaughlin et al. 2009, where verti-
+cal and horizontal asymmetries are obtained due to the same
+eﬀect). Thus, the initial velocity proﬁle causes the peak of the
+pulse to propagate faster than the edges in the upper-left and
+lower-right quadrants, while the pulse edges travel faster than the
+peak in the upper-right and lower-left quadrants. These wave-
+speed asymmetries become discontinuous, and lead to the for-
+mation of fast-oblique (and perpendicular) shocks, as identiﬁed
+by McLaughlin et al. (2009). These shock fronts are associated
+with abrupt changes in density and temperature which coincide
+with discontinuities in the magnetic ﬁeld, as seen in Fig. 3.
+In Hall MHD, diﬀerences begin to arise in comparison to the
+MHD benchmark, which increase in proportion to the value of
+λi. Threlfall et al. (2011) demonstrated that the inclusion of the
+Hall term in the generalised Ohm’s law causes an initially shear
+Alfv´en wave pulse (acting along a uniform magnetic ﬁeld) to de-
+couple into whistler and ion-cyclotron wave components, each
+having opposite circular polarisation. In this experiment, we see
+that the initially fast-mode wave pulse also becomes decoupled
+in this way, due to the inclusion of the Hall term. While much
+of the behaviour seen in the λi = 0.0072 simulations matches
+that seen in the MHD benchmark case, the second and third
+rows of Fig. 2 show that increasing the eﬀect of the Hall term
+also increases the amount of coupling to the shear velocity com-
+ponent, vz. The asymmetry of wave-speed (described earlier) is
+also retained in simulations with λi = 0.072, however the cou-
+pling to other wave modes and enhanced dispersion (which ac-
+company the Hall term) limit the formation of the fast-oblique
+parts of the shock front. The second row of Fig. 2 illustrates this,
+showing that the shock front begins to take on the shape of the
+local magnetic ﬁeld in this limit. The remaining wave annulus
+is concentrated at the centre of the four quadrants (where it re-
+mains exactly perpendicular to the local magnetic ﬁeld, i.e. only
+the perpendicular shock fronts remain). Figure 3 shows that cuts
+through these shock fronts now reveal much larger density and
+temperature changes than in the λi = 0.0072 (and MHD bench-
+mark) case(s).
+Note that the diﬀraction-like pattern recovered in Figs. 2
+and 3 are not related to any contact with a boundary, as these
+ﬁgures represent only a small region of the entire simulated do-
+main, (x, y) ∈[−20, 20].
+4. X-point collapse and evolution of magnetic
+topology
+The response of the magnetic ﬁeld to the inward-travelling pulse
+and the evolution and formation of current sheets greatly de-
+pends on the normalised ion-skin depth, λi. In the case where
+λi = 0.0072 (as with the MHD benchmark) the evolution of
+the system largely follows that outlined by McLaughlin et al.
+(2009); fast magnetic shock waves, formed in opposite quad-
+rants, travel in towards the null, signiﬁcantly deforming the mag-
+netic ﬁeld-lines as they pass. The initial interaction between the
+wave annulus and the null may be seen in Fig. 4.
+In this limit (and in MHD), the outer edges of the shock front
+begin to overlap at t ∼2τA [at approximately (x, y) = (1, 1) and
+(x, y) = (−1, −1)], leading to the formation of hot “cusp” jets
+which heat the plasma (in the opposite quadrants to those where
+the original fast shocks predominantly formed). The centre of the
+fast shock-fronts reach the null and begin to pass through each
+other at t ≈2.9τA, whereupon the local magnetic topology has
+deformed into a thin current sheet-like structure. The fact that the
+wave is able to reach and pass through the null is entirely due to
+our choice of a large initial wave amplitude and the nonlinear
+eﬀects which result; a small amplitude wave would slow while
+approaching the null but never actually reach it (as cA →0).
+After t ≈2.9τA, the original fast shock-waves begin to
+pass through the null, allowing wave energy to travel out from
+the centre. This energy is removed from the system before any
+waves reach the simulation boundaries, due to the presence of
+the damping layer. Meanwhile the hot cusp-jets continue to grow
+and spread out, leading to the formation of further magnetic
+shocks which, in combination with a local increase in gas pres-
+sure, act to compress the initial current sheet and wedge open the
+separatrices. This ultimately causes the magnetic ﬁeld to over-
+shoot its equilibrium conﬁguration, leading to the formation of
+a second current sheet, of opposite orientation in Jz and perpen-
+dicular to the original current sheet (i.e. from top-left to bottom
+right). The system then relaxes through a series of these current
+sheets, a process which is described in detail in Sect. 5.
+Increasing λi by a factor of 10 highlights several marked dif-
+ferences with evolution outlined above, both in the way in which
+the wave annulus interacts with the local ﬁeld and the ﬁeld re-
+sponse. As mentioned earlier, the fast wave is not only coupled
+to a shear component of velocity through the inclusion of the
+Hall term, but also now contains both whistler and ion-cyclotron
+waves. In particular, dispersive whistler waves allow informa-
+tion to travel faster than both the local Alfv´en and fast MA wave
+speeds. In the λi = 0.072 simulations, whistler waves are respon-
+sible for rapid oscillations of the magnetic ﬁeld near the origin,
+at a much earlier time than the λi = 0.0072 results (and also in
+MHD); these early oscillations are demonstrated in the contours
+4
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+Fig. 2: Contours of ξ⊥(top and middle) and vz (bottom) seen through snapshots in time, for λi = 0.0072 (top), and λi = 0.072
+(middle and bottom). Each case is overplotted with selected ﬂux surfaces (contours of Az - in white), the lines of Bx = 0 (dark
+green) and By = 0 (light green), and also the location of the null-point (indicated by a white star). (NB. while the ﬁrst two columns
+display (x, y) ∈[−6, 6], the ﬁnal column zooms in to illustrate a range of only (x, y) ∈[−2, 2] of the entire simulated range,
+(x, y) ∈[−20, 20]).
+of Bx = 0 and By = 0 in the third column of Fig. 2. As the oscil-
+lations grow in amplitude, multiple additional nulls are created
+in a small region close to the origin (of radius r ∼0.5). The
+additional nulls appear in pairs (containing both an X-type and
+O-type null); each new null pair is evidence of local magnetic
+reconnection. Every null point is located to sub-grid resolution
+accuracy using a linear interpolation algorithm (described in de-
+tail in Haynes & Parnell 2007), with the results catalogued in
+Table 1 according to phases during the simulations which dis-
+play similar properties (such as number of nulls, local current
+sheet orientation, etc.). As we are using interpolation, the pre-
+cise location of the nulls must be regarded as an approximation
+(with the error on the order of a fraction of the grid resolution).
+Many of the early phases containing multiple nulls
+(phases 2-4 of Table 1) are highly dynamic; the number and posi-
+tion of nulls varies rapidly, and phases (with the same number of
+nulls) are relatively short-lived. All null points which arise as a
+result of the dispersive whistler component exist only on or close
+to the lines y = x or y = −x, while any current sheets which form
+in the system also evolve rapidly and are short-lived. The forma-
+5
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+Fig. 3: Plots illustrating the jump conditions across the shocks in the system at t = 1.6τA for diﬀerent ion skin-depth values.
+Cuts through the shock wave front illustrate radial variations in Bx (dotted line), By (short dashes), gas pressure p (solid line) and
+temperature T (long dashes) for a radius r =
+p
+x2 + y2 ∈[0, 2
+√
+2] (p and T are enhanced by a factor of 50 to aid visual comparison).
+The positions of the cuts are indicated in the third column by the diagonal black lines, seen together with background contours of
+ξ⊥and selected contours of Az (in white).
+Fig. 4: Illustration of pulse evolution and X-point collapse in simulations where λi = 0.0072, following the formation of magnetic
+shocks; contours of ξ⊥are seen at various times and overlaid with selected contours of Az (in white).
+tion of the whistler-generated nulls may be seen in the ﬁrst row
+of Fig. 5, with subsequent rows illustrating the later evolution of
+nulls and currents in the system.
+It is interesting to note that the behaviour of the MHD/λi =
+0.0072 simulations is encapsulated by only 3 of the phases
+outlined in Table 1. In these cases, the initial conﬁguration
+(phase 1) is retained until the arrival of the fast-shocks at the
+null (phase 5c), after which the system relaxes through the os-
+cillatory reconnection phase (11). The additional phases which
+occur only in the λi = 0.072 case are generated by the whistler
+components (for phases 2-5c), and following the arrival of the
+pulse, by a combination of whistler and ion cyclotron (fast and
+shear) wave components (phases 5d-10).
+Using Table 1 and Fig. 5, the remaining evolution of the
+λi = 0.072 system may be described as follows; the arrival
+of two perpendicular magnetic shocks at the origin (originating
+6
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+Fig. 5: Contours of current, |J|, illustrating snapshots of the λi = 0.072 simulations, focussing closely on behaviour near the null,
+highlighting the presence and locations of multiple nulls, overlaid with selected contours of Az (in black). Each null is assigned a
+symbol and a colour based on the null position relative to the central null, which is indicated by a black star. Nulls above this along
+the contour of By = 0 would be seen in green and those below are shown in light blue. The distance along the By = 0 line is indicated
+by the symbol - a snapshot containing 7 nulls would thus display, from left to right, × + △∗□+ ×.
+7
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+Table 1: Conﬁguration of Nulls
+Phase
+Nulls
+X’s
+O’s
+Central
+Time
+C-S
+(X+O)
+Null
+Orientation
+1
+1
+1
+0
+X
+<2.3
+n/a
+2
+5
+3
+2
+X
+2.3
+/
+3
+7
+4
+3
+O
+2.4
+\/\
+4
+5
+3
+2
+X
+2.5
+\
+5a
+5
+3
+2
+X
+2.60
+\
+5b
+1
+1
+0
+X
+2.61-2.64
+\
+5c
+1
+1
+0
+X
+2.65-2.66
+/
+5d
+3
+2
+1
+X†
+2.67
+/
+5e
+5
+3
+2
+X
+2.68
+/
+6
+3
+2
+1
+O
+2.69-3.4
+/
+7
+7
+4
+3
+O
+3.5-3.6
+/
+8
+5
+3
+2
+O†
+3.7
+/
+9
+7
+4
+3
+O
+3.8
+/
+10
+3
+2
+1
+O
+3.9-4.5
+/
+11
+1
+1
+0
+X
+>4.6
+∗
+Notes. Summary of the conﬁguration of null-points in the λi = 0.072
+simulations, broken down into phases which display similar properties.
+In each phase, the number of nulls in the system and their type are given,
+along with the central null type, the time over which the phase occurs
+and the orientation of any local current sheets (/ infers a current sheet
+oriented along the line y = x, and \ along the line y = −x). [NB. †
+denotes a null asymmetry - the “central null” refers to the null closest to
+the origin in these instances; ∗denotes that the current sheet orientation
+alternates periodically via oscillatory reconnection].
+from the upper-left and lower-right quadrants) halts the rapid os-
+cillation of the ﬁeld in the local vicinity. This is illustrated in
+phase 5b of Table 1, highlighting that the shock fronts cause all
+additional null pairs to recombine, leaving a single X-type null
+at the origin. The arrival of these shock fronts at the remaining
+null, between 2.64τA < t < 2.65τA, reverses the orientation of
+the currents generated by earlier whistler oscillations (seen in the
+second row of Fig. 5). The remaining shock waves then continue
+to pass through the origin and each other, forming a relatively
+stable current sheet oriented along the line y = x (as with the
+previous MHD/λi = 0.0072 simulations). Unlike the previous
+cases, multiple null pairs are then created, at a range of loca-
+tions which all lie along the current sheet, up to a maximum of
+6 additional nulls at any one time. At t ≈2.69τA (phase 6 of
+Table 1), the appearance of a null pair close to the origin causes
+the existing X-type null to be displaced from the origin, with a
+new O-type null-point taking its place at the centre. The central
+null remains as O-type until t ≈4.5τA. Islands of current form
+around the O-type nulls in the system, and, in particular, at this
+long-lived central O-type null (demonstrated by the ﬁnal row of
+Fig. 5).
+Phase 11 of Table 1 marks destruction of the additional
+null pairs, leaving a single X-type null at the origin. This coin-
+cides with the arrival of the second (slower) pair of shock waves
+from the upper-right and lower-left quadrants (the formation of
+which may be seen in the second rows of Figs. 2 and 3). These
+Fig. 6: Comparison of the time evolution of the out-of-plane cur-
+rent, Jz, at the central null. The black line indicates the value of
+Jz for the central null in the λi = 0.072 simulations, overlaid with
+the λi = 0.0072 results (in red) and the MHD results (in blue).
+The insert displays the behaviour of all 3 cases at later times but
+over a much smaller range of Jz in the y-axis).
+shocks arrive much later than the initial shocks which cause
+the initial X-point collapse (due to the wave-speed asymmetry
+discussed earlier), and cause any remaining additional nulls to
+merge. At this point the system returns to the original conﬁgura-
+tion; a single X-type null-point at the origin about which forms
+a series of oppositely oriented current sheets, as with previous
+MHD/λi = 0.0072 cases.
+5. Oscillatory relaxation
+Both in the MHD and Hall MHD simulations, the majority of the
+initial transient wave features have left the system by t ≈10τA,
+and no longer disturb the null. At this point, the perturbed ﬁeld
+begins to evolve back to a force-balanced state through a series
+of oppositely oriented current sheets, reconnecting magnetic ﬂux
+at the single X-type null-point as it relaxes (see e.g. Craig &
+McClymont 1991; McLaughlin et al. 2009).
+In the MHD/λi = 0.0072 investigations, only a single null
+is ever present, located at the origin, where no initial current
+density is recorded prior to the arrival of the fast wave (at ap-
+proximately ∼2.9τA). Threlfall et al. (2011) showed that the
+dispersion relation derived for the long wavelength Hall MHD
+regime yields a modiﬁed form of the MHD dispersion relation.
+In this limit, the whistler and Alfv´en speeds are well matched,
+but moving to the short wavelength Hall MHD limit rapidly in-
+creases the whistler speed in comparison to the Alfv´en speed.
+Thus the MHD/λi = 0.0072 simulations begin to destabilise the
+magnetic ﬁeld at the origin at approximately the same time (as
+seen in Fig. 6) but this destabilisation occurs much earlier in
+simulations with λi = 0.072.
+The arrival of the fast-wave at the null (seen in Fig. 4 for
+the case where λi = 0.0072) forms a strong current sheet at the
+origin. This is seen as the deep initial minima in the blue and
+red curves of Fig. 6. This current sheet is then destabilised both
+by the remaining fast-wave exiting the system, and the “wedg-
+ing open” of the magnetic ﬁeld by the cusp jets described ear-
+lier (and studied in detail by McLaughlin et al. 2009). The pre-
+8
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+ferred direction for the generation of a current sheet (noted by
+McLaughlin et al. 2009) results from the orientation of the ini-
+tial current sheet (formed by the arrival of the fast shocks). This
+orientation also determines in which quadrants plasma pressure
+is increased; the fast/perpendicular shocks compress and heat
+plasma, particularly to the left and right of the current sheet. The
+plasma pressure enhancement which results then exerts a force
+to open the compressed X-point quadrants, and return the system
+to equilibrium. The ﬁrst peak of the MHD/λi = 0.0072 curves in
+Fig. 6 signals the formation of a second current sheet, of op-
+posite orientation, generated by the ﬁeld overshooting its initial
+equilibrium conﬁguration. While minor cusp jets are also ob-
+served during this phase (once again causing the magnetic ﬁeld
+to widen), they are seen to be much weaker and are not observed
+in any further oscillation cycles; hence they do not play an es-
+sential role in the subsequent oscillatory process.
+The oscillatory nature of the experiment (at stages where the
+cusp jets are no longer seen) is generated by a competition of
+Lorentz and gas pressure forces, each in turn restoring an over-
+shoot of the equilibrium conﬁguration brought on by the other. A
+simpliﬁed description of this competition of forces may be seen
+in Fig. 7. Of the Lorentz force components, magnetic pressure
+dominates in these experiments (magnetic tension aids the com-
+pression of magnetic ﬁeld lines in the compressed quadrants of
+the X-point as the current sheet forms). As each successive over-
+shoot is smaller than the last, the system is ultimately able to
+relax.
+We also present supporting evidence for this competition of
+forces, in the form of snapshots of the local current conﬁguration
+near the null (Fig. 8) and a summary of the forces and velocity
+ﬂow in a cut through one of the separatrices (Figs. 9a and 9b re-
+spectively), sampled at the same time. Beginning at t = 19.7τA,
+the chosen cycle begins with Lorentz and gas pressure forces
+approximately balanced and a strongly negative plasma veloc-
+ity (Fig. 9 - solid lines), while Fig. 8 shows that the plasma is
+close to its original conﬁguration (and that a previous strong
+positive Jz current sheet at the origin is diminishing as the ﬁeld
+returns towards equilibrium). A large plasma velocity (acting
+downward along the chosen cut) generates inertia, which drags
+ﬁeld lines past their equilibrium conﬁguration, compressing the
+plasma in the lower-left and upper-right quadrants. Subsequently
+a gas pressure response is generated in these quadrants. Along
+the cut, a strong gas pressure force acting upwards dominates
+the competition of forces at t = 21.1τA in Fig. 9a (dot-dashed
+lines). Concurrently, a current sheet (of negative Jz and of op-
+posite orientation to the ﬁrst) has formed in the corresponding
+panel of Fig. 8. The force imbalance slows the plasma; in Fig. 9b,
+the plasma velocity reaches its largest negative value and re-
+verses sign as it accelerates back towards an equilibrium state.
+Having once more returned to a near-equilibrium ﬁeld conﬁgura-
+tion (at t = 24.4τA), Fig. 9a (dashed lines) shows Lorentz and gas
+pressure forces are near-balanced, but the large upward velocity
+in 9b now carries plasma past equilibrium in the opposite di-
+rection (compressing the upper-left and lower-right quadrants).
+Note that the velocity seen here is approximately at maximum
+for this particular phase of the cycle, but is much smaller than the
+equivalent maximum downward velocity generated earlier; each
+successive peak is smaller than the last as each overshoot grad-
+ually reduces in size as the system relaxes. In the ﬁnal snapshot
+(at t = 26.7τA), Fig. 8 shows the formation of a positive Jz cur-
+rent sheet near the origin, while the plasma velocity has begun to
+reduce (Fig. 9b, dotted lines). The reduction in plasma velocity
+is caused by a second force imbalance (where forces along the
+cut are now dominated by contributions from the Lorentz force,
+acting downward in 9a). Plasma velocity continues to reduce and
+the forces return to balance once more; with the plasma returning
+towards its equilibrium conﬁguration the cycle repeats.
+6. Nature of reconnection
+The reconnection which takes place in our system may be
+broadly grouped into two categories, associated with either the
+initial X-point collapse or the later oscillatory relaxation. While
+the oscillatory reconnection process is very similar in all 3 ex-
+periments, the initial X-point collapse diﬀers greatly as the in-
+ﬂuence of the Hall term increases.
+For the λi = 0.0072/MHD benchmark simulations, the wave
+annulus reaches the null at approximately t ∼2.8τA, causing
+the initial departure from zero of Jz at the null, plotted in Fig. 6
+(red and blue lines), and thus marking the onset of reconnection.
+Following this, the reconnection associated with the initial X-
+point collapse follows the description given in McLaughlin et al.
+(2009). The initial current sheet (aligned with the line y = x) is
+“wedged open” by the formation of cusp jets, forming a second
+current sheet perpendicular to the ﬁrst. This second current sheet
+(aligned with the line y = −x) is maintained until the oscillatory
+reconnection phase (discussed earlier and below) starts at around
+t ∼10τA. In simulations with λi = 0.072, the onset of reconnec-
+tion occurs much earlier, when a rapid oscillation of the ﬁeld at
+the origin (due to the whistler wave component) creates multi-
+ple X-type and O-type null-points, which by their very existence
+provide evidence of local magnetic reconnection. In Fig. 10a, we
+show how the number of nulls and the local current at each null
+varies in both Hall MHD experiments. The arrival of perpen-
+dicular magnetic shocks causes the multiple nulls to recombine,
+leaving a single X-type null about which a single large current
+sheet forms. Subsequently, further nulls are generated within this
+current sheet, which is ultimately collapsed by a second pair of
+shocks; these shocks cause the nulls to recombine once more,
+after which only a single null remains at the centre, with the os-
+cillatory phase once more setting in at around t ∼10τA.
+During the initial X-point collapse phase, large currents
+(both perpendicular and planar) are often associated with many
+of the nulls in the system (regardless of type) as indicated by
+Figs. 10b and 10c. These currents provide insight into the local
+reconnection rate at each null. It is clear from 10b and 10c that
+9
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+Fig. 7: Cartoon illustrating the cycle of forces generated during the oscillatory reconnection phase (for key to symbols, see legend).
+Fig. 8: Illustration of current sheets generated during oscillatory phase. Each snapshot displays normalised perpendicular current,
+Jz, in a region near the X-point, x, y ∈[−0.5, 0.5], at selected times during the oscillatory cycle (chosen for comparison with Fig. 9,
+which displays quantities along a cut indicated in each frame by a dashed black line).
+the currents at the nulls during the λi = 0.072 case are typically
+larger that those during the λi = 0.0072/MHD cases, indicating
+that the rate of reconnection increases with the value of λi, as
+one might expect.
+How each local rate contributes to a global rate (for a system
+containing multiple X-type and O-type nulls which continually
+change in number and position) is unknown. In 2D, reconnec-
+tion can only occur at X-points, while annihilation/dissipation
+and generation of magnetic ﬂux is associated only with O-points
+(pp. 41, Birn & Priest 2007). Annihilation and generation of
+magnetic ﬂux are distinct from reconnection since they involve
+a loss or a gain of magnetic ﬂux rather than a transfer of ﬂux
+between topologically distinct regions. In the λi = 0.072 simula-
+tions, where there are multiple nulls, reconnected ﬂux from one
+10
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+Fig. 9: y-components of (a) a summation of Lorentz and gas
+pressure forces and (b) velocity in a cut along the y-axis at
+selected times; the timing of each cut is chosen for compari-
+son with the local current conﬁgurations demonstrated in Fig. 8
+(where the location of each cut is also illustrated by a dashed
+black line). One half of the oscillatory cycle is indicated in red,
+with the remaining half in black (at times indicated in the leg-
+end).
+X-point may reconnect again at another X-point, repeating this
+process several times. It is still an open question as to whether re-
+peated reconnection should or should not be taken into account
+when determining an overall (i.e. global) rate of reconnection.
+Additionally, ﬂux pile-up may occur at O-points, which again
+may or may not aﬀect a global reconnection rate.
+Calculation of a global reconnection rate through a summa-
+tion of rates at individual X-points (for example) would be in-
+suﬃcient to describe all the reconnection which takes place. The
+sign of the reconnection rate (seen through the orientation of the
+local electric ﬁeld) at each X-point varies signiﬁcantly (accord-
+ing to Fig. 10); nulls with similar rates which are opposed in sign
+would cancel if all rates were simply summed, obscuring the true
+amount of reconnection which has taken place. The variation of
+the position of each null also calls into question whether a sin-
+gle (global) diﬀusion region or several smaller diﬀusion regions
+are present in Hall MHD reconnective regimes. Finally, in some
+Fig. 10: Figure (a) indicates the number of nulls present in the
+Hall MHD simulations. The remaining ﬁgures illustrate the evo-
+lution of current at each null; the values of (b) Jz and (c)
+|J| −|Jz| at an individual null are shown, comparing the single
+null case (λi = 0.0072, in red) with values at every null in the
+λi = 0.072 simulations. When multiple nulls are present, each
+null is uniquely identiﬁed by a combination of colour and sym-
+bol, identical to that outlined in Fig. 5 [e.g. 7 nulls, ordered ac-
+cording to location along the By = 0 line, would be identiﬁed by
+× + △∗□+ ×].
+cases, a signiﬁcant fraction of the total current at a null may be
+located in one or both of the planar components, Jx and Jy, as
+seen in Fig. 10c. How these currents aﬀect reconnection in a 2D
+model requires further consideration.
+The second category of reconnection, as already mentioned,
+is oscillatory and involves just a single null in all experiments
+considered. Despite the diﬀerent skin depths in the experiments,
+both MHD and Hall MHD simulations yield nearly identical fre-
+quencies of current oscillation at the central null (albeit with a
+phase-diﬀerence in the λi = 0.072 case, as seen in Fig. 6).
+Craig & McClymont (1991) studied the oscillatory relax-
+ation of a 2D X-point ﬁeld following a perturbation with well de-
+ﬁned azimuthal modes. They obtained analytical solutions which
+included an expression for the oscillation period of the lowest
+frequency, associated with the most slowly decaying eigenfunc-
+tion of their system which relaxes through oscillatory reconnec-
+11
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+tion. This analytical treatment, when performed for a purely az-
+imuthal (i.e. m = 0), fundamental radial mode (n = 0), yields
+a period of oscillation for topological reconnection, which de-
+pends only on the Lundquist number:
+τn=0
+osc = 2 ln S,
+where τn=0
+osc is in units of Alfv´en times, τA = l0/cA. Substituting
+the Lundquist number for our experiment (S = 2000) yields an
+oscillation period τn=0
+osc ≈15.2, which is signiﬁcantly higher than
+the period of oscillation seen from the oscillation of current at
+the null in Fig. 6, which we estimate to be τosc ≈10.
+The smaller oscillation time in our simulations compared to
+the value given by the above equation may be explained by the
+fact that the latter applies only to the lowest frequency radial
+eigenmode of the system considered by Craig & McClymont
+(1991). In contrast, the fast wave modelled in our simulation
+contains many radial eigenmodes, with a range of frequencies
+higher than that of the fundamental mode. Furthermore we em-
+ploy damping layers and a non-circular boundary that diﬀers
+from that of the system considered by Craig & McClymont.
+Finally, nonlinear eﬀects in our simulations cause the annulus
+to become azimuthally asymmetric, introducing coupling to ﬁ-
+nite m modes, for which Craig & McClymont did not compute
+any eigenfunctions. It is therefore to be expected that while the
+overall oscillation period we obtain is of the same order as the
+fundamental mode period found by Craig & McClymont (1991),
+the presence of higher frequency radial eigenmodes, nonlinear
+eﬀects and the choice of boundary conditions means that the pe-
+riod in the simulation diﬀers from that obtained by these authors.
+7. Discussion and conclusions
+Simulations of an X-type null point disturbed from equilibrium
+by an incident nonlinear fast wave annulus behave largely as de-
+scribed by McLaughlin et al. (2009), both in MHD and in Hall
+MHD simulations with a small ion skin depth value. Increasing
+the ion-skin depth by a factor of 10 shows signiﬁcant diﬀerences,
+both in the evolution of the initial annulus and the response of
+the local magnetic environment. The initial fast wave annulus
+rapidly deforms, coupling to a shear component which may only
+travel along magnetic ﬁeld lines. The oblique parts of the shock
+front seen in the MHD benchmark/λi = 0.0072 cases are no
+longer present, leaving most of the remaining fast wave concen-
+trated in four perpendicular shock fronts. The dispersive whistler
+waves cause the ﬁeld near the null to rapidly oscillate, even be-
+fore the arrival of the shock fronts. As the waves from diﬀer-
+ent quadrants arrive out of phase with one another, multiple null
+pairs are generated near the equilibrium X-point location, prior
+to the arrival of a pair of perpendicular magnetic shocks at the
+null. The initial shocks set up a current sheet containing an is-
+land of current surrounding an O-type null at the centre, with up
+to 6 additional nulls at either side. A second slower pair of per-
+pendicular shocks (arriving from the opposite quadrants to the
+ﬁrst) destabilise the current sheet, causing all additional nulls to
+recombine, leaving a single X-type null remaining at the origin.
+Following the initial X-point collapse, all simulations un-
+dergo oscillatory reconnection, through which the system is able
+to relax. Both in MHD and Hall MHD, plasma pressure is en-
+hanced at both ends of the initial current sheet, which exerts a
+force to open the magnetic ﬁeld lines in the compressed quad-
+rants, in an attempt to restore equilibrium. As the ﬁeld nears its
+original conﬁguration, both the gas pressure and Lorentz forces
+balance each other, but plasma inertia causes the ﬁeld to over-
+shoot, forming a second (perpendicular) current sheet. A Lorentz
+force response accelerates plasma back towards its equilibrium
+conﬁguration once more, and the cycle repeats; each additional
+overshoot is smaller than the last, and requires a smaller restora-
+tion force as the system returns to equilibrium.
+The simulation results presented in this paper indicate that
+two-dimensional X-point reconnection is rather more compli-
+cated in Hall MHD than in MHD. In the former case, many more
+magnetic nulls are created (albeit transiently) and the presence
+of whistler waves means that information can propagate more
+rapidly than in the MHD limit. Despite these signiﬁcant diﬀer-
+ences, it is striking that over long timescales both the rate of
+oscillatory reconnection and the damping rate of this oscillation
+are essentially invariant under changes in the normalised ion skin
+depth, λi (see Fig. 6). As noted in Sect. 2, for a given set of val-
+ues of B0, n0 and T0, increasing the value of λi is equivalent to
+reducing the normalising length scale l0 and hence the Alfv´en
+time t0 = l0/cA. Thus, if we also ﬁx the dimensionless resistivity
+η, the absolute timescales of the reconnection process indicated
+by Fig. 6 become progressively shorter as the normalised ion
+skin depth is increased. It should be noted that holding η ﬁxed,
+as we have done in these simulations, while reducing l0 also im-
+plies a reduction in the absolute resistivity, η0 (or, equivalently,
+a smaller enhancement of the resistivity above the collisional
+value). Thus, Fig. 6 reinforces the conclusion of previous authors
+(e.g. Birn et al. 2001) that the Hall term produces an enhanced
+rate of reconnection.
+Even for the highest value of λi used in the simulations
+(0.072), l0 is still more than an order of magnitude larger than
+δi, although for typical coronal parameters this is well below
+the spatial resolution of any measurements. Whether magnetic
+structures with sub-resolution macroscopic length scales of this
+order are actually present in the corona is unclear. If they are,
+Fig. 6 indicates that the timescale of reconnection within these
+structures could be very rapid. For example, with B0 = 100 G,
+n0 = 1016m−3 and λi = 0.072, we ﬁnd that t0 ≃16µs. The
+damping time of the long timescale oscillation in Fig. 6 is then
+no more than 50t0 ≃1 ms. The most rapid ﬂuctuations reported
+in ﬂare hard X-ray emission occurred on timescales that were
+more than an order of magnitude longer than this 19098respon-
+seome of the most rapid ﬂuctuations have been observed in ﬂare
+hard X-ray emission, occurring on timescales that are more than
+an order of magnitude longer than this (Kiplinger et al. 1983;
+12
+
+J. W. Threlfall et al.: Nonlinear wave propagation and reconnection at magnetic X-points in the Hall MHD regime
+Dmitriev et al. 2006). Thus, taking into account the Hall term
+in the generalised Ohm’s law makes it possible to obtain recon-
+nection rates that are at least as rapid as those implied by ﬂare
+observations.
+Several extensions to this work merit further consideration.
+For example, introducing an initially non-zero plasma beta may
+signiﬁcantly alter the balance of forces in the oscillatory cy-
+cle, potentially aﬀecting the oscillation frequency and hence the
+rate of reconnection during the oscillatory phase. This would
+also introduce slow magnetoacoustic waves into the problem;
+in Hall MHD, the additional presence of coupled fast and shear
+Alfv´en wave motions would further complicate any identiﬁca-
+tion of speciﬁc wave modes. Altering the form of the initial
+disturbance (even simply in MHD) would alter the wave-speed
+asymmetry and hence aﬀect the arrival of the initial perpendic-
+ular shock-waves at the null. Finally, full 3D Hall MHD studies
+of separator/null-point reconnection (for example) would allow
+a more comprehensive comparison between the full vector forms
+of the magnetic vector potential, A, and current J. Such a com-
+parison may provide further insight into the inﬂuence of planar
+components of current (generated by the Hall term) on the re-
+connection rate.
+Acknowledgements. This work was part-funded by the RCUK Energy
+Programme under grant EP/I501045 and the United Kingdom Engineering and
+Physical Sciences Research Council through a CASE studentship. JT would like
+to thank T. Neukirch (University of St Andrews) and J. McLaughlin (University
+of Northumbria) for helpful discussions. IDM acknowledges support of a Royal
+Society University Research Fellowship.
+References
+Antiochos, S. K., DeVore, C. R., & Klimchuk, J. A. 1999, ApJ, 510, 485
+Arber, T. D., Longbottom, A. W., Gerrard, C. L., & Milne, A. M. 2001, Journal
+of Computational Physics, 171, 151
+Birn, J., Drake, J. F., Shay, M. A., et al. 2001, J. Geophys. Res., 106, 3715
+Birn, J. & Priest, E. 2007, Reconnection of Magnetic Fields (New York:
+Cambridge University Press), 94–95
+Biskamp, D. 2000, Magnetic Reconnection in Plasmas (Cambridge University
+Press)
+Craig, I. J. D. & Litvinenko, Y. E. 2002, ApJ, 570, 387
+Craig, I. J. D. & Litvinenko, Y. E. 2008, A&A, 484, 847
+Craig, I. J. D. & McClymont, A. N. 1991, ApJ, 371, L41
+Craig, I. J. D. & McClymont, A. N. 1993, ApJ, 405, 207
+Craig, I. J. D. & Watson, P. G. 1992, ApJ, 393, 385
+Craig, I. J. D. & Watson, P. G. 2003, Sol. Phys., 214, 131
+De Moortel, I. 2005, Royal Society of London Philosophical Transactions Series
+A, 363, 2743
+De Moortel, I. & Nakariakov, V. M. 2012, Royal Society of London
+Philosophical Transactions Series A (submitted), arXiv:1202.1944 [astro-
+ph.SR]
+Dmitriev, P. B., Kudryavtsev, I. V., Lazutkov, V. P., et al. 2006, Solar System
+Research, 40, 142
+Dorelli, J. C. 2003, Physics of Plasmas, 10, 3309
+Dungey, J. 1953, Philosophical Magazine Series 7, 44, 725
+Fletcher, L., Hannah, I. G., Hudson, H. S., & Metcalf, T. R. 2007, ApJ, 656, 1187
+Hassam, A. B. 1992, ApJ, 399, 159
+Haynes, A. L. & Parnell, C. E. 2007, Physics of Plasmas, 14, 082107
+Hesse, M. & Schindler, K. 1988, J. Geophys. Res., 93, 5559
+Kiplinger, A. L., Dennis, B. R., Frost, K. J., Orwig, L. E., & Emslie, A. G. 1983,
+ApJ, 265, L99
+Longcope, D. W. & Parnell, C. E. 2009, Sol. Phys., 254, 51
+Masson, S., Aulanier, G., Pariat, E., & Klein, K.-L. 2012, Sol. Phys., 276, 199
+Masson, S., Pariat, E., Aulanier, G., & Schrijver, C. J. 2009, ApJ, 700, 559
+McClements, K. G., Thyagaraja, A., Ben Ayed, N., & Fletcher, L. 2004, ApJ,
+609, 423
+McLaughlin, J. A., De Moortel, I., Hood, A. W., & Brady, C. S. 2009, A&A,
+493, 227
+McLaughlin, J. A. & Hood, A. W. 2004, A&A, 420, 1129
+McLaughlin, J. A. & Hood, A. W. 2005, A&A, 435, 313
+McLaughlin, J. A. & Hood, A. W. 2006, A&A, 459, 641
+McLaughlin, J. A., Hood, A. W., & de Moortel, I. 2011, Space Sci. Rev., 158,
+205
+Nakariakov, V. M. & Verwichte, E. 2005, Living Reviews in Solar Physics, 2, 3
+Ofman, L., Morrison, P. J., & Steinolfson, R. S. 1993, ApJ, 417, 748
+Pariat, E., Antiochos, S. K., & DeVore, C. R. 2009, ApJ, 691, 61
+Parker, E. N. 1957, J. Geophys. Res., 62, 509
+Priest, E. & Forbes, T. 2007, Magnetic Reconnection: MHD Theory and
+Applications (Cambridge University Press)
+Schindler, K., Hesse, M., & Birn, J. 1988, J. Geophys. Res., 93, 5547
+Senanayake, T. & Craig, I. J. D. 2006, A&A, 451, 1117
+Sweet, P. A. 1958, in IAU Symposium, Vol. 6, Electromagnetic Phenomena in
+Cosmical Physics, ed. B. Lehnert, 123
+Threlfall, J., McClements, K. G., & de Moortel, I. 2011, A&A, 525, A155
+13

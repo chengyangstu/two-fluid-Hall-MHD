@@ -1,0 +1,2192 @@
+Accepted to Plasma Physics and Controlled Fusion, October 28, 2016
+Local properties of magnetic reconnection in nonlinear resistive- and
+extended-magnetohydrodynamic toroidal simulations of the sawtooth crash
+M. T. Beidler and P. A. Cassak
+Department of Physics and Astronomy, West Virginia University, Morgantown, WV 26506, USA∗
+S. C. Jardin and N. M. Ferraro
+Princeton Plasma Physics Laboratory, Princeton, NJ 08543, USA
+We diagnose local properties of magnetic reconnection during a sawtooth crash employing the
+three-dimensional toroidal, extended-magnetohydrodynamic (MHD) code M3D-C1. To do so, we
+sample simulation data in the plane in which reconnection occurs, the plane perpendicular to the
+helical (m, n) = (1, 1) mode at the q = 1 surface, where m and n are the poloidal and toroidal mode
+numbers and q is the safety factor. We study the nonlinear evolution of a particular test equilibrium
+in a non-reduced ﬁeld representation using both resistive-MHD and extended-MHD models. We ﬁnd
+growth rates for the extended-MHD reconnection process exhibit a nonlinear acceleration and greatly
+exceed that of the resistive-MHD model, as is expected from previous experimental, theoretical, and
+computational work. We compare the properties of reconnection in the two simulations, revealing
+the reconnecting current sheets are locally diﬀerent in the two models and we present the ﬁrst
+observation of the quadrupole out-of-plane Hall magnetic ﬁeld that appears during extended-MHD
+reconnection in a 3D toroidal simulation (but not in resistive-MHD). We also explore the dependence
+on toroidal angle of the properties of reconnection as viewed in the plane perpendicular to the helical
+magnetic ﬁeld, ﬁnding qualitative and quantitative eﬀects due to changes in the symmetry of the
+reconnection process. This study is potentially important for a wide range of magnetically conﬁned
+fusion applications, from conﬁrming simulations with extended-MHD eﬀects are suﬃciently resolved
+to describe reconnection, to quantifying local reconnection rates for purposes of understanding and
+predicting transport, not only at the q = 1 rational surface for sawteeth, but also at higher order
+rational surfaces that play a role in disruptions and edge-conﬁnement degradation.
+PACS numbers: 52.55.Fa,52.35.Vd,52.65.Kj
+Keywords: Fusion, Magnetic Reconnection, Sawteeth
+I.
+INTRODUCTION
+During a cycle of the sawtooth crash, the temperature
+of the core plasma in a tokamak slowly rises (for a few
+ms) followed by a rapid crash down (10s-100s of µs). The
+edge temperature concomitantly undergoes a slow decline
+followed by a rapid increase. It was discovered in 1974 in
+the Symmetric Tokamak (ST) [1] and shortly thereafter a
+qualitative explanation appeared involving the change of
+magnetic topology during magnetic reconnection at the
+q = 1 rational surface [2]. The Kadomtsev picture is gen-
+erally accepted although it does not explain the trigger
+mechanism, crash time, or measured evolution of q0, and
+other explanations have also been put forward [3]. Saw-
+tooth phenomena need to be better understood in order
+to fully optimize ITER operation [4]. If natural sawteeth
+are deemed to be too deleterious, operational regimes ex-
+ist where smaller amplitude sawteeth can be triggered by
+RF [5], or eliminated entirely as in the “hybrid” regimes
+[6–8].
+There are many undesirable ramiﬁcations of sawteeth.
+Sawtooth events degrade conﬁnement of fusion alpha par-
+ticles generated in the core of the tokamak, limiting their
+ability to transfer their energy to the plasma. It was re-
+cently argued that fast-ion transport strongly depends on
+∗Beidler’s current aﬃliation: Department of Engineering Physics,
+University of Wisconsin, Madison, WI 53706, USA; Emails to:
+beidler@wisc.edu
+the crash time [9]. The sawtooth crash forms seed islands
+on higher-order rational surfaces, which can destabilize
+neoclassical tearing modes (NTMs) [10]. Because NTMs
+often lead to locked mode disruptions (e.g. [11]), saw-
+teeth are also responsible for triggering disruptions in
+some circumstances.
+Despite its importance, a predictive capability of saw-
+teeth and its eﬀects has been elusive.
+There remains
+no accepted model of the crash time. In early devices,
+crash times were consistent with the time it takes re-
+sistive (Sweet-Parker) reconnection to process all avail-
+able magnetic ﬂux [2], and early simulations [12, 13] were
+largely consistent with this picture. However, the crash
+time was much quicker than the prediction for sawteeth
+at the Joint European Torus (JET) [14] and in the Toka-
+mak Test Fusion Reactor (TFTR) [15]. It has been pro-
+posed that this discrepancy is due to collisionless recon-
+nection being faster than collisional reconnection in the
+hotter devices [16]. However, predicting the crash time
+is more complicated than only including collisionless re-
+connection eﬀects, primarily because reconnection does
+not always continue long enough to process all available
+magnetic ﬂux in the core, i.e., reconnection can be in-
+complete [15]. What causes reconnection to be incom-
+plete and what sets the time scale at which reconnection
+ceases remain open questions. The limited understand-
+ing of incomplete reconnection impacts tokamak trans-
+port modeling. Low-dimensional transport models cap-
+ture the sawtooth period and amplitude [17], but the
+fraction of ﬂux reconnected is an input parameter rather
+than self-consistently calculated (e.g., [18]).
+
+2
+Models for incomplete reconnection often discuss lo-
+cal physics at the reconnection site [19–23]. Therefore,
+achieving the long-term goal of understanding how re-
+connection occurs in toroidal fusion devices and using
+this to develop ﬁrst-principles predictions of tokamak
+plasma evolution requires an ability to study local aspects
+of reconnection in toroidal geometry. Since collisionless
+physics is a candidate for describing the reconnection
+rate, toroidal extended-MHD or kinetic codes are needed
+to properly analyze the magnetic reconnection. Gener-
+ally, extended-MHD models retain physics past that of
+resistive-MHD, including two-ﬂuid eﬀects and more phys-
+ical closures for conductivity and viscosity. It has been
+only recently that extended-MHD terms have been inte-
+grated into ﬂuid codes that employ a toroidal geometry.
+There are previous studies employing extended-MHD
+physics in both cylindrical and toroidal 3D geometries.
+Incomplete reconnection was reported in toroidal simu-
+lations with extended-MHD physics [24] using the M3D
+code [25] with ion diamagnetic terms included. While it
+was not concluded whether the incomplete reconnection
+was due to the inclusion of extended-MHD eﬀects or a
+consequence of the lesser energy of the second crash, it is
+the ﬁrst simulation showing incomplete reconnection in a
+3D toroidal geometry. More recent sawtooth simulations
+have also been run with extended-MHD physics [26, 27]
+using the TM1 code [28]. These simulations employ a
+large aspect ratio approximation (periodic cylinder) with
+a circular cross-section and a constant equilibrium den-
+sity proﬁle with cold ions and anomalous electron vis-
+cosity. With these assumptions, they showed that using
+typical parameters from the Axially Symmetric Divertor
+EXperiment-Upgrade (ASDEX-U) tokamak, simulations
+gave sawtooth crash time scales that were comparable to
+experimental observations, although the trigger mecha-
+nism, sawtooth period, and comparison of the change in
+q0 with experiments were not addressed.
+A complication in studying the reconnection process in
+toroidal numerical simulations is that it is easiest to an-
+alyze the simulation data in poloidal planes, while it has
+been known since early work [e.g. [2]] that the plane in
+which reconnection occurs is normal to the helical mag-
+netic ﬁeld, which is not the same as the toroidal plane.
+We note that in a general 3D magnetic geometry recon-
+nection is not conﬁned to a plane [e.g. [29]], but in the
+limit of a strong helical magnetic “guide ﬁeld”, a “re-
+connection plane” can be deﬁned in the vicinity of the
+reconnection site. We are unaware of any studies of 3D
+toroidal simulations to ﬁnd the appropriate plane of re-
+connection. Developing a set of tools to do so and per-
+forming a preliminary analysis is a major goal of this
+study.
+A second goal of the present study is repeating this
+process at multiple toroidal locations to study the depen-
+dence on toroidal angle of sawtooth phenomena. Viewing
+data from a single toroidal angle misses out on important
+information on how the mode evolves. It was not until
+the WT-3 tokamak in the early 2000s that multiple soft
+X-ray detector arrays were placed around the device at
+diﬀerent toroidal angles [30]. On WT-3, detector arrays
+were positioned at φ = 0◦, 90◦, and 202.5◦.
+For the WT-3 discharges, the plasma current was di-
+rected opposite to the toroidal magnetic ﬁeld, giving the
+reconnection mode a counter-clockwise helical polarity.
+With a tangential neutral beam causing rotation paral-
+lel to the toroidal ﬁeld, the mode was observed to rotate
+in the clockwise poloidal direction. It was also observed
+that the hot core was shifted toward the outboard side for
+all toroidal locations. Furthermore, it was apparent that
+the poloidal location of reconnection aﬀects the structure
+of the electron temperature. When the hot core was oﬀ-
+set towards the outboard side, the electron temperature
+proﬁle elongated along the q = 1 surface.
+In this study, we develop an approach to ﬁnd the recon-
+nection plane in 3D toroidal simulations. To view data
+local to the reconnection site, we employ a novel method
+to sample data between computational grid points in the
+toroidal direction.
+The methodology should be eﬀec-
+tive across codes and numerical models, including kinetic
+modeling. We use this approach both on resistive- and
+extended-MHD physics models, using the M3D-C1 code.
+In doing so, we are able to make direct comparisons of
+the local reconnection physics in both systems. We ﬁnd,
+as expected, that the collisional reconnection process is
+much slower than reconnection in well-resolved extended-
+MHD. We ﬁnd the contributions to Ohm’s law in the
+reconnection plane and compare the measured reconnec-
+tion rates to theoretical predictions. We also present the
+ﬁrst known identiﬁcation of the quadrupole out-of-plane
+Hall magnetic ﬁeld that is an indicator of two-ﬂuid eﬀects
+in 3D toroidal simulations. We then compare properties
+of the reconnection at diﬀerent toroidal angles.
+In Sec. II, we describe the simulations in this study.
+In Sec. III, we examine the simulations holistically using
+data from the poloidal plane. Then, we describe the ap-
+proach to ﬁnding the reconnection plane in Sec. IV A. We
+discuss local properties of reconnection in the reconnec-
+tion plane in Sec. IV. Sec. V discusses how reconnection
+varies at diﬀerent toroidal locations. We conclude and
+discuss applications in Sec. VI.
+II.
+NUMERICAL SIMULATION SETUP
+A.
+The M3D-C1 Code
+We use the M3D-C1 code [31] to evolve the extended-
+MHD equations for the density n, velocity v, ion and
+
+3
+electron pressure pi and pe, and magnetic ﬁeld B:
+∂n
+∂t + ∇· (nv) = 0,
+(1)
+nMi
+∂v
+∂t + v · ∇v
+
++ ∇p = J × B −∇· ΠGV −∇· Πµ,
+(2)
+3
+2
+∂pe
+∂t + ∇· (pev)
+
+= −pe∇· v + ηJ2 −∇· qe,
+(3)
+3
+2
+∂pi
+∂t + ∇· (piv)
+
+= −pi∇· v + Πµ : ∇v −∇· qi,
+(4)
+∂B
+∂t = −∇× E.
+(5)
+In these equations, J = ∇× B/µ0 is the current density,
+the electric ﬁeld is given by the generalized Ohm’s law as
+E + v × B = ηJ + 1
+ne (J × B −∇pe),
+(6)
+and Mi is the ion mass.
+The Braginskii gyroviscosity
+pressure tensor ΠGV [32] can be included in Eq. (2). A
+generic isotropic viscous term can be included, given by
+Πµ = −µ
+ ∇v + ∇vT 
+, where µ is an arbitrary scalar
+ﬁeld and ∇vT is the matrix transpose of ∇v. The resis-
+tivity η has a Spitzer form given by η = ηr + η0/T 3/2
+e
+.
+For the pressure evolution, the ratio of speciﬁc heats for
+both species is set to 5/3, and electron and ion heat
+ﬂuxes are given by qe,i = −κ0∇Te,i −κ∥bb·∇Te,i, where
+κ0 = κisop/T 3/2
+e
+describes isotropic conduction and κ∥is
+for parallel conduction, where κiso is a constant. Elec-
+trons are assumed massless for simplicity. The code can
+simulate diﬀerent physical models: ideal-MHD for the
+terms in black, resistive-MHD when the red terms are
+used as well, and extended-MHD including all the terms.
+For representing the variables spatially, M3D-C1 has
+3D ﬁnite elements with continuous ﬁrst derivatives be-
+tween elements.
+In the poloidal plane, M3D-C1 uses
+a reduced-quintic (fourth order polynomial with addi-
+tional constrained coeﬃcients) representation for the so-
+lution on an unstructured triangular grid.
+Toroidally,
+it has a Hermite cubic polynomial representation. This
+gives the elements a triangular prism shape. If the av-
+erage length of an element edge in the poloidal plane
+is ∆x, the reduced-quintic representation has an error
+on the order of (∆x)5 (see Ref. [33]). For the simula-
+tions included in this study, we employ a semi-implicit
+time stepping method to evolve the model equations; im-
+plicit schemes allow for time steps much larger than the
+Courant-Friedrichs-Lewy condition constraining the time
+step in explicit methods.
+M3D-C1 uses a cylindrical coordinate system (R, φ, Z).
+The positive direction of φ is counter-clockwise looking
+down from the top of the torus. For a plasma current
+parallel to the toroidal magnetic ﬁeld in the positive φ
+direction, the resulting helical ﬁeld has a clockwise he-
+licity relative to the φ-direction. R is the major radial
+direction from the azimuthal axis, and Z is the vertical
+direction.
+The boundary conditions employed in the 3D toroidal
+simulations are as follows.
+The ﬂow v has “no-slip”
+boundary conditions (the ﬂow tangential to the bound-
+aries is held constant). There is no ﬂow into the bound-
+ary, i.e., ˆn·v = 0 where ˆn is the unit vector normal to the
+boundary. The normal and toroidal magnetic ﬁelds have
+Dirichlet boundary conditions ˆn · B = ˆφ · B = constant,
+and the poloidal magnetic ﬁeld Bθ has Neumann bound-
+ary conditions ˆn · ∇Bθ = constant. The plasma parame-
+ters n, p, and T are all held constant on the boundary.
+M3D-C1 represents the velocity v, magnetic vector po-
+tential A, and magnetic ﬁeld B in terms of scalar vari-
+ables Φ, ω, χ, ψ, f as [34]:
+v = R∇Φ × ˆφ + Rω ˆφ + 1
+R2 ∇⊥χ,
+(7)
+A = Rˆφ × ∇f + ψ
+R
+ˆφ −F0 ln R ˆZ,
+(8)
+B ≡∇× A = 1
+R∇ψ × ˆφ −∇⊥
+∂f
+∂φ + F
+R
+ˆφ,
+(9)
+where ∇⊥is the del operator in the R−Z plane. For the
+representation of the velocity, Φ is the stream-function
+describing incompressible ﬂow in the poloidal plane, ω
+is the toroidal angular frequency, and χ captures the
+eﬀect of compressible ﬂow in the poloidal plane.
+This
+form allows the numerical method evolving the scalar
+variables to approximately separate the physics of the
+Alfv´en and fast and slow magnetosonic waves for the
+toroidal system with a strong Bφ ﬁeld [35]. For the mag-
+netic ﬁeld representation, ψ is the magnetic ﬂux function
+describing the magnetic ﬁeld in the poloidal plane and
+F = F0 + R2∇· ∇⊥f is an auxiliary variable.
+F0 is
+a constant proportional to the current in the (modeled)
+toroidal ﬁeld magnets. The gauge condition implied by
+this representation is ∇⊥· (R−2A) = 0.
+The
+system
+of
+units
+for
+all
+quantities
+appear-
+ing hereafter is derived from a characteristic length,
+density,
+and
+magnetic
+ﬁeld
+of
+Lnorm
+=
+1
+m,
+nnorm
+=
+1020 particles/m3,
+and Bnorm
+=
+1 T.
+This sets the normalization for velocity to vnorm =
+Bnorm/(µ0nnormMi)1/2 = 2.2 × 106 m/s, the Alfv´en
+speed
+based
+oﬀ
+the
+characteristic
+magnetic
+ﬁeld
+and
+density
+for
+hydrogen,
+the
+time
+to
+tnorm
+=
+Lnorm/vnorm
+=
+0.46 µs, the pressure to pnorm
+=
+B2
+norm/2µ0 = 3.9 atm, the electric ﬁeld to Enorm =
+vnormBnorm = 2.2 × 106 V/m, and the current den-
+sity to Jnorm
+=
+Bnorm/µ0Lnorm
+=
+0.80 MA/m2
+(implying
+the
+current
+is
+normalized
+to
+Inorm
+=
+0.80 MA. The resistivity is normalized to ηnorm
+=
+µ0Lnormvnorm = 2.8Ohm · m, the viscosity to µnorm =
+nnormMiLnormvnorm
+=
+0.37kg/m · s,
+and
+conduc-
+tivity to κnorm
+=
+kBnnormLnormvnorm
+=
+2.2 ×
+1026W/m · deg(K), where kB is the Boltzmann constant.
+The blue terms in Eqs. (2) and (6) are scaled by a con-
+stant db = di/Lnorm, where di is the ion inertial scale
+c/ωpi.
+This allows the user to specify the strength of
+two-ﬂuid eﬀects.
+
+4
+2.5
+3.0
+3.5
+4.0
+R(m)
+0.0
+0.5
+1.0
+1.5
+Bφ
+Jφ
+n
+100*p
+q=1
+FIG. 1. Equilibrium proﬁles of normalized system parameters
+through the midplane at Z = 0, which are used throughout
+all simulations.
+TABLE I. Parameters used to solve the Grad-Shafranov equa-
+tion, which determine the equilibrium used to initialize the
+simulations with the M3D-C1 code.
+Parameter Ip
+q0 B0
+p0
+p0,i
+pedge
+n0 expn
+Value
+0.8 0.6 1.0 0.006 0.003 0.0003 1.0
+0.2
+B.
+Initialization and Optimization
+The simulations are initialized using an axisymmetric
+equilibrium determined from solving the Grad-Shafranov
+equation [36, 37] using a module included in M3D-C1.
+The solver assumes the magnetic ﬁeld and gas pressure
+proﬁles have a polynomial form, and a relaxation tech-
+nique is employed to approach the exact solution. Input
+parameters include the toroidal plasma current Ip, the
+central safety factor q0 and toroidal magnetic ﬁeld B0,
+the central total and ion pressures p0 and p0,i, the total
+edge pressure pedge, central density n0, and a variable
+named ‘expn’ to set the density proﬁle from the pres-
+sure proﬁle as n = pexpn. Values used to generate the
+equilibrium for this study are given in Table I and pro-
+ﬁles through the midplane at Z = 0 are shown in Fig. 1.
+The equilibrium generated for this set of inputs has a
+plasma column with an outer boundary parametrized by
+R(θ) = 3.20 + cos[θ + 0.2 sin(θ)], Z(θ) = 1.3 sin(θ), where
+θ is the poloidal angle. This conﬁguration has a mag-
+netic axis with radius R0 = 3.28 m, where the q = 1
+rational surface is located at a minor radius of approxi-
+mately r1 = 0.59 m. We note that this equilibrium does
+not correspond to a particular tokamak, but is instead
+chosen to study the basic physics of reconnection in saw-
+teeth.
+Optimizing parameters in the fully nonlinear extended-
+MHD model in a 3D toroidal geometry is challenging
+because run times are long, so we use M3D-C1 simula-
+tions in its 2D axisymmetric nonlinear, 3D linear, and
+3D resistive-MHD forms to optimize parameters. This
+allows us to run a series of computationally inexpensive
+2.5
+3.0
+3.5
+4.0
+R(m)
+-1.0
+-0.5
+0.0
+0.5
+1.0
+z(m)
+a) 
+-0.02
+0.15 
+0.33 
+0.50 
+0.67 
+0.85 
+1.02 
+3.7
+3.8
+3.9
+4.0
+R(m)
+-0.2
+-0.1
+0.0
+0.1
+0.2
+ 
+-0.02
+0.15 
+0.33 
+0.50 
+0.67 
+0.85 
+1.02 
+b) 
+z(m)
+FIG. 2. (a) View of the toroidal current density at a constant
+toroidal angle over-plotted with the triangular ﬁnite element
+mesh. (b) Zoomed in portion of the domain in (a) to show the
+resolution of the mesh, with an average edge length of 0.04 m.
+simulations to probe the equilibrium parameter space,
+spatial and time resolution. It also allows us to tune the
+simulated plasma controllers for plasma density and cur-
+rent, which includes applying a loop voltage by ramping
+the poloidal ﬂux at the boundary to maintain the plasma
+current.
+The chosen ﬁnite element grid in each poloidal plane of
+the computational domain is shown in Fig. 2(a). The av-
+erage edge of an element is 0.04 m, as seen in the zoomed-
+in panel (b). There are 16 toroidal planes, each with iden-
+tical poloidal meshes. All the degrees-of-freedom (DOF)
+are located at the nodes of the triangular prisms. There
+are 12 DOF at each node associated with each scalar
+variable. The split-implicit method ﬁrst advances all 3
+velocity variables (36 DOF at each node) implicitly, and
+then uses these to advance the magnetic, pressure, and
+density variables. The sparse matrix equations are solved
+using the PETSc GMRES iterative solver with a block-
+
+5
+Jacobi preconditioner [38].
+The resolution is chosen by running multiple toroidal,
+nonlinear resistive-MHD simulations where we vary the
+resolution while keeping all other parameters constant.
+We check that there is no qualitative change in the solu-
+tion. In the nonlinear extended-MHD model, the system
+of equations to be solved is much more complex than that
+of the resistive-MHD case. Because the iterative solver
+employed has a limit on the number of loops for solving
+each time slice, the maximum time step that could be
+used was limited by a factor of ∼10 smaller than for
+the resistive-MHD simulations. This restricted our abil-
+ity to parametrically scan the resolution for the nonlinear
+extended-MHD simulations, and will be a part of future
+studies. However, the results of this study summarized
+in the next few sections serve as additional evidence that
+the grid resolution is suﬃcient.
+After setting the equilibrium, a small random pertur-
+bation on the poloidal ﬂow on the order of 0.1cAθ is em-
+ployed to initialize the system, where cAθ is the Alfv´en
+speed based on the poloidal magnetic ﬁeld. The mag-
+nitude of the initial perturbation is varied to ensure the
+resulting evolution is not sensitive to it. The timestep
+is optimized in 2D and 3D resistive simulations, with
+20tnorm being the largest timestep that could be used
+where the results are qualitatively consistent with simu-
+lations with a lower timestep. The extended-MHD simu-
+lations are performed with the largest timestep that the
+iterative solver could converge, which is 2tnorm.
+A simulated neutral beam is included as a source of
+particles, torque, and energy into the system. This beam
+has a ﬁnite deposition area and is located in the central
+region near the magnetic axis. It is set to have a beam
+voltage of 104V, deposit ions at a rate of 5×1022 per sec-
+ond, and have a Gaussian proﬁle of width 0.8. The sim-
+ulations also use a spatially varying pellet fueling source
+in the continuity equation equal to Prate × n0(p/p0)expn,
+where p is the local pressure and Prate is the pellet rate
+equal to 3×10−5 per second. A density controller is used
+to hold the number of particles at 8.8 × 1020 and a cur-
+rent controller is used to hold Ip at 0.8 Inorm, both using
+a standard proportional-integral-derivative feedback con-
+trol [31]. With these sources and controls, we ﬁnd a range
+of perpendicular and parallel thermal conductivities that
+do not qualitatively alter the evolution by running sim-
+ulations with the 2D nonlinear version of the code. We
+choose κiso = 4.0 × 10−6 and κ∥= 10. Additionally, we
+set the viscosity to µ = 3.058 × 10−5.
+A key aspect of this study is resolving two-ﬂuid physics.
+To ensure we resolve the Hall scales, we use the 3D linear
+version of the code. The system of equations is expanded
+using A = A0 + A1, where A0 is the equilibrium value
+and A1 is the complex perturbation, and A represents
+all dynamical variables. Keeping only the linear terms
+and Fourier transforming in φ, the toroidal derivatives
+are replaced by a multiplier of in, with n being the cho-
+sen number of the toroidal mode. Employing these lin-
+ear simulations for a single n mode at a time, we hold
+the two-ﬂuid parameter db constant and change the re-
+sistivity, and vice-versa. We choose values of the resis-
+tivity of η ∼1.5 × 10−6 at the q = 1 surface and the
+0
+500
+1000
+1500
+t (τA0)
+10-14
+10-12
+10-10
+10-8
+10-6
+10-4
+10-2
+100
+* 
+KE
+b) 
+0
+1700
+3400
+5100
+6800
+t (τA0)
+10-14
+10-12
+10-10
+10-8
+10-6
+10-4
+10-2
+100
+KE
+n=0
+n=1
+n=2
+n=3
+n=4
+n=5
+* 
+a) 
+FIG. 3. Kinetic energy in toroidal modes n = 0 −5 in (a)
+resistive-MHD and (b) extended-MHD simulations as a func-
+tion of time t. The (red) stars indicate the approximate begin-
+ning of the reconnection, or crash, phase in each respective
+sawtooth cycle.
+Time scales are much faster in extended-
+MHD, and there is late nonlinear acceleration of the growth
+for the extended-MHD case compared to deceleration in the
+resistive case.
+two-ﬂuid parameter db = 0.1. For these simulations, the
+grid suﬃciently resolves the resistive reconnection layer
+in resistive-MHD simulations (db = 0) for n = 0, 1 and 2,
+and when extended-MHD eﬀects are turned on the resis-
+tivity is small enough that the two-ﬂuid eﬀects dominate.
+Note, for db = 0.1, the ion inertial scale is di = 10 cm,
+rather than the value based on the normalized density
+nnorm of 2.28 cm.
+III.
+MACROSCOPIC PROPERTIES
+The nonlinear 3D simulations are allowed to evolve in
+time from the linear through to the non-linear phase.
+Before ﬁnding the reconnection plane, we look at macro-
+scopic properties of the simulation results.
+We begin
+by comparing results from resistive-MHD and extended-
+MHD simulations.
+The grid and the initial conditions
+of the two simulations are identical; the only diﬀerence
+between the two simulations is the presence of extended-
+MHD terms and a smaller timestep in the extended-MHD
+
+6
+simulations. A complete sawtooth crash is observed in
+each simulation.
+First, we compare the kinetic energy contained in the
+lowest order toroidal modes.
+In Fig. 3, the evolution
+of the kinetic energy KE in diﬀerent toroidal modes
+is shown for the (a) resistive-MHD (db = 0) and (b)
+extended-MHD (db = 0.1) simulations, where the red
+stars indicate the approximate beginning of the recon-
+nection, or crash, phase in each respective sawtooth cy-
+cle. The ﬁrst striking diﬀerence between the two is the
+disparity in the time scales; the extended-MHD simula-
+tion evolves from t = 0 to its maximum kinetic energy in
+roughly a quarter of the time it takes in resistive-MHD.
+The calculated growth rate of the kinetic energy in the
+n = 1 toroidal mode is ∼0.005 for the resistive case and
+∼0.015 for the extended-MHD case.
+A second important observation in Fig. 3 is the nonlin-
+ear acceleration of the kinetic energy growth rates for the
+extended-MHD simulation from t ∼1400 −1500 consis-
+tent with Ref. [16], and a deceleration of the mode growth
+for the resistive simulation after t ∼5000. This implies
+that reconnection is not only faster using extended-MHD,
+but also increases in rate as the reconnection phase pro-
+ceeds, while resistive-MHD has slower reconnection that
+slows even further during the crash. The acceleration of
+the mode growth rate is similar to results from Ref. [39],
+where reduced, extended-MHD simulations showed an
+accelerating growth rate during the reconnection phase
+across a parameter space of poloidal beta and density
+gradient widths. This is also reminiscent of experimental
+observations from Ref. [30] of a two-phase crash, which
+was composed of a gradually evolving initial phase fol-
+lowed by a rapid phase.
+A third important diﬀerence between resistive-MHD
+and extended-MHD is the time it takes for reconnection
+to process the magnetic ﬁelds and expel the hot plasma
+in the core, the time scale of the sawtooth crash phase.
+Shown in Figs. 4 and 5 for the resistive and extended-
+MHD simulations, respectively, is the electron tempera-
+ture in the poloidal plane at a constant toroidal angle for
+diﬀerent times throughout the reconnection phase, where
+the white x’s mark the location of the reconnection site
+as determined from Poincar´e plots and poloidal plane ve-
+locity data. Reconnection processes the hot core in the
+extended-MHD simulation in ∼50 µs, approximately 15
+times more rapidly than in the resistive-MHD simula-
+tion, which processes the core in ∼750 µs and more
+closely in line with experimentally observed crash times.
+This agrees with the extended-MHD results of [26, 27],
+which were based oﬀof typical ASDEX discharge pa-
+rameters. Another important ramiﬁcation of this result
+is that it serves as an excellent benchmark suggesting the
+grid in the extended-MHD simulations properly resolved
+the two-ﬂuid physics.
+Another diﬀerence between Fig. 4 and Fig. 5 is the
+poloidal drift of the reconnection site in the counter-
+clockwise poloidal direction for the resistive case, while
+it is not prominent for the extended-MHD case.
+The
+torque imparted by the simulated neutral beam causes
+the helical mode to rotate in the positive toroidal direc-
+tion, which appears as a counter-clockwise poloidal drift
+t = 5000
+-1.0
+-0.5
+0.0
+0.5
+1.0
+z(m)
+t = 5600
+0.0000
+0.0008
+0.0016
+0.0025
+0.0033
+0.0041
+0.0049
+t = 6075
+2.5
+3.0
+3.5
+4.0
+R(m)
+-1.0
+-0.5
+0.0
+0.5
+1.0
+z(m)
+t = 6625
+2.5
+3.0
+3.5
+4.0
+R(m)
+0.0000
+0.0008
+0.0016
+0.0025
+0.0033
+0.0041
+0.0049
+x 
+x 
+x 
+x 
+a) 
+b) 
+c) 
+d) 
+FIG. 4. Poloidal cross-sections of the electron temperature
+during the reconnection phase of the sawtooth crash for the
+resistive-MHD simulation.
+White x’s show the location of
+the reconnection site determined from Poincar´e plots. The
+counter-clockwise poloidal drift is due to the external neutral
+beam adding torque to the system and causing the helical
+mode to rotate toroidally.
+of the reconnection site. This is consistent with experi-
+mental results [30], although their plasma current Ip was
+directed opposite to the toroidal ﬁeld and neutral beam,
+so they observed rotation in the clockwise poloidal di-
+rection. Since the reconnection phase starts much later
+in the resistive simulation and also evolves over a longer
+time scale, the toroidal rotation is apparent for this simu-
+lation. However, there is much less time for torque to be
+imparted in the extended-MHD simulation, and because
+of this, the poloidal drift of the reconnection site due to
+the neutral beam is not signiﬁcant. Calculations conﬁrm
+that the observed poloidal rotation is consistent with the
+measured toroidal ﬂow in both simulations.
+IV.
+LOCAL PROPERTIES OF RECONNECTION
+IN 3D TOROIDAL GEOMETRY
+Looking at data in the poloidal plane as done in Sec. III
+is suﬃcient to gain information about the global prop-
+erties of the reconnection process, but the reconnection
+plane is necessary to quantitatively diagnose reconnec-
+tion in a tokamak. Here, we present the ﬁrst analysis of
+the reconnection plane in a 3D toroidal geometry. We
+note that the discussion in this section is limited to the
+poloidal plane in which the reconnection site is at the
+inboard of the torus; a comparison of reconnection prop-
+erties for sites at other toroidal angles will be discussed
+in Sec. V.
+
+7
+t = 1440
+2.5
+3.0
+3.5
+4.0
+R(m)
+-1.0
+-0.5
+0.0
+0.5
+1.0
+z(m)
+0.0000
+0.0006
+0.0012
+0.0018
+0.0023
+0.0029
+0.0035
+t = 1410
+2.5
+3.0
+3.5
+4.0
+R(m)
+-1.0
+-0.5
+0.0
+0.5
+1.0
+z(m)
+t = 1500
+2.5
+3.0
+3.5
+4.0
+R(m)
+-1.0
+-0.5
+0.0
+0.5
+1.0
+z(m)
+0.0000
+0.0006
+0.0012
+0.0018
+0.0023
+0.0029
+0.0035
+t = 1470
+2.5
+3.0
+3.5
+4.0
+R(m)
+-1.0
+-0.5
+0.0
+0.5
+1.0
+z(m)
+x 
+x 
+x 
+x 
+a) 
+b) 
+c) 
+d) 
+FIG. 5. Poloidal cross-sections of the electron temperature as
+in Fig. 4, but for the extended-MHD simulation. The time
+scale of the core expulsion is ∼15 times shorter than for the
+resistive simulation.
+A.
+Finding the Reconnection Plane
+It has long been known that the reconnection plane
+should be the auxiliary plane, normal to the helical mag-
+netic ﬁeld at the point of reconnection on the rational sur-
+face. Here, we describe a general approach to ﬁnd these
+planes.
+While the approach works within the toroidal
+geometry of the simulations, we show an idealized q = 1
+surface for a cylindrical toroid for illustrative purposes in
+Fig. 6. The checkered-green surface represents the q = 1
+rational surface. The red line is a helical q = 1 magnetic
+ﬁeld line.
+We ﬁnd the approximate location of the reconnection
+site (the X-line) using the following procedure.
+First,
+we generate Poincar´e plots in a chosen poloidal plane
+to allow us to visually estimate the location of the re-
+connection site. We expect the pressure gradient to be a
+maximum at the reconnection site, so we reﬁne the minor
+radial location of the site in the poloidal plane to match
+this extremum. The red dot in Fig. 6 is meant to indicate
+the location where the reconnection site is found. In the
+ﬁgure, the red dot is on the inboard side of the rational
+surface. For the initial part of this study, we choose the
+toroidal angle such that the reconnection site is on the
+inboard side for simplicity, but the approach in use would
+work for any toroidal position with the reconnection site
+at an arbitrary point.
+Having an approximate location of the reconnection
+site in the poloidal plane, we next ﬁnd the reconnection
+plane. The vector direction of the local magnetic ﬁeld at
+the reconnection site is denoted by ˆh (for “helical”):
+ˆh = ˆb = B
+|B|.
+(10)
+It is shown for the illustrative example in Fig. 6. This
+unit vector deﬁnes the blue plane shown in the ﬁgure,
+which we expect to be the reconnection plane. (We point
+out that it is not always the case that the reconnection
+plane is normal to the out-of-plane “guide” magnetic ﬁeld
+[40, 41], but for the tokamak geometry with a large helical
+ﬁeld the approximation is expected to be quite good.)
+Next we need unit vectors that span the reconnection
+plane, and the desire is to have them oriented to align
+with the reconnection inﬂow and outﬂow. The inﬂow di-
+rection should be locally normal to the rational surface.
+To ﬁnd the normal to the rational surface at the recon-
+nection site, we ﬁrst deﬁne an ancillary unit vector ˆt in
+the poloidal plane that is tangent to the q = 1 rational
+surface.
+When the reconnection site is at the inboard
+edge, we simply have ˆt = ˆZ (not shown in Fig. 6), but
+for other locations, one merely ﬁnds the local direction
+tangent to the rational surface. Then, the cross prod-
+uct ˆt × ˆh is normal to both the magnetic ﬁeld and the
+q = 1 rational surface, which corresponds to the inﬂow
+direction. We normalize it and denote it as the inﬂow
+direction ˆi:
+ˆi ∝ˆt × ˆh.
+(11)
+Finally, the outﬂow direction, denoted by ˆo, completes
+the triplet:
+ˆo = ˆh ×ˆi.
+(12)
+The i and o directions span the reconnection plane and
+are expected to be oriented along the reconnection inﬂow
+and outﬂow, as included in the example in Fig. 6.
+With the reconnection plane deﬁned, the plasma pa-
+rameter data is then obtained on this plane. In the anal-
+ysis carried out here, we interpolate to ﬁnd data on a
+grid rectangular grid of size 200 × 200 with a separation
+between data points of order 0.01×0.01, where the exact
+separation varies slightly depending on the minor radius
+of the q = 1 surface. With this data, we can analyze the
+properties of reconnection in the reconnection plane.
+B.
+Finding the Local Plasma Parameters
+Governing Reconnection
+We begin by ﬁnding the characteristic local plasma pa-
+rameters governing the local eﬃciency of the reconnec-
+tion process, such as the upstream magnetic ﬁelds and
+densities and the aspect ratio of the reconnecting current
+sheet. In addition to setting the stage for a quantitative
+analysis of the local reconnection process, this allows us
+to conﬁrm that the approach used to ﬁnd the reconnec-
+tion plane is successful.
+The in-plane components of the magnetic ﬁeld for the
+extended-MHD simulations are displayed in Fig. 7, show-
+ing (a) the reconnecting magnetic ﬁeld Bo and (b) the re-
+connected (normal) magnetic ﬁeld Bi overlaid with con-
+tours of constant ψh, consistent with ⃗B⊥= ˆh × ∇ψh.
+The color table used here and throughout has white be-
+ing 0, red positive, and blue negative. The origin has
+been shifted so that (o, i) = (0, 0) is the reconnection site
+found with the approach in the previous section. The
+
+8
+FIG. 6. Illustrative example of the approach to ﬁnd the re-
+connection plane.
+The checkered-green circular torus is an
+idealized q = 1 rational surface. The red line is a q = 1 mag-
+netic ﬁeld line. A location of the reconnection site is marked
+by the red dot. The direction of the local ﬁeld is ˆh, the normal
+to the q = 1 surface (the direction of the reconnection inﬂow)
+is ˆi, and the reconnection outﬂow direction ˆo completes the
+triplet. The reconnection plane (blue) is spanned by ˆo and ˆi.
+-0.137  0.040 
+ 
+ 
+-0.2
+-0.1
+0.0
+0.1
+0.2
+i(m)
+-0.14 
+-0.09 
+-0.05 
+0.00  
+0.05  
+0.09  
+0.14  
+-0.170  0.179 
+-0.4
+-0.2
+0.0
+0.2
+0.4
+o(m)
+-0.2
+-0.1
+0.0
+0.1
+0.2
+i(m)
+-0.18 
+-0.12 
+-0.06 
+0.00  
+0.06  
+0.12  
+0.18  
+a) 
+b) 
+FIG. 7. In-plane components of the magnetic ﬁelds: (a) Bo
+and (b) Bi in the reconnection plane for the extended-MHD
+simulation overlaid with contours of constant ψh. The recon-
+nection site is at (o, i) = (0, 0) and the ﬁeld structure there is
+consistent with an in-plane X-type magnetic null.
+-3.26   1.21  
+0.0 -0.1 -0.2 -0.3 -0.4
+i(m)
+-0.6
+-0.4
+-0.2
+0.0
+0.2
+0.4
+0.6
+o(m)
+-1.61   1.10  
+0.0 -0.1 -0.2 -0.3 -0.4
+i(m)
+-3.26 
+-2.17 
+-1.09 
+0.00  
+1.09  
+2.17  
+3.26  
+a) 
+b) 
+FIG. 8. Helical current Jh in the reconnection plane for the
+(a) resistive-MHD and (b) extended-MHD simulations. The
+resistive current sheet is more elongated than in extended-
+MHD, as expected from Sweet-Parker theory.
+in-plane ﬁeld goes to zero at the reconnection site, as it
+should. This suggests the technique to identify the inﬂow
+and outﬂow directions i and o is appropriate. Further-
+more, the polarity of these ﬁelds at the origin is consistent
+with an X-type null, as expected.
+Quantifying the local reconnection properties requires
+measuring the plasma parameters just upstream (in the
+i direction) of the reconnection site. These quantities are
+measured a distance δ upstream, where δ is the location
+where Jh falls to half its maximum value in the inﬂow
+in a cut along o = 0. The current density in the out-
+of-plane (helical) direction Jh is shown in Fig. 8 for the
+(a) resistive-MHD and (b) extended-MHD simulations.
+The time slice for the extended-MHD simulation is well
+into the accelerated nonlinear phase t = 1460, and the
+resistive simulation has an island size comparable to that
+of the extended-MHD case at t = 5625. In each case, a
+strong thin current sheet is visible at the reconnection
+site. A comparison of the two simulations is carried out
+in the next subsection.
+The thickness δ is measured along a cut at o = 0.
+Figure 9 shows Jh as a function of i for the extended-
+MHD simulation as the blue trace. The vertical dashed
+lines denote where Jh falls to half of its absolute maxi-
+mum. This deﬁnes the thickness of the reconnection site
+in the inﬂow direction; the thickness for the extended-
+MHD simulation is δ = 0.0245, and δ = 0.0135 for the
+resistive-MHD simulation (not shown), and is where val-
+ues of the upstream magnetic ﬁeld and inﬂow speed are
+measured. Interestingly, due to our choice of η and db, the
+resistive current sheet is thinner than the extended-MHD
+current sheet, which may seem counter-intuitive. How-
+ever, this actually should be expected and is a nice con-
+sistency check that extended-MHD physics are dominant
+in the extended-MHD simulation. It justiﬁes our choice
+
+9
+-0.10
+-0.05
+0.00
+0.05
+0.10
+R(m)
+-2
+-1
+0
+1
+2
+25Bo
+500vi
+Jh
+25Bo 
+500viʹ 
+Jh 
+i
+FIG. 9. Proﬁles of the reconnecting ﬁeld Bo, the inﬂow veloc-
+ity v′
+i (in the reference frame of the X-line), and the helical
+current Jh. Where Jh drops to half its maximum value is de-
+noted by the vertical, dashed black lines; upstream quantities
+are evaluated there.
+for η; if the width of the current sheet for the resistive
+simulation was larger than for the extended-MHD sim-
+ulation, the extended-MHD eﬀects would not have been
+active for the simulation with db = 0.10 [42]. For this
+scaled value of the ion inertial scale, the ion gyroradius
+based oﬀthe thermal speed ρs =
+p
+β/2di = 0.015 for the
+extended-MHD simulation, which is approximately δ/2.
+The cut of Bo is shown as the red trace (scaled up by
+a factor of 25 to be on the same axes). The upstream re-
+connecting magnetic ﬁeld Bo,1 and Bo,2 are measured at
+the vertical dashed lines. The upstream inﬂow speeds vi,1
+and vi,2 are measured at the same location. However, we
+note the reconnecting magnetic ﬁeld Bo exhibits a weak
+asymmetry. When the magnetic ﬁelds are asymmetric,
+the X-line tends to move in the inﬂow direction towards
+the direction of stronger reconnecting magnetic ﬁeld (the
+positive i direction, towards the tokamak edge) [43–48].
+Thus, to get a proper measurement of the reconnection
+parameters, we must measure the velocities in the refer-
+ence frame of the moving X-line.
+Transforming into the reference frame of the moving
+X-line is done using standard techniques [49, 50]. In the
+steady-state in quasi-2D systems, the reconnection elec-
+tric ﬁeld E′
+h is uniform in the reference frame of the X-
+line, where we use a prime to denote quantities in the
+reference frame of the X-line. In the lab frame, the elec-
+tric ﬁelds Eh,1 = vi,1Bo,1 and Eh,2 = vi,2Bo,2 diﬀer.
+If the speed of the X-line is deﬁned as vi,X, then the
+reconnection electric ﬁeld is E′
+h = (vi,1 + vi,X)Bo,1 =
+(vi,2 −vi,X)Bo,2. Solving these two equations for vi,X
+gives
+vi,X = Eh,1 −Eh,2
+Bo,1 + Bo,2
+.
+(13)
+The calculated speed of the X-line from Eq. (13) are 1.2×
+10−4 and 2.6×10−3 for the resistive- and extended-MHD
+cases. We shift the inﬂow velocities accordingly to obtain
+v′
+i, the inﬂow in the reference frame of the X-line. This
+is plotted for the extended-MHD simulation in green in
+Fig. 9, scaled by a factor of 500 to be on the same axes.
+We also measure the length of the reconnection re-
+gion in the outﬂow direction in a similar manner as the
+width, except that the current sheet is curved. Thus, we
+ﬁnd the location above and below the X-line at which
+the current density is half of its maximum, and calcu-
+late the distance along the current sheet to the X-line as
+L. For the extended-MHD simulation L = 0.145, and
+L = 0.370 for the resistive-MHD simulation. Since the
+current density is more strongly peaked near the X-line
+in the extended-MHD simulation, the length is shorter.
+We are now ready to quantitatively compare reconnection
+between resistive-MHD and extended-MHD simulations.
+C.
+Local Reconnection Rates: Resistive- vs.
+Extended-MHD
+We ﬁrst compare properties of the reconnecting cur-
+rent sheets visible in Fig. 8.
+The dominant feature is
+that the resistive current sheet is elongated compared to
+the extended-MHD current sheet. The resistive sheet has
+δ/L = 0.07 compared to the extended-MHD sheet with
+δ/L = 0.17. The extended-MHD result is in reasonable
+agreement with values seen in 2D slab geometry simula-
+tions, while resistive reconnection with smaller δ/L forms
+a nozzle which slows reconnection.
+Next, we analyze proﬁles of the contributions to the
+out-of-plane electric ﬁeld E′
+h in Ohm’s law (in the refer-
+ence frame of the X-line) taken through the reconnection
+site in the inﬂow direction at o = 0. These proﬁles are
+shown in Fig. 10 for the (a) resistive- and (b) extended-
+MHD simulations. The asymmetric shift in the electric
+ﬁeld is a consequence of the reconnection being asym-
+metric - the reconnecting ﬁelds and densities diﬀer on the
+two sides [44]. Understanding the nature of this asym-
+metry in a torus should be the subject of future work as
+transport through the q = 1 surface is sensitive to the re-
+connection time [9], which is sensitive to the asymmetry
+[e.g. [44]].
+For the resistive simulation, the only terms that con-
+tribute are convection −(v′ × B)h and diﬀusion due to
+resistivity ηJh, shown by the dark blue and red lines re-
+spectively. The sum of the terms is E′
+h, shown as the
+light blue line. They essentially balance (E′
+h is relatively
+ﬂat near the X-line), as one expects for steady-state 2D
+reconnection, with a local reconnection rate of about
+E′
+h ≃5 × 10−6. The proﬁles are similar to those seen
+in 2D asymmetric reconnection in a slab geometry [44].
+For the extended-MHD simulation,
+the dominant
+terms are convection and the Hall term db (J × B)h /n
+shown as the green line. The resistivity has a negligi-
+ble contribution to E′
+h, which is consistent with previous
+results (see, e.g., Ref. [26]). We ﬁnd that the reconnec-
+tion electric ﬁeld is E′
+h ≃2 × 10−4. This is ∼40 times
+stronger than that of the resistive simulation. This shows
+the extended-MHD reconnection is faster, consistent with
+
+10
+b) 
+-0.10
+-0.05
+0.00
+0.05
+0.10
+i(m)
+-3.0e-4
+-2.0e-4
+-1.0e-4
+0.0
+1.0e-4
+2.0e-4
+ηJh
+-(v×B)h
+(J×B)h
+Eh
+db(J×B)h/n 
+𝜂Jh 
+Jh 
+-(vʹ×B)h 
+Ehʹ 
+-1.0e-5
+-5.0e-6
+0.0
+5.0e-6
+1.0e-5
+ηJh
+-(v×B)h
+Eh
+𝜂Jh 
+Jh 
+-(vʹ×B)h 
+Ehʹ 
+a) 
+FIG. 10. Proﬁles the out-of-plane component of the general-
+ized Ohm’s law taken through the reconnection site through
+o = 0 in the reconnection plane. (a) resistive-MHD results,
+(b) extended-MHD results. The contribution due to the Hall
+term is visible in (b).
+the known result that collisionless reconnection is much
+faster than resistive reconnection. Moreover, this result
+shows that the Hall term is contributing to the recon-
+nection electric ﬁeld near the X-line, showing that the
+numerical resolution in this region is suﬃcient.
+We point out that the terms in Ohm’s law shown in
+Fig. 10(b) are close to zero at the X-line. This is because
+in the extended-MHD simulation, the diﬀusive physics
+breaking the frozen-in condition is not resolved. In a real
+system, this eﬀect is caused by electron inertia or oﬀ-
+diagonal elements of the electron pressure tensor. In this
+simulation without these eﬀects, the mechanism breaking
+the frozen-in condition is undoubtedly numerical. Fortu-
+nately, the large scale properties of collisionless reconnec-
+tion are insensitive to the physics breaking the frozen-in
+condition [51], so not resolving the artiﬁcial dissipation
+that breaks the frozen-in condition (which would be very
+computationally expensive) is not a detriment. Testing
+how the present results are aﬀected when the dissipation
+mechanism is explicit as in [52] should be the subject of
+future work. In summary, we ﬁnd that the local mea-
+sure of the reconnection rate shows that extended-MHD
+is much faster than collisional reconnection, consistent
+with the global measures discussed earlier.
+We now turn to a quantitative understanding of the lo-
+cal reconnection properties. First, as a consistency check,
+a by-product of the analysis leading to Eq. (13) is the re-
+connection electric ﬁeld E′
+h in the reference frame of the
+X-line.
+Using the values for the reconnecting ﬁeld Bo
+and the inﬂow velocity vi determined in the last section,
+we calculate the reconnection electric ﬁeld (reconnection
+rate) [49, 50]:
+E′
+h,meas = Eh,1Bo,2 + Eh,2Bo,1
+Bo,1 + Bo,2
+.
+(14)
+We ﬁnd E′
+h,meas = 8.23 × 10−5 for the extended-MHD
+simulation, which is within a factor of 2.5 of the value of
+E′
+h = 2 × 10−4 obtained from Fig. 10(b), and E′
+h,meas =
+3.30 × 10−6 for the resistive-MHD simulation, which is
+within a factor of 1.5 of the value of E′
+h = 5 × 10−6
+obtained from Fig. 10(a).
+Next, we employ analytical predictions to calculate the
+rate of reconnection and compare it to the measured
+value for the inboard reconnection site.
+A recent the-
+ory of 2D asymmetric reconnection in the absence of a
+guide ﬁeld suggests [44]
+E′
+h,pred ∼
+ Bo,1Bo,2
+Bo,1 + Bo,2
+
+vout
+2δ
+L ,
+(15)
+where vout is the outﬂow speed from the reconnection
+site. For the extended-MHD simulation, using the mea-
+sured value of vout = 0.021, we get E′
+h,pred ∼6.81×10−5,
+which is within 20% of E′
+h,meas. For the resistive-MHD
+simulation, using the measured value of vout = 0.00235,
+we get E′
+h,pred ∼3.33 × 10−6, which agrees well with
+E′
+h,meas. The agreement is quite good despite the fact
+that the theory is for 2D reconnection and does not treat
+the guide ﬁeld or the curved magnetic geometry of a toka-
+mak. This is simply for a single data point, so a more
+thorough study varying the plasma parameters is neces-
+sary before making any overarching conclusions, but the
+prediction does rather well for this simulation.
+As a ﬁnal quantitative check of the local reconnection
+rates, we compare the asymmetric Sweet-Parker recon-
+nection rate and current sheet width [44] to the previ-
+ously measured and predicted values. The asymmetric
+Sweet-Parker reconnection rate is given by
+E′
+SP ∼
+rηvout
+L
+Bo,1Bo,2,
+(16)
+and is evaluated for the resistive-MHD simulation to give
+3.93 × 10−6, which agrees well with E′
+h, E′
+h,meas, and
+E′
+h,pred. The half-widths of the current sheet on either
+side of the asymmetric reconnection layer are given by
+δSP,1 ∼
+s
+ηL
+vout
+Bo,1
+Bo,2
+,
+δSP,2 ∼
+s
+ηL
+vout
+Bo,2
+Bo,1
+,
+(17)
+and are evaluated for the resistive-MHD simulation to
+give δSP,1 = 0.006 and δSP,2 = 0.026, which agree well
+with the measured values of δ1 = 0.008 and δ2 = 0.019.
+
+11
+-0.020  0.019 
+0.0
+-0.1
+-0.2
+i(m)
+-0.2
+0.0
+0.2
+o(m)
+a) 
+-0.042  0.047 
+0.0
+-0.1
+-0.2
+i(m)
+-0.048
+-0.032
+-0.016
+0.000 
+0.016 
+0.032 
+0.048 
+b) 
+FIG. 11. (a) Ion and (b) electron outﬂow speeds vi,o and ve,o
+in the reconnection plane located on the inboard side of the
+tokamak. Maximum electron ﬂows are a factor of two larger
+than the ion ﬂows and are peaked closer to the reconnection
+site.
+D.
+Separation of Ion and Electron Scales in
+Extended-MHD Reconnection
+Due to the disparity between the ion and electron
+masses, a characteristic feature of collisionless reconnec-
+tion is a two-scale structure of the region near the X-
+line. In most cases, simulations purporting to capture
+extended-MHD eﬀects on reconnection need resolution
+suﬃcient to resolve the separation in scales between ions
+and electrons. Shown in Fig. 11 are the outﬂow (o) com-
+ponents of the (a) ion velocity vi and (b) electron velocity
+ve, where ve = vi −(db/ne)J. The maximum electron
+outﬂow speed is larger than that of the ions by over a
+factor of 2, consistent with extended-MHD and PIC slab
+reconnection studies (see, e.g., Ref. [53]).
+Furthermore, the electron outﬂow jets are noticeably
+thinner than the ion outﬂow jets, consistent with the two-
+scale structure due to the inclusion of the Hall term in the
+generalized Ohm’s law. While diﬃcult to determine from
+the ﬁgure, the maximum electron velocity is peaked closer
+to the reconnection site than the maximum ion veloc-
+ity, also consistent with known properties of collisionless
+reconnection [53]. These results suggest that extended-
+MHD physics is playing a role in these simulations as is
+expected, but has not previously been diagnosed in 3D
+toroidal simulations.
+An interesting observation is that both the ion and
+electron ﬂows are in the direction of the electron diamag-
+netic drift velocity v∗e at the reconnection site, which is
+consistent with the 2D slab simulations [23, 54].
+This
+suggests that electron diamagnetic eﬀects are playing a
+role in the local ﬂow dynamics at the reconnection site,
+a phenomena that will be the subject of future study.
+-0.0133  0.0031
+0.092
+0.000
+-0.092
+i(m)
+-0.2
+-0.1
+0.0
+0.1
+0.2
+o(m)
+-0.0133
+-0.0089
+-0.0044
+0.0000 
+0.0044 
+0.0089 
+0.0133 
+-0.012  0.021 
+2.60 2.65 2.70 2.75 2.80
+R(m)
+-0.2
+-0.1
+0.0
+0.1
+0.2
+Z(m)
+-0.021 
+-0.014 
+-0.007 
+0.000  
+0.007  
+0.014  
+0.021  
+a) 
+b) 
+FIG. 12. (a) Toroidal magnetic ﬁeld perturbation ˜Bφ in the
+poloidal plane with the proﬁle at the midplane subtracted
+out of every horizontal slice, leaving a dipolar structure. (b)
+Helical magnetic ﬁeld perturbation ˜Bh in the reconnection
+plane with the proﬁle through o = 0 subtracted out, which
+leaves a quadrupolar structure that has polarity consistent
+with collisionless reconnection due to the Hall term.
+E.
+Identiﬁcation of the Hall Magnetic Field
+An important signature of collisionless reconnection is
+the existence of a quadrupole in the out-of-plane mag-
+netic ﬁeld [55, 56]. It has been observed experimentally
+in satellite observations (see, e.g., [49]) and in dedicated
+reconnection experiments (see, e.g., [57]). However the
+small reconnection scales in a tokamak makes viewing
+this structure prohibitively diﬃcult. Furthermore, to the
+best of our knowledge, it has not been identiﬁed in fully
+3D toroidal simulations until now.
+We ﬁrst show the toroidal magnetic ﬁeld in the poloidal
+(R −Z) plane at the inboard side of the torus. Since the
+background Bφ ∝1/R dominates the signal, a meaning-
+ful measure of the role of the Hall term would remove
+the background. To handle this, we deﬁne the perturbed
+toroidal magnetic ﬁeld ˜Bφ as the full Bφ with the proﬁle
+of Bφ at the midplane (Z = 0) subtracted from every slice
+of constant Z. This is plotted for the extended-MHD sim-
+ulation in Fig. 12(a). The dotted lines mark axes through
+the location of the reconnection site as determined from
+the Poincar´e plot. The solid line shows the calculated
+q = 1 surface from averaging over the magnetic ﬁeld in
+the toroidal and poloidal directions, where the diﬀerence
+from the Poincar´e method reveals the non-axisymmetry
+of the mode. From this ﬁgure, it is evident that there is
+no quadrupolar ﬁeld signature in ˜Bφ when viewed from
+the poloidal plane.
+However, in the reconnection plane, we deﬁne a sim-
+ilarly calculated perturbed helical magnetic ﬁeld
+˜Bh,
+where the Bh proﬁle through o = 0 has been subtracted
+oﬀall cuts at ﬁxed o. The result is shown in Fig. 12(b);
+we ﬁnd a quadrupolar perturbed helical magnetic ﬁeld.
+From the polarity of the in-plane magnetic ﬁelds as shown
+in Fig. 7, the polarity of the quadrupole out-of-plane
+ﬁeld is consistent with that of the expected Hall mag-
+netic ﬁeld. Note, the quadrupole ˜Bh is not observed in
+the reconnection plane of the resistive-MHD simulations
+
+12
+TABLE II. Measured characteristic values of extended-MHD
+reconnection, where the reconnection site is located at dif-
+ferent toroidal (and poloidal) angles.
+Tabulated values are
+the reconnecting magnetic ﬁeld in the inﬂows toward the core
+and edge Bo,core and Bo,edge, the density n at the X-line,
+the average ion outﬂow velocity vi,out,ave, the average elec-
+tron outﬂow velocity ve,out,ave, the total length of the current
+sheet 2L, and the total thickness of the current sheet 2δ.
+Location
+Bo,core Bo,edge
+n
+vi,out,ave ve,out,ave
+2L
+2δ
+Outboard
+0.02
+0.014
+0.83
+0.028
+0.063
+0.45 0.051
+Top
+0.044
+0.01
+0.91
+0.025
+0.059
+0.28 0.048
+Inboard
+0.034
+0.044
+1.1
+0.021
+0.047
+0.29 0.049
+Bottom
+0.024
+0.038
+0.95
+0.024
+0.051
+0.35 0.057
+(not shown). These results are indicative that the Hall
+term is actively playing a role in the extended-MHD sim-
+ulation, corroborating the result in Fig. 10.
+The helical (guide) ﬁeld is strong compared to the rel-
+atively weak reconnecting ﬁeld, with a ratio of ¯Bo/Bh ≃
+0.039/1.23 = 3.2%, where
+¯Bo is the average of Bo
+on the two sides of the reconnection site.
+For re-
+connection with a strong guide ﬁeld, it is expected
+that the helical quadrupole ﬁeld is accompanied by a
+quadrupole gas pressure proﬁle in order to maintain to-
+tal pressure balance [58]. Interestingly, we ﬁnd no gas
+pressure quadrupole in the reconnection plane for this
+extended-MHD simulation. Additionally, the ratio of the
+quadrupolar ﬁeld to the reconnecting ﬁeld departs from
+predictions that ˜Bh ∼Bo [59]. We hypothesize that the
+curved geometry of the toroidal system and extremely
+large Bh/Bo ratio implies that additional physics due to
+magnetic ﬁeld bending be kept in the scaling relations;
+this analysis is left for a future study. In summary, we
+have shown evidence local to the reconnection site that
+Hall reconnection takes place.
+V.
+TOROIDAL DEPENDENCE
+Thus far, the discussion has been limited to the re-
+connection site located on the inboard side of the torus.
+In this section we explore how reconnection changes for
+diﬀerent toroidal angles, where the reconnection site is
+located at diﬀerent poloidal locations. However, we con-
+tinue to look at data in the reconnection plane as opposed
+to the poloidal plane. In what follows, we compare the
+reconnection planes for the toroidal locations where the
+X-line is on the inboard, top, outboard, and bottom of
+the q = 1 rational surface. We limit our analysis to the
+extended-MHD simulation, but comment that the results
+are similar for the resistive-MHD simulation.
+Using the methodology in Sec. IV B, we ﬁnd upstream
+values representing the reconnection process.
+We ﬁnd
+the reconnecting magnetic ﬁelds in the inﬂows of the
+core Bo,core and the edge Bo,edge, the density at the X-
+line, the ion and electron outﬂow speeds vi,out,ave and
+ve,out,ave averaged over the two jets, the full length of
+the current sheet 2L, and the full width of the current
+sheet 2δ. Measured parameters are listed in Table II.
+For perspective, we show the structure of the recon-
+TABLE III. Aspect ratio of the reconnection site δ/L, mea-
+sured E′
+h and calculated E′
+h,meas and E′
+h,pred values of the
+reconnection rate at the same four locations as in Table II.
+E′
+h,meas is calculated using Eq. (14) and E′
+h,pred is calculated
+using Eq. (15).
+Location
+δ/L
+E′
+h
+E′
+h,meas
+E′
+h,pred
+Outboard 0.11 7.3 × 10−5 2.6 × 10−5 2.6 × 10−5
+Top
+0.17 1.0 × 10−4 2.3 × 10−5 3.4 × 10−5
+Inboard
+0.17 2.0 × 10−4 8.2 × 10−5 6.8 × 10−5
+Bottom
+0.16 1.4 × 10−4 6.5 × 10−5 5.7 × 10−5
+necting current sheet Jh in Fig. 13. The reconnection
+sites are on the (a) inboard, (b) top, (c) outboard, and
+(d) bottom of the q = 1 rational surface as determined
+from Poincar´e plots. We note that there is some numer-
+ical noise towards the inboard side, which we attribute
+to the modest toroidal resolution; a convergence study of
+the toroidal resolution will be a matter for future work.
+The principal feature is that the maximum Jh at diﬀer-
+ent toroidal angles is greater on the inboard side, and is
+smaller on the outboard side. This is expected because
+the toroidal ﬁeld varies as Bφ ∼1/R, leading to stronger
+reconnecting ﬁelds Bo towards the inboard side. Then,
+since the width of the current sheet is set by the reconnec-
+tion physics, we expect the current density to be largest
+on the inboard side, consistent with our simulations.
+The average ion and electron ﬂows are the smallest
+on the inboard side where the density is largest; this is
+consistent with the reconnection outﬂows scaling with
+the Alfv´en speed ∝n−1/2. There is a toroidal variation
+in the length of the current sheet, which we attribute to
+toroidal geometry. Using Fig. 6 for a helical ﬁeld line with
+a circular cross-section as a reference, the path length
+from the top to the bottom on the inboard side is shorter
+than the path length connecting the top and bottom on
+the outboard side because B is stronger on the inboard
+side. The width of the current sheet δ varies only slightly
+with toroidal (poloidal) location.
+We now turn to quantifying the local reconnection rate
+at the four toroidal locations. Table III contains the as-
+pect ratio of the reconnection region δ/L, the measured
+helical electric ﬁeld E′
+h, and the calculated reconnection
+electric ﬁelds E′
+h,meas and E′
+h,pred from Eqs. (14) and (15),
+respectively. Since L increases towards the outboard side
+due to the toroidal geometry, δ/L decreases, implying
+that reconnection proceeds more slowly towards the out-
+board side of the tokamak. The decrease in the rate of
+reconnection toward the outboard side is also visible in
+the electric ﬁeld measurements and calculations.
+Another interesting aspect is that reconnection at the
+top and bottom is asymmetric in the outﬂow direction.
+In Fig. 13, the inboard and outboard current sheets are
+mostly centered around the midplane, but the top and
+bottom current sheets are shifted towards the inboard
+side of the torus. This is also apparent from looking at
+the ion outﬂow jets, shown in Fig. 14 for the (a) top and
+(b) bottom reconnection sites. The faster outﬂow jets are
+toward the outboard side for both sites. This asymme-
+try in the outﬂow jets can be explained by the toroidal
+magnetic ﬁeld dependence in the major radial direction,
+
+13
+-1.15   1.03  
+0.6
+0.4
+0.2
+0.0
+-0.2
+-0.4
+-0.6
+o(m)
+0.0
+-0.1
+-0.2
+-0.3
+-0.4
+i(m)
+-1.44   1.03  
+-0.6
+-0.4
+-0.2
+0.0
+0.2
+0.4
+0.6
+o(m)
+-0.4
+-0.3
+-0.2
+-0.1
+0.0
+i(m)
+-1.61   1.10  
+0.0 -0.1 -0.2 -0.3 -0.4
+i(m)
+-0.6
+-0.4
+-0.2
+0.0
+0.2
+0.4
+0.6
+o(m)
+a) 
+b) 
+d) 
+c) 
+-0.80   0.94  
+-0.4 -0.3 -0.2 -0.1 0.0
+i(m)
+0.6
+0.4
+0.2
+0.0
+-0.2
+-0.4
+-0.6
+o(m)
+-1.61 
+-1.07 
+-0.54 
+0.00  
+0.54  
+1.07  
+1.61  
+FIG. 13. Views of the helical reconnection current density Jh in the reconnection plane at diﬀerent toroidal angles corresponding
+to where the reconnection site is at the (a) inboard, (b) top, (c) outboard, and (d) bottom of the torus. The maximum magnitude
+of the reconnection current is on the inboard side, where the toroidal ﬁeld is the strongest. Also, δ/L is greater towards the
+inboard side, and lower towards the outboard side.
+-0.016  0.021 
+ 
+-0.4
+-0.2
+0.0
+0.2
+0.4
+o(m)
+-0.3
+-0.2
+-0.1
+0.0
+i(m)
+-0.021  0.017 
+0.4
+0.2
+0.0
+-0.2
+-0.4
+o(m)
+0.0
+-0.1
+-0.2
+-0.3
+i(m)
+-0.022
+-0.015
+-0.007
+0.000 
+0.007 
+0.015 
+0.022 
+a) 
+b) 
+FIG. 14. Ion outﬂow speed vo when the reconnection site is
+at the (a) top and (b) bottom of the rational surface. The
+outﬂows are asymmetric due to the magnetic pressure gradi-
+ent in the major radial direction due to the varying toroidal
+magnetic ﬁeld.
+decreasing as ∼1/R. At the inboard and outboard recon-
+nection sites, the toroidal magnetic ﬁeld changes through
+the inﬂow direction, contributing to the helical current,
+but at the top and bottom sites the toroidal magnetic
+ﬁeld changes through the outﬂow direction. There are
+very few papers studying reconnection that is asymmet-
+ric in the outﬂow direction. One showed that if there is
+a gas pressure gradient in the outﬂow direction, there is
+0.00072  0.0031
+ 
+-0.4
+-0.2
+0.0
+0.2
+0.4
+o(m)
+-0.3
+-0.2
+-0.1
+0.0
+i(m)
+0.00066  0.0030
+0.4
+0.2
+0.0
+-0.2
+-0.4
+o(m)
+0.0
+-0.1
+-0.2
+-0.3
+i(m)
+0.00066
+0.00107
+0.00147
+0.00188
+0.00229
+0.00269
+0.00310
+FIG. 15. Electron temperature Te in the reconnection plane
+when the reconnection site is at the (a) top and (b) bottom.
+Consistent with the results of Ref. [30], the hot core bulges
+toward the outboard side of the torus.
+an outﬂow asymmetry with the faster outﬂow where the
+gas pressure is less [60]. Similarly here, there is a mag-
+netic ﬁeld pressure gradient towards the inboard side of
+the torus, and for the top and bottom sites this gradient
+is in the outﬂow direction, consistent with the polarity
+of the asymmetric outﬂows.
+Interestingly, the simulations reveal an asymmetry of
+the electron temperature for the top and bottom recon-
+
+14
+nection sites, as seen in Fig. 15. The temperature in the
+outﬂow jet directed toward the outboard side is greater
+than that in the outﬂow jet toward the inboard side. This
+gives the appearance that the high temperature core is
+oﬀset toward the outboard side. This is consistent with
+the experimental result of Ref. [30], where the hot core
+was shifted toward the outboard side when the sawtooth
+mode was on the top and bottom sides of the tokamak.
+VI.
+CONCLUSIONS AND DISCUSSION
+A.
+Conclusions
+It has long been known that reconnection in sawteeth
+occurs in the auxiliary plane normal to the helical mag-
+netic ﬁeld at the q = 1 surface, and idealized simulations
+of reconnection in cylindrical geometries have taken this
+into account. However, we are not aware of any simu-
+lation studies in fully 3D toroidal geometries that study
+reconnection in the reconnection plane. This study has
+carefully and systematically devised an approach for an-
+alyzing reconnection in a 3D toroidal geometry in the
+plane of reconnection.
+We use Poincar´e plots and plasma proﬁles to ﬁnd the
+reconnection X-line in a particular poloidal plane. Then,
+we ﬁnd the helical direction at that point, and the re-
+connection plane is normal to the helical direction. We
+orient the plane with vectors spanning the plane and de-
+velop a technique to automatically identify the inﬂow and
+outﬂow directions.
+We utilize the extended-MHD code M3D-C1, to per-
+form a systematic study of the local reconnection prop-
+erties and to compare the results of between resistive-
+MHD and extended-MHD simulations. Globally, we ﬁnd
+that the growth of the kinetic energy in diﬀerent toroidal
+modes for the extended-MHD reconnection process is
+substantially greater than in resistive-MHD and exhibits
+a nonlinear acceleration, with crash times more consis-
+tent with experimental results. This is consistent with
+the hypothesis that collisionless reconnection is necessary
+to explain observed crash times.
+We observe toroidal rotation due to the externally-
+applied neutral beam, which causes poloidal rotation of
+the helical mode during the longer timescale of the re-
+sistive simulation, consistent with experimental results
+[30].
+During the tearing phase in the extended-MHD
+simulations, the tearing site drifted in the direction of
+v∗e, which shows that the magnetic ﬁeld conﬁguration
+drifts with the electron diamagnetic ﬂow. This poloidal
+drift is consistent with the initial ﬁndings of [1], which
+reported that the sawtooth mode propagates in the v∗e
+direction. This will be the topic of future work.
+By sampling the extended-MHD simulation data in the
+plane perpendicular to the local magnetic ﬁeld at the re-
+connection site, we conﬁrm the approach we developed
+successfully found the reconnection plane. We ﬁnd the lo-
+cal parameters controlling the reconnection (in the mov-
+ing reference frame of the X-line), ﬁnd the non-ideal con-
+tributions to Ohm’s law which become important in the
+reconnection region, directly measure the reconnection
+electric ﬁeld and show it is in reasonable agreement with
+a 2D prediction, show the decoupling of the electrons and
+ions in the region near the reconnection site, and show
+the ﬁrst observation of the quadrupole out-of-plane mag-
+netic ﬁeld resulting from the Hall term in collisionless
+reconnection.
+We also explored how reconnection varies with toroidal
+(and poloidal) angle, which is an interesting aspect that
+has not received much attention but is relevant because
+q = 1 magnetic ﬁeld lines wrap around the rational sur-
+face and sample local parameters varying from the in-
+board to outboard sides. Reconnection is faster on the
+inboard side even though the outﬂow speeds are higher
+on the outboard side.
+We posit that toroidal geome-
+try aﬀects the aspect ratio of the reconnection geometry,
+elongating the reconnection site on the outboard side.
+The varying toroidal magnetic ﬁeld causes an outﬂow
+asymmetry on the top and bottom of the torus. Because
+these asymmetries and current sheet variations alter the
+rate of reconnection, this is important for understanding
+how the reconnection mode evolves locally throughout
+the tokamak.
+B.
+Discussion
+The results of this study are important results for a
+number of reasons. First, with regard to the role of col-
+lisionless eﬀects in the sawtooth crash, the approach em-
+ployed here provides a systematic approach to conﬁrm
+given numerical results are properly resolving the ap-
+propriate physics. The approaches employed here were
+only tested on simulation results from a single code, but
+the approach is general and should work with any 3D
+toroidal simulation output.
+Second, by demonstrating
+how to measure local properties of reconnection, it en-
+hances our ability to study the reconnection process in
+sawteeth in tokamaks, which is important for developing
+a ﬁrst-principles understanding. Since sawteeth are cru-
+cial for transport and current transport models employ
+ad hoc techniques to incorporate sawtooth crash times,
+such a research direction is very important.
+The present results show that local 2D reconnection
+models agree reasonably well with reconnection proper-
+ties in the fully 3D toroidal geometry, which suggest that
+such an approach can be useful for predicting quantita-
+tive behavior of tokamak reconnection-related phenom-
+ena.
+The study of the toroidal angle variation of reconnec-
+tion could be useful for analysis of experimental data,
+such as recent work in Ref. [30]. While the WT-3 toka-
+mak is no longer in use, there has been recent installa-
+tions of quasi-3D electron cyclotron emission (ECE) di-
+agnostics on the Korea Superconducting Tokamak Ad-
+vanced Research (KSTAR) [61] and ASDEX-U [62] toka-
+maks. The local reconnection analysis utilized in this pa-
+per could be directly tested on either device. This local
+analysis could also be useful for modeling and analyz-
+ing reconnection events occurring during non-inductive
+startup in many spherical tokamaks, including MAST
+[63], NSTX-U [64], and Pegasus [65].
+
+15
+The local reconnection analysis could also be valuable
+for diagnosing other dynamic events in tokamaks that
+involve magnetic reconnection, namely, NTMs and the
+use of resonant magnetic perturbations (RMPs) to sup-
+press edge localized modes (ELMs). An understanding
+of the suppression of ELMs by RMPs will also lead to
+knowledge of the edge conﬁnement degradation known
+as density pumpout. A detailed understanding of both
+NTM and RMP processes are of major importance to the
+success of future fusion devices, and an understanding of
+the local reconnection dynamics at the higher order ra-
+tional surfaces where these processes occur is essential.
+As mentioned throughout the text, there are sev-
+eral limitations of the present study that should be ad-
+dressed in future work. Convergence tests on the poloidal
+and toroidal resolution for the extended-MHD simulation
+shown are needed. One could include an explicit, higher-
+order numerical magnetic diﬀusivity to control the dis-
+sipation mechanism breaking the frozen-in condition at
+the reconnection X-point. Future work should apply the
+local reconnection analysis across test simulations with
+diﬀerent equilibrium magnetic and thermal proﬁles, and
+especially across experimental data, moving past the test
+simulation used here. One could also revisit the analytic
+theory of asymmetric reconnection to include a guide
+magnetic ﬁeld, curved geometry eﬀects, and a drifting
+reference frame. A more thorough understanding of what
+controls the structure and amplitude of the out-of-plane
+(helical) Hall quadrupole ﬁeld structure when including
+curved geometry and drift eﬀects would be useful. The ef-
+fects on sawtooth reconnection due to diamagnetic drifts
+will be discussed in a forthcoming paper.
+ACKNOWLEDGMENTS
+The authors gratefully acknowledge support from the
+West Virginia University Program to Stimulate Com-
+petitive Research (PSCoR) program (MTB), the West
+Virginia University Provost Fellowship (MTB), NASA
+Grants NNX10AN08A, NNX16AF75G, NNX16AG76G
+(PAC), NSF Grant AGS-0953463 (PAC), U.S. OFES
+DOE Award No. DE-AC02-09CH11466 (SCJ and NMF),
+and the SciDAC Center for Extended MHD modeling
+(SCJ and NMF). MTB would like to thank B. N. Rogers,
+C. M. Komar, I. Krebs, and K. Malakit.
+[1] S. von Goeler, W. Stodiek, and N. R. Sautoﬀ, Phys. Rev.
+Lett. 33, 1201 (1974).
+[2] B. B. Kadomtsev, Fiz. Plazmy 1, 710 (1975).
+[3] J. A. Wesson, Plasma Physics and Controlled Fusion 28,
+243 (1986).
+[4] T. C. Hender, J. C. Wesley, J. Bialek, A. Bondeson, A. H.
+Boozer, R. J. Buttery, A. Garofalo, T. P. Goodman, R. S.
+Granetz, Y. Gribov, et al., Nucl. Fusion 47, S128 (2007).
+[5] V. Bhatnagar, D. Start, J. Jacquinot, F. Chaland,
+A. Cherubini, and F. Porcelli, Nuclear Fusion 34, 1579
+(1994).
+[6] C. C. Petty, M. E. Austin, C. T. Holcomb, R. J. Jayaku-
+mar, R. J. La Haye, T. C. Luce, M. A. Makowski, P. A.
+Politzer, and M. R. Wade, Phys. Rev. Lett. 102, 045005
+(2009).
+[7] A. C. C. Sips, R. Arslanbekov, C. Atanasiu, W. Becker,
+G. Becker, K. Behler, K. Behringer, A. Bergmann, R. Bi-
+lato, D. Bolshukhin, et al., Plasma Physics and Con-
+trolled Fusion 44, B69 (2002).
+[8] S. C. Jardin, N. Ferraro, and I. Krebs, Phys. Rev. Lett.
+115, 215001 (2015).
+[9] C. M. Muscatello, W. W. Heidbrink, Y. I. Kolesnichenko,
+V. V. Lutsenko, M. A. V. Zeeland, and Y. V. Yakovenko,
+Plasma Phys. Control. Fusion 54, 025006 (2012).
+[10] O. Sauter, E. Westerhof, M. L. Mayoral, B. Alper, P. A.
+Belo, R. J. Buttery, A. Gondhalekar, T. Hellsten, T. C.
+Hender, D. F. Howell, et al., Phys. Rev. Lett. 88, 105001
+(2002).
+[11] J. Wesson, Tokamaks (Clarendon Press, Oxford, 1987).
+[12] A. Sykes and J. A. Wesson, Phys. Rev. Lett. 37, 140
+(1976).
+[13] R. Denton, J. F. Drake, R. G. Kleva, and D. Boyd,
+Phys. Rev. Lett. 56, 2477 (1986).
+[14] A. W. Edwards, D. J. Campbell, W. W. Engelhardt,
+H. U. Farhbach, R. D. Gill, R. S. Granetz, S. Tsuji,
+B. J. D. Tubbing,
+A. Weller,
+J. Wesson,
+et al.,
+Phys. Rev. Lett. 57, 210 (1986).
+[15] M. Yamada, F. M. Levinton, N. Pomphrey, R. Budny,
+J. Manickam, and Y. Nagayama, Phys. Plasmas 1, 3269
+(1994).
+[16] A. Y. Aydemir, Phys. Fluids B 4, 3469 (1992).
+[17] F. Porcelli, D. Boucher, and M. N. Rosenbluth, Plasma
+Phys. Control. Fusion 38, 2163 (1996).
+[18] G. Bateman, C. N. Nguyen, A. H. Kritz, and F. Porcelli,
+Phys. Plasmas 13, 072505 (2006).
+[19] J. A. Holmes, B. A. Carreras, and L. A. Charlton,
+Phys. Fluids B 1, 788 (1989).
+[20] R. G. Kleva, Phys. Fluids B 4, 218 (1992).
+[21] X. Wang and A. Bhattacharjee, Phys. Plasmas 2, 171
+(1995).
+[22] R. G. Kleva and P. N. Guzdar, Phys. Plasmas 9, 3013
+(2002).
+[23] M. T. Beidler and P. A. Cassak, Phys. Rev. Lett. 107,
+255002 (2011).
+[24] J. A. Breslau, S. C. Jardin, and W. Park, Phys. Plasmas
+14, 056105 (2007).
+[25] W. Park, E. V. Belova, G. Y. Fu, X. Z. Tang, H. R.
+Strauss, and L. E. Sugiyama, Phys. Plasmas 6 (1999).
+[26] S. G¨unter, Q. Yu, K. Lackner, A. Bhattacharjee, and
+Y.-M. Huang, Plasma Physics and Controlled Fusion 57,
+014017 (2015).
+[27] Q. Yu, S. G¨unter, and K. Lackner, Nuclear Fusion 55,
+113008 (2015).
+[28] Q. Yu, Nuclear Fusion 50, 025014 (2010).
+[29] D. I. Pontin, Advances in Space Research 47, 1508
+(2011).
+[30] S. Yamaguchi, H. Igami, H. Tanaka, and T. Maekawa,
+Plasma Phys. and Conrol. Fusion 46, 1163 (2004).
+[31] N. M. Ferraro and S. C. Jardin, Journal of Computational
+Physics 228, 7742 (2009).
+[32] S. I. Braginskii, Reviews of Plasma Physics 1, 205 (1965).
+[33] S. C. Jardin, Journal of Computational Physics 200, 133
+(2004).
+[34] J. Breslau, N. Ferraro, and S. Jardin, Physics of Plasmas
+16 (2009).
+[35] S. C. Jardin, Journal of Computational Physics 231, 822
+
+16
+(2012).
+[36] H. Grad and H. Rubin, in Proceedings of the 2nd
+UN Conference on the Peaceful Uses of Atomic Energy
+(IAEA, 1958), vol. 31, p. 190.
+[37] V. D. Shafranov, Reviews of Plasma Physics 2, 103
+(1966).
+[38] S. C. Jardin, N. Ferraro, J. Breslau, and J. Chen, Com-
+putational Science and Discovery 5, 014002 (2012).
+[39] D. Biskamp, E. Schwarz, and J. F. Drake, Phys. Plasmas
+4, 1002 (1997).
+[40] C. E. Parnell, A. L. Haynes, and K. Galsgaard, J. Geo-
+phys. Res. 115, A02102 (2010).
+[41] C. M. Komar and P. A. Cassak, J. Geophys. Res. (in
+press).
+[42] P.
+A.
+Cassak,
+M.
+A.
+Shay,
+and
+J.
+F.
+Drake,
+Phys. Rev. Lett. 95, 235002 (2005).
+[43] M. Ugai, Phys. Plasma 7, 867 (2000).
+[44] P. A. Cassak and M. A. Shay, Phys. Plasmas 14, 102114
+(2007).
+[45] P. A. Cassak and M. A. Shay, Geophys. Res. Lett. 35,
+L19102 (2008).
+[46] M. Hoshino and A. Nishida, J. Geophys. Res. 88, 6926
+(1983).
+[47] M. Scholer, J. Geophys. Res. 94, 15,099 (1989).
+[48] R. P. Rijnbeek, V. S. Semenov, A. A. Shmalts, H. K.
+Biernat, M. F. Heyn, and B. P. Besser, Planet. Space
+Sci. 39, 1377 (1991).
+[49] F. Mozer, S. D. Bale, and T. D. Phan, Phys. Rev. Lett.
+89, 015002 (2002).
+[50] P. A. Cassak and M. A. Shay, Phys. Plasmas 16, 055704
+(2009).
+[51] J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E.
+Denton, M. Hesse, M. Kuznetsova, Z. W. Ma, A. Bhat-
+tacharjee, A. Otto, et al., J. Geophys. Res. 106, 3715
+(2001).
+[52] S. Jardin, J. Breslau, and N. Ferraro, Journal of Compu-
+tational Physics 226, 2146 (2007), ISSN 0021-9991.
+[53] M. A. Shay, J. F. Drake, R. E. Denton, and D. Biskamp,
+J. Geophys. Res. 25, 9165 (1998).
+[54] M. Swisdak, J. F. Drake, M. A. Shay, and B. N. Rogers,
+J. Geophys. Res. 108, 1218 (2003).
+[55] B. U. ¨O.. Sonnerup, in Solar System Plasma Physics,
+edited by L. J. Lanzerotti, C. F. Kennel, and E. N. Parker
+(North Halland Pub., Amsterdam, 1979), vol. 3, p. 46.
+[56] M. E. Mandt, R. E. Denton, and J. F. Drake, Geophys.
+Res. Lett. 21, 73 (1994).
+[57] M. Yamada, Y. Ren, H. Ji, J. Breslau, S. Gerhardt,
+R. Kulsrud, and A. Kuritsyn, Phys. Plasmas 13, 052119
+(2006).
+[58] R. Kleva, J. Drake, and F. Waelbroeck, Phys. Plasma 2,
+23 (1995).
+[59] B. N. Rogers and R. E. Denton, J. Geophys. Res. 108,
+1111, doi:10.1029/2002JA009699 (2003).
+[60] N. A. Murphy, C. R. Sovinec, and P. A. Cassak, J. Geo-
+phys. Res. 115, A09206 (2010).
+[61] G. S. Yun, W. Lee, M. J. Choi, J. Lee, M. Kim, J. Leem,
+Y. Nam, G. H. Choe, H. K. Park, H. Park, et al., Review
+of Scientiﬁc Instruments 85, 11D820 (2014).
+[62] I. G. J. Classen, C. W. Domier, N. C. Luhmann, A. V.
+Bogomolov, W. Suttrop, J. E. Boom, B. J. Tobias,
+A. J. H. Donn´e, and ASDEX Upgrade Team, Review
+of Scientiﬁc Instruments 85, 11D833 (2014).
+[63] A. Stanier, P. Browning, M. Gordovskyy, K. G. Mc-
+Clements, M. P. Gryaznevich, and V. S. Lukin, Physics
+of Plasmas 20, 122302 (2013).
+[64] F. Ebrahimi, E. B. Hooper, C. R. Sovinec, and R. Raman,
+Physics of Plasmas 20, 090702 (2013).
+[65] J. B. O’Bryan and C. R. Sovinec, Plasma Physics and
+Controlled Fusion 56, 064005 (2014).

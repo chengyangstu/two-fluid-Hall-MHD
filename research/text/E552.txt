@@ -1,0 +1,1228 @@
+arXiv:2008.06440v3  [physics.plasm-ph]  28 Dec 2020
+1
+Fluid Simulations of Three-Dimensional
+Reconnection that Capture the
+Lower-Hybrid Drift Instability
+F. Allmann-Rahn1†, S. Lautenbach1, R. Grauer1, and R. D. Sydora2
+1Institute for Theoretical Physics I, Ruhr University Bochum, Germany
+2Department of Physics, University of Alberta, Edmonton, Alberta T6G 2E1, Canada
+Fluid models that approximate kinetic eﬀects have received attention recently in the
+modelling of large scale plasmas such as planetary magnetospheres. In three-dimensional
+reconnection, both reconnection itself and current sheet instabilities need to be rep-
+resented appropriately. We show that a heat ﬂux closure based on pressure gradients
+enables a ten moment ﬂuid model to capture key properties of the lower-hybrid drift
+instability (LHDI) within a reconnection simulation. Characteristics of the instability are
+examined with kinetic and ﬂuid continuum models, and its role in the three-dimensional
+reconnection simulation is analysed. The saturation level of the electromagnetic LHDI is
+higher than expected which leads to strong kinking of the current sheet. Therefore, the
+magnitude of the initial perturbation has signiﬁcant impact on the resulting turbulence.
+1. Introduction
+The reconnection of magnetic ﬁeld lines in a plasma causes release of magnetic
+energy. Magnetic reconnection takes place, for example, in solar ﬂares and the Earth’s
+magnetosphere and thus inﬂuences space weather. In fusion devices it can induce further
+instabilities and aﬀect conﬁnement of the fusion plasma.
+In the last decades, reconnection has been the subject of many numerical studies,
+especially starting with the GEM challenge (Birn et al. 2001) where a widely used setup
+for reconnection simulations was deﬁned. The deeper understanding of fast reconnection
+gained through numerical simulations has been complemented by laboratory experiments
+such as the Magnetic Reconnection Experiment (MRX) (Yamada et al. 1997). In 2015
+NASA started the Magnetospheric Multiscale Mission (MMS) which was the ﬁrst space-
+craft to directly measure reconnection in the magnetosphere.
+The increase in computational power and the availability of data from MMS measure-
+ments open up new possibilities and deﬁne the directions of current reconnection research.
+We will brieﬂy list what we consider to be central research subjects. One important point
+is of course the interpretation of MMS measurements, and numerical simulations are a
+valuable tool in this regard. On the other hand, the MMS measurements can also be
+used to validate the numerical models. Recent studies showed agreement with MMS
+data for kinetic particle-in-cell (PIC) simulations (e.g. Nakamura et al. (2018a)) and for
+ten moment ﬂuid simulations (TenBarge et al. 2019). Both models retain the anisotropic
+pressure tensor which is one mechanism to break the frozen-in condition in collisionless
+reconnection (Egedal et al. 2019). Generally, there is hope for more insights from the
+† Email address for correspondence: far@tp1.rub.de
+
+2
+MMS mission concerning dissipation processes (e.g. Landau damping) that break the
+frozen-in law.
+Another question is that of three-dimensionality. Due to limited computational re-
+sources, past research focused on two-dimensional reconnection where the third dimen-
+sion is assumed to be homogeneous. Under which conditions this is a good approx-
+imation and how much inﬂuence current sheet instabilities and resulting turbulence
+have, is still a largely open question. Relevant instabilities are for example the lower-
+hybrid drift instability (LHDI) and the ﬁrehose instability (Le et al. 2019) as well as
+the current sheet shear instability (CSSI) and Kelvin-Helmholtz/kink type instabil-
+ities (Fujimoto & Sydora 2012, 2017). The LHDI, whose ﬂuid representation is dis-
+cussed in this work, has been extensively studied theoretically and in kinetic simulations
+(e.g. Daughton (2003); Innocenti et al. (2016)) along with frequent measurements of
+LHDI ﬂuctuations being made at magnetospheric reconnection sites, such as the mag-
+netopause, and in laboratory reconnection experiments. The free energy source for the
+instability are inhomogeneities in the magnetic ﬁeld and plasma pressure which drive the
+relative drifts of electrons and ions. Even though the LHDI does not signiﬁcantly alter
+the reconnection rate it does lead to enhanced anomalous plasma transport which relaxes
+gradients, for instance the density, which in turn can give rise to secondary instabilities
+such as the CSSI that is driven by the electron ﬂow shear (Fujimoto & Sydora 2017).
+The electromagnetic branch of the LHDI causes kinking of the current sheet. At later
+times kink type instabilities can be induced by the LHDI (Lapenta et al. 2003).
+Finally, the impact of reconnection on macroscopic systems like planetary magneto-
+spheres is of great interest. Generally, being able to simulate large scale, global systems
+with models more accurate than MHD brings new opportunities: both for getting a
+better understanding of physical processes in the magnetosphere and for the application
+in space weather forecast. Treating global systems with fully kinetic particle-in-cell
+(PIC) models is diﬃcult due to their high computational expense. Therefore, recent
+studies utilised ten moment ﬂuid models with good success. Wang et al. (2018) modelled
+the magnetosphere of the Jupiter moon Ganymede, and Dong et al. (2019) studied the
+interaction between the solar wind and Mercury’s magnetosphere. The applicability of
+multi-ﬂuid models for very large scales also proﬁts from their ability to under-resolve
+scales and still yield appropriate results (Wang et al. 2020). However, the ten moment
+model used in aforementioned studies (ﬁrst presented in Wang et al. (2015)) has some
+drawbacks, indicating that the approximation of kinetic eﬀects in the model needs to be
+improved.
+Diﬀerent directions can be taken concerning the integration of kinetic eﬀects in ﬂuid
+models, and we want to highlight some of them. Kinetic eﬀects include non-collisional
+damping mechanisms such as Landau damping. A very successful ﬂuid model that
+approximates Landau damping in one dimension using calculations in Fourier space
+was introduced by Hammett & Perkins (1990) and Hammett et al. (1992). It was later
+extended (see e.g. Snyder et al. (1997) and Passot & Sulem (2003)) and is still relevant
+today for one-dimensional cases and as a basis for other closures.
+In two and three dimensions, it is a reasonable assumption that damping mechanisms
+will drive temperature to a more isotropic state. Fluid models that include a term
+which drives the pressure tensor to isotropy were applied in collisionless reconnection
+by Hesse et al. (1995) and Johnson & Rossmanith (2010). Later, a connection was made
+between the Landau damping ﬂuid closures and pressure isotropisation by Wang et al.
+(2015). The result was the ﬂuid model that was used for the mentioned simulations of
+Ganymede’s and Mercury’s magnetospheres. However, some problems became apparent;
+using this heat ﬂux closure in island coalescence reconnection, one does not obtain the
+
+3
+same reconnection rate scaling with system size that is present in kinetic simulations
+(Ng et al. 2015). It was also found that the simple isotropisation closure does not
+support the LHDI when its free parameter is chosen as in reconnection simulations.
+Both issues can be addressed to some degree with a closure expression that, like the
+original Hammett-Perkins approach, incorporates calculations in Fourier space (Ng et al.
+2017, 2019). Such a non-local closure, however, is not suitable for large scale simulations
+because Fourier transforms and the necessary global communication are computationally
+extensive (Ng et al. 2019). Even better agreement with kinetic results can be achieved
+using a local pressure or temperature gradient-driven closure, as has been shown for both
+reconnection (Allmann-Rahn et al. 2018) and the LHDI (Ng et al. 2020).
+Besides Landau damping, particle trapping is another relevant kinetic eﬀect in col-
+lisionless reconnection. A ﬂuid model that includes particle trapping mechanisms was
+developed by Le et al. (2009) with an extension of the classic equations of state. This
+closure yields good results in guide ﬁeld reconnection (also see Egedal et al. (2013);
+Le et al. (2016)) but is not designed for use in systems without a guide ﬁeld. In its
+current form, the model does not support the LHDI (Le et al. 2019).
+In this paper, we simulate three-dimensional reconnection and current sheet instabil-
+ities using the heat ﬂux closure introduced in Allmann-Rahn et al. (2018). There, heat
+ﬂux is assumed to be proportional to the gradient of the pressure tensor’s deviation
+from isotropy. Thus, both the isotropisation character of the closely related closure in
+Wang et al. (2015) and the gradient dependence of the classic Landau ﬂuid closures are
+retained.
+2. Physical Models and Numerics
+A plasma is accurately described by distribution functions fs(x, v, t) for each species
+s. The amount of particles located between x and x + dx with velocities between v and
+v + dv is then given by f(x, v, t) dx dv. For collisionless plasmas, the Vlasov equation
+determines the evolution of the distribution functions:
+∂fs
+∂t + v · ∇fs + qs
+ms
+(E + v × B) · ∇vfs = 0.
+(2.1)
+Various physical quantities can be obtained from the distribution function by taking
+moments. Multiplying by powers of v and integrating over velocity space leads to
+expressions for particle density ns(x, t) =
+R
+fs(x, v, t)dv, mean velocity us(x, t) =
+1
+ns(x,t)
+R
+vfs(x, v, t)dv, pressure Ps = ms
+R
+v′ ⊗v′fsdv and heat ﬂux Qs = ms
+R
+v′ ⊗
+v′ ⊗v′fsdv. Here, ⊗is the tensor product and v′ = v −u.
+The plasma quantities evolve according to the so called multi-ﬂuid equations. These can
+be derived by taking moments of the Vlasov equation and making a physical assumption
+in order to close the resulting hierarchy. If moments up to the pressure tensor are
+considered, the ten moment equations follow (named like that because ten equations
+need to be solved):
+∂ns
+∂t + ∇· (nsus) = 0 ,
+(2.2)
+ms
+∂(nsus)
+∂t
+= nsqs(E + us × B) −∇· Ps ,
+(2.3)
+∂Ps
+ij
+∂t
+−qs(nsus
+[iEj] + 1
+ms
+ǫ[iklPs
+kj]Bl) = −(∇· Qs)ij .
+(2.4)
+
+4
+Ps = ms
+R
+v ⊗vfsdv and Qs = ms
+R
+v ⊗v ⊗vfsdv are the second and third moment
+of the distribution function (multiplied by mass), ǫikl is the Levi-Civita symbol and the
+square brackets denote the sum over as many permutations of indices as needed to make
+the tensors symmetric, for example
+u[iEj] = uiEj + ujEi.
+This set of equations needs a closure approximation for the divergence of the heat ﬂux
+which is discussed in Sec. 3. Heat ﬂux Q is related to the distribution function’s moments
+according to Qijk = Qijk −u[iPjk] + 2mnuiujuk.
+The ten moment equations reduce to ﬁve moment equations, if the temperature (and
+pressure, respectively) is isotropic. Then Eq. (2.3) becomes
+ms
+∂(nsus)
+∂t
+= nsqs(E + us × B) −1
+3∇(2Es −msnsu2
+s) −∇· (msnsus ⊗us) ,
+(2.5)
+with scalar energy density Es = ms
+2
+R v2fsdv. Additionally assuming zero heat ﬂux in
+this isotropic limit, Eq. (2.4) becomes
+∂Es
+∂t + 1
+3∇· (us(5Es −msnsu2
+s)) −qsnsus · E = 0.
+(2.6)
+Physical units in the simulations are normalised as follows: Length is normalised over
+ion inertial length di,0 based on density n0, velocity over ion Alfv´en velocity vA,0 based
+on the magnetic ﬁeld B0, time over the inverse of the ion cyclotron frequency Ω−1
+i,0 and
+mass over ion mass mi. Further normalisations are vacuum permeability µ0 = 1 and
+Boltzmann constant kB = 1.
+The Vlasov simulations in this paper use the positive and ﬂux-conservative (PFC)
+method by Filbet et al. (2001), which is a semi-Lagrangian method, combined with
+backsubstitution (Schmitz & Grauer 2006) for the velocity updates. For the ﬂuid equa-
+tions we employ a centrally weighted essentially non-oscillating (CWENO) method
+(Kurganov & Levy 2000) and the third-order Runge-Kutta scheme by Shu & Osher
+(1988). Maxwell’s equations are solved by means of the ﬁnite-diﬀerence time-domain
+(FDTD) method.
+All of the simulations were performed using the GPU accelerated muphy2 multiphysics
+simulation code developed at the Institute for Theoretical Physics I, Ruhr University
+Bochum. The code is designed for running kinetic, ﬂuid and hybrid schemes either
+individually or spatially coupled to each other.
+3. Gradient-Driven Heat Flux Closure
+A heat ﬂux term that models kinetic dissipation mechanisms needs to introduce
+damping into the ten moment equations. This can be achieved, for example, with an
+expression that takes the form of Fourier’s law
+q = −n D ∇T
+(3.1)
+with heat ﬂux vector q and thermal conductivity D. Heat ﬂux approximations based
+on temperature gradients have been used for plasmas in the classic Braginskii equa-
+tions already (Braginskii 1965) and can also be the basis of Landau ﬂuid closures.
+Hammett & Perkins (1990) and Hammett et al. (1992) used phase mixing theory to ob-
+tain in one-dimensional Fourier space ˜q = −n0χ1
+√
+2 vt
+|k|ik ˜T where tildes denote perturbed
+quantities and the conductivity D = χ1
+√
+2 vt
+|k| is dependent on the wave number k and
+thermal velocity vt. This closure is suitable for approximating kinetic Landau damping.
+
+5
+Fourier’s law is trivially generalised to three dimensions by replacing the heat ﬂux
+vector with the third order heat ﬂux tensor Q and the scalar temperature with the second
+order temperature tensor T. Then the gradient of the temperature tensor yields a third
+order tensor. The conductivity from the Landau ﬂuid closure can also easily be transferred
+as it contains only the absolute value of the wave number. To avoid calculations in Fourier
+space, Sharma et al. (2006) and Wang et al. (2015) introduced a simpliﬁcation where the
+continuous wave number ﬁeld is replaced by a single typical wave number k0, and we
+follow this approach. Landau damping is the kinetic damping of plasma oscillations, thus
+1/|ks,0| = ds,0 is a natural choice, ds,0 being the species inertial length based on n0. We
+choose an initial ansatz q = −D ∇P slightly diﬀerent from Fourier’s law which originates
+from comparisons with kinetic simulations. Since Landau damping is modelled, damping
+is supposed to act on fast changing gradients due to wave-like plasma activities and
+not on gradients from slowly changing background quantities. Therefore, we subtract an
+equilibrium pressure which is comparable to the consideration of perturbed quantities
+like in the Hammett-Perkins closure. For species s, the resulting heat ﬂux then has the
+form
+Qs = −χ
+ks,0
+vt,s ∇(Ps −Ps,0)
+(3.2)
+with the dimensionless parameter χ and an equilibrium pressure Ps,0. A Maxwell distri-
+bution is an equilibrium distribution at which no Landau damping occurs and the related
+pressure would then be isotropic. This motivation is in accordance with studies where a
+closure term that drives pressure towards isotropy led to good results (Hesse et al. 1995;
+Johnson & Rossmanith 2010; Wang et al. 2015). The closure produces wave damping,
+but due to the approximation of wave number and pressure perturbation it does not
+always give the correct Landau damping rate. It is not obvious which kinetic eﬀects are
+captured and to what degree, for example Hesse et al. (1995) included an isotropisation
+term to account for phase space instabilities.
+We need an approximation of ∇· Q as a closure to the ten moment equations so we
+take the divergence. The derivative of vt,s is assumed to be small and is neglected, and
+we obtain the Laplacian of the pressure tensor which is simply the Laplacian applied to
+each of its components. Then the ﬁnal expression (hereafter called the gradient closure)
+is
+∇· Qs = −χ
+ks,0
+vt,s ∇2 (Ps −ps id)
+(3.3)
+with χ = 3 and ks,0 = 1/ds,0. The isotropic pressure is given by ps = (Ps,xx +
+Ps,yy + Ps,zz)/3 and id denotes the identity matrix. The thermal velocity is deﬁned as
+vt,s =
+p
+kBTs/ms. We ﬁnd that χ = 3 is a reasonable value in a broad range of plasma
+conﬁgurations, but modiﬁcations to this dimensionless parameter can be made for further
+improving the agreement with kinetic calculations in specialised scenarios. Eq. (3.3)
+reduces to the isotropisation closure in Wang et al. (2015) with the approximation
+∇2 ≈k2
+0. The gradient closure was ﬁrst used in Allmann-Rahn et al. (2018).
+For numerical stability and in order to enforce positive temperatures, we set a ﬂoor
+for the diagonal elements of the pressure tensor. The Laplacian is evaluated using second
+order central ﬁnite diﬀerences. This explicit method may need smaller time steps than the
+solution of the ﬂuid equations themselves. Therefore, the computation of the closure is
+subcycled with a boundary exchange of the pressure tensor in between each subcycle. The
+amount of subcycles necessary depends on the cell size and the plasma conﬁguration. In
+the three-dimensional reconnection simulation in this paper, for example, eight subcycles
+were used.
+
+6
+−20
+−10
+0
+10
+20
+x/di,0
+−5
+0
+5
+y/di,0
+−15
+−10
+−5
+x/di,0
+−1.5
+−1.0
+−0.5
+0.0
+−2.5
+0.0
+2.5
+Figure 1: Current and velocity proﬁles in two-dimensional reconnection. Out-of-plane
+current jz/(n0vA,0) (left) and electron outﬂow velocity ux,e/vA,0 (right) at t = 65 Ω−1
+i,0 .
+4. Two-Dimensional Reconnection
+4.1. Harris Sheet
+Magnetic reconnection can develop from a perturbation of the Harris sheet (Harris
+1962) equilibrium. As initial conditions for the simulation we use parameters similar to
+the GEM (Geospace Environmental Modeling) reconnection setup (Birn et al. 2001) but
+with a larger domain of size Lx × Ly = (32π × 8π) di,0 ≈(100 × 25) di,0, resolved by
+2400 × 600 cells. Further diﬀerences are in the ion to electron mass ratio which is set
+to mi/me = 100 and in the speed of light c = 30 vA,0. The domain is periodic in x-
+direction, has conducting walls for ﬁelds and reﬂecting walls for particles in y-direction
+and is translationally symmetric in z-direction. The initial conﬁguration of the magnetic
+ﬁeld is Bx(y) = B0 tanh(y/λ) and the particle density is n(y) = n0 sech2(y/λ) + nb with
+λ = 0.5 di,0 and background density nb = 0.2 n0. Temperature is deﬁned by n0kB(Te +
+Ti) = B2
+0/(2µ0), Ti/Te = 5. A perturbation of the magnetic ﬁeld is added to break the
+equilibrium which takes the form B = ˆz × ∇ψ where the perturbation in the magnetic
+ﬂux is given by ψ(x, y) = 0.1 cos(2πx/Lx) cos(πy/Ly)B0di,0. In the Harris equilibrium,
+the current resulting from the magnetic ﬁeld conﬁguration is distributed among electrons
+and ions according to uz,i/uz,e = Ti/Te.
+The ten moment gradient simulation shown in Fig. 1 has an x-point proﬁle comparable
+to existing particle-in-cell simulations with large system sizes. The electron outﬂow jet
+near the x-point is visible in the right plot in dark blue. Its structure matches the kinetic
+results shown in Fig. 2 of Nakamura et al. (2018b), including the in- and outﬂow regions
+along the separatrix boundary. Nakamura et al. (2018a) modelled a reconnection event
+detected by MMS where the outﬂow jet is similar. A diﬀerence between kinetic and ten
+moment ﬂuid models is that the onset of reconnection can take signiﬁcantly longer in ﬂuid
+simulations depending on the heat ﬂux closure (Wang et al. 2015; Allmann-Rahn et al.
+2018). This is also the case in the present simulation, and although onset duration is not
+a particularly important aspect in two-dimensional Harris sheet reconnection (as current
+sheet formation is ignored anyway), it is important for the interaction with current sheet
+instabilities in three-dimensional simulations.
+After reconnection, a secondary island evolves at the x-point location. If perturbations
+are applied to break symmetry, this island is ejected, but in the perfectly symmetric
+case shown here, the island stays in the middle of the domain and two new x-points
+are created. When the current sheet enlarges in x-direction, at later times secondary
+islands also evolve in kinetic simulations with zero guide ﬁeld (Karimabadi et al. 2007;
+Klimas et al. 2008), but more often when a guide ﬁeld is present (Drake et al. 2006). Ion-
+scale islands, also referred to as ﬂux transfer events, have been observed in magnetosphere
+(Hasegawa et al. 2016; Hwang et al. 2016). Nevertheless, the ten moment gradient model
+seems to be more susceptible to formation of secondary islands.
+
+7
+5
+10
+15
+25
+50
+λ/di,0
+0.05
+0.1
+0.25
+⟨ER⟩
+10 gradient
+5 moment
+(λ/di,0)−0.8
+Figure 2: Scaling of average reconnection rate with system size in island coalescence
+reconnection: ten moment gradient and ﬁve moment simulations.
+4.2. Island Coalescence
+Reconnection studies are often initialised with a perturbed current sheet as described
+in the previous section. This approach results in reconnection rates and an x-point
+structure comparable to reconnection events in the magnetosphere. The procedure of
+reconnection onset, however, diﬀers from that in nature since the formation of the
+current sheet is not considered. A model that can be applied to the magnetosphere
+should also be able to capture the physics of current sheet formation appropriately. This
+can be tested using the island coalescence reconnection setup where kinetic simulations
+showed lower reconnection rates for larger system sizes (Stanier et al. 2015), and the
+ten moment ﬂuid model with the gradient closure can reproduce the reconnection rate
+scaling (Allmann-Rahn et al. 2018). The correct time development of reconnection is
+particularly important for the interplay with current sheet instabilities like the LHDI.
+In order to see if the kinetic results can be reproduced using the parameters chosen here
+for Harris sheet reconnection and the lower-hybrid drift instability, we perform island
+coalescence simulations for diﬀerent system sizes with χ = 3 in Eq. (3.3).
+The initial geometry is deﬁned by density n = n0(1 −ǫ2)/(cosh(y/λ) + ǫ cos(x/λ))2 +
+nb and magnetic potential Az = −λB0 ln(cosh(y/λ) + ǫ cos(x/λ) with a system size
+of Lx × Ly = (2πλ × 4πλ) di,0. For a more detailed description of the setup see
+Allmann-Rahn et al. (2018) (also Stanier et al. (2015), Ng et al. (2015)). Reconnection
+rate is evaluated using the magnetic ﬂux, which is the integral over Bx from the O- to
+the X-point Ψ =
+R X
+O Bx dy and is normalised over B′, the maximum of the magnetic
+ﬁeld’s absolute value at x = 0 and time t = 0. With v′
+A = B′/√µ0n0mi, the normalised
+reconnection rate is ER = ∂Ψ
+∂t /(B′v′
+A).
+In Fig. 2 the average reconnection rate is shown depending on the parameter λ which
+determines the system size. The dotted line represents the scaling of ⟨ER⟩with λ found
+by Stanier et al. (2015) in kinetic particle-in-cell simulations up to λ = 25 di,0, and the
+ten moment gradient model comes close to ⟨ER⟩∝(λ/di,0)−0.8. Slightly better agreement
+can be achieved by tuning χ and ks,0, but it is important that the closure works ﬁne
+with the same parameters in diﬀerent conﬁgurations – and that seems to be the case
+for χ = 3 and ks,0 = 1/ds,0. In addition to the ten moment gradient results, we show
+performance of the ﬁve moment model, which is able to capture the lower-hybrid drift
+instability (cf. Sec. 5) and was not considered in previous studies of island coalescence.
+The drop of reconnection rate is much smaller and the scaling with system size is only
+somewhat stronger than that of Hall-MHD in Stanier et al. (2015). The ten moment
+model using the isotropisation closure or a non-local closure outperform the ﬁve moment
+model, although they do not reach the scaling of the kinetic and ten moment gradient
+models (Ng et al. 2017; Allmann-Rahn et al. 2018).
+
+8
+0
+2
+4
+6
+8
+10
+12
+14
+t/Ω−1
+i,0
+10−2
+10−1
+100
+101
+Ez,max/(B0vA,0)
+Vlasov
+10 gradient
+5 moment
+10 isotropization
+Figure 3: Time development of the supremum norm of Ez in LHDI simulations (mi/me =
+100).
+5. Lower-Hybrid Drift Instability (LHDI)
+When magnetic reconnection is simulated in two dimensions, the assumed approx-
+imation is that the plasma is homogeneous along the out-of-plane dimension. Thin
+current sheets, as they are present in reconnection, are often susceptible to instabilities
+though and these can cause highly turbulent features in the out-of-plane dimension.
+The initial setup for a two-dimensional analysis of various current sheet instabilities can
+again be a Harris sheet equilibrium. The connection to the two-dimensional reconnection
+setup is that instead of the x-y-plane, now the y-z-plane is simulated for one ﬁxed
+point in x-direction. So the initial conﬁguration is again n(y) = n0 sech2(y/λ) + nb,
+Bx(y) = B0 tanh(y/λ), n0kB(Te + Ti) = B2
+0/(2µ0) and c = 30 vA,0. For the velocity
+proﬁles it follows that uz,s = 2Ts,0B0 sech2(y/λ)/(qsnsλµ0). The instabilities are initiated
+by adding perturbations which can either be random noise or explicit modes that are
+supposed to be examined. In PIC simulations, the particle noise also excites instabilities
+and when single precision calculations are used (especially combined with the FDTD
+method) even the noise from machine precision drives instabilities. Therefore we utilise
+double precision calculations in all cases in order to avoid unphysical results. There
+are four important aspects to consider when studying the LHDI: the growth rate, the
+duration of onset, the saturation and the potential excitation of secondary instabilities.
+These characteristics are most inﬂuenced by current sheet thickness, background density
+and ion-electron temperature ratio. Generally, the growth rate is higher for thin current
+sheets, low background density and high Ti/Te.
+5.1. Electrostatic Branch
+The electrostatic LHDI is often the ﬁrst current sheet instability to arise and generates
+ﬂuctuations located at the edges of the current sheet. For studying the electrostatic
+LHDI branch we choose parameters as in Ng et al. (2019) so that there is the possibility
+of comparing the results. The parameters are: half-thickness of the current sheet λ =
+ρi,0 ≈0.67di,0, background density nb = 0.001 n0 and temperature ratio Ti,0/Te,0 = 10,
+where ρi,0 =
+p
+kBTi,0/mi/Ωi,0 is the ion gyroradius. These are suitable conditions for
+a fast development of the LHDI. Ng et al. (2019) used a mass ratio of mi/me = 36
+which is interesting for magnetosphere modelling where reduced mass ratios are common.
+Nevertheless, it is necessary to consider more realistic mass ratios, both for obtaining
+physically relevant results and for comparing numerical models. In order to analyse
+the inﬂuence of mass ratio, we perform simulations using diﬀerent electron masses.
+Perturbations that exist in realistic plasmas can be modelled by adding random noise to
+
+9
+the initial setup. That way, the contribution and interaction of all modes as well as the
+occurence of other instabilities than the LHDI can be observed. For the simulations in this
+subsection, linearly distributed random noise is added to the initial Bx with a magnitude
+of 10−4B0. The simulated domain is of size Ly × Lz = (12.8 × 6.4)ρi,0 ≈(8.6 × 4.3)di,0
+with a spatial resolution of 512 × 256 for mi/me ⩽100 and 1024 × 512 for higher mass
+ratios. In the Vlasov simulations, the extent of velocity space is ±8vt,s resolved by 2.1
+cells per vt,e. In the mi/me = 250 case, for example, electron velocity space goes from
+−27vA,0 to 27vA,0 and ion velocity space from −5vA,0 to 5vA,0 with a total resolution of
+1024 × 512 × 1142 cells.
+0
+1
+2
+3
+4
+5
+Growth rate γ/Ωi,0
+0.0
+2.5
+5.0
+7.5
+10.0
+12.5
+tonset/Ω−1
+i,0
+Vlasov
+10 gradient
+5 moment
+10 isotropization
+linear theory
+36
+100
+250400
+1836
+mi/me
+5
+10
+15
+20
+Mode number M
+Figure 4: Scaling of LHDI characteris-
+tics with mass ratio for diﬀerent models.
+Growth rate of the instability (upper),
+onset duration (middle) and number of
+modes (lower).
+Growth rate, onset duration and the mode
+number that develops are shown in Fig. 4
+for the Vlasov model, the ten moment model
+using the gradient closure, the ﬁve moment
+model and the ten moment model using the
+isotropisation closure in Wang et al. (2015).
+Growth rate γ is determined via a ﬁt in the
+phase where ||Ez||∞∝exp(γt) and we deﬁne
+the instability’s onset duration as the time
+until ||Ez||∞⩾0.02 B0vA,0 which was the
+value where exponential growth started in the
+simulations.
+The growth rate agrees reasonably well
+between the kinetic Vlasov model and the ten
+moment gradient model. For the mi/me = 100
+case, time development of the electric ﬁeld
+is shown in Fig. 3 where the curves’ slopes
+correspond to the growth rates. The growth
+rates are 2.2 Ωi,0 and 2.4 Ωi,0 for the Vlasov
+and ten moment gradient models, respectively,
+whereas growth rate is higher in the ﬁve
+moment model (3.2 Ωi,0) and signiﬁcantly
+lower
+in
+the
+ten
+moment
+isotropisation
+model (0.67 Ωi,0). The latter approximates
+the divergence of heat ﬂux as ∇· Qs
+=
+ks,0 vt,s (Ps −ps id) and we choose ks,0
+=
+1/ds,0 for the free parameter which was used
+in reconnection studies. When ks,0
+→∞,
+the isotropisation closure approaches the ﬁve
+moment limit (isotropy) and the growth rate
+increases accordingly. In this case, however,
+reconnection cannot be modelled well. Vlasov
+simulations with high mass ratios are not
+feasible,
+but
+we
+performed
+ten
+moment
+gradient simulations with realistic mass ratio,
+and the growth rate goes up to 4 Ωi,0. This should be considered when interpreting
+magnetosphere simulations where severely reduced mass ratios such as mi/me = 25 are
+employed.
+The onset duration is, for Harris sheet reconnection simulations, as relevant as the
+growth rate since the inﬂuence of the LHDI at a certain time results from the combination
+of both. It is important to note that the onset duration depends heavily on the magnitude
+
+10
+−2.5
+0.0
+2.5
+z/ρi,0
+−6
+−4
+−2
+0
+2
+4
+6
+y/ρi,0
+Vlasov
+−2.5
+0.0
+2.5
+z/ρi,0
+10 Moment
+−2.5
+0.0
+2.5
+z/ρi,0
+5 Moment
+−0.4
+−0.3
+−0.2
+−0.1
+0.0
+0.1
+0.2
+0.3
+0.4
+−0.3
+−0.2
+−0.1
+0.0
+0.1
+0.2
+0.3
+−2
+−1
+0
+1
+2
+Figure 5: Ez/(B0vA,0) in simulations of the LHDI at t = 4.75 Ω−1
+i,0 for the Vlasov model,
+the ten moment gradient model and the ﬁve moment model (mi/me = 100).
+of the initial perturbation. But when the perturbation is ﬁxed, the duration until
+exponential growth starts can be examined for the various models. In Fig. 5 the structure
+and magnitude of the electric ﬁeld at a certain time is shown, which gives an impression
+of the combined eﬀect of onset duration and growth rate. The diﬀerence between the ten
+moment gradient model and the Vlasov model is small and the slightly higher E-ﬁeld
+value in the Vlasov case results from the earlier onset. The ﬁve moment model is already
+in a state where the fastest growing mode has saturated and secondary modes are excited.
+This rapid development can be attributed more to the very fast onset than to the higher
+growth rate. The ﬁve moment results are in contrast to the ﬁndings of Ng et al. (2019)
+who reported a much too slow LHDI growth using this model. They agree, however, with
+a study by TenBarge et al. (2019) who modelled an MMS reconnection event and found
+the ﬁve moment model to be not well-suited due to explosive growth of the LHDI. Our
+ﬁndings are also consistent with the ks,0 →∞limit of the ten moment isotropisation
+closure. The onset time in the ten moment isotropisation model using normal parameters
+is very late, decreases with mass ratio, and for mi/me = 250 no instability grows at all
+during the simulated time span.
+The mode number shown in Fig. 4 is deﬁned as the M = kzLz/(2π) that develops out
+of random noise in the respective simulation and thus corresponds to the fastest growing
+mode (or one of the fastest, if growth rates are very close for several modes). The mode
+numbers do not agree between the Vlasov and ﬂuid models for low mass ratios. While the
+number of modes itself is of little relevance for reconnection, it is crucial to always look at
+the respectively fastest growing modes when comparing diﬀerent models. Ng et al. (2019)
+explicitly initialised the M = 8 mode in the mi/me = 36 case which is the fastest mode
+for the ﬂuid models but a rather slow mode in the Vlasov model (we obtain a growth
+rate of 1.1 Ωi,0 for the M = 8 mode in agreement with Ng et al. (2019)). Therefore, only
+looking at a single mode is not an appropriate method of measuring the capability of
+ﬂuid models to reproduce the kinetic LHDI. At mass ratio mi/me = 250 the Vlasov and
+the ten moment gradient model results become closer and mode numbers keep increasing
+towards realistic mass ratio in the ﬂuid simulations.
+It is interesting to compare the simulation results to linear kinetic theory, especially at
+
+11
+high mass ratios where the Vlasov simulations are not available for validating the ﬂuid
+model. An expression for the local dispersion relation of the LHDI according to linear
+kinetic theory is given in Eq. (52) of Davidson et al. (1977). The dispersion relation
+can be solved numerically to give the dependence of growth rate on the wave number.
+The local density and magnetic ﬁeld values were taken at the y-location of the fastest
+modes in the simulations. The results from linear theory are shown in Fig. 4 with dotted
+lines. The growth rate agrees well between theory and the non-linear Vlasov simulation
+at mi/me = 36 but the theory estimates slightly higher growth rates than the kinetic
+simulation at more realistic mass ratios. This suggests that non-linear electron eﬀects
+play an important role. In the theoretic prediction of the mode number the discrepancy
+is more evident; there is excellent agreement between kinetic theory and the Vlasov
+simulations at low mass ratios, but at mi/me = 250 the theory does not reproduce the
+higher mode number from the simulation. When the Vlasov simulation results are not
+available, the gradient ﬂuid model closely matches the growth rates predicted by linear
+kinetic theory. Concerning the mode number of the fastest growing mode, the theory
+yields better results at low mass ratios, but the ﬂuid simulation can capture non-linear
+eﬀects and the interaction between various modes leading to more reliable results when
+realistic mass ratio is approached.
+The mass ratio dependence of LHDI onset and growth rate the simulations supports
+our choice of ks,0 = 1/ds,0 in the gradient closure. More heat ﬂux due to the closure
+leads to increased LHDI growth rates and earlier onset. Since ds,0 ∝√ms, the higher ks,0
+compensates the increased heat ﬂux caused by vt,s in the closure at small electron masses
+and prevents the electrons from being thermalised. If ks,0 is chosen to be independent of
+mass, the LHDI grows too fast at high mass ratios, whereas with ks,0 = 1/ds,0 there is
+good agreement between kinetic and ten moment gradient results.
+5.2. Electromagnetic Branch
+The electromagnetic LHDI has lower growth rates compared to the electrostatic
+branch, but it penetrates into the center of the current sheet and thus can potentially
+have more signiﬁcant impact on (for example) reconnection. Therefore, we test whether
+the gradient ﬂuid model can also reproduce these more complex electromagnetic modes.
+A detailed analysis of the electromagnetic branch using kinetic theory and simula-
+tions can be found in Daughton (2003). Since we are interested in the eﬀect of the
+electromagnetic LHDI within reconnection, we choose parameters and resolutions as
+in the ﬂuid simulation of three-dimensional reconnection that is discussed in the next
+section. The parameters are nb = 0.2 n0, Ti/Te = 5, λ = 0.5 di,0, mi/me = 100 and
+initial random noise added to electron density with a magnitude of δne = 10−8 n0. It
+should be noted that electromagnetic LHDI branch is also present in Vlasov and ﬂuid
+simulations when the setup from the previous section is used. The domain is now of size
+Ly × Lz = (6π × 2π)di,0 resolved by 450 × 150 cells.
+In Fig. 6 the ﬂuctuations in the magnetic ﬁeld caused by the electromagnetic LHDI
+are shown for kinetic Vlasov and ten moment ﬂuid simulations next to the current sheet
+density to demonstrate the inﬂuence of the mode. Onset duration of both the elctrostatic
+and the electromagnetic LHDI modes is longer using the ﬂuid model compared to the
+kinetic simulation with these plasma parameters. Although an accurate representation
+of onset times in all parameter regimes would of course be desirable, this behaviour is
+consistent with the longer reconnection onset of the ﬂuid model that was mentioned in
+Sec. 4. Growth rate of the electromagnetic modes that are shown in Fig. 6 (concerning
+the amplitude of magnetic ﬁeld ﬂuctuations) is γ ≈0.41 Ωi,0 in the Vlasov simulation
+and γ ≈0.21 Ωi,0 in the ﬂuid simulation. In order to still compare the inﬂuence of the
+
+12
+−2
+0
+2
+y/di,0
+t = 26 Ω−1
+i,0
+Vlasov
+t = 54 Ω−1
+i,0
+10 Moment
+−2
+0
+2
+y/di,0
+t = 26 Ω−1
+i,0
+t = 54 Ω−1
+i,0
+−2
+0
+2
+y/di,0
+t = 28 Ω−1
+i,0
+t = 57 Ω−1
+i,0
+−4
+−2
+0
+2
+4
+z/di,0
+−2
+0
+2
+y/di,0
+t = 28 Ω−1
+i,0
+−4
+−2
+0
+2
+4
+z/di,0
+t = 57 Ω−1
+i,0
+−0.4
+−0.2
+0.0
+0.2
+0.4
+eBx/B0
+−3.2
+−2.4
+−1.6
+−0.8
+0.0
+jz/(n0vA,0)
+−0.8
+−0.4
+0.0
+0.4
+0.8
+eBx/B0
+−3.2
+−2.4
+−1.6
+−0.8
+0.0
+jz/(n0vA,0)
+Figure 6: Electromagnetic mode of the lower-hybrid drift instability in Vlasov and ten
+moment gradient simulations. Shown are the deviation of the magnetic ﬁeld from the
+initialized proﬁle eBx = Bx −tanh(y/λ) and the out-of-plane current density jz.
+mode in both models, we choose times in the plot when the magnetic ﬂuctuations have
+a similar magnitude. The kinetic Vlasov solution has the typical spatial structure of the
+electromagnetic mode at t = 26 Ω−1
+i,0 which is not perfectly reproduced by the ten moment
+gradient model (t = 54 Ω−1
+i,0 ), but in the latter the mode does also arise in the center of
+the current sheet and the wave length is similar. At this stage the electromagnetic LHDI
+already causes signiﬁcant kinking of the current sheet and the magnitude of the magnetic
+ﬁeld ﬂuctuations is high. In contrast to the ﬁndings in Daughton (2003) the saturation is
+not at a moderate level. Instead, the ﬂuctuations in the magnetic ﬁeld keep growing so
+that eBx > 1 B0, causing signiﬁcant modiﬁcations to the current sheet and magnetic ﬁeld
+proﬁle as can be seen in the lower panels of Fig. 6 (times t = 28 Ω−1
+i,0 and t = 57 Ω−1
+i,0
+respectively). The reason for the high saturation level is unclear, but of course the results
+cannot be directly compared to Daughton (2003) because the plasma parameters are
+diﬀerent. In Harris sheet reconnection simulations, the reconnection process is started
+by an initial perturbation to the magnetic ﬁeld. If strong ﬂuctuations in the magnetic
+ﬁeld due to the electromagnetic LHDI arise before reconnection, they can also initiate
+reconnection leading to multiple x-lines and turbulence. The high saturation level of the
+LHDI is surprising, considering that many studies suggest that very strong kinking of
+magnetosphere current sheets is primarily caused by slower instabilities such as the ion-
+ion kink instability or Kelvin-Helmholtz type instabilities (Lapenta & Brackbill 2002;
+
+13
+Figure 7: Contour plots of jz/(n0vA,0) from the three-dimensional reconnection
+simulation at times t = 65 Ω−1
+i,0 (upper) and t = 95 Ω−1
+i,0 (lower).
+Lapenta et al. 2003; Baumjohann et al. 2007). A detailed analysis of the saturation of
+the electromagnetic LHDI branch and its eﬀect on current sheet stability using kinetic
+simulations in various parameter regimes goes beyond the scope of this paper but is a
+subject of future research.
+The ﬂuid model cannot excactly represent the complex electromagnetic LHDI modes,
+but the key properties and the eﬀect on the current sheet are in agreement with the
+Vlasov simulation including high saturation levels of the magnetic ﬁeld ﬂuctuations.
+6. Three-Dimensional Reconnection
+In order to examine the eﬀect of the LHDI on reconnection using the ﬂuid model,
+we study the interplay of the two in a three-dimensional setup that is identical to the
+one of the Harris sheet reconnection simulation in Sec. 4.1 – except for the additional
+dimension and a tiny initial perturbation of electron density. The domain now has the size
+Lx×Ly×Lz = (32π×8π×2π) di,0 ≈(100×25×6) di,0 with a resolution of 2400×600×150
+cells and periodic boundary conditions in z-direction. Linearly distributed random noise
+is added to the initial electron density with a maximum magnitude of δne = 10−8n0 so
+that instabilities like the LHDI can develop. The perturbation’s magnitude inﬂuences
+the LHDI’s onset duration and therefore has great impact on the eﬀect of the LHDI, as
+will be discussed later. Using a small random perturbation of electron density, we give
+current sheet instabilities maximum freedom in their development.
+Contour renderings of the current density jz are given in Fig. 7 after the reconnection
+current sheet has formed and at a later stage when turbulence dominates. The upper
+plot shows the same time as Fig. 1 for the two-dimensional case and similar features are
+visible with a slightly smaller x-line current sheet in the three-dimensional simulation.
+Fluctuations in the third dimension are moderate in the electron diﬀusion region but
+
+14
+strong in the outﬂow where the electromagnetic LHDI has impaired the current sheet.
+The electrostatic LHDI mode also aﬀects the current density and can be seen in the
+contours at t = 65 Ω−1
+i,0 left and right of the x-line. Around t = 68 Ω−1
+i,0 a secondary
+island (plasmoid) forms and is ejected in the negative x-direction. Later, the electron
+diﬀusion region becomes more turbulent and the x-line current sheet broadens, as is
+visible in the lower panel.
+0
+20
+40
+60
+80
+100
+t/Ω−1
+i,0
+0.0
+0.1
+0.2
+ER/(B0vA,0)
+2D
+3D
+0
+20
+40
+60
+80
+100
+t/Ω−1
+i,0
+10−2
+10−1
+100
+Ez,max/(B0vA,0)
+3D reconnection
+2D LHDI 10 moment
+2D LHDI Vlasov
+10−10
+10−8
+10−6
+10−4
+10−2
+δn/n0
+0
+10
+20
+30
+40
+tonset/Ω−1
+i,0
+Figure 8: Reconnection rate (upper), supre-
+mum
+norm
+of
+Ez
+in
+three-dimensional
+reconnection compared to two-dimensional
+LHDI (middle) and LHDI onset duration
+depending on initial perturbation (lower).
+The reconnection rate is shown in Fig. 8
+(top) for both 2D and 3D, evaluated by
+averaging the value of Ez at the x-line
+over z. We deﬁne the x-line as the location
+in the x-y plane where By averaged over
+z goes through zero to the left (i.e.
+negative x-direction) of the maximum of
+By. When two x-lines are present due
+to a magnetic island, this corresponds to
+the one at larger x-position as the island
+is ejected in negative x-direction in the
+three-dimensional simulation. The island
+formation is visible in the form of a bump
+around t = 68 Ω−1
+i,0 and is associated with
+an increase of reconnection rate. The is-
+land is not ejected in the two-dimensional
+simulation with perfect symmetry which
+may cause the slightly higher reconnection
+rate
+at
+later
+times
+in
+the
+2D
+run.
+The earlier start of fast reconnection in
+three dimensions can likely be attributed
+to current sheet thinning and electron
+heating caused by the LHDI. After fast
+reconnection has started, the increased
+electron temperature and weaker density
+gradient in the electron diﬀusion region
+leads to a decay of the LHDI which may
+be the reason for the temporary drop of
+the reconnection rate at t = 48 Ω−1
+i,0 . The
+development of instabilities at the x-line is
+demonstrated in Fig. 9 at three exemplary
+points in time. The LHDI (left) is weaker and arises later at the x-line than in the rest of
+the current sheet and when fast reconnection has started it decays and leaves moderate
+turbulence behind (middle) caused by secondary modes. In the later stage, a diﬀerent
+instability emerges (right) which has common features with the current sheet shear
+instability (CSSI) shown in Fig. 3 of Fujimoto & Sydora (2017) concerning wave length,
+y-extent and magnitude. To conﬁrm whether the instability in our simulation is indeed
+the CSSI will be left for future work as it is not the primary subject of this study. However,
+the structure of the electric ﬁeld at the x-line does agree with the kinetic PIC simulation
+of three-dimensional reconnection in Fujimoto & Sydora (2017) although there, the
+turbulence is much stronger around the x-line. In contrast, Nakamura et al. (2018a) found
+negligible three-dimensionality in the electron diﬀusion region. This is not necessarily
+a contradiction and is likely caused by the diﬀerent background densities which were
+0.044n0 in the former and 0.3n0 in the latter study attended by respectively fast or slow
+
+15
+Figure 9: Instabilities at the x-line in 3D reconnection. Shown are y-z-slices of
+Ez/(B0vA,0) at times t = 42 Ω−1
+i,0 (left), t = 54 Ω−1
+i,0 (middle) and t = 98.5 Ω−1
+i,0 (right).
+growth of the LHDI. The low temperature ratio of Ti/Te = 3 in Nakamura et al. (2018a)
+may have further slowed down the LHDI development. Our setup with nb = 0.2n0 and
+Ti/Te = 5 lies between the two which is also evident in the amount of turbulence present.
+Recent studies on the role turbulence and the LHDI in reconnection have discussed a
+possible increase in reconnection rate due to modiﬁcations in the Ohm’s law caused
+by turbulence around the x-line (so called anomalous dissipation). The focus was on
+the electromagnetic LHDI in the reconnecting current sheet and there are ﬁndings
+that support the importance of turbulence (Price et al. 2016, 2017) and some that
+estimate a rather low inﬂuence of anomalous dissipation (Le et al. 2017, 2018). The
+small electromagnetic ﬂuctuations at the x-line in our three-dimensional ﬂuid simulation
+at earlier time (Fig. 9 middle) do have a similar structure as those shown in Fig. 7b of
+Price et al. (2017) but in our case contributions of the electromagnetic LHDI at the x-line
+decay fast because of the low density gradient. Therefore, the LHDI can not make long-
+term contributions apart from inducing the later CSSI-like instability. It should be noted
+that this could potentially be diﬀerent in the reconnection scenario that aforementioned
+studies used where density and temperature asymmetries are present. The possible
+inﬂuence of the CSSI-like instability on reconnection rate will be an interesting topic
+of future research.
+For agreement of the ﬂuid simulations of three-dimensional reconnection with published
+kinetic PIC simulations, the relation between instability onset duration and reconnection
+onset duration is a central issue since both depend on the closure approximation. If
+reconnection onset takes too long with respect to LHDI onset, the electromagnetic LHDI
+can cause turbulent reconnection at multiple x-lines before reconnection due to the
+initially applied B-ﬁeld perturbation takes place. The turbulence in the electron diﬀusion
+region is also largely determined by the time that the LHDI has been present before the
+reconnection process leads to a decay of the LHDI around the x-line. We compared the
+LHDI development in two-dimensional Vlasov and ten moment gradient simulations with
+the one within three-dimensional reconnection using the same initial conditions for the
+current sheet. The electric ﬁeld’s evolution is given in Fig. 8 (middle). Comparing the ten
+moment simulation of pure LHDI with the reconnection simulation, the development is
+very similar indicating that the LHDI is the main source of ﬂuctuations in Ez as expected.
+Its onset is slightly later within reconnection because of the broader current sheet that
+develops in the course of the reconnection process. Looking at the Vlasov simulation, the
+development is again comparable but onset time is much earlier and growth rate is also
+higher (1.08 Ωi,0 compared to 0.61 Ωi,0 in the ﬂuid model). The faster onset of the LHDI
+using the kinetic model in this setup is consistent with the faster onset of reconnection
+so that in the end the eﬀect of the LHDI in ten moment gradient simulations resembles
+
+16
+the eﬀect in kinetic simulations. It should however be noted that the initially applied
+perturbation of δn = 10−8n0 is small compared to intrinsic PIC noise present in kinetic
+simulations of 3D reconnection. A low initial noise level is necessary for agreement with
+previous PIC studies which is interesting because reconnection onset and LHDI onset
+are delayed to similar extent compared to Vlasov simulations. The reason is that the
+electromagnetic branch of the LHDI has a high saturation level so that the magnetic
+ﬁeld ﬂuctuations can initiate turbulent reconnection at multiple x-lines.
+The onset duration of the LHDI is important because it inﬂuences the the time when
+strong ﬂuctuations in the magnetic ﬁeld arise and largely determines the impact that the
+LHDI can have around the x-line. In order to examine the dependence of LHDI onset on
+the noise level, we apply initial perturbations of diﬀerent magnitudes δn to electron and
+ion density in the current sheet setup used for the Harris sheet reconnection simulations,
+and measure the onset duration (time until ||Ez||∞⩾0.04 B0vA,0). The results are
+shown in Fig. 8 (lower). The onset duration has an approximately logarithmic dependence
+tonset ∼log(δn/n0) in this setup using a resolution as in the three-dimensional simulation.
+There is a wide range between tonset = 30 Ω−1
+i,0 when δn = 10−10 n0 and tonset = 4 Ω−1
+i,0
+when δn = 10−2 n0 and the time development is substantially diﬀerent even when
+comparing, for example, an initialisation using δn = 10−6 n0 and one using δn = 10−4 n0.
+There is also competition between the LHDI onset and the reconnection onset, which is
+not signiﬁcantly inﬂuenced by the level of initial random noise but can be controlled by
+the magnitude of perturbation in the magnetic ﬂux ψ. Thus, depending on the initial
+perturbation one can get highly turbulent reconnection with x-lines due to current sheet
+instabilities or weak eﬀect of instabilities and a reconnection that is essentially two-
+dimensional. In ﬂuid simulations there is the additional diﬁculty that onset times are
+aﬀected by the closure approximation. Past studies of 3D reconnection that used kinetic
+paricle-in-cell simulations typically relied on the discrete particle noise to trigger instabil-
+ities. When comparing such simulations it is important to consider that instability onset
+depends on the respectively used numbers of particles, resolutions and noise reduction
+techniques. Discrepancies in past publications concerning the inﬂuence of instabilities
+and turbulence may partly be attributed to varying onset times caused by diﬀerent
+noise levels. Generally, a prediction of the inﬂuence of instabilities in magnetospheric
+reconnection events using simulations with a pre-formed current sheet is a diﬃcult task
+because accurate information on perturbation levels at the beginning of the simulated
+time span would be needed. Three-dimensional Harris sheet simulations provide valuable
+insight in the possible scenarios concerning turbulence in magnetospheric reconnection
+though.
+7. Conclusions
+The ten moment ﬂuid model with a closure based on pressure gradients can adequately
+represent magnetic reconnection and the lower-hybrid drift instability (LHDI), making
+it a suitable candidate for magnetospheric modelling. The closure is applicable in a
+broad range of plasma conﬁgurations in the collisionless regime without the need for
+parameter tuning. Important features of the LHDI are captured like the electrostatic
+and electromagnetic ﬂuctuations and current sheet kinking due to the electromagnetic
+branch. Onset times, growth rates and saturation levels often match kinetic results, but
+depending on the plasma parameters there can be discrepancies. The full range of LHDI
+modes is not accurately modelled at the same time and the electrostatic modes can be
+captured more easily than the electromagnetic ones. The ﬂuid model is particularly useful
+
+17
+when decently resolved kinetic particle-in-cell (PIC) simulations are not feasible since the
+computational cost of ﬂuid simulations is typically much lower.
+In both ﬂuid and Vlasov continuum simulations saturation levels of the LHDI were
+higher than expected which enabled the electromagnetic branch to cause heavy tur-
+bulence. Therefore, the initial perturbation level needed to be very low in order to
+match results from previous kinetic PIC simulations of three-dimensional reconnection. A
+detailed analysis of LHDI saturation levels and potential implications will be necessary
+in the future. Generally, the duration of LHDI onset (and thus its inﬂuence on the
+reconnection process) is very sensitive to perturbation levels which must be considered
+in the interpretation of reconnection simulations. In three-dimensional ﬂuid reconnection,
+reconnection onset was faster than in two dimensions and the current sheet broadened
+in the later stages. Strong turbulence in the outﬂow and moderate turbulence in the
+electron diﬀusion region was observed to develop.
+Future work on the heat ﬂux closure may take into account the direction imposed
+by the magnetic ﬁeld, which has not been considered at this point. The formation
+of magnetic islands in connection with the ten moment gradient model needs further
+investigation. Improvements to the representation of Harris sheet reconnection onset
+and LHDI onset/growth rate independently of plasma parameters are desirable. This
+paper focused on the applicability of the ﬂuid model in three-dimensional reconnection
+and therefore on the turbulence generation of the LHDI. Other eﬀects like the role of
+anomalous dissipation in ﬂuid simulations deserve a closer look. Instabilities at later
+times such as the current sheet shear instability (CSSI) at the x-line or the eﬀect
+of instabilities in the outﬂow regions will be addressed in the future. The process of
+reconnection onset and the connection with instabilities is not well understood and
+three-dimensional simulations of reconnection that take current sheet formation into
+account may provide new insights in this direction.
+Acknowledgements
+We gratefully acknowledge the Gauss Centre for Supercomputing e.V. (www.gauss-
+centre.eu) for funding this project by providing computing time through the John
+von Neumann Institute for Computing (NIC) on the GCS Supercomputer JUWELS
+at J¨ulich Supercomputing Centre (JSC). Computations were conducted on JUWELS
+(J¨ulich Supercomputing Centre 2019) and on the DaVinci cluster at TP1 Plasma
+Research Department. F.A. and S.L. acknowledge support from the Helmholtz
+Association (VH-NG-1239).
+REFERENCES
+Allmann-Rahn, F., Trost, T. & Grauer, R. 2018 Temperature gradient driven heat ﬂux
+closure in ﬂuid simulations of collisionless reconnection. Journal of Plasma Physics 84 (3),
+905840307.
+Baumjohann, W., Roux, A., Le Contel, O., Nakamura, R., Birn, J., Hoshino, M., Lui,
+A. T. Y., Owen, C. J., Sauvaud, J.-A., Vaivads, A., Fontaine, D. & Runov, A.
+2007 Dynamics of thin current sheets: Cluster observations. Annales Geophysicae 25 (6),
+1365–1389.
+Birn, J., Drake, J. F., Shay, M. A., Rogers, B. N., Denton, R. E., Hesse, M.,
+Kuznetsova, M., Ma, Z. W., Bhattacharjee, A., Otto, A. & Pritchett, P. L.
+2001 Geospace environmental modeling (gem) magnetic reconnection challenge. Journal
+of Geophysical Research: Space Physics 106 (A3), 3715–3719.
+Braginskii, S. I. 1965 Transport processes in a plasma. Reviews of Plasma Physics 1, 205.
+
+18
+Daughton, W. 2003 Electromagnetic properties of the lower-hybrid drift instability in a thin
+current sheet. Physics of Plasmas 10 (8), 3103–3119.
+Davidson, R. C., Gladd, N. T., Wu, C. S. & Huba, J. D. 1977 Eﬀects of ﬁnite plasma beta
+on the lower-hybrid-drift instability. The Physics of Fluids 20 (2), 301–310.
+Dong, C., Wang, L., Hakim, A., Bhattacharjee, A., Slavin, J. A., DiBraccio, G. A.
+& Germaschewski, K. 2019 Global ten-moment multiﬂuid simulations of the solar
+wind interaction with mercury: From the planetary conducting core to the dynamic
+magnetosphere. Geophysical Research Letters 46 (21), 11584–11596.
+Drake, J. F., Swisdak, M., Schoeffler, K. M., Rogers, B. N. & Kobayashi, S. 2006
+Formation of secondary islands during magnetic reconnection. Geophysical Research
+Letters 33 (13).
+Egedal, J., Le, A. & Daughton, W. 2013 A review of pressure anisotropy caused by electron
+trapping in collisionless plasma, and its implications for magnetic reconnection. Phys.
+Plasmas 20, 061201.
+Egedal, J., Ng, J., Le, A., Daughton, W., Wetherton, B., Dorelli, J., Gershman, D. &
+Rager, A. 2019 Pressure tensor elements breaking the frozen-in law during reconnection
+in earth’s magnetotail. Phys. Rev. Lett. 123, 225101.
+Filbet, F., Sonnendr¨ucker, E. & Bertrand, P. 2001 Conservative numerical schemes for
+the vlasov equation. Journal of Computational Physics 172 (1), 166 – 187.
+Fujimoto, K. & Sydora, R. D. 2012 Plasmoid-induced turbulence in collisionless magnetic
+reconnection. Phys. Rev. Lett. 109, 265004.
+Fujimoto, K. & Sydora, R. D. 2017 Linear theory of the current sheet shear instability.
+Journal of Geophysical Research: Space Physics 122 (5), 5418–5430.
+Hammett, G. W., Dorland, W. & Perkins, F. W. 1992 Fluid models of phase mixing, landau
+damping, and nonlinear gyrokinetic dynamics. Physics of Fluids B 4 (7), 2052–2061.
+Hammett, G. W. & Perkins, F. W. 1990 Fluid moment models for landau damping with
+application to the ion-temperature-gradient instability. Phys. Rev. Lett. 64, 3019–3022.
+Harris, E. G. 1962 On a plasma sheath separating regions of oppositely directed magnetic
+ﬁeld. Il Nuovo Cimento (1955-1965) 23 (1), 115–121.
+Hasegawa, H., Kitamura, N., Saito, Y., Nagai, T., Shinohara, I., Yokota, S., Pollock,
+C. J., Giles, B. L., Dorelli, J. C., Gershman, D. J., Avanov, L. A., Kreisler, S.,
+Paterson, W. R., Chandler, M. O., Coffey, V., Burch, J. L., Torbert, R. B.,
+Moore, T. E., Russell, C. T., Strangeway, R. J., Le, G., Oka, M., Phan, T. D.,
+Lavraud, B., Zenitani, S. & Hesse, M. 2016 Decay of mesoscale ﬂux transfer events
+during quasi-continuous spatially extended reconnection at the magnetopause. Geophysical
+Research Letters 43 (10), 4755–4762.
+Hesse, M., Winske, D. & Kuznetsova, M. M. 1995 Hybrid modeling of collisionless
+reconnection in two-dimensional current sheets: Simulations. Journal of Geophysical
+Research: Space Physics 100 (A11), 21815–21825.
+Hwang, K.-J., Sibeck, D. G., Giles, B. L., Pollock, C. J., Gershman, D., Avanov, L.,
+Paterson, W. R., Dorelli, J. C., Ergun, R. E., Russell, C. T., Strangeway, R. J.,
+Mauk, B., Cohen, I. J., Torbert, R. B. & Burch, J. L. 2016 The substructure of a
+ﬂux transfer event observed by the mms spacecraft. Geophysical Research Letters 43 (18),
+9434–9443.
+Innocenti, M. E., Norgren, C., Newman, D., Goldman, M., Markidis, S. & Lapenta, G.
+2016 Study of electric and magnetic ﬁeld ﬂuctuations from lower hybrid drift instability
+waves in the terrestrial magnetotail with the fully kinetic, semi-implicit, adaptive multi
+level multi domain method. Physics of Plasmas 23 (5), 052902.
+Johnson, E. A. & Rossmanith, J. A. 2010 Ten-moment two-ﬂuid plasma model agrees well
+with pic/vlasov in gem problem. ArXiv e-prints , arXiv: 1010.0746.
+J¨ulich Supercomputing Centre 2019 JUWELS: Modular Tier-0/1 Supercomputer at the
+J¨ulich Supercomputing Centre. Journal of large-scale research facilities 5 (A135).
+Karimabadi, H., Daughton, W. & Scudder, J. 2007 Multi-scale structure of the electron
+diﬀusion region. Geophysical Research Letters 34 (13).
+Klimas, A., Hesse, M. & Zenitani, S. 2008 Particle-in-cell simulation of collisionless
+reconnection with open outﬂow boundaries. Physics of Plasmas 15 (8), 082102.
+Kurganov, A. & Levy, D. 2000 A third-order semidiscrete central scheme for conservation
+
+19
+laws and convection-diﬀusion equations. SIAM Journal on Scientiﬁc Computing 22 (4),
+1461–1488.
+Lapenta, G. & Brackbill, J. U. 2002 Nonlinear evolution of the lower hybrid drift instability:
+Current sheet thinning and kinking. Physics of Plasmas 9 (5), 1544–1554.
+Lapenta, G., Brackbill, J. U. & Daughton, W. S. 2003 The unexpected role of the lower
+hybrid drift instability in magnetic reconnection in three dimensions. Physics of Plasmas
+10 (5), 1577–1587.
+Le, A., Daughton, W., Chen, L.-J. & Egedal, J. 2017 Enhanced electron mixing and heating
+in 3-d asymmetric reconnection at the earth’s magnetopause. Geophysical Research Letters
+44 (5), 2096–2104.
+Le, A., Daughton, W., Karimabadi, H. & Egedal, J. 2016 Hybrid simulations of magnetic
+reconnection with kinetic ions and ﬂuid electron pressure anisotropy. Physics of Plasmas
+23 (3), 032114.
+Le, A., Daughton, W., Ohia, O., Chen, L.-J., Liu, Y.-H., Wang, S., Nystrom, W. D.
+& Bird, R. 2018 Drift turbulence, particle transport, and anomalous dissipation at the
+reconnecting magnetopause. Physics of Plasmas 25 (6), 062103.
+Le, A., Egedal, J., Daughton, W., Fox, W. & Katz, N. 2009 The equations of state for
+collisionless guide-ﬁeld reconnection. Phys. Rev. Lett. 102, 085001.
+Le, A., Stanier, A., Daughton, W., Ng, J., Egedal, J., Nystrom, W. D. & Bird, R. 2019
+Three-dimensional stability of current sheets supported by electron pressure anisotropy.
+Physics of Plasmas 26 (10), 102114.
+Nakamura, T. K. M., Genestreti, K. J., Liu, Y.-H., Nakamura, R., Teh, W.-L.,
+Hasegawa, H., Daughton, W., Hesse, M., Torbert, R. B., Burch, J. L. & Giles,
+B. L. 2018a Measurement of the magnetic reconnection rate in the earth’s magnetotail.
+Journal of Geophysical Research: Space Physics 123 (11), 9150–9168.
+Nakamura, T. K. M., Nakamura, R., Varsani, A., Genestreti, K. J., Baumjohann,
+W. & Liu, Y.-H. 2018b Remote sensing of the reconnection electric ﬁeld from in situ
+multipoint observations of the separatrix boundary. Geophysical Research Letters 45 (9),
+3829–3837.
+Ng, J., Hakim, A., Bhattacharjee, A., Stanier, A. & Daughton, W. 2017 Simulations of
+anti-parallel reconnection using a nonlocal heat ﬂux closure. Physics of Plasmas 24 (8),
+082112.
+Ng, J., Hakim, A., Juno, J. & Bhattacharjee, A. 2019 Drift instabilities in thin current
+sheets using a two-ﬂuid model with pressure tensor eﬀects. Journal of Geophysical
+Research: Space Physics 124 (5), 3331–3346.
+Ng, J., Hakim, A., Wang, L. & Bhattacharjee, A. 2020 An improved ten-moment closure
+for reconnection and instabilities. Physics of Plasmas 27 (8), 082106.
+Ng, J., Huang, Y.-M., Hakim, A., Bhattacharjee, A., Stanier, A., Daughton, W.,
+Wang, L. & Germaschewski, K. 2015 The island coalescence problem: Scaling of
+reconnection in extended ﬂuid models including higher-order moments. Physics of Plasmas
+22 (11), 112104.
+Passot, T. & Sulem, P. L. 2003 Long-alfv´en-wave trains in collisionless plasmas. ii. a landau-
+ﬂuid approach. Physics of Plasmas 10 (10), 3906–3913.
+Price, L., Swisdak, M., Drake, J. F., Burch, J. L., Cassak, P. A. & Ergun, R. E. 2017
+Turbulence in three-dimensional simulations of magnetopause reconnection. Journal of
+Geophysical Research: Space Physics 122 (11), 11,086–11,099.
+Price, L., Swisdak, M., Drake, J. F., Cassak, P. A., Dahlin, J. T. & Ergun, R. E.
+2016 The eﬀects of turbulence on three-dimensional magnetic reconnection at the
+magnetopause. Geophysical Research Letters 43 (12), 6020–6027.
+Schmitz, H. & Grauer, R. 2006 Comparison of time splitting and backsubstitution methods
+for integrating vlasov’s equation with magnetic ﬁelds. Comp. Phys. Comm. 175, 86.
+Sharma, P., Hammett, G. W., Quataert, E. & Stone, J. M. 2006 Shearing box simulations
+of the MRI in a collisionless plasma. The Astrophysical Journal 637 (2), 952–967.
+Shu, C.-W. & Osher, S. 1988 Eﬃcient implementation of essentially non-oscillatory shock-
+capturing schemes. Journal of Computational Physics 77 (2), 439 – 471.
+Snyder, P. B., Hammett, G. W. & Dorland, W. 1997 Landau ﬂuid models of collisionless
+magnetohydrodynamics. Physics of Plasmas 4 (11), 3974–3985.
+
+20
+Stanier, A., Daughton, W., Chac´on, L., Karimabadi, H., Ng, J., Huang, Y.-M., Hakim,
+A. & Bhattacharjee, A. 2015 Role of ion kinetic physics in the interaction of magnetic
+ﬂux ropes. Phys. Rev. Lett. 115, 175004.
+TenBarge, J. M., Ng, J., Juno, J., Wang, L., Hakim, A. H. & Bhattacharjee, A. 2019
+An extended mhd study of the 16 october 2015 mms diﬀusion region crossing. Journal of
+Geophysical Research: Space Physics 124 (11), 8474–8487.
+Wang, L., Germaschewski, K., Hakim, A., Dong, C., Raeder, J. & Bhattacharjee, A.
+2018 Electron physics in 3-d two-ﬂuid 10-moment modeling of ganymede’s magnetosphere.
+Journal of Geophysical Research: Space Physics 123 (4), 2815–2830.
+Wang, L., Hakim, A. H., Bhattacharjee, A. & Germaschewski, K. 2015 Comparison
+of multi-ﬂuid moment models with particle-in-cell simulations of collisionless magnetic
+reconnection. Physics of Plasmas 22 (1), 012108.
+Wang, L., Hakim, A. H., Ng, J., Dong, C. & Germaschewski, K. 2020 Exact and locally
+implicit source term solvers for multiﬂuid-maxwell systems. Journal of Computational
+Physics 415, 109510.
+Yamada, M., Ji, H., Hsu, S., Carter, T., Kulsrud, R., Bretz, N., Jobes, F., Ono, Y. &
+Perkins, F. 1997 Study of driven magnetic reconnection in a laboratory plasma. Physics
+of Plasmas 4 (5), 1936–1944.

@@ -1,0 +1,96 @@
+\subsection{Hall MHD与双流体：变量改写不等于删掉物理}
+\label{sec:twofluid-to-hall}
+\note{Hall MHD是双流体在指定闭合、低频准中性及电子惯性可忽略条件下的约化；它用一套总动量和磁场方程表达，但仍保留$\vel_i\ne\vel_e$。相反，仅把双流体变量改写成质心速度和电流，并不自动成为Hall MHD。}
+
+\paragraph{第一步：先取低频准中性，尚不删电子质量。}
+取$n_i=n_e=n$到所保留阶次，并忽略Ampère位移电流：
+\begin{equation}
+ \J=en(\vel_i-\vel_e)=\frac1{\mu_0}\grad\times\B,\qquad
+ \grad\cdot\J=0.
+\end{equation}
+这是两个分别检查过的排序，不是简单宣称“电荷分离永远为零”。
+离子连续性足以给出共同密度，因为
+\begin{equation}
+ \partial_tn+\grad\cdot(n\vel_e)
+ =\partial_tn+\grad\cdot(n\vel_i)-\frac1e\grad\cdot\J=0.
+\end{equation}
+因此电子连续性与约束相容而不独立。电场的确定方式也改变了：不再独立推进原来的全Maxwell电场，而由电子动量即广义欧姆定律求得。
+
+\paragraph{第二步：做可逆变量变换。}
+仍保留$m_e$时，以共同密度定义$\rho=(m_i+m_e)n$及质心速度$\vel$，有
+\begin{equation}
+ \vel_i=\vel+\frac{m_e}{m_i+m_e}\frac{\J}{en},\qquad
+ \vel_e=\vel-\frac{m_i}{m_i+m_e}\frac{\J}{en}.
+\end{equation}
+给定$n,\vel,\J$就能恢复两种流速。这一步可逆，只改变描述变量。
+两套动量的和给式\eqref{eq:singlemom}；电子动量改写给式\eqref{eq:gohm}。
+总动量中有相对漂移应力，欧姆定律中有电子惯性；两者均保留时，仍比通常的无电子惯性Hall模型多一层物理。
+
+\paragraph{第三步：相加动量，说明电场力为什么消失。}
+在尚未取准中性时，两物种电磁力之和为
+\begin{equation}
+ en_i(\E+\vel_i\times\B)-en_e(\E+\vel_e\times\B)
+ =\rho_q\E+\J\times\B.
+\end{equation}
+只有进入上述准中性阶次才略去$\rho_q\E$。进一步令$\rho\simeq m_in$、
+$\vel\simeq\vel_i$，并在目标尺度上忽略电子漂移应力，取标量压力，便得到
+\begin{equation}
+ m_in(\partial_t+\vel\cdot\grad)\vel
+ =-\grad(p_i+p_e)+\J\times\B.
+\end{equation}
+这里没有显式Hall项，并不表示它没有作用；它随后通过改变磁场的输运速度影响$\J\times\B$。
+
+\paragraph{第四步：在电子力平衡中删惯性，但保留电子流。}
+从完整电子动量出发，在准中性下写成
+\begin{equation}
+ \E+\vel_e\times\B
+ =-\frac{\grad p_e}{en}-\frac{m_e}{e}D_e\vel_e+\frac{\vct R_e}{en}.
+\end{equation}
+忽略的是$(m_e/e)D_e\vel_e$，不是$\vel_e$，更不是$p_e$。
+若取$\vct R_e/(en)=\eta\J$，再代入$\vel_e=\vel-\J/(en)$，逐项移项：
+\begin{align}
+ \E+\left(\vel-\frac{\J}{en}\right)\times\B
+ &=-\frac{\grad p_e}{en}+\eta\J,\\
+ \boxed{\E+\vel\times\B
+ =\frac{\J\times\B}{en}-\frac{\grad p_e}{en}+\eta\J.}
+ \label{eq:tutorial-hall-origin}
+\end{align}
+Hall项因此是\textbf{把电子流输运写成离子流输运时留下的相对漂移项}。
+它没有取代Maxwell定律，而是进入Faraday定律所需的电场。
+电子惯性小还须按电子层的实际速度、频率和梯度检查；仅有$m_e/m_i\ll1$不足以保证可以删去。
+
+\paragraph{第五步：给出一套完整闭合的Hall方程。}
+为避免摩擦加热分配引入新未知量，下面先取$\eta=0$、无黏性、无热流的两温度绝热例子。
+令$\vel=\vel_i$表示本约化保留阶次的离子速度，未知量为$n,\vel,\B,p_i,p_e$：
+\begin{align}
+ \partial_t n+\grad\cdot(n\vel)&=0,\\
+ m_in(\partial_t+\vel\cdot\grad)\vel
+ &=-\grad(p_i+p_e)+\J\times\B,\\
+ \partial_t\B
+ &=\grad\times\left(\vel\times\B-\frac{\J\times\B}{en}
+                         +\frac{\grad p_e}{en}\right),\\
+ (\partial_t+\vel\cdot\grad)p_i+\gamma_i p_i\grad\cdot\vel&=0,\\
+ (\partial_t+\vel_e\cdot\grad)p_e+\gamma_e p_e\grad\cdot\vel_e&=0,\\
+ \J=\frac1{\mu_0}\grad\times\B,\qquad
+ \vel_e=\vel-\frac{\J}{en},\qquad \grad\cdot\B&=0.
+ \label{eq:closed-hall-system}
+\end{align}
+压强各有自己的输运速度。电子动量被零惯性力平衡取代，电子连续性通过$\grad\cdot\J=0$与离子连续性相容；电子并没有从模型中消失。
+上面共有九个标量演化变量，加磁散度约束；电流、电子流速和电场均由这些变量重建。
+
+若加入电阻，感应方程括号中增加$-\eta\J$；两种压力方程右边增加相应$(\gamma_s-1)H_s$等热源，并满足总摩擦热$\eta J^2$的能量账。若采用等温电子，应明确外部热库或热输运；若把两个压强合成一个总压，还需说明相对热输运怎样处理。
+在低电子惯性模型里保留有限$\eta=m_e\nu_{ei}/(ne^2)$是对不同项作相应排序，不是把所有含$m_e$的系数都机械置零。
+
+\paragraph{第六步：Hall之后，还能怎样回到普通MHD。}
+若$|\J|/(enU)\ll1$，相对漂移对磁场输运的修正可忽略；在$U\sim\VA$的典型Alfvén排序下，该比值约为$d_i/L$。
+再要求电子压力项对感应方程的旋度可忽略，或采用$p_e=p_e(n)$使该旋度为零，得到电阻MHD：
+\begin{equation}
+ \partial_t\B=\grad\times(\vel\times\B)-\grad\times(\eta\J).
+\end{equation}
+只有空间均匀的$\eta$才可把末项写成$(\eta/\mu_0)\nabla^2\B$；再忽略目标尺度上的磁扩散，才得到理想MHD。
+这条链不表示普通MHD在微观上必须令$\J=0$，而是忽略小相对漂移对宏观输运的修正。
+
+\paragraph{用重联检查这条模型关系。}
+无电阻、无电子惯性且正压电子的Hall模型仍有电子磁冻结；Hall解耦不单独提供二维X点的重联电场。
+若在层内由惯性或非对角压力支撑$E_z$，就必须保留相应方程；若用电阻、超电阻或数值耗散支撑，必须明确标出来源。
+“一个模型保留Hall物理”“它是一套无惯性Hall MHD方程”“它能可信预测电子扩散区”，不能视为同一句话。\citep{Wang2015,Birn2001}

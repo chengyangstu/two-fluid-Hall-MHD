@@ -1,0 +1,898 @@
+
+===== PDF PAGE 1 =====
+          Publications of the Astronomical Society of Japan, 2025, 00, 1–15
+           doi: 10.1093/pasj/xxx000
+        Advance access publication date:
+
+
+
+    Influence of kinetic effects in large-scale magnetic recon-
+    nection with multi-hierarchy simulation code KAMMUY
+
+       Keita AKUTAGAWA,1,∗Shinsuke IMADA,1 and Munehito SHODA1
+
+        1Department of Earth and Planetary Science, Graduate School of Science, The University of Tokyo, 7-3-1 Hongo, Bunkyo-ku,
+         Tokyo 113-0033, Japan
+          ∗E-mail: akutagawa@eps.s.u-tokyo.ac.jp
+
+
+         ORCID: 0009-0005-4643-1660, 0000-0001-7891-3916, 0000-0002-7136-81902025
+       Abstract
+         Magnetic reconnection is a multiscale phenomenon where fluid- and particle-scale processes interact. The particle-in-cell (PIC) method, capa-Oct   ble of resolving kinetic (particle-scale) physics, is extensively used to study the kinetic effects in magnetic reconnection. Meanwhile, because
+           of the high computational cost, PIC simulations cannot capture the interaction between kinetic and fluid dynamics, which poses a major ob-
+           stacle to understanding magnetic reconnection in large-scale phenomena such as solar flares. A multi-hierarchy simulation that combines16  Magnetohydrodynamics (MHD) and PIC provides a promising means to overcome these spatial and temporal scale gaps. We developed a
+           multi-hierarchy simulation code KAMMUY (Kinetic And Magnetohydrodynamic MUlti-hierarchY simulation code), in which an ideal MHD simu-
+            lation for a large domain and a PIC simulation for a smaller domain are solved in parallel with mutual information exchange. To validate the
+          code, we conducted test simulations of MHD wave propagation and the shock tube problem. The results demonstrate that short-wavelength,
+          high-frequency waves generated in the PIC region do not propagate into the MHD region, whereas MHD-scale structures propagate smoothly
+           into the PIC region, highlighting the capability of our code for numerical studies of magnetic reconnection. By applying the KAMMUY code to
+         magnetic reconnection while varying the PIC domain size, we find that the reconnection rate remains unchanged, regardless of the extent of the
+        PIC region where the Hall magnetic field is present.  It suggests that the spatial extension of the Hall magnetic field on the scale of 10 ∼100λi
+         does not influence the reconnection rate.
+
+        Keywords: methods: numerical, magnetic reconnection, plasmas, Sun: flares[astro-ph.SR]      1 Introduction                                               reconnection rate in solar flares, the resistivity is phenomeno-
+                                                                                   logically prescribed, and it is difficult to determine which model
+        Plasma phenomena often show multiscale behavior due to the in-      is most plausible.  This limitation poses a major obstacle in re-
+          teraction between fluid- and particle-scale physics (J. Squire et al.    connection studies of fluid-scale astrophysical systems. To over-
+         2022). Magnetohydrodynamics (MHD) describes the fluid scale    come this, MHD simulations incorporating resistivity derived self-
+          physics, while kinetic theory represents the particle scale physics,     consistently from plasma kinetics are required.
+        and their self-consistent treatment is crucial for understanding                                                                                                             It is well established that the Hall effect is essential to explain
+          multiscale plasma dynamics. In simulations, particle-in-cell (PIC)                                                                               the observed reconnection rate of O(0.1) (J. Birn et al. 2001).
+        methods are commonly used for kinetic plasmas.  Integration of                                                               Most simulation studies, however, have been limited to simulation
+     MHD and PIC models within one framework is promising but un-                                                                 box sizes of O(100λi), where λi denotes the ion inertial length.
+         resolved challenge. Some methods have been developed to date,                                                                              In such systems, Hall magnetic fields with quadrupole structure
+        however there is no established computational approach for this                                                                                       persist and span the entire domain without damping (K. Fujimoto
+          coupling.                                                                       2006; J. F. Drake et al. 2009; S. Zenitani et al. 2011; N. K. Walia
+         One of the main motivations for bridging the gap between fluid     et al. 2022). These results suggest that the Hall effect plays a key
+        and particle scales is to clarify the multiscale nature of mag-     role in systems of O(100λi) or larger.  Nevertheless, its overall
+          netic reconnection.  Magnetic reconnection is a fluid-scale phe-    impact on the efficiency of the energy conversion in entire sys-arXiv:2510.14521v1        nomenon observed in astrophysical and laboratory plasmas, while    tems (=: global reconnection rate), which is not the reconnection
+             its timescale and reconnection rate are controlled by resistivity     rate achieved locally, remains unclear. It is uncertain whether the
+          arising from plasma kinetics. Several models have been proposed     Hall effect is only important near the localized diffusion region or
+         under the resistive MHD framework, including the Petschek recon-     also significant at global scales. In particular, in the astrophysical
+          nection model (H. E. Petschek 1965; M. Ugai 1995; S. Zenitani &     context, whether the kinetic and two-fluid (including Hall) effects
+          T. Miyoshi 2011; S. Zenitani 2015), the plasmoid-mediated recon-     control the reconnection rate in solar flares of O(107−8λi) remains
+          nection model (K. Shibata & S. Tanuma 2001; N. F. Loureiro et al.    an open and critical question (M. Shay et al. 2024; R. Nakamura
+         2007; A. Bhattacharjee et al. 2009; Y.-M. Huang et al. 2011; S.     et al. 2025; J. F. Drake et al. 2025). To properly evaluate the role
+          Zenitani & T. Miyoshi 2020), and the dynamical Petschek recon-     of the Hall effect in the global reconnection rate, it is therefore
+          nection model (T. Shibayama et al. 2015; T. Shibayama et al.     necessary to use models capable of describing full plasma kinetic
+         2019).  Although these models can partly explain the observed     effects in fluid-scale systems.
+
+
+           Received: , Accepted:
+      © 2025. Astronomical Society of Japan.
+
+===== PDF PAGE 2 =====
+2                                                                      Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0
+
+
+   In order to simulate as large systems as possible with the first-     variable grid size ratio, and named it KAMMUY (Kinetic And
+principle plasma simulation method PIC, several approaches have    Magnetohydrodynamic MUlti-hierarchY simulation code).  By
+been developed. The fully implicit PIC code iPIC3D proposed by    employing an explicit PIC, our approach allows accurate treatment
+S. Markidis et al. (2010) relaxes the time-step restriction by em-     of electron scale physics. However, the strong numerical noise in-
+ploying implicit integration for particles and fields. This enables     herent in explicit PIC requires careful handling when coupling to
+simulations in regimes inaccessible to explicit PIC, such as the     the MHD. In addition, special treatment is needed to address the
+realistic mass ratio mi/me ∼1836 and the large frequency ratio    problem of non-zero divergence of magnetic field (∇·B ̸= 0) that
+ωpe/Ωce ≫1. Nevertheless, resolving electron scales in space and    can arise when sending magnetic field from PIC to MHD. The de-
+time still incurs a computational cost comparable to explicit PIC.      tails of schemes employed in KAMMUY are described in section
+The Energy Conserving semi-implicit method (ECsim) proposed     2. KAMMUY is implemented in CUDA C++ so that it supports
+by G. Lapenta (2017) addresses the energy dissipation problem   GPUs parallelization. To validate its applicability to a variety of
+in fully implicit PIC. By updating particles explicitly while solv-     physical problems, we performed several test simulations, includ-
+ing fields implicitly, ECsim reduces the cost of the particle solver.     ing energy conservation property, Alfvén wave propagation, fast
+It has been implemented in the PIC module of a multi-hierarchy    mode wave propagation, and a shock tube problem. The results
+framework (H. Zhou et al. 2019). Another approach is AMR-PIC     of these test simulations are presented in section 3. Building on
+(K. Fujimoto 2006), which dynamically adapts grid resolution us-     this validation, we applied KAMMUY to magnetic reconnection
+ing particle splitting. This method enabled long-term simulations     in 100λi system where λi is the ion inertial length, which is pre-
+of magnetic reconnection in a O(650)λi 2D system (K. Fujimoto     sented in section 4. By varying the size of the PIC region in the
+2018).  The various approaches shown above enables about 10     inflow direction, we effectively controlled the spatial extent of the
+times larger scale systems compared to explicit PIC.                  region where kinetic or Hall effects work to investigate how these
+   In  this  study, we  focus on  multi-hierarchy  simulations.     effects influence the reconnection rate.
+Originally introduced by T. Sugiyama & K. Kusano (2007),
+this approach solves MHD and PIC simultaneously, providing a
+promising means to bridge the large spatial and temporal gaps be-   2 Numerical scheme of KAMMUY code
+tween fluid and particle scales. By applying PIC only in regions
+where kinetic effects are essential and using MHD elsewhere, the    Our multi-hierarchy scheme broadly follows the interlocking
+method reduces computational cost while preserving physical fi-    method of T. Sugiyama & K. Kusano 2007. However, there are
+delity. Several implementations have since been proposed and val-    some problems when extending their algorithm in 2D systems,
+idated: the original coupling of 1D explicit PIC with ideal MHD    such as ∇· B error which our numerical calculation becomes
+using a variable grid size ratio (T. Sugiyama & K. Kusano 2007);     unstable.  In this section we describe in detail what algorithms
+a coupling of 2D explicit PIC with ideal MHD on the same grid   KAMMUY follows.
+(S. Usami et al. 2013; T. Ogawa et al. 2016); 3D full implicit
+PIC or ECsim coupled with Hall or ideal MHD (L. K. Daldorff
+et al. 2014; G. Tóth et al. 2017; D. Li et al. 2023; X. Wang et al.    2.1 Numerical scheme of ideal MHD simulation
+2024; K. Makwana et al. 2017); and a recent model combining                                                       The MHD equations solved by the KAMMUY code are the con-
+semi-implicit PIC (implicit only for Maxwell’s equations) with                                                                     ventional ideal MHD equations, expressed as follows:
+ideal MHD (M. Haahr et al. 2025). Some previous studies per-
+formed global earth magnetospheric simulation (L. K. Daldorff             ∂ρ
+                                                           +∇·(ρv) = 0,                              (2)
+et al. 2014; G. Tóth et al. 2017; X. Wang et al. 2024) embed-                  ∂t
+ding PIC in magnetopause and magnetotail reconnection regions.               dv
+Multi-hierarchy simulation is still developing and promising ap-              ρ dt = −∇p+j ×B,                           (3)
+proach to understand multiscale plasma dynamics.                 E +v ×B = 0,                                  (4)
+  Comparing to PIC method, multi-hierarchy method has the po-                                         ∇×B
+tential to reduce a lot of particles. Reducing particles is essen-                j =           ,                                      (5)
+                                                                               µ0tial for computational memory and time because the most time-
+                                                                ∂e
+consuming parts of PIC are the calculation of particle moment (or               +∇·((e+ pT)v −B(v ·B)) = 0,           (6)
+current) and the MPI communication of particles. The ratio of                  ∂t
+the number of particles which can be reduced by multi-hierarchy                                                          where ρ denotes the mass density, v = (u,v,w) the bulk velocity,
+scheme relative PIC in 2D system can be estimated as follows:                                                             j = (jx, jy, jz) the current density, B = (Bx,By,Bz) the magnetic
+            NPIC      Nx,PIC ×Ny,PIC       ∆PIC   2                      field, E = (Ex,Ey,Ez) the electric field, p the pressure, pT := p+
+          ∼         ×                 ,          (1)
+                Ntot    Nx,MHD ×Ny,MHD    ∆MHD                  |B|2/2 is the total pressure, and e is the total energy density. µ0 is
+where NPIC is the number of particles in PIC region of multi-     the magnetic permeability of vacuum.
+hierarchy simulation (∝Nx,PIC × Ny,PIC) and Ntot is the number of      The MHD equations are solved using the finite volume method
+particles needed in entire region (∝Nx,tot ×Ny,tot). ∆MHD and ∆PIC     with the HLLD Riemann solver (T. Miyoshi & K. Kusano 2005),
+are the grid sizes of MHD and PIC. Nx,tot and Ny,tot are the number    2nd-order MUSCL reconstruction (B. van Leer 1979), and a 2nd-
+of MHD grid converted to PIC grid; Nx,tot = Nx,MHD ×∆MHD/∆PIC     order Runge-Kutta method. The solenoidal condition of the mag-
+and Ny,tot = Ny,MHD ×∆MHD/∆PIC. This estimation is strictly satis-     netic field is enforced using the projection method (J. U. Brackbill
+fied when particles are uniformly distributed. Using larger grid   & D. C. Barnes 1980). We have tested our MHD simulation
+size ratio ∆MHD ≫∆PIC is essential for reducing computational    code with 12 shock tube problems (M. Brio & C. Wu 1988) and
+cost.                                                         checked the discontinuity is solved without any spurious oscilla-
+  We have developed a multi-hierarchy simulation code from     tion, with Orszag-Tang vortex (S. A. Orszag & C. M. Tang 1979)
+scratch which connects 2D explicit PIC and ideal MHD with a    and checked the solenoidal error is removed well.
+
+===== PDF PAGE 3 =====
+Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0                                                        3
+
+
+2.2 Numerical scheme of PIC simulation
+The governing equations of PIC simulation are the equations of
+motion and the Maxwell’s equations. Equations of motion are ex-
+pressed as follows:
+          dx
+          = v,                                         (7)
+               dt
+            d
+              (γmsv) = qs (E(x)+v ×B(x)),            (8)
+               dt
+and Maxwell’s equations are expressed as follows:
+                          ρq
+            ∇·E =     ,                               (9)
+                              ε0
+            ∇·B = 0,                             (10)
+          ∇×E = −∂B ,                       (11)
+                               ∂t
+                              1 ∂E
+          ∇×B = µ0j +           ,                (12)
+                                      c2 ∂t
+where x and v are the position and velocity, and γ is the Lorentz
+factor of the particle. ms and qs are the rest mass and charge of
+particle species s. E = (Ex,Ey,Ez) and B = (Bx,By,Bz) are the
+magnetic and electric field, ρq and j = (jx, jy, jz) are the charge
+density and current density. ε0 and µ0 are the dielectric constant
+and magnetic permeability in vacuum.
+  The equations of motion and Maxwell’s equations are con-
+nected through the following relationships:
+                           Z
+                    ρq = ∑ qs   fsdv,                   (13)
+                                           s
+                           Z
+                     j = ∑ qs   fsvdv,                  (14)
+                                           s
+where the subscript s denotes the species of the particles, and the
+ fs denotes the distribution function of species s.
+  The equations of motion are solved using the relativistically ex-
+tended Buneman–Boris method (J. P. Boris 1970), which ensures     Fig. 1: Schematic pictures of MHD and PIC grids. The upper panel
+second-order accuracy in time and numerical stability except for    shows the physical quantities of ρ,v,B, p in MHD grid (solid
+ultra-relativistic particles.  Maxwell’s equations are solved with      line). The lower panel shows the physical quantities of B,E,j
+the Yee lattice (K. Yee 1966) and the Leapfrog scheme, which are    and particles (orange and light-blue circles) in PIC grid (dotted
+second-order accurate in space and time. Charge and current den-      line). Dotted lines are drawn in MHD grid to emphasize that PIC
+sities are obtained from the distribution function using linear inter-     grid is embedded in MHD region and is smaller than MHD grid.
+polation (CIC) following C. K. Birdsall & A. B. Langdon (1991).     Alt text: The ρ,v,B and p of MHD are at the cell center. The
+  Using the Yee lattice guarantees ∇· B = 0 to the machine    Ez and  jz of PIC are at the cell center. By,Ex and jx of PIC are at
+precision.  Meanwhile, the Poisson noise arising from ∇· E ̸=     the face center in x direction. Bx,Ey and  jy of PIC are at the face
+ρq/ε0 must be eliminated at each step, for which we apply the     center in y direction. The Bz of PIC is at the edge of cell.
+Langdon–Marder correction (B. Marder 1987; A. B. Langdon
+1992). This approach introduces a pseudo current that disperses
+and attenuates the noise. The modified time evolution of the elec-
+tric field is given by
+          ∂E            = c2∇×B −j +d∇F,              (15)    2.3 Numerical scheme of MHD-PIC coupling
+                  ∂t                ε0
+where
+                F := ∇·E −ρq.                    (16)    Our study is motivated to understand multiscale nature of plasma
+The quantity F then evolves according to the diffusion equation:      dynamics, in particular magnetic reconnection.  Multi-hierarchy
+           ∂F             ∂ρq                         method can capture interactions between plasma kinetics and
+             −d∇2F = −    +∇·j   .           (17)   MHD self-consistently. In this section we summarize the method-               ∂t                ∂t
+Here, d is a free parameter and determined according to simu-    ology for connecting MHD and PIC models.
+lation setup. When the time evolution is solved explicitly, the
+Langdon–Marder correction efficiently suppresses Poisson noise      The locations of physical quantities in MHD and PIC are illus-
+using only local data, making it highly suitable for parallel compu-     trated in Figure 1. In MHD, all quantities are placed at the cell
+tation. We have tested our PIC simulation code with two stream in-     centre, whereas in PIC they are staggered. The multi-hierarchy
+stability and compared growth rate with linear theory, with Weibel    scheme therefore requires a consistent and non-trivial mapping be-
+instability and checked energy conversion ratio from kinetic to    tween the MHD and PIC quantities. In practice the PIC grid size
+magnetic energy, and with collisionless magnetic reconnection and     ∆PIC (comparable to the Debye length) must be much smaller than
+checked the reconnection rate and field structures (Figure 1, 2, and     the MHD grid size ∆MHD. The freedom to choose ∆MHD/∆PIC is es-
+3 in K. Akutagawa et al. 2025).                                          sential for numerical stability, as discussed in sub-subsection 2.3.5.
+
+===== PDF PAGE 4 =====
+4                                                                      Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0
+
+
+                                                                   Z
+                                                                              ni,e,MHD =      fi,e dv,                                      (20)
+
+                                                      ρMHD = ni,PICmi +ne,PICme,                               (21)
+                                                                                R fi,evdv
+                                                                            vi,e,MHD =               ,                                    (22)
+                                                                                                               ni,e,PIC
+                                                                                           ni,PICmivi,PIC +ne,PICmeve,PIC
+                                                     vMHD =                                           ,                    (23)
+                                                                                            ρPIC
+                                                                           Z
+                                                                          kBTi,e,MHD = mi,e tr      fi,e(v −vi,e,PIC)(v −vi,e,PIC)dv   ,  (24)
+
+                                                       pMHD = ni,PICTi,PIC +ne,PICTe,PIC,                          (25)
+                                               BMHD = BPIC.                                           (26)
+
+                                                              These conversions are applied when the PIC quantities (de-
+                                                                       fined at the PIC grid points) are transferred to MHD domain at
+Fig. 2: Schematic picture of multi-hierarchy simulation in space.    each MHD step (shown as yellow and green regions in Figure
+Solid and dotted line show MHD and PIC grids and orange and     2).  Physical quantities of PIC are averaged in ∆MHD × ∆MHD
+light-blue circles show particles in PIC. Blue area corresponds to     grids (averaged in 9 grids and sent to 1 MHD grid in Figure
+the purely MHD region, yellow area corresponds to the purely     2).  Physical quantities of MHD are overwritten by QInt calcu-
+PIC region, and green area is the interface region. PIC has the     lated using (18) in the yellow and green areas.  For example,
+green and yellow region and MHD has the whole region. Alt text:      ρint = FρMHD + (1 −F)ρPIC where ρPIC is averaged mass density
+Schematic picture of multi-hierarchy simulation in space.              in ∆MHD ×∆MHD grids. Finally, MHD information where PIC em-
+                                                           bedded is rewritten as averaged PIC information. Schematic pic-
+                                                                         ture for how to exchange physical quantities from PIC to MHD is
+                                                       shown in Figure 3.
+2.3.1 Exchange of physical quantities between MHD and PIC
+     domains
+                                                                         2.3.3 Conversion of physical quantities from MHD to PIC
+To connect the MHD and PIC domains, we employ the interlock-    The equations to convert the physical quantities of MHD to the
+ing method (T. Sugiyama & K. Kusano 2007; S. Usami et al.    PIC are as follows:
+2013; L. K. Daldorff et al. 2014; K. Makwana et al. 2017) for                               ρMHD
+                                                                                                            ni,PIC = ne,MHD =             ,                (27)
+exchanging physical quantities. In this approach, quantities within                                    mi +me
+the boundary (interface) region are calculated as a weighted aver-                                                                                                        vi,PIC = vMHD,                            (28)
+age of the MHD and PIC outputs as follows:
+                                                            ∇×BMHD
+                                                                                                   ve,PIC = vMHD +                  ,             (29)
+                                                                                               µ0qene,MHD
+                   QInt = FQMHD +(1−F)QPIC,             (18)                                                                             pMHD
+                                                                                                        kBTi,e,PIC =               ,                     (30)
+                                                                                                       2ni,e,MHD
+where QMHD and QPIC are the physical quantity of MHD and PIC.                                                                         BPIC = BMHD,                           (31)
+When calculating QInt in MHD domain, QMHD is from MHD di-
+rectly and QPIC is calculated from sub-subsection 2.3.2. When                   EPIC = −vMHD ×BMHD,                  (32)
+calculating QInt in PIC domain, QMHD  is calculated from sub-                 ∇×BMHD                                                                                            jPIC =                 .                       (33)
+subsection 2.3.3 and QPIC is from PIC directly. Note that the la-                              µ0
+bels of MHD and PIC for Q in this section are different from sub-      These conversions are applied when the MHD quantities (de-
+subsection 2.3.2 and 2.3.3. F is the weight function, and in this     fined at the MHD gird points) are transferred to the PIC domain
+work, we employ the following function:                                 at each PIC time step in the interface region (shown as green re-
+                                                                gion in Figure 2). Since the MHD grid is much coarser than the
+                  1           y−yPIC                    PIC grid, we apply the linear interpolation in space to obtain the            F(y) =   1±cos                           .         (19)
+                  2         yMHD −yPIC                       values on the PIC grids, as illustrated in Figure 3. Particles inside
+                                                                      the interface region are deleted and reloaded as shifted Maxwellian
+Figure 2 shows the schematic picture of multi-hierarchy scheme in     distribution. We assume that the bulk speed is determined by ions,
+space. yMHD −yPIC in (19) corresponds to the size of the interface     the current is carried only by electrons. This condition is satisfied
+region (green area). Details of how to calculate QPIC for MHD and    when the mass ratio mi/me is large enough. The pressures of ions
+QMHD for PIC are explained in the following subsections.           and electrons are assumed to be identical. Schematic picture for
+                                                  how to exchange physical quantities from MHD to PIC is shown   In this study, the interface region (yMHD −yPIC) is defined to
+                                                                         in Figure 3.span only a few PIC grid cells. Physical quantities of MHD are
+                                                                     Detailed process of particles inside the interface region is assent to PIC as nearly boundary condition (green area), and almost
+                                                                      follows:all physical quantities of PIC are sent to MHD (yellow and green
+areas).                                                                    1. Calculate nInt, vInt, and TInt from Equation (18). Each quantity
+                                                                       of PIC is calculated from zeroth, first, and second moments
+                                                          same as equations in sub-subsection 2.3.2. How to calculate
+2.3.2 Conversion of physical quantities from PIC to MHD                                                                       physical quantities of MHD at each PIC step is explained in
+The equations to convert the physical quantities of PIC to MHD        sub-subsection 2.3.4.
+are as follows:                                                            2. Delete particles from computational memory according to the
+
+===== PDF PAGE 5 =====
+Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0                                                        5
+
+
+
+
+
+Fig. 3: Schematic picture of multi-hierarchy simulation scheme of exchanging physical quantities between MHD and PIC. The upper
+panel shows MHD domain; blue region corresponds to purely MHD region, green region corresponds to interface region where physical
+quantities of MHD and PIC are mixed, and yellow region corresponds to PIC embedded region. The lower two panels show PIC domain;
+boundary thick line represents MHD grid and thin line inside represents PIC grid. In this figure 8 × 8 PIC grids correspond to 1 MHD
+grid. Physical quantities of PIC are averaged and sent to MHD, and those of MHD are interpolated and sent to PIC. Alt text: Three figures
+are shown; one MHD domain and two PIC domains which represent the exchanges of the physical quantities between MHD and PIC.
+
+
+                                                                            1. Advance MHD by one step with ∆tMHD using MHD schemes
+                                                                     explained in subsection 2.1.
+                                                                            2. Advance PIC by ∆tMHD/∆tPIC steps using PIC schemes ex-
+                                                                      plained in subsection 2.2. In each PIC step, physical quantities
+                                                                       of MHD are interpolated and sent to the interface region (green
+                                                                          area) in PIC. Sending quantities of MHD are made by linear
+                                                                           interpolation of QMHD(t = t1) and QMHD(t = t2).
+                                                                            3. Send averaged physical quantities of PIC to MHD.
+
+
+                                                                         2.3.5 Grid size and time step
+                                                       The grid size ratio of MHD and PIC ∆MHD/∆PIC can be deter-
+                                                         mined freely because MHD model has the spatial and temporal
+                                                                         scale-free properties. Since physical quantities are averaged over
+Fig. 4: Schematic picture of multi-hierarchy simulation scheme   ∆MHD × ∆MHD grids when converting PIC data to MHD data, a
+in time. MHD and PIC are integrated with exchanging physical     larger grid size ratio reduces numerical noise and blocks kinetic
+quantities with each other. Alt text: Schematic picture of multi-     effects from propagating into the MHD region. ∆MHD should be
+hierarchy simulation in time.                                    comparable to the largest typical scales of collisionless plasmas
+                                                       (∼ion inertial length). Moreover, using coarser MHD grid reduces
+                                                                      the computational cost for the projection method.
+   probability of F. Random number rand ∈[0,1) is generated for                                                         The Courant–Friedrichs–Lewy (CFL) condition in PIC calcula-
+   each particle and delete particle if rand < F(y) where y denotes                                                                         tions is stricter than in MHD calculations because the MHD grid
+   the particle position of y axis.                                                                                     is coarser than the PIC grid. Consequently, we can adopt ∆tMHD
+3.  nInt number of particles are generated from shifted Maxwellian                                                                          larger than ∆tPIC. In low-beta and non-relativistic systems, ∆tMHD
+   distribution of vInt and TInt. Position of particle is decided fol-                                                                                     is estimated as ∆MHD/VA, where VA is the maximum Alfvén speed,
+   lowing uniform distribution in each cell.                                                                while ∆tPIC is given by ∆PIC/c, with c denoting the speed of light.
+4. Load generated particles into computational memory.                                                                  Their ratio is
+To reduce computational cost, particularly the time for memory
+                                                                ∆MHD/VA     ∆MHD   ωpe r mi ∆MHDallocation and access, we allocate arrays of sufficient size to store              r :=     ∼c    =                         .    (34)
+particle information and use a boolean variable for each particle                  ∆PIC/c     VAi ∆PIC    Ωce   me ∆PIC
+to specify which elements are active.  This method reduces the                                                                         ∆tPIC and ∆tMHD are thus determined as follows:
+overhead of repeatedly releasing and reallocating memory in each
+PIC step, leading to faster computation.                                               ∆tPIC = min(CFL×∆PIC/c,0.1ω−1pe ),          (35)
+                                                                    ∆tMHD = ∆tPIC ×[r],                          (36)
+2.3.4 Time integration
+Figure 4 shows the schematic picture of time integrator in multi-    where [r] denotes the largest integer not exceeding r (the Gauss
+hierarchy scheme. The detail is as follows:                         symbol). In this paper, we set CFL = 0.5.
+
+===== PDF PAGE 6 =====
+6                                                                      Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0
+
+
+
+
+
+Fig. 5: Time evolution of the total energy in multi-hierarchy sim-     Fig. 6: Time evolution of the total energy in multi-hierarchy sim-
+ulations and PIC simulation. The dotted line shows the result of     ulations with magnetic field. 100 ppc is used in both simulations.
+multi-hierarchy simulation with 20 ppc, and the solid line shows     Alt text: The axis shows the time Ωcet. The range in axis is from
+the result with 100 ppc. Black line shows the result of PIC simu-    0 to 3500. The axis shows the total energy divided by the initial
+lation with 100 ppc. Alt text: The horizontal axis shows the time     total energy. The range in axis is from 0.998 to 1.002.
+ωpet. The range in horizontal axis is from 0 to 3500. The axis
+shows the total energy divided by the initial total energy. The range
+in axis is from 0.95 to 1.05.
+
+
+2.3.6 Filtering process
+In exchanging physical variables between the PIC and MHD do-
+mains, numerical noise is often introduced. In the PIC region in
+particular, the magnetic field defined on the MHD grid frequently
+exhibits large non-solenoidal noise components. Since we remove
+the divergence of the magnetic field with the projection method,
+which solves the Poisson equation, locally large non-solenoidal
+noise can lead to significant global numerical errors. To mitigate
+                                                                        Fig. 7: Time evolution of the total energy in multi-hierarchy sim-
+this, we apply a smoothing filter to the variables defined on the
+                                                                        ulations with forcefree current sheet. 20 ppc is used in this simu-
+MHD grid, specifically given as follows:
+                                                                              lation. Alt text: The axis shows the time Ωcit. The range in axis
+                      1    1                                             is from 0 to 100. The axis shows the total energy divided by the
+                Qi,j,MHD =                      9 ∑  Qi+α,j+β,MHD.           (37)      initial total energy. The range in axis is from 0.96 to 1.04.                           α,β=−1
+
+The smoothing filter is used once when the projection method is
+used. In all simulations in this paper, the projection method and       Figure 5 presents the time evolution of the total energy in multi-
+one filtering are employed every 5−10 MHD steps.                  hierarchy simulations with 20 ppc and 100 ppc, together with a
+                                                       PIC simulation at 100 ppc. All simulations solve 50000 PIC steps
+                                                                         for time evolution of 3500ωpet. For evolutions exceeding O(104)
+3 Test simulations                                               steps, total energy is conserved within a few % for 20 ppc and
+                                                                   within 0.5% for 100 ppc.  Increasing ppc enhances energy con-
+3.1 Energy conservation in a static plasma                    servation. However, for a fixed ppc, multi-hierarchy simulations
+We first test the conservation of total energy in an unmagnetized    show greater energy loss than PIC. As plasma energy dominates
+plasma, with the initial condition given by                            the total energy, this loss likely arises from particle deletion and
+                                                                    reloading at the interface region. The impact of particle-number
+             ρ = ni,0mi +ne,0me,                                                                         fluctuations becomes more pronounced at lower ppc. We recall
+              u = v = w = 0,                                         that particles are first removed with a probability given by F in
+               Bx = By = Bz = 0,                                     (18), and then reloaded as nInt, rounded to the nearest integer in
+                                                                      the interface region.
+              p = p0 = kB (ni,0Ti,0 +ne,0Te,0).
+                                             We verify the conservation of total energy in a static magnetized
+Here, the ion and electron masses are denoted by mi and me, re-    plasma. A uniform magnetic field is added in the x or y direction,
+spectively, and we set mi/me = 25. The initial number densities      i.e. Bx = B0 or By = B0, where B0 is set by ωpe/Ωce = 1 (cor-
+of ions (ni,0) and electrons (ne,0) are ni,0 = ne,0 = 20 and 100 ppc,    responding to the plasma beta of 0.04). All other parameters are
+in order to examine the dependence on the ppc. The ion and elec-     identical to the previous simulation, with 100 ppc used. Figure 6
+tron temperatures are equal (Ti,0/Te,0 = 1), with a thermal veloc-     presents the time evolution of the total energy. The total energy
+ity of vth = 0.1c. The grid size ratio between MHD and PIC is      is conserved within 0.2%, which is better than the case without a
+∆MHD/∆PIC = 10. The domain size is Nx,PIC × Ny,PIC = 100 × 100    magnetic field. In these runs, the magnetic energy dominates over
+and Nx,MHD ×Ny,MHD = 10×100, corresponding to 100×1000 in     the plasma energy, making the errors from particle deletion and
+the PIC grid. Symmetric boundaries are imposed in x direction,     reloading insignificant. The total energy is particularly well con-
+and periodic boundaries in y direction.  For comparison, a PIC     served when By = B0, suggesting that conservation is improved
+simulation with the same setup was also performed, using 100 ppc    when the particle gyration plane is parallel, rather than perpendic-
+and periodic boundaries in both directions.                                ular, to the interface region.
+
+===== PDF PAGE 7 =====
+Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0                                                        7
+
+
+  We also verify the time evolution of the total energy under
+the initial conditions of a force-free current sheet following K.
+Makwana et al. (2017), who demonstrated that the total energy
+is conserved within 0.1% when using 1000 ppc in their multi-
+hierarchy model. The simulation setup is as follows:
+
+                 ρ = ρ0,
+                  u = 0,
+                    v = 0,
+              w = 0,
+                    Bx = B0 tanh(y/δ),
+                    By = 0,
+                     Bz = B0/cosh(y/δ),
+                  p = p0.
+
+We set mi/me = 25,  ni,0 = ne,0 = 20 ppc,  Ti,0/Te,0 = 1, and
+ωpe/Ωce = 1. The plasma beta is set to 0.25.  Grid-size ratio is
+adopted as ∆MHD/∆PIC = 10. The size of the simulation domain
+is 2000 × 200 for the PIC region and 200 × 100 for the MHD re-
+gion (corresponding to 2000×1000 PIC grids). It corresponds to
+100λi × 50λi simulation box. The current sheet thickness δ is set
+to 1λi. Periodic boundary condition is imposed in the x direction,
+while symmetric boundary condition is imposed in the y direction.
+  Figure 7 presents the time evolution of the total energy with
+forcefree current sheet. Our results are within 0.5% when 20 ppc
+is used after 100Ωcit has passed.  Previous simulation results in
+Figure 5 indicate that using 5 times ppc reduces the energy conser-
+vation error by at least half. The energy conservation property is
+consistent with the result of K. Makwana et al. (2017).
+
+
+3.2 Alfvén wave propagation
+To verify that physical quantities are correctly exchanged between     Fig.  8:   Snapshots  of Alfvén wave  propagation  at  ωpet =
+the MHD and PIC regions, we next perform a test of circularly-    0.00,17.50,525.00. ρ,Bx,By,Bz,Vx,Vy,Vz, and p are plotted from
+polarized Alfvén wave propagation. The initial conditions are as     the top left. Blue line shows the result obtained from PIC, and or-
+follows.                                                     ange line shows the result obtained from MHD. Alt text: The axis
+                                                         shows the position normalized by λi. The range in axis is from 40
+             ρ = ni,0mi +ne,0me,
+                                                                         to 60. The axis shows the amplitude of each physical quantity. The
+              u = δVA sin(ky),                                  range in axis is about ±0.1 from the initial background value.
+               v = 0,
+          w = δVA cos(ky),
+                                                                           likely caused by numerical errors in the projection method (de-
+               Bx = −δB0 sin(ky),                                                                     scribed in sub-subsection 2.3.6), which affects ρ and p. Because
+               By = B0,                                            the vertical axis range of ρ and p is small, these weak fluctua-
+                Bz = −δB0 cos(ky),                                   tions appear more prominently. At ωpet = 525.00, after one wave-
+                                                                    length has passed through the PIC region, the Alfvén wave retains
+              p = p0 = kB (ni,0Ti,0 +ne,0Te,0).
+                                                                                          its shape in both the magnetic field and flow velocity, confirming
+We set mi/me = 25, ni,0 = ne,0 = 50 ppc, Ti,0/Te,0 = 1 (with the      its successful propagation through the PIC region.
+thermal speed of vthe = 0.1c), and ωpe/Ωce = 1. VA denotes the       Figure 9 shows the ω −k diagram constructed from the Bz of
+Alfvén speed defined by VA := B0/√µ0ρ0. The grid-size ratio is   MHD. We used Bz within y = [30λi,70λi] which corresponds to 2λ
+adopted as ∆MHD/∆PIC = 5. The size of the simulation domain    where λ is the wavelength of the initial Alfvén wave. The promi-
+is 25 × 100 for the PIC region and 5 × 1000 for the MHD region     nent peak around kλi ∼0.25 corresponds to the Alfvén wave in-
+(corresponding to 25 × 5000 PIC grids). The ion inertial length    troduced as the initial condition. In addition, mode along ω = kVA
+λi is resolved by 50 PIC grids. We use λ = 20λi (= 2π/k) and      is observed. Within the range ω < Ωci, Alfvén waves entering PIC
+δ = 0.05. Symmetric boundaries are imposed in x direction, and     region are converted into dispersive modes of whistler and ion cy-
+periodic boundaries in y direction.                                    clotron modes, which then converted into the dispersive Alfvén
+  Figure 8 presents snapshots of Alfvén wave propagation at    mode in MHD region. Modes which are not included in ideal
+ωpet = 0.00,17.50,525.00. At ωpet = 17.50, small fluctuations ap-   MHD, such as whistler wave, typically treated as numerical noises
+pear in ρ and p throughout the simulation domain. These fluctua-     in ideal MHD, and they can create artificial fluctuation when trans-
+tions are not introduced from the PIC region; rather, they are gener-     mitted into MHD region. The simulation result indicates that the
+ated simultaneously across the entire MHD domain. They are most     multi-hierarchy scheme proposed in subsection 2.3 exhibits ro-
+
+===== PDF PAGE 8 =====
+8                                                                      Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0
+
+
+
+
+
+Fig. 9: ω −k diagram constructed using the MHD’s Bz data from
+the multi-hierarchy simulation of Alfvén wave propagation. The
+wavenumber is normalized by the ion inertial length λi, and the
+frequency is normalized by the ion gyro frequency Ωci. Alt text:
+The axis shows the kλi. The range in axis is from 0 to 7. The axis
+shows the ω/Ωci. The range in axis is from 0 to 7. The contour of
+log|Bz,k| is plotted in the range from -2.0 to 9.0.
+
+
+
+
+bustness against numerical noise of PIC when PIC information is
+sent to MHD. A small peak is also seen for ω > Ωci, which should
+be attributed solely to the conversion of Whistler modes. Our re-
+sult is consistent with Figures 4 and 5 in T. Sugiyama & K. Kusano
+(2007); dispersive whistler wave is seen clearly in the PIC region
+and dispersive Alfvén wave is seen slightly in the MHD region.
+
+                                                                        Fig. 10: ω −k diagram from the test simulation of Alfvén wave  Although unphysical wave-mode conversion is negligible when
+                                                                 propagation with larger PIC region (1 wavelength). Upper dia-the wavelength greatly exceeds the PIC domain, it can still occur
+                                                       gram is constructed using Bz in PIC, and the lower diagram is con-when the two scales are comparable. To test this, we repeated
+                                                                        structed using Bz in MHD. The wavenumber is normalized by thethe calculation with an enlarged PIC region and a shorter wave-
+                                                                   ion inertial length λi, and the frequency is normalized by the ionlength (λ = 10λi). The PIC region was set to one wavelength
+                                                              gyro frequency Ωci. Alt text: (Upper panel) The axis shows the(Ny,PIC = 500). The upper panel of Figure 10 shows the ω −k
+                                                                           kλi. The range in axis is from 0 to 20. The axis shows the ω/Ωci.spectrum from Bz in the PIC grid, where both a distinct whistler
+                                                       The range in axis is from 0 to 20. The contour of log|Bz,k| is plot-branch (shown by solid line) and the ion-cyclotron branch (near
+                                                                      ted in the range from 0.0 to 8.0. (Lower panel) The axis shows theω = Ωci shown by dotted line) are visible, confirming the con-
+                                                                           kλi. The range in axis is from 0 to 7. The axis shows the ω/Ωci.version to kinetic dispersive waves. The lower panel, constructed
+                                                       The range in axis is from 0 to 7. The contour of log|Bz,k| is plottedfrom Bz in the MHD grid, shows the existence of Alfvén mode
+                                                                         in the range from -1.0 to 7.0.along with a whistler-like mode. These results indicate that for
+short-wavelength waves influenced by kinetic effects, or for waves
+spanning roughly one wavelength in the PIC region, modes absent
+in ideal MHD can enter the MHD domain.
+
+   Whistler wave does not exist in ideal MHD so that it should
+be treated as numerical noises and create unphysical results. This    3.3 Fast mode propagation
+problem may be solved by sufficiently increasing the grid size of
+MHD. To investigate the dependence on the grid size ratio between
+MHD and PIC ∆MHD/∆PIC, ∆MHD/∆PIC = 20 is adopted (4 times    Third test simulation setup is the fast mode wave.  Solving the
+larger). Other parameters are kept the same as in the previous sim-     propagation of compressive wave needs to handle variation of par-
+ulation.  Here, ∆MHD corresponds to 0.4λi, where λi is the ion      ticles correctly. This test simulation can investigate the robustness
+inertial length.  Figure 11 shows the ω −k diagram constructed     for larger numerical noises from particles compared to transverse
+from the Bz in MHD. Compared to the upper panel in Figure 10,    wave such as previous Alfvén wave simulations. Moreover it is
+the peak corresponding to the whistler mode disappears. This re-     useful for checking whether inflow and outflow can be handled
+sult indicates that using sufficiently large MHD grid size makes    when applied to magnetic reconnection. Initial condition is same
+possible to prevent modes which are absent in ideal MHD from     as previous studies (L. K. Daldorff et al. 2014; K. Makwana et al.
+propagating into MHD.                                          2017; M. Haahr et al. 2025) and is as follows:
+
+===== PDF PAGE 9 =====
+Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0                                                        9
+
+
+
+
+
+Fig. 11: Same as Figure 10 but with a larger grid-size ratio be-
+tween the MHD and PIC domains; ∆MHD/∆PIC = 20 (∆MHD =
+0.4λi).  Alt text: The axis shows the kλi. The range in axis is
+from 0 to 7. The axis shows the ω/Ωci. The range in axis is from
+0 to 7. The contour of log|Bz,k| is plotted in the range from -2.0 to
+5.0.
+
+
+               ρ = ρ0(1+δ sin(ky)),
+                u = 0,
+                  v = δCf sin(ky),
+            w = 0,
+                  Bx = 0,
+                  By = 0,
+                  Bz = B0(1.0+δ sin(ky)),
+                p = p0(1.0+γδ sin(ky)),                         Fig. 12:  Snapshots of fast mode wave propagation at ωpet =
+We set mi/me = 25, ni,0 = ne,0 = 50 ppc, Ti,0/Te,0 = 1 (with the    0.00,350.00,700.00. ρ,Bx,By,Bz,Vx,Vy,Vz, and p are plotted from
+thermal speed of vthe = 0.1c), and ωpe/Ωce = 1.  CA denotes     the top left. Blue line shows the result obtained from PIC, and or-
+the fast mode wave speed by CA := pVA2 +C2s , here VA,Cs de-    ange line shows the result obtained from MHD. Alt text: The axis
+note the Alfvén speed and the sound speed defined by VA :=    shows the position normalized by λi. The range in axis is from 40
+B0/√µ0ρ0,Cs := p γ p0/ρ0.  The grid-size ratio is adopted as     to 60. The axis shows the amplitude of each physical quantity. The
+∆MHD/∆PIC = 5. The size of the simulation domain is 25 × 100    range in axis is about ±0.1 from the initial background value.
+for the PIC region and 5×1000 for the MHD region (correspond-
+ing to 25×5000 PIC grids). The ion inertial length λi is resolved
+50 PIC grids. We use λ = 2π/k = 20λi and δ = 0.05. Symmetric
+boundaries are imposed in x direction, and periodic boundaries in
+y direction.
+  Figure 12 shows the snapshots of fast mode wave propaga-
+tion at ωpet = 0.00,350.00,700.00. The fast-mode wave steep-
+ens during propagation due to nonlinear effects, and its signature
+appears at ωpet = 350.00 and 700.00. The steepened structure
+located at y = [40λi,45λi] at ωpet = 350.00 passes through the
+PIC region, and moves to y = [55λi,60λi] at ωpet = 700.00, while
+maintaining waveform. However, the results around PIC region
+at ωpet = 700.00, the waveforms of ρ, p are distorted. However,     Fig. 13:  Snapshots of fast mode wave propagation at ωpet =
+from the results of Bz and Vy, multi-hierarchy scheme can propa-     700.00. ρ,Bx,By,Bz,Vx,Vy,Vz, and p are plotted from the top left.
+gate compressive wave without distorting its waveform.             Blue line shows the result obtained from PIC, and orange line
+  To clarify the reason why ρ and p are distorted, we first repeated    shows the result obtained from MHD. Alt text: The axis shows
+calculation which changes the number of particles to investigate     the position normalized by λi. The range in axis is from 40 to 60.
+the effects from numerical noises. Figure 13 presents the results    The axis shows the amplitude of each physical quantity. The range
+at ωpet = 700.00 when using 20 ppc instead of 50 ppc. ρ and p     in axis is about ±0.1 from the initial background value.
+are distorted around the PIC region, while the waveform of Vy and
+Bz remain undistorted. The results remain largely unchanged com-
+pared to previous results even with fewer particles, demonstrating
+
+===== PDF PAGE 10 =====
+10                                                                     Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0
+
+
+
+
+
+Fig. 14:  Snapshots of fast mode wave propagation at ωpet =
+700.00. ρ,Bx,By,Bz,Vx,Vy,Vz, and p are plotted from the top left.
+Blue line shows the result obtained from PIC, and orange line
+shows the result obtained from MHD. Alt text: The axis shows
+the position normalized by λi. The range in axis is from 40 to 60.
+The axis shows the amplitude of each physical quantity. The range
+in axis is about ±0.1 from the initial background value.
+
+
+that our multi-hierarchy method is robust to numerical noises from
+the number of particles.
+  We next repeated calculation which changes the amplitude of
+                                                                        Fig. 15:  Snapshots of the shock-tube problem simulations at
+the initial wave. Figure 14 presents the results at ωpet = 700.00
+                                                                  ωpet = 250 (top) and 500 (bottom). The blue line shows the re-
+when using δ = 0.025 instead of 0.05. Compared to previous re-
+                                                                             sults obtained with 200 PIC grids, while the orange dashed line
+sults, ρ and p are not largely distorted. It indicates that the reason
+                                                                 corresponds to 800 PIC grids. The black dotted line represents
+of distortion stems from the steepening, which is a nonlinear effect
+                                                                      the results from the MHD simulation (without the PIC domain).
+of large amplitude compressive waves.
+                                                                 ρ,Bx,By,Bz,Vx,Vy,Vz, and p are plotted from the top left. Alt text:
+                                                       The axis shows the position normalized by λi. The range in axis
+3.4 Shock tube problem                                                  is from 0 to 55. The axis shows the amplitude of each physical
+                                                                          quantity.
+Fourth test simulation setup is a shock tube problem.  This test
+simulation verifies the behavior around discontinuity or shock,
+for example they can be seen in the nonlinear regime of com-
+pressive wave propagation by steepening shown in subsection 3.3.
+Moreover, small-wavelength, high-frequency waves are generated
+                                                                         positive (y ∼45λi) directions. In both simulations, the structuresaround discontinuity and shocks, and this test simulation can in-
+                                                                    of rarefaction waves are almost the same as the outcome of MHDvestigate the robustness for such small scale waves from PIC to
+                                                                    simulations (black dotted line). At ωpet = 500.00 within the regionMHD. Initial condition is the same as M. Brio & C. Wu (1988),
+                                                                y = [30λi,40λi], the slow shock are clearly seen in Ny,PIC = 200 re-and as follows:
+                                                                             sults (y ∼40λi is outside of the PIC domain). However, the results
+                  ρL = ρ0, ρR = 0.125ρ0,                           for Ny,PIC = 800, it appears to show a smoothed structure. Whether
+                   uL = uR = 0,                                slow shocks can stably exist in PIC simulation remains unclear (L.-
+                                                          N. Hau & B.-J. Wang 2016; N. K. Walia et al. 2022). Moreover, in                    vL = vR = 0,
+                                                                both simulations, the compound wave typically forming near the
+                wL = wR = 0,                                                                      center in MHD simulation is not observed. Except for slow shock,
+                      Bx,L = Bx,R = 0,                                  there is no significant difference between the both simulations in
+                       By,L = By,R = 0.75B0,                          terms of structures in the MHD domain.
+                       Bz,L = B0, Bz,R = −B0,
+                                                         To find out whether small scale waves are existed in the PIC
+                   pL = p0, pR = 0.1p0.                                                                    or MHD domain, we checked the electric field which reflect any
+We set mi/me = 25, ni,0,L = ne,0,L = 200 ppc, Ti,L/Te,L = 1 (with the     kinds of waves. Figure 16 shows the time evolution of Ey from
+thermal speed of vthe,L = 0.28c), and ωpe/Ωce = 2. The grid-size    PIC and MHD with a domain size of 800 grids. Short wavelength,
+ratio is adopted as ∆MHD/∆PIC = 10. The size of the simulation do-    high frequency waves are generated around the discontinuity at the
+main is 50×200,800 for the PIC domain and 5×100 for the MHD     center and propagate outward. However, waves corresponding to
+domain (corresponding to 50 × 1000 PIC grids). The ion inertial     the oscillations in Ey are not observed in MHD domain. It indicates
+length is resolved by about 18 PIC grids. Symmetric boundaries     that the scheme explained in subsection 2.3 does not transmit small
+are imposed in x direction, and periodic boundaries in y direction.     scale waves present in the PIC into MHD. In addition, we find no
+   Figures 15 show the snapshots of shock tube problem with the     clear evidence of wave reflection at the interface region. These
+PIC domain sizes of 200 and 800 grids (PIC domain is embed-     results indicate that the kinetic waves generated in the PIC domain
+ded around y ∼[23λi,34λi],[6λi,51λi]), respectively. The results    can penetrate at the interface region, provided that the grid-size
+from only MHD simulation are also presented. At ωpet = 250.00,     ratio is sufficiently large so that small scale waves should not be
+rarefaction waves propagate both in the negative (y ∼20λi) and     existed in the MHD domain where the PIC domain embedded.
+
+===== PDF PAGE 11 =====
+Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0                                                       11
+
+
+                                                         The total number of particles in Ny,PIC = 100 simulation is de-
+                                                                  creased to about one-tenth that of Ny,PIC = 900. The most computa-
+                                                                          tionally intensive part is MPI communication of particles in these
+                                                                      simulations, so that the total number of particles determine the to-
+                                                                                     tal computational time. In conclusion, the total computational time
+                                                                                     is about one-tenth in Ny,PIC = 100 that of Ny,PIC = 900.
+                                                                    Figure 17 presents the spatial distributions of Bx, ρ,  jz, and Vx
+                                                                               at Ωcit = 100.0 for PIC domains with grid sizes of 100 (top), 500
+                                                                     (middle), and 900 (bottom). The overall structures such as the out-
+                                                                 flow are similar across the three simulations. In contrast, Figure
+                                                         18 presents the spatial profile of ρ when secondary plasmoids are
+                                                           formed inside the reconnecting current sheet, appearing at dif-
+                                                                         ferent times.  This indicates that the multi-hierarchy simulation
+                                                                    of magnetic reconnection is not perfectly identical to the results
+                                                                    of the PIC-only simulations. To examine whether this discrep-
+                                                             ancy solely originates from the PIC domain size, we performed
+                                                                             Ny,PIC = 100 simulations with different initial positions and veloc-
+                                                                                     ities of particles in the PIC domain. The results show that the
+                                                                 timing of secondary plasmoid formation differs among these runs.
+                                                                This suggests that the difference of the timing of secondary plas-
+                                                       moid formation may arise not only from a numerical artifact as-
+                                                                     sociated with the PIC domain size but also from the random ini-
+Fig. 16: Time evolution of Ey in PIC with a domain size of 800     tialization of particles. Moreover, the density ρ profile exhibits
+grids.  Ey is normalized by VAB0 where VA := B0/√µ0ρ0 is the    a sharp boundary at the MHD–PIC interface, that is the position
+Alfvén speed. Blue line shows the result obtained from PIC, and     of sharp structure is different from each simulation. This is evi-
+orange line shows the result obtained from MHD. Alt text: The     dent at y ∼10,30λi for the Ny,PIC = 500 case and at y ∼5,45λi for
+axis shows the position normalized by λi. The range in axis is     the Ny,PIC = 900 case, which trace the interface. Such signatures
+from 0 to 55. The axis shows the amplitude of Ey. The range in y     are barely visible in Bx, jz, and Vx. The fluctuation of the number
+axis is from -1.5 to 1.5.                                              density of particles should create these numerical structures.
+                                                                    Figure 19 shows the out-of-plane magnetic field Bz from the
+                                                                       three simulations.  The quadrupole structure of Bz observed in
+4 Application to magnetic reconnection              the reconnection region is caused by the Hall effect, which is a
+                                                                          characteristic of collisionless magnetic reconnection (K. Fujimoto
+Taking into account the applicability and limitations of the code
+                                                              2006; J. F. Drake et al. 2009; S. Zenitani et al. 2011; N. K. Walia
+revealed by the test calculations in the previous section, we now
+                                                                               et al. 2022), and cannot be seen in MHD simulation without the
+discuss the application of our multi-hierarchy code to magnetic re-
+                                                                  Hall term. For Ny,PIC = 900, since the PIC region covers almost theconnection. In particular, by varying the size of the PIC domain,
+                                                          whole computational domain, the result closely resembles that of
+we aim to assess the applicability of the code and to clarify whether
+                                                       PIC simulation, showing a quadrupole structure in Bz. In the sim-Hall effect is locally or globally important for the reconnection
+                                                                       ulation with Ny,PIC = 100, unlike the cases with Ny,PIC = 500,900,rate. The initial condition is given by the following force-free cur-
+                                                                      the quadrupole structure gradually disappears outside the PIC re-
+rent sheet:
+                                                                gion around y ∼20,30λi. This is likely because structures gener-
+                 ρ = ρ0,                                       ated by kinetic effects (including the Hall effect) do not propagate
+                                                                         into the MHD domain, as discussed in the previous section (dis-                  u = 0,
+                                                                      persive kinetic waves such as whistler wave do not propagate into
+                    v = 0,                                                                      the MHD domain in the test simulations of the Alfvén wave prop-
+              w = 0,                                          agation).
+                    Bx = B0 tanh(y/δ),                            For a more quantitative comparison of the three simulations, we
+                                                                     evaluate the time evolution of the reconnection rate. The recon-
+                    By = 0,
+                                                                   nection region is identified as the location of the minimum recon-
+                     Bz = B0/cosh(y/δ),                          necting magnetic flux, Φmin(t) := min(Φ(x,t)), where Φ(x,t) :=
+                  p = p0.                                      R |Bx(x,y,t)|dy. The reconnection rate is then obtained by
+                                                                                      1   d
+We set mi/me = 25,  ni,0 = ne,0 = 20 ppc,  Ti,0/Te,0 = 1, and               reconnection rate = −         Φmin,            (38)
+ωpe/Ωce = 1.  The plasma beta is set to 0.25.  Grid-size ratio                                 VA0B0 dt
+is adopted as ∆MHD/∆PIC = 10. The size of the simulation do-    where VA0 := B0/ p µ0n0(mi +me) is the Alfvén speed, and B0 is
+main is 2000 × 100,500,900 for the PIC region and 200 × 100     the anti-parallel magnetic field strength. Figure 20 shows the time
+for the MHD region (corresponding to 2000×1000 PIC grids). It     evolution of the reconnection rate from three simulations. We find
+corresponds to 100λi × 50λi simulation box. The current sheet    no significant differences among the three simulation results. The
+thickness δ  is set to 1λi.  Reconnection is initiated by a small     value of the maximum reconnection rate of ∼0.08 is consistent
+perturbation in the z-component of the vector potential, given by    with a previous study using the force-free current sheet (F. Zhou
+∆Az = −2δ exp −(x2 +y2)/(2δ)2 × εB0, where ε is set to 0.1.     et al. 2015). The results of the Bz structure shown in Figure 19
+Periodic boundary condition is imposed in the x direction, while    and the reconnection rate shown in Figure 20 indicate that the Hall
+symmetric boundary condition is imposed in the y direction.           effect seen in 100λi scale does not affect the reconnection rate.
+
+===== PDF PAGE 12 =====
+12                                                                     Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0
+
+
+
+
+
+Fig. 17: Snapshots of magnetic reconnection at Ωcit = 100.0 for PIC domains of 100, 500, and 900 grids. The upper panel shows the
+results with the PIC domain size of 100 grids, the middle panel shows those of 500 grids, and the lower panel shows those of 900 grids.
+The left side shows the results from PIC and the right from MHD. Bx,ρ, jz, and Vx are plotted from the top to bottom. The Bx is normalized
+by B0, the ρ is normalized by ρ0, the  jz is normalized by B0/µ0δ, and the Vx is normalized by VA where VA := B0/√µ0ρ0 is the Alfvén
+velocity. Alt text: The x and y axes show the position of x and y normalized by λi. The range in x axis is from 0 to 100, and y axis is from
+0 to 50. The contour of the Bx is plotted in the range from -1.0 to 1.0, the ρ is from 0.5 to 2.0, the jz is from -1.0 to 1.0, and the Vx is from
+-1.0 to 1.0.
+
+===== PDF PAGE 13 =====
+Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0                                                       13
+
+
+                                                                            1. Using small MHD grid size creates unphysical results in MHD
+                                                                domain, for example whistler wave can exist in MHD domain
+                                                       when small ∆MHD is used.
+                                                                            2. Using small number of particles may create some unphysical
+                                                                            error especially for ρ and p which particle noises affects di-
+                                                                                    rectly.
+
+                                                           Using large ∆MHD and number of particles can reduce those limi-
+                                                                              tations. In particular, the test simulation of Alfvén wave propaga-
+                                                                         tion suggests that the optimal MHD grid size (∆MHD) is close to or
+                                                                          larger than the ion inertial length λi.
+                                                         Our multi-hierarchy simulation results of magnetic reconnec-
+                                                                         tion indicate that reducing the PIC domain size has only a minor
+                                                               impact on the reconnection rate at least Ny,PIC = 100 which cor-
+                                                                responds to 5λi.  It was also found that the structure of the Hall
+                                                              magnetic field depends on the PIC region size, and it was not seen
+                                                                         in the MHD region where PIC was not embedded. Although the
+Fig. 18: Snapshots of the distribution of ρ on the MHD grid. The    presence of the Hall term has a significant effect on the magnetic
+time of each panel corresponds to the onset of the secondary plas-     reconnection rate as discussed by J. Birn et al. (2001), our result
+moid formation: Ωcit = 70.0,70.0, and 60.0 for PIC domain sizes     suggests that the reconnection rate is not significantly affected by
+of 100, 500, and 900 grids, respectively. Alt text: The x and y axes     the Hall magnetic field that extends outside the diffusion region in
+show the position of x and y normalized by λi. The range in x axis    O(100)λi systems. Y.-H. Liu et al. (2022) presented a theory that
+is from 0 to 100, and y axis is from 10 to 40. The contour of the ρ     the Hall effect inside the ion diffusion region is important for fast
+is plotted in the range from 0.5 to 2.0.                             magnetic reconnection. The size of the PIC domain in section 4 is
+                                                                               at least 5λi, and the ion diffusion region (∼λi) is inside the PIC
+                                                             domain.  It is consistent with the fact that the value of the recon-
+5 Summary and Discussion                              nection rate in multi-hierarchy simulation is almost the same as the
+                                                                  previous PIC study (F. Zhou et al. 2015). The fact that the recon-We have developed a multi-hierarchy simulation code that exe-
+                                                                    nection rate is largely independent of the PIC domain size suggestscutes PIC simulations in localized regions and MHD simulations
+                                                                            that our multi-hierarchy method is a promising approach for under-in extended regions. From test simulations for the verification of
+                                                                   standing the physics of the reconnection rate in large systems suchthe total energy conservation, Alfvén wave propagation, fast mode
+                                                                    as solar flares. Examining whether similar results are obtained forwave propagation, and shock tube problem, we confirmed that the
+                                                                  another conditions (e.g., including guide field, 3D systems) whensmall scale structures from PIC do not propagate into MHD do-
+                                                                 reducing the size of the PIC domain is also our future work.main and large scale structures from MHD propagate into PIC do-
+main smoothly. Furthermore, the simulation of magnetic recon-      Our multi-hierarchy code has the potential to be universally ef-
+nection showed that even when most of the domain is replaced     fective in large-scale systems where kinetic effects are locally im-
+by MHD, the reconnection rate remains consistent with those ob-     portant. Magnetic reconnection and shocks are typical examples
+tained from PIC simulations. Our results suggest two things; the     of such processes. In the case of magnetic reconnection, although
+first is that multi-hierarchy simulation can be applicable to many     this study treats only the inflow region with MHD, the outflow re-
+physical problems, and the second is that the reconnection rate    gion is likewise expected to be handled by MHD. For shocks, all
+is not significantly affected by the Hall magnetic field which ex-     regions except the transition region could potentially be replaced
+tends O(100)λi scale. The inside of the ion diffusion region (∼λi)    with MHD. In particular, applying MHD to the downstream region
+should be solved using PIC, however whether the outside is solved    would markedly reduce the number of particles, enabling simula-
+has little effect on the reconnection rate.                                tions of the long-term shock evolution and making substantial con-
+                                                                          tributions to studies of particle acceleration, especially ion accel-  The   test  simulations  demonstrate  the  effectiveness  of
+                                                                           eration. Implementing interface region in different direction canKAMMUY code, as listed below:
+                                                                         further reduce computational cost, which remains as a future work.
+1. Energy conservation is satisfied within a few % error through
+                                                 By incorporating such improvements, the KAMMUY code should
+   O(104) PIC steps, especially well conserved when low beta
+                                                                                 facilitate understanding the significance of kinetic effects in large-
+   condition is adapted.
+                                                                       scale systems such as solar flares.
+2. Large scale (MHD scale) waves can propagate through PIC re-
+   gion without distorting its waveform.
+3. Small scale (kinetic scale) waves hardly propagate into the
+  MHD region where PIC domain is not embedded when using   Acknowledgments
+   large grid-size ratio of MHD and PIC.                                                          K. A. thanks Dr. Hidetaka Kuniyoshi for deciding our simulation
+4. Numerical noises from PIC do not transmit to MHD domain so                                                            code name KAMMUY from spiritual beings in Ainu culture in
+   that multi-hierarchy simulation becomes stable.                                                             Hokkaido, not from the name of a special move in the globally
+An essential aspect of our multi-hierarchy scheme is that the grid    acclaimed Japanese manga NARUTO. Numerical computations
+size in the MHD domain is much larger than in the PIC domain.    were carried out on GPU cluster at the Center for Computational
+As a result, small-scale fluctuations or numerical noise from the     Astrophysics, National Astronomical Observatory of Japan.  It is
+PIC domain cannot propagate into the MHD domain. On the other     also partially supported by Recommendation Program for Young
+hand, the test calculations revealed the following caveats in our    Researchers and Woman Researchers, Supercomputing Division,
+code, as listed below:                                              Information Technology Center, The University of Tokyo.
+
+===== PDF PAGE 14 =====
+14                                                                     Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0
+
+
+
+
+
+Fig. 19: Snapshots of the profile of Bz at Ωcit = 100.0 for PIC domains of 100, 500, and 900 grids. The upper panel shows the results
+with the PIC domain size of 100 grids, the middle panel shows those of 500 grids, and the lower panel shows those of 900 grids. The left
+side shows the results from PIC and the right from MHD. Bz is normalized by B0. Alt text: The x and y axes show the position of x and y
+normalized by λi. The range in x axis is from 0 to 100, and y axis is from 10 to 40. The contour of the Bz is plotted in the range from -0.5
+to 1.0.
+
+
+                                            References
+
+                                                                     Akutagawa, K., Imada, S., & Shoda, M. 2025 Physics of Plasmas, 32,
+                                                                          082103,
+                                                                                Bhattacharjee, A., Huang, Y.-M., Yang, H., & Rogers, B. 2009 Physics of
+                                                                              Plasmas, 16, 112102,
+                                                                                      Birdsall, C. K., & Langdon, A. B. 1991, Plasma Physics via Computer
+                                                                              Simulation
+                                                                                 Birn,  J., Drake,  J. F., Shay, M. A., et al. 2001 Journal of Geophysical
+                                                                               Research, 106, 3715,
+                                                                                 Boris, J. P. 1970 in Proc. of 4th Conference on Numerical Simulation of
+                                                                         Plasmas (Naval Research Laboratory, Washington D.C), 3–67
+                                                                                   Brackbill, J. U., & Barnes, D. C. 1980 Journal of Computational Physics, 35,
+Fig. 20: Time evolution of the reconnection rate calculated by                                                                              426,
+Equation (38) for PIC domains of 100 (blue), 500 (orange), and      Brio, M., & Wu, C. 1988 Journal of Computational Physics, 75, 400,
+900 grids (green). Alt text: The x axis shows the time Ωcit. The      Daldorff,  L.  K.,  Tóth,  G.,  Gombosi,  T.  I.,  et  al. 2014  Journal  of
+range in x axis is from 0 to 100. The y axis shows the value of the        Computational Physics, 268, 236,
+reconnection rate. The range in y axis is from 0.00 to 0.10.             Drake, J. F., Swisdak, M., Phan, T. D., et al. 2009 Journal of Geophysical
+                                                                               Research, 114, A05111,
+                                                                         Drake, J. F., Antiochos, S. K., Bale, S. D., et al. 2025 Space Science Reviews,
+                                                                              221, 27,
+Funding                                                               Fujimoto, K. 2006 Physics of Plasmas, 13, 072904,
+                                                                           Fujimoto, K. 2018 Frontiers in Physics, 6, 119,
+This work was supported by JSPS KAKENHI Grant Numbers     Haahr,  M.,  Gudiksen,  B.  V., & Nordlund, Å. 2025 Astronomy and
+JP24K00688, JP25K00976, JP25K01052, and by the grant of Joint         Astrophysics, 696, A191,
+Research by the National Institutes of Natural Sciences (NINS)     Hau, L.-N., & Wang, B.-J. 2016 Journal of Geophysical Research: Space
+(NINS program No OML032402).                                            Physics, 121, 6245,
+                                                                   Huang, Y.-M., Bhattacharjee, A., & Sullivan, B. P. 2011 Physics of Plasmas,
+                                                                                  18, 072109,
+                                                                     Langdon, A. B. 1992 Computer Physics Communications, 70, 447,
+Data availability                                                    Lapenta, G. 2017 Journal of Computational Physics, 334, 349,
+                                                                                      Li, D., Chen, Y., Dong, C., Wang, L., & Toth, G. 2023 AIP Advances, 13,
+The simulation codes that support the findings of this study are        015126,
+openly available in GitHub repository https://github.com/      Liu, Y.-H., Cassak, P., Li, X., et al. 2022 Communications Physics, 5, 97,
+keita-akutagawa. The simulation data underlying this article     Loureiro, N. F., Schekochihin, A. A., & Cowley, S. C. 2007 Physics of
+will be shared on reasonable request to the corresponding author.          Plasmas, 14, 100703,
+
+===== PDF PAGE 15 =====
+Publications of the Astronomical Society of Japan (2025), Vol. 00, No. 0                                                       15
+
+
+
+Makwana,  K.,  Keppens,  R., & Lapenta, G. 2017 Computer Physics
+   Communications, 221, 81,
+Marder, B. 1987 Journal of Computational Physics, 68, 48,
+Markidis,  S.,  Lapenta,  G., & Rizwan-uddin. 2010 Mathematics and
+   Computers in Simulation, 80, 1509,
+Miyoshi, T., & Kusano, K. 2005 Journal of Computational Physics, 208,
+   315,
+Nakamura, R., Burch, J. L., Birn, J., et al. 2025 Space Science Reviews, 221,
+    17,
+Ogawa, T., Usami, S., Horiuchi, R., den, M., & Yamashita, K. 2016 Plasma
+   and Fusion Research, 11, 2401096,
+Orszag, S. A., & Tang, C. M. 1979 Journal of Fluid Mechanics, 90, 129,
+Petschek, H. E. 1965 in Proc. AAS-NASA Symp. NASA-SP 50. The physics
+    of Solar Flares, edited W. N. Ness, 425
+Shay,  M.,  Adhikari,   S.,  Beesho,  N.,  et  al.  2024  arXiv  e-prints,
+   arXiv:2406.05901,
+Shibata, K., & Tanuma, S. 2001 Earth, Planets and Space, 53, 473,
+Shibayama, T., Kusano, K., Miyoshi, T., & Bhattacharjee, A. 2019 Physics
+    of Plasmas, 26, 032903,
+Shibayama, T., Kusano, K., Miyoshi, T., Nakabou, T., & Vekstein, G. 2015
+   Physics of Plasmas, 22, 100706,
+Squire, J., Meyrand, R., Kunz, M. W., et al. 2022 Nature Astronomy, 6, 715,
+Sugiyama, T., & Kusano, K. 2007 Journal of Computational Physics, 227,
+   1340,
+Tóth, G., Chen, Y., Gombosi, T.  I., et al. 2017 Journal of Geophysical
+   Research (Space Physics), 122, 10,336,
+Ugai, M. 1995 Physics of Plasmas, 2, 3320,
+Usami, S., Horiuchi, R., Ohtani, H., & Den, M. 2013 Physics of Plasmas, 20,
+   061208,
+van Leer, B. 1979 Journal of Computational Physics, 32, 101,
+Walia, N. K., Seki, K., & Amano, T. 2022 Journal of Geophysical Research:
+   Space Physics, 127, e2021JA030066,
+Wang, X., Zou, S., Wang, Z., et al. 2024 Geophysical Research Letters, 51,
+   e2024GL108645,
+Yee, K. 1966 IEEE Transactions on Antennas and Propagation, 14, 302,
+Zenitani, S. 2015 Physics of Plasmas, 22, 032114,
+Zenitani, S., Hesse, M., Klimas, A., Black, C., & Kuznetsova, M. 2011
+   Physics of Plasmas, 18, 122108,
+Zenitani, S., & Miyoshi, T. 2011 Physics of Plasmas, 18, 022105,
+Zenitani, S., & Miyoshi, T. 2020 The Astrophysical Journal Letters, 894, L7,
+Zhou, F., Huang, C., Lu, Q., Xie, J., & Wang, S. 2015 Physics of Plasmas,
+    22, 092110,
+Zhou, H., Tóth, G., Jia, X., Chen, Y., & Markidis, S. 2019 Journal of
+   Geophysical Research (Space Physics), 124, 5441,

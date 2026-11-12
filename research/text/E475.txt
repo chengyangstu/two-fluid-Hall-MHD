@@ -1,0 +1,1392 @@
+arXiv:1406.1334v1  [physics.plasm-ph]  5 Jun 2014
+Accepted for publication on Physics of Plasmas
+Numerical comparison between a Gyroﬂuid and Gyrokinetic
+model investigating collisionless magnetic reconnection
+O. Zacharias1, L. Comisso2,3, D. Grasso2,3, R. Kleiber1, M. Borchardt1 and R. Hatzky4
+1 IPP-Teilinstitut Greifswald, Wendelsteinstr. 1, D-17491 Greifswald, Germany
+2 Dipartimento Energia, Politecnico di Torino, Corso Duca degli Abruzzi 24, 10129, Torino, Italy
+3 Istituto dei Sistemi Complessi - CNR, Via dei Taurini 19, 00185, Roma, Italy
+4 Max-Planck-Institut f¨ur Plasmaphysik, Boltzmannstr. 2, 85748 Garching, Germany
+Abstract
+The ﬁrst detailed comparison between gyrokinetic and gyroﬂuid simulations of collisionless mag-
+netic reconnection has been carried out. Both the linear and nonlinear evolution of the collisionless
+tearing mode have been analyzed. In the linear regime, we have found a good agreement between
+the two approaches over the whole spectrum of linearly unstable wave numbers, both in the drift
+kinetic limit and for ﬁnite ion temperature. Nonlinearly, focusing on the small-∆′ regime, with ∆′
+indicating the standard tearing stability parameter, we have compared relevant observables such as
+the evolution and saturation of the island width, as well as the island oscillation frequency in the
+saturated phase. The results are basically the same, with small discrepancies only in the value of
+the saturated island width for moderately high values of ∆′. Therefore, in the regimes investigated
+here, the gyroﬂuid approach can describe the collisionless reconnection process as well as the more
+complete gyrokinetic model.
+PACS numbers: 52.35.Vd, 52.35.Py, 52.25.Dg, 52.65.Kj, 52.65.Tt, 52.65.Rr
+Keywords: magnetic reconnection, gyroﬂuid and gyrokinetic simulations, plasma kinetic theory, plasma ﬂuid
+theory
+1
+
+I.
+INTRODUCTION
+Reconnection of magnetic ﬁelds is recognized to play a key role in many events occur-
+ring in laboratory, space, and astrophysical plasmas. Classical examples of such events are
+sawtooth crashes in tokamaks, substorms in the Earth’s Magnetosphere, and solar ﬂares.
+Magnetic reconnection involves a topology change of a set of ﬁeld lines, which leads to a
+new equilibrium conﬁguration with lower magnetic energy. During this process magnetic
+energy is converted into kinetic and thermal energy of electrons and ions [1]. Although much
+of the progress in the understanding of magnetic reconnection has been possible thanks to
+the use of ﬂuid-based models, the results achieved with these models require independent
+conﬁrmation when kinetic eﬀects are expected to be important.
+Recently, a new class of generalized ﬂuid models, so called gyroﬂuid models, have been
+adopted to investigate magnetic reconnection in the presence of a large guide ﬁeld [2–10].
+These models combine the advantages of the ﬂuid description, namely computational eﬃ-
+ciency and intuitively appealing physical interpretation, while retaining important kinetic
+eﬀects through gyro-orbit averaging [11]. However, for problems in which strongly non-
+Maxwellian features characterize the distribution function it would probably be necessary
+to keep many velocity-space moments to describe the detailed shape of the distribution func-
+tion, in which case the gyroﬂuid approach may lose its advantages [12]. Therefore, detailed
+comparisons between gyrokinetic and gyroﬂuid simulations are necessary to conﬁrm the va-
+lidity of the continuum gyroﬂuid descriptions and to improve them when such descriptions
+are no longer applicable.
+An early investigation of collisionless tearing modes by means of gyrokinetic particle-in-
+cell (PIC) simulations was made in Ref. [13]. In particular, this work focused on the growth
+and nonlinear evolution of small-scale magnetic islands having a characteristic width of the
+order of the electron skin depth and smaller than the ion Larmor radius. In Ref. [14] the
+evolution of collisionless and semicollisional tearing mode instabilities was studied using a
+gyrokinetic δf PIC code with gyrokinetic ions and drift-kinetic electrons. After a bench-
+2
+
+mark of the linear simulation results with eigenmode analysis for the case of ﬁxed ions, the
+nonlinear evolution of the magnetic island width was calculated. More recently, in Ref. [15]
+numerical results of saturated island widths resulting from gyrokinetic δf PIC simulations
+were compared to analytical calculations [16] in a more extended parameter space. In this
+work electron diamagnetic eﬀects were also considered, and it was found that they have
+stabilizing eﬀects in agreement with the asymptotic theory of Ref. [17]. Simulations of the
+collisionless tearing mode with gyrokinetic electrons and fully kinetic ions were performed in
+Ref. [18] and compared with the asymptotic matching theory of Ref. [16], and with a gyroki-
+netic eigenmode theory in a small but ﬁnite Larmor radius limit. Very recently, collisionless
+reconnection in the large guide ﬁeld regime has also been investigated by comparing fully
+kinetic PIC simulations and gyrokinetic results, showing that the gyrokinetic framework is
+capable of making accurate predictions well outside its formal regime of applicability [19].
+It was also shown that many physical quantities resulting from the nonlinear reconnection
+process scale linearly with the guide ﬁeld.
+The ﬁrst comparison between gyrokinetic and ﬂuid simulations was carried out in Ref. [20,
+21], where both the linear and nonlinear regimes of collisionless magnetic reconnection were
+investigated, ﬁnding a reasonably good agreement between the two approaches for low-β
+plasmas and small ion to electron temperature ratio. For β ∼1 and ion temperature greater
+than the electron temperature, an increase in discrepancy between gyrokinetic simulations
+and ﬂuid theory was found in Ref. [22], where, however, it was shown that the adoption of
+a reduced ion-to-electron mass ratio plays a signiﬁcant role in causing these discrepancies.
+This latter work focused on the linear regime, but also considered the collisionality depen-
+dence of the tearing mode growth. The importance of adopting a realistic mass ratio was
+emphasized in Ref. [23], where extensive linear studies were presented, and nonlinear results
+were performed to investigate reconnection in the cases of decaying and driven turbulence.
+As in most of the works mentioned above, in this paper we focus on rareﬁed high-temperature
+plasmas in which the collisional mean free path is large enough that collisions are negligi-
+ble. Additionally we consider magnetic reconnection phenomena that take place in a two-
+3
+
+dimensional plane perpendicular to a strong and constant magnetic guide ﬁeld. Diﬀerently
+from previous studies, here the comparison is between the results of gyrokinetic and gy-
+roﬂuid simulations. For this purpose, we adopt the gyrokinetic δf PIC code EUTERPE
+with gyrokinetic ions and drift-kinetic electrons [15]. Recently, a linear version of this code
+(GYGLES) has been employed to simulate the ideal-MHD internal kink mode and the col-
+lisionless m = 1 tearing mode in a tokamak [24]. We also adopt the gyroﬂuid code that has
+been employed in Refs. [7, 9, 10] to investigate ion gyro-orbit averaging eﬀects on collisionless
+magnetic reconnection. After a linear benchmark of these codes with a numerical eigenmode
+and eigenvalue analysis, the results of the two models in the linear regime are compared over
+the whole spectrum of linearly unstable wave numbers, both in the drift kinetic limit and
+for ﬁnite ion temperature. Nonlinearly, focusing on the small ∆′ regime (with ∆′ indicating
+the standard tearing stability parameter), we compare relevant observables as the evolution
+and saturation of the island half-width, and the island oscillation frequency at saturation.
+This paper is organized as follows: In Sec. II the adopted gyrokinetic and gyroﬂuid models
+are described, as well as the initial equilibrium conﬁguration. In Sec. III we focus on linear
+simulation results, while the nonlinear regime is studied in Sec. IV. Finally, in Sec. V we
+summarize our results and discuss their implications.
+II.
+THE MODELS
+Within the framework of low-β plasmas, β ≪1, the dominant ﬁeld ﬂuctuations are
+the electrostatic potential ˆΦ and the parallel vector potential ˆA∥. Both models which are
+investigated here adopt the following normalization scheme with respect to Alfv´en units
+t = vA
+L
+ˆt,
+x = ˆx
+L,
+ds =
+ˆds
+L ,
+ρS,e = ˆρS,e
+L ,
+(1)
+ns = L ˆns
+ˆdi n0
+,
+us = L ˆus
+ˆdi vA
+,
+A =
+ˆA∥
+B0,z L,
+Φ =
+ˆΦ
+B0,z L vA
+(2)
+where the carets denote the dimensional quantities, us is the out-of-plane guiding center
+velocity ﬁeld, ns is the guiding center density perturbation, and a constant background
+density n0 is assumed to be equal for each species s. L indicates a characteristic magnetic
+4
+
+equilibrium length scale,
+while vA = B0,z/√µ0 n0 mi is the Alfv´en speed based on the
+magnetic ﬁeld strength B0,z of the guiding ﬁeld.
+ˆds = c/ωp,s is the skin depth of singly
+charged ions (s = 1) or electrons (s = 2) and ρS,e =
+p
+mi kB T0,e/ (e B0,z) is the sound Larmor
+radius. The ratio of ion temperature T0,i to the reference temperature of the electrons T0,e
+is indicated by τ, while µ refers to the ratio of the ions mass mi to electron mass me.
+Also, the electron plasma-β is deﬁned by βe = µ0 kB T0,e n0/B2
+0,z, whereas βi = βeτ for ions.
+A.
+The gyrokinetic model
+The particle-in-cell code EUTERPE [25] uses a δf-scheme splitting of the distribution
+function fs for each species s into a time independent background f0,s and a perturbed
+part δfs in order to solve the full standard gyrokinetic Vlasov-Maxwell-system [27] globally
+in toroidal 3D-geometry. Here the code is modiﬁed to simulate the tearing mode in slab
+geometry. The background distribution function is assumed to be a shifted Maxwellian with
+bulk velocity u0,s. EUTERPE works in the p∥-formalism so that the equations for particles
+trajectories are in a slab geometry [26, 27]
+˙⃗Rs =
+1
+α √βe
+p∥
+ms
+⃗b −Ωs A⃗b + ⃗b × ∇⟨Ψ⟩
+(3)
+=
+1
+α √βe
+p∥
+ms
+⃗b + ˙⃗R1
+s
+(4)
+˙p∥,s
+ms
+= −α
+p
+βe Ωs⃗b · ∇⟨Ψ⟩,
+(5)
+where Ωs = (qs B0,z/ms) L/vA is the cyclotron frequency normalized to the Alfv´en time for
+each species, qs is the species charge, Ψ = Φ −A p∥/ms, ⃗b is the normalized magnetic ﬁeld
+and α = L/ρS,e. The perturbed distribution function is pushed along the particle orbits
+according to
+˙δfs = −˙f0,s
+(6)
+= −f0,s
+
+κu0,s ˙⃗R1
+s · ∇x + Ωs
+√βe α
+v2
+s
+ p∥
+ms
+−u0,s
+
+⃗b · ∇⟨Ψ⟩
+
+.
+(7)
+5
+
+The current gradient term with the bulk velocity u0,s reads
+κu0,s(x) =
+p∥
+ms −u0,s
+v2
+s
+du0,s
+dx
+and vs =
+p
+kB Ts/ms/
+
+vA ˆdi/L
+
+is the normalized thermal speed of each species.
+The
+quasineutrality condition for drift kinetic electrons and gyrokinetic ions reads
+ne = ⟨ni⟩+ Γ0 −1
+ρ2
+i
+Φ.
+(8)
+Γ0 is an integral operator that describes the average of the electrostatic potential over
+a gyro-ring around the guiding center position.
+If necessary the polarization density is
+approximated by a Pad´e approximation due to the relative complex structure of Γ0 in real
+space. Otherwise the ion response is simplifed by using a long wavelength approximation,
+k2
+⊥ρ2
+i ≪1. Expanding Γ0 −1 in a Taylor series in this limit, the quasineutrality condition
+becomes
+ne = ⟨ni⟩+ ∇2
+⊥Φ .
+(9)
+The gyroaveraging of the ion guiding center density perturbation, ni, can be expressed by
+the phase space integral
+⟨ni⟩(⃗x) =
+Z
+J d6Z δ
+
+⃗R + ⃗ρi −⃗x
+
+δ fi
+(10)
+with the phase space Jacobian J = B, d6Z = d⃗R (dp∥/mi) v⊥dv⊥dα and the gyroradius
+vector ⃗ρi(α).
+Amp`ere’s law closes the Vlasov-Maxwell-system
+−∇2
+⊥A +
+X
+s
+βs
+ρ2s
+A =
+X
+s
+⟨j∥,s⟩
+(11)
+with the Larmor radii ρs = √ms kB Ts/ (e B0,z) for each species. The corresponding gyroav-
+eraged ”current” response is calculated according to
+⟨j∥,i⟩(⃗x) =
+Z
+J d6Z δ
+
+⃗R + ⃗ρi −⃗x
+ p∥
+mi
+δ fi.
+(12)
+6
+
+The gyroaverging procedure of the ﬁelds A, Φ is being employed according to
+⟨A, Φ⟩(⃗R) = 1
+2 π
+Z
+(A, Φ) (⃗R + ⃗ρ) dα,
+(13)
+taking suﬃciently many points on the gyro ring around the guiding center position ⃗R.
+Recently, serious computational diﬃculties concerning the skin terms in Eq. (11) could be
+resolved using an enhanced control variate method [28].
+B.
+The gyroﬂuid model
+We consider the gyroﬂuid model that has been adopted in Refs. [7, 9, 10] to investigate
+magnetic reconnection in collisionless high-temperature plasmas with a strong guide ﬁeld.
+This model is obtained from the equations of Ref. [32] by neglecting magnetic curvature
+eﬀects and assuming two-dimensional dynamics with ∂/∂z = 0, being z the direction of the
+strong guide ﬁeld. In turn, the model of Ref. [32] was obtained from the equations of Ref. [33]
+by taking only the ﬁrst two velocity space moments of the gyrokinetic equations for both
+the electrons and the ions, assuming constant temperatures and neglecting collisions and
+the electron gyroradius. Electron inertia terms, on the other hand, were retained in order to
+break the frozen-in condition and allow for magnetic reconnection phenomena. Therefore,
+the evolution equations of this gyroﬂuid model consist of the continuity equation and the
+z-component of the equation of motion for the ion guiding centers:
+∂ni
+∂t + [Γ1/2
+0 Φ, ni] = [ui, Γ1/2
+0 A],
+(14)
+∂D
+∂t + [Γ1/2
+0 Φ, D] = τρ2
+S,e[Γ1/2
+0 A, ni],
+(15)
+and similar equations for the electrons:
+∂ne
+∂t + [Φ, ne] = [ue, A],
+(16)
+∂F
+∂t + [Φ, F] = −ρ2
+S,e[A, ne],
+(17)
+7
+
+where the Poisson brackets between two generic ﬁelds f and g are deﬁned by [f, g] = ⃗z ·
+∇f × ∇g. Here D = Γ1/2
+0 A + d2
+i ui is the ion guiding center parallel canonical momentum,
+whereas F = A −d2
+eue is the electron parallel canonical momentum. Furthermore, Γ1/2
+0 Φ is
+the gyro-averaged electrostatic potential and Γ1/2
+0 A is the gyro-averaged parallel magnetic
+potential, where the symbol Γ1/2
+0
+refers to the gyro-averaging operator that we adopt in its
+lowest-order Pad´e approximant form [12]
+Γ1/2
+0
+=
+1
+1 −ρ2
+i
+2 ∇2
+⊥
+.
+(18)
+This approximation gives reasonable values for the whole range of k2
+⊥ρ2
+i . The system of
+equations is completed by the parallel component of Amp`ere’s law,
+∇2
+⊥A = ue −Γ1/2
+0 ui
+(19)
+and by the quasineutrality condition
+ne = Γ1/2
+0 ni + Γ0 −1
+ρ2
+i
+Φ.
+(20)
+The resulting model is dissipationless and suitable for the study of reconnection mediated
+by electron inertia. In particular, it possesses a noncanonical Hamiltonian structure [32]
+that reveals the presence of four Lagrangian invariants, which have proved to be helpful to
+understand how the reconnection evolution is aﬀected by the plasma β and by the ratio of
+species temperatures [7, 10].
+C.
+Equilibrium conﬁguration and numerical setup
+To investigate spontaneous reconnection, the model equations are solved numerically
+with an initial equilibrium that is unstable with respect to tearing modes. The instability
+reconnects the antiparallel component of magnetic ﬁeld lines at the resonant surface deﬁned
+by ⃗k · ⃗B0 = 0, with ⃗k indicating the wavevector of the mode. We consider a two-dimensional
+slab geometry with x as the coordinate of the equilibrium inhomogeneity and setting ∂/∂z =
+0. The equilibrium magnetic ﬁeld ⃗B0 results from an equilibrium current u0,e carried by
+8
+
+electrons only (for ions u0,i = 0). The perpendicular sheared magnetic ﬁeld can be deduced
+from a parallel vector potential A0,∥(x), which is chosen to be
+A0,∥(x) =
+C
+cosh2 (x).
+(21)
+The parameter C was chosen to be C = 0.1 if not stated otherwise.
+This results in a
+maximal relative shear strength of B0,y/B0,z ∼0.08 in the domain and a shear length
+ls = B0,z/(dB0,y/dx) = 5 at the resonant surface x = 0.
+Furthermore, the plasma is considered homogeneous with ﬂat density n0,s(x) = neq and
+temperature proﬁles T0,s(x) = T0,s for every species s. We considered a simulation domain
+{(x, y) : −π ≤x ≤π, −aπ ≤y ≤aπ}, where the parameter a ﬁxes the domain length Ly
+in y-direction, which is linked to the wavenumber ky = 2π m/Ly of the longest wavelength
+mode m = 1 of the system. The tearing mode stability quantity [29] ∆′ is then charaterized
+by the wavenumber ky according to the analytical expression [30]
+∆′ = 2 (3 + k2
+y)(5 −k2
+y)
+k2y
+p4 + k2y
+.
+(22)
+The tearing mode becomes unstable in nonideal MHD if ∆′ > 0, which is the case if ky <
+√
+5.
+The ﬁeld equations in EUTERPE are discretized in real space by a B-spline ﬁnite element
+method [31]. The y-direction is treated periodically, while the ﬁelds A and Φ are subject
+to Dirichlet boundary conditions with respect to x. For the simulations a resolution of up
+to 1024 × 128 grid points has been used for the x and y-direction, respectively. The code
+pushes the perturbed distribution function δfs along particles trajectory using a Runge-
+Kutta-scheme of fourth order. In the gyrokinetic simulations no special initial perturbations
+are chosen so that the tearing instability evolves out of noise.
+The gyroﬂuid code decomposes the ﬁelds into a time-independent background equilibrium
+and an evolving perturbation within a pseudospectral method [7]. Periodic boundary condi-
+tions are employed in both the x- and y-directions, and a grid of 1024 ×128 points has been
+used. Since periodic boundary conditions are imposed also along the x-direction, a Fourier
+series truncated to eleven modes is used to approximate Eq. (21).
+Finally, an Adams-
+Bashforth algorithm is applied to push the ﬁelds in time, and an initial disturbance on the
+9
+
+out-of-plane current density of width O(de) around the resonant surface is set to accelerate
+the onset of the tearing instability.
+It is important to note that the boundary conditions for the ﬁelds with respect to the x-
+direction are diﬀerent in the two codes. This is a consequence of the historical development
+of the codes. Due to the numerical method underlying the gyroﬂuid code periodic boundary
+conditions arise naturally. In EUTERPE the chosen ﬁeld boundary conditions are ﬁxed
+in the code. Our choice of the domain size in the x-direction is suﬃcient to avoid ﬁnite
+domain size eﬀects on the value of the tearing stability index ∆′. However, in the following
+we will check the eﬀects of the boundary conditions by performing a detailed linear bench-
+mark with an eigenvalue approach. If, in the following, simulations in the drift kinetic limit
+were performed, this was achieved by setting the temperature ratio to τ = 1/900, giving
+ρi = 1/30 ≪de, which makes the eﬀect of the gyroaveraging operators negligible. Addition-
+ally, instead of the Pad´e approximation the long wavelength approximation was then used
+for the quasi-neutrality equation in EUTERPE.
+III.
+LINEAR COMPARISON OF THE MODELS
+As a ﬁrst step we check the accuracy of the codes in the linear regime with a benchmark.
+For this purpose a numerical eigenmode and eigenvalue analysis is applied to each of the
+two models in the drift kinetic limit. After the accuracy of the codes is checked to a high
+degree, we proceed with a comparison of the models in both the drift kinetic limit and the
+ﬁnite Larmor radius case.
+A.
+Eigenvalue equations
+In this section we describe the procedure of performing a numerical benchmark using a
+shooting method to get the linear dispersion relation in the drift kinetic limit. An anal-
+ysis of the eigenvalues and the eigenmode structure is given here for both the linearised
+gyroﬂuid and the gyrokinetic equations.
+The gyroﬂuid equations (14–20), and the gy-
+10
+
+rokinetic equations (5–9), are linearised using the ansatz δΦ (x, y, t) = ei(ky y−ωt) ˜Φ(x) and
+δA (x, y, t) = ei(ky y−ωt) ˜A(x) for the perturbed quantities, additionally assuming a long-wave-
+length approximation for the quasineutrality equation, Eq. (9). The ﬁeld equations are cast
+into a general form with the coeﬃcients qi
+j, with (i, j) = (A, Φ),
+d2˜Φ
+dx2 = −qΦ
+Φ (x, ω) ˜Φ −qΦ
+A (x, ω) ˜A
+(23)
+d2 ˜A
+dx2 = −qA
+Φ (x, ω) ˜Φ −qA
+A (x, ω) ˜A
+(24)
+The linearisation of the gyroﬂuid system gives the following coeﬃcients
+qΦ
+Φ (x, ω) = −k2
+y +
+X
+s
+qs
+F ′
+0,s
+Ns
+ky
+ω
+(25)
+qΦ
+A (x, ω) =
+X
+s
+qs
+Ns
+
+−qs −ks
+k∥
+Ns −τsρ2
+S,e
+k∥ks
+ω2
+
+(26)
+qA
+Φ (x, ω) =
+X
+s
+−F ′
+0,s
+Ns
+ky
+ω
+(27)
+qA
+A (x, ω) =
+X
+s
+qs
+Ns
+
+−qs −τsρ2
+S,e
+k∥ks
+ω2
+
+(28)
+where the prime denotes the derivative with respect to x. Also the quantities
+F ′
+0,s = −By,0 + (−1)s+1 d2
+s u′
+0,s
+(29)
+k∥= −A′
+0ky
+(30)
+ks = −u′
+0,sky
+(31)
+Ns = d2
+s
+ 
+1 −τs
+ρ2
+S,e
+d2s
+k2
+∥
+ω2
+!
+,
+(32)
+have been introduced to make the notation more compact. Note that in the above relations
+τ1 = τ for ions and τ2 = 1 for electrons.
+11
+
+The coeﬃcients resulting from the linearisation of the gyrokinetic model are
+qΦ
+Φ (x, ω) = −k2
+y + α2βe
+X
+s
+Ωs
+µs
+Xs
+v2
+s k∥
+⟨V 1
+s ⟩
+(33)
+qΦ
+A (x, ω) = −α
+p
+βe
+X
+s
+Ωs
+µs
+Xs
+v2s k∥
+ ⟨V 2
+s ⟩+ u0,s⟨V 1
+s ⟩
+
+(34)
+qA
+Φ (x, ω) = ne
+X
+s
+Ωs
+µs
+Xs
+v2s k∥
+ ⟨V 2
+s ⟩+ u0,s⟨V 1
+s ⟩
+
+(35)
+qA
+A (x, ω) = −k2
+y −
+ne
+α√βe
+X
+s
+Ωs
+µs
+(36)
+×
+ Xs
+v2
+s k∥
+ ⟨V 3
+s ⟩+ 2 u0,s⟨V 2
+s ⟩+ u2
+0,s⟨V 1
+s ⟩
+
++ Ωs
+
+.
+where we have introduced Xs = −ks −k∥Ωs and µi = 1, µe = µ.
+The functions ⟨V n
+s ⟩(x, ω) for each species are deﬁned as
+⟨V n
+s ⟩=
+√
+2 vs
+n−1 1
+√π
+Z ∞
+−∞
+dt tn
+e−t2
+t −
+
+1
+√
+2 vs
+
+ω
+k∥−u0,s
+
+=
+√
+2 vs
+n−1
+Zn (ζs)
+(37)
+with Zn (ζs) being the plasma dispersion function of n-th order with the species argument
+ζs =
+
+ω
+k∥−u0,s
+
+/
+ √
+2 vs
+
+.
+These fourth-order equations are a nontrivial extension with respect to the case where the
+electrostatic potential ˜Φ is negleted [14, 34], which is only of second order. Both these sets
+of eigenvalue equations are solved numerically using a shooting method, which is formulated
+as a Riccati problem [35]. By using an adaptive stepsize integrator results of very high
+accuracy results are obtained.
+For the equilibrium conﬁguration considered here, i. e. without any equilibrium gradients
+of temperature or density, the eigenvalue has only an imaginary part ω = i γ.
+The
+Eqs. (23–24), with the coeﬃcients (25–28) and (33–37), are solved using Dirichlet boundary
+conditions in x-direction.
+12
+
+ 0
+ 0.2
+ 0.4
+ 0.6
+ 0.8
+ 1
+ 1.2
+-3
+-2
+-1
+ 0
+ 1
+ 2
+ 3
+Re A
+x
+Shooting method
+Gyrofluid-Code
+-1.5
+-1
+-0.5
+ 0
+ 0.5
+ 1
+ 1.5
+-3
+-2
+-1
+ 0
+ 1
+ 2
+ 3
+Im Φ
+x
+Shooting method
+Gyrofluid-Code
+FIG. 1: Benchmark of the gyroﬂuid eigenfunctions. Left the real part of the parallel vector potential
+˜A, right the imaginary part of the electrostatic potential ˜Φ. Eigenfunctions are normalized by their
+maximum value.
+B.
+Linear Benchmark with eigenvalue approach
+The ﬁrst benchmark is carried out for the parameter values de = 0.1, di = 4.285, ρS,e =
+0.6, ky = 0.6 using the drift kinetic limit. This corresponds to βe = 1.96·10−2 and a realistic
+proton to electron mass ratio µ = 1836. The comparison of the eigenfunction resulting
+from the shooting method with results from the gyroﬂuid simulation is shown in Figure 1.
+Due to symmetries of the equations and the pure imaginary eigenvalue, γ = 0.0248, only
+the real part of ˜A remains, as well as only an imaginary part of ˜Φ. The ﬁeld structures
+agree very well with results from the shooting code, although the boundary conditions with
+respect to x diﬀer. The same procedure has been performed with EUTERPE using the
+coeﬃcients deﬁned by Eqs. (33–37). In this case γ = 0.0273, and both potentials are in
+good agreement with the results from the shooting method as well, as shown in Figure 2.
+In this case both methods used the same boundary conditions regarding the x-direction.
+The comparison with the solution of the gyroﬂuid problem shows that the instability is
+mainly inﬂuenced by the dynamics at the resonant layer. The solutions drop very fast to
+zero approaching the boundaries and therefore the inﬂuence of the boundary conditions is
+suppressed. This will be important for further nonlinear comparisons.
+To check the eigenvalues over an extended ky-spectrum of unstable modes, simulations
+have been performed with the previous setup varying the simulation domain size Ly. The
+13
+
+ 0
+ 0.2
+ 0.4
+ 0.6
+ 0.8
+ 1
+ 1.2
+-3
+-2
+-1
+ 0
+ 1
+ 2
+ 3
+Re A
+x
+Shooting method
+EUTERPE
+-1.5
+-1
+-0.5
+ 0
+ 0.5
+ 1
+ 1.5
+-3
+-2
+-1
+ 0
+ 1
+ 2
+ 3
+Im Φ
+x
+Shooting method
+EUTERPE
+FIG. 2: Benchmark of the gyrokinetic eigenfunctions. Left the real part of the parallel vector
+potential ˜A, right the imaginary part of the electrostatic potential ˜Φ. Eigenfunctions are normalized
+by their maximum value.
+ 0
+ 0.01
+ 0.02
+ 0.03
+ 0.04
+ 0.05
+ 0.06
+ 0
+ 0.2
+ 0.4
+ 0.6
+ 0.8
+ 1
+ 1.2
+ 1.4
+γ
+ky
+Shooting method (Gyrofl. Eq.)
+Gyrofluid-Code
+Shooting method (Gyrokin. Eq.)
+EUTERPE
+FIG. 3: A benchmark of the linear growth rates of both models for various wavevectors ky. Both
+the gyroﬂuid code and gyrokinetic code work linearly exact.
+comparison of both ﬂuid and kinetic results and the relevant results of the shooting method
+are shown in Figure 3. We have thus shown numerically that the two codes give exact
+results in the linear regime over a wide range of ky.
+C.
+Model comparison in the drift kinetic limit
+In the following we use two sets of parameters which are relevant for reconnection
+physics. The parameter associated with Setup I and II are listed in the Table below. Case
+14
+
+Setup
+I
+II
+µ
+1836
+100
+βe
+4.91 · 10−3 4 · 10−2
+ρS,e
+0.3
+0.2
+de
+0.1
+0.1
+di
+4.285
+1.0
+TABLE I: Set of parameters deﬁning setup I and II used for the simulations.
+I refers to a realistic mass ratio µ and ”kinetic” regime, βe ≫me/mi, or equivalently
+ρS,e ≫de, whereas case II deﬁnes a ”medium” range between kinetic and inertial regime,
+βe ∼me/mi.
+Simulations for cases I and II have been performed for various ky. Over the full range of
+wave numbers, from the large-∆′ to the small-∆′ cases, close to the stability threshold at
+ky ∼2.23, both models describe the reconnection process very well, as shown in Figure 4.
+It is found a relative maximum deviation of about 20% around ky ∼1 for both setups.
+However, in the small-∆′ limit the diﬀerences of the growth rates become smaller.
+The kinetic description allows one to estimate the width of the region of particle acceler-
+ation, δ, due to the resonance condition k∥ρS,e/de = ky δ/ls · ρS,e/de ∼γ in the small-∆′
+limit and δ ≪L [36]. This limit is deﬁned by the condition ∆′ de ≪(de/ρS,e)1/3. Together
+with the kinetic dispersion relation in this limit, γ = ky de ρS,e ∆′/ls, one gets the estimate
+δ ∼∆′ d2
+e. The two-ﬂuid description also yields this scaling of the growth rate and current
+layer in the small-∆′ limit [17, 37].
+Another point which might be important concerns the assumptions of the adopted
+gyroﬂuid model, which is a truncation of the much more complete model proposed by
+Snyder and Hammett [33].
+The derivation uses the restriction that the bulk velocity
+of the species u0,s is much smaller than the thermal velocity vs.
+Moreover, this model
+uses an unshifted Maxwellian when performing the integration over the velocity space to
+get the equations of moments.
+Therefore, the gyroﬂuid equations hold exactly only for
+15
+
+ 0
+ 0.005
+ 0.01
+ 0.015
+ 0.02
+ 0.025
+ 0.03
+ 0
+ 0.5
+ 1
+ 1.5
+ 2
+γ
+ky
+Gyrofluid-Code
+EUTERPE
+ 0
+ 0.005
+ 0.01
+ 0.015
+ 0.02
+ 0
+ 0.5
+ 1
+ 1.5
+ 2
+γ
+ky
+Gyrofluid-Code
+EUTERPE
+FIG. 4: The comparison of the linear dispersions shows a good agreement between the two ap-
+proaches over the full ky range. Left. Case I, µ = 1836. Right. Case II, µ = 100. (Solid lines
+connect the numerical results for better visualization.)
+C ≪1. For the linear simulations done here the amplitude of the sheared perpendicular
+ﬁeld was chosen as C = 0.1, which approximates this limit very well and additionally
+allows relatively short simulation times. However we checked this point simulating a mode
+with ky = 1.0, de = 0.1, di = 4.285, ρS,e = 0.3 and decreasing C from 10−1 to 10−4. Although
+these runs required very long simulation times for small C, due to the dependence of γ
+from ls, the relative deviation of the growth rates of the models fell from approximately 20%
+to 12%.
+D.
+Inﬂuence of gyro-eﬀects
+It is desirable to go beyond the drift kinetic limit and simulate the tearing mode for ﬁnite
+ion temperatures when the gyroradius can become much larger than the thickness of the
+electron diﬀusion region which is O(de) [38]. Here we only compare the linear simulations of
+the codes using the setup scenario II for ky = 1.0 and 2.0, while varying τ. The gyrokinetic
+eﬀects now enter according to Eq. (8) using the approximation of Pad´e.
+Figure 5 shows that the growth rates obtained with the two diﬀerent codes behave qual-
+itatively very similar when we vary τ. While for small τ the growth rate remains nearly
+constant, for larger ion-gyroradii ρi ≫ρS,e (τ ≳1), the growth rate begins to increase
+16
+
+ 0.012
+ 0.024
+ 0.036
+ 0.0001  0.001
+ 0.01
+ 0.1
+ 1
+ 10
+ 100
+γ
+τ
+Gyrofluid-Code
+EUTERPE
+ 0.006
+ 0.012
+ 0.0001  0.001
+ 0.01
+ 0.1
+ 1
+ 10
+ 100
+γ
+τ
+Gyrofluid-Code
+EUTERPE
+Porcelli
+FIG. 5: In the medium-∆′ regime, ∆′ de ∼1 (left), and in the small ∆′ de regime (right) the codes
+show good agreement over whole range of τ. The analytical predicition, Eq. (38), ﬁts well for both
+the gyrokinetic and gyroﬂuid model (right).
+strongly.
+For the medium range ky ∼1 both models cover the physics very well (Figure 5, left). This
+result is important since it proves clearly that the gyro-eﬀects are being covered correctly by
+both gyro-approaches, which provides a good starting point for the following comparisons
+in the nonlinear regime.
+The right frame of Figure 5 displays the simulation results in the small-∆′ limit, which for
+the case with hot electrons and ions is deﬁned by ∆′ de ≪
+
+de/
+ ρS,e
+√1 + τ
+1/3. In this
+range of parameters an analytical prediction for a kinetic ion response together with an
+electron ﬂuid derived by Porcelli gives [17]
+γ = ky ∆′ √
+1 + τ de ρS,e
+ls π ,
+(38)
+which reproduces the simulation results to high accuracy. Since the parallel ion dynamics and
+the gyrophase-independent part of the real space ion particle density ⟨ni⟩were neglected in
+Porcelli’s theory, their eﬀect plays a negligible role when considering an equilibrium without
+density gradients. Ion diamagnetic drifts may change this picture, and an investigation of
+nonuniform ion density equilibria will be the subject of a future publication.
+17
+
+IV.
+COMPARISON OF THE NONLINEAR MODELS
+In fusion relevant applications the saturated behaviour of the tearing instability is a very
+important issue. Continuing with the parameters of both cases I and II we now discuss the
+nonlinear phase, concentrating on the small-∆′ regime. The saturated island half width w
+and oscillation frequency ωB in the deeply nonlinear phase are the two most relevant ob-
+servables. Up to now, in the literature there are only a few extended simulation results of
+these quantities in homogeneous plasmas [14, 15, 18].
+It is important to note that the equilibrium considered in this section is unstable with
+respect to modes with m = 1, which can in general interact in the nonlinear phase
+with the m = 0 mode.
+Pseudospectral codes simulate a complete rectangular domain
+[−mmax, . . . , mmax] × [−nmax, . . . , nmax] in Fourier space [40], n being the mode number in
+z-direction (nmax = 0 here), so the m = 0 mode is being simulated as well. In the gyroﬂuid
+simulations all relevant scales were well resolved by choosing the extent of the Fourier spec-
+trum to 1/kmax ≪de. In EUTERPE it is not necessary to choose a corresponding domain
+setup. Nevertheless, to match the initial computational conditions of the two methods, EU-
+TERPE was adjusted to adopt the ﬁlter [−1, . . . , 1] × [0]. Because higher modes numbers
+m = 2, 3, . . . are expected to play no role in the dynamics the chosen ﬁlter does not restrict
+the essential physics.
+The gyrokinetic simulations were performed with up to Np = 3·107 markers with a minimum
+time step ∆t = 0.125. The skin depth de = 0.1 is resolved with at least 16 points, whereas
+the width of the perturbed current produced by the parallel electric ﬁeld, δ, was resolved
+with about ten points. The numerical resolution of the vector potential in the x-direction
+amounts to nx = 1024 points, which separates scales up to ∆x = 5 · 10−3. This introduces
+an upper error range, which can be removed with ﬁner grid resolutions but demands a much
+higher computational eﬀort.
+We apply two diﬀerent methods to obtain the island half widths w of the collisionless tearing
+18
+
+mode. Assuming the constant- ˜A approximation, the half width evolution is given by [39]
+w(t) = 2
+q
+˜A(x = 0, y = 0, t) ls.
+(39)
+Otherwise, without any approximation, we can obtain the exact island half width using the
+geometric deﬁnition of the island separatrix at each time step by solving numerically the
+equation
+A(x = 0, y = 0, t) = A
+
+x = w (t) , y = π
+ky
+, t
+
+(40)
+on the discrete spatial grid used in the codes. Assuming that the X-point is at x = 0, y = 0
+and following the separatrix, the island half width w is found at x = w (t) , y = π/ky.
+A.
+Drift kinetic limit
+The evolution of the island half width into the deeply nonlinear regime is shown in Figure 6
+for the parameters ky = 1.8, µ = 1836 and ρS,e = 0.3 obtained with both codes. This Figure
+shows the solution of Eq. (40) at each time step. Both gyroﬂuid and gyrokinetic models
+behave well in the nonlinear phase and show a clear saturated phase beginning at t ∼1500.
+The energy conservation proved to be more accurate than 2.5%. Moreover, it turned out
+for all simulations presented here that the coupling between the m = 0 and m = 1 modes
+is very weak and can be neglected. Figure 7 shows a comparison of the evolution of the
+exact island half width and the island half width obtained according to Eq. (39) for the
+gyroﬂuid simulation shown in Figure 6. We have checked that for wavenumbers ky ≥1.8,
+which corresponds to the small-∆′ limit, the island half width calculated with the constant- ˜A
+approximation is valid within the precision of measurement. Nevertheless, in the following
+we use Eq. (40).
+When the island width becomes comparable to the linear current sheet thickness δ, the
+mode saturates [16]. After the transition into the saturation phase the width of the island
+begins to oscillate with a characteristic frequency ωB, which is clearly visible in Figure 6
+and 7. From the timeseries w(t) the saturated island half width w is measured by taking
+19
+
+ 0
+ 0.01
+ 0.02
+ 0.03
+ 0.04
+ 0.05
+ 0.06
+ 0.07
+ 0
+ 500
+ 1000
+ 1500
+ 2000
+ 2500
+ 3000
+w(t)
+t
+Gyrofluid-Code
+  EUTERPE
+FIG. 6: Island half width as a function of time for setup I and ky = 1.8. Both gyroﬂuid and
+gyrokinetic models show clear saturated behaviour of the mode. The steps are due to the spatial
+discrete grid points.
+ 0
+ 0.01
+ 0.02
+ 0.03
+ 0.04
+ 0.05
+ 0.06
+ 0.07
+ 0
+ 500
+ 1000
+ 1500
+ 2000
+ 2500
+ 3000
+w(t)
+t
+Gyrofluid-Code (w exact)
+Gyrofluid-Code (const-A)
+FIG. 7: Comparison between the exact island half width obtained by solving Eq. (40) on a discrete
+spatial grid and the island half width calculated according to Eq. (39) (Setup I and ky = 1.8). In
+the small-∆′ limit the const- ˜A approximation is numerically conﬁrmed.
+the mean value w = ⟨w(t)⟩T after saturation starts, with T indicating a period longer than
+the oscillation frequency.
+In the following we measure both quantities w and ωB for an extended parameter range
+to compare the gyrokinetic and gyroﬂuid models, and to check the validity of analytical
+predictions in this regime of parameters.
+Figure 8 shows the saturated island half width w as a function of the longest wavelength
+20
+
+in the system for both parameter cases. For values ky ∼1.6 the relative diﬀerence of the
+island half widths obtained with the two adopted models is found to be about 30% for both
+parameter cases I and II. Increasing ky to the range ky = 1.9 . . . 2.23 close to the stability
+threshold the agreement between the results of the two codes is much better. The relative
+deviation of the island half widths is approximately 10% for ky = 1.9 in both setups and
+vanishes practically for higher wavenumbers.
+This shows that for ∆′ ≲1 both models
+agree very well. Therefore, there are no signiﬁcant diﬀerences between the gyroﬂuid and the
+gyrokinetic models for small island widths, i. e. when w ≲de. So for the cases investigated
+here, in which the island half width and the current layer thickness δ are much smaller than
+the equilibrium scales, the ﬂuid description produces practically the same island half widths
+as the more complete kinetic model. The comparison between the models also shows that
+the island width is slightly higher in the ﬂuid description than in the kinetic model. These
+are the ﬁrst extended comparisons of the saturated island width in slab geometry over a
+broad range of parameter.
+Since for both parameter cases the ion skin depth is much larger than the electron skin
+ 0
+ 0.05
+ 0.1
+ 0.15
+ 0.2
+ 0.25
+ 1.4
+ 1.6
+ 1.8
+ 2
+ 2.2
+ 2.4
+w
+ky
+Gyrofluid-Code
+EUTERPE
+ 0
+ 0.05
+ 0.1
+ 0.15
+ 0.2
+ 0.25
+ 1.2
+ 1.4
+ 1.6
+ 1.8
+ 2
+ 2.2
+ 2.4
+w
+ky
+Gyrofluid-Code
+EUTERPE
+FIG. 8: Saturated island half width w as a function of ky for Setup I (left panel) and for Setup II
+(right panel). The gyrokinetic and gyroﬂuid models show a very good agreement in determining
+the saturated island half width in the small-∆′ limit.
+depth, de ≪di, electron inertia dominates completely. This regime has been investigated
+analytically in an early kinetic approach by Drake and Lee [16], where it was shown that the
+tearing mode saturates approximately when w ∼δ, which in this regime means w ∼∆′ d2
+e.
+21
+
+A more detailed estimation yields
+w = ∆′ d2
+e
+2 G
+(41)
+with G ∼0.41 [16]. Therefore, in the small island limit, de ≪L ∼ls, the saturated island
+half width is described only by the skin depth de and the tearing mode stability parameter
+∆′, which for our choice of the equilibrium is known analytically from Eq. (22).
+The analytical prediction in comparison with our simulation results depending on ky is
+shown in Figure 9. Eq. (41) well reﬂects the qualitative behaviour of w over the shown
+ky-range, and agrees more closely with the gyrokinetic results than the gyroﬂuid ones. The
+deviations of the prediction of w can be caused by assumptions which are not completely
+valid in the simulations. For instance, in the analytical estimations the shifted background
+Maxwellian was not used rigorously, and in addition the density response was neglected.
+For both parameter cases investigated here, the island width does not seem to depend
+on the values of ρS,e = 0.2, 0.3, as can be seen by comparing the left and right panels of
+Figure 8. This suggests that there is no inﬂuence of ﬁnite electron temperature eﬀects on
+the island width. This is consistent with the fact that the analytical prediction, Eq. (41),
+ 0
+ 0.02
+ 0.04
+ 0.06
+ 0.08
+ 0.1
+ 0.12
+ 1.4
+ 1.6
+ 1.8
+ 2
+ 2.2
+ 2.4
+w
+ky
+Gyrofluid-Code
+EUTERPE
+Drake and Lee
+FIG. 9:
+The saturated island half width w depending on ky is compared with the prediction
+by Drake and Lee [16] for the parameter case I. The analytical model shows a good qualitative
+agreement with simulation results for ∆′ < 1.
+does not contain ﬁnite electron temperature eﬀects related to ρS,e, which are linked to ﬁnite
+pressure eﬀects and the width of the ion inﬂow region [37]. Since ρS,e is comparable to the
+electron skin depth and the analytical model does not contain this quantity, it is unclear
+22
+
+whether it plays an important role in nonlinear simulations with both kinetic species. To
+investigate this dependence we ﬁx the parameters ky = 1.8, ∆′ de ∼0.25, µ = 1836 and vary
+ρS,e = 0.3, 0.1, 0.05, 0.025. The simulations have shown that the island half width remains
+the same (w ∼0.04) to high accuracy in both gyrokinetic and gyroﬂuid simulations.
+It
+follows that in the small-∆′ regime the pressure scale has no inﬂuence on the saturation
+level of the collisionless tearing mode.
+A further important nonlinear quantity which has been compared within the adopted
+gyrokinetic and gyroﬂuid models is the oscillation frequency ωB that characterizes the
+saturation phase, as shown in Figures 6 and 7. In the kinetic context it was observed that
+this frequency is due to the bounce motion of trapped electrons in the island [14].
+We
+consider again the parameter cases I and II, and measure the oscillation frequency as the
+mean value of several oscillation periods in the deeply nonlinear saturation phase, namely
+ωB = 2π np/(Tf −Ti), being np the number of periods. In the gyroﬂuid simulations the
+ 0
+ 0.005
+ 0.01
+ 0.015
+ 0.02
+ 0.025
+ 1.4
+ 1.6
+ 1.8
+ 2
+ 2.2
+ 2.4
+ωB
+ky
+Gyrofluid-Code
+EUTERPE
+ 0
+ 0.005
+ 0.01
+ 0.015
+ 0.02
+ 0.025
+ 1.2
+ 1.4
+ 1.6
+ 1.8
+ 2
+ 2.2
+ 2.4
+ωB
+ky
+Gyrofluid-Code
+EUTERPE
+FIG. 10: Oscillation frequency as a function of the wavenumber ky for the two models using the
+parameter setup I (left panel) and the parameter setup II (right panel).
+Both models deliver
+practically the same oscillation frequency in the saturated phase in the low- and medium-∆′ range.
+oscillation frequency can always be clearly observed. While for parameters of case I the
+frequency can be measured clearly with the gyrokinetic code EUTERPE, this is more
+diﬃcult in case II. Therefore, to obtain good results the number of markers was doubled to
+Np = 3 · 107 and the previous time step was halfed to ∆t = 0.125.
+23
+
+The results are displayed in Figure 10. The models agree very well for all wavenumbers ky
+shown here, also for moderate values of ∆′ ∼1. These results clearly show that also in this
+regime the oscillatory behaviour of the saturated reconnection process can be described
+completely by a ﬂuid description.
+From a rough kinetic estimation one gets ωB ∼ky ve w/ (2 ls)
+[14, 16], so the frequency
+is roughly proportional to the island width and the stability parameter ∆′ according to
+Eq. (41). The results in Figure 10 conﬁrm this linear scaling in the limit of low ∆′ values.
+B.
+Finite ion temperature eﬀects
+This section deals with the extension of previous nonlinear results by including ﬁnite ion
+temperature eﬀects using the full ﬁnite Larmor radius (FLR) response.
+We focus on the parameter case I and investigate the behaviour of the saturated island half
+width and oscillation frequency with increasing ion temperature.
+In Figure 11, left, the saturated island half width is shown when the ion temperature is
+ 0.03
+ 0.04
+ 0.05
+ 0.06
+ 0.0001
+ 0.001
+ 0.01
+ 0.1
+ 1
+ 10
+w
+τ
+Gyrofluid-Code
+EUTERPE
+ 0
+ 0.01
+ 0.02
+ 0.03
+ 0.04
+ 0.0001
+ 0.001
+ 0.01
+ 0.1
+ 1
+ 10
+ωB
+τ
+Gyrofluid Code
+EUTERPE
+FIG. 11: Comparison of the island half width w (left panel) and the oscillation frequency ωB (right
+panel) as a function of the temperature ratio τ for the parameter Setup I and ky = 1.8.
+varied using the values τ = 1/900, 0.25, 1, 4 and ﬁxing ky = 1.8. The island width only
+changes by about 5% over approximately three orders of magnitude of τ. This shows that
+ﬁnite Larmor radius eﬀects on w are weakly relevant for ∆′ ≲1.
+As stated earlier, Ref. [16] predicts the general saturation condition w ∼δ. Here, due to
+the inﬂuence of ﬁnite ion temperature, the parallel current channel width changes according
+24
+
+to [20]
+δ ∼
+γ ls
+ky ve
+√1 + τ .
+(42)
+On the other hand the growth rate increases according to γ ∝√1 + τ, as we have seen in
+section III. Using Eq. (38) for the growth rate and Eq. (42) for the modiﬁed current width,
+the generalized scaling of the saturated island half width for ﬁnite τ becomes
+w ∼∆′ d2
+e
+(43)
+as stated for the drift kinetic case. This estimation makes evident that the saturated island
+width does not change signiﬁcantly with ion temperature.
+In contrast to the island half width, the oscillation frequency changes signiﬁcantly when the
+temperature ratio is varied, as shown in the right panel of Figure 11. The dependence of the
+oscillation frequency on the temperature ratio is similar to that of the growth rate. However,
+even with small but ﬁnite τ ≲1, the two models agree completely in the saturated phase.
+25
+
+V.
+SUMMARY
+We have simulated collisionless magnetic reconnection via the tearing instability with
+a gyrokinetic and a gyroﬂuid model. The results of both approaches have been compared
+to each other linearly and nonlinearly for an extended set of parameters.
+To the best
+of our knowledge, this is the ﬁrst comparison of these two models for simulations of the
+collisionless tearing mode.
+As a ﬁrst step, we have applied a shooting method to benchmark the linear simulations of
+both codes in the drift kinetic limit. The linear eigenmodes of the two models have been
+benchmarked for a single wave number and a ﬁxed set of plasma parameters, whereas the
+linear growth rates of both codes have been compared for a range of wave numbers. It has
+been shown that in the linear regime both codes give results with high degree of accuracy.
+Then the results of the two models have been compared over the whole spectrum of linearly
+unstable wave numbers for two sets of plasma parameters showing a good agreement
+between the growth rates obtained with the gyrokinetic model and the gyroﬂuid one.
+The linear simulations have been extended to the case of ﬁnite ion temperature, where
+we have shown that ion gyro-orbit averaging eﬀects can be properly described by both
+approaches. Furthermore, numerical simulations in the small ∆′de range compare favorably
+with the asymptotic theory by Porcelli [17].
+Nonlinear simulations of both models have been carried out in the small-∆′ regime. We
+have performed a detailed comparison of observables such as the evolution and saturation
+of the island width, as well as its oscillation frequency in the saturated phase, which has
+not been performed in this extend of parameter space so far. The gyrokinetic and gyroﬂuid
+simulations have shown that close to the marginal stability the evolution and saturation
+of the island width for both models is practically the same. Moreover, an important and
+new observation is that the oscillation frequency of the island width shows no diﬀerence
+between the two models.
+Therefore, the main result is that the nonlinear evolution of
+the collisionless tearing mode in the drift kinetic limit is essentially well described by
+26
+
+the ﬂuid theory. We have also considered ﬁnite ion temperature eﬀects in the saturated
+island phase. Here again both models diﬀer only slightly when measuring the island width
+and its oscillation frequency.
+Therefore, in the regimes investigated here, the nonlinear
+reconnection physics can be completely described with a gyroﬂuid approach.
+Slightly stronger deviations between the simulation results occur for ∆′ ∼1, suggesting that
+further investigations will be of interest in this regime, as well as in cases where ∆′ ≫1, for
+which a detailed nonlinear comparison between the gyrokinetic and gyroﬂuid models is still
+missing.
+Acknowledgments
+The authors would like to acknowledge fruitful discussions with Dario Borgogno and
+Alessandro Zocco.
+This work was supported by the European Community under the
+contracts of Association between Euratom and ENEA and by the Euratom research and
+training programme 2014–2018.
+Part of this work was carried out using the HELIOS
+supercomputer system at the Computational Simulation Centre of International Fusion
+Energy Research Centre (IFERC-CSC), Aomori, Japan, under the Broader Approach
+collaboration between Euratom and Japan, implemented by Fusion for Energy and JAEA.
+The views and opinions expressed herein do not necessarily reﬂect those of the European
+Commission.
+[1] M. Yamada, R. Kulsrud and H. Ji, Rev. Mod. Phys. 82, 603 (2010).
+[2] D. Grasso, F. Califano, F. Pegoraro and F. Porcelli, Plasma Phys. Rep. 26, 512 (2000).
+[3] N. F. Loureiro and G.W. Hammett, J. Comput. Phys. 227, 4518 (2008).
+[4] D. Grasso, E. Tassi and F. L. Waelbroeck, Phys. Plasmas 17, 082312 (2010).
+[5] E. Tassi, F. L. Waelbroeck and D. Grasso, J. Phys.: Conf. Series 260, 012020 (2010).
+27
+
+[6] D. Del Sarto, C. Marchetto, F. Pegoraro and F. Califano, Plasma Phys. Control. Fusion 53,
+035008 (2011).
+[7] L. Comisso, D. Grasso, E. Tassi and F. L. Waelbroeck, Phys. Plasmas 19, 042103 (2012).
+[8] A. Biancalani and B. D. Scott, Europhys. Lett. 97, 15005 (2012).
+[9] L. Comisso, F. L. Waelbroeck, and D. Grasso, J. Phys.: Conf. Ser. 401, 012005 (2012).
+[10] L. Comisso, D. Grasso, F.L. Waelbroeck and D. Borgogno, Phys. Plasmas 20, 092118 (2013).
+[11] F. L. Waelbroeck, Fusion Sci. Technol. 59, 499 (2011).
+[12] W. Dorland and G. W. Hammett, Phys. Fluids B 5, 812 (1993).
+[13] R. D. Sydora, Phys. Plasmas 8, 1929 (2001).
+[14] W. Wan, Y. Chen and S. E. Parker, Phys. Plasmas 12, 012311 (2005).
+[15] O. Zacharias, R. Kleiber and R. Hatzky, J. Phys.: Conf. Ser. 401, 012026 (2012).
+[16] J. F. Drake and Y.C. Lee, Phys. Rev. Lett. 39, 453 (1977).
+[17] F. Porcelli, Phys. Rev. Lett. 66, 425 (1991).
+[18] X. Y. Wang, Y. Lin, L. Chen, X. Lu and W. Kong, Phys. Plasmas 18, 122102 (2011).
+[19] J. M. TenBarge, W. Daughton, H. Karimabadi, G. G. Howes and W. Dorland, Phys. Plasmas
+21, 020708 (2014).
+[20] B. N. Rogers, S. Kobayashi, P. Ricci, W. Dorland, J. Drake, and T. Tatsuno, Phys. Plasmas
+14, 092110 (2007)
+[21] B. N. Rogers, S. Kobayashi, P. Ricci, W. Dorland, J. Drake, and T. Tatsuno, Phys. Plasmas
+18, 049902 (2011).
+[22] R. Numata, W. Dorland, G. G. Howes, N. F. Loureiro, B. N. Rogers and T. Tatsuno, Phys.
+Plasmas 18, 112106 (2011).
+[23] M. J. P¨uschel, F. Jenko, D. Told, and J. B¨uchner, Phys. Plasmas 18, 112102 (2011).
+[24] A. Mishchenko and A. Zocco, Phys. Plasmas 19, 122104 (2012)
+[25] R. Kleiber, C. Beidler, M. Borchardt, T. Feh´er, R. Hatzky, K. Kauﬀmann, A. K¨onies, A.
+Mishchenko and J. M. Garcia-Rega˜na, Proceedings of the 24th IAEA Fusion Energy Confer-
+ence (2012), TH/P3-06.
+[26] T. S. Hahm, W. W. Lee and A. J. Brizard, Phys. Fluids 31, 1940 (1988).
+[27] T. S. Hahm, Lu Wang and J. Madsen, Phys. Plasmas 16, 022305 (2009).
+[28] R. Hatzky, A. K¨onies and A. Mishchenko, J. Comp. Phys. 225, 568 (2007).
+[29] H. P. Furth, J. Killeen, and M. N. Rosenbluth, Phys. Fluids 6, 459 (1963).
+28
+
+[30] F. Porcelli, D. Borgogno, F. Califano, D. Grasso, M. Ottaviani and F. Pegoraro, Plasma Phys.
+Control. Fusion 44, 389 (2002).
+[31] R. Hatzky, T. M. Tran, A. K¨onies, R. Kleiber and S. J. Allfrey, Phys. Plasmas 9, 898 (2002).
+[32] F. L. Waelbroeck and E. Tassi, Commun. Nonlinear Sci. Numer. Simulat. 17, 2171 (2012).
+[33] P. B. Snyder and G.W. Hammett, Phys. Plasmas 8, 3199 (2001).
+[34] I. Katanuma and T. Kamimura, Phys. Fluids 23, 2500 (1980).
+[35] M. R. Scott, J. Comp. Phys. 12, 334 (1973).
+[36] J. F. Drake and Y. C. Lee, Phys. Fluids 20, 1341 (1977).
+[37] A. Zocco and A. A. Schekochihin, Phys. Plasmas 18, 102309 (2011).
+[38] S. C. Cowley, R. M. Kulsrud and T. S. Hahm, Phys. Fluids, 29, 10 (1985).
+[39] R. J. Goldston and P. H. Rutherford, Introduction to Plasma Physics (Institute of Physics
+Publishing, Bristol and Philadelphia, 1995).
+[40] S. K. Lele, J. Comp. Phys. 103 (1992).
+29

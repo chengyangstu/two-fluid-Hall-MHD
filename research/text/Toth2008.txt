@@ -1,0 +1,1706 @@
+Hall Magnetohydrodynamics on Block Adaptive
+Grids
+G´abor T´oth, Yingjuan Ma, Tamas I. Gombosi
+∗Center for Space Environment Modeling, University of Michigan, Ann Arbor,
+Michigan, 48109-2143. (gtoth@umich.edu)
+Version: April 15, 2008
+We present a conservative second order accurate ﬁnite volume discretization of the
+magnetohydrodynamics equations including the Hall term. The scheme is generalized to
+three dimensional block adaptive grids with Cartesian or generalized coordinates. The
+second order accurate discretization of the Hall term at grid resolution changes is descri-
+ibed in detail. Both explicit and implicit time integration schemes are developed. The
+stability of the explicit time integration is ensured by including the whistler wave speed
+for the shortest discrete wave length into the numerical dissipation, but then second order
+accuracy requires the use of symmetric limiters in the total variation diminishing scheme.
+The implicit scheme employs a Newton-Krylov-Schwarz type approach, and can achieve
+signiﬁcantly better eﬃciency than the explicit scheme with an appropriate preconditioner.
+The second order accuracy of the scheme is veriﬁed by numerical tests.
+The parallel
+scaling and robustness are demonstrated by three dimensional simulations of planetary
+magnetospheres.
+Key Words:
+65D99 Numerical approximation, 77A05 Magnetohydrodynamics
+1.
+INTRODUCTION
+Ideal or resistive magnetohydrodynamics (MHD) provides a fairly accurate
+physical model for a wide range of laboratory and space plasma problems.
+In
+certain applications, however, some of the MHD approximations become invalid,
+and the simulations deviate from physical reality. An essential example is recon-
+nection of the magnetic ﬁeld. Flows around unmagnetized planets and moons also
+show features, such as asymmetry of the pile-up boundary, that cannot be modeled
+with classical MHD.
+One option to better describe the physics is using full or hybrid particle schemes
+(see e.g.
+[3]).
+While particle and hybrid schemes can successfully model these
+problems, these algorithms are very costly, especially for three-dimensional (and
+possibly time-dependent) simulations. An alternative approach is to maintain the
+ﬂuid description of the plasma but allow for the decoupling of the ion and electron
+ﬂuids.
+The Hall term is part of the generalized Ohm’s law and it describes the relative
+speed between ions and electrons. The magnetic ﬁeld lines are frozen in the electron
+ﬂuid, but not in the ion ﬂuid due to the Hall eﬀect. The Hall eﬀect is important
+at length scales shorter than the ion skin depth. Including the Hall term modiﬁes
+the induction equation and the total energy density equation of MHD.
+Hall MHD seems to be the minimal modiﬁcation required to reproduce the fast
+reconnection process successfully modeled by particle and hybrid schemes [3]. In
+1
+
+FIG. 1 The block-adaptive grid structure. Blocks are reﬁned into 8 octants (left
+panel). The blocks communicate via layers of ghost cells (right panel).
+terms of magnetospheric physics, it is found that the Hall eﬀect is important for
+both the dayside magnetopause [13] and the nightside magnetotail [14].
+Modeling the magnetic reconnection by various methods has been studied in
+detail for the Geospace Environment Modeling Challenge [3, 25, 16]. For this non-
+driven reconnection problem the reconnection rate increases as the Hall parameter
+is increased. On the other hand [12] found that for externally driven magnetic
+reconnection the presence of the Hall current does not necessarily enhance the
+total reconnected ﬂux.
+In this paper we descibe a ﬁnite volume Hall MHD scheme on a three-dimensional
+block adaptive Cartesian or generalized coordinate grid with both explicit and im-
+plicit time discretization. To put our work in context, we brieﬂy describe some of the
+published Hall MHD schemes that are similar to our eﬀort. There are many codes
+that use relatively simple numerical techniques (e.g. explicit time integration with
+hyper-resistivity) on structured two-dimensional grids. These schemes would not
+be eﬃcient for 3 dimensional calculations and do not generalize to adaptive grids.
+Three-dimensional Hall MHD has been successfully modeled by pseudo-spectral
+codes (e.g. [11, 5]), but spectral schemes are not suitable for adaptive grids. The
+VooDoo code by Huba [7, 8] is a 3D high order ﬁnite volume scheme using a gas
+kinetic type ﬂux function and explicit time discretization with subcycling for the
+Hall physics. We use a similar ﬁnite volume approach for the spatial discretization,
+but use diﬀerent ﬂux functions and we use implicit time integration scheme instead
+of subcycling. Chacon and Knoll [4] have developed an implicit scheme for the
+incompressible Hall MHD equations in 2 dimensions. Our time integration scheme
+is similar, but the formulation of the MHD equations is quite diﬀerent, since we use
+the usual MHD variables, while Chacon and Knoll use the vector potential and the
+stream and vorticity functions. The preconditioner is also quite diﬀerent. Proba-
+bly the closest to our eﬀort is the recently developed Magnetic Reconnection Code
+(MRC) [2], a massively parallel Hall MHD code with a patch based adaptive mesh
+reﬁnement, CWENO type numerical ﬂux, and Newton-Krylov type (semi-)implicit
+time integration scheme.
+In the published papers known to us, MRC has been
+applied to the Hall MHD equations in 2 dimensions.
+2
+
+We develop a parallel, explicit and/or implicit 3D Hall MHD scheme and im-
+plement it into the BATSRUS code [17]. BATSRUS solves the MHD equations
+with second-order shock-capturing total variation diminishing (TVD) schemes on a
+block-adaptve grid. Block-adaptive grids [19] consist of self-similar blocks as shown
+in Figure 1. Each block has a simple logically Cartesian geometry. The grid is
+reﬁned by dividing a block into 8 smaller blocks, while coarsening is achieved by
+merging 8 smaller blocks into a larger one. The BATSRUS code achieves excellent
+scaling on distributed memory parallel super-computers both with explicit and with
+implicit time-stepping. The implicit scheme is based on the Jacobian-free Newton-
+Krylov-Schwarz (NKS) method and it can be eﬃciently combined with the explicit
+scheme on a block-by-block basis [21].
+Our goal is to add the new Hall MHD capability into BATSRUS while preserving
+compatibility with all the essential features: shock-capturing, high resolution second
+order TVD schemes, eﬃcient explicit and implicit time stepping, block-adaptive
+grid for both Cartesian and non-Cartesian geometries, and good parallel scaling
+on distributed memory computers. We also allow for solving the Hall MHD in a
+limited region by introducing a spatially varying coeﬃcient for the Hall term.
+Section 2 presents the Hall MHD equations in conservation form and we discuss
+the analytic properties that are important for the discretization. In section 3 we
+describe the second order discretization. Simple numerical tests as well as some
+typical geophysics applications are presented in 4. The tests demonstrate the second
+order accuracy of the scheme and the eﬃciency of the implicit time stepping scheme.
+We also demonstrate good parallel scaling up to more than thousand processors.
+We conclude in section 5.
+2.
+EQUATIONS
+In Hall MHD the electric ﬁeld is modiﬁed from the resistive MHD expression
+E = −v × B + ηJ
+(1)
+to the Hall MHD form
+E = −v × B + ηJ + 1
+neJ × B
+(2)
+where v, B, and J are the velocity, magnetic ﬁeld and current vectors, respectively,
+η is the resistivity, n is the number density and e is the electron charge. Note
+that the magnetic units are chosen such that the magnetic permeability of vacuum
+µ0 is unity. For sake of simplicity we neglect the electron pressure gradient term
+∇pe/(ne), although it can be discretized the same way as the Hall term J×B/(ne).
+The electron inertia is also neglected.
+The electric ﬁeld enters the induction and energy equations thus the MHD
+equations including the Hall term become
+∂ρ
+∂t
+=
+−∇· (ρv)
+(3)
+∂ρv
+∂t
+=
+−∇· (vρv + ¯Ip + ¯I B2
+2 −BB)
+(4)
+∂e
+∂t
+=
+−∇· [v(ε + p) + (v + vH) · (¯IB2 −BB) −B × ηJ]
+(5)
+∂B
+∂t
+=
+−∇× [−(v + vH) × B + ηJ]
+(6)
+3
+
+where ¯I is the identity matrix, ρ and p are the mass density and the thermal
+pressure. The Hall velocity is deﬁned as
+vH = −J
+ne = −∇× B
+ne
+(7)
+while the total energy density is
+e = ε + B2
+2 =
+p
+γ −1 + ρv2
+2
++ B2
+2
+(8)
+where ε is the hydrodynamic energy and γ is the adiabatic index.
+For space physics simulations it is often useful to split the magnetic ﬁeld into
+an analytic part and a numerical part B = B0 + B1 [20]. The analytic B0 is a
+divergence and curl free potential ﬁeld (e.g. the dipole ﬁeld of a planet), while B1
+contains the rest of the ﬁeld. We allow B0 to be time dependent. The advantage
+of this splitting is that the numerical solution is more accurate and robust where
+gradients of B0 are large. Also one can introduce a ’reduced’ total energy density
+e1 = ε + B2
+1
+2
+(9)
+that does not contain B0 or B2
+0 which allows much more accurate and robust
+results in regions where B0 is large. The splitting results in the following energy
+and induction equations:
+∂e1
+∂t
+=
+−∇· [v(ε + p) + (v + vH) · (¯IB2
+1 −B1B) + vHB0 · B1 −B × ηJ]
+−B1 · ∂B0
+∂t
+(10)
+∂B1
+∂t
+=
+−∇× [−(v + vH) × B + ηJ] −∂B0
+∂t
+(11)
+There are only a few extra terms relative to classical MHD in the induction and
+energy density equations all proportional to vH. This seemingly small modiﬁcation
+of the MHD equations is quite challenging to implement in a conservative, accurate
+and eﬃcient manner. There are two challenges:
+• There is a second order spatial derivative of the magnetic ﬁeld in the induction
+equation that cannot be rewritten into a simple Laplace operator.
+• The maximum wave speed increases from the fast magnetosonic wave to the
+whistler wave speed that is approximately inversely proportional to the wave
+length.
+The ﬁrst problem is especially diﬃcult because of the adaptive block structure of
+the BATSRUS code. It takes a lot of care to obtain a spatially second order accurate
+discretization at resolution changes. The second problem is important, because the
+shortest wave length that can be represented on the grid is twice the grid resolution
+∆x, so the fastest wave speed can be estimated as [8]
+cw = |v| + cf + |B|π
+en∆x
+(12)
+4
+
+J
+B
+B
+B
+B
+B
+B
+FIG. 2 The stencil for calculating the face centered current on a 2D grid.
+where cf is the classical MHD fast magnetosonic speed. The maximum stable time
+step for an explicit time integration scheme is
+∆t < ∆x
+cw
+∝∆x2
+(13)
+for small enough ∆x. This can make the explicit time integration algorithms rather
+ineﬃcient as the grid resolution is increased. An implicit scheme can potentially
+overcome this problem, since the time step is not limited by the CFL condition.
+An additional diﬃculty arises, since the numerical dissipation required for the
+stability of the explicit numerical scheme is also proportional to the fastest wave
+speed of the hyperbolic system of equations, and this can reduce the spatial order
+of accuracy by one order. To see this, let us consider the usually ﬁrst order accurate
+local Lax-Friedrichs scheme
+U n+1 −U n
+∆t
+= −F n
+i+1 −F n
+i−1
+2∆x
++ ci+1/2(U n
+i+1 −U n
+i ) −ci−1/2(U n
+i −U n
+i−1)
+2∆x
+(14)
+where U is one of the conservative variables, F is the corresponding physical ﬂux
+function, and c is the fastest wave speed. The superscripts denote the time level and
+the subscripts correspond to the spatial grid indexes. The index i + 1/2 identiﬁes
+the cell face between the cell centers i and i+1. The second term on the right hand
+side is the numerical dissipation and to lowest order in ∆x it is proportional to
+∆x ∂
+∂x
+
+c∂U
+∂x
+
+(15)
+Since c ∝1/∆x the local Lax-Friedrichs scheme is inconsistent for the Hall MHD
+equation.
+In the following section we will describe our solutions to these challenging prob-
+lems.
+3.
+NUMERICAL DISCRETIZATION
+3.1.
+Spatial discretization of the current for uniform grid
+A second order conservative scheme requires a second order accurate calculation
+of the physical ﬂuxes at the center of the cell faces. Since the ﬂux for the magnetic
+ﬁeld B contains the Hall term J × B/ne and J = ∇× B, we have to calculate the
+5
+
+current with second order accuracy at the cell faces. For the x face of a uniform
+Cartesian grid one can use simple central diﬀerencing and averaging as needed:
+Jx
+i+1/2,j,k
+=
+Bz
+i,j+1,k + Bz
+i+1,j+1,k −Bz
+i,j−1,k −Bz
+i+1,j−1,k
+4∆y
+−
+By
+i,j,k+1 + By
+i+1,j,k+1 −By
+i,j,k−1 −By
+i+1,j,k−1
+4∆z
+Jy
+i+1/2,j,k
+=
+Bx
+i,j,k+1 + Bx
+i+1,j,k+1 −Bx
+i,j,k−1 −Bx
+i+1,j,k−1
+4∆z
+−
+Bz
+i+1,j,k −Bz
+i,j,k
+∆x
+(16)
+Jz
+i+1/2,j,k
+=
+By
+i+1,j,k −By
+i,j,k
+∆x
+−
+Bx
+i,j+1,k + Bx
+i+1,j+1,k −Bx
+i,j−1,k −Bx
+i+1,j−1,k
+4∆y
+and similar formulas apply to the other faces. Note that the normal derivatives
+use the two closest cell centers only, while the tangential derivatives require 4 cell
+centers and averaging in the i direction. Consequently one needs to use the ﬁrst
+layer of ghost cells not only at the faces between the blocks but also along the 12
+edges of the block. Figure 2 shows the stencil used for calculating the 3 components
+of the current at the x face center on a 2D grid.
+3.2.
+Spatial discretization of the current at resolution changes
+The second order accurate central diﬀerence formulas (16) used to calculate the
+curl of B on a uniform grid can be used at resolution changes as well if the ghost
+cells are ﬁlled in with at least 3rd order accurate magnetic ﬁeld. An alternative is
+to use a one sided derivative. For example the y gradient of Bz at the cell center j
+can be approximated as
+∂Bz
+∂y
+
+j
+= −3Bz
+j + 4Bz
+j+1 −Bz
+j+2
+2∆y
+(17)
+We use this latter approach to avoid the use of ghost cells in the tangential (relative
+to the face) derivatives on the coarse side of resolution changes. On the ﬁne side we
+take the ﬁrst approach, ie. interpolate the magnetic ﬁeld to the ﬁne ghost cells with
+third order accuracy. This is not a unique choice, there are many other possible
+discretizations.
+3.3.
+Spatial discretization of the magnetic ﬁeld at resolution changes
+Let us consider a face orthogonal to the x direction indexed by 1/2, j, k and
+assume that the ghost cells 0, j, k cover the domain of a coarser block. We are
+interested in calculating the current for the ﬁne block because the ﬂux on the
+coarse side is overwritten by the sum of the 4 ﬁne ﬂuxes [1] in a conservative AMR
+scheme.
+The interpolation of the magnetic ﬁeld has to be third order accurate
+so that the derived current can be second order accurate. Third order accuracy
+is quite complicated to achieve in ﬁnite volume discretization, so we take a ﬁnite
+diﬀerence approach and regard the cell center values to be point values (and not
+cell averages).
+6
+
+5/32
+30/32
+10/15
+−3/15
+8/15
+−3/32
+FIG. 3 The weights used to interpolate the magnetic ﬁeld to the ﬁne ghost cell
+(dashed circle) with 3rd order accuracy on a 2D grid. First the coarse ghost cell
+centers (large dots) are interpolated in the vertical direction, next the interpolated
+value (circle) and the ﬁne cell centers (small dots) are interpolated in the horizontal
+direction.
+The ﬁrst step is to interpolate the coarse cell values in the tangential direction
+to the yj, zk coordinates. For example the j = k = 1 index is interpolated from
+3 coarse cell values covering the ﬁne ghost cells j, k ∈{−1, 0}, j, k ∈{1, 2} and
+j, k ∈{3, 4}. In general when both j and k are odd numbers the interpolation
+formula is
+B−1/2,j,k = 5B−1/2,j−3/2,k−3/2 + 30B−1/2,j+1/2,k+1/2 −3B−1/2,j+5/2,k+5/2
+32
+(18)
+Note that the 3 coarse cells are collinear with the ﬁne cell along a diagonal line in
+the y, z plane. Cells with even j and k or even and odd j and k use a diﬀerent set
+of coarse cells but the weights are the same. Next the ﬁne cells inside the ﬁne block
+and the interpolated coarse cell value are interpolated in the x direction along the
+j, k grid lines
+B0,j,k = 8B−1/2,j,k + 10B1,j,k −3B2,j,k
+15
+(19)
+The same interpolation scheme is used for the other 5 faces. Figure 3 shows the
+interpolation weights for the 2D case.
+The edge ghost cells are ﬁlled in with a similar approach. For example the edge
+ghost cells indexed by 0, 0, k are interpolated from 2 ﬁne cells inside the ﬁne block
+and the coarse cell values interpolated in the z direction
+B0,0,k = 8B−1/2,−1/2,k + 10B1,1,k −3B2,2,k
+15
+(20)
+where
+B−1/2,−1/2,k = 5B−1/2,−1/2,k−3/2 + 30B−1/2,−1/2,k+1/2 −3B−1/2,−1/2,k+5/2
+32
+(21)
+7
+
+for odd values of k and
+B−1/2,−1/2,k = 5B−1/2,−1/2,k+3/2 + 30B−1/2,−1/2,k−1/2 −3B−1/2,−1/2,k−5/2
+32
+(22)
+for even values of k. The edges parallel with the x and y axes are ﬁlled in similarly.
+3.4.
+Discretization of the current for non-Cartesian geometries
+We use the generalized coordinate approach to calculate the current with second
+order accuracy on non-Cartesian grids. The formulas developed in the previous
+subsections for taking gradients in the x, y and z directions can be used without any
+change to obtain second order accurate derivatives of the magnetic ﬁeld components
+Bx, By and Bz with respect to the generalized coordinates ξ, η, ζ. From these one
+can obtain the x, y and z derivatives using the coordinate transformation matrix
+T = ∂(ξ, η, ζ)/∂(x, y, z), for example
+∂Bz
+∂y = ∂ξ
+∂y
+∂Bz
+∂ξ + ∂η
+∂y
+∂Bz
+∂η + ∂ζ
+∂y
+∂Bz
+∂ζ
+(23)
+The elements of matrix T can either be calculated analytically, or they can be
+obtained numerically by discretizing and inverting T −1 = ∂(x, y, z)/∂(ξ, η, ζ). Ele-
+ments of T −1 at the face i + 1/2, j, k are obtained with the following fourth order
+accurate formulas:
+∂x
+∂ξ
+
+i+1/2,j,k
+=
+27(xi+1,j,k −xi,j,k) −(xi+2,j,k −xi−1,j,k)
+24∆ξ
+(24)
+∂x
+∂η
+
+i+1/2,j,k
+=
+9
+
+∂x
+∂η
+
+i,j,k + 9
+
+∂x
+∂η
+
+i+1,j,k −
+
+∂x
+∂η
+
+i−1,j,k −
+
+∂x
+∂η
+
+i+2,j,k
+16
+∂x
+∂ζ
+
+i+1/2,j,k
+=
+9
+
+∂x
+∂ζ
+
+i,j,k + 9
+
+∂x
+∂ζ
+
+i+1,j,k −
+
+∂x
+∂ζ
+
+i−1,j,k −
+
+∂x
+∂ζ
+
+i+2,j,k
+16
+where the transverse gradients are obtained as
+∂x
+∂η
+
+i,j,k
+=
+8(xi,j+1,k −xi,j−1,k) −(xi,j+2,k −xi,j−2,k)
+12∆η
+(25)
+∂x
+∂ζ
+
+i,j,k
+=
+8(xi,j,k+1 −xi,j,k−1) −(xi,j,k+2 −xi,j,k−2)
+12∆ζ
+(26)
+Here we can safely use the ghost cells, since the coordinates of the ghost cell centers
+are exact. The formulas for the y and z faces can be derived in an analogous fashion.
+3.5.
+Second order explicit scheme
+The main challenge for the explicit time integration scheme is to preserve the
+stability without losing the order of accuracy. In the previous subsections we showed
+how the current can be discretized at the cell interfaces. Using this current it is
+straightforward to construct the second order accurate physical ﬂux. The remaining
+task is to use a numerical dissipation that is stable and second order accurate. As
+8
+
+we have shown the naive implementation of the ﬁrst order Lax-Friedrichs scheme
+(14) is inconsistent for the Hall MHD equations.
+We use the MUSCL approach [22] to get a consistent and second order accurate
+TVD scheme. The state variable U is extrapolated from the left and right cell
+centers to the cell face at i + 1/2 as
+U L
+i+1/2
+=
+Ui + 1
+2
+¯∆Ui
+U R
+i+1/2
+=
+Ui+1 −1
+2
+¯∆Ui+1
+(27)
+where ¯∆Ui is the limited slope in cell i. The divergence of the numerical ﬂux (the
+last term in 14) is modiﬁed to
+Φi =
+ci+1/2(U R
+i+1/2 −U L
+i+1/2) −ci−1/2(U R
+i−1/2 −U L
+i−1/2)
+2∆x
+(28)
+In classical MHD c does not depend on ∆x and the numerical dissipation is a second
+order term as long as the limited slopes are consistent, i.e. ¯∆Ui →(Ui+1−Ui) when
+(Ui+1 −Ui) →(Ui −Ui−1). For Hall MHD we need higher order accuracy, and it
+turns out that only a certain class of limiters can be used. The simplest, most
+robust and quite commonly used minmod limiter is deﬁned as
+¯∆Ui = minmod(Ui+1 −Ui, Ui −Ui−1)
+(29)
+where the minmod function returns 0 if the arguments have diﬀerent signs, oth-
+erwise it returns the argument with the smallest magnitude. The minmod limiter
+is asymmetric in the sense that it either takes the left slope or the right slope,
+depending on the second derivative of the solution. Due to the asymmetry the nu-
+merical ﬂux in (28) is proportional to c∆x2∂3U/∂x3 (here we take c to be constant
+for simplicity) so the scheme is ﬁrst order accurate only in general.
+On the other hand the monotonized central limiter
+¯∆Ui = minmod
+
+β(Ui+1 −Ui), β(Ui −Ui−1), Ui+1 −Ui−1
+2
+
+(30)
+with 1 < β ≤2 is symmetric as long as the last argument, (the central diﬀerence)
+has the smallest magnitude. This is true in suﬃciently smooth parts of the solution
+and away from local extrema. Substituting the central diﬀerence into equations
+(27) and then into (28) we get
+Φ
+=
+ci+1/2
+
+Ui+1 −Ui+2−Ui
+4
+−Ui −Ui+1−Ui−1
+4
+
+2∆x
+−
+ci−1/2
+
+Ui −Ui+1−Ui−1
+4
+−Ui−1 −Ui−Ui−2
+4
+
+2∆x
+(31)
+For suﬃciently smooth solutions this can be rewritten up to the lowest order non-
+zero terms in ∆x as
+Φi = −
+(ci+1/2 + ci−1/2) ∂4U
+∂x4
+
+i ∆x4 + (ci+1/2 −ci−1/2) ∂3U
+∂x3
+
+i ∆x3
+16∆x
+(32)
+9
+
+Since according to (12) c ∝1/∆x the ﬁrst term on the right hand side is pro-
+portional to ∆x2. The second term contains the diﬀerence (ci+1/2 −ci−1/2) that
+can be approximated as (∂c/∂U) · (∂U/∂x)i∆x ∝O(1), so the second term is also
+proportional to ∆x2. This proves that the use of a symmetric limiter achieves the
+required second order accuracy.
+We note that for ordinary MHD (or any hyperbolic system where the wave speed
+does not depend on the wave length) the MC limiter has a third order dissipation
+in smooth regions as opposed to the asymmetric minmod (or superbee) limiters
+that have second order dissipation at best. One can also construct limiters with
+diﬀerent weights in the left and right extrapolations that give third order accuracy
+for the physical ﬂuxes as well. Using
+¯∆LUi
+=
+minmod
+
+β(Ui+1 −Ui), β(Ui −Ui−1), 2Ui+1 −Ui −Ui−1
+3
+
+(33)
+¯∆RUi
+=
+minmod
+
+β(Ui+1 −Ui), β(Ui −Ui−1), Ui+1 −Ui −2Ui−1
+3
+
+(34)
+for the left and right extrapolations in (27), respectively, results in a third order
+accurate scheme in suﬃciently smooth regions away from local extrema. This is
+the same as Koren’s limiter [9] but with an adjustable β parameter.
+Finally we point out the similarity between the dissipation terms arising from
+the symmetric limiter and the fourth (or higher) order hyper-resistivity used in
+several Hall MHD codes (e.g. [3, 25, 24]). If we substitute the dominant term of
+cw in (12) into the ﬁrst term of (32) we obtain the numerical dissipation
+Φi = −|B|π
+8en
+∂4U
+∂x4
+
+i
+∆x2
+(35)
+This is essentially the same form as the fourth order hyper-resistivity often used to
+stabilize the induction equation. Note, however, that the TVD scheme switches to
+lower order dissipation where the solution is not smooth, while the hyper-resistivity
+is applied uniformly everywhere. Another diﬀerence is that the TVD scheme is ap-
+plied to all of the Hall MHD equations, while the hyper-resistivity is only applied to
+the induction equation, and the other equations are usually stabilized in a diﬀerent
+manner.
+We also note that the explicit Hall Diﬀusion Scheme (HDS) described by Sullivan
+and Downes [15] also results in a fourth order hyper-resistivity term once the update
+equations for the By and Bz components (equations 29 and 30 in their paper) are
+substituted into each other. The HDS scheme is essentially a two stage formulation
+of the one stage hyper-resistivity scheme.
+3.6.
+Implicit time discretization
+We use the Newton-Krylov-Schwarz (NKS) approach to formulate the implicit
+time integration scheme for Hall MHD. Thanks to the general implementation of
+the implicit scheme in the BATSRUS code [21], once the explicit Hall MHD scheme
+is implemented, the implicit time integration works as well. To make it eﬃcient,
+however, the preconditioner needs to take into account the Hall term. This is not
+a simple task. For sake of simplicity and eﬃciency the preconditioner is based on
+the Jacobian that uses the nearest 6 neighbor cells only on a 3D grid.
+Due to
+the higher order derivatives, the stencil of the Hall term is much more extended.
+10
+
+We found that the preconditioner becomes much more eﬀective if the Hall term
+is discretized on a stencil that is as compact as possible. In particular, when the
+current is calculated for the X face at i + 1/2, j, k, all x derivatives should use only
+the i + 1 and i cell centers only.
+An additional diﬃculty arises due to the particular choice of the implicit scheme.
+For sake of eﬃciency a spatially ﬁrst order local Lax-Friedrichs (or HLL or Roe)
+discretization is used in the matrix-free calculation of the Jacobian. The corre-
+sponding error term is c∆x∆t which is second order for classical MHD, but it is
+only ﬁrst order accurate for Hall MHD, since c ∝1/∆x and for the implicit scheme
+the time step is decreased as ∆t ∝∆x as the resolution is increased.
+To resolve this problem, we exploit that for the implicit time step it is not
+necessary to include the full whistler wave speed into the numerical ﬂux function.
+In fact, our numerical tests conﬁrmed that it leads to signiﬁcant degradation of
+accuracy, if we use the full speed c = cw in the numerical ﬂux. Since the stability
+of the implicit scheme does not depend on the numerical dissipation, one can use a
+reduced speed
+c = |u| + cf + W π|B|
+∆xen
+(36)
+where W < 1. According to Chacon and Knoll [4] a good choice is W ∝∆texpl/∆t
+where ∆texpl is the time step for the explicit scheme. This way W ∝∆x, the c
+used in the numerical ﬂux becomes independent of the resolution, and the second
+order accuracy is recovered. An even simpler choice is to set W = 0 that seems to
+work ﬁne in our experience.
+3.7.
+Preconditioner
+The general preconditioner described in [21] (and implemented in BATSRUS)
+calculates the Jacobian with the assumption that the face ﬂux in the Lax-Friedrichs
+scheme is
+Fi+1/2,j,k = Fi,j,k + Fi+1,j,k
+2
+(37)
+and Fi,j,k is a function of the local state variable Ui,j,k only. The Hall term in the
+cell centered ﬂux function used by this preconditioner is
+FH(B)i,j,k = (vHB −BvH)i,j,k = −
+JB −BJ
+ne
+
+i,j,k
+(38)
+where the current Ji,j,k is evaluated with a cell centered approximation. As we
+take the partial derivatives ∂Fi,j,k/∂Ui,j,k, the current Ji,j,k will behave as a con-
+stant multiplier, since it depends on the magnetic ﬁeld in the neighbor cells only.
+Unfortunately this neglects the most important terms that are responsible for the
+whistler wave, and make the preconditioner useless for a Hall term dominated prob-
+lem. To obtain an eﬃcient preconditioner, we need to add the partial derivatives
+that are not included by the general preconditioner algorithm.
+The face ﬂux of the magnetic ﬁeld contains the current Ji+1/2,j,k that is dis-
+cretized by (16) and depends on the cell values Bi,j,k, Bi,j±1,k, Bi,j,k±1, Bi+1,j,k,
+Bi+1,j±1,k, and Bi+1,j,k±1. For sake of computational eﬃciency, the preconditioner
+is limited to the adjacent cells (i±1, j, k), (i, j±1, k), and (i, j, k±1) so that the ap-
+proximate Jacobian is restricted to a block heptadiagonal matrix. This means that
+we drop all fractions in (16) that have four terms in the numerator. The remaining
+11
+
+two fractions describe the orthogonal (with respect to the face) derivatives of the
+tangential components of the magnetic ﬁeld. Substituting these current terms into
+the discretized induction equation results in
+RH(By
+i,j,k) =
+−∆x−2h
+Bx
+ne
+
+i+1/2,j,k
+(Bz
+i+1,j,k −Bz
+i,j,k) +
+Bx
+ne
+
+i−1/2,j,k
+(Bz
+i−1,j,k −Bz
+i,j,k)
+i
+(39)
+RH(Bz
+i,j,k) =
++∆x−2h
+Bx
+ne
+
+i+1/2,j,k
+(By
+i+1,j,k −By
+i,j,k) +
+Bx
+ne
+
+i−1/2,j,k
+(By
+i−1,j,k −By
+i,j,k)
+i
+(40)
+and similar terms for the y and z faces. Here RH = −∇·FH is the change of B due
+to the Hall term. The partial derivatives of the Bx/(ne) terms are properly approxi-
+mated by the general algorithm that calculates [(∂F/∂U)i+1−(∂F/∂U)i−1]/(2∆x).
+The extra terms that correspond to the partial derivatives of the current with re-
+spect to the magnetic ﬁeld, are obtained analytically and added to the Jacobian
+matrix, e.g.
+∂RH(By
+i,j,k)
+∂Bz
+i+1,j,k
+= −∆x−2
+Bx
+ne
+
+i+1/2,j,k
+(41)
+Although we dropped a lot of terms from (16), the preconditioner still contains
+the essential terms that are responsible for the whistler waves. To see this, let us
+take the case when the ambient magnetic ﬁeld is homogeneous and aligned with
+the x axis, the velocity is zero, and the density is also homogeneous. Then (39) is
+a discretization of
+∂By
+∂t
+=
+−Bx
+ne
+∂2Bz
+∂x2
+(42)
+∂Bz
+∂t
+=
++Bx
+ne
+∂2By
+∂x2
+(43)
+that can be combined to
+∂2By
+∂t2
+= −
+Bx
+ne
+2 ∂4By
+∂x4
+(44)
+Substituting By = exp i(kx −ωt) gives the dispersion relation
+ω2 =
+Bx
+ne
+2
+k4
+(45)
+and the wave speed for a ﬁxed wave number is
+c = ω
+k = k|Bx|
+ne
+= 2πB
+λne
+(46)
+that is the whistler wave speed.
+Substituting λ = 2∆x results in the last and
+dominant term of (12).
+12
+
+3.8.
+Preconditioner for generalized coordinates
+To derive the preconditioner in generalized coordinates, we start from the dis-
+crete form of the induction equation for a particular grid cell and we deal with the
+contribution of the Hall term only:
+RH(B) = 1
+V
+X
+s
+As
+nse · (BsJs −JsBs)
+(47)
+where V is the cell volume, s indexes the faces of the cell, and As is the out-
+ward pointing area vector for face s. The current Js is discretized with partial
+derivatives with respect to the generalized coordinates multiplied by the coordi-
+nate transformation matrix T = ∂ξ/∂x as in (23). For component Bj the above
+equation becomes
+RH(Bj) = 1
+V
+X
+s
+As
+i
+nse
+ Bs
+i ǫjkl −Bs
+j ǫikl
+
+T s
+kα∂αBs
+l
+(48)
+where ǫ is the Levi-Civita tensor and summation is implied for repeated indexes.
+The i, j, k, l indexes are for the Cartesian coordinates x, y, z, while the α index is
+for the generalized coordinates ξ, η, ζ.
+Just like in the Cartesian case, the partial derivatives of RH with respect to
+Bs
+i and Bs
+j are properly taken into account by the general algorithm. We only
+need to calculate the extra terms that correspond to the derivatives of Bl. Since
+we constrain the preconditioner matrix to the neighboring cells, only the discrete
+diﬀerence along the direction α = σ normal to face s is kept when taking the
+derivatives:
+∂σBs
+l = ±BS
+l −Bl
+∆σ
+(49)
+where BS
+l is the magnetic ﬁeld at the center of the neighbor cell on the other side of
+face s. The plus sign is taken for the face pointing toward the positive σ direction.
+Now we are ready to calculate the extra elements of the ∂RH/∂B matrix needed
+for the preconditioner:
+∂RH(Bj)
+Bl
+=
+1
+V
+X
+s
+∓As
+i
+nse (Bs
+i ǫjkl −Bs
+j ǫikl)T s
+kσ
+∆σ
+(50)
+∂RH(Bj)
+BS
+l
+=
+± As
+i
+V nse(Bs
+i ǫjkl −Bs
+j ǫikl)T s
+kσ
+∆σ
+(51)
+One may further simplify the preconditioner by taking the cell center values n, Bi,
+Bj and Tkσ instead of the face centered values ns, Bs
+i , Bs
+j and T s
+kσ, respectively.
+For sake of computational eﬃciency we have implemented this simpliﬁed form.
+As a consistency check we show that the preconditioner developed for the gen-
+eralized coordinates simpliﬁes to the Cartesian preconditioner for Cartesian coor-
+dinates, when Tkσ/∆σ = δkσ/∆xk and As
+i /V = ±δis/∆xs. Here δ denotes the
+Kronecker delta and σ = s = k = i. With these the above formulas simplify to
+∂RH(Bj)
+Bl
+=
+X
+s
+Bs
+sǫsjl
+∆x2snse
+(52)
+∂RH(Bj)
+BS
+l
+=
+−Bs
+sǫsjl
+∆x2snse
+(53)
+This is the Cartesian preconditioner written in a general notation. For example,
+for s = x, j = y, l = z and S = i + 1 the last equation coincides with (41).
+13
+
+BZ
+-100
+-50
+0
+50
+100
+X
+-100
+-50
+0
+50
+100
+Y
+BZ
+-100
+-50
+0
+50
+100
+X
+-100
+-50
+0
+50
+100
+Y
+BZ
+-100
+-50
+0
+50
+100
+X
+ 
+ 
+ 
+ 
+ 
+ 
+BZ
+-100
+-50
+0
+50
+100
+X
+ 
+ 
+ 
+ 
+ 
+ 
+FIG. 4 The z component of the magnetic ﬁeld at the initial (left panel) and ﬁnal
+(right panel) times for the whistler wave test on a periodic non-uniform grid. The
+crosses indicate the cell centers.
+4.
+NUMERICAL TESTS
+4.1.
+Propagation of the whistler wave
+To verify the accuracy of the algorithm and the correctness of the implementa-
+tion, we simulate the propagation of the whistler wave in a periodic box. In our
+standard runs we use the second order MUSCL scheme with the Lax-Friedrichs ﬂux
+and the MC limiter with β = 1.5. The explicit runs use a two stage Runge-Kutta
+scheme with a CFL number 0.8. The implicit runs use the BDF2 scheme, a time
+step linearly proportional to the cell size, and a reduced numerical ﬂux with W = 0
+in (36). We apply the 8-wave scheme to control the divergence of the magnetic ﬁeld
+in the two-dimensional test, although this is not really necessary in these test runs.
+Any deviation from these standard parameters will be noted.
+We start with the grid aligned case on a uniform grid.
+The computational
+domain is −100 < x < 100 with periodic boundaries.
+The initial condition is
+uniform for the following variables: ρ = 1, vx = −0.001, Bx = 100 and P = 1, so
+the Alfv´en speed is cA = Bx/√ρ = 100 and the sound speed is cS =
+p
+γp/ρ ≈1.291
+where γ = 5/3. The choice of a non-zero vx avoids the problems with normalization
+in the implicit scheme. To make the whistler wave speed comparable to the Alfv´en
+speed, we set the ion mass per charge M/e = 35.1076 (an admittedly arbitrary
+number in the normalized units). We will study the longest wave that ﬁts into
+the computational domain, so the wave length is λ = 200 and the wave number
+is k = 2π/λ = π/100. The exact formula for the phase speed of the right going
+14
+
+TABLE 1
+Relative errors for whistler wave test on a uniform grid
+n
+expl/mm
+explicit
+impl/W=1
+implicit
+impl/mm
+expl/rot
+impl/rot
+16
+1.236
+0.42261
+0.875
+0.15352
+0.19424
+0.30733
+0.18311
+32
+0.614
+0.08537
+0.465
+0.03856
+0.04881
+0.06167
+0.04266
+64
+0.265
+0.01926
+0.243
+0.00100
+0.01234
+0.01388
+0.01034
+128
+0.118
+0.00519
+0.124
+0.00277
+0.00316
+0.00373
+0.00304
+whistler wave relative to the ﬂuid is
+cw = ω
+k = w
+2 +
+r
+c2
+A + w2
+4 ≈169.345
+(54)
+where w = (M/e)(k|B|)/ρ ≈110.294, and the amplitude ratio of the transverse
+velocity and magnetic perturbations is
+|δvy,z|
+|δBy,z| = |Bx|
+cwρ ≈0.590511
+(55)
+The whistler wave is initialized with
+vy
+=
+−0.00590511 cos(kx)
+(56)
+vz
+=
++0.00590511 sin(kx)
+(57)
+By
+=
++0.001 cos(kx)
+(58)
+Bz
+=
+−0.001 sin(kx)
+(59)
+Note that this is a circularly polarized wave, and the velocity (and the electric ﬁeld)
+is right-hand circularly polarized. The pressure, the density and the x components
+of the velocity and magnetic ﬁeld are not aﬀected by the wave. The ﬁnal time is
+set to tmax = λ/|ux + cw| ≈1.18103 so that the wave arrives back at the original
+position by the end of the run. The numerical error is calculated from the diﬀerence
+between the initial and ﬁnal vz:
+En =
+Pn
+i=1 |vz,i(tmax) −vz,i(0)|
+Pn
+i=1 |vz,i(0)|
+(60)
+where i = 1 . . . n indexes the grid cells in the whole computational domain. We
+could use the error in vy, By or Bz just as well, and the results would remain
+essentially the same.
+We repeat the simulation with 4 diﬀerent resolutions using n = 16, 32, 64, 128
+cells, respectively. The explicit scheme requires 141, 489, 1811, and 6955 time steps
+respectively, ie. the time step ∆t is roughly proportional to 1/∆x2. For the implicit
+scheme the time step is set to be proportional to 1/∆x and it takes 40, 80, 160
+and 320 time steps to ﬁnish the runs, respectively. As expected, the implicit time
+stepping becomes relatively more eﬃcient at ﬁner resolutions.
+The ﬁrst four columns of Table 1 contain the errors of the explicit runs with
+minmod and MC limiters and the implicit runs with W = 1 and W = 0 in (36)
+both with the MC limiter, respectively. The ﬁfth column is the implicit schem
+with W = 0 and the minmod limiter. In accordance with the analysis presented in
+15
+
+TABLE 2
+Relative errors for whistler wave test on a non-uniform grid
+n
+explicit
+implicit
+expl, rot.
+impl, rot.
+24
+0.2514
+0.05218
+0.2632
+0.07958
+48
+0.0517
+0.01244
+0.0522
+0.01968
+96
+0.0114
+0.00305
+0.0124
+0.00490
+subsection 3.5 the explicit scheme with the minmod limiter provides a roughly ﬁrst
+order convergence rate only, while the MC limiter gives almost perfect second order
+convergence. Similarly, the implicit scheme using a numerical ﬂux based on the
+full wave speed gives ﬁrst order convergence rate only, while setting W = 0 in (36)
+provides second order convergence rate, in full agreement with the discussion in
+subsection 3.6. The implicit scheme with W = 0 and the minmod limiter converges
+at a second order rate although the results are less accurate than for the MC limiter
+(columns 4 and 5). It is interesting to note that the implicit scheme is more accurate
+than the explicit scheme (compare columns 2 and 4). This is due to the fact that
+explicit scheme requires the full numerical ﬂux with W = 1 for stability, while the
+implicit scheme is stable with a less diﬀusive numerical ﬂux too.
+We repeated the test on a two-dimensional uniform grid with rotated initial
+conditions. The rotation angle is α = tan−1 0.5 = 26.56◦so there is a translational
+symmetry in the (1,2) direction as shown in Figure 4. The boundary conditions
+remain periodic in the X direction, while we apply a sheared zero gradient in the
+(1,2) direction along the Y boundaries. The length of the computational domain is
+increased by a factor of 1/ cos(α) =
+√
+5/2 to −111.803 < x < 111.803 to maintain
+the periodicity in the X direction. All the vector variables (velocity and magnetic
+ﬁeld) as well as the perturbation are rotated by α. As the last two columns of
+Table 1 shows, the convergence rate remains second order. Somewhat surprisingly
+the errors for the rotated explicit run are somewhat smaller than in the grid aligned
+case. This is probably due to the fact that the numerical ﬂux is proportional to
+|Bx| and |By|, which is diﬀerent in the rotated case than in the grid aligned case.
+The next set of tests are done on a non-uniform grid. We reﬁne the middle
+part of the grid for |x| < 50 in the 1D case, and |x|, |y| < 50/ cosα in the 2D case.
+The error is calculated the same way as for the uniform grid (equal weight for all
+cells). The results are shown in Table 2 for the explicit and implicit schemes with
+grid-aligned and rotated initial conditions. The number of cells refer to a 1D cut,
+e.g. n = 48 corresponds to the base grid with n = 32 which is reﬁned in the middle
+adding another 16 cells. The time step for the explicit scheme is determined by
+the smaller cells. For the implicit scheme we also used the same time step as on
+the uniform grid corresponding to the ﬁner cells, so the number of explicit and
+implicit steps for n = 24, 48, 96 are 489, 1811, 6955 and 80, 160, 320, respectively.
+The results conﬁrm that the scheme remains second order accurate at resolution
+changes.
+4.2.
+Reconnection in the GEM challenge
+The Geospace Environmental Modeling (GEM) magnetic reconnection challenge
+[3] is a very well studied 2D reconnection problem. There are several published
+solutions obtained with other Hall MHD codes, so this problem is suitable to further
+16
+
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+0.0
+0.5
+1.0
+1.5
+ 
+Jy and B
+-10
+-5
+0
+5
+10
+X
+-6
+-4
+-2
+0
+2
+4
+6
+Z
+Jy and B
+-10
+-5
+0
+5
+10
+X
+-6
+-4
+-2
+0
+2
+4
+6
+Z
+Jy and B
+-10
+-5
+0
+5
+10
+X
+-6
+-4
+-2
+0
+2
+4
+6
+Z
+Jy and B
+-10
+-5
+0
+5
+10
+X
+-6
+-4
+-2
+0
+2
+4
+6
+Z
+FIG. 5 The current (color) and some magnetic ﬁeld lines at t = 30 for the Hall
+MHD simulation of the GEM reconnection problem.
+Hall and Classical MHD with η=0.005
+0
+10
+20
+30
+40
+Time
+1
+2
+3
+4
+Reconnected Flux
+Hall MHD
+Classical MHD
+FIG. 6 The reconnected magnetic ﬂux versus time for constant resistivity in the
+GEM reconnection problem.
+17
+
+verify our implementation.
+The computational domain is Lx = 25.6 times Lz = 12.8 centered around the
+origin (for sake of comparison we follow [3] and use x and z coordinates). The
+initial condition is
+Bx
+=
+tanh(2z) −Ay(π/Lz) cos(2πx/Lx) sin(πz/Lz)
+(61)
+Bz
+=
+Ay(2π/Lx) cos(2πx/Lx) sin(πz/Lz)
+(62)
+p
+=
+0.6 −tanh(2z)2/2
+(63)
+with v = 0, By = 0 and ρ = 2p so that the normalized temperature is 1/2. The
+adiabatic index is γ = 5/3.
+The perturbation of the magnetic ﬁeld is deﬁned
+through the vector potential with amplitude Ay. Without this perturbation the
+current sheet is in pressure equilibrium. The boundary conditions are periodic in
+the x direction, and ﬂoating (zero gradient) for the other boundaries (instead of
+ideally conducting). The simulation is run until t = 40.
+The initial perturbation forces the reconnection site to be at the origin. We
+found, however, that in the Hall MHD simulations the conﬁguration evolves into
+two reconnection sites and an island in the middle (see Figure 5), as long as the
+initial perturbation is small (Ay = 0.1). For larger initial perturbation (Ay = 0.5)
+the single reconnection site is stable. We note that the formation of an island in
+the GEM challenge problem is not unique to our code (J. Huba, L. Chacon private
+communications).
+The computational domain is resolved by 64 times 128 rectangular grid cells
+with ∆x = 0.4 and ∆z = 0.1. We use the second order Lax-Friedrichs scheme,
+the MC limiter and β = 1.2. For the resistive MHD simulations (with no Hall
+term) the resistivity is set to η = 0.005. In the Hall MHD runs the resistivity is
+the same and the normalized ion mass per charge is 1. Figure 6 shows the time
+dependence of the reconnected ﬂux
+R Lx/2
+0
+Bzdx for classical resistive and Hall MHD
+simulations. The results agree quite well with Figure 1 in Birn et al. [3] despite the
+split reconnection site in the Hall MHD simulation. We checked that starting with
+a larger perturbation results in a single reconnection site and the reconnection rate
+remains about the same.
+4.3.
+3D Magnetosphere Simulations and Parallel Scaling
+Finally we tested if the code gives physically reasonable results for magneto-
+sphere type problems. We are solving the ﬂow of the solar wind around the Earth.
+The solar wind ﬂows in the x direction, the dipole is aligned with the z direction,
+and the magnetic ﬁeld of the solar wind has a pure Bz component only that is
+opposite of the orientation of the dipole ﬁeld in the equatorial plane. For classi-
+cal MHD the solution is perfectly symmetric in the ±Z and ±Y directions. For
+Hall MHD we expect the solution to be asymmetric which means that By can be
+non-zero in the Y = 0 plane.
+Figure 7 shows the magnetosphere solution together with the grid structure
+in the Y = 0 plane.
+Both the day-side (left of the body) and the magnetotail
+reconnection regions are highly resolved with 1/32 RE (Earth radii) cells. There
+are 71000 4×4×4 grid blocks with more than 4.5 million cells altogether. Figure 8
+shows the solution obtained with local time stepping.
+The By component has
+the typical quadrupolar structure at the magnetotail. The day-side reconnection
+site moved northward which suggests that the solution is unstable. This is most
+18
+
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+-3
+-2
+-1
+0
+ 
+log P [nPa] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+log P [nPa] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+log P [nPa] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+log P [nPa] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+log P [nPa] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+log P [nPa] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+FIG. 7 Magnetosphere solution in the Y = 0 plane. The black crosses show the
+grid cell centers. Distance is measured in Earth radii.
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+-20
+-10
+0
+10
+ 
+BY [nT] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+BY [nT] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+BY [nT] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+BY [nT] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+BY [nT] (color) and BX-BZ (lines)
+10
+0
+-10
+-20
+X
+-15
+-10
+-5
+0
+5
+10
+15
+Z
+FIG. 8 Magnetosphere ﬁeld solution with Hall MHD. Note the quadrupolar By
+ﬁeld in the tail.
+19
+
+32
+64
+128
+256
+544
+816 976 1216
+1616
+NUMBER OF PROCESSORS
+0.01
+0.10
+1.00
+SIMULATION TIME / CPU TIME
+EXPLICIT HALL MHD
+IMPLICIT HALL MHD
+EXPL/IMPL HALL MHD
+FIG. 9 Scaling of the explicit, implicit and explicit/implicit time stepping schemes
+for a ﬁxed size magnetosphere problem.
+likely a particular manifestation of the tearing mode instability, also known as Flux
+Transfer Events (FTE) in the space physics literature (e.g. [18]). The presence of
+this instability as well as the lack of perfect convergence of the local time stepping
+scheme suggests that the solution is time dependent despite the ﬁxed boundary
+conditions.
+We have repeated the simulation in time dependent mode with a slightly reduced
+resolution. The grid consists of 4848 blocks of size 8×8×8 cells, or about 2.5 million
+cells altogether. The cell sizes range from 8 to 1/16 RE. The high resolution is
+concentrated around the reconnection region in the magnetotail and Hall MHD is
+solved in this region only. Outside this region the Hall term is neglected. In this
+time accurates simulation we have indeed found that the solution shows a quasi-
+periodic behavior with periodic plasmoid formation. The physical interpretation
+of these results are outside the scope of this paper, on the other hand this rather
+expensive simulation provides an excellent demonstration of the parallel scaling and
+eﬃciency of the explicit and implicit Hall MHD schemes.
+We present scaling results on an SGI Altix super computer (columbia at NASA
+Ames) for short runs (25 seconds) starting from a restart ﬁle saved at about 2
+hours simulation time.
+Figure 9 shows scaling curves for explicit, implicit and
+explicit/implicit time stepping, respectively. For the explicit scheme the stability
+condition required ∆t = 0.00295 s time steps, while the time step for the implicit
+scheme was 1 s.
+The ﬁgure demonstrates a near perfect scaling of the explicit
+scheme from 32 to 1616 processors, which is quite remarkable for strong scaling
+with a ﬁxed problem size. Note that there are only 3 blocks per processor when
+the code runs on 1616 processors.
+20
+
+The fully implicit and explicit/implicit algorithms are about 14 and 20 times
+faster on 32 CPU-s than the explicit scheme, respectively. The implicit time step is
+about 330 times larger than the explicit time step, and the implicit scheme requires
+about 25 Krylov iterations per step. The Krylov iterations are less expensive than
+the full explicit time step, because the Jacobian-free evaluation uses the ﬁrst order
+scheme (no limiters), but the construction and application of the preconditioner
+also takes up signiﬁcant time. The overall gain of the fully implicit scheme over the
+explicit scheme happens to be close to the simple estimate of 330/25 = 13.2.
+As the ﬁgure shows the implicit schemes scale quite well up to 256 processors.
+In the explicit/implicit scheme most of the blocks (about 3400) require implicit
+time steps for the selected time step, so there is relatively little diﬀerence between
+the eﬃciency of the implicit and explicit/implicit algorithms.
+5.
+CONCLUSIONS
+We have developed a second order accurate Hall MHD scheme for block adaptive
+Cartesian or general structured grids using both explicit and implicit time integra-
+tion. For steady state solutions the explicit scheme can be used in combination with
+local time stepping. Care should be taken to use symmetric type limiters (like MC)
+instead of asymmetric limiters (like minmod or super-bee) to achieve second order
+accuracy in smooth regions. For time accurate runs the implicit scheme is much
+more eﬃcient than the explicit scheme if the whistler wave speed is dominant. The
+preconditioner has to take into account the terms responsible for the whistler wave.
+Using the implicit scheme the Hall MHD simulation ran about 3-4 times slower
+than the classical MHD simulation, which is quite reasonable given the stiﬀness of
+the Hall MHD equations due to the whistler wave.
+The eﬃciency and good parallel scaling of our Hall MHD scheme enables us to
+do steady state and time accurate simulations in 3D. We have already used the
+Hall MHD code to simulate Titan’s interaction with the surrounding plasma [10].
+This steady state simulation uses a spherical grid with logarithmic stretching in the
+radial direction. As shown by Ma et al. [10] the Hall MHD results match the values
+measured by the Cassini satellite signiﬁcantly better than the results obtained with
+classical MHD simulations. We plan to use the Hall MHD code to study many
+space physics problems in the future.
+While Hall MHD captures the most important kinetic eﬀects, it does not de-
+scribe the full physics. Comparing Hall MHD and hybrid model results [24, 6, 23],
+it was found that the oﬀ-diagonal elements of the pressure tensor play an impor-
+tant role. We plan to extend our code to use a non-isotropic pressure equation with
+ﬁeld-aligned and orthogonal components. We are also working on extending our
+code to multi-ﬂuid Hall MHD with ions of diﬀerent mass.
+ACKNOWLEDGMENTS
+We greatfully acknowledge useful discussions with Igor V. Sokolov, Luis Chacon, and
+Joseph Huba. This work has been supported by NASA IASRP grant NNG04GP89G. The
+3D simulations were carried out with the supercomputing resources provided by NASA’s
+Columbia system under award SMD-07-0350.
+21
+
+REFERENCES
+[1] M. J. Berger and P. Colella. Local adaptive mesh reﬁnement for shock hydro-
+dynamics. J. Comput. Phys., 82:67–84, 1989.
+[2] A. Bhattacharjee, K. Germaschewski, and C. S. Ng.
+Current singularities:
+Drivers of impulsive reconnection. Physics of Plasmas, 12, 2005.
+[3] J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton, M. Hesse,
+M. Kuznetsova, Z. W. Ma, A. Bhattacharjee, A. Otto, and P. L. Pritchett.
+Geospace Environmental Modeling (GEM) magnetic reconnection challenge.
+J. Geophys. Res., 106(A3):3715–3720, 2001.
+[4] L. Chac´on and D. A. Knoll. A 2d high-β hall mhd implicit nonlinear solver.
+J. Comput. Phys., 188, 2003.
+[5] P. Dmitruk and W. H. Matthaeus. Structure of the electromagnetic ﬁeld in
+three-dimensional hall magnetohydrodynamic turbulence. Physics of Plasmas,
+13, 2006.
+[6] M. Hesse, J. Birn, and M. Kuznetsova. Collisionless magnetic reconnection:
+Electron processes and transport modeling. J. Geophys. Res., 106(A3):3721–
+3736, 2001.
+[7] J. D. Huba. A new 3d hall mhd code. In J. B¨uchner, C. T. Dum, and M. Sc-
+holer, editors, Proc. Sixth International School/Symposium on Space Plasma
+Simualation, pages 143–146. Copernicus Gesellschaft, Garching, 2001.
+[8] J. D. Huba. Hall magnetohydrodynamics – A tutorial. In J. B¨uchner, C. T.
+Dum, and M. Scholer, editors, Space Plasma Simulation, pages 166–192.
+Springer-Verlag, Berlin, 2003.
+[9] B. Koren. A robust upwind discretisation method for advection, diﬀusion and
+source terms. In C.B. Vreugdenhil and B.Koren, editors, Numerical Methods
+for Advection-Diﬀusion Problems, page 117. Vieweg, Braunschweig, 1993.
+[10] Y. J. Ma, A. F. Nagy, G. T´oth, T. E. Cravens, C. T. Russell, T. I. Gombosi,
+J-E. Wahlund, F. J. Crary, A. J. Coates, C. L. Bertucci, and F. M. Neubauer.
+3d global multi-species hall-mhd simulation of the cassini t9 ﬂyby. Geophys.
+Res. Lett., 34, 2007.
+[11] P. D. Mininni and D. O. Gomez. Direct simulations of helical hall-mhd turbu-
+lence and dynamo action. Astrophys. J., 619:1019–1027, 2005.
+[12] L. F. Morales, S. Dasso, and D. O. Gomez.
+Hall eﬀect in incompressible
+magnetic reconnection. J. Geophys. Res., 110, 2005.
+[13] F. Mozer, S. Bale, and T. D. Phan. Evidence of diﬀusion regions at a subsolar
+magnetopause crossing. Phys. Rev. Lett., 89, 2002.
+[14] M. et al. Oieroset. In situ detection of collisionless reconnection in the earth’s
+magnetotail. Nature, 412, 2001.
+[15] S. O’Sullivan and T. P. Downes. An explicit scheme for multiﬂuid magnetohy-
+drodynamics. MNRAS, 366:1329–1336, doi:10.1111/j.1365–2966.2005.09898.x,
+2006.
+22
+
+[16] A. Otto. Geospace environment modeling (gem) magnetic reconnection chal-
+lenge: Mhd and hall-mhd constant and current dependent resistivity models.
+J. Geophys. Res., 106, 2001.
+[17] K.G. Powell, P.L. Roe, T.J. Linde, T.I. Gombosi, and D. L. De Zeeuw. A
+solution-adaptive upwind scheme for ideal magnetohydrodynamics. J. Comp.
+Phys., 154:284–309, 1999.
+[18] J. Raeder. Flux transfer events: 1. generation mechanism for strong southward
+imf. Annales Geophysicae, 24:381–392, 2006.
+[19] Q. F. Stout, D. L. De Zeeuw, T. I. Gombosi, C. P. T. Groth, H. G. Marshall,
+and K. G. Powell. Adaptive blocks: A high-performance data structure. In
+Proc. Supercomputing’97, 1997.
+[20] T. Tanaka.
+Finite volume TVD scheme on an unstructured grid system
+for three-diemsnional MHD simulations of inhomogeneous systems including
+strong background potential ﬁeld. J. Comput. Phys., 111:381–389, 1994.
+[21] G. T´oth, D. L. De Zeeuw, T. I. Gombosi, and K. G. Powell. A parallel ex-
+plicit/implicit time stepping scheme on block-adaptive grids. J. Comput. Phys.,
+217:722–758, 2006.
+[22] B. van Leer. Towards the ultimate conservative diﬀerence scheme. V. A second-
+order sequel to Godunov’s method. J. Comput. Phys., 32:101–136, 1979.
+[23] L. Yin and D. Winske. Simulations of current sheet thinning and reconnection.
+J. Geophys. Res., 107(A12), 2002.
+[24] L. Yin, D. Winske, S. P. Gary, and J. Birn. Hybrid and hall-mhd simulations
+of collisionless reconnection: Dynamics of the electron pressure tensor. JGR,
+106(A6):10,761–10,776, 2001.
+[25] Ma Z. and A. Bhattacharjee. Hall magnetohydrodynamic reconnection: The
+geospace environment modeling challenge. JGR, 106, 2001.
+23

@@ -1,0 +1,2748 @@
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+F. F. Locker,1 M. Rinner,1 M. Held,1, 2 and A. Kendl1
+1)Department for Ion Physics and Applied Physics, University of Innsbruck, A-6020 Innsbruck,
+Austria
+2)Department of Mathematics and Statistics, UiT The Arctic University of Norway, 9037 Tromsø,
+Norway
+(Dated: 11 August 2026)
+Magnetic reconnection in a two-dimensional system is studied employing a novel Full-F gyrofluid model with arbitrary-
+wavelength polarization. In strongly magnetized plasmas, the long wavelength dimension parallel to the magnetic
+field can be separated from the much smaller perpendicular scales, motivating an isolated two-dimensional description.
+While previous studies have predominantly employed δF gyrofluid models, the present Full-F formulation is applied to
+simulate Harris-sheet magnetic reconnection with domain aspect ratios Lˆy/Lˆx ≤16, investigating tearing-mode growth,
+plasmoid formation, and the influence of finite ion Larmor radius (FLR) effects. In addition to a linear tearing-mode
+analysis, a non-modal stability analysis of the linearized system is performed. The evolution operator is shown to be
+strongly non-normal, exhibiting large condition numbers and extended pseudospectra that indicate the possibility of
+significant transient amplification, even in marginally stable regimes. Such transient amplification may facilitate the
+transition from linear tearing growth to rapid nonlinear acceleration. We focus on low-plasma-β magnetic reconnection
+on the scale of the drift scale ρs and incorporate ion FLR effects, placing the simulations in the context of magneti-
+cally confined fusion plasmas such as tokamaks. After discussing numerical resolution and convergence, we present
+a parameter scan varying the normalized electron skin depth and the ion-to-electron temperature ratio. Finally, the
+influence of aspect ratio, polarization model, and FLR effects on the reconnection dynamics and plasmoid formation is
+investigated.
+I.
+INTRODUCTION
+In magnetized plasmas, magnetic reconnection (MR) is
+known to play a crucial role in non-ideal magnetohydrody-
+namics (MHD), as magnetic field energy is converted into
+kinetic energy through the violation of flux conservation1.
+This process is fundamental to a wide range of systems, in-
+cluding stellar coronae, Earth’s magnetotail, and magneti-
+cally confined fusion devices2,3. Since the early studies by
+Sweet and Parker, and later by Petschek, research has been ex-
+tended from the comparatively well understood resistive MR
+regime to its collisionless counterpart, with the non-resistive
+tearing instability being identified as a key moderator of the
+process4–7.
+Early theoretical descriptions predicted a decline of the re-
+sistive tearing instability growth rate γη ∼S−3
+5 with increasing
+Lundquist number S = LvA/η, where L denotes the charac-
+teristic system size, vA the Alfvén velocity, and η = (µ0σ)−1
+the magnetic diffusivity, thereby limiting applicability to colli-
+sionless reconnection in the η →0 regime. It was later shown
+by Loureiro et al.8 that Sweet–Parker current sheets become
+unstable to secondary tearing via the plasmoid instability at
+sufficiently large values of S ∼104, leading to enhanced linear
+growth rates as well as nonlinear interactions, and rendering
+plasmoid-driven reconnection nearly independent of S7,9–12.
+Furthermore, plasmoid formation in such current sheets has
+been found to be independent of β = µ0p/B2, the ratio of
+plasma pressure p to magnetic pressure B2/µ0, in the high-S
+regime13.
+Current sheets thinner than an aspect ratio scaling as a/L ∼
+S−1/3 (with a,L denoting the sheet width and length) were
+proposed by Pucci et al.14 to be inherently unstable, result-
+ing in an “ideal” tearing mode characterized by reconnection
+rates independent of S and explosive reconnection occurring
+on Alfvénic timescale. In low-β ≪1, high-S plasmas with
+large aspect ratios ra = a/L, island formation involving mul-
+tiple X-points (or magnetic nulls in three dimensions) has
+been shown to increase reconnection rates between coalescing
+flux surfaces by enabling multiple simultaneous reconnection
+sites through the plasmoid instability12,15,16. Recently, it was
+highlighted by Morillo et al.17 that plasmoid formation may
+be suppressed in numerical simulations if insufficient reso-
+lution is employed, even at high Lundquist numbers, under-
+scoring the necessity of systematic convergence testing. This
+is particularly relevant for the present study, since arbitrary-
+wavelength polarization and ρs-scale structure require suffi-
+cient numerical resolution to distinguish physical plasmoid
+formation from numerical artifacts.
+Gyrofluid and gyrokinetic models have previously been
+shown to reproduce the essential collisionless mechanisms re-
+sponsible for fast magnetic reconnection, including electron
+inertia and finite-Larmor-radius (FLR) effects18–22. In par-
+ticular, gyrofluid studies demonstrated that fast reconnection
+and nonlinear acceleration can occur even in reduced fluid
+formulations while retaining key kinetic effects18–21. Corre-
+spondingly, fast normalized reconnection rates Erec/(B0vA) ∼
+0.1 have been reported in gyrofluid, gyrokinetic, Hall-MHD,
+and fully kinetic simulations23–27, particularly for moderately
+low electron skin depth de =
+p
+me/(µ0e2ne) to drift scale
+ρs = √Temi/(eB0) ratios, de/ρs ≈1.
+However, many ex-
+isting gyrofluid reconnection models employ δF, Oberbeck–
+Boussinesq, or long-wavelength approximations in the polar-
+ization equation. While these approximations are often jus-
+tified close to equilibrium and for sufficiently large spatial
+scales, they may become insufficient in strongly nonlinear
+reconnection regimes with finite-wavelength polarization ef-
+fects and large density fluctuations.
+arXiv:2603.06234v2  [physics.plasm-ph]  10 Aug 2026
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+2
+As a motivation for the present study, it is worth recalling
+that in toroidal fusion plasmas such as tokamaks, the plasma
+is typically characterized by high Lundquist numbers, and
+resonant flux surfaces are susceptible to tearing instabilities
+and subsequent magnetic island formation28. These processes
+are generally associated with a degradation of plasma con-
+finement through the flattening of radial pressure profiles and
+enhanced cross-field transport. Although the present work is
+restricted to a two-dimensional slab geometry, understanding
+the underlying collisionless reconnection physics provides an
+important step toward more realistic fusion-relevant configu-
+rations.
+In the present work, the recently published code GREENY
+(Gyrofluid Reconnection with Extended Electromagnetic
+Nonlinearity)29 is employed. GREENY is a two-dimensional
+Full-F gyrofluid simulation framework designed for the in-
+vestigation of collisionless magnetic reconnection in param-
+eter regimes relevant to fusion plasmas. A two-dimensional
+geometry is often employed as a first approximation for toka-
+mak plasmas, although more detailed modelling requires the
+inclusion of toroidal curvature, trapped-particle effects, and
+global equilibrium gradients. Here, the term “collisionless”
+refers to the neglect of parallel resistive (e.g. Spitzer) terms,
+such that ηS →0, and reconnection is instead mediated by
+non-ideal effects such as electron inertia and weak numeri-
+cal or hyper-viscosity. In contrast to many reduced gyrofluid
+approaches, arbitrary-wavelength polarization is retained and
+total densities are evolved self-consistently in time.
+species temperature
+Tz
+species mass
+mz
+charge number
+Zz
+perpendicular gradient length L⊥
+charge
+qz := eZz
+drift scale
+ρs := √Temi/(eB0)
+electron skin depth
+de :=
+p
+me/(µ0e2ne)
+temperature ratio
+τz :=
+Tz
+ZzTe
+mass ratio
+µz :=
+mz
+Zzmi
+electron beta
+β = µ0Ne0Te/B2
+0
+sound speed
+cs :=
+p
+Te/mi
+E ×B velocity
+|UE| = 1/B0|∇⊥ˆψz|
+perpendicular Poisson bracket 1/B0(ˆb×∇⊥f)·∇g = 1/B0[f,g]⊥
+TABLE I: Physical quantities, system parameters, and
+identities.
+This
+formulation
+defines
+a
+Full-F,
+non-Oberbeck–
+Boussinesq (NOB) gyrofluid model,
+governed
+by
+the
+system parameters listed in Table I, with a constant species
+gyro-radius ρz = √Tzmz/(eB) = const. and a locally con-
+stant guide field B = B030.
+Consequently, the model is
+isothermal and, while densities are evolved as total quanti-
+ties, the magnetic-field fluctuations remain perturbative in
+amplitude31. A reduced Oberbeck–Boussinesq (δF) limit is
+also available, in which densities Nz are decomposed into a
+constant background N0 and perturbations δNz, together with
+an OB-approximated polarization equation.
+Perpendicular
+magnetic field fluctuations are computed self-consistently
+through Ampère’s law. The numerical implementation and
+associated modeling assumptions are discussed in detail in
+Ref. 29.
+While typically δF gyrofluid formulations are obtained us-
+ing perturbative gyrokinetic expansions around a prescribed
+equilibrium, Full-F models are derived from moment equa-
+tions of the Full-F gyrokinetic Vlasov equation32,33. The pri-
+mary difficulty lies in the treatment of quasi-neutrality and
+Ampère’s law, which require additional approximations in or-
+der to obtain a closed system of equations. These approxi-
+mations become particularly relevant in strongly nonlinear re-
+connection scenarios, where large density fluctuations, finite-
+wavelength effects, and nonlinear polarization dynamics may
+invalidate assumptions commonly used in reduced models.
+Within the scope of this work, collisionless magnetic re-
+connection is investigated in the described Full-F gyrofluid
+framework, with a focus on a low-β parameter regime and
+perpendicular scales comparable to the drift scale, L⊥∼ρs.
+This regime is chosen in order to emphasize finite-wavelength
+polarization and ion-FLR effects, for which long-wavelength
+and Oberbeck-Boussinesq approximations may become insuf-
+ficient.
+Following the presentation of the model equations in Sec-
+tion II, a linear perturbation analysis is performed in Sec-
+tion III A in order to derive an analytical estimate for the lin-
+ear tearing growth rate ˆγlin. Subsequently, the conditioning
+and transient behavior of the linearized system are investi-
+gated by means of a non-modal analysis in Section III B. Sec-
+tion IV then presents nonlinear simulations of Harris-sheet
+magnetic reconnection under different polarization assump-
+tions, including comparisons between long-wavelength and
+arbitrary-wavelength polarization models, as well as between
+δF and Full-F formulations. The influence of aspect ratio,
+electron skin depth ˆde = de/ρs = √µe/
+p
+β, and ion temper-
+ature effects on reconnection dynamics and plasmoid forma-
+tion is investigated systematically. Finally, conclusions and a
+summary of the results are presented in Section V.
+II.
+MODEL EQUATIONS
+A.
+Full-F collisionless MR model
+The collisionless magnetic reconnection model, introduced
+in Ref. 29, is derived from the Full-F gyrofluid formulation
+of Madsen32 together with Held et al. 34. For the sake of
+completeness, the model and its limits are presented again.
+The low-β limit, β ≪1, of the Full-F model is considered, all
+curvature effects are neglected, and a uniform guide magnetic
+field B = B0ˆeˆ∥is assumed. The evolution equations for the
+density and canonical momentum are
+∂
+∂t Nz + 1
+B{ψz,Nz}⊥−Nz
+1
+B{ξ1,z,Uz}⊥−U 1
+B{ξ1,z,Nz}⊥= Λ
+(1)
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+3
+mzNz
+qz
+∂
+∂tUz +Nz
+∂
+∂t ξ1,z = −mzNz
+qzB {ψz,Uz}⊥+
++Nz
+1
+B{ξ1,z,ψz}⊥+ mzUzNz
+qzB
+{ξ1,z,Uz}⊥+ Tz
+qzB{ξ1,z,Nz}⊥+ 1
+qz
+Λ
+(2)
+for each species, where ψ1,z := Γ1,zφ and ξ1,z := Γ1,zA∥and
+Λ denotes sources and sinks (e.g. subgrid-dissipation). These
+evolution equations are normalized (denoted by ˆ·) according
+to the Bohm normalization scheme shown in Table II.
+time
+t :=
+ˆL ˆ⊥
+cs ˆt
+gyrocenter number density
+Nz := N0 ˆNz
+Poisson bracket
+{·,·}⊥:= ρ−2
+s
+[·,·] ˆ⊥
+magnetic-field magnitude
+B := B0 ˆB
+generalized electric potential
+ψz := Te
+e ˆψ
+parallel velocity
+Uz := cs ˆUz
+parallel vector potential
+A∥:= (B0ρs) ˆ˜Aˆ∥
+perpendicular gradient operator ∇⊥:= ρ−1
+s
+ˆ∇⊥
+TABLE II: Bohm normalization scheme of the dependent
+fields.
+The corresponding system constants and parameters are
+listed in Table I. We decompose the magnetic-field unit vec-
+tor as ¯b = b0 +˜b, where the fluctuating component is given by
+˜b = 1
+B0 ∇A∥×ˆb and the static guide field is b0. The normalized
+parallel gradient of a field ˆf becomes
+ˆ¯∇ˆ∥ˆf := ˆ∇ˆ∥ˆf +˜b· ˆ∇ˆf = ˆ∇ˆ∥ˆf −β
+ˆBδ
+[ ˆ˜Aˆ∥, ˆf] ˆ⊥
+(3)
+where the second term is magnetic flutter. In this normaliza-
+tion, the parameter δ = ρs/L⊥scales the Poisson brackets and
+hence the system dynamics. Since the characteristic gradient
+length is of order ρs, the dimensionless scaling parameter is
+set to δ = 1. The gyrocenter E ×B drift is determined by the
+gyroaveraged and polarization components of the gyrofluid
+potential ˆψz = ˆψ1,z + ˆψ2,z35,
+ˆψ1,z := ˆΓ1,z ˆφ,
+(4)
+ˆψ2,z := −µz
+2
+ ˆ∇⊥
+q
+ˆΓ0,z ˆφ
+
+2
+.
+(5)
+The exact form of the operators depends on the model as-
+sumptions summarized in Table III. For the remainder of this
+work, β is absorbed into ˆAˆ∥= β ˆ˜Aˆ∥. The Padé-approximated
+gyroaverage and screening operators are34
+ˆΓ0,i :=
+1
+1−τiµi ˆ∆⊥
+,
+ˆΓ1,i :=
+1
+1−τi
+2 µi ˆ∆⊥
+.
+(6)
+Since |µe| ≪1 for proton–electron plasmas, electron FLR ef-
+fects may be neglected, which implies ˆψe = ˆφ, ˆΓ0,e = ˆΓ1,e = 1,
+ˆNe = ˆne and ˆUe = ˆue. The normalized and implemented Full-F
+equations are
+∂
+∂ˆt ˆne = −
+ ˆφ, ˆne
+
+ˆ⊥+
+h
+ˆAˆ∥, ˆne ˆue
+i
+ˆ⊥,
+(7)
+∂
+∂ˆt
+ˆNi = −
+ ˆψi, ˆNi
+
+ˆ⊥+
+h
+ˆΓ1 ˆAˆ∥, ˆNi ˆUi
+i
+ˆ⊥,
+(8)
+∂
+∂ˆt
+
+ˆue + 1
+µe
+ˆAˆ∥
+
+=−
+
+ˆφ, ˆue + 1
+µe
+ˆAˆ∥
+
+ˆ⊥
++
++
+
+ˆAˆ∥, 1
+2 ˆu2
+e
+
+ˆ⊥
+−1
+µe
+h
+ˆAˆ∥, ln(ˆne)
+i
+ˆ⊥, (9)
+∂
+∂ˆt
+
+ˆUi + ˆΓ1 ˆAˆ∥
+
+=−
+h
+ˆψi, ˆUi + ˆΓ1 ˆAˆ∥
+i
+ˆ⊥+
++
+
+ˆΓ1 ˆAˆ∥, 1
+2
+ˆU2
+i
+
+ˆ⊥
++τi
+h
+ˆΓ1 ˆAˆ∥, ln( ˆNi)
+i
+ˆ⊥.
+(10)
+With the E × B drift and the perpendicular magnetic flut-
+ter 3, the species advection velocities are
+ˆVe := ˆuE + ˆue˜b,
+(11)
+ˆVi := ˆuE + ˆUi˜b.
+(12)
+where ∇· ˆVz = 0. Hence, the equations in advective form
+are
+∂
+∂ˆt ˆne = −ˆVe ·∇ˆne −ˆne ˆb·∇ˆue,
+(13)
+∂
+∂ˆt
+ˆNi = −ˆVi ·∇ˆNi −ˆNi ˆb·∇ˆUi,
+(14)
+∂
+∂ˆt
+
+ˆue + 1
+µe
+ˆA∥
+
+= −ˆVe ·∇ˆue + 1
+µe
+ˆb·∇
+ ln ˆne −ˆφ
+
+, (15)
+∂
+∂ˆt
+  ˆUi + ˆΓ1 ˆA∥
+
+= −ˆVi ·∇ˆUi −τi ˆb·∇ln ˆNi −ˆb·∇ˆψ.
+(16)
+Here we used ˆNe ≈ˆne and ˆUe ≈ˆue, valid for electron mass
+ratios |µe| ≪1 at ρs scales and small β. This regime is char-
+acteristic of fusion plasma simulations dominated by drift-
+wave dynamics interacting with reconnecting magnetic field
+structures. While in a turbulent setting, the implementation
+of equations 7 requires a subgrid dissipation36–38 one gener-
+ally also needs regularization for centered differencing. This
+is done by transforming
+∂
+∂ˆt →∂
+∂ˆt +ν ˆ∇4
+ˆ⊥.
+(17)
+For the problem of magnetic reconnection one can either take
+the numerical diffusion into account21 or choose the scalar
+parameter ν small enough to prevent a strong influence on the
+reconnecting current sheet29. In the presented setting, a small
+hyperviscosity parameter of ν ∝10−6,10−7 is used, further
+discussed in III C.
+The system is closed by Ampère’s law,
+−1
+β
+ˆ∆⊥ˆAˆ∥= −ˆne ˆue + ˆΓ1( ˆNi ˆUi),
+(18)
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+4
+and
+the
+arbitrary-wavelength,
+non-Oberbeck–Boussinesq
+(NOB) polarization equation,
+ˆ∇·
+q
+ˆΓ0
+ˆNi
+ˆB2
+q
+ˆΓ0 ˆ∇ˆ⊥ˆφ
+
+= −∑
+z
+Zz ˆΓ1,z ˆNz.
+(19)
+The polarization equation may be written as
+∑
+z
+Zz ˆNz −ˆ∇· ˆP = 0,
+(20)
+where ˆP = ˆP1 + ˆP230,35 and
+ˆP1 := −∑
+z
+Zz ˆ∇⊥ˆΓ1,z
+ µzτz ˆNz/2
+
+,
+(21)
+ˆP2 := −∑
+z
+q
+ˆΓ0,z Zzµz
+ˆNz
+ˆB2
+q
+ˆΓ0,z ˆ∇ˆ⊥ˆφ
+
+.
+(22)
+Here the second-order Padé approximation ˆΓ1 ≈
+pˆΓ0 is
+used34, together with
+−ˆ∇·P1 = ∑
+z
+Zz(ˆΓ1 −1) ˆNz.
+(23)
+The respective OB and long wavelength (LWL) approxima-
+tion of the polarization equation are summed up in table III.
+The normalized total energy is
+ˆEtot = ∑
+z
+Z
+V dV
+
+Zzτz ˆNz ln( ˆNz)−Zz ˆNz ˆψ2,z
++Zzµz 1
+2 ˆNz ˆU2
+z +
+| ˆ∇⊥ˆAˆ∥|2
+2β
+
+(24)
+which consists of the Helmholtz free energy ˆEn, the E ×B en-
+ergy ˆEE×B, the parallel energy ˆEˆ∥, and the perturbed magnetic
+energy ˆEm. The chosen normalization targets turbulence at
+the scale of ρs, thereby defining the resolvable range of fluc-
+tuations and implying that only ion FLR effects are retained.
+These effects become significant mainly in large–aspect ratio
+systems and in turbulent magnetic-reconnection scenarios21.
+B.
+Oberbeck-Boussinesq approximated equations
+One can recover the OB (δF) limit, assuming a constant
+background density N0 and small perturbations ˆ˜Nz, substitut-
+ing ˆNz = 1+ ˆ˜Nz in the Full-F equations33. Further simplifica-
+tion is obtained by assuming ˆ˜nz ≪ˆN0 (or, in normalized form,
+ˆ˜nz ≪1), neglecting triple non-linearities and employing the
+δF polarization equation.
+GF model
+ˆP2
+ˆψ2
+Full-F
+−∑z
+pˆΓ0µzZz
+ˆNz
+ˆB2
+0
+pˆΓ0 ˆ∇⊥ˆφ −µz| ˆ∇⊥
+√ˆΓ0 ˆφ|2
+Full-F + OB
+−∑z µzZz
+ˆN0
+ˆB2
+0
+ˆΓ0 ˆ∇ˆ⊥ˆφ
+0
+Full-F + LWL
+−∑z µzZz
+ˆNz
+ˆB2
+0
+ˆ∇ˆ⊥ˆφ
+−µz| ˆ∇ˆ⊥ˆφ|2
+Full-F + OB + LWL −∑z µzZz
+ˆN0
+ˆB2
+0
+ˆ∇ˆ⊥ˆφ
+0
+TABLE III: Long wavelength (LWL) and
+Oberbeck-Boussinesq (OB) approximation of the
+polarization density ˆP2 and polarization part of the gyrofluid
+potential ˆψ2 for different models.
+∂
+∂ˆt
+ˆ˜ne = −
+ ˆφ, ˆ˜ne
+
+ˆ⊥+
+h
+ˆAˆ∥, ˆue
+i
+ˆ⊥,
+(25)
+∂
+∂ˆt
+ˆ˜Ni = −
+h
+ˆψ, δ ˆ˜Ni
+i
+ˆ⊥+
+h
+ˆΓ1 ˆAˆ∥, ˆUi
+i
+ˆ⊥,
+(26)
+∂
+∂ˆt
+
+ˆue + 1
+µe
+ˆAˆ∥
+
+= −
+
+ˆφ, ˆue + 1
+µe
+ˆAˆ∥
+
+ˆ⊥
+−
+−1
+µe
+h
+ˆAˆ∥, ˆ˜ne
+i
+ˆ⊥,
+(27)
+∂
+∂ˆt
+
+ˆUi + ˆΓ1 ˆAˆ∥
+
+= −
+h
+ˆψ, ˆUi + ˆΓ1 ˆAˆ∥
+i
+ˆ⊥+
++τi
+h
+ˆΓ1 ˆAˆ∥, ˆ˜Ni
+i
+ˆ⊥,
+(28)
+−1
+β
+ˆ∆⊥ˆAˆ∥= −ˆue + ˆΓ1
+  ˆUi
+
+,
+(29)
+1
+τi
+(ˆΓ0 −1) ˆφ = ˆ˜ne −ˆΓ1 ˆ˜Ni
+(30)
+Note, that the Full-F and Full-F + OB polarization equa-
+tions coincide only in their respective long-wavelength limit
+(LWL) (Table III). These equations match the model derived
+by Scott33. A key difference between the Full-F and Full-F +
+OB systems is the presence of cubic nonlinearities in all evo-
+lution equations.
+III.
+STABILITY ANALYSIS
+Section III A and Section III B concern the linearized sys-
+tem.
+The normal-mode analysis describes the asymptotic
+modal growth rate, whereas the non-modal analysis charac-
+terizes possible finite-time amplification caused by the non-
+normality of the linearized evolution operator. These mecha-
+nisms are distinct from the nonlinear explosive reconnection
+phase discussed in Section III C. However, in the Full-F sys-
+tem the nonlinear evolution continuously modifies the effec-
+tive linearized operator around the instantaneous state of the
+plasma. Consequently, transient amplification associated with
+non-normality may persist beyond the initial linear phase and
+contribute to the onset of nonlinear explosive reconnection.
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+5
+A.
+Linearized System of Equations
+To obtain an analytical estimate ˆγlin for the tearing insta-
+bility growth rate ˆγ, the approach of Tassi et al.39 is fol-
+lowed. The Full-F equations are linearized in the cold-ion
+limit τi = Ti/Te ≈0, whereby the gyroaveraging operators ˆΓ1
+and ˆΓ0 are eliminated (yielding, e.g.
+ˆψ = ˆφ). A harmonic
+ansatz of the form
+ˆF(x,y,t) = ˆFeq(ˆx)+ ˜F(ˆx) exp
+ i(ˆkˆy−ˆωˆt)
+
+,
+(31)
+with ˆω = i ˆγ and ˆF representing one of the six fields, is em-
+ployed.
+The analysis is restricted to the small-growth-rate
+regime ˆγ ≪1, using the following equilibrium functions,
+which are characteristic of a Harris-sheet initial condition.
+ˆne,eq(ˆx) = N0 = const.,
+(32)
+ˆNi,eq(ˆx) = N0,
+(33)
+ˆUe,eq(ˆx) =
+1
+βN0
+∇2
+⊥ˆAˆ∥,eq(ˆx),
+(34)
+ˆUi,eq(ˆx) = 0,
+(35)
+ˆφeq(ˆx) = 0,
+(36)
+ˆAˆ∥,eq(ˆx) = βA0 aˆ∥,eq(ˆx) = −βA0 ln(cosh(ˆx)),
+(37)
+Analogous to Refs.39,40, an analytical estimate for the tear-
+ing stability parameter ˆ∆′ is obtained in the marginally stable
+limit ˆ∆′ ≪1 (Appendix A) by matching the inner and outer
+solutions,
+ˆ∆′
+outer = 2
+ 
+1
+ˆkˆy
+−ˆkˆy
+!
+= ˆ∆′
+inner
+= βN0
+s
+ˆγlin
+A0ˆkˆy
+"
+2.12
+p
+β
++π
+ϕ−1 + µeN2
+0
+−µeN2
+0
+ 
+ˆγlin
+ι
+−µeN2
+0
+A0ˆkˆy
+!1/2 #
+.
+(38)
+Here,
+ι = β 2(A2
+0µe +N2
+0),
+(39)
+ϕ−1 = N2
+0
+
+1−µe
+
+1+
+2
+βN0
+
+,
+(40)
+and ˆkˆy denotes the normalized wave number in the ˆy direction.
+Equation (38) can be inverted point-wise for given values
+of ˆkˆy and β in order to obtain the linear tearing growth rate
+ˆγlin. The resulting dependence on β is shown in Figs. 1 and 2.
+For sufficiently small β ≲10−2, the growth rate initially in-
+creases with β. This behavior originates from the β −1/2 con-
+tribution in the inner-layer matching condition of Eq. (38),
+which dominates the low-β regime. At larger β, however,
+the growth rate decreases similar but slower than ˆγlin ∝β −1,
+consistent with pressure-dominated collisionless reconnection
+scalings discussed by Rogers et al.41 and later gyrokinetic
+studies42.
+The low-β increase differs from the trend reported in three-
+dimensional gyrofluid simulations by Biancalani et al.21,
+which may be attributed to differences in geometry, dimen-
+sionality, and closure assumptions. Finally, we emphasize that
+the present gyrofluid formulation is derived under a low-β or-
+dering. Consequently, the results presented here should be
+interpreted within this regime of validity, and quantitative de-
+viations are expected as β approaches unity.
+FIG. 1: Analytical estimate for the linear tearing growth rate
+ˆγlin at marginal stability as a function of β for different
+normalized wave numbers ˆkˆy, obtained from the inversion of
+Eq. (38). For sufficiently small β ≲10−2, the growth rate
+initially increases with β, while for larger values the
+dependence becomes weaker and eventually turns over
+depending on ˆkˆy and proximity to marginal stability.
+FIG. 2: Analytical estimate for the linear tearing growth rate
+ˆγlin at marginal stability over an extended β range. For
+sufficiently large β, the growth rate decreases similar but
+slower than ˆγlin ∝β −1, consistent with pressure-dominated
+collisionless reconnection scalings discussed in Refs.41,42.
+One has to note that this solution for the growth rate is very
+much dependent on the equilibrium function ˜Aˆ∥,eq, and a de-
+viation has to be expected when e.g.
+aˆ∥,eq(ˆx) =
+1
+cosh2(ˆx)
+(41)
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+6
+is used. Such initial conditions are very suitable for imple-
+mentation due to their boundary behavior, and we expect them
+to behave as analytically predicted in the linear regime due to
+the similarity in ˆ∆′.
+To translate the analytical result to the simulations we in-
+troduce the box-stability parameter ˆ∆′
+box
+ˆ∆′
+box = lim
+x→0+
+˜A′
+ˆ∥,out
+˜Aˆ∥,out
+−lim
+x→0−
+˜A′
+ˆ∥,out
+˜Aˆ∥,out
+= 2
+1
+ˆk −ˆk
+
+(42)
+where the Box size enters via ˆkˆy = πm/Lˆy. To get e.g. ˆkˆy = 1
+with Lˆy = 10π one needs m = 10, which results in a stability
+parameter of ˆ∆′
+box = 14.3108. To obey the limits of the linear
+stability analysis the system is perturbed with a suitable mode
+number, close to marginal stability. Note that the aspect ratio
+Lˆy/Lˆx does not explicitly show up in the dispersion relation,
+but as Lˆy enters via ˆkˆy a change in the aspect ratio results in
+a different stability parameter. As a result of the small x ap-
+proximation, rooted in the shrinking automatism of the current
+sheet, the initial ˆkˆx should not influence the general stability of
+the current sheet, while the aspect ratio of the sheet (note: not
+the box) still changes. This, and the general stability behavior
+will be investigated in the following sections with the goal of
+code verification. A wide scan of aspect-ratio effects is left
+for later work.
+B.
+Non-modal Analysis
+If a system’s evolution matrix A is non-normal, the non-
+orthogonality of its eigenvectors makes typical spectral analy-
+sis less useful43,44. Even if all eigenvalues of A have negative
+real parts, the evolution operator norm ∥etA ∥does not neces-
+sarily decay monotonically, but can exhibit transient growth.
+This behavior is related to the energy production operator
+B = A † + A , which governs the instantaneous growth rate
+of the norm.
+The evolution matrix A is obtained from the linearized
+cold-ion system by rewriting the equations in Fourier space
+and collecting the coupled perturbation variables into a state
+vector ˆu. For the constant-gradient equilibrium the resulting
+operator has constant coefficients, yielding a linear system of
+the form
+∂t ˆu = A ˆu.
+(43)
+For non-constant equilibrium profiles, the linearized equa-
+tions contain products between spatially varying equilibrium
+quantities and perturbation fields, for example terms of the
+form ˆAˆ∥,eq(ˆx)∂ˆy ˜ne or ∂ˆx ˆAˆ∥,eq ˜ue. Since multiplication in phys-
+ical space corresponds to convolution in Fourier space, these
+terms couple perturbations with different ˆkˆx.
+As a simple quantification of such behavior, one can ana-
+lyze the condition number
+κ(V) = ∥V∥∥V −1∥
+(44)
+with V being a matrix of eigenvectors of the evolution matrix
+A , for the solution of
+∂u(x,t)
+∂t
+= A u(x,t),
+u(x,t) = etA u(x,0).
+(45)
+For a normal matrix A , the norm of the system evolution
+satisfies
+∥v(t)∥
+∥v(0)∥≤∥eA t∥= eβ(A )t,
+(46)
+where β(A ) = max{Reλ : λ ∈Λ(A )} denotes the spectral
+abscissa, with Λ(A ) being the spectrum of A .
+For non-
+normal matrices, one obtains the bound
+∥eA t∥≤κ(V)eβ(A )t,
+(47)
+which can significantly overestimate the actual transient
+growth.
+A sharper characterization of the short-time behavior is
+given by the numerical range45
+W(A ) =
+⟨A x,x⟩
+⟨x,x⟩
+: x ̸= 0
+
+(48)
+and its rightmost point, the numerical abscissa
+η(A ) =
+sup
+z∈W(A )
+Re(z)
+(49)
+where we make use of the standard Hermitian inner product
+⟨·,·⟩. Another estimate for the transient behavior can be found
+via the ε-pseudospectral abscissa
+αε(A ) =
+sup
+z∈Λε(A )
+Re(z),
+(50)
+which is defined via definition III.1 (see further below). The
+spectral abscissa β(A ) determines the asymptotic growth or
+decay rate of the system and is therefore associated with
+modal stability analysis.
+In contrast, the numerical ab-
+scissa η(A ) characterizes the maximal instantaneous growth
+rate and provides information about possible short-time am-
+plification even when all eigenvalues are stable.
+The ε-
+pseudospectral abscissa αε(A ) measures how far the pseu-
+dospectrum extends into the unstable half-plane and therefore
+quantifies the susceptibility of the system to transient growth
+and perturbations of the evolution operator. For strongly non-
+normal operators, αε(A ) can substantially exceed the spec-
+tral abscissa, indicating the possibility of significant finite-
+time amplification despite asymptotic stability. When A is
+normal, the conditioning number κ is 1, while κ = ∞in the
+case of a non diagonalizable matrix. For strongly non-normal
+operators, quantitative predictions based solely on eigenval-
+ues may become insufficient, since transient amplification can
+depend sensitively on the conditioning number κ. Such an
+analysis is often called "non-modal" and has been carried out
+in similar context (e.g. Hasegawa-Wakatani model) in var-
+ious publications31,46–48. Transient amplification in tearing-
+type systems has been investigated in several related plasma
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+7
+models18,21,49,50. A modal analysis of the linearized Full-F
+model51 is performed to study any transient behavior. Alge-
+braic manipulations are carried out using Wolfram Mathemat-
+ica (v. 12.3)52. First, a simplified case with an initial condition
+ˆA ˆ
+∥,eq = a0 ˆx and constant gradient a0 is considered, for which
+ue and its derivatives vanish. The resulting evolution matrix
+reads
+Aconst. =
+
+
+
+
+
+
+
+
+a0κ
+0
+a0κˆkˆy −a0κ
+α
+a0κ
+α
+0
+a0κ
+α
+a0κµe
+α
+−a0κˆkˆyµe
+α
+a0κ
+α
+−a0κ
+α −ia0ˆkˆy
+ˆk2
+ˆx+ˆk2
+ˆy
+ia0ˆkˆy
+ˆk2
+ˆx+ˆk2
+ˆy
+0
+0
+−
+ia0ˆkˆy
+µe
+
+ˆk2
+ˆx+ˆk2
+ˆy
+
+ia0ˆkˆy
+µe
+
+ˆk2
+ˆx+ˆk2
+ˆy
+
+0
+0
+
+
+
+
+
+
+
+
+(51)
+If the initial ˆAˆ∥(and obviously ue etc.) has a spectrum on
+its own, one has to carry out the cyclic convolution for the
+product terms e.g.
+F( ˆAˆ∥,0 · ∂
+∂y ˆne) = (2π)−n
+2 F( ˆAˆ∥,0)∗F( ∂
+∂y ˆne).
+(52)
+Again, the evolution depends on the initial vector potential
+ˆAˆ∥,0 (determining all the dependent quantities) and one option
+is to make use of the Fourier-sum representation, singling out
+one mode number, and further implying periodic boundary
+conditions, so
+F( ˆAˆ∥,0) = F(a0 cos(nx)) = a0
+r
+π
+2 (δ(k −n)+δ(n+k)).
+(53)
+One can finally use the sifting property of the convolution
+Z −∞
+∞
+f(x)δ(x−n)dx = f(n)
+(54)
+to obtain an evolution matrix for each mode number n. The
+equilibrium profile introduces discrete spectral support at
+ˆkˆx = ±n. Consequently, the convolution terms act as mode-
+coupling operators in Fourier space, shifting perturbation
+modes according to ˆkˆx →ˆkˆx ±n. The resulting evolution ma-
+trix therefore remains parametrized by the perturbation wave
+numbers (ˆkˆx, ˆkˆy), while the integer n labels the (constant) equi-
+librium spectral component.
+An =
+
+
+
+
+
+
+
+
+
+
+
+
+
+βnˆkˆy
+
+µe
+
+2ˆk2
+ˆx+2ˆk2
+ˆy−
+√
+2πn4−2
+
++
+√
+2πn2+2
+
+4µe
+
+ˆk2
+ˆx+ˆk2
+ˆy−1
+
++4
+0
+βnµeˆkˆy
+
+ˆk2
+ˆx+ˆk2
+ˆy+n2−1
+
+2µe
+
+ˆk2
+ˆx+ˆk2
+ˆy−1
+
++2
+βnˆkˆy(1−n2µe)
+2µe
+
+ˆk2
+ˆx+ˆk2
+ˆy−1
+
++2
+√π
+2 βn3µeˆkˆy
+2µe
+
+ˆk2
+ˆx+ˆk2
+ˆy−1
+
++2
+1
+2βnˆkˆy
+−
+βnµeˆkˆy
+2µe
+
+ˆk2
+ˆx+ˆk2
+ˆy−1
+
++2
+1
+2βnˆkˆy
+ 
+µe
+µe
+
+ˆk2
+ˆx+ˆk2
+ˆy−1
+
++1 +1
+!
+1
+4
+
+(2πβ −i)µe +β
+
+4π
+µe+1 −4π +2
+
++i
+
+1
+4i(µe −1)
+−
+√π
+2 βµe
+µe+1
+√π
+2 β(µe−1)µe
+2(µe+1)
+−
+iˆkˆy
+2
+
+ˆk2
+ˆx+ˆk2
+ˆy
+
+−
+iˆkˆy
+2
+
+ˆk2
+ˆx+ˆk2
+ˆy
+
+0
+0
+
+
+
+
+
+
+
+
+
+
+
+
+
+(55)
+The resulting eigensystem shown in eq. 55 can then be an-
+alyzed for different initialisations with mode number m, vary-
+ing β and ˆkˆx,ˆy. At this point it makes sense to single out a
+low ˆkˆy and compare a few different values to investigate how
+the condition number scales with the system parameters. For
+ˆkˆy = 0, the condition number remains approximately constant
+at κ = 106 for all parameters, and generally large for ˆkˆy ̸= 0
+with a local minimum around marginal stability, yielding a
+possible explanation for transient behavior.
+To analyze the spectrum of the evolution operator A , we
+make use of the resolvent of A ∈Cn×n
+R(A ) = (zIn −A )−1
+(56)
+which is obviously singular when z is an eigenvalue λA of
+the operator. In the same way, we can define the spectrum
+of the operator Λ(A ) as the set of all values for which the
+resolvent becomes singular. Analogously one can define the
+ε pseudospectrum Λε(A ) as the set of complex numbers that
+satisfy definition III.143.
+Definition III.1 (ε- pseudospectrum).
+The set of complex numbers z, that satisfy
+(i) ∥(zIn −A )−1∥≥ε−1,
+(ii) σmin(zIn−A ) ≤ε, where σmin denotes the smallest sin-
+gular value,
+(iii) ∥A u−zu∥≤ε for some vector u with ∥u∥= 1,
+(iv) z is an eigenvalue of A +E, where E is a perturbation
+to A with ∥E∥≤ε.
+is called, the epsilon-pseudospectrum of Operator A.
+In a practical sense, one can now plot ε-contour lines of
+(zIn −A ), which, in terms of the spectrum, means, that we
+can look at the subsets of "almost" singular values, and this
+ε-pseudospectrum can be viewed as the spectrum of some
+perturbed matrix. Nevertheless, the pseudospectrum does not
+only contain information about a change in the spectrum under
+a perturbation of the operator but also gives information about
+the operator itself53. The pseudospectrum can be used to gain
+insight on transient effects on instabilities, and further, one
+can try to find parameters for the operator to prevent such tran-
+sient behavior. In Fig. 3, the ε-pseudospectrum of A is shown
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+8
+together with the boundary of the numerical range (blue dotted
+line) for an initial condition with n = 1. The rightmost point
+of the numerical range determines the numerical abscissa and
+provides an upper bound for the instantaneous growth rate
+at t = 0. For small ˆkˆy, the pseudospectral contours exhibit
+strong deformation and merging, indicating pronounced non-
+normality and the possibility of significant transient amplifi-
+cation. As ˆkˆy increases, the contours become progressively
+more localized and approach the circular structure character-
+istic of nearly normal operators. Simultaneously, the domi-
+nant eigenvalues approach the real axis and shift toward the
+unstable half-plane. The ε-pseudospectra extend substantially
+beyond the eigenvalue spectrum, indicating strong sensitivity
+of the evolution operator to perturbations and the presence of
+transient growth. The numerical abscissa remains positive for
+all considered ˆkˆy, implying the existence of initial conditions
+with short-time exponential amplification. From the extent of
+the ε-pseudospectra, transient growth factors of order 1/ε are
+expected. This indicates the possibility of substantial transient
+amplification and provides a possible mechanism facilitating
+the transition toward rapid nonlinear reconnection dynamics.
+FIG. 3: Black contours show ε-pseudospectral level sets of
+the evolution operator for decreasing perturbation levels
+ε = 10−1, 10−2, 10−3, 10−4, while black dots denote
+eigenvalues. The blue dotted curve indicates the boundary of
+the numerical range W(A ), whose rightmost point
+determines the numerical abscissa η(A ). Contour plots of
+the ε-pseudospectrum of An are shown for n = 1 and
+ˆkˆy = 0.1, 1, 10 (left, right, bottom), together with the
+numerical range boundary. For small ˆkˆy, the pseudospectral
+contours exhibit strong deformation and merging, indicating
+pronounced non-normality and the possibility of significant
+transient amplification. As ˆkˆy increases, the contours become
+progressively more localized and approach the circular
+structure characteristic of nearly normal operators.
+Simultaneously, the dominant eigenvalues approach the real
+axis and shift progressively toward the unstable half-plane.
+One may estimate transient growth by sampling perturbation
+matrices E with ∥E∥= ε →0 and evaluating the correspond-
+ing spectral abscissa43,
+γ(A) = lim
+ε→0αε(A).
+(57)
+Equivalently, one may infer bounds on transient growth di-
+rectly from the ε-pseudospectrum by considering the right-
+most extent of Λε(A) in the complex plane. For ˆkˆy ≤1, the
+largest observed values of αε(A) are approximately 0.2, which
+provides a more realistic upper bound on the transient growth
+rate than that suggested by the condition number alone.
+In the present analytical estimate, a very simple class of
+initial conditions has been employed. In practice, however,
+the dynamics may involve more complex perturbations, and
+it is therefore not surprising if estimates based on a restricted
+set of modes (e.g. a fixed mode number) do not quantitatively
+match numerical simulations.
+We conclude that the linearized operator exhibits very large
+condition numbers and is therefore strongly non-normal. This
+implies that transient amplification is a natural feature of the
+linearized dynamics and may occur in addition to, or before,
+the asymptotic modal growth described by the eigenvalues.
+The non-modal analysis should therefore not be interpreted
+as a direct description of the nonlinear explosive phase itself.
+Rather, it shows that the underlying Full-F operator is sus-
+ceptible to transient amplification, which can enhance pertur-
+bation amplitudes and thereby facilitate the transition toward
+nonlinear explosive reconnection18,20,21,54–56. Since the non-
+linear evolution continuously modifies the effective operator
+around the instantaneous state, non-modal amplification and
+nonlinear explosive growth should not be regarded as com-
+pletely separate mechanisms.
+The dominant contribution to non-normality arises from
+the off-diagonal coupling between the electromagnetic vari-
+ables and the density and velocity perturbations, in particu-
+lar from terms proportional to the equilibrium magnetic shear
+ˆA′
+∥,eq and to electron inertia through µe. These couplings ren-
+der the evolution matrix A non-self-adjoint and couple per-
+turbations associated with different physical energy channels.
+For the Fourier-sum equilibrium, additional non-normality
+is introduced by convolution-induced mode coupling, which
+shifts perturbations according to ˆkˆx →ˆkˆx ± n. Consequently,
+transient amplification may occur even in parameter regimes
+where the asymptotic modal growth rate is small.
+C.
+Tearing Instability and Rapid Nonlinear Acceleration of
+Magnetic Reconnection
+We now turn from the linearized stability analysis to
+fully nonlinear simulations of a tearing-unstable Harris-type
+sheet57.
+ˆAˆ∥= β ·
+
+A0
+cosh(η ·4π ˆx/Lˆx)2 +A1 ·cos(m·2π ˆy/Lˆy)
+
+cos(π ˆx/Lˆx)
+(58)
+ˆue =
+1
+N0 ·β
+ˆ∆ˆAˆ∥
+(59)
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+9
+with the parameters: sheet amplitude := A0, perturbation
+amplitude := A1, perturbation mode number (in y−direction)
+:= m, background density := N0, numerical sheet width pa-
+rameter := η. Throughout the following, the term "explosive"
+refers to the rapid nonlinear acceleration of the reconnection
+dynamics following the initial approximately linear tearing
+phase. To capture all X-points, one can make use of the rela-
+tive global partition reconnection rate58
+ˆγ = d
+dˆt ln(∑
+xp
+∆ˆΨ(ˆt)) = d
+dˆt ln(∑
+xp
+| ˆAˆ∥,eq(x0, ˆt)−ˆAˆ∥(xp, ˆt)|)
+(60)
+where all the X-points are located by finding local minima
+and tracking their evolution and ˆ∆ˆΨ = | ˆAˆ∥(⃗x,t) −ˆAˆ∥(⃗x0,0)|.
+This method requires the choice of an equilibrium vector po-
+tential Aˆ∥,eq, which for the analytical Harris-sheet is given by
+Eq. (58). Since the Harris-sheet equilibrium depends only on
+the radial coordinate ˆx, it is entirely contained in the ˆkˆy = 0
+Fourier component. In the numerical simulation, however, the
+initialized equilibrium is represented only through its discrete
+approximation, which is subject to spectral discretization, nu-
+merical filtering, boundary treatment, and finite floating-point
+precision. Comparing the perturbation directly with the ana-
+lytical equilibrium would therefore attribute these small nu-
+merical differences to the perturbation. Instead, we define
+the numerical equilibrium as the ˆkˆy = 0 Fourier component of
+ˆAˆ∥, providing a consistent separation between the background
+field and the finite-ˆkˆy perturbations throughout the simulation.
+The resulting differences with respect to the analytical equi-
+librium are small and depend on the resolved ˆkˆx spectrum33.
+For the scope of this paper, the numerical sheet-width pa-
+rameter η was set to unity, resulting in a physical sheet width
+of
+Lˆx
+4πη = 32ρs
+4π
+= 8
+π ρs ≈2.55ρs
+(61)
+for a domain of Lˆx = 32ρs.
+Figure 4 shows the nonlinear evolution of a tearing-unstable
+Harris-sheet configuration. The evolution proceeds through
+several distinct stages, including an initial transient phase, a
+quasi-steady reconnection phase, a subsequent phase of rapid
+nonlinear acceleration, and final saturation associated with the
+topological rearrangement of the magnetic field.
+Since the normalized vector potential evolved by the model
+contains the absorbed beta factor, ˆAˆ∥= β eAˆ∥, the normalized
+reconnected magnetic flux is defined as
+ˆΨ(ˆt) = ˆAˆ∥(x0, ˆt)−ˆAˆ∥(xX, ˆt),
+(62)
+where x0 and xX denote the corresponding O- and X-points.
+Using A∥= B0ρs ˆA∥/β and t = (L⊥/cs)ˆt, the normalized re-
+connection rate becomes
+Rrec = Erec
+B0vA
+=
+δ
+p
+β
+
+d ˆΨ
+dˆt
+,
+(63)
+where δ = ρs/L⊥. Since δ = 1 throughout the present work,
+Rrec =
+1
+p
+β
+
+d ˆΨ
+dˆt
+.
+(64)
+This diagnostic is distinct from the logarithmic tearing
+growth rate for a single X-point (eq. 60)
+ˆγ = 1
+∆ˆΨ
+d ∆ˆΨ
+dˆt
+= d
+dˆt ln
+ ∆ˆΨ
+
+.
+(65)
+which characterizes the relative growth of the reconnected
+flux rather than the reconnection electric field. Since both di-
+agnostics are derived from the same reconnected flux, they
+may exhibit similar temporal features, although they differ by
+the instantaneous factor 1/∆ˆΨ.
+For the case shown in Fig. 4, the normalized reconnection
+rate remains of order Rrec ≈0.1 during the quasi-steady phase
+and reaches a peak value of approximately Rrec ≈0.2 during
+the subsequent nonlinear acceleration phase, consistent with
+previously reported fast collisionless reconnection rates23,24.
+The simulation shown in Fig. 4 was selected because it ex-
+hibits particularly well-separated dynamical phases, allowing
+the transition from quasi-steady to rapid nonlinear reconnec-
+tion to be identified clearly. Depending on the parameters,
+however, the evolution may become more complex, with over-
+lapping linear and nonlinear phases and transient behavior
+arising from the interaction of multiple unstable modes.
+FIG. 4: Normalized reconnection rate Rrec = Erec/(B0vA) for
+a warm-ion Harris sheet with τi = 1, β = 5×10−3, and
+m = 1. The horizontal axis is given in output intervals
+∆ˆt = ˆt ∆output with ∆output = 1000. The evolution proceeds
+through an initial transient stage (I), a quasi-steady
+reconnection stage (II), a phase of rapid nonlinear
+acceleration (III), and final saturation (IV). This simulation
+was selected because these phases are particularly well
+separated. During stage II, Rrec ≈0.1, while stage III reaches
+a peak value of approximately Rrec ≈0.2.
+In the m = 1 case, reconnection proceeds through a single
+X-point, making it easy to distinguish the different phases of
+the evolution. For decreasing β (corresponding to increasing
+ˆde), the obtained growth rates decrease and generally exhibit a
+phase of exponential growth. The simulations shown in Fig. 5
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+10
+correspond to a separate parameter scan and are not identical
+to the illustrative case presented in Fig. 4. The presence of the
+linear phase is particularly visible in the logarithmic evolution
+of ˆ∆ˆΨ shown in Fig. 5.
+FIG. 5: Logarithmic time evolution of ˆ∆ˆΨ for different
+values of β. As expected from the dispersion relation, the
+growth rate decreases with decreasing β (corresponding to
+increasing ˆde). The approximately linear sections indicate the
+exponential-growth phase.
+Finally, the growth rate is investigated in the regime where
+the analytical estimate is applicable, using the small-stability-
+parameter approximation ˆ∆′ ≪1 with m = 4.9 for τi ∈{0,1}.
+This regime is close to marginal stability and is obtained by
+choosing ˆkˆy close to, but smaller than, unity. The linear phases
+of a current sheet perturbed with m = 1, for which the an-
+alytical estimate is not expected to be quantitatively valid,
+are additionally compared for arbitrary- wavelength and long-
+wavelength-approximated (LWL) polarization at Lˆx = Lˆy =
+32ρs, nˆx = nˆy = 1024, and ν = 10−8.
+In Fig. 6, the numerically obtained linear growth rates are
+compared with the analytical estimate for different parame-
+ters. Good agreement is observed for the marginally stable
+cases, whereas for m = 1 deviations become visible already
+at intermediate values of ˆde and grow more pronounced as
+ˆde approaches unity. The m = 1 case is also compared with
+results obtained from the open-source gyrofluid code FEL-
+TOR59.
+As expected, FLR effects play only a minor role
+in most cases, particularly when the polarization equation is
+used in long-wavelength-approximated form. Sensitivity to
+the polarization model is nevertheless observed for the m = 1
+system, while the deviation from the analytical estimate is
+reduced when arbitrary-wavelength polarization is combined
+with weak hyperviscosity ν ∼10−8.
+We emphasize that the analytical estimate was derived in
+the cold-ion limit τi →0, whereas some of the presented
+Full-F, Full-k simulations employ finite ion temperature with
+τi = 1. The comparison should therefore be interpreted as
+qualitative rather than as an exact quantitative agreement. The
+stronger departure of the LWL model becomes increasingly
+apparent as ˆde = de/ρs increases and finite-wavelength effects
+become relevant. Similar sensitivity of linear gyrofluid dy-
+namics to the Oberbeck–Boussinesq approximation and po-
+larization modeling has been discussed by Held et al.31.
+Figure 7 compares the Arakawa discretization with ν =
+10−7 and an upwind scheme for the arbitrary-wavelength
+NOB model and its long-wavelength-approximated counter-
+part (NOB+LWL). The latter discretization introduces nu-
+merical dissipation on its own60.
+The color contours rep-
+resent the parallel current density ˆJˆ∥, illustrating the forma-
+tion and nonlinear evolution of the reconnecting current sheet.
+Both discretization schemes produce qualitatively and quanti-
+tatively similar current structures, indicating that the centered
+Arakawa scheme with weak hyperdiffusion provides suffi-
+cient regularization without introducing significant numeri-
+cal artifacts. Moreover, reconnection proceeds more rapidly
+for the arbitrary-wavelength NOB polarization than for the
+NOB+LWL approximation, demonstrating the influence of
+finite-wavelength polarization effects. Overall, the agreement
+between the Arakawa and upwind results confirms that the ob-
+served differences arise from the physical model rather than
+from the numerical discretization.
+Figure 8 shows the time evolution of the normalized ˆkˆy
+spectrum of the parallel magnetic vector potential ˆAˆ∥for a
+marginally stable m = 4.9 current sheet and an unstable m = 1
+current sheet.
+For the marginally stable case, the initially excited mode
+persists for an extended period before lower mode numbers
+become appreciably populated. In contrast, the m = 1 case
+exhibits an earlier redistribution of spectral energy toward ad-
+ditional modes. This spectral broadening reflects nonlinear
+mode coupling during the evolution of the current sheet and
+is consistent with the transition from the quasi-linear to the
+nonlinear regime. The rapid nonlinear acceleration itself is
+identified by the reconnection-rate evolution shown in Fig. 4.
+The spectral evolution provides additional evidence that the
+rapid nonlinear acceleration identified in Fig. 4 is associated
+with nonlinear dynamics. Before the onset of rapid reconnec-
+tion, the spectrum remains comparatively localized around the
+initially excited perturbation and its weak harmonics. After
+the onset, however, a broad range of modes is rapidly excited,
+indicating nonlinear mode coupling and energy transfer across
+Fourier modes. From a spectral perspective, this transfer to-
+ward lower mode numbers is consistent with nonlinear beat-
+ing and sideband generation, while the lower-m modes them-
+selves possess a larger tearing drive and therefore grow more
+readily. Such spectral redistribution is not expected from the
+linear evolution of a fixed operator, including transient am-
+plification associated with non-normality alone. We therefore
+interpret the rapid nonlinear acceleration observed in Fig. 4 as
+a nonlinear reconnection event, which may nevertheless be fa-
+cilitated by the non-normal transient amplification discussed
+above.
+To investigate the time evolution of the current sheet and
+possible FLR effects, x-cuts of several quantities are plotted
+and compared at different times with results presented in the
+literature19,33. Figure 9 shows slices of δ ˆAˆ∥at the time when
+the x-point emerges, and changes in the indent of ˆAˆ∥due to ion
+FLR effects are observed, similar to those reported in Ref. 19,
+together with narrowing of the current sheet and island forma-
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+11
+FIG. 6: Analytical estimates ˆγlin (black dotted and dot-dashed lines) and numerically obtained linear growth rates ˆγ for
+marginally stable m = 4.9 and unstable m = 1 perturbations using different δF and Full-F models. The marginally stable cases
+show good agreement with the analytical estimate, whereas the m = 1 results are included only for qualitative comparison. For
+m = 1, deviations become visible already at intermediate ˆde and increase as ˆde approaches unity. The closest agreement is
+recovered when arbitrary-wavelength polarization is combined with weak hyperviscosity ν ∼10−8. Ion-FLR effects remain
+comparatively small in the square domain for most of the considered cases.
+FIG. 7: Comparison of the Arakawa discretization with ν = 10−7 and an upwind scheme for the arbitrary-wavelength NOB and
+NOB+LWL polarization models at comparable times. Both discretization schemes yield similar current-sheet structures, while
+reconnection proceeds more rapidly for the arbitrary-wavelength NOB model than for the NOB+LWL approximation.
+tion. However, at this stage of the reconnection, a larger island
+width is observed when ion temperature effects are included,
+and the electric potential is found to display the expected mul-
+tipolar structure. The characteristic left/right asymmetry as-
+sociated with ion FLR effects is clearly visible in the electro-
+static potential ˆφe, while only a comparatively weak asymme-
+try is observed in the parallel current density ˆJˆ∥.
+When the reconnection is almost completed and possible
+elongation of the reconnection zone is fully developed, the
+indent in ˆAˆ∥has nearly vanished as constant behavior is ap-
+proached. The electric potential then becomes rather chaotic
+with increased fine structure in the warm ion τi = 1 case,
+which translates via Nz to more fine structure in the current
+ˆJˆ∥.
+IV.
+PLASMOID FORMATION AND ASPECT RATIO
+EFFECTS
+To further test the Full-F Full-k framework of the code, a
+situation is constructed in which the initial current ˆJ is mainly
+carried by the ions,
+−1
+β
+ˆ∇2
+⊥ˆAˆ∥= ˆΓ1( ˆUi),
+(66)
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+12
+FIG. 8: Time evolution of the normalized ˆkˆy spectrum of the parallel magnetic vector potential ˆAˆ∥for the marginally stable
+m = 4.9 case (left) and the unstable m = 1 case (right). The equilibrium mode ˆkˆy = 0 is omitted from the displayed spectrum.
+The m = 1 panel corresponds to the same simulation shown in Fig. 4. The spreading of spectral energy away from the initially
+excited mode illustrates nonlinear mode coupling during reconnection.
+as shown in Fig. 10, where the species velocities ˆUz are shown
+seperately. In this regime, not only a disparity in the current
+evolution due to µe is expected, but the ion contribution in the
+polarization equation also becomes relevant when the gyro-
+center density amplitudes deviate significantly from the initial
+(or mean) value N0. Owing to the low electron inertia, a sig-
+nificant electron current is formed as a response, thereby con-
+tributing to the reconnection process. The resulting configu-
+ration exhibits plasmoid formation with intermediate x-points,
+which contribute to the total growth rate. Nevertheless, the ob-
+tained growth rate is found to be hardly comparable with the
+case in which the electron current is used for the initialisation,
+and the growth rates are generally smaller by a factor of 10 for
+all values of β. We further point out that the plasmoid forma-
+tion appears to happen almost independently in each species
+velocity ˆUz. This might be a result of the initial condition, and
+any real situation with a coherent history might never show
+such behaviour.
+In the regime where a significant fraction of the equilibrium
+current is carried by the ions, ion-FLR effects are expected to
+influence the nonlinear reconnection dynamics. We therefore
+consider an ion-current-supported Harris-type sheet and scan
+the ion temperature ratio τi and electron skin depth ˆde = de/ρs
+within the Full-F formulation.
+For a square domain with β = 10−4, electron mass ratio
+µe = −1/1836, and warm ions τi = 1, the reconnection devel-
+ops the characteristic quadrupolar electrostatic potential struc-
+ture around the X-point, which has previously been associated
+with stabilization and elongation of the reconnection zone61.
+Although this behavior is also observed in our simulations, it
+is not shown explicitly in the present manuscript.
+We next consider the same Harris-type-sheet initial condi-
+tion in an elongated domain with aspect ratio Lˆy/Lˆx = 2, for
+which secondary island formation is expected.
+Figures 11
+and 12 show Full-F simulations for two consecutive ranges
+of ˆde. Each panel is taken at a comparable nonlinear stage
+of the corresponding reconnection event, when the dominant
+magnetic island or secondary island structure has formed.
+Taken together, Figs. 11 and 12 represent a continuous qual-
+itative scan over ˆde. The transition from a single dominant
+island to a more structured plasmoid-mediated state occurs
+approximately between the smallest value shown in Fig. 11,
+ˆde ≃0.54, and the largest value shown in Fig. 12, ˆde ≃0.054.
+The comparison further shows that increasing τi modifies
+the local current-sheet morphology, but does not produce a
+systematic change in either the number of dominant plasmoids
+or the amount of small-scale structure across the investigated
+parameter range. Instead, the transition from a single dom-
+inant island to a more structured plasmoid-mediated state is
+mainly controlled by ˆde and by the nonlinear competition be-
+tween tearing modes. We emphasize that the statements re-
+garding the number of plasmoids and the separation into two
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+13
+FIG. 9: 1D slices of fields in x-direction at the beginning of
+the magnetic reconnection, when the X-point is formed.
+Although the observed reconnection rates are often similar,
+the time evolution of the exact quantities differs, including an
+asymmetry in the potential ˆφe and a weaker asymmetry in ˆJˆ∥
+at the X-point and plasmoid center.
+a.)
+b.)
+FIG. 10: Full-F parallel species-velocities ˆUz( ˆx) for an
+ion-current induced magnetic reconnection event with aspect
+ratio Lˆy
+Lˆx = 2 and τi = 1. The electron current shows two
+plasmoids growing, while there are no plasmoids developed
+in the ion current at this time of the reconnection.
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+14
+FIG. 11: Snapshots of the parallel current density for an ion-current-supported sheet with aspect ratio Lˆy/Lˆx = 2 in the Full-F
+formulation. The columns correspond to ion temperature ratios τi ∈{0,1,5}, while the rows correspond to
+ˆde ∈{5446.62, 544.662, 54.4662, 5.44662, 0.544662}. Each snapshot is taken at a comparable nonlinear stage, when the
+dominant magnetic island has formed. Finite ion temperature modifies the local current-sheet morphology, but no systematic
+increase in small-scale structure or in the number of dominant plasmoids is observed with increasing τi. A single main island is
+present in all cases shown here.
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+15
+FIG. 12: Snapshots of the parallel current density for an ion-current-supported sheet with aspect ratio Lˆy/Lˆx = 2 in the Full-F
+formulation. The columns correspond to ion temperature ratios τi ∈{0,1,5}, while the rows correspond to
+ˆde ∈{5.44662×10−2, 5.44662×10−3, 5.44662×10−4, 5.44662×10−5, 5.44662×10−6}. Each snapshot is shown at a
+comparable nonlinear stage of the reconnection event. For decreasing ˆde, secondary island formation and small-scale
+current-sheet structure become more pronounced. Although finite ion temperature modifies the local current-sheet morphology,
+the dominant plasmoid structure is mainly controlled by the tearing and plasmoid dynamics, and no systematic change in the
+number of dominant plasmoids is observed with increasing τi.
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+16
+ˆde regimes are qualitative observations from the present pa-
+rameter scan rather than quantitative scaling laws. Thus, in
+the simulated case and parameter range, ion-FLR effects influ-
+ence the detailed morphology of the reconnecting layer, while
+the dominant plasmoid topology is primarily set by the aspect
+ratio, electron skin depth, and tearing-mode dynamics.
+To investigate the general behavior with respect to the as-
+pect ratio, a Full-F system perturbed with m = 1 and τi = 1 is
+considered, and aspect ratios of up to Lˆy/Lˆx = 16 are exam-
+ined. Figure 13 shows that the number of plasmoids generally
+increases with increasing aspect ratio. From an aspect ratio
+of 8 onwards, reconnection is observed to proceed through
+large plasmoids whose sizes are comparable to those of the
+main islands. In these configurations, the phases of reconnec-
+tion vary strongly among the multiple X-points, such that re-
+connection may already be completed at some locations while
+still being at an early stage at others. At the highest aspect ra-
+tios considered, multiple regions containing small islands are
+observed around the main islands.
+V.
+CONCLUSION AND SUMMARY
+We have investigated collisionless magnetic reconnec-
+tion and plasmoid formation in a two-dimensional Full-F
+gyrofluid framework designed for fusion-relevant, strongly
+magnetized, low-β regimes.
+Using the recently developed
+GREENY code29, we quantified tearing-mode growth, tran-
+sient non-modal amplification, and nonlinear explosive recon-
+nection, and mapped the onset and morphology of plasmoid
+dynamics as functions of electron inertia, ion FLR effects, po-
+larization modeling, and system aspect ratio.
+A main outcome is that the Full-F gyrofluid model
+reproduces key signatures of fast collisionless reconnec-
+tion reported in Hall-MHD, gyrokinetic, and kinetic sim-
+ulations, with peak normalized reconnection rates of or-
+der Erec/(B0vA) ∼0.1–0.2 in the parameter range stud-
+ied23,24,26,27.
+In the marginally stable regime, numerically
+measured linear growth rates agree well with analytical
+tearing-mode estimates when arbitrary-wavelength polariza-
+tion is retained, whereas long-wavelength and Oberbeck–
+Boussinesq polarization approximations can introduce notice-
+able deviations at small β and intermediate ˆde. This demon-
+strates that consistent polarization physics is essential for
+quantitative reconnection studies at ρs scales.
+The linearized Full-F system is shown to be strongly non-
+normal. Large condition numbers, a positive numerical ab-
+scissa, and ε-pseudospectra extending into the unstable half-
+plane indicate that transient amplification is intrinsic to the
+linearized dynamics. This non-modal amplification should not
+be interpreted as a direct description of the nonlinear explosive
+phase itself. Rather, it shows that perturbations may be ampli-
+fied efficiently before or during the transition into the non-
+linear regime, beyond what is predicted by asymptotic modal
+growth alone. The explosive reconnection phase observed in
+the nonlinear simulations is instead associated with mode cou-
+pling, spectral broadening, and topological rearrangement of
+the reconnecting magnetic field. Thus, the non-modal anal-
+ysis provides a possible pathway for enhancing perturbation
+amplitudes, while the explosive phase itself remains a nonlin-
+ear reconnection process.
+Ion FLR effects are found to be secondary for linear growth
+rates in square domains, but they influence current-sheet mor-
+phology, island width, and the fine structure of the recon-
+nection region in warm-ion regimes, consistent with ear-
+lier gyrofluid and reduced-kinetic studies19,21.
+In particu-
+lar, when a significant fraction of the equilibrium current
+is carried by ions, FLR effects contribute to the shaping
+of the reconnection geometry and modify the local struc-
+ture of plasmoid-mediated reconnection in elongated systems
+through enhanced species disparity and nonlinear coupling.
+The aspect-ratio comparison shows that plasmoid forma-
+tion is promoted in elongated current sheets. With increasing
+Lˆy/Lˆx, the number of plasmoids generally increases, yield-
+ing multiple X-points and magnetic islands together with in-
+creasingly spatially inhomogeneous reconnection dynamics.
+At the largest aspect ratios considered, reconnection proceeds
+through coexisting large islands and surrounding smaller is-
+land structures, indicating a transition toward a multiscale re-
+connection regime.
+These observations are qualitative and
+should not be interpreted as a quantitative scaling law.
+Numerically, we emphasize that centered differencing re-
+quires explicit regularization.
+In our implementation this
+is achieved via a weak hyperdiffusion term, chosen small
+enough to avoid artificially broadening the reconnecting cur-
+rent sheet while still suppressing grid-scale noise.
+Impor-
+tantly, Fig. 7 demonstrates that an Arakawa discretization with
+ν = 10−7 and an upwind scheme yield very similar parallel-
+current structures for both the arbitrary-wavelength NOB and
+NOB+LWL polarization models, while reconnection is con-
+sistently accelerated when arbitrary-wavelength NOB polar-
+ization is employed. This comparison supports two key con-
+clusions:
+(i) the qualitative and quantitative reconnection
+dynamics reported here are not artifacts of the discretiza-
+tion choice, and (ii) the reconnection acceleration observed
+with arbitrary-wavelength NOB polarization reflects a physi-
+cal model difference rather than numerical bias.
+Finally, while convergence is robust for long-wavelength
+polarization at moderate resolution, arbitrary-wavelength po-
+larization introduces ρs-scale structure whose detailed origin
+and sensitivity to numerical dissipation merit further inves-
+tigation.
+Future work should therefore include systematic
+dissipation-parameter scans, improved iterative solvers for
+polarization/Ampère closures, and extensions toward three-
+dimensional coupling, such as shear-Alfvénic dynamics, and
+reconnection in the presence of drift-wave turbulence. Over-
+all, the present results establish Full-F gyrofluid modeling
+as a quantitatively consistent and computationally efficient
+framework for studying fast reconnection, transient amplifi-
+cation, and plasmoid dynamics in tokamak-relevant parameter
+regimes.
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+17
+FIG. 13: Full-F simulations of an ion-current-supported Harris sheet with aspect ratios r ∈{2,3,4,8,16} from left to right,
+using τi = 1 and LWL polarization. The number and characteristic size of the plasmoids generally increase with aspect ratio. At
+the highest aspect ratios, large islands are accompanied by regions containing multiple smaller islands.
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+18
+ACKNOWLEDGMENTS
+This work has been carried out within the framework of
+the EUROfusion Consortium, funded by the European Union
+via the Euratom Research and Training Programme (Grant
+Agreement No 101052200 — EUROfusion).
+Views and
+opinions expressed are however those of the author(s) only
+and do not necessarily reflect those of the European Union or
+the European Commission. Neither the European Union nor
+the European Commission can be held responsible for them.
+This work was supported by the UiT Aurora Centre
+Program, UiT The Arctic University of Norway (2020). This
+research was funded in whole or in part by the Austrian
+Science Fund (FWF) [P 34241-N].
+The author thanks Bruce Scott and Matthias Wiesenberger
+(DTU) for valuable discussions.
+A.
+Author Contributions
+F. F. Locker:
+Data Curation (lead); Conceptualization
+(equal); Validation (equal); Software (equal); Visualization
+(equal); Writing - original draft (lead); Methodology (equal);
+Formal analysis (lead); Project Administration (equal); M.
+Rinner: Validation (supporting); Visualization (equal); Soft-
+ware (supporting); M. Held:
+Conceptualization (equal);
+Methodology (equal); A. Kendl: Supervision (lead); Concep-
+tualization (equal); Writing – review & editing (equal); Re-
+sources (lead); Project Administration (equal);
+DATA AVAILABILITY STATEMENT
+The full code is available on https://git.uibk.ac.at/
+c7441315/greeny and the presented data that supports the
+findings of this study are available from the corresponding au-
+thor upon reasonable request.
+Appendix A: Derivation of the Dispersion Relation
+After neglecting second order terms, we find the linearised
+system of equations
+i g
+β ˜ne = −a′
+||,eq
+A0
+N0
+a′′
+||,eq ˜ne +N0 ˜Ue
+
++
++a′′′
+||,eq ˜A||,
+(1L)
+i g
+β
+˜Ni =−a′
+||,eq N0 ˜Ui,
+(2L)
+i g
+β
+
+˜Ue + 1
+µe
+β ˜A||
+
+= −
+ 1
+βN0
+a′′′
+||,eq + 1
+µe
+a′
+||,eq
+
+˜φ+
++
+1
+µeN0
+a′
+||,eq ˜ne −A0
+N0
+a′′
+||,eq
+
+a′
+||,eq ˜Ue −1
+N0
+a′′′
+||,eq ˜A||
+
+,
+(3L)
+i
+β g
+  ˜Ui +β ˜A||
+
+=−a′
+||,eq ˜φ,
+(4L)
+−
+
+˜A′′
+|| −k2 ˜A||
+
+= N0
+  ˜Ui −˜Ue
+
+−A0
+N0
+a′′
+||,eq ˜ne, (5L)
+−
+  ˜φ ′′ −k2 ˜φ
+
+= 1
+N0
+  ˜Ni −˜ne
+
+.
+(6L)
+where we introduced the quantity g :=
+γ
+kA0 . From this set one
+can derive another equation by subtracting equation (1L) from
+(2L) and substituting the
+  ˜Ui −˜Ue
+
+term with equation (5L)
+and the
+  ˜Ni −˜ne
+
+term with equation (6L). Conducting this,
+one gets
+igN0 ( ˜φ ′′ −k2 ˜φ)−a′′′
+||,eq β ˜A|| +a′
+||,eq (β ˜A′′
+|| −k2β ˜A||) = 0.
+(7L)
+This last equation is very fundamental and found as an inter-
+mediate result in many other derivations of the tearing insta-
+bility parameter39,62.
+1.
+Solving for different Regimes
+Solving this system of equations for ˜Aˆ∥and ˜φ we use the
+ordering
+ˆ∆′de ≪1,
+γ ≪1,
+d2
+e ≪1,
+(A1)
+to obtain an analytically solvable differential equation. Sub-
+stitutions, rearrangements and simplifications were done by
+pen and paper and double checked with the CAS Wolfram
+Mathematica.52 For small growth rates γ we can decouple φ
+and ˜Aˆ∥in equation 7L and obtain
+−a′′′
+||,eq ˜A|| +a′
+||,eq ( ˜A′′
+|| −k2 ˜A||) = 0.
+(A2)
+which is a Legendre differential equation. Note that ne-
+glecting γ terms holds only because g becomes independent
+of β beforehand. Otherwise that would not universally hold
+as β ≪1 too. With
+a′
+||,eq = −tanh(x)
+and
+a′′′
+||,eq = 2 tanh(x)
+cosh2(x)
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+19
+The solution is
+˜A||,out = ˜A||,0
+(
+e−kx (1+tanh(x)/k),
+x > 0
+ekx (1−tanh(x)/k),
+x < 0 ,
+(A3)
+where ˜A||,0 ∈R is an arbitrary constant.
+The function has a discontinuous derivative at x = 0, just
+as it is needed for the tearing stability parameter ˆ∆′, which is
+defined by the solution of this outermost region
+ˆ∆′
+outer = lim
+x→0+
+˜A′
+||,out
+˜A||,out
+−lim
+x→0−
+˜A′
+||,out
+˜A||,out
+= 2
+1
+k −k
+
+.
+(A4)
+For small x one can linearize the above solution. Near the
+resonant surface at x = 0 the outer solution behaves like
+˜A||,out(x) ≈˜A||,0
+
+1+
+ˆ∆′
+2 |x|
+
+.
+Lets now solve the equations for the so called "inner region"
+close to the current sheet, so for |x| ≪1.
+By
+Taylor-expanding
+the
+used
+equilibrium
+function
+a||,eq(x) = −ln(cosh(x)) one finds
+a||,eq(x) ≈0,
+a′
+||,eq(x) ≈−x,
+(A5)
+a′′
+||,eq(x) ≈−1,
+a′′′
+||,eq(x) ≈2x.
+(A6)
+Since all k2 terms originate from a y derivative, (k = ˆkˆy),
+and the variations of the functions are larger in x-direction,
+the following can be applied
+k2 ˜φ ≪˜φ ′′,
+(A7)
+k2 ˜A|| ≪˜A′′
+||,
+(A8)
+ k2 −2
+ ˜A|| ≪˜A′′
+||,
+(A9)
+With these approximations the equations (1L) to (7L) be-
+come
+
+i g
+β + A0
+N0
+x
+
+˜ne = N0 x ˜Ue + 2x ˜A||,
+(1x)
+i g
+β
+˜Ni = N0 x ˜Ui,
+(2x)
+
+i g
+β + A0
+N0
+x
+
+˜Ue =−
+
+ig 1
+µe
++ A0
+N0
+2
+N0
+x
+
+˜A||
+(A10)
+−x
+ 2
+βN0
+−1
+µe
+
+˜φ −
+1
+µeN0
+x ˜ne,
+(3x)
+i g
+β
+˜Ui =−ig ˜A|| +x ˜φ,
+(4x)
+−˜A′′
+|| = N0
+  ˜Ui −˜Ue
+
++ A0
+N0
+˜ne,
+(5x)
+−˜φ ′′ = 1
+N0
+  ˜Ni −˜ne
+
+,
+(6x)
+0 = g ˜φ ′′ +i x
+N0
+β ˜A′′
+||.
+(7x)
+We now want to find an ODE for ˜Aˆ∥. For that we start with 7x
+and eliminate ˜φ ′′ to obtain
+g(ne −Ni) = βix ˜A′′
+ˆ∥.
+(A11)
+Then one has to insert for ne (eliminate Ue in the electron den-
+sity equation first), Ui and Ni to get
+˜A′′
+ˆ∥= −˜Aˆ∥βN0 −iβN0φx
+g
++
+2 ˜Aˆ∥g2µeN2
+0
+Ω
+−
+(A12)
+−
+˜Aˆ∥β 2g2N3
+0
+Ω
++ 2igµeN2
+0φx
+Ω
+−iβgN3
+0φx
+Ω
+(A13)
+where Ω= −g2µeN2
+0 + 2iA0βgµeN0x + β 2(A2
+0µe + N2
+0)x2 is
+used to shorten it. We can rearrange that to
+˜A′′
+ˆ∥+N0
+[Ωβ +g2N0(βN0 −2µe)]( ˜Aˆ∥g+iφx)
+gΩ
+= 0.
+(A14)
+The imaginary part of Ω, Im[Ω] = 2A0βgµeN0x is relatively
+small and can be neglected. This can be cast into the form of
+˜A′′
+ˆ∥= κ
+
+˜Aˆ∥+ i ˜φx
+g
+
+(A15)
+where κ is now
+κ = N0(g2N0(βN0 −µe(2+βN0))+β 3(A2
+0µe +N2
+0)x2)
+−g2µeN2
+0 +β 2(A2
+0µe +N2
+0)x2
+.
+(A16)
+The small ˆ∆′ hypothesis allows one to set ˜A||,in approximately
+constant around the resonant surface x = 0 (constant- ˜A||,in ap-
+proximation), thus to apply this one sets ˜A||,in(x) = ˜A||,in,0 +
+˜A||,in,1(x) with | ˜A||,in,1| ≪˜A||,in,0. Inserting this into relation
+A15 yields
+1
+κ
+  ˜A||,in,0 + ˜A||,in,1
+′′ =
+  ˜A||,in,0 + ˜A||,in,1
+
++ix
+g
+˜φ
+(A17)
+⇔
+(A18)
+1
+κ
+˜A′′
+||,in,1 = ˜A||,in,0
+ 
+1+
+˜A||,in,1
+˜A||,in,0
+!
++ix
+g
+˜φ
+(A19)
+⇒
+1
+κ
+˜A′′
+||,in,1 = ˜A||,in,0 +ix
+g
+˜φ
+(A20)
+⇔
+˜A′′
+||,in,1 = κ
+
+˜A||,in,0 −x
+
+−i
+˜φ
+g
+
+.
+(A21)
+Without loss of generality we can set ˜A||,in,0 = 1 and obtain
+˜A′′
+||,in,1 = κ
+
+1−x ˜ξ
+
+(A22)
+where we defined the displacement function ˜ξ = −i ˜φ/g39. At
+this point it is helpful to rewrite κ and defining the new quan-
+tities
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+20
+ϕ−1 := N2
+0(1−µe(1+
+2
+βN0
+))
+(A23)
+λ = β 2(A2
+0µe +N2
+0)
+(A24)
+to obtain
+κ = N0(g2N0(βN0 −µe(2+βN0))+β 3(A2
+0µe +N2
+0)x2)
+−g2µeN2
+0 +β 2(A2
+0µe +N2
+0)x2
+=
+= N0β
+σ + x2
+δ 2
+ε + x2
+δ 2
+(A25)
+where we introduce: δ := √g as a renormalization factor,
+the parameter σ := gϕ−1λ −1 and the expansion parameter
+ε := −gN2
+0 (µe)λ −1. We now want to first solve the ODE for
+φ or ξ(x). So we use equation 7x to eliminate ˜A ˆ∥
+˜Aˆ∥,in = N0β
+σ + x2
+δ 2
+ε + x2
+δ 2
+
+1−x ˜ξ
+
+= ig ˜φ ′′
+xβ N0
+(A26)
+and after transformation of
+ig
+x
+˜φ ′′ = β 2 σ + x2
+δ 2
+ε + x2
+δ 2
+
+1−x(−1)
+˜φ
+g
+
+(A27)
+−g2
+x
+˜ξ ′′ = β 2 σ + x2
+δ 2
+ε + x2
+δ 2
+
+1−x ˜ξ
+
+(A28)
+g2
+x
+˜ξ ′′ = −β 2 σ + x2
+δ 2
+ε + x2
+δ 2
+
+1−x ˜ξ
+
+(A29)
+g2
+x
+˜ξ ′′ = β 2 σ + x2
+δ 2
+ε + x2
+δ 2
+
+x ˜ξ −1
+
+(A30)
+with
+z := x
+δ ,
+ˆξ(z) := δ ˜ξ(δz),
+(A31)
+⇒
+ˆξ ′′(z) = δ d2
+dz2 ˜ξ(x)
+= δ d
+dz
+dx
+dz
+d
+dx
+˜ξ(x)
+
+= δ 2 dx
+dz
+d
+dx
+˜ξ ′(x)
+= δ 3 ˜ξ ′′(x),
+This equation turns into a second order differential equation
+in z for ˆξ
+g2
+δ 3 ˆξ ′′(z) = δ 4
+δ 3 ˆξ ′′(z) = β 2zδ(z ˆξ −1)z2 +σ
+z2 +ε
+(A32)
+ˆξ ′′(z) = β 2z(z ˆξ −1)z2 +σ
+z2 +ε .
+(A33)
+This differential equation can be solved analytically in the
+case where ε ≪σ ≪1 ordering is applied (large z ordering)
+ˆξ ′′ = −β 2z+β 2 ˆξz2
+(A34)
+and the boundary conditions
+ˆξ(0) = 0,
+lim
+x→∞
+ˆξ(x) = x−1
+(A35)
+apply. The solution, given by Goldston, Rutherford and Furth,
+is33
+ˆξ(z) = β z
+2
+Z π/2
+0
+exp
+
+−β z2
+2 cos(θ)
+
+sin1/2(θ)dθ.
+(A36)
+Having an expression for ˆξ we now can try to solve the
+integral for the matching parameter, making use of the relation
+for ˜A
+′′
+ˆ∥(eq. A26)
+ˆ∆′ =
+Z ∞
+∞
+dx ˜A′′
+ˆ∥=
+(A37)
+=
+Z ∞
+∞dxN0β
+σ + x2
+δ 2
+ε + x2
+δ 2
+
+1−x ˜ξ
+
+=
+(A38)
+=
+Z ∞
+∞dzδN0β(1−z ˆξ)z2 +σ
+z2 +ε
+(A39)
+An expression for ˜A′′
+||,in,1 was obtained by substituting via
+equation (A31) and rearranging to
+ˆ∆′
+inner = βN0
+Z ∞
+−∞
+(x/δ)2 +σ
+(x/δ)2 +ε
+
+1−x
+δ δ ˜ξ(x)
+
+(A40)
+= βN0 δ
+Z ∞
+−∞
+z2 +σ
+z2 +ε
+
+1−z ˆξ(z)
+
+dz
+(A41)
+= βN0 δ
+Z ∞
+−∞
+
+1+ σ
+ε
+1
+1+z2/ε −
+1
+1+z2/ε
+
+1−z ˆξ(z)
+
+dz
+(A42)
+=: βN0 δ
+
+I1 +
+σ −ε
+ε
+)
+
+I2
+
+,
+(A43)
+The main contribution to the integral is in the regions for |z| >
+σ or z2 ≫σ ≫ε. Evaluating the first Integral one finds40,63
+I1 =
+Z ∞
+−∞(1−z ˆξ(z))dz
+(A44)
+≈2.12
+p
+β
+(A45)
+which can be tested by numerical evaluation of the integral.
+Outside of the region z ∈[−σ,σ] the function
+f2(z) =
+1
+1+z2/ε
+practically vanishes and suppresses every function it gets mul-
+tiplied to. Thus the function f2(z)(1−z ˆξ(z)) is only non-zero
+inside this region. Together with the leading order solution
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+21
+valid for |z| ≲σ/α (has been numerically tested by us for
+small ε) one concludes
+I2 =
+Z ∞
+−∞
+1−z ˆξ(z)
+1+z2/ε dz
+≈πε1/2.
+(A46)
+ˆ∆′
+inner = βN0 δ
+ 
+2.12
+p
+β
++
+σ −ε
+ε
+
+π ε1/2
+!
+.
+(A47)
+Substituting the definitions one finally gets
+ˆ∆′
+outer = 2
+1
+k −k
+
+= ˆ∆′
+inner =
+= βN0
+s γlin
+A0k
+"
+2.12
+p
+β
++π
+ 1
+ϕ + µeN2
+0
+−µeN2
+0
+ γ
+λ
+−µeN2
+0
+A0k
+1/2#
+(A48)
+1A. H. Boozer, “Why fast magnetic reconnection is so prevalent,” Journal of
+Plasma Physics 84, 715840102 (2018).
+2E. G. Zweibel and M. Yamada, “Perspectives on magnetic reconnection,”
+Proceedings of the Royal Society A 472, 20160479 (2016).
+3A. Letsch, H. Zohm, F. Ryter, W. Suttrop, A. Gude, F. Porcelli, C. An-
+gioni, and I. Furno, “Incomplete reconnection in sawtooth crashes in asdex
+upgrade,” Nuclear Fusion 42 (2002).
+4E. N. Parker, “The generation of magnetic fields in astrophysical bodies. i.
+the dynamo equations,” Astrophysical Journal 162, 665 (1970).
+5E. N. Parker, “Sweet’s mechanism for merging magnetic fields in conduct-
+ing fluids,” Journal of Geophysical Research 62, 509–520 (1970).
+6H. E. Petschek, “Magnetic field annihilation,” AAS/NASA Symposium on
+the Physics of Solar Flares 2372, 425 (1964).
+7D. Uzdensky, N. F. Loureiro, and A. A. Schekochihin, “Fast magnetic re-
+connection in the plasmoid-dominated regime,” Physical Review Letters
+105, 235002 (2010).
+8N. Loureiro, A. A. Schekochihin, and S. C. Cowley, “Instability of cur-
+rent sheets and formation of plasmoid chains,” Phys. Plasmas 14, 100703
+(2007).
+9H.
+Baty,
+“On
+the
+onset
+of
+the
+plasmoid
+instability,”
+Phys.
+Plasmas
+19,
+092110
+(2012),
+https://pubs.aip.org/aip/pop/article-
+pdf/doi/10.1063/1.4752744/16124733/092110_1_online.pdf.
+10A. Bhattacharjee, H. Yi-Min, H. Yang, and B. Rogers, “Fast reconnection
+in high-lundquist-number plasmas due to the plasmoid instability,” Phys.
+Plasmas 16 (2009), 10.1063/1.3264103.
+11L. Comisso and D. Grasso, “Visco-resisitive plasmoid instability,” Phys.
+Plasmas 23 (2016), 10.1063/1.4942940.
+12L. Comisso, M. Lingam, Y.-M-Huang,
+and A. Bhatacharjee, “Gen-
+eral theory of the plasmoid instability,” Phys. Plasmas 23 (2016),
+10.1063/1.4964481.
+13L.
+Ni,
+U.
+Ziegler,
+Y.-M.
+Huang,
+J.
+Lin,
+and
+Z.
+Mei,
+“Ef-
+fects
+of
+plasma
+β
+on
+the
+plasmoid
+instability,”
+Phys.
+Plas-
+mas
+19,
+072902
+(2012),
+https://pubs.aip.org/aip/pop/article-
+pdf/doi/10.1063/1.4736993/16114983/072902_1_online.pdf.
+14F. Pucci and M. Velli, “Reconnection of quasi-singular current sheets: the
+“ideal” tearing mode,” The Astrophysical Journal Letters 780, L19 (2013).
+15Y.-M. Huang, L. Comisso, and A. Bhattacharjee, “Plasmoid instability in
+evolving current sheets and onset of fast reconnection,” The Astrophysical
+Journal 849, 75 (2017).
+16L. Comisso and D. Grasso, “Visco-resistive plasmoid instability,” Phys.
+Plasmas 23 (2016).
+17J. M. G. Morillo and A. Alexakis, “Magnetic reconnection, plasmoids and
+numerical resolution,” Journal of Fluid Mechanics 1007, R3 (2025).
+18M. Ottaviani and F. Porcelli, “Nonlinear collisionless magnetic reconnec-
+tion,” Phys. Rev. Lett. 71 (1993), 10.1103/PhysRevLett.71.3802.
+19D. Grasso, F. Califano, F. Pegoraro, and F. Porcelli, “Ion larmor radius
+effects in collisionless reconnection,” Plasma Physics Reports 26, 512–518
+(2000).
+20L. Comisso, D. Grasso, F. L. Waelbroeck,
+and D. Borgogno, “Gyro-
+induced acceleration of magnetic reconnection,” Phys. Plasmas 60 (2013),
+10.1063/1.4821840.
+21A. Biancalani and B. Scott, “Observation of explosive collisionless recon-
+nection in 3d nonlinear gyrofluid simulations,” EPL 97, 15005 (2012).
+22B. Scott, “Derivation via free energy conservation constraints of gy-
+rofluid equations with finite-gyroradius electromagnetic nonlinearities,”
+Phys. Plasmas 17, 102306 (2010).
+23M. A. Shay, J. F. Drake, B. N. Rogers, and R. E. Denton, “The scaling of
+collisionless, magnetic reconnection for large systems,” Geophysical Re-
+search Letters 26, 2163–2166 (1999).
+24J. Birn, J. F. Drake, M. A. Shay, and et al., “Geospace environmental mod-
+eling (gem) magnetic reconnection challenge,” Journal of Geophysical Re-
+search: Space Physics 106, 3715–3719 (2001).
+25R. Numata, W. Dorland, G. G. Howes, N. F. Loureiro, B. N. Rogers, and
+T. Tatsuno, “Gyrokinetic simulations of the tearing instability,” Phys. Plas-
+mas 18, 112106 (2011).
+26M. Yamada, R. Kulsrud, and H. Ji, “Magnetic reconnection,” Reviews of
+Modern Physics 82, 603–664 (2010).
+27C. Granier, D. Borgogno, D. Grasso,
+and E. Tassi, “Gyrofluid analysis
+of electron βe effects on collisionless reconnection,” Journal of Plasma
+Physics 88, 905880111 (2022).
+28A. H. Boozer, “Physics of magnetically confined plasmas,” Rev. Mod. Phys.
+76, 1071–1141 (2005).
+29F. Locker, M. Held, T. Stocker-Waldhuber, A. Stürz, M. Rinner,
+and
+A. Kendl, “Greeny: A full-f 2d gyrofluid reconnection code,” Computer
+Physics Communications , 109807 (2025).
+30A. Kendl, “Tiff:
+Gyrofluid turbulence in full-f and full-k,” Computer
+Physics Communications 294 (2023), 10.1016/j.cpc.2023.108953.
+31M. Held, M. Wiesenberger, and A. Kendl, “The collisional drift wave insta-
+bility in steep density gradient regimes,” Nuclear Fusion 59, 026015 (2019).
+32J.
+Madsen,
+“Full-f
+gyrofluid
+model,”
+Phys.
+Plasmas
+20
+(2013),
+10.1063/1.4813241.
+33B. Scott, Turbulence and Instabilities in Magnetised Plasmas: Volume 2
+(IOP Publishing, 2021).
+34M. Held, M. Wiesenberger, and A. Kendl, “Padé-based arbitrary wave-
+length polarization closures for full-f gyro-kinetic and -fluid models,” Nucl.
+Fusion 60 (2020), 10.1088/1741-4326/ab7a68.
+35M. Held and M. Wiesenberger, “Beyond the oberbeck–boussinesq and
+long wavelength approximation,” Nucl. Fusion 63 (2022), 10.1088/1741-
+4326/aca9e0.
+36S. Smith and G. Hammett, “Eddy viscosity and hyperviscosity in spectral
+simulations of 2d drift wave turbulence,” Phys. Plasmas 4, 978–990 (1997).
+37B. D. Scott, “The mechanism of self-sustainment in collisional drift wave
+turbulence,” Physics of Fluids B: Plasma Physics 4, 2468–2494 (1992).
+38S. J. Camargo, M. K. Tippett, and I. L. Caldas, “Nonmodal energetics of
+electromagnetic drift waves,” Phys. Plasmas 7, 2849–2855 (2000).
+39E. Tassi, D. Grasso, and L. Comisso, “Linear stability analysis of colli-
+sionless reconnection in the presence of an equilibrium flow aligned with
+the guide field,” European Physical Journal D 68, 88 (2014).
+40H. P. Furth, J. Killeen, and M. N. Rosenbluth, “Finite-resistivity instabili-
+ties of a sheet pinch,” Physics of Fluids 6, 459–484 (1963).
+41B. N. Rogers, S. Kobayashi, P. Ricci, W. Dorland, J. F. Drake, and T. Tat-
+suno, “Gyrokinetic simulations of collisionless magnetic reconnection,”
+Physics of Plasmas 14, 092110 (2007).
+42M. J. Pueschel, F. Jenko, D. Told, and J. Büchner, “Gyrokinetic simulations
+of magnetic reconnection,” Physics of Plasmas 18, 112102 (2011).
+43L. N. Trefethen, “Spectra and pseudospectra,” in The Graduate Student’s
+Guide to Numerical Analysis ’98 (Springer, 1999) pp. 217–250.
+44P. J. Schmid and D. S. Hennington, Stability and Transition in Shear Flows
+(Springer, 2001) iSBN: 0387989854.
+45L. N. Trefethen, “Pseudospectra of linear operators,” SIAM REV. 39, 383–
+406 (1997).
+46S. J. Camargo, M. K. Tippett, and I. L. Caldas, “Nonmodal energetics of
+resistive drift waves,” PHYSICAL REVIEW E 85, 3 (1998), 10.1103/Phys-
+RevE.58.3693.
+47B. Friedman and T. Carter, “A non-modal analytical method to predict tur-
+
+Gyrofluid Magnetic Reconnection Beyond the δF Approximation
+22
+bulent properties applied to the hasegawa-wakatani model,” Phys. Plasmas
+22 (2015), 10.1063/1.4905863.
+48L. N. Trefethen, A. E. Trefethen, S. C. Reddy, and T. A. Driscol, “Hydro-
+dynamic stability without eigenvalues.” Science 261, 578–584 (1993).
+49D. MacTaggart, “The non-modal onset of the tearing instability,” J. Plasma
+Phys. 84 (2018), 10.1017/S0022377818001009.
+50M. Hirota, “An explosive scaling law for nonlinear magnetic reconnection
+and its insensitivity to microscopic scales,” Plasma and Fusion Research 12
+(2017), 10.1585/pfr.12.1401010.
+51F. F. Locker, 2D Full-F Gyrofluid Magnetic Reconnection, Phd thesis, Uni-
+versity of Innsbruck, Innsbruck (2025), available at https://ulb-dok.
+uibk.ac.at/.
+52Wolfram Research, Inc., “Mathematica, version 12.3,”.
+53L. N. Trefethen, M. Contedini, and M. Embree, “Spectra, pseudospectra,
+and localization for random bidiagonal matrices,” Communications on Pure
+and Applied Mathematics LIV, 0595–0623 (2001).
+54A. Y. Aydemir, “Nonlinear studies of m= 1 modes in high-temperature plas-
+mas,” Phys. Fluids B. 4, 3469–3472 (1992).
+55A. Stanier, A. N. Simakov, L. Chacón, and W. Daughton, “Fluid vs. kinetic
+magnetic reconnection with strong guide fields,” Phys. Plasmas 22 (2015),
+10.1063/1.4932330.
+56C. Granier, R. Numata, D. Borgogno, E. Tassi,
+and D. Grasso,
+“Investigation of the collisionless plasmoid instability based on gy-
+rofluid and gyrokinetic integrated approach,” J. Plasma Phys. 89 (2023),
+10.1017/S0022377823000570.
+57F. Porcelli, D. Borgogno, F. Califano, D. Grasso, M. Ottaviani, and F. Pe-
+goraro, “Recent advances in collisionless magnetic reconnection,” Plasma
+physics and controlled fusion 44, B389 (2002).
+58E. Priest, “Other topological invariants and braiding experiments,” in Mag-
+netic Reconnection: MHD Theory and Applications (Cambridge University
+Press, 2000) pp. 125–132.
+59M.
+Wiesenberger
+and
+H.
+M,
+“Feltor,”
+https://github.com/
+feltor-dev (2024).
+60C. Hirsch, Numerical computation of internal and external flows: The fun-
+damentals of computational fluid dynamics (Elsevier, 2007).
+61Y.-H. Liu, P. Cassak, X. Li, M. Hesse, S.-C. Lin, and K. Genestreti, “First-
+principles theory of the rate of magnetic reconnection in magnetospheric
+and solar plasmas,” Communications Physics 5, 97 (2022).
+62R. Fitzpatrick and F. L. Waelbroeck, “Drift-tearing magnetic islands in
+tokamak plasmas,” Phys. Plasmas 15 (2008), 10.1063/1.2829757.
+63M. N. Bussac, D. Edery, R. Pellat, and J. L. Soule, “Stabilization of the
+linear drift tearing mode by coupling with the ion sound wave,” PHYSICAL
+REVIEW LETTERS 40 (1978), 10.1103/PhysRevLett.40.1500.

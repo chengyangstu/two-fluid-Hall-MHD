@@ -1,0 +1,954 @@
+
+===== PDF PAGE 1 =====
+       IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+             PREPRINT
+
+
+       Crossmark      PAPER
+            RECEIVED       Tearing Stability Prediction Combining Toroidal Calculations
+        21 January 2026
+
+            REVISED              With a Two-Fluid Slab Layer    — —– 2026
+
+                      D.A. Burgess1   , N.C. Logan1   , J.-K. Park2   , C. Paz-Soldan1   ,
+
+                          1Columbia University, New York, New York 10027, USA
+                             2Seoul National University, Seoul, Korea
+
+
+                          E-mail: daniel.burgess@columbia.edu
+2026
+
+                   Abstract
+              A new classical TM stability simulation workflow has been developed that solves theMar                           resistive inner-layer equations in a plasma slab to yield a linear, quasi-toroidal TM growth
+12                   rateeffectsγ andin a modeslab approximationrotation frequencyof theω.resistiveThis workflowinner layercombines(SLAYER)two-fluidwithandan effectivedrift MHD
+                        tearing stability index as ∆(γ, ω) = ∆′ −∆crit. SLAYER is used to calculate the
+                         inner-layer ∆(γ, ω), the STRIDE code is used to calculate a toroidal ∆′ that includes
+                      shaping effects, and the toroidal ∆crit incorporates effects of thermal conduction on
+                       Glasser stabilization. This workflow is rapid and numerically robust across
+                        reactor-relevant plasma conditions, and yields growth rates that closely align with analytic
+                        predictions in well-documented linear growth rate regimes. Using synthetic equilibria, TM
+                          stability was calculated across scans of plasma β, inverse aspect-ratio, and toroidal current
+                           profile gradient. These scans effectively benchmarked this STRIDE+SLAYER workflow                       against existing models PREPRINTand showed reliable stability predictions in shaped H-mode-like
+                      plasmas. This capability to quickly and robustly predict classical tearing stability in
+                    tokamaks will facilitate the mapping of TM stable operational regimes and design of safe
+                       discharge trajectories in future devices.[physics.plasm-ph]
+                    1   Motivation
+                        Tearing modes (TMs) are a class of resistive magnetohydrodynamic (MHD) instability that occur
+                           in toroidal magnetic confinement fusion configurations with a significant plasma current, such as
+                       tokamaks. While TMs can be benign, they can also pose a serious threat to stable plasma
+                         operation – as the TM opens a toroidally periodic chain of magnetic islands and their widths grow,
+                            particles and thermal energy will be lost from the inboard to the outboard side of the islands,
+                         causing deleterious transport [1, 2]. In severe cases, larger islands can “lock” to the wall due to
+                      eddy currents, drag against the plasma’s toroidal rotation, and cause a disruption [3]. Disruptions
+                          involve a complete loss of the plasma, can damage the tokamak, and must be minimized in a fusion
+                      power plant [4, 5]. For these reasons, understanding and if possible, predicting the onset of TMs
+                             will help design safer discharges from ramp-up to flat-top and ramp-down, substantially aiding
+                           stable tokamak operation.
+                   TMs grow on surfaces of closed field lines in the plasma, known as “resonant surfaces” and
+                          defined by a rational value of the safety factor q = m/n, where m is the number of poloidal fieldarXiv:2603.11562v1
+                             line transits and n the number of toroidal transits. The global ideal MHD force balance solution is
+                          singular at rational q = m/n, and the size of this singular jump is related to the strength of a
+                          driving force exerted by the toroidal current density gradient across this resonant surface in the
+                           radial direction. This force is associated with the free energy available for tearing this rational
+                          surface into a chain of magnetic islands, and can be measured by the ideal MHD tearing stability
+                       parameter ∆′(m, n) [6]. However, resistivity is required to calculate the linear growth rates and
+                          rotation frequencies of modes on rational surfaces, as well as to model TM stabilization by
+                         curvature effects (Ref. [7]; see Section 2.2), therefore ∆′ lacks certain physics for more predictive
+                           use. Several “straight-through” code suites have been developed which treat the entire plasma
+                      volume using resistive MHD, such as NIMROD [8] or M3D-C1 [9]. However, a more
+                        computationally efficient approach is to treat only a narrow region on either side of the rational
+                          surface with more detailed resistive or two-fluid physics, assume ideal MHD everywhere else in the
+
+
+
+                                                          1
+
+===== PDF PAGE 2 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+                plasma, and match the ideal and resistive solutions to solve for the mode growth rate [10]. This
+                asymptotic matching approach is well known and has been successfully demonstrated in e.g. the
+          RDCON code, which utilizes a simple inner region model and retains surface-to-surface coupling
+                     [11].
+                The novel approach taken in this work uses a newer, well-established and detailed slab model of
+                 the resistive inner region [12, 13] (implemented numerically in the SLAYER code [14]) and solves
+                 the canonical dispersion relation for TM growth by asymptotically matching this inner region
+                  solution with a fully toroidal ideal MHD ∆′ from the STRIDE code [15]. Mode stabilization due to
+                 curvature and thermal transport effects is additionally included, which may be an important
+                 modification for model relevance in present day and future tokamaks. The STRIDE+SLAYER TM
+               growth rates align with analytic theory and the TJ code across a wide parameter space, and
+                   differing stability predictions at low aspect ratio are observed (a regime where STRIDE can be
+                expected to be more accurate). Growth rate calculations are additionally made in a shaped
+                H-mode-like plasma with multiple rational surfaces and self-consistently calculated bootstrap
+                  current, showing applicability to experimental discharges in existing and future devices.
+                    In Section 2, a procedure is outlined for calculating the inner region solutions, then the outer
+                 region solutions, and finally a method for combining the two into a dispersion relation and solving
+                   for the TM growth rate. In Section 3, STRIDE+SLAYER growth rates are compared against
+                  analytic growth rates across four established linear growth rate regimes. In Section 4, this
+            STRIDE+SLAYER workflow is benchmarked against the TJ code on both a plasma β scan and an
+                  inverse aspect-ratio scan. In Section 5, the STRIDE+SLAYER workflow is applied to a shaped,
+                  synthetic equilibrium with realistic H-mode-like kinetic and toroidal current profiles. Finally, in
+                 Section 6, findings and future work are discussed.
+
+
+             2  SLAYER Tearing Stability Workflow
+                 2.1   Calculation of the Inner-Layer ∆
+             The tearing of a magnetic surface into a magnetic island is a fundamentally resistive process, and
+             many physical effects can influence whether a mode amplitude at a rational surface will be damped
+                 or grow exponentially into a nonlinear island of finite width. A variety of analytic inner-layer            PREPRINT
+               models of varying fidelity have been developed which incorporate relevant physics effects at a
+                  rational surface, and both resistive and inertial effects have been successfully addressed even in a
+                complete toroidal geometry. However, higher order two-fluid MHD effects such as drifts, the
+                 presence of finite rotation, long mean-free-path physics, semi-collisional effects, and Hall effects
+                have thus far only been implemented in a simplified 3D plasma slab geometry [14]. A slab model is
+               an appropriate approximation of the narrow resistive region around a rational surface as long as
+                 the region remains narrow (i.e., high Lundquist number S). Additionally, the majority of relevant
+                geometric effects are captured in the outer region solution, which is computed here in a full toroidal
+                geometry.
+                  There are certain caveats to modeling the inner region with a slab model, particularly a reduced
+                  slab model that is analytically tractable. These include the assumption of no pressure gradient and
+               no parallel flow in the inner region. The neglect of pressure gradients is justifiable in the case of a
+                    sufficiently narrow resistive layer width, which is a reasonable approximation in ∼keV tokamaks
+                 (the layer width scales roughly as Te−3/5 [16]). The neglect of parallel flow is acceptable given that
+                 the plasma is not high β ∝P/B2t (cβ ≳0.2) [17], which is a reasonable assumption in present-day
+              and future tokamaks as high β operation increases neoclassical tearing mode (NTM) risk [18].
+                The inner-layer response to a mode amplitude can be investigated through a scalar quantity
+               termed the inner-layer ∆[10], which is obtained by solving the two-fluid drift MHD equations in a
+                  slab geometry. The slab model used in SLAYER is the well-known analytic four field model
+                developed by Fitzpatrick, Cole, and Waelbroeck [12, 13]. The four field model equations are
+                reduced via variable substitution, a generalized Fourier-Laplace transform, and a Riccati transform
+                  into a single analytic, rapidly solvable ODE (for a full derivation of this ODE, see Refs. [13] and
+                     [14]). The full set of SLAYER ODE inputs for a given rational surface (Q, Qe, Qi,C,D,P,τ) are
+                 defined in Table 1. The real and imaginary components of Q correspond to the rotation and
+               growth rate of the mode amplitude, respectively.
+                   Using these normalized variables, the Riccati-transformed, Fourier-space ODE solved by
+           SLAYER can be written as:
+
+
+            dW
+                    =                                               2p  −1 W   −  W 2   +    p iqe + p2 G(p),  (1)
+                  dp                               iqe + p2   p               p
+
+
+
+                                                   2
+
+===== PDF PAGE 3 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+                Table 1: SLAYER normalized input variables (top), sub-variables (bottom), and their definitions.
+                For C2 and P, on the left are the original Fitzpatrick, Cole, & Waelbroeck definitions retained in the
+                   original SLAYER release [14], on the right are equivalencies used in other recent implementations
+                    [19, 20]. ω∗e and ω∗i are the electron and ion diamagnetic frequencies, respectively. For a complete
+                       list of variables defined from plasma parameters, see Appendix A.
+
+
+                   Variable              Definition                                 Description
+                  Re(Q)         ˆω = S1/3ωτH                        Normalized mode rotation frequency (in local E×B frame)
+                Im(Q)          ˆγ = S1/3γτH                        Normalized growth rate (in local E×B frame)
+                Qe        S1/3ω∗eτH                          Normalized electron diamagnetic frequency
+                  Qi        S1/3ω∗iτH                          Normalized ion diamagnetic frequency
+            D          S1/3 [ω∗e/(ω∗e −ω∗i)]1/2 (dβ/rs)     Normalized ion skin depth
+                C2          (c2β + (1 −c2β)K) ≃P⊥= (τRχ⊥)/r2s    Resistive diffusion ≃perp. magnetic Prandtl number
+               P         τR/τV ≃Pϕ = (τRχϕ)/r2s            Norm. ion viscosity ≃toroidal magnetic Prandtl number
+                      τ          Ti/Te                                Ion to electron temperature ratio
+
+
+                with
+
+                                          −Qqi + iqi(P + C2)p2 + C2Pp4
+                                      G(p) =
+                                                           iqe + (C2 + iqiD2)p2 + (1 + τ)PD2p4
+                                                                                                                     (2)
+                                                  qe = Q −Qe
+                                                         qi = Q −Qi.
+
+                 Here, p is the Fourier frequency variable and W is defined in Ref. [14]. Specifying
+
+                                         a = −(Q + iQe)
+                                                   b = P                                                            (3)
+                                                  c = −i(Qe −Qi)(P/C2) + Q + iQi,                 the large p boundary conditionsPREPRINTtake the form
+                                                          ab −c  √
+                                         W(p) =  √  −  P p2,                                   (4)
+                                                         2  b
+
+                                |C|
+                 at D >                                  1/3 , and                      P
+                                                            ab −c   √
+                                     W(p) = −1 +  √    p −  P p3                              (5)
+                                                           2  b
+
+                                |C|
+                 at D <                                  1/3 [20]. The normalized inner-layer ˆ∆can then be obtained via a power series expansion                      P
+               by launching either (4) or (5) at large p, backwards integrating dWdp  to small p, and taking
+
+                                                         lim                                       dW ∼π .                                        (6)
+                                               p→+0 dp    ˆ∆
+                    Numerically, this limit is evaluated in SLAYER when p reaches 1 × 10−6 in the backwards
+                  integration of dWdp .
+              SLAYER and the Fitzpatrick model presented in Ref. [20] differ in their definitions of
+               anomalous diffusion, but equations (1), (2), and (6) that are solved for the inner-layer ˆ∆are the
+              same in terms of normalized variables. Comparing C2 and P in SLAYER with P⊥and Pϕ in
+                 Ref. [20], it can be seen that C2 = P⊥and P = Pϕ. These equivalencies are noted in Table 1.
+
+                 2.2   Calculation of Outer Region ∆′ and ∆eff
+                 In order to obtain tearing mode growth rates, the two-fluid physics in the resistive inner region
+              must be combined with toroidal, ideal MHD information in the outer region. In the inner-outer
+                  layer matching approach, this outer region solution is the classical tearing stability index ∆′,
+                 defined as the jump in the logarithmic derivative of the radial magnetic field perturbation across a
+                  rational surface. This can be defined in a slab or cylindrical geometry as
+
+                                                             x=x+s                                                         1 dψ
+                                               ∆′ =                      ,                                      (7)
+                                           ψ dx x=x−s
+
+
+
+
+                                                   3
+
+===== PDF PAGE 4 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+               where x is a Cartesian (in a slab geometry) or radial (cylindrical geometry) coordinate and xs is
+                 the location of a rational surface [16, 21]. The toroidal derivation and definition of ∆′ are more
+                 involved [7]. The tearing stability index has been previously used as a solitary predictor of classical
+                  tearing stability with some success [22, 23], but it is lacking the necessary inner region resistive
+                 physics for analysis of growth rates, mode rotation frequencies, and surface-to-surface coupling.
+                The toroidal ∆′ matrix for a given equilibrium is calculated using the STRIDE code [15]. ∆′ is
+               an m × m subset of the full ideal MHD 2m × 2m D matrix, where m is the number of rational
+                  surfaces analyzed in the plasma [24]. STRIDE includes poloidal mode coupling and fully
+                 generalized toroidal and poloidal shaping. The diagonal of the ∆′ matrix provides stability indices
+                   for each rational surface, while the off-diagonal terms represent surface-to-surface coupling. In this
+                   analysis, the STRIDE+SLAYER workflow investigates the simplified, decoupled problem
+                 (described in the next section). Therefore, only the self-coupled diagonal ∆′ values are used, and
+                 the off-diagonal terms are discarded.
+                The tearing stability index ∆′ provides one measure of the free energy available in the gradient
+                   of the toroidal current profile jϕ for tearing at a given rational surface q = m/n. However, other
+                  physical effects beyond the jϕ gradient can further alter the available free energy for tearing. One
+                such effect is known as Glasser stabilization (or “GGJ” stabilization, for Glasser-Greene-Johnson)
+               which describes how in a toroidal geometry with good average curvature (i.e. DR < 0, where DR is
+                 the resistive interchange parameter), finite pressure, and high Lundquist number S, there can be a
+                 strong stabilizing effect against tearing [7]. This stabilization results from finite plasma pressure
+                   resisting the tearing of a favorably curved rational surface via sound wave propagation, and can be
+                formulated as a critical threshold ∆crit. Therefore, if ∆′ > ∆crit, curvature effects will no longer
+                   stabilize against tearing. ∆crit has more recently been extended to include thermal transport effects
+                  in the vicinity of the rational surface, which can have a significant effect on the strength of
+                 curvature stabilization. A large aspect-ratio approximated ∆crit that included thermal transport
+                    effects was first derived by Ref. [25], and was later extended into a toroidal geometry by Ref. [26].
+                This toroidal ∆crit was defined using the volume contained within a flux surface V as the radial
+                 coordinate, but it can also be written in terms of the STRIDE and SLAYER radial coordinate ψN
+                (normalized poloidal flux). It is defined as            PREPRINT
+                                                                  1/4                !1/4                                               π3/2   χ∥           α2Λ2
+                                            ∆crit =               Vs                (−DR),                     (8)
+                                            2   χ⊥         ⟨B2⟩⟨|∇V |2⟩
+
+               where Vs is the volume of the singular surface, and ⟨A⟩is defined as the flux average over the
+               plasma volume [26].
+                As a result, the ideal MHD tearing stability threshold ∆′ > 0 now becomes
+                  ∆eff = ∆′ −∆crit > 0, incorporating curvature and thermal transport effects alongside the
+                fundamental physics of toroidal current (jϕ) profile stability.
+
+
+                 2.3   Dispersion Relation and Calculation of Tearing Mode Growth Rates
+             The decoupled tearing mode dispersion relation can be written as ∆′ = ∆(ω, γ), where ω is the
+             mode rotation and γ is the growth rate, both in the local E×B frame at the surface. This is a
+                  simplified case of the matrix problem described in Ref. [24], and decoupling all rational surfaces
+                  into separate dispersion relations can be justified under the assumption that significant rotation
+                 shear is present between surfaces [10]. Incorporating the ∆crit proxy for Glasser stabilization yields
+               an effective tearing stability index ∆eff = ∆′ −∆crit, and taking ∆= S1/3 ˆ∆gives the dispersion
+                  relation solved by SLAYER:
+
+                                               ∆′ −∆crit = ∆(Q),                                      (9)
+
+               where Q = ˆω + iˆγ. The inputs and output of the dispersion relation are illustrated in Fig. 1. It is
+                 necessary to note that inserting a proxy for Glasser stabilization into this dispersion relation may
+                   result in spurious solutions that predict high frequency instability for large values of ∆crit (e.g.
+                   ∆crit >> 10). These appear to be purely numerical modes, and since the sign of the classical
+                  tearing mode growth rate should match the sign of ∆eff [10], these spurious solutions are discarded
+                  in this analysis. The validity of this proxy when solving for growth rates – particularly in the
+                 experimentally relevant DR and VR regimes (see Fig. 4) – remains a point of ongoing work.
+                    In order to solve this dispersion relation, a suitable ˆ∆must be found across ˆω-ˆγ space using
+                  one’s numerical method of choice. In SLAYER, a square grid scan is used for robustness (allowed
+               by the rapidity of each ODE solve). Once a sufficiently wide (ˆω, ˆγ) space has been scanned
+                   (typically Q ± 10), contours of Re(∆eff) = Re(∆) and Im(∆eff) = Im(∆) are extracted and their
+
+
+                                                   4
+
+===== PDF PAGE 5 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+                  intersections found. The intersection with the most positive ˆγ value not found within a pole is the
+               dominant uncoupled growth rate for a given rational surface. Intersections at continuous values of
+             ∆(Q) represent actual modes, whereas intersections across a pole in ∆(Q) contain an undefined
+                 value of ∆and therefore do not satisfy the dispersion relation. These contours, their intersections,
+              and several ∆(Q) poles can be visualized across ˆω-ˆγ space in Fig. 2.
+
+
+                              STRIDE
+                                      ∆′
+                                                               ∆eff = ∆′ OR
+                                                              ∆eff = ∆′−∆crit
+                                         Analytic                         Growth
+                                                 ∆crit                                  rate γ
+
+
+
+                                          SLAYER
+                                           ∆(Q, Qe, Qi, D, C2, P, τ)
+
+                Figure 1: STRIDE+SLAYER workflow schematic showing that a combination of outer layer tearing
+                  drive (∆′) and inner-layer response (∆) are needed to calculate the linear tearing growth rate γ.
+                  Inclusion of a proxy for Glasser stabilization (∆crit) in the dispersion relation is optional.
+
+
+
+
+
+                                                                                            Re(Δ) = Re(Δeff) = 8.3409
+                                                                                            Im(Δ) = Im(Δeff) = -0.0079            120
+                                                                                          Rejected (inside pole)
+                                                   100              Least stable: ω=-12.765, γ=0.689      80
+                                                                                                             [kHz]                                           40  Δ
+                      γ                              p            PREPRINT             0  ⋅
+                                                     0                                                                                        Rate
+                                                                                   −40                                                                                                                                                                                                                                                                                                                               sign(Δ)
+                                                                                   −80                                                                                                                                   Growth
+                                              −100
+                                                                                     −120
+
+                                                                                     −160
+
+                                                       −100       0        100
+                                                Mode Rotation ω [kHz]
+
+                Figure 2: SLAYER (ω, γ) space growth rate root find. Shaded red and blue contours are computed
+                 using Re(∆). The dominant TM growth rate (real-imaginary contour intersection) is marked with a
+                    star. Two stable solutions are also visible near ±110 kHz. Poles with asymptotic ∆yield undefined
+                  solutions to the dispersion relation and are therefore rejected.
+
+
+                    In most equilibrium resonant layers tested, the solution space takes a form similar to that in
+                  Fig. 2, where an unstable pole is located at γ > 0 and small ω. Unstable roots only being found at
+                 small ω aligns with the reasonable expectation that a large rotation differential between the mode
+              and plasma bulk (predominantly ExB) rotation should be stabilizing [27]. As ∆eff increases in this
+               example (taken from the lowest β scan point in Fig. 5), the contour intersection that marks the
+               growth rate solution increases in γ toward the pole, which aligns with the γ ∝∆′ scaling identified
+                  in analytic theory (see eqs. 10 to 13). Conversely, as ∆eff decreases below 0, the contour
+                  intersection decreases in negative γ correspondingly.
+                   Further accelerating these SLAYER growth rate scans by use of an unstructured mesh of scan
+                 points and adaptive mesh refinement is planned for future work.
+
+
+             3  Growth Rate Benchmark Against Analytic Linear Growth Rates
+                 Analytic linear growth rates have previously been derived across distinct regimes that span a range
+                   of normalized total diamagnetic frequencies Q∗and magnetic Prandtl numbers P [19]. Using a
+                   cylindrical geometry and assuming that the plasma is surrounded by a perfectly conducting rigid
+                   wall, the expressions for the normalized tearing stability index ˆ∆′ = ∆′/S1/3 can be rearranged to
+                  calculate the normalized growth rate ˆγ in terms of Q∗= 2Qe (for τ = 1), P, D, and Ti/Te = τ.
+
+
+
+                                                   5
+
+===== PDF PAGE 6 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+               Note the assumption that P ∼Pϕ ∼P⊥. The four identified linear regimes are diffusive-resistive
+               (DR), viscous-resistive (VR), semi-collisional (SC), and resistive-inertial (RI). Rearranging the
+                 expressions for ˆ∆derived in Chapter 6 of Ref. [10] and substituting in this normalized tearing
+                   stability index yields corresponding expressions for each linear, normalized growth rate:
+
+                                                    Γ(1/4)  (1 + 1/τ)1/4D1/2
+                                               ˆγDR =                    1/4        ˆ∆′,                          (10)                                                 2πΓ(3/4)     P
+
+                                                            Γ(1/6)
+                                                                       ˆγV R =                1/6 ˆ∆′,                               (11)                                                      62/3πΓ(5/6)P
+
+                                                               eiπ/4 (1 + 1/τ)1/2D
+                                                        ˆγSC =                          ˆ∆′,                              (12)
+                                               π      Q1/2∗
+                                                              eiπ/2 (1 + 1/τ)1/2P 1/2
+                                                            ˆγRI =                             ˆ∆′.                             (13)
+                                              π       Q∗
+                   Boundaries for all four linear growth rate regimes can be found in Chapter 6 of Ref. [10].
+                  Fig. 3a shows the numerical SLAYER growth rates transition smoothly between three different
+                  analytic regimes across a broad range of P values, aligning well with the analytic limits and
+               showing only small offsets in ˆγ magnitude. Fig. 3b shows a similar regime transition with good
+                agreement, but across Q∗instead.
+                   Scanning ˆP = P/D6 and ˆQ∗= Q∗/D4 in conjunction yields two dimensional linear growth rate
+             maps across all four identified regimes, as can be seen in Figs. 4a & 4b. All 1D and 2D analytic
+               growth rate scans were produced by fixing ˆ∆′ = ∆′/S1/3 = 0.01, D = 2.26, and τ = 1.0, with the
+                 goal of reproducing the map shown in Fig. 6 of Ref. [19]. All resulting ˆγ values were left
+                 dimensionless (i.e. not divided by S1/3τH). Note that Re(ˆγRI) = 0 implies a purely oscillatory
+                  tearing mode in this analytic formalism (for visualization, Im(ˆγRI) is instead plotted in Fig. 4a).
+                Typical tokamak plasmas span the DR (at low field) and VR (at high field) regimes with ˆQ∗<< 1
+                     [10]. Comparing Figs. 4a & 4b, it is clear that SLAYER agrees well with the analytic results at
+                 small ˆQ∗. The results diverge more noticeably in the SC regime, with SLAYER showing            PREPRINT
+               dependence on both Q∗and P, however this discrepancy only occurs at unrealistically high
+                diamagnetic frequencies for a typical tokamak. Additionally, the SLAYER results smoothly connect
+                 the disparate analytic regimes, more accurately capturing the physics near regime boundaries.
+
+
+             4  Growth Rate Benchmark Against TJ
+               Having demonstrated that SLAYER provides numerically reliable growth rates that agree with and
+               smoothly span all analytic regimes, its performance in conjunction with the STRIDE outer region
+              ∆′ can now be investigated on rational surfaces in simple, synthetic tokamak equilibria (hereafter
+                  referred to as the STRIDE+SLAYER workflow). Growth rate benchmarks on self-consistent MHD
+                   equilibria and kinetic profiles are most easily done using another linear stability code, which is the
+               approach taken in this section.
+
+
+                 4.1  β Scan
+             The TJ code calculates linear tearing growth rates of an inverse aspect-ratio (ϵ) expanded tokamak
+               plasma equilibrium using the inner-outer region asymptotic matching technique [28]. It is therefore
+               an excellent tool for benchmarking this STRIDE+SLAYER workflow. While STRIDE and TJ use
+                   differing approaches to calculate the ∆′ matrix, their inner-layer models are equivalent, therefore
+                 the resulting growth rates are expected to be roughly identical for a given outer region ∆′.
+                To benchmark tearing growth rates in a regime where TJ is expected to be valid, a β scan was
+                prepared using a circular cross-section equilibrium that replicates the scan shown in Fig. 7 of
+                 Ref. [20]. This scan covers values of βN from 9.27 × 10−3 to 1.56. TJ was used to output
+                 equilibrium and kinetic profile files alongside its tearing growth rates, and these files were then
+                used as inputs to STRIDE and SLAYER for self-consistency. The other equilibrium and kinetic
+                parameters input to TJ are: q0 = 1.5, qa = 3.6, pp = 2.0, B0 = 12 T, R0 = 2 m, a = 0.4 m,
+               n0 = 3 × 1020 m−3, Te, edge = 100 eV, α = 0.5, Zeff = 2, M = 2, and χ⊥= 0.2 m−3 (see Ref. [20]
+                   for definitions). The perpendicular energy diffusivity χ⊥is assumed to be spatially uniform.
+                    In Fig. 5, good alignment is seen between the TJ and STRIDE+SLAYER 2/1 and 3/1 growth
+                   rates. STRIDE and TJ see different β limits (similar to previously investigated discrepancies
+               between PEST-3 [24] and RDCON [29]), therefore the scans are plotted across the fractional β
+                   limit seen by each code. Scan points near the β limit (∆′ > 100) where the TJ failed to solve for
+                 the growth rate have been removed.
+
+
+                                                   6
+
+===== PDF PAGE 7 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+
+
+                                       a)
+
+
+                                    ̂γ 10-2
+                                                                               Rate
+
+
+                                                 SLAYER                                                                                                                       Growth
+                                              SC
+                                          DR
+                                             VR
+                                                  10-3
+                                                     10-4 10-3 10-2 10-1 100  101  102  103
+                                                            P
+
+
+                                  b)                                          0.012            PREPRINT
+
+                                          0.009
+                                   ̂γ
+                                                                              Rate 0.006
+                                                                                                                     Growth 0.003
+                                                  SLAYER
+                                           DR
+                                          0.000      SC
+
+                                                      10-3    10-2    10-1    100    101
+                                              Q *
+
+                Figure 3: Comparison of SLAYER vs.  analytic dimensionless growth rates  ˆγ.  (a) As viscosity
+            P increases, the linear growth rate regime switches from semi-collisional (SC) to diffusive-resistive
+             (DR) to viscous-resistive (VR). (b) As total normalized diamagnetic rotation Q∗increases, the regime
+                 switches from diffusive-resistive (DR) to semi-collisional (SC). Analytic limits are shown as dashed
+                     lines. Regions of validity for analytic limits are shown in color, while invalid regions are plotted at
+                low opacity.
+
+
+
+
+
+                                                   7
+
+===== PDF PAGE 8 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+
+
+                                      a)                                      ×10−3                                                                4.0
+
+                                                                                                           5.888
+
+                                                                  3.2
+                                                       VR
+                                                                                                          4.121
+                                                                                            0.0018
+
+
+
+
+                                     ̂P                                                                2.4                                           0.0016RI           ̂γ
+                                                                                                           2.884
+                                                                1.6
+
+                                                                                      0.0020
+                                                                 0.8          0.0026                              2.018
+                                                    DR 0.0029            SC    0.0023                      0.0020                                                                                                                                                                                                                                                                                                             0.0026                                                                                                                                                                                                                                                                                           0.0029
+                                                                0.0                                            1.413
+                                                                  0.0     0.4      0.8      1.2     1.6     2.0
+                                                                                                    ̂Q *
+
+
+
+                                   b)                                                                                           ×10−3            PREPRINT                                                                4.0
+                                                                                                           5.888
+
+                                                                  3.2         0.0021
+                                                       VR                                     4.121
+
+
+                                                                2.4                                                                                                           2.884
+                                     ̂P                                                0.0018RI           ̂γ
+                                                                1.6    0.0024                            0.0016       2.018
+                                                                                                              0.0014       1.413                                                                 0.8 0.0028
+                                                                                                             0.0012                                                                          0.0032DR                SC
+                                                                                                             0.0010
+                                                                0.0
+                                                                  0.0     0.4      0.8      1.2     1.6     2.0
+                                                                                                    ̂Q *
+
+                Figure 4: Full (ˆQ∗, ˆP) TM growth rate maps across DR, VR, SC, and RI regimes. (a) Analytic map
+               showing discrete linear growth rate regimes as calculated by equations (10)–(13). (b) SLAYER map
+               showing smooth transitions between regimes and alignment with analytic theory at tokamak-relevant
+                  frequencies (i.e., low ˆQ∗).
+
+
+
+
+
+                                                   8
+
+===== PDF PAGE 9 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+
+
+                                                                        TJ (2/1)
+                                                                        TJ (3/1)
+                                                    SLAYER (2/1)
+                                          101       SLAYER (3/1)                                                                                                   [kHz]
+                                                                               Rate
+
+
+                                          100                                                                                                                       Growth
+
+                                        0
+
+                                                0.00    0.25    0.50    0.75    1.00
+                                                                               β/βlim
+
+                Figure 5: STRIDE+SLAYER vs TJ β scan benchmark, showing good alignment in the 2/1 and 3/1
+               growth rates calculated by both codes.
+
+
+
+                                                                        TJ (2/1)
+                                                                        TJ (3/1)
+                                          101       SLAYER (2/1)
+                                                    SLAYER (3/1)                                                                                                  [kHz]             Ideal limit at ε = 0.66
+                                                                              Rate
+
+                                          100                                                                                                                     Growth
+
+                                        0            PREPRINT
+                                                  0.15     0.30     0.45     0.60
+                                                                    ε
+
+                Figure 6: Inverse aspect-ratio scan showing STRIDE+SLAYER growth rate divergence from TJ at
+                high ϵ.
+
+
+                 4.2   ϵ Scan
+               Because TJ uses an ϵ-expansion approach that may not capture higher order geometric effects of
+                shaping in the outer region to the same fidelity as STRIDE, STRIDE and TJ may be expected to
+                    differ at large ϵ where the ϵ-expansion is less valid or insufficiently high order. For this ϵ scan, all
+                input equilibrium and kinetic parameters were held fixed as detailed in the β scan, except βN
+               which was set to 9.27 × 10−3 (the minimum value from that scan), and a to 1.0 m. R0 was then
+                scanned from 8 m to 1.52 m, corresponding to ϵ values of 0.125 to 0.658. As seen in Fig. 6, at low
+                      ϵ, both codes follow the same trend in growth rates with only a small offset in ∆′ values that
+                propagates into γ. As ϵ increases past 0.45, the STRIDE ∆′ increases as it approaches an ideal
+                    limit, driving up both the SLAYER 2/1 and 3/1 growth rates. However, the TJ ∆′ (and thus γ)
+                 values diverge noticeably in slope and trend for ϵ > 0.45 before reaching a different ideal limit at
+                   ϵ = 0.60, suggesting that STRIDE may capture trends in ∆′ unseen by TJ in low aspect-ratio (high
+                   ϵ) tokamak plasmas. Additionally, discrepancies would likely appear earlier in ϵ in more poloidally
+               shaped plasmas.
+                    In Fig. 7, the TJ large aspect-ratio approximated ∆crit values are compared against the toroidal
+                   ∆crit used by SLAYER. Both are in reasonable agreement, though there is some offset at typical
+              tokamak ϵ values (∼0.3 to 0.6). For comparison, the original large aspect-ratio approximated ∆crit
+                 that included thermal conduction effects and was derived by Ref. [25] is compared against TJ and
+             SLAYER, denoted “LAR” in this figure. The toroidal ∆crit predicts less stabilization than both
+                  large aspect-ratio approximated values across most ϵ values in this scan.
+
+
+
+
+
+                                                   9
+
+===== PDF PAGE 10 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+
+
+                                                      LAR (2/1)
+                                                      LAR (3/1)
+                                              1.5         TJ (2/1)
+                                                                              TJ (3/1)
+                                                                         Toroidal (2/1)
+                                                                         Toroidal (3/1)
+                                              1.0        Ideal limit at ε = 0.66
+                                                                                           Δcrit
+
+                                              0.5
+
+
+                                              0.0
+
+                                                  0.15     0.30     0.45     0.60
+                                                                    ε
+
+                Figure 7: Toroidal ∆crit used in SLAYER (“Toroidal”), large aspect-ratio approximated ∆crit used
+                  in TJ (“TJ”), and original Ref. [25] ∆crit (“LAR”) compared across ϵ scan.
+
+
+             5  Growth Rate Evolution with Changing Toroidal Current Profile in a Shaped
+                Plasma
+                 In order to investigate the tearing stability of experimental tokamak discharges using this
+            STRIDE+SLAYER workflow, confidence is needed in the workflow’s ability to handle growth rate
+                  solves in a more realistic parameter space (i.e. Te ̸= Ti, in shaped equilibria, and with reverse-shear
+                  regions in the toroidal current profile jϕ). To investigate this, the “TokaMaker” Grad-Shafranov
+                  solver was used, which is part of OpenFUSIONToolkit [30]. The chosen baseline synthetic
+                 equilibrium is representative of typical H-modes in DIII-D [31], with the following set of
+                parameters: Ip = 1.4 MA, B = 2 T, elongation κ = 1.7, triangularity δ = 0.4, q0 = 1.1, q95 = 3.7,
+              and βN = 1.2 %. Parameterized∗H-mode-like kinetic profiles are used with
+                    ne,core = 5.5 × 1019 m−3, ne,ped = 3.3 × 1019 m−3, Te,core = 2.5 keV, Te,ped = 1.0 keV,            PREPRINT
+                    ni,core = 4.5 × 1019 m−3, ni,ped = 2.7 × 1019 m−3, Ti,core = 5.0 keV, and Ti,ped = 1.5 keV.
+                The parallel bootstrap current (jBS) profile is calculated using the Sauter formula [32], and the
+                 inductive jϕ profile is parameterized as jϕ(ψN) = (1 −ψN α)γ. Both jϕ and jBS are summed, and
+                 the core jϕ broadness is increased using the inner exponent α (hereafter referred to as a “broadness
+                  factor”) as can be seen in Fig. 8. Growth rates with and without the inclusion of Glasser
+                   stabilization are both presented in Fig. 9. Excluding stabilization effects yields unstable 2/1 growth
+                  rates across the broadness scan, whereas the 3/1 surface is driven from stability to instability as
+                 the gradient of jϕ and therefore ∆′ both increase. For these DIII-D-like profiles parameters, the
+                  calculated values of ∆crit using both the TJ and toroidal definitions are overwhelmingly stabilizing,
+              and without analysis of experimental data it remains unclear which form of the dispersion relation
+                 better aligns with observed classical TM onset. These initial studies using analytic, shaped
+                   equilibria with realistic profiles prove the STRIDE+SLAYER workflow to be a robust and
+                  interpretable tool that is now ready for application to and validation on experimental time-series
+                  kinetic equilibria from present day tokamaks.
+
+
+             6  Summary and Future Work
+             The basic capabilities of a new classical TM stability calculation workflow have been demonstrated,
+               combining successful analytic and code-to-code benchmarks before application to more realistic
+                  synthetic H-mode-like equilibria. This workflow matches high physics fidelity inner region solutions
+                   for ∆(calculated via SLAYER) with the ideal MHD toroidal ∆′ (calculated via STRIDE) on all
+                uncoupled rational surfaces in a given equilibrium. This approach does not posses the fidelity of
+                 “straight-through” resistive MHD codes such as M3D-C1, and additionally neglects pressure
+                 gradients and parallel flow inside the slab. However, these latter approximations are justifiable in
+                 present-day and future devices with low to moderate β and ∼keV temperatures. Using these
+                approximations in the original four field slab model yields an ODE for the slab’s inner region ∆
+                 that is well behaved and rapidly solved, allowing for quick and robust TM dispersion relation root
+                  finding for the growth rate γ and mode rotation frequency ω. The asymptotically matched TM
+               growth rate formalism was further extended in this work by including a toroidal proxy for Glasser
+
+                     ∗See function Hmode profiles() in https://omfit.io/_modules/omfit_classes/utils_fusion.html for profile pa-
+                     rameterization.
+
+
+
+
+                                                  10
+
+===== PDF PAGE 11 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+
+
+                                                                                                               1.5 2.0 2.5
+                                                                                                       2.0                     6
+                                                                                                     Broadness α
+                                                                                                       1.6                     5
+                                                                                                           1.2                                                  Factor 4                                                                           0.8                                      [MA]
+                                                                         jϕ0.8                     3                                                                                                       0.4                                                  Safety 2
+                                                                                  [m] 0.0                           0.0                     1
+                           Z                           5                       6.0
+                                                                                                                           Te
+                                                                                        4                    Ti      m-3]4.5
+                                                                                        3        ×
+                                                                −0.8                                                                                                                                  3.0                                                                                                                                                                                                      [keV]
+                                        T 2
+                                                                                                                                  1.5        ne                                                                                        1                                     [1019n                                                                                                                                                                                  ni
+                                                                                   1.2   1.6   2.0   2.4     0                       0.0
+                                                        R [m]              0.0 0.2 0.4 0.6 0.8 1.0     0.0 0.2 0.4 0.6 0.8 1.0
+                                                                                                                                                               ̂ψ                                  ̂ψ
+
+                Figure 8: TokaMaker synthetic equilibrium, fixed density and temperature profiles, and scanned jϕ
+              and safety factor profiles used to increase the gradient of jϕ and therefore ∆′ on the 2/1 and 3/1
+                   surfaces.
+
+
+                                              0.24
+                                                                                                     Δcrit = 0                                             0.18        2/1
+                                                                     3/1
+                                             0.12
+                                             0.06                                                                                                   [kHz]
+                    γ 0.00
+                                                                               Rate−0.060
+                                                                                      Δcrit = toroidal    Δcrit = TJ
+                                                                                                                       Growth  -100
+                                                -101
+                                                                    2/1      3/1      2/1      3/1
+
+                                                  1.0      1.5      2.0      2.5      3.0            PREPRINTBroadness Factor α
+
+                Figure 9: 2/1 and 3/1 growth rates across the toroidal current profile scan shown in Fig. 8. The
+                square marker cases use ∆crit = 0, the circle marker cases use the TJ ∆crit, and the diamond marker
+                  cases use the toroidal ∆crit.
+
+
+                   stabilization on each rational surface, which yields an effective tearing stability index
+                  ∆eff = ∆′ −∆crit used for all inner-outer region matching.
+                    In all cases analyzed so far, this toroidal ∆crit is within a factor of ∼2 from the LAR
+               approximated ∆crit used in the TJ code. However, the values obtained from both definitions
+               appear overwhelmingly dominant in equilibria more relevant to modern tokamaks, such as those in
+                  Figs. 8 & 9. The inclusion of ∆crit in the dispersion relation and its behavior in experimental
+                   equilibria requires further analysis, since the sign of ∆eff defines the stability of the classical tearing
+               mode, and this stability cannot be altered in typical core plasma conditions by any other inner
+                 region physics presently contained within SLAYER.
+                     Additionally, the inclusion of higher order effects such as surface-to-surface coupling [33] and
+                 the effect of a resistive wall [34] may prove necessary for further aligning linear TM theory with
+                experimental results, and their implementation and analysis would benefit the disruption physics
+               community. The effects of two-surface, three-surface, etc. coupling on TM growth or stabilization
+               remain largely unexplored, and it is additionally unclear whether coupling, this work’s adopted
+                proxy for Glasser stabilization, or their combined effects most realistically align with
+                 experimentally observed TM onset.
+                    In conclusion, this STRIDE+SLAYER TM stability workflow offers a robust, toroidally
+                   self-consistent, and open source analysis tool [35] that can be rapidly deployed on both analytic
+                   equilibria and experimental results. While stochastic NTMs will likely remain a threat in the
+                 discharge flat-top of present-day and future devices, the STRIDE+SLAYER classical TM workflow
+               can aid in the investigation and design of safe discharge trajectories of dynamic phases such as
+              ramp-up and ramp-down, as well as mapping parameter regions of greatest classical TM stability
+                   for full-power operation.
+
+
+
+
+
+                                                  11
+
+===== PDF PAGE 12 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+             7  Acknowledgments
+             The authors thank Dylan Brennan and Richard Fitzpatrick for helpful discussions on linear tearing
+             mode theory, as well as support from Prof. Fitzpatrick when using TJ for code-to-code
+                benchmarking. This work was supported by the U.S. Department of Energy Office of Science Office
+                   of Fusion Energy Sciences under Award DE-SC0022272.
+                  Disclaimer: This report was prepared as an account of work sponsored by an agency of the
+                United States Government. Neither the United States Government nor any agency thereof, nor any
+                   of their employees, makes any warranty, express or implied, or assumes any legal liability or
+                  responsibility for the accuracy, completeness, or usefulness of any information, apparatus, product,
+                 or process disclosed, or represents that its use would not infringe privately owned rights. Reference
+                 herein to any specific commercial product, process, or service by trade name, trademark,
+                manufacturer, or otherwise does not necessarily constitute or imply its endorsement,
+               recommendation, or favoring by the United States Government or any agency thereof. The views
+              and opinions of authors expressed herein do not necessarily state or reflect those of the United
+                 States Government or any agency thereof.
+
+
+                Conflict of Interest
+             The authors have no conflicts to disclose.
+
+
+             Data Availability
+             The TJ equilibrium files used as inputs for the STRIDE+SLAYER workflow and output SLAYER
+               growth rate data corresponding to Figs. 5, 6, and 7 are openly available in Zenodo at
+               https://doi.org/10.5281/zenodo.18329503.
+
+
+         A  Additional SLAYER Plasma Parameters
+                See Table 2.
+
+                Table 2: Additional parameters required for calculation of SLAYER quantities in Table 1. Electron
+              and ion temperatures Te and Ti are in units of eV. q is the elementary charge. µ is the main ion to            PREPRINT
+                proton mass ratio, while µi is the phenomenological ion viscosity.
+
+
+                   Variable             Definition                                 Description
+
+                        ln Λ        24 + 3.0 ln(10) −0.5 ln(ne) + ln(Te)   Coulomb logarithm
+
+                      τ          Ti/Te                               Ion to electron temperature ratio
+
+                    η           1.65 × 10−9 ln Λ/(Te/103)1.5          Spitzer resistivity
+
+                   ρ        µmpne                         Mass density
+                       √
+                                    6                                        2π1.5ε20m0.5e T e1.5
+                       τee                 ln Λ·q2.5ne                         Electron-electron collision time
+                      √
+                                                 /4)                                                   neq2τee                                       2+13(Zeff                         √                                                                              ·                                                                              Parallel conductivity                   σ∥                                        me                                                   (                                                             )                                           Zeff                                           2+Zeff
+                     ρs           1.02 × 10−4√µTe/Bt                Ion Larmor radius
+
+                        di     pµmp/(nee2µ0)                       Collisionless ion skin depth
+                 τH        R0√µ0ρ/(nnsBt)                      Alfv´en time across rational surface
+
+                  τR         µ0r2sσ∥                                Resistive timescale
+
+                    τV          r2sρ/µi                              Viscous timescale (phenomenological)
+
+                 β          (5/3)µ0neq(Te + Ti)/B2t            Plasma β
+
+                     cβ     pβ/(1 + β)                         Dimensionless pressure parameter
+
+                   dβ          cβdi                                Ion sound radius
+
+                S         τR/τH                             Lundquist number
+
+            K         κ/η                           κ = thermal conductivity
+
+
+
+
+
+                                                  12
+
+===== PDF PAGE 13 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+              References
+                 1R. J. La Haye, “Neoclassical tearing modes and their controla)”, Physics of Plasmas 13, 055501
+                    (2006).
+                 2R. Sweeney, W. Choi, R. La Haye, S. Mao, K. Olofsson, and F. Volpe, “Statistical analysis of
+              m/n = 2/1 locked and quasi-stationary modes with rotating precursors at DIII-d”, Nuclear
+                  Fusion 57, 016019 (2017).
+                  3P. de Vries, M. Johnson, B. Alper, P. Buratti, T. Hender, H. Koslowski, V. Riccardo, and
+                    J.-E. Contributors, “Survey of disruption causes at jet”, Nuclear Fusion 51, 053018 (2011).
+                 4R. Sweeney, A. Creely, J. Doody, T. F¨ul¨op, D. Garnier, R. Granetz, M. Greenwald, L. Hesslow,
+                      J. Irby, V. Izzo, et al., “Mhd stability and disruptions in the sparc tokamak”, Journal of Plasma
+                  Physics 86, 865860507 (2020).
+               5M. Lehnen, K. Aleynikova, P. Aleynikov, D. Campbell, P. Drewelow, N. Eidietis, Y. Gasparyan,
+                 R. Granetz, Y. Gribov, N. Hartmann, et al., “Disruptions in iter and strategies for their control
+                and mitigation”, Journal of Nuclear materials 463, 39–48 (2015).
+                6H. P. Furth, “Tearing mode in the cylindrical tokamak”, Physics of Fluids 16, 1054 (1973).
+                7A. H. Glasser, J. M. Greene, and J. L. Johnson, “Resistive instabilities in general toroidal plasma
+                    configurations”, The Physics of Fluids 18, 875–888 (1975).
+                8A. Glasser, C. Sovinec, R. Nebel, T. Gianakon, S. Plimpton, M. Chu, D. Schnack, N. team, et al.,
+               “The nimrod code: a new approach to numerical plasma physics”, Plasma Physics and Controlled
+                  Fusion 41, A747 (1999).
+                9N. M. Ferraro, S. C. Jardin, and P. B. Snyder, “Ideal and resistive edge stability calculations
+                  with M3D-C1”, Physics of Plasmas 17, 102508, 102508 (2010).
+                 10R. Fitzpatrick, Tearing mode dynamics in tokamak plasmas, 2053-2563 (IOP Publishing, 2023).
+                11A. H. Glasser, Z. R. Wang, and J. .-. Park, “Computation of resistive instabilities by matched
+                  asymptotic expansions”, Physics of Plasmas 23, 112506, 112506 (2016).                 12R. Fitzpatrick and F. L.PREPRINTWaelbroeck, “Two-fluid magnetic island dynamics in slab geometry. I.
+                    Isolated islands”, Physics of Plasmas 12, 022307, 022307 (2005).
+                13A. Cole and R. Fitzpatrick, “Drift-magnetohydrodynamical model of error-field penetration in
+                tokamak plasmas”, Physics of Plasmas 13, 032503, 032503 (2006).
+                  14J.-K. Park, “Parametric dependencies of resonant layer responses across linear, two-fluid,
+                drift-MHD regimes”, Physics of Plasmas 29, 072506, 072506 (2022).
+                15A. S. Glasser and E. Kolemen, “A robust solution for the resistive MHD toroidal ∆’ matrix in
+                  near real-time”, Physics of Plasmas 25, 082502, 082502 (2018).
+                16H. P. Furth, J. Killeen, and M. N. Rosenbluth, “Finite-resistivity instabilities of a sheet pinch”,
+               The physics of Fluids 6, 459–484 (1963).
+                17Y. Lee, J.-K. Park, and Y.-S. Na, “Effect of parallel flow on resonant layer responses in high beta
+                  plasmas”, Nuclear Fusion 64, 106058 (2024).
+                 18R. Buttery, S. G¨unter, G. Giruzzi, T. Hender, D. Howell, G. Huysmans, R. La Haye,
+              M. Maraschek, H. Reimerdes, O. Sauter, et al., “Neoclassical tearing modes”, Plasma Physics
+                and Controlled Fusion 42, B61 (2000).
+                 19R. Fitzpatrick, “Influence of anomalous perpendicular transport on linear tearing mode dynamics
+                    in tokamak plasmas”, Physics of Plasmas 29, 032507 (2022).
+                 20R. Fitzpatrick, “Investigation of tearing mode stability near ideal stability boundaries via
+                  asymptotic matching techniques”, (2025).
+                   21J. Connor, R. Hastie, I. Pusztai, P. Catto, and M. Barnes, “High-m kink/tearing modes in
+                     cylindrical geometry”, Plasma Physics and Controlled Fusion 56, 125006 (2014).
+               22M. S. Chu, R. J. La Haye, M. E. Austin, L. L. Lao, E. A. Lazarus, A. Pletzer, C. Ren,
+                  E. J. Strait, T. S. Taylor, and F. L. Waelbroeck, “Study of a low β classical tearing mode in
+                  DIII-D”, Physics of Plasmas 9, 4584–4590 (2002).
+                23D. Brennan, E. Strait, A. Turnbull, M. Chu, R. La Haye, T. Luce, T. Taylor, S. Kruger, and
+                 A. Pletzer, “Tearing mode stability studies near ideal stability boundaries in diii-d”, Physics of
+                 Plasmas 9, 2998–3006 (2002).
+
+
+
+
+                                                  13
+
+===== PDF PAGE 14 =====
+IOP Publishing    Journal vv (yyyy) aaaaaa                                                      Burgess et al
+
+
+
+                24A. Pletzer, A. Bondeson, and R. L. Dewar, “Linear stability of resistive mhd modes:
+                  axisymmetric toroidal computation of the outer region matching data”, Journal of
+                 Computational Physics 115, 530–549 (1994).
+                25H. L¨utjens, J.-F. Luciani, and X. Garbet, “Curvature effects on the dynamics of tearing modes in
+                 tokamaks”, Physics of Plasmas 8, 4267–4270 (2001).
+                   26J. W. Connor, C. J. Ham, R. J. Hastie, and Y. Q. Liu, “The role of thermal conduction in
+                    tearing mode theory”, Plasma Physics and Controlled Fusion 57, 065001, 065001 (2015).
+                 27R. Dewar and M. Persson, “Coupled tearing modes in plasmas with differential rotation”, Physics
+                     of Fluids B: Plasma Physics 5, 4273–4286 (1993).
+                 28R. Fitzpatrick, “Calculation of tearing mode stability in an inverse aspect-ratio expanded
+                tokamak plasma equilibrium”, Physics of Plasmas 31, 102507 (2024).
+                  29Z. Wang, A. H. Glasser, D. Brennan, Y. Liu, and J. Park, “Modeling of resistive plasma response
+                    in toroidal geometry using an asymptotic matching approach”, Physics of Plasmas 27, 122503,
+                 122503 (2020).
+                 30C. Hansen, I. G. Stewart, D. Burgess, M. Pharr, S. Guizzo, F. Logak, A. O. Nelson, and
+                 C. Paz-Soldan, “TokaMaker: An open-source time-dependent Grad-Shafranov tool for the design
+                and modeling of axisymmetric fusion devices”, Computer Physics Communications 298, 109111,
+                 109111 (2024).
+                 31C. Paz-Soldan, S. Gu, N. Leuthold, P. Lunia, P. Xie, M. W. Kim, S. K. Kim, N. C. Logan,
+                      J. .-. Park, W. Suttrop, Y. Sun, D. B. Weisberg, M. Willensdorfer, The ASDEX Upgrade Team,
+               The Diii-D Team, The East Team, and The Kstar Team, “Plasma performance and operational
+                  space with an RMP-ELM suppressed edge”, Nuclear Fusion 64, 096004, 096004 (2024).
+                32O. Sauter, C. Angioni, and Y. R. Lin-Liu, “Neoclassical conductivity and bootstrap current
+                  formulas for general axisymmetric equilibria and arbitrary collisionality regime”, Physics of
+                 Plasmas 6, 2834–2839 (1999).
+                33D. P. Brennan and L. E. Sugiyama, “Tearing mode stability in a low-beta plasma with            PREPRINT                   sawteeth”, Physics of Plasmas 13, 052515, 052515 (2006).
+                   34J. M. Finn, “Resistive wall stabilization of kink and tearing modes”, Physics of Plasmas 2,
+                 198–204 (1995).
+                  35J.-K. Park, N. C. Logan, Z. Wang, A. H. Glasser, A. S. Glasser, and E. Kolemen, Generalized
+                   perturbed equilibrium code (gpec), [Computer Software]
+                https://doi.org/10.11578/GPEC/dc.20190207.1, Dec. 2018.
+
+
+
+
+
+                                                  14

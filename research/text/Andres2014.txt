@@ -1,0 +1,884 @@
+arXiv:1312.2437v2  [physics.plasm-ph]  30 Jun 2014
+Eﬀects of electron inertia in collisionless magnetic reconnection
+Nahuel Andr´es,1, 2, a) Luis Martin,2 Pablo Dmitruk,2 and Daniel G´omez1, 2
+1)Instituto de Astronom´ıa y F´ısica del Espacio (CONICET-UBA), Argentina
+2)Departamento de F´ısica (FCEN, UBA), Argentina
+(Dated: October 2, 2018)
+We present a study of collisionless magnetic reconnection within the framework of full two-ﬂuid MHD for a
+completely ionized hydrogen plasma, retaining the eﬀects of the Hall current, electron pressure and electron
+inertia. We performed 2.5D simulations using a pseudo-spectral code with no dissipative eﬀects. We check
+that the ideal invariants of the problem are conserved down to round-oﬀerrors. Our numerical results conﬁrm
+that the change in the topology of the magnetic ﬁeld lines is exclusively due to the presence of electron inertia.
+The computed reconnection rates remain a fair fraction of the Alfv´en velocity, which therefore qualiﬁes as
+fast reconnection.
+Keywords: Collisionless Magnetic Reconnection, Electron Inertia, MHD
+I.
+INTRODUCTION
+Magnetic reconnection is an important physical mech-
+anism of energy conversion in various space plasma
+physics environments, such as the solar corona or plan-
+etary magnetospheres1,2.
+This process locally changes
+the magnetic ﬁeld topology, transforming free magnetic
+energy into kinetic energy and heating of the plasma.
+To study the eﬃciency of magnetic reconnection, the
+reconnection rate is considered. Theoretical models of
+magnetic reconnection were ﬁrst developed within the
+framework of one-ﬂuid resistive magnetohydrodynamics
+(MHD), the so-called Sweet-Parker regime3,4.
+In the
+Sweet-Parker model, the reconnection rate scales as the
+square root of the magnetic resistivity, which leads to ex-
+ceedingly low reconnection rates for most space physics
+environments5–9. A possible solution to this problem was
+reported by Petschek 10, giving rise to the concept of fast
+reconnection.
+However, numerical simulations showed
+that the classical Petschek model conﬁguration cannot be
+attained in a model with a spatially uniform resistivity11.
+The idea that MHD turbulence may play an important
+role in a magnetic reconnection setup was ﬁrst proposed
+by Matthaeus and Lamkin 12, by adding turbulent ﬂuc-
+tuations on a two-dimensional sheet pinch conﬁguration.
+For a speciﬁc model for MHD turbulence13, Lazarian and
+Vishniac 14 reported that the rate of magnetic reconnec-
+tion is increased in the presence of a stochastic or tur-
+bulent component of the magnetic ﬁeld. In their model,
+the fast reconnection speed is determined by the level of
+large-scale kinetic energy feeding the turbulent cascade,
+which was conﬁrmed by Kowal et al. 15 using direct nu-
+merical simulations. Within the framework of resistive
+MHD, Bhattacharjee et al. 16 showed that thin current
+sheets with Lundquist number exceeding a critical value,
+are unstable to a super-Alfv´enic tearing instability. As a
+result of this instability, the system reaches a nonlinear
+reconnection rate which is larger than the Sweet-Parker
+a)E-mail: nandres@iafe.uba.ar. Tel.: +5411 47890179 (int. 134).
+rate by an order of magnitude. Recently, Yamada et al. 17
+reported an extensive review on magnetic reconnection,
+discussing results from theory, numerical simulations, ob-
+servations from space satellites, and recent results from
+laboratory plasma experiments.
+Kinetic plasma eﬀects such as Hall and electron iner-
+tia, introduce new spatial and temporal scales into the
+theoretical ﬂuid description. At length scales larger than
+the so-called ion skin-depth, these two eﬀects can be ne-
+glected. For instance, if the resistive scale is larger than
+the ion skin-depth the resistive MHD model is a valid de-
+scription for a collisional plasma. On the other hand, at
+scales below the ion skin-depth, the Hall-MHD (HMHD)
+description is valid.
+In this scenario, the ions are no
+longer frozen-in to the magnetic ﬁeld lines as a result of
+the Hall current term. Meanwhile, the electrons remain
+frozen-in to the magnetic ﬁeld lines. Smith et al. 18 ex-
+amined the inﬂuence of the Hall eﬀect and level of MHD
+turbulence on the reconnection rate in 2.5D compressible
+Hall MHD. Their results indicate that the reconnection
+rate is enhanced both by increasing the Hall parameter
+and the turbulence amplitude. In any of the cases dis-
+cussed above, a small amount of magnetic resistivity is
+necessary to break the frozen-in condition and start the
+reconnection process.
+Biskamp et al. 19 reported theoretical studies of colli-
+sionless magnetic reconnection within the framework of
+two-ﬂuid theory. In particular, the authors propose that
+reconnection is controlled by the whistler mode, leading
+to the decoupling of ions from electrons on scales of the
+order of the ion skin-depth, where the behavior of the
+plasma is approximately described by the equations of
+electron-MHD (EMHD). In this approximation, which
+becomes asymptotically valid at spatial scales smaller
+than the ion skin-depth, ions are considered static (be-
+cause of their larger mass) and electrons are the only
+species to carry the electric current. More recently, Zocco
+et al. 20 considered the potential relevance of electron vis-
+cosity on the reconnection rate, which is also known as
+hyper-resistivity, since the eﬀect is represented by a ∇4
+term in the induction equation. Using scaling arguments
+on a steady state conﬁguration, they ﬁnd that the hyper-
+
+2
+resistive regime can potentially lead to fast reconnection,
+even though the length of the electron diﬀusion region
+might depend explicitly on the level of hyper-resistivity.
+Sullivan et al. 21 also study the role of hyper-resistivity
+in the somewhat more general framework of HMHD per-
+forming two dimensional simulations, and conﬁrm the
+previous results. Electron viscosity corresponds to a par-
+ticular closure on the electron pressure tensor within the
+ﬂuidistic description. Considering alternative closure ap-
+proximations on the electron pressure tensor, Cai and
+Li 22 performed a linear analysis on the EMHD equations
+to study the role of electron-pressure anisotropies on the
+evolution of the tearing-mode instability. They ﬁnd that
+the relative importance between electron-pressure and
+electron inertia eﬀects during reconnection, depends on
+the ratio between the thermal electron Larmor radius
+and the electron skin depth. Hesse et al. 23 report a com-
+prehensive study of anisotropies of the electron pressure
+tensor on the reconnection process, in the cases of either
+presence or absence of a guide magnetic ﬁeld.
+Geospace Environment Modeling (GEM) Reconnec-
+tion Challenge24 was a project designed to study col-
+lisionless magnetic reconnection assuming diﬀerent the-
+oretical approaches. Using fully electromagnetic parti-
+cle in cell25–27, resistive MHD, HMHD27–30 and hybrid
+codes27,31, the authors studied a simple 2D Harris cur-
+rent sheet conﬁguration with a speciﬁed set of initial con-
+ditions. They found that the reconnection rate is insen-
+sitive to the mechanism that breaks the frozen-in condi-
+tion, and corresponds to an inﬂow velocity of nearly 10
+% of the Alfv´en speed. In addition to these arguments,
+Shay et al. 32 claimed that the reconnection rate is found
+to be a universal constant as the system become very
+large. However, several studies have demonstrated that
+the reconnection rate might still depend on the value of
+the Hall parameter18,19,33–35 or on the level of turbulent
+ﬂuctuations14,18. Moving beyond the steady-state mod-
+els, Ottaviani and Porcelli 36 showed that electron inertia
+can lead to growth rates faster than exponential in time.
+This work was made under the assumption that the non-
+local ion motion can be neglected. Comisso et al. 37 re-
+ported results including ion gyration eﬀects. These au-
+thors have shown analytical evidence that the qualita-
+tive diﬀerences between hot and cold ion reconnection is
+linked to the formation of strong electric ﬁelds due to ion
+gyration eﬀects. Recent particle-in-cell (PIC) simulations
+of collisionless magnetic reconnection studied the eﬀect
+of both electron inertia and non-gyrotropic (oﬀ-diagonal)
+pressure tensor eﬀects38. Using 3D electromagnetic PIC
+simulations, Fujimoto 39 conﬁrmed the presence of a fast
+reconnection rate. For conﬁgurations displaying trans-
+lational symmetry along the current sheet, he also ﬁnds
+that the electrons cross the diﬀusion region without ther-
+malization, which means that the magnetic dissipation
+is dominated by electron inertia (see also Fujimoto and
+Sydora 40). Using 2D PIC simulations, Zenitani et al. 41
+found that the size of the central dissipation region is
+controlled by the electron to ion mass ratio, even though
+the reconnection rate is largely insensitive to this mass
+ratio.
+In a two-ﬂuid description of a plasma, at least two ki-
+netic eﬀects are able to break magnetic ﬁeld lines and
+give rise to reconnection: electric resistivity and electron
+inertia. Al-Salti and Shivamoggi 42 considered the rela-
+tive importance between these two eﬀects on externally
+driven magnetic reconnection. They ﬁnd that when the
+boundaries are perturbed at rates slower than the hydro-
+dynamic time and faster than the resistive time, a current
+sheet as narrow as the electron skin depth forms which
+undergoes resistive dissipation at later times.
+Most if
+not all of the ﬂuid descriptions listed above include elec-
+tric resistivity, at the very least a numerical resistivity
+originated in the computational scheme used to calcu-
+late the spatial derivatives. However, in truly collision-
+less regimes (i.e. where the collisional frequencies remain
+much smaller than all other relevant frequencies, such as
+those corresponding to the cyclotron motions), magnetic
+reconnection should be driven solely by electron inertia.
+This physical or numerical resistivity is likely to be the
+ultimate cause of the reconnection process. In the present
+paper, our goal is to study magnetic reconnection exclu-
+sively due to electron inertia, by completely suppressing
+the action of electric resistivity. We use a pseudo-spectral
+scheme to compute the spatial derivatives, which con-
+verges exponentially fast as the number of grid points is
+increased. As a result, we can run simulations with zero
+resistivity and/or viscosity, and check that we are not
+spuriously adding numerical resistivity simply by mon-
+itoring the energy conservation for each run.
+We ﬁnd
+that energy is conserved with a precision consistent with
+round-oﬀerrors. Therefore, we are certain that recon-
+nection in our simulations arises exclusively as a result
+of ﬁnite electron inertia, and not because of the presence
+of physical or numerical resistivity.
+For spatial scales
+below of the electron skin-depth the terms of electron in-
+ertia are dominant, and the electrons can no longer be
+frozen-in to the magnetic ﬁeld lines43. Only at this level
+of description, a change in the topology of the magnetic
+ﬁeld lines exclusively due to electron inertia (i.e. includ-
+ing the mass of the electron explicitly) becomes possible.
+We call Electron Inertia Hall-MHD (EIHMHD) to a the-
+oretical framework that extends HMHD and includes the
+inertia of electrons. This level of description should not
+be confused with the EMHD approximation44, for which
+the ion motion is neglected. Instead, we retain the whole
+dynamics of both the electron and ion ﬂows throughout
+all the relevant spatial scales.
+In summary, our main goal in this paper is to study
+the magnetic reconnection process, using a full two-ﬂuid
+model for a completely ionized hydrogen plasma, retain-
+ing the Hall current and electron inertia. To the extent of
+our knowledge, this is the ﬁrst time such a complete ideal
+two-ﬂuid model is presented, considering also a pseudo-
+spectral method to accurately run simulations with neg-
+ligible numerical resistivity.
+In section II we develop the EIHMHD model used in
+
+3
+the present paper and present the ideal invariants of the
+model. In section III we show the set of equations that
+describe the dynamical evolution of the problem in a 2.5D
+setup. The linear modes of this incompressible model,
+and the numerical code used to integrate the equations
+are described in section IV. In section V we present our
+main results and, ﬁnally, in section VI we summarize our
+conclusions.
+II.
+ELECTRON INERTIA HALL-MHD MODEL
+The equations of motion for a plasma made of protons
+and electrons with mass mp,e, charge ±e, density np =
+ne = no (because of quasi-neutrality), pressure pp,e and
+velocity up,e respectively, in the ideal limit can be written
+as
+mpno
+dup
+dt = eno(E + 1
+c up × B) −∇pp
+(1)
+meno
+due
+dt = −eno(E + 1
+cue × B) −∇pe
+(2)
+j = c
+4π ∇× B = eno(up −ue)
+(3)
+where (3) corresponds to Ampere’s law neglecting the
+displacement current, c is the speed of light and the total
+derivative is
+dup,e
+dt
+≡∂up,e
+∂t
++ (up,e · ∇)up,e
+(4)
+The conservation of mass for each species implies
+∂(mp,eno)
+∂t
++ ∇· (mp,enoup,e) = 0
+(5)
+This set of equations can be written in a dimensionless
+form in terms of a typical length scale L0, a constant
+particle density n0, a value for the magnetic ﬁeld B0 and
+a typical value of velocity u0 = vA = B0/√4πn0M (the
+Alfv´en velocity) where M ≡mp + me,
+(1 −δ)dup
+dt = 1
+ε(E + up × B) −∇pp
+(6)
+δ due
+dt = −1
+ε(E + ue × B) −∇pe
+(7)
+εj = up −ue
+(8)
+where we have introduced the parameters δ ≡me/M and
+ε ≡c/ωML0, and ωM =
+p
+4πe2n0/M is related to the
+plasma proton frequency ωpp =
+p
+4πe2n0/mp as ωM =
+ωpp
+p
+mp/M. It is important to mention that in the limit
+of electron inertia equal to zero, we obtain ωM = ωpp,
+and therefore ε = εH = c/ωppL0 which is the usual Hall
+parameter.
+Using the deﬁnition of the hydrodynamic velocity ﬁeld
+u ≡mpup + meue
+mp + me
+= (1 −δ)up + δue
+(9)
+we can readily obtain the relations between the hydrody-
+namic variables and the velocity of each species as
+up = u + δεj
+(10)
+ue = u −(1 −δ)εj
+(11)
+The modiﬁed Euler equation, is the sum of the corre-
+sponding equations of motion (6) and (7),
+du
+dt = j ×
+
+B −δ(1 −δ)ε2∇2B
+
+−β∇p
+(12)
+where p ≡pp +pe is the hydrodynamic pressure, and β is
+the ratio between the gas pressure and the magnetic pres-
+sure. Note that in the limit of negligible electron inertia
+(i.e., for δ →0), equation (12) reduces to the standard
+equation of motion of one-ﬂuid MHD, and this is also
+the case for the HMHD description, which is a two-ﬂuid
+theoretical description, but considering massless elec-
+trons. The equation of motion for electrons (7), using
+E = −∂tA −∇φ and ((ue · ∇)ue) = ωe × ue + ∇(u2
+e/2)
+can be cast into
+∂
+∂t(A −δεue) = ue × (B −δεωe) +
++ ∇(εpe + δεu2
+e
+2 −φ)
+(13)
+We deﬁne,
+B′ ≡B −δεωe = B −(1 −δ)δε2∇2B −δεω
+(14)
+where ω = ∇× u is the hydrodynamic vorticity. Tak-
+ing the curl of equation (13), it is possible to obtain a
+dynamical equation for the magnetic ﬁeld
+∂t B′ = ∇×
+
+[u −(1 −δ)εj] × B′	
+(15)
+Again, it is straightforward to verify that for δ →0, equa-
+tion (15) reduces to the induction equation for HMHD.
+Just as for three-dimensional Hall-MHD, the Electron
+Inertia Hall-MHD model has three ideal invariants. Us-
+ing E = −1
+c∂tA−∇φ, we can readily show that the total
+energy E is one of these ideal invariants, where
+E =
+Z
+d3r
+ X
+s
+msns
+u2
+s
+2 + B2
+8π
+
+(16)
+The other two ideal invariants are one helicity per species,
+i.e.
+Hs =
+Z
+d3r
+
+A + cms
+qs
+us
+
+·
+
+B + cms
+qs
+ωs
+
+(17)
+where ωs = ∇× us and in this case s = p, e.
+It is
+worth to mention that in the Hall-MHD limit, i.e. δ →0,
+the conservation of the ion helicity and electron helicity
+corresponds to the conservation of the hybrid helicity and
+magnetic helicity respectively45.
+
+4
+III.
+2.5D SETUP
+In a 2.5D setup, the vector ﬁelds depend on two coordi-
+nates, say x and y, although they have three components.
+Considering the incompressible case, i.e. ∇· u = 0, we
+can write the magnetic and velocity ﬁelds as
+B = ∇× [ˆz a(x, y, t)] + ˆz b(x, y, t)
+(18)
+u = ∇× [ˆz ϕ(x, y, t)] + ˆz u(x, y, t)
+(19)
+where a(x, y, t) and ϕ(x, y, t) are the scalar potential for
+the magnetic and velocity ﬁelds respectively. In terms of
+these scalar potentials, equations (12) and (15) take the
+form
+∂t ω = [ϕ, ω] −[a, j] −(1 −δ)δε2[b, ∇2b]
+(20)
+∂t u = [ϕ, u] −[a, b] −(1 −δ)δε2[j, b]
+(21)
+∂t a′ = [ϕ −(1 −δ)εb, a′]
+(22)
+∂t b′ = [ϕ −(1 −δ)εb, b′] + [u −(1 −δ)εj, a′] (23)
+where
+ω = −∇2ϕ
+(24)
+j = −∇2a
+(25)
+a′ = a + (1 −δ)δε2j −δεu
+(26)
+b′ = b −(1 −δ)δε2∇2b −δεω
+(27)
+and the nonlinear terms are the standard Poisson brack-
+ets, i.e. [p, q] = ∂xp∂yq −∂yp∂xq. The set of equations
+(20) - (23) describe the dynamical evolution of the mag-
+netic and velocity ﬁelds for the reconnection problem.
+When δ = 0 (massless electrons) this set of equations
+reduces to the incompressible 2.5D HMHD equations45.
+IV.
+IDEAL INVARIANTS AND LINEAR
+MODES
+Linearising equations (20)-(23) around a static equilib-
+rium given by a homogeneous magnetic ﬁeld of intensity
+B0 in the x-y plane, we obtain the following dispersion
+relationship:
+
+σ2
+1 + (1 −δ)δε2k2
+−k2 cos2(θkB)
+	2 = σ2ε2k2(2δ −1)
+(28)
+where θkB is the angle between the propagation vector
+and the equilibrium magnetic ﬁeld and σ is the tempo-
+ral frequency. The solution of equation (28) yields the
+normal modes of oscillation of equations (20)-(23).
+Figure 1 shows the two modes of propagation of waves
+in EIHMHD, for a realistic mass ratio of me/mp =
+1/1836, θkB = 0 and εH = 0.1. The dotted line cor-
+responds to the MHD Alfv´en mode, for reference.
+As
+in HMHD45 the bottom branch represents the shear ion-
+cyclotron waves, which converges to the proton cyclotron
+frequency (ωcp = eB0/mpc). The top branch corresponds
+to the whistler branch and, in contrast to HMHD, it
+reaches a maximum given by the electron cyclotron fre-
+quency (ωce = eB0/mec).
+The fact that both linear
+10
+0
+10
+1
+10
+2
+10
+3
+10
+0
+10
+1
+10
+2
+10
+3
+10
+4
+k (wavenumber)
+σ (frequency)
+Incompressible EIHMHD Linear Modes
+ 
+ 
+ whistler
+ alfven
+ ion cyclotron
+ωce
+ωcp
+Figure 1. Linear propagation modes in EIHMHD model for
+a realistic mass ratio, θkB = 0 and εH = 0.1. The dotted line
+corresponds to the MHD Alfv´en mode, for reference.
+modes have upper boundaries for their frequencies repre-
+sents an advantage from the numerical point of view, with
+respect to the unbounded dispersion relation in HMHD.
+The maximum frequency in EIHMHD (corresponding to
+ωce) is suggestive of the existence of a minimum time-step
+in the numerical integration scheme which is indepen-
+dent of the spatial resolution ∆t << 1/ωmax = 2/ωce.
+Instead, in HMHD, the whistler branch implies a k-
+dependent maximum frequency ωmax ∼k2
+max and there-
+fore the minimum time-step in the numerical integration
+scheme (CFL condition46) depends quadratically on the
+spatial resolution, ∆t = 1/ωmax ∼1/k2
+max ∼∆x2. As
+a result, HMHD is computationally more demanding as
+the spatial resolution is increased, as compared with the
+more complete EIHMHD model.
+In a 2.5D setup, the dimensionless expressions for the
+three ideal invariants are
+E = 1
+2
+Z
+d2r
+
+|∇ϕ|2 + u2 + |∇a|2 + b2 +
+(1 −δ)δε2|∇b|2 + (1 −δ)δε2j2
+
+(29)
+Hp =
+Z
+d2r
+
+ab +
+((1 −δ)ε)
+
+(u + δε j)b + a(ω −δε∇2b)
+
++
+((1 −δ)ε)2 
+(u + δε j)(ω −δε∇2b)
+ 	
+(30)
+He =
+Z
+d2r
+
+ab −
+(δε)
+
+(u −(1 −δ)ε j)b + a(ω + (1 −δ)ε∇2b)
+
++
+(δε)2 
+(u −(1 −δ)ε j)(ω + (1 −δ)ε∇2b)
+ 	
+(31)
+In
+the
+present
+paper,
+we
+performed
+2.5D
+EIHMHD
+simulations using a pseudo-spectral code,
+which yields exponentially fast numerical convergence
+
+5
+and negligible numerical dissipation.
+The accuracy
+of the numerical scheme can be veriﬁed in part by
+looking at the behavior of the ideal invariants of the
+EIHMHD equations in time. The simulations reported
+here correspond to zero viscosity and resistivity, and
+the total energy is conserved by the numerical scheme
+with an error ∆E/E of less than 10−8.
+The ion and
+electron helicities were initially zero, and throughout
+their evolution diﬀer from zero in less than 10−15. It is
+clear that numerical dissipation is reduced to round-oﬀ
+errors only.
+V.
+RESULTS
+A.
+Initial Conditions
+Our initial condition to simulate a thin current sheets
+is given by (assuming periodic boundary conditions in a
+2π × 2π box)
+B(x, y, t = 0) = B0
+
+tanh
+y −3π
+2
+2π∆
+
+−tanh
+y −π
+2
+2π∆
+
++1
+
+ˆx
+(32)
+where, in normalized units, we have B0 = 1 and ∆=
+0.02. To drive reconnection, a monochromatic perturba-
+tion δB = ∇× [ˆz δa(x, y)] with δa(x, y) = a0 cos(kxx),
+kx = 1 and an amplitude of a0 = 0.02B0 is added to
+the initial condition (32). We perform numerical simula-
+tions starting with a moderate spatial resolution of 5122
+grid points, followed by progressively higher spatial res-
+olutions of 10242, 15362 and 20482 grid points. For all
+these cases we use a Hall parameter εH = 0.1 and a value
+of mass ratio me/mp = 0.015, which corresponds to ap-
+proximately 27 times the real electron mass. In addition,
+we made 3 runs with high spatial resolution (10242, 15362
+and 20482 grid points) and a realistic ratio of electron to
+proton mass, i.e. me/mp = 1/1836.
+In Figure 2 we show the set up of magnetic reconnec-
+tion for a run of 10242 grid points. Contours levels of
+magnetic ﬂux a(x, y) are in white lines, superimposed
+to the electric current density component along the z
+direction, j(x, y), at time t = 0.6 (in grayscale). The
+panel above shows a EIHMHD run with εH = 0.1 and
+me/mp = 0.015, while the panel below shows a HMHD
+run with εH = 0.1 and me/mp = 0. The brightest re-
+gions correspond to the current sheets. We only show
+half a box of integration for each case, of size 2π × π.
+B.
+Topological change and spatial resolution
+As discussed in section I, magnetic reconnection is a
+local change in the magnetic ﬁeld topology. One of the
+consequences of this topological change, is a transfer of
+free magnetic energy into kinetic energy of the plasma.
+In a ﬂuid description, where resistivity and viscosity are
+Figure 2. The images (in grayscale) show the spatial distri-
+bution of current density j(x, y) at t = 0.6 for εH = 0.1 and
+me/mp = 0.015 (above) and me/mp = 0 (below), for the
+lower half of the integration box (see Figure 3). Contours of
+a(x, y) are superimposed (white lines).
+X-point
+O-point
+Figure 3. Schematic conﬁguration for the calculation of the
+reconnection rate. The horizontal plane shows the distribu-
+tion of j(x, y) for the full box, contour levels of a(x, y) are
+superimposed.
+set equal to zero, we expect that the break of the frozen-
+in condition is due to the presence of electron inertia.
+Therefore, we study the generation of magnetic recon-
+nection in the following three models: MHD, HMHD,
+and EIHMHD, expecting that the only framework where
+reconnection is possible is EIHMHD.
+To quantitatively measure the eﬃciency of the mag-
+netic reconnection process, the reconnection rate r(t) is
+deﬁned, which is the rate at which magnetic ﬂux ﬂows
+into the central neutral point (the X-point). Near the
+neutral point, magnetic ﬂux enters due to a relatively
+slow plasma inﬂow and is expelled out at speeds of the
+
+6
+Figure 4.
+Reconnected ﬂux versus time.
+Each panel cor-
+responds to a diﬀerent case, as labelled.
+Diﬀerent spatial
+resolutions: 5122, 10242, 15362, and 20482 correspond to pro-
+gressively darker traces.
+order of the Alfv´en speed. Figure 3 shows the vertical sur-
+face used to integrate the magnetic ﬂux φ(t) =
+R
+dS · B,
+that extends from the O-point of one of the current
+sheets (shown in black, corresponding to negative values
+of j(x, y)), to the X-point of the other (shown in white).
+Both the O-point and the X-point are stagnation points
+of the ﬂow.
+Using equation (18) it is straightforward to show that
+φ(t) =
+Z
+dS · B = amax −amin
+(33)
+The reconnection rate r(t) is the variation of this mag-
+netic ﬂux per unit time, i.e. r(t) = dφ(t)/dt.
+To test the accuracy of our results, we focused our at-
+tention on the spatial resolution of our simulations. For
+this purpose, we made diﬀerent runs for several spatial
+resolutions, starting from the same initial condition as
+the one discussed in section IV. More speciﬁcally, we
+performed 2.5D runs with the following numbers of grid
+points: 5122, 10242, 15362 and 20482. For each spatial
+resolution, we calculated the reconnected ﬂux as shown
+in Figure 4. As expected, for the ideal MHD and HMHD
+the curve for the reconnected ﬂux converges to zero as
+the spatial resolution is increased (line color scale is ob-
+scured).
+Therefore, as the number of grid points in-
+creases, the reconnection rate approaches zero, both in
+the MHD and HMHD cases. In the case of EIHMHD,
+since we expect the electrons to break the frozen-in con-
+dition, the reconnected ﬂux converges to a value diﬀer-
+ent from zero, as the number of grid points increases.
+Therefore, we cla im that considering electron inertia is
+a necessary physical ingredient to start the reconnection
+process. Note that in our pseudo-spectral scheme, nu-
+merical dissipation is essentially zero (within round-oﬀ
+errors), as becomes apparent from the high degree of nu-
+merical conservation of the three ideal invariants (see also
+Brachet et al. 47).
+C.
+Magnetic Reconnected Flux and Rate
+Within the framework of EIHMHD, we study the
+collisionless magnetic reconnection problem considering
+εH = 0.1 and a realistic value of the electron mass
+(me/mp = 1/1836). Using the same initial conditions de-
+scribed in section V A, we performed simulations with rel-
+atively high spatial resolution (10242, 15362 and 20482).
+Figure 5 shows the reconnected ﬂux and reconnection
+rate, for each spatial resolution, as a function of time.
+The reconnection rate r(t) is calculated using second or-
+der ﬁnite central diﬀerences from the time series of the
+ﬂux φ(t). As expected, we obtain essentially the same
+curve for the three spatial resolutions in agreement with
+the results shown in Figure 4.
+In particular, we get
+a maximum reconnection rate reaching values close to
+0.1, which corresponds to inﬂow velocities approaching
+a fraction of the Alfv´en speed. This result is consistent
+with those reported in the literature, in particular with
+PIC simulation results39,41 and the GEM Challenge24. In
+particular, using a partially implicit PIC code, Zenitani
+et al. 41 found a reconnection rate approaching 0.1vA. It
+is worth mentioning that we obtained a reconnection rate
+comparable to the one reported by Birn et al. 24, because
+we used a similar set of initial conditions and parameter
+values. Nevertheless, the reconnection rate is expected to
+depend on the Hall parameter18,19,33–35 as well as on the
+amplitude of ﬂuctuations δB18, even though a system-
+atic study of the reconnection rate as a function of these
+parameters is beyond the scope of the present study.
+Finally, we compared the reconnected ﬂux and recon-
+nection rate for the same initial conditions and diﬀer-
+ent electron to proton mass ratios.
+In particular, we
+compared the results for me/mp = 0.015 and me/mp =
+1/1836. We obtain the same trend for both the recon-
+nected ﬂux and reconnection rate.
+In agreement with
+PIC simulations41 and resistive HMHD simulations24, we
+ﬁnd that the reconnection rate is insensitive to the elec-
+tron to proton mass ratio.
+
+7
+Figure 5. Reconnected ﬂux and reconnection rate as a func-
+tion of time for 10242 (light gray line), 15362 (dark gray line)
+and 20482 (black line) grid points. The three runs correspond
+to εH = 0.1 and a realistic mass ratio (me/mp = 1/1836).
+VI.
+CONCLUSIONS
+We presented a fully two-ﬂuid model for a completely
+ionized hydrogen plasma, retaining the Hall current and
+electron inertia.
+In the incompressible limit, we veri-
+ﬁed the existence of the linear modes of the model, i.e.
+the ion-cyclotron and the whistler branches. As showed,
+these two branches converge to the proton and electron
+cyclotron frequencies in the wavenumber k →∞limit.
+Numerically, we conﬁrm the conservation of the three
+ideal invariants of the model with a high degree of accu-
+racy of ∼10−8 −10−12. It is worth mentioning that in
+the limit of zero electron inertia (i.e. me →0) we recover
+the HMHD model, with their corresponding linear modes
+and ideal invariants45.
+Our results show that we are able to obtain magnetic
+reconnection, only when the eﬀects of electron inertia
+are retained, since our scheme is free from physical or
+numerical resistivity. Even though the fact that electron
+inertia enables magnetic reconnection is well known, to
+the extent of our knowledge this is the ﬁrst time that this
+feature is conﬁrmed with results from a non-dissipative
+ﬂuid simulation. In particular, for the case of ideal MHD
+and HMHD, we show that it is not possible to have mag-
+netic reconnection without dissipation eﬀects. In other
+words, we ﬁnd that within the framework of the present
+model, ﬁnite electron inertia is a necessary physical ingre-
+dient to drive the reconnection process, even though the
+reconnection rate is largely independent of the numeri-
+cal value of the mass ratio me/mp. Moreover, for high
+spatial resolution simulations we ﬁnd a reconnection rate
+that is quantitatively compatible with the one found by
+Birn et al. 24, when we use parameter values and initial
+conditions similar to theirs. Note however, that the re-
+connection rate might still depend on the value of the
+Hall parameter εH or on the level of ﬂuctuations δB.
+ACKNOWLEDGMENTS
+The authors Nahuel Andr´es and Luis Martin would
+like to acknowledge interesting discussions and advice by
+Vanesa Monserrat that helped us to make this work pos-
+sible.
+We acknowledge support from the following grants
+PIP
+11220090100825,
+UBACyT
+20020110200359,
+20020100100315, and PICT 2011-1529, 2011-1626 and
+2011-0454.
+REFERENCES
+1D. Biskamp, Magnetic Reconnection in Plasmas (Cambridge
+Univ. Press, 2000).
+2E. Priest and T. Forbes, Magnetic Reconnection, MHD Theory
+and Applications (Cambridge Univ. Press, 2007).
+3P. A. Sweet, The Observatory 78, 30 (1958).
+4E. N. Parker, J. Geophys. Res. 62, 509 (1957).
+5A. W. Edwards, D. J. Campbell, W. W. Engelhardt, H. U.
+Fahrbach, R. D. Gill, R. S. Granetz, S. Tsuji, B. J. D. Tub-
+bing, A. Weller, J. Wesson, and D. Zasche, Phys. Rev. Lett. 57,
+210 (1986).
+6M. Oieroset, T. D. Phan, M. Fujimoto, R. P. Lin,
+and R. P.
+Lepping, Nature 412, 414 (2007).
+7A. Fujisawa, K. Itoh, A. Shimizu, H. Nakano, S. Ohshima,
+H. Iguchi, K. Matsuoka, S. Okamura, T. Minami, Y. Yoshimura,
+K. Nagaoka,
+K. Ida,
+K. Toi,
+C. Takahashi,
+M. Kojima,
+S. Nishimura, M. Isobe, C. Suzuki, T. Akiyama, Y. Nagashima,
+S.-I. Itoh,
+and P. H. Diamond, Phys. Rev. Lett. 98, 165001
+(2007).
+8A. Bhattacharjee, Annual Review of Astronomy and Astro-
+physics 42, 365 (2004).
+9M. Yamada, Phys. Plasmas 18, 111212 (2011).
+10H. E. Petschek, NASA Special Publication 50, 425 (1964).
+11D. Biskamp, Physics of Fluids 29, 1520 (1986).
+12W. H. Matthaeus and S. L. Lamkin, Phys. Fluids 29, 2513 (1986).
+13P. Goldreich and S. Sridhar, ApJ 438, 763 (1995).
+14A. Lazarian and E. T. Vishniac, ApJ 517, 700 (1999).
+15G. Kowal, A. Lazarian, E. T. Vishniac,
+and K. Otmianowska-
+Mazur, ApJ 700, 63 (2009).
+16A. Bhattacharjee, Y.-M. Huang, H. Yang, and B. Rogers, Phys.
+Plasmas 16, 112102 (2009).
+17M. Yamada, R. Kulsrud,
+and H. Ji, Rev. Mod. Phys. 82, 603
+(2010).
+18D. Smith, S. Ghosh, P. Dmitruk, and W. Matthaeus, Geophys-
+ical Research Letters 31, L02805 (2004).
+19D. Biskamp, E. Schwarz, and J. F. Drake, Phys. Plasmas 4, 1002
+(1997).
+20A. Zocco, L. Chac´on, and A. N. Simakov, AIP Conference Pro-
+ceedings 1069, 349 (2008).
+
+8
+21B. P. Sullivan, A. Bhattacharjee,
+and Y.-M. Huang, Physics of
+Plasmas (1994-present) 16, (2009).
+22H. Cai and D. Li, Physics of Plasmas (1994-present) 16, (2009).
+23M. Hesse, T. Neukirch, K. Schindler, M. Kuznetsova, and S. Zen-
+itani, Space Science Reviews 160, 3 (2011).
+24J. Birn, J. F. Shay, M. A. Drake, N. Hesse, E. Rogers, M. Denton,
+M. Kuznetsova, Z. W. Ma, A. Bhattacharjee, A. Otto, and P. L.
+Pritchett, J. Geophy. Res. 106, 3715 (2001).
+25M. Hesse, J. Birn,
+and M. Kuznetsova, J. Geophys. Res. 106,
+3721 (2001).
+26P. L. Pritchett, J. Geophys. Res. 106, 3783 (2001).
+27M. A. Shay, J. F. Drake, B. N. Rogers,
+and R. E. Denton, J.
+Geophys. Res. 106, 3759 (2001).
+28J. Birn and M. Hesse, J. Geophys. Res. 106, 3737 (2001).
+29A. Otto, J. Geophys. Res. 106, 3751 (2001).
+30Z. W. Ma and A. Bhattacharjee, J. Geophys. Res. 106, 3773
+(2001).
+31M. M. Kuznetsova, M. Hesse, and D. Winske, J. Geophys. Res.
+106, 3799 (2001).
+32M. A. Shay, J. F. Drake, and B. N. Rogers, Geophys. Res. Lett.
+26, 2163 (1991).
+33A. N. Simakov and L. Chac´on, Phys. Rev. Lett. 101, 105003
+(2008).
+34L. F. Morales, S. Dasso, D. O. G´omez, and P. Mininni, Journal
+of Atmospheric and Solar-Terrestrial Physics 67, 1821 (2005).
+35L. F. Morales, S. Dasso, D. O. G´omez, and P. D. Mininni, Ad-
+vances in Space Research 37, 1287 (2006).
+36M. Ottaviani and F. Porcelli, Phys. Rev. Lett. 71, 3802 (1993).
+37L. Comisso, D. Grasso, F. L. Waelbroeck,
+and D. Borgogno,
+Phys. Plasmas 20, 092118 (2013).
+38M. Hesse, K. Schindler, J. Birn, and M. Kuznetsova, Physics of
+Plasmas (1994-present) 6, 1781 (1999).
+39K. Fujimoto, Physics of Plasmas (1994-present) 18, (2011).
+40K. Fujimoto and R. D. Sydora, Physics of Plasmas (1994-present)
+16, (2009).
+41S. Zenitani, M. Hesse, A. Klimas, C. Black, and M. Kuznetsova,
+Physics of Plasmas (1994-present) 18, (2011).
+42N. Al-Salti and B. K. Shivamoggi, Phys. Plasmas 10, 4271 (2003).
+43V. M. Vasyliunas, Reviews of Geophysics 13, 303 (1975).
+44Bulanov, S. V. and Pegoraro, F. and Sakharov, A. S., Physics of
+Fluids B: Plasma Physics (1989-1993) 4, 2499 (1992).
+45D. O. G´omez, S. M. Mahajan, and P. Dmitruk, Phys. Plasmas
+15, 102303 (2008).
+46R. Courant, K. Friedrichs, and H. Lewy, Mathematische Annalen
+100, 32 (1928).
+47M. E. Brachet, M. D. Bustamante, G. Krstulovic, P. D. Mininni,
+A. Pouquet, and D. Rosenberg, Phys. Rev. E 87, 013110 (2013).

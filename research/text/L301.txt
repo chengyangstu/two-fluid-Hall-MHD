@@ -1,0 +1,1430 @@
+Systematic 2.5 D resistive MHD simulations with ambipolar diffusion and Hall effect for
+fast magnetic reconnection
+Gabriela Landineza, Fabio D. Lora-Clavijoa
+aUniversidad Industrial de Santander, A. A. 678, Bucaramanga, 680002, Santander, Colombia
+Abstract
+In this work, we explore the possibility of the Hall effect and ambipolar diffusion as a mechanism for fast reconnection. The
+reconnected flux of our resistive and resistive+Hall simulations replicates the GEM results. Furthermore, we investigate, for the first
+time, the effect of ambipolar diffusion in the GEM. The reconnected flux of the resistive+ambipolar and resistive+Hall+ambipolar
+simulations showed increases of up to 75% and 143%, respectively, compared to the resistive and resistive+Hall simulations,
+showing that ambipolar diffusion contributes significantly to the reconnected flux. Our second scenario has a magnetic Harris
+field without perturbations but with an out-of-plane component, known as a guide field. We found that the reconnection rate
+increased faster with ambipolar diffusion, reaching values close to 0.1 for the resistive+Hall+ambipolar simulation followed by
+the resistive+Hall. These two simulations achieved the highest kinetic energy, implying more efficient energy conversion during
+reconnection.
+Keywords: magnetic reconnection, Hall MHD, ambipolar diffusion, numerical simulations, numerical methods
+1. Introduction
+Magnetic reconnection is a topological rearrangement of the
+magnetic field that converts magnetic energy into plasma en-
+ergy (Zweibel and Yamada, 2009). This process is usually de-
+scribed in terms of a change in the connectivity of the field lines,
+also known as the magnetic field topology, which allows the
+release of magnetic energy stored in the system. The Ohmic
+resistivity is responsible for this release, causing the plasma
+frozen-in-flux condition to be violated in the diffusion zone,
+where breaking and reconnection of magnetic field lines occur
+(Priest and Forbes, 2000; Bittencourt, 2013). Magnetic recon-
+nection takes place in different plasmas, spanning from labora-
+tory to astrophysical environments, is responsible for the dif-
+ferent mechanisms of particle acceleration, the main driver of
+space weather (Priest and Forbes, 2000; Birn et al., 2012) and
+astrophysical phenomena, such as geomagnetic storms. To un-
+derstand the energy conversion associated with these phenom-
+ena, it is essential to know the rate at which magnetic recon-
+nection occurs (Comisso and Bhattacharjee, 2016).
+For ex-
+ample, the amplitude of geomagnetic disturbances can be con-
+trolled by the rate of magnetic reconnection (Nakamura et al.,
+2018), which provides information about how fast the process
+occurs, how much magnetic flux is reconnected, and how much
+magnetic energy becomes kinetic energy that accelerates the
+plasma (Hesse and Cassak, 2020). For these reasons, the mag-
+netic reconnection rate has been studied observationally, ex-
+perimentally, theoretically, and numerically. Nowadays, it is
+known from numerical simulations and satellite observations
+that the normalized reconnection rate is about 0.1 in many sys-
+tems (Cassak et al., 2017; Hesse and Cassak, 2020), a much
+larger value than that predicted by the classical model of Sweet
+(Sweet, 1958b,a) and Parker (Parker, 1957, 1963). However,
+despite years of effort and first-principles theories (Liu et al.,
+2022; Goodbred and Liu, 2022), a complete theoretical un-
+derstanding has not been achieved. The above suggests that
+those classical models are insufficient to capture all the rele-
+vant processes during reconnection, probably because the phys-
+ical mechanisms for fast reconnection are challenging to study
+through theoretical means (Malyshkin and Zweibel, 2011).
+The key to explaining a value of 0.1 may lie in studying the
+particle decoupling caused by the Hall effect, or in other phys-
+ical phenomena beyond the single-fluid magnetohydrodynamic
+(MHD) approximation, like ambipolar diffusion. The GEM re-
+connection challenge (Birn et al., 2001) looked into that and
+verified that all their models with the Hall effect had similar re-
+connection rates, but later other simulations (Karimabadi et al.,
+2004; Bessho and Bhattacharjee, 2005, 2007) showed that re-
+connection also has a similar rate without this effect. How-
+ever, most of these works are not concerned with partially ion-
+ized plasmas. According to Malyshkin and Zweibel (2011), in
+a weakly ionized plasma with significant interaction between
+ions and neutrals, fast reconnection is triggered by the Hall ef-
+fect at considerably lower Lundquist number values compared
+to scenarios with fully ionized plasma. These conditions for fast
+reconnection are satisfied in molecular clouds, where another
+effect could play a key role: the ambipolar diffusion, which
+is extremely important in astrophysics and contributes signifi-
+cantly to events of interstellar medium heating (Falgarone et al.,
+2015; Zweibel, 2015). So far, simulations have shown that am-
+bipolar diffusion causes thinning of the current sheet, favour-
+ing rapid reconnection rates (Ethan and Lazarian, 1999; Heitsch
+and Zweibel, 2003; Ni et al., 2015). However, the direct effect
+of ambipolar diffusion on the reconnection rate has yet to be
+Preprint submitted to Physics Letters A
+October 10, 2024
+arXiv:2410.06391v1  [astro-ph.SR]  8 Oct 2024
+
+well studied in the Earth’s magnetotail. While the literature on
+the value 0.1 for partially ionized plasmas is limited, numeri-
+cal kinetic simulations suggest that magnetic reconnection rates
+can approach this value (Jara-Almonte et al., 2019). Although
+research on magnetic reconnection in partially ionized plasmas
+is less extensive, a multitude of astrophysical environments, in-
+cluding the lower solar atmosphere, comet tails, protoplanetary
+nebulae, and disks around young stellar objects, are filled with
+partially ionized plasmas. This motivates further investigation
+into the underlying mechanisms driving fast reconnection and
+the conditions under which it can occur in these environments.
+Even in the presence of neutrals, all plasma components can
+be assumed to be strongly coupled by collisions, and the single
+fluid remains adequate. In many cases, however, collisions be-
+tween particles are not sufficient to fully couple all species in a
+plasma. For example, in diffusion regions where magnetic re-
+connection occurs, the single-fluid approximation is no longer
+valid: ions are decoupled from the magnetic field and no longer
+move with electrons. Similarly, there are regions where the neu-
+tral gas in a plasma separates from the charged particles. This
+gives rise to relative velocities that manifest themselves as non-
+ideal processes, such as the Hall effect and ambipolar diffusion
+(Khomenko and Collados, 2012). Fortunately, even when the
+plasma is modelled as a single fluid, it is possible to adopt an
+approach to deal with the effects produced by the interaction
+between its species. This approach, instead of including more
+fluids in the system, relies on the use of a generalized Ohm’s
+law, whose additional terms contain the necessary information
+to describe a plasma where the different species are not strongly
+coupled.
+With the above motivation, we address the problem of mag-
+netic reconnection rate by performing a systematic comparison
+of simulations. We take a single-fluid approach with terms as-
+sociated with the Hall effect and ambipolar diffusion in the re-
+sistive MHD equations. We do this to determine the effect of
+both phenomena on the behaviour of magnetic reconnection, in
+particular on the amount of reconnected flux and the reconnec-
+tion rate. All numerical simulations are obtained by implement-
+ing and modifying subroutines in the MAGNUS code (Navarro
+et al., 2017). The paper is structured as follows. In section
+2 we present the resistive MHD equations with the Hall effect
+and ambipolar diffusion, which are included in the equations
+through Ohm’s law. In section 3 we give a brief description of
+MAGNUS and the inclusion of both effects in the code. Then,
+in section 4 we perform the GEM benchmark test for the Hall
+effect. To our knowledge, no one has used the GEM to study
+the effect of ambipolar diffusion on the reconnected flux, so in
+section 5 we present simulations with ambipolar diffusion us-
+ing the GEM model too. In section 6 we present the results for
+another simple current sheet model with guide field, in which
+we measure reconnection rates, magnetic and kinetic energies,
+and fluxes related to the energy transport equation. Finally, in
+section 7 we summarize the main conclusions.
+2. MHD equations for a conducting fluid with Hall and am-
+bipolar terms
+As mentioned above, we take a single-fluid approach with
+Hall and ambipolar diffusion terms in the resistive MHD equa-
+tions. The MHD model describes low-frequency interactions
+between conducting fluids and electromagnetic fields, i.e. mo-
+tions where u2/c2 << 1, where u is the characteristic fluid ve-
+locity and c is the speed of light (Schnack, 2009).
+2.1. Ohm’s law
+Ohm’s law couples the dynamics of the fluid and the electro-
+magnetic fields, taking into account non-ideal MHD processes
+beyond the ohmic resistance. For a reference frame in which
+the fluid moves with velocity u, Ohm’s law reads as follows
+(Bittencourt, 2013; Ballester et al., 2018)
+E + u × B = ηj + ηH(j × B) −ηA
+(j × B) × B ,
+(1)
+where η is the ohmic resistivity, ηH is the Hall coefficient, and
+ηA is the ambipolar diffusion coefficient. The coefficients are
+defined as
+ηH = 1
+ne,
+ηA = KA ·
+1
+ρ2 √
+T
+,
+(2)
+where n is the number density, e is the electron charge, ρ is the
+plasma density, and T is the temperature. KA is a parameter that
+controls the effect of the ambipolar term in our simulations and
+depends on the collision frequencies between particles and the
+physical conditions of the plasma (Vigan`o et al., 2019). For ex-
+ample, KA is inversely related to the degree of ionization, so for
+a fully ionized plasma, KA becomes zero and we do not have
+ambipolar diffusion. Ohm’s law is often derived from the elec-
+tron momentum equation under simplifying assumptions, such
+as neglecting electron inertia, gravity acting on electrons, and
+assuming that currents vary much more slowly in time than hy-
+drodynamic processes (Zaqarashvili et al., 2011). Additionally,
+strong couplings, which are sometimes broken in partially ion-
+ized plasmas (Brandenburg and Zweibel, 1994; Brandenburg
+and Zweibel, 1995), are often assumed. For a detailed discus-
+sion of Ohm’s law in multi-component partially ionized plas-
+mas, see (Khomenko et al., 2014). In this research, we focus
+specifically on analyzing the impact of Hall terms and ambipo-
+lar diffusion on the plasma dynamics associated with magnetic
+reconnection phenomena.
+2.1.1. Hall effect
+The Hall effect refers to the appearance of an electric field
+due to charge separation in a conductor. In plasma, the separa-
+tion occurs as a consequence of decoupling between ions and
+electrons that takes place in the diffusion region, where a multi-
+scale structure is developed based on the characteristic lengths
+of each species.
+The Hall term arises from the separation of electron and ion
+motions in the plasma. In the generalized Ohm’s law, this term
+captures the dynamics of the magnetic field at scales smaller
+than the ion inertial length. Including the Hall term allows for a
+faster reconnection rate than predicted by classical MHD. This
+2
+
+is essential for explaining the rapid energy release observed
+in many astrophysical and laboratory plasmas. The Hall term
+leads to the formation of quadrupolar magnetic fields around
+the reconnection site. These structures are key observational
+signatures in both simulations and experiments.
+Given an initial antiparallel magnetic field as the one in Fig-
+ure 1, the term j × B implies the appearance of electric fields in
+the xy plane, where reconnection occurs. To understand the dy-
+namics of ions and electrons influenced by these electric fields
+and the appearance of the quadrupole field, a characteristic sig-
+nature of Hall reconnection, the reader may refer to the physical
+picture made by Uzdensky and Kulsrud (2006). Their descrip-
+tion provides a clear example of how currents induced by the
+Hall effect may affect the structure of the initial current sheet as
+well as the magnetic field and its evolution (Morales, 2020).
+Figure 1: Simple diagram of a current sheet. The magnetic field is located in
+the xy plane and the current sheet in the xz plane is oriented towards the −z axis.
+2.1.2. Ambipolar diffusion
+Ambipolar diffusion affects the transport of magnetic flux
+and can lead to the decoupling of magnetic fields from the bulk
+plasma. This decoupling is crucial for understanding the recon-
+nection process in environments where neutrals are present.
+Ambipolar diffusion also produces the appearance of electric
+fields, this time due to decoupling between neutrals and charged
+particles (Zweibel, 2015). The ambipolar term (j×B)×B gener-
+ates electric fields in the xz plane of Figure 1, as a consequence
+it affects the perpendicular currents to the reconnection plane.
+According to Morales (2020), this implies that ambipolar dif-
+fusion cannot produce magnetic reconnection. However, it can
+relax the magnetic field configuration by reducing the magnetic
+energy, which is then converted to heat by a dissipation process.
+Ambipolar diffusion influences the reconnection rates by
+modifying the resistivity in the plasma. Depending on the lo-
+cal plasma conditions, this can either enhance or suppress the
+reconnection rate. In astrophysical contexts, such as star forma-
+tion and the evolution of molecular clouds. Understanding its
+impact is necessary for realistic modelling of these processes.
+Although the Hall effect generates currents in the plane
+where reconnection occurs, it does not contribute directly to re-
+connection because it continues to freeze the magnetic field in
+the electron flow (Priest and Forbes, 2000). In fact, both effects,
+unlike ohmic resistance, preserve the magnetic field topology
+and do not trigger reconnection. However, they can promote its
+occurrence and affect its rate with effects such as current sheet
+thinning and plasmoid formation (N´obrega-Siverio et al., 2020;
+Zweibel, 2015). Including both terms in the generalized Ohm’s
+law lead to better predictions of reconnection rates, energy re-
+lease, and the overall behaviour of plasma in both astrophysical
+and laboratory settings.
+Finally, it is important to clarify that the appearance of elec-
+tric fields in the plane where reconnection occurs, or in its per-
+pendicular plane, will change depending on the configuration
+adopted, e.g. if a guide field is used, the z component of the
+magnetic field must be considered. Figure 1 is only used to
+illustrate a simple and specific configuration.
+2.2. Transport equations
+When the plasma, which may contain ions, electrons, and
+neutrals, is considered as a single conducting fluid, the trans-
+port equations for each species are replaced by transport equa-
+tions for the whole plasma, meaning that variables such as den-
+sity and velocity for each species are replaced by average val-
+ues (Bittencourt, 2013). In conservative form, the macroscopic
+transport equations for a conducting fluid are
+∂ρ
+∂t + ∇· (ρu) = 0,
+(3)
+∂ρu
+∂t + ∇·
+ 
+ρuu −1
+µ0
+BB + PI
+!
+= 0,
+(4)
+∂E
+∂t + ∇·
+(
+(E + P)u −1
+µ0
+(B · u)B + 1
+µ0
+h
+B2uH −(B · uH)B
+i
++ 1
+µ0
+(B2uA)
+)
+= −∇·
+ η
+µ0
+j × B
+!
+,
+(5)
+where uH and uA are velocities associated with the Hall effect
+and the ambipolar diffusion, defined as
+uH = −ηHj,
+uA = ηA(j × B).
+(6)
+The total pressure P is defined as
+P = p + B2
+2µ0
+,
+(7)
+the sum of fluid pressure p and the magnetic pressure B2/2µ0.
+The total energy density E is given by the sum of the kinetic,
+magnetic and internal energy densities, that is
+E = 1
+2ρu2 +
+1
+2µ0
+B2 + ρe,
+(8)
+here e is the system’s internal energy and is related to pressure
+by the equation of state
+p = (γ −1)ρe,
+(9)
+where γ is the adiabatic index. The equations (3), (4) and (5)
+correspond to the transport equations for mass, momentum and
+energy. To obtain them, no gravitational force is assumed, vis-
+cosity and heat flow are neglected.
+3
+
+2.3. Evolution equations for the electromagnetic fields
+Evolution equations for E and B are given by Faraday’s and
+Amp`ere-Maxwell’s laws,
+∇× E = −∂B
+∂t ,
+(10)
+∇× B = µ0j,
+(11)
+where the displacement current term in equation (11) is ne-
+glected due to the low-speed approximation. Also, at all times
+it must be guaranteed that
+∇· B = 0,
+(12)
+which also guarantees the absence of magnetic monopoles. Fi-
+nally, Faraday’s law can be rewritten using Ohm’s law to obtain
+the induction equation
+∂B
+∂t +∇·(uB−Bu)+∇·(uHB−BuH)+∇·(uAB−BuA) = −∇×ηj.
+(13)
+With equations (12) and (13), the system of equations (3)-(5) is
+closed and we can proceed with the numerical methods used to
+solve it.
+3. Numerical methods: MAGNUS code
+MAGNUS (Navarro et al., 2017) is the Newtonian version of
+the relativistic code CAFE (Lora-Clavijo et al., 2015). It solves
+the resistive MHD equations and has been used mainly to study
+wave propagation in the solar atmosphere. Some of the scenar-
+ios that have been simulated with MAGNUS are: the emerg-
+ing plasma blob in a solar coronal hole (Navarro et al., 2019),
+the thermal conduction effects on the formation of tadpole-like
+jets in the solar chromosphere (Navarro et al., 2021), and the
+propagation of torsional Alfv´en waves in a stratified solar atmo-
+sphere (Wandurraga et al., 2021). More recently, an adaptation
+of MAGNUS has been used to model the propagation of PS-V
+seismic waves (Landinez et al., 2021).
+The code solves the system of equations in a uniform grid
+using the method of lines, whose main idea is to replace the
+spatial derivatives by algebraic approximations (Schiesser and
+Griffiths, 2009). Once this is done, any integration method can
+be used to compute a solution. In MAGNUS, the algebraic ap-
+proximation of the right-hand side of the equations is done us-
+ing the finite volume method in combination with the HLLE
+approximate Riemann solver, which uses different slope lim-
+iters. The time integration can be done with different integra-
+tors of the Runge-Kutta family implemented in MAGNUS. In
+particular, we use the MC beta limiter with β = 1.2 and a TVD
+second-order Runge-Kutta in all simulations.
+The finite volume discretization of the MHD equations, in-
+cluding Hall and ambipolar terms, modifies the induction equa-
+tion and the total energy density equation. We found that it is
+not possible to consider the Hall term as an additional source
+term, therefore it is necessary to add new terms to the numeri-
+cal fluxes.
+3.1. Hall and ambipolar corrections to the fluxes
+With the velocities uH and uA, the energy and induction equa-
+tions can be rewritten in coordinates as
+∂E
+∂t = −∂
+∂x j
+"
+(E + P)uj −1
+µ0
+(B · u)Bj
+#
+−∂
+∂x j
+h
+B2uH
+j −(B · uH)Bj
+i
+−∂
+∂xj
+
+B2uA
+j
+
+−
+"
+∇·
+ η
+µ0
+j × B
+!#
+j
+,
+(14)
+∂Bi
+∂t = −∂
+∂x j
+(ujBi −Bjui) −∂
+∂x j
+(uH
+j Bi −BjuH
+i )
+−∂
+∂xj
+(uA
+j Bi −BjuA
+i ) −[∇× ηj]i.
+(15)
+The magnetic permeability µ0 does not appear in the above
+equations because MAGNUS solves the dimensionless system
+of equations.
+The first three terms on the right-hand side of both equations
+are fluxes, while the others are source terms. Since MAGNUS
+already solves the resistive MHD equations, only the second
+and third terms in parentheses need to be added to the fluxes
+of each equation. With the finite volume method, the equations
+are discretized as
+dU(i, j,k)
+dt
+= −
+Fx
+(i+1/2,j,k) −Fx
+(i−1/2,j,k)
+∆x
+−
+Fy
+(i,j+1/2,k) −Fy
+(i, j+1/2,k)
+∆y
+−
+Fz
+(i, j,k+1/2) −Fz
+(i, j,k−1/2)
+∆z
++ S(i, j,k),
+(16)
+where U is the state vector, Fi the vector of fluxes along each
+direction1, and S the vector of source terms. In MAGNUS, each
+vector of fluxes is calculated as
+Fi±1/2,j,k = FHLLE
+i±1/2, j,k + FH
+i±1/2, j,k + FA
+i±1/2,j,k,
+(17)
+where FHLLE is the numerical flux for the MHD part, calculated
+using the HLLE High-Resolution Shock Capturing method. FH
+and FA are the fluxes due to Hall and ambipolar terms, both
+computed in different subroutines and then added to the other
+fluxes computed with the HLLE scheme along each spatial di-
+rection. Equation (17) is analogous for Fi,j±1/2,k, Fi,j,k±1/2.
+To compute the Hall and ambipolar velocities, which appear
+in (14) and (15), we need the magnetic field and the current
+density evaluated at the intercell. Since the current density is
+given by j = (∇× B)/µ0, we need the spatial derivatives of the
+magnetic field. For the latter, some authors propose schemes
+where the normal derivatives are computed differently from the
+tangential derivatives (see T´oth et al. (2008) and Strumik and
+Stasiewicz (2017)). However, we compute the derivatives of
+1By using 1/2 in one of the subindexes of the triplet (i, j, k), we denote a
+face between cells in a given direction. For example, The subindex (i+1/2, j, k)
+represents the face between cells in i direction, that is, the face between (i, j, k)
+and (i + 1, j, k).
+4
+
+the magnetic field along each direction using a second-order
+finite-difference scheme. At each of the nodes, the derivatives
+are numerically approximated using forward, backwards, and
+central finite differences. Once this is done, the Hall and am-
+bipolar velocities can be obtained at each point in the numerical
+grid. We then use the averaged variables
+(uH)i+1/2, j,k = (uH)i,j,k + (uH)i+1,j,k
+2
+,
+(18)
+(uA)i+1/2,j,k = (uA)i,j,k + (uA)i+1, j,k
+2
+,
+(19)
+to calculate the velocities at the intercell. The same is done
+for (uH)i,j+1/2,k, (uH)i, j,k+1/2, (uA)i, j+1/2,k y (uA)i, j,k+1/2 and also
+for each component of the magnetic field in equations (14) and
+(15).
+3.2. Time-step modification
+Following the Courant-Friedrichs-Levy condition, the time
+step in MAGNUS is chosen as
+∆t = CCFL × min
+
+∆x
+λn,x
+ijk
+
+, ∆y
+λn,y
+ijk
+
+, ∆z
+λn,z
+ijk
+
+,
+(20)
+where the Courant-Friedrichs-Levy parameter CCFL must be
+less than or equal to 1, and λn,d
+ijk is the velocity of the fastest
+wave propagating in some d direction at a time level n (Navarro
+et al., 2017), so that the time step adapts at each level.
+In the presence of Hall and ambipolar terms, some modifi-
+cations are required. To do this, we performed a dimensional
+analysis of each of these terms in the induction equation. For
+the Hall term, we have
+Bo
+to
+= ηH
+joBo
+xo
+= ηH
+B2
+o
+x2o
+,
+(21)
+therefore
+to =
+x2
+o
+BoηH
+=
+xo
+BoηH
+xo
+.
+(22)
+It is clear that the denominator of the last fraction corresponds
+to some velocity. With this is defined a new velocity
+λH = u + cf + C BoηH
+xo
+,
+(23)
+where u is the fluid velocity and c f is the fast magnetosonic
+velocity. According to T´oth et al. (2008), it is not necessary
+to include the exact speed of the modes introduced by the Hall
+effect, but a reduced speed can be used to guarantee the stabil-
+ity of the simulations. In this case, C is a constant that allows
+defining a reduced or extended speed of the Hall term. Thus,
+there is freedom in the choice of C that allows to better adapt
+the time step depending on the physical system to be simulated.
+At each time level MAGNUS evaluates the speed λH at all
+points in the domain and chooses the largest. Then, the time
+step is calculated as
+∆tH = CCFL ×
+
+∆x
+λn,x
+H i, j,k
++
+∆y
+λn,y
+H i, j,k
++
+∆z
+λn,z
+H i, j,k
+.
+(24)
+The same is done with the ambipolar term, for which
+λA = u + c f + B2
+oηA
+xo
+,
+(25)
+and
+∆tA = CCFL ×
+
+∆x
+λn,x
+A i, j,k
++
+∆y
+λn,y
+A i,j,k
++
+∆z
+λn,z
+A i,j,k
+.
+(26)
+In the end, MAGNUS chooses the smallest time step between
+(20), (24) and (26).
+3.3. Scaling and Nondimensionalization
+As mentioned above, MAGNUS solves the dimensionless
+system of equations. Therefore, the dimensionless equations
+are the ones that evolve. Then the dimensionless quantities that
+result from the system’s evolution can be scaled with quantities
+that do have dimensions and depend on the simulated physical
+system.
+In the code, this is done by dividing each physical quantity
+by characteristic quantities of the system such as la ρa, ua and
+constants such as the magnetic permeability µ0. Including the
+Hall and ambipolar terms in the code makes it necessary to de-
+termine expressions for ηHa and ηAa.
+4. GEM reconnection challenge
+After the implementation of the Hall and ambipolar term in
+the MAGNUS code was done, we proceeded with the Geospace
+Environmental Modeling (GEM) reconnection challenge (Birn
+et al., 2001). The analytical solution to this problem is not
+known, but since its publication, several authors have repro-
+duced their results, which is why it is often used as a benchmark
+test (T´oth et al., 2008; Strumik and Stasiewicz, 2017).
+First, we use the GEM as a numerical test to verify the im-
+plementation of the Hall term in MAGNUS. For the test, the
+system starts from rest with a magnetic field whose components
+are defined as
+Bx = tanh(2z) + δBx,
+(27)
+Bz = δBz,
+(28)
+By = 0.
+(29)
+The perturbations δBx and δBz are defined as
+δBx = 0.05π
+Lz
+cos
+ 2πx
+2Lx
+!
+sin
+ πz
+2Lz
+!
+,
+(30)
+δBz = 0.1π
+Lx
+sin
+ 2πx
+2Lx
+!
+cos
+ πz
+2Lz
+!
+.
+(31)
+The initial density is
+ρ = 1.2 −[tanh(2z)]2,
+(32)
+and the pressure is p = ρ/2. In all simulations we set the re-
+sistivity to η = 0.005. In the resistive+Hall simulations, the
+normalized ion mass per charge is set to 1.0, so that ηH = 1/ρ.
+5
+
+In both cases, resistive and resistive+Hall, the simulation box
+is [−Lx, Lx] × [−Lz, Lz] × [−Ly, Ly], where Lx = 12.8, Lz = 6.4
+and Ly = 0.2. In this volume, the equations are discretized in a
+three-dimensional numerical grid with Nx = 64, Nz = 128 and
+Ny = 4. The boundary conditions are periodic in x, inflow in z
+and outflow in y.
+Figure 2 shows the reconnected flux of resistive and resis-
+tive+Hall simulations. In both, the flux is calculated at each
+time step as
+Reconnected flux =
+Z Nx
+Nx/2
+Bz(x, Ny/2, Nz/2)dx.
+(33)
+With the Hall effect, the reconnected flux reaches a value of
+3.3, about six times larger than in the simulation with resistivity
+alone, where the reconnected flux reaches a value of 0.5. This
+result is in qualitative and quantitative agreement with those
+presented in GEM for MHD and Particle-In-Cell (PIC) simu-
+lations. For comparison see Figure 1 of Birn et al. (2001), at
+t = 30 the Hall MHD case reaches a reconnected flux of about
+3.2. See the bottom panel of Figure 1 from Pritchett (2001), the
+reconnected flux reaches a value slightly above 3.0.
+Figure 2: Testing results of the reconnected flux for the initial data of the GEM
+reconnection challenge.
+These results are also consistent with those of other au-
+thors who have used GEM as a benchmark. For example, in
+the kinetic simulation of Schmitz and Grauer (2006) the curve
+reaches a value slightly above 3.0, similar to the MHD sim-
+ulation of T´oth et al. (2008), both at time t = 30. This dif-
+fers slightly from the results of Strumik and Stasiewicz (2017),
+whose MHD simulation reaches a value of 2.5, lower than the
+simulations mentioned above and the results shown in Figure
+2. For the resistive case, the result presented in Figure 2 is also
+in agreement with those presented by Birn et al. (2001); T´oth
+et al. (2008); Strumik and Stasiewicz (2017).
+5. Ambipolar diffusion in the GEM
+Although the GEM was designed to study the Hall effect on
+magnetic reconnection, we use the same scenario to study the
+effect of ambipolar diffusion. To our knowledge, such a system-
+atic study of simulations with ambipolar diffusion in the GEM
+model has not been done before. In fact, ambipolar diffusion
+had been overlooked in the Earth’s magnetotail.
+We present two types of simulations: resistive+ambipolar
+and resistive+Hall+ambipolar.
+The Hall parameter remains
+unchanged, with the same value as in the previous section
+(ηH = 1/ρ). The ambipolar term, ηA = KA · 1/ρ2 √
+T, is im-
+plemented with T = p/ρ. Three values of KA are considered:
+0.001, 0.005, and 0.01 (since KA is inversely proportional to the
+degree of ionization, the latter value represents the less ionized
+case). These values were selected taking into account equation
+(22) from (Ni et al., 2015). These values physically correspond
+to values of ηA in the chromosphere. The code being dimen-
+sional allows for the straightforward use of these values without
+any issues.
+Figure 3 shows the reconnected flux of the resistive simula-
+tion compared to the resistive+ambipolar cases. As can be seen,
+the reconnected flux grows with the value of KA, obtaining an
+increase of about 7% for KA = 0.001, 38% for KA = 0.005,
+and 75% for KA = 0.01, all percentages with respect to the
+resistive case. Comparing with figure 2, we see that the in-
+crease of the reconnected flux is much higher with the Hall
+effect than with the ambipolar diffusion, but the percentages
+indicate that the ambipolar diffusion also contributes to the re-
+connected flux. Furthermore, its increase could be higher if
+other values of KA are considered. Figure 4 compares the re-
+connected flux of the resistive+Hall simulation with the resis-
+tive+Hall+ambipolar cases. For the case with KA = 0.01, the
+reconnected flux grows faster until it reaches an increase of
+143% (with respect to the resistive+Hall case) at time t = 18
+and then remains approximately stationary until the end. This
+quasi-steady state of the reconnected flux seems to be caused
+by the appearance of a plasmoid in the centre of the domain at
+t = 18.
+Figure 3: Reconnected flux for different values of the KA parameter in the re-
+sistive+ambipolar simulations.
+To illustrate the qualitative differences between some of the
+simulations carried out, Figure 5 shows the current density at
+time t = 20 for the four types of simulations: resistive, resis-
+tive+Hall, resistive+ambipolar, and resistive+Hall+ambipolar,
+using KA = 0.01 for those that include the ambipolar term. For
+the resistive simulation (upper left panel), we observe an elon-
+gated current sheet of nearly the order of the global length scale,
+6
+
+Figure 4: Reconnected flux for different values of the KA parameter in the re-
+sistive+Hall+ambipolar MHD simulations.
+as proposed by the model of Sweet-Parker. By including the
+ambipolar term (lower left panel) we observe a thinner current
+sheet, in agreement with the results of Ni et al. (2015), where
+the inclusion of ambipolar diffusion causes a rapid thinning of
+the current sheet in the solar chromosphere.
+Together with the reconnected flux shown in Figure 3, these
+results support the fact that elongated current sheets result in
+low reconnection rates, which are inconsistent with the rate
+suggested by observations. For the resistive+Hall simulation
+(upper right panel), the diffusion region is much smaller as the
+current density is concentrated in an x-shaped region in the cen-
+tre of the domain, a result consistent with the one presented by
+Strumik and Stasiewicz (2017). However, it differs from the
+presented by T´oth et al. (2008), whose simulation with the Hall
+effect shows asymmetric behaviour, has two reconnection re-
+gions and a plasmoid, a result that is not obtained with MAG-
+NUS for any time of the resistive+Hall simulation case. In fact,
+the combination of the Hall effect with ambipolar diffusion in
+the resistive+Hall+ambipolar case is the only one that produces
+the formation of a plasmoid (bottom right panel).
+It is worth checking whether the plasmoid is due to insuffi-
+cient resolution. For that, in Figure 6 we present the results of
+two more simulations with higher resolution: the first one with
+128×256 and the second with 256×512 grid points. Both pan-
+els of Figure 6 show the same global morphology. Locally, the
+higher resolution panel reveals more detail, but the appearance
+of the plasmoid in the centre of the domain is consistent in sim-
+ulations with different resolutions. Based on these results, we
+can confirm that the appearance of the plasmoid is not due to a
+numerical issue.
+Concerning the formation of the plasmoid, we want to high-
+light the current sheet thinning caused by the ambipolar diffu-
+sion that can be seen in 5. We believe that the spatial scale
+reduction, attributed to the thinning of the current sheet char-
+acteristic of ambipolar diffusion, is likely crucial for bringing
+magnetic field lines close enough together to facilitate magnetic
+reconnection. Moreover, in a region of strong magnetic gra-
+dient, ambipolar diffusion can allow electrons to move faster
+than ions, which can cause the formation of thin current lay-
+ers and then the possible appearance of instabilities in those
+Figure 5: Out-of-plane component of the current density at time t = 20. The
+simulations with Hall effect and ambipolar diffusion have parameters KH = 1.0
+and KA = 0.01.
+Figure 6: Out-of-plane component of the current density at time t = 18 with
+higher resolutions.
+layers. These instabilities can evolve towards the formation of
+plasmoids.
+We believe that the formation of the plasmoid in the sim-
+ulation is facilitated by the combined effects. However, sub-
+stantiating this claim requires a systematic study solely focused
+on plasmoid formation, demonstrating how these combined ef-
+fects enhance the likelihood of plasmoid formation. It is crucial
+to emphasize that plasmoid formation cannot be attributed to a
+single phenomenon. Rather, it emerges from the interaction and
+dynamics of multiple factors. As noted by Singh et al. (2019),
+while the thinning of the current sheet plays an important role
+in plasmoid formation, it is influenced not only by this thinning
+but also by additional factors that collectively shape the overall
+dynamics of magnetic reconnection.
+6. Current sheet with a guide-field
+This second model attempts to simulate the process of mag-
+netic reconnection from the formation of a current sheet. It
+also includes the presence of a guide field, that is, the non-
+reconnecting component of the magnetic field that is out-of-
+plane. This out-of-plane component is commonly used in solar
+flare simulations and plays an important role in determining key
+properties of reconnection, like the efficiency of particle accel-
+eration (Dahlin et al., 2022). Unlike the GEM, in this model,
+we use initial data with constant density, constant pressure, and
+magnetic field without perturbations. This ensures that the cur-
+rent sheet is not formed at time zero and that the reconnected
+flux is zero. To trigger reconnection, we use spatially localized
+resistivity.
+7
+
+The system starts from rest with a magnetic field whose com-
+ponents are defined as (Shibata et al., 2022)
+Bx = B tanh(y/w),
+(34)
+By = 0,
+(35)
+Bz = B/ cosh(y/w),
+(36)
+being Bz the guide-field with B = 3.92 and w = 0.5. Density
+and initial pressure of the system are given by ρ = 1.0 and
+p = 1.0, and the localized resistivity is given by the function
+η = η0 · exp
+
+−
+
+q
+y2 +
+
+x −hη
+2
+wη
+
+2
+,
+(37)
+with η0 = 0.01, hη = 15.0 and wη = 1.0. The computational
+domain is [0, Lx] × [−Ly/2, Ly/2] × [−Lz/2, Lz/2] where Lx =
+30.0, Ly = 15.0 and Lz = 0.15, with a numerical mesh with
+Nx = 800, Ny = 400 and Nz = 4. The boundary conditions are
+periodic in x, inflow in y and outflow in z.
+With the previous specifications, four simulations are per-
+formed: resistive, resistive+Hall, resistive+ambipolar, and re-
+sistive+Hall+ambipolar. It is important to emphasize that in or-
+der to perform systematic simulations, the only thing that varies
+in each type of simulation is the presence or absence of the Hall
+effect and the ambipolar diffusion, which is controlled by the
+parameters ηH and ηA. The initial data, boundary conditions,
+computational domain, spatial resolution, and numerical meth-
+ods are the same for all simulations. For the ambipolar coeffi-
+cient, we used KA = 0.01 and for the Hall coefficient, we set the
+normalized ion mass per charge to 0.2.
+As mentioned above, the out-of-plane component of this
+model is also commonly used in solar flare simulations. That
+is one of the reasons why this second model is suitable for ap-
+plication to partially ionized plasmas, like the chromosphere,
+where ambipolar diffusion is a relevant phenomenon and could
+potentially impact its dynamics. In such instances, it is essen-
+tial to select characteristic values for scaling the dimensionless
+outcomes derived from the computational code, so that the re-
+sults may have dimensions according to the physical scenario.
+In our study, all quantities were kept dimensionless, meaning
+they were not scaled to fit a particular scenario. This approach
+allowed us to focus on assessing the potential impact and ef-
+fects of the Hall and ambipolar diffusion terms on reconnection
+itself, rather than their applicability to a specific context.
+6.1. Current sheet morphology
+First, we examine the current sheet morphology at time t =
+12ta, where ta is a characteristic time. Figure 7 shows the tem-
+perature distribution in the current sheet for each simulation. It
+can be seen that the current sheet centre is the hottest region, es-
+pecially in the resistive and resistive+ambipolar cases. For the
+resistive+Hall and resistive+Hall+ambipolar simulations, the
+central region is not as hot, but we see heating at the extremes of
+the domain, particularly in the presence of the ambipolar term.
+Regarding the plasma velocities, Figure 8 shows maps for
+the ux component, where we can clearly see the presence of
+two flows with opposite directions coming out of the central
+region. This indicates that the plasma is being accelerated out
+of the current sheet, one of the main consequences of reconnec-
+tion. Therefore, this type of velocity diagram is characteristic of
+magnetic reconnection and is also consistent with the diagrams
+in the PIC simulations of Nakamura et al. (2018), which were
+performed to model a reconnection event detected by MMS.
+The different panels of figure 8 also show that the high-velocity
+regions are bigger in the presence of the Hall effect and ambipo-
+lar diffusion. Thus, both effects contribute to the acceleration of
+particles.
+Finally, figure 9 shows maps for the uy component. In the
+panels, we see that the plasma is moving toward the current
+sheet, with positive velocities in the lower region of the domain
+and negative velocities in the upper region. Towards the ex-
+tremes of the domain, where the current sheet opens, this distri-
+bution of velocities changes: negative velocities are present in
+the lower region and positive in the upper region. This indicates
+that although the plasma enters the diffusion region, it is also
+expelled from it according to the scheme of magnetic recon-
+nection. We can also see that the plasma regions with the high-
+est velocities are located at the extremes of the current sheet.
+There, the colour distribution indicates that there are abrupt
+changes in both the magnitude and direction of the velocity.
+This type of behaviour can trigger turbulence and be another
+mechanism contributing to plasma acceleration (Price et al.,
+2016). Three-dimensional MHD simulations of Shibata et al.
+(2022) and Shen et al. (2022) investigate the dynamics of solar
+flares with a focus on the generation of turbulence. These stud-
+ies identified regions characterized by turbulent flows, which
+may significantly influence electron acceleration within these
+areas. Additionally, they found self-organized structures in tur-
+bulent interface flare regions, resembling formations also seen
+in supernova remnants. Further investigation on this topic is
+essential for understanding the mechanisms behind substantial
+energy releases and events of particle acceleration.
+6.2. Reconnection rate
+In addition to telling us that the flux is being reconnected, the
+reconnection rate is associated with the energy released during
+the process.
+The original model for determining the reconnection rate was
+proposed by Sweet (1958b,a) and Parker (1957, 1963), consid-
+ering a diffusion region with length L, on the order of the global
+external length scale that occupies the entire boundary between
+opposing magnetic fields. According to this model, the dimen-
+sionless reconnection rate is given by: vi/vAi = 1/
+√
+S , where vi
+is the characteristic speed of entry of the field lines into the dif-
+fusion region, vAi is the Alfv´en speed at the entry and S is the
+Lundquist number. In general, the Lundquist number is large
+for most astrophysical plasmas (S >> 106). Consequently, the
+Sweet-Parker reconnection is too slow to explain phenomena
+such as geomagnetic storms (Birn and Priest, 2007).
+Simulations and observations have reported a fast rate of 0.1,
+and smaller values cannot explain the rapid energy release that
+accelerates the plasma. Here the dimensionless reconnection
+rate is calculated as v/vA, where v is the plasma velocity at the
+8
+
+Figure 7: Temperature distribution at t = 12ta. In all cases, the hottest region is
+found at the current sheet centre. For the resistive+Hall+ambipolar simulation,
+high heating is also observed at the extremes of the domain.
+entrance of the diffusion region and vA is the Alfv´en velocity,
+also at the entrance (Priest and Forbes, 2000). Although it is
+impossible to determine the exact volume and location of the
+diffusion region, the localized resistivity in the centre of the re-
+gion implies that we have a single reconnection site also located
+in the centre. Based on this, the entry to the diffusion region can
+be considered as the point located at (Nx/2, Nyi, Nz/2), where
+Nyi is a point close to the line y = 0.0 (Ny/2), but not on it be-
+cause there the magnetic field is zero. Thus, for all simulations,
+the reconnection rate is calculated as
+Reconnection rate = v(Nx/2, Nyi, Nz/2)
+vA(Nx/2, Nyi, Nz/2),
+(38)
+with Nyi on the line y = 0.5. The velocities are computed using
+only the components of the xy plane, that is, v =
+q
+v2x + v2y and
+vA = B/ √ρ with B =
+q
+B2x + B2y.
+In Figure 10 we plot the reconnection rate as a func-
+tion of time for the four types of simulations.
+The results
+show that when running systematic simulations, the resis-
+tive+Hall+ambipolar case reaches a reconnection rate of 0.1,
+followed by the resistive+Hall case. The Hall effect simula-
+tions show similar reconnection rates, implying that the Hall
+Figure 8: ux velocity maps at t = 12ta. All simulations exhibit two flows with
+opposite directions, a characteristic feature of magnetic reconnection. More-
+over, the highest velocity regions widen in the presence of the Hall effect and
+ambipolar diffusion.
+term is indeed important to obtain reconnection rates of 0.1.
+However, the results also show that the ambipolar term may
+play an important role in the reconnection rate. While the Hall
+effect dominates when reconnection rates are compared to the
+resistive case, it is the combination of the Hall effect and am-
+bipolar diffusion that reaches a value of 0.1, comparable to what
+has been observed, for example, in the magnetosphere, where
+MMS values are 0.1 −0.2 (Chen et al., 2017; Nakamura et al.,
+2018).
+The ambipolar term also seems to influence the reconnection
+rate to increase faster, which is why the maximum rate appears
+earlier in the simulations with ambipolar diffusion, an effect
+also reported by other authors (see case C from model I and
+case F from model II in Figure 5 of Ni et al. (2015)). However,
+Ni et al. (2015) attribute this to the fact that ambipolar diffusion
+triggers plasmoid instability. Our results show that even with-
+out plasmoids, ambipolar diffusion has the effect of accelerating
+the reconnection process.
+In our simulations, the Lundquist number is of the order of
+S ∼104, which corresponds to a reconnection rate S −1/2 ∼0.01
+according to Sweet-Parker (as we mentioned above, the rate
+is calculated as 1/
+√
+S ). This shows that reconnection in our
+9
+
+Figure 9: uy velocity maps at t = 12ta. All maps show plasma movement
+towards the current sheet and velocity distribution changes in its extremes. This
+indicates plasma is entering and exiting the diffusion region. Regions with
+higher velocities are found at the current sheet extremes and are highest in the
+presence of the Hall effect and ambipolar diffusion.
+simulations is not a Sweet-Parker-type reconnection, which is
+not surprising since the Sweet-Parker model involves several
+simplifications. For example, it assumes a uniform resistivity,
+contrary to the localized resistivity we used for our simulations
+(as described in equation (37)).
+Finally, concerning the formation of plasmoids, it is worth
+mentioning that for values of S > 104, plasmoid instability oc-
+curs Loureiro et al. (2007). In the solar chromosphere, for in-
+stance, the values of the Lundquist number are of the order of
+S ∼106 −108 Ni et al. (2015). Because the value we assume in
+our work was the critical value S ∼104, we do not expect the
+formation of plasmoids.
+6.3. Energy conversion and transport
+Figure 11 shows the evolution of magnetic and kinetic en-
+ergy measured by a detector.
+Similar to the reconnection
+rate, this detector corresponds to a point with coordinates
+(Nxi, Ny/2, Nz/2), where Nxi is at x = 10.0. The results show
+that the kinetic energy starts from zero for the four types of
+simulations, in agreement with the initial data. From the initial
+time to t = 5ta, there is a slight decrease in the magnetic energy
+Figure 10: Reconnection rate as a function of time.
+that does not lead to a noticeable increase in the kinetic energy,
+most likely because there is also conversion to internal energy
+and dissipation by Joule heating. From time t = 5ta the kinetic
+energy increases, coinciding with an increase in magnetic en-
+ergy from t = 5ta to t = 7ta. Finally, from t = 7ta to the end
+of the simulation, the behaviour of the curves is consistent with
+the reconnection process: the magnetic energy decreases while
+the kinetic energy increases because there is a conversion from
+one to the other.
+Figure 11: Temporal evolution of kinetic and magnetic energies.
+The resistive+Hall and resistive+Hall+ambipolar simula-
+tions achieve the highest kinetic energy values.
+This sug-
+gests that the Hall and ambipolar terms not only affect the
+reconnection rate but also the particle acceleration. Consid-
+ering that the kinetic energy of the resistive+Hall and resis-
+tive+Hall+ambipolar simulations reaches a value close to the
+initial value of the magnetic energy, we conclude that the Hall
+effect and its combination with ambipolar diffusion provide a
+more efficient energy conversion during the reconnection pro-
+cess.
+To fully understand both energy conversion and transport, it
+is necessary to consider not only the change in energy stored in
+a volume but also the amount of energy flowing through the sur-
+10
+
+face surrounding it. In particular, we focus on a small region of
+the domain, including the diffusion region where reconnection
+occurs, and study the influence of the Hall effect and ambipo-
+lar diffusion on electromagnetic energy, bulk kinetic energy and
+enthalpy fluxes. The fluxes are related to the energy transport
+equation (5) which, in addition to describing the conservation of
+energy, tells us how energy is transferred from one form to an-
+other. Specifically, the electromagnetic energy flux is given by
+the Poynting vector S = (E×B)/µ0, where the electric field can
+be obtained from Ohm’s law (1). The bulk kinetic energy flux is
+given by K = ρu2u/2 and the enthalpy flux by H = (p + ρe)u =
+γpu/(γ −1), which has a contribution from the internal energy
+density and another from the compressional work, pu. These
+three quantities are integrated over a volume whose domain is
+given by [8la, 16la]×[−3.5la, 3.5la]×[−0.1la, 0.1la]. The results
+are shown in Figure 12, where we have plotted these fluxes as
+a function of time for each case, i.e. resistive, resistive+Hall,
+resistive+ambipolar and resistive+Hall+ambipolar.
+Figure 12: Temporal evolution of the electromagnetic energy flux (first panel),
+bulk kinetic energy flux (second panel) and enthalpy flux (third panel).
+The results depicted in Figure 12 reveal that energy transport
+associated with reconnection primarily arises from electromag-
+netic and enthalpy fluxes, while kinetic energy flux plays a rel-
+atively minor role. Notably, the three panels in Figure 12 indi-
+cate that the rate of energy transfer is significantly higher in the
+resistive+Hall and resistive+Hall+ambipolar cases. This sug-
+gests that Hall and ambipolar effects may account for the rapid
+energy release during magnetic reconnection.
+To quantitatively analyze this phenomenon, we measured
+the increases in S x, Kx, and Hx for the resistive+Hall, resis-
+tive+ambipolar, and resistive+Hall+ambipolar cases compared
+to the resistive case at time t = 8ta.
+For S x, we observed
+a 29% increase in the ambipolar case, 34% in the Hall case,
+and 55% in the Hall+ambipolar case. Similarly, for Kx, the
+increases were 73%, 99%, and 171%, respectively.
+Finally,
+for Hx, the increases were 33%, 47%, and 76%, respectively.
+These measurements, conducted at time t = 8ta and calcu-
+lated relative to the resistive case, demonstrate that the resis-
+tive+Hall+ambipolar case exhibits the highest percentage in-
+creases, followed by the resistive+Hall case. Consequently, we
+can conclude that the Hall effect, particularly in combination
+with ambipolar diffusion, facilitates more efficient energy trans-
+port during reconnection.
+7. Conclusions
+Existing research has mainly focused on the Hall effect or
+ambipolar diffusion separately, without exploring the potential
+impact of their combined influence in a systematic way. In this
+work, we conducted a systematic study to analyze the effects
+of the Hall term and ambipolar diffusion on the formation and
+evolution of current sheets, the reconnection rate and the energy
+released during the magnetic reconnection process. Our find-
+ings underscore the importance of considering both effects in
+partially ionized plasma dynamics, where ambipolar diffusion
+cannot be neglected. We have observed significant enhance-
+ments in reconnection rates compared to simulations neglect-
+ing one or both processes. This integrated approach provides
+valuable insights into the acceleration of reconnection events in
+astrophysical plasmas, contributing to a more comprehensive
+understanding of magnetic reconnection speed-up mechanisms
+essential for the study of all astrophysical plasmas.
+We solved the system of MHD equations with resistivity,
+Hall effect and ambipolar diffusion using MAGNUS. Since the
+code only solved the resistive MHD equations, we implemented
+new subroutines to calculate all terms related to the Hall effect
+and ambipolar diffusion in the numerical fluxes. The inclusion
+of these effects also required modifications to the time step.
+However, the presence of the Hall term in the code results in
+a significant reduction of the time step, which makes the execu-
+tion time excessive, especially when a high spatial resolution is
+required.
+Once the subroutines were implemented and modified, we
+used the initial data and boundary conditions proposed by the
+GEM magnetic reconnection challenge, a project to study the
+Hall effect in magnetic reconnection that has been used by
+many authors as a benchmark test. We performed four types
+of simulations, systematically turning on and off the Hall and
+ambipolar terms. Here, systematic means that the initial data,
+boundary conditions, computational domain, spatial resolution,
+and numerical methods were the same for all simulations, ex-
+cept for the Hall and ambipolar parameters, which changed de-
+pending on which term was turned on or off in each simulation.
+The four types of simulations were: resistive, resistive+Hall,
+resistive+ambipolar, and resistive+Hall+ambipolar.
+11
+
+First, we tested the Hall effect in MAGNUS by replicating
+the results of the GEM project.
+For the resistive and resis-
+tive+Hall simulations, we obtained a reconnected flux of 3.3
+and 0.5, respectively, the same values as reported by Birn et al.
+(2001) in the GEM summary. Not only the values were the
+same, but also the qualitative behaviour of the curves. The same
+is true if we compare the results with those of other authors,
+such as Schmitz and Grauer (2006); T´oth et al. (2008); Strumik
+and Stasiewicz (2017), where only slight differences are found.
+Finally, since we obtained the same results as in the test, MAG-
+NUS shows fidelity in solving the MHD equations with the Hall
+term.
+The ambipolar diffusion term was programmed similarly to
+the Hall effect. No benchmark test was performed this time,
+but we did investigate the effect of ambipolar diffusion on the
+GEM problem for the first time. This was done by systemati-
+cally comparing simulations where only the ambipolar parame-
+ter KA was changed. In both the resistive+ambipolar and resis-
+tive+Hall+ambipolar simulations, the reconnected flux grows
+with the value of KA. The higher value of KA was 0.01, the less
+ionized case compared to the other values used in this inves-
+tigation. With KA = 0.01 we obtained a 75% increase of the
+reconnected flux for the resistive+ambipolar simulation com-
+pared to the resistive one. For the resistive+Hall+ambipolar we
+got a 143% increase in reconnected flux compared to the resis-
+tive+Hall simulation. However, after the increase, the flux of
+the latter remained quasi-stationary due to the formation of a
+plasmoid.
+In general, the results of the GEM scenario show that the in-
+clusion of the Hall effect produces a significant increase in the
+reconnected flux. Similarly, the inclusion of ambipolar diffu-
+sion produces significant increases. This suggests that ambipo-
+lar diffusion, like the Hall effect, could be one of the mecha-
+nisms for fast reconnection rates.
+To study a model different from the GEM, which does not
+have a guide field, has uniform resistivity and has the cur-
+rent sheet formed since the beginning, we implemented a
+simple magnetic field configuration without perturbations, but
+with a guide-field and localized resistivity as initial data for
+the formation of a current sheet.
+In this model, the resis-
+tive+Hall+ambipolar case was the only one that reached a 0.1
+value in the reconnection rate, followed by the resistive+Hall
+case. These results show that the Hall effect is indeed the domi-
+nant phenomenon when it comes to increasing the reconnection
+rate and obtaining values close to 0.1. However, ambipolar dif-
+fusion is also relevant, since it was the combination of the Hall
+effect and ambipolar diffusion that reached a maximum value
+of 0.1. Moreover, simulations with ambipolar diffusion show a
+faster growth of the reconnection rate, which helps explain the
+rapid energy release that accelerates particles.
+We also found that the conversion from magnetic to kinetic
+energy is more efficient in the presence of the Hall effect and its
+combination with ambipolar diffusion. This supports the fact
+that both mechanisms have a significant impact on particle ac-
+celeration processes.
+In addition to energy conversion, we also study its trans-
+fer through the fluxes present in the energy transport equation,
+and we found that energy transport is mainly due to electro-
+magnetic and enthalpy fluxes. The kinetic energy flux is also
+present but is smaller than the others. For the three fluxes, the
+rate of energy transfer is higher in the resistive+Hall+ambipolar
+case, followed by resistive+Hall and resistive+ambipolar cases.
+Therefore, we conclude that both mechanisms provide more ef-
+ficient energy transfer, especially when combined. Since the
+highest energy transfer rate is for the resistive+Hall+ambipolar
+case, we highlight the importance of ambipolar diffusion.
+Our results show that ambipolar diffusion causes magnetic
+energy to dissipate rapidly, facilitating the reconnection of mag-
+netic field lines, and leading to the formation of thin current
+sheets. It is worth mentioning that the Hall effect enhances re-
+connection by altering the magnetic field topology and favour-
+ing the appearance of localized plasma current sheets, a natural
+outcome of the presence of a Burgers-like term. The above
+since the Hall term is proportional to the current, it is quadratic
+in B, and hides a Burgers-like behaviour (Vainshtein et al.,
+2000)). On the other hand, the ambipolar diffusion term, which
+is not quadratic but cubic in B, is related to a velocity in the
+same direction as the Lorentz force. Therefore, its effect is to
+dissipate the currents perpendicular to B, acting to align mag-
+netic and current fields (Vigan`o et al., 2019). Ambipolar effect
+plays a crucial role in the study of magnetic reconnection for
+several reasons. Mainly, it facilitates energy dissipation, which,
+together with the Hall effect, is essential for the optimal conver-
+sion of magnetic energy into thermal and kinetic plasma energy.
+The above is supported by our last results, where the rate of en-
+ergy transfer shows a notable increase in the cases combining
+Hall and ambipolar effects.
+Finally, it is essential to emphasize that although plasmas are
+often treated as single fluids, the distinction between ions, elec-
+trons, and neutral species becomes significant in diffusion re-
+gions where magnetic reconnection occurs. Therefore, future
+research should focus on a multi-species charged fluid model
+rather than a single-fluid approach. The different species inter-
+act through elastic and inelastic collisions. Elastic collisions in-
+volve the exchange of momentum and energy between different
+fluids, while inelastic collisions involve processes such as ion-
+ization and recombination. Adopting a multi-fluid approach al-
+lows for a more comprehensive study of regions within the flow
+sheet where turbulence is induced, such as the extremes where
+abrupt changes in velocity magnitude and direction occur. A
+recent study by Shibata et al. (2022) examined such regions in
+solar flares, where turbulence is also generated. A systematic
+study of turbulence excitation in the Earth’s magnetotail using
+a multi-fluid framework would be very interesting and provide
+valuable insights. The above requires a model of the Earth’s
+magnetotail current sheet without oversimplification.
+Acknowledgements
+F.D.L-C was supported by the Vicerrector´ıa de Investigaci´on
+y Extensi´on - Universidad Industrial de Santander, under Grant
+No. 3703.
+12
+
+References
+Ballester, J.L., Alexeev, I., Collados, M., Downes, T., Pfaff, R.F., Gilbert, H.,
+Khodachenko, M., Khomenko, E., Shaikhislamov, I.F., Soler, R., et al.,
+2018. Partially ionized plasmas in astrophysics. Space Science Reviews
+214, 1–149.
+Bessho, N., Bhattacharjee, A., 2005. Collisionless reconnection in an electron-
+positron plasma. Physical review letters 95, 245001.
+Bessho, N., Bhattacharjee, A., 2007. Fast collisionless reconnection in electron-
+positron plasmas. Physics of Plasmas 14, 056503.
+Birn, J., Artemyev, A.V., Baker, D., Echim, M., Hoshino, M., Zelenyi, L., 2012.
+Particle acceleration in the magnetotail and aurora. Space science reviews
+173, 49–102.
+Birn, J., Drake, J., Shay, M., Rogers, B., Denton, R., Hesse, M., Kuznetsova,
+M., Ma, Z., Bhattacharjee, A., Otto, A., et al., 2001. Geospace environmen-
+tal modeling (gem) magnetic reconnection challenge. Journal of Geophysi-
+cal Research: Space Physics 106, 3715–3719.
+Birn, J., Priest, E.R., 2007. Reconnection of magnetic fields: magnetohydro-
+dynamics and collisionless theory and observations. Cambridge University
+Press.
+Bittencourt, J.A., 2013. Fundamentals of plasma physics. Springer Science &
+Business Media.
+Brandenburg, A., Zweibel, E.G., 1994. The formation of sharp structures by
+ambipolar diffusion. Astrophysical Journal 427, L91–L94.
+Brandenburg, A., Zweibel, E.G., 1995. Effects of Pressure and Resistivity on
+the Ambipolar Diffusion Singularity: Too Little, Too Late. Astrophysical
+Journal 448, 734. doi:10.1086/176001.
+Cassak, P., Liu, Y.H., Shay, M., 2017. A review of the 0.1 reconnection rate
+problem. Journal of Plasma Physics 83.
+Chen, L.J., Hesse, M., Wang, S., Gershman, D., Ergun, R., Burch, J., Bessho,
+N., Torbert, R., Giles, B., Webster, J., et al., 2017. Electron diffusion re-
+gion during magnetopause reconnection with an intermediate guide field:
+Magnetospheric multiscale observations. Journal of Geophysical Research:
+Space Physics 122, 5235–5246.
+Comisso, L., Bhattacharjee, A., 2016. On the value of the reconnection rate.
+Journal of Plasma Physics 82, 595820601.
+Dahlin, J.T., Antiochos, S.K., Qiu, J., DeVore, C.R., 2022. Variability of the
+reconnection guide field in solar flares. The Astrophysical Journal 932, 94.
+Ethan, T., Lazarian, A.V., 1999. Reconnection in the interstellar medium. The
+Astrophysical Journal 511, 203.
+Falgarone, E., Momferratos, G., Lesaffre, P., 2015. The intermittency of ism
+turbulence: What do the observations tell us?, in: Magnetic Fields in Diffuse
+Media. Springer, pp. 227–252.
+Goodbred, M., Liu, Y.H., 2022. First-principles theory of the relativistic mag-
+netic reconnection rate in astrophysical pair plasmas. Physical Review Let-
+ters 129, 265101.
+Heitsch, F., Zweibel, E.G., 2003. Fast reconnection in a two-stage process. The
+Astrophysical Journal 583, 229.
+Hesse, M., Cassak, P., 2020. Magnetic reconnection in the space sciences: Past,
+present, and future. Journal of Geophysical Research: Space Physics 125,
+e2018JA025935.
+Jara-Almonte, J., Ji, H., Yoo, J., Yamada, M., Fox, W., Daughton, W., 2019.
+Kinetic simulations of magnetic reconnection in partially ionized plasmas.
+Physical review letters 122, 015101.
+Karimabadi, H., Krauss-Varban, D., Huba, J., Vu, H., 2004.
+On magnetic
+reconnection regimes and associated three-dimensional asymmetries: Hy-
+brid, hall-less hybrid, and hall-mhd simulations. Journal of Geophysical
+Research: Space Physics 109.
+Khomenko, E., Collados, M., 2012. Heating of the magnetized solar chromo-
+sphere by partial ionization effects. The Astrophysical Journal 747, 87.
+Khomenko, E., Collados, M., Diaz, A., Vitas, N., 2014. Fluid description of
+multi-component solar partially ionized plasma. Physics of Plasmas 21.
+Landinez, G., Rueda, S., Lora-Clavijo, F.D., 2021. First steps on modelling
+wave propagation in isotropic-heterogeneous media: numerical simulation
+of p–sv waves. European Journal of Physics 42, 065001.
+Liu, Y.H., Cassak, P., Li, X., Hesse, M., Lin, S.C., Genestreti, K., 2022. First-
+principles theory of the rate of magnetic reconnection in magnetospheric and
+solar plasmas. Communications Physics 5, 97.
+Lora-Clavijo, F., Cruz-Osorio, A., Guzm´an, F., 2015. Cafe: a new relativistic
+mhd code. The Astrophysical Journal Supplement Series 218, 24.
+Loureiro, N., Schekochihin, A.A., Cowley, S.C., 2007. Instability of current
+sheets and formation of plasmoid chains. Physics of Plasmas 14.
+Malyshkin, L.M., Zweibel, E.G., 2011. Onset of fast magnetic reconnection in
+partially ionized gases. The Astrophysical Journal 739, 72.
+Morales, P.A.G., 2020. Modeling of non-ideal magnetohydrodynamic effects
+in the solar atmosphere. Ph.D. thesis. Universidad de La Laguna (Islas Ca-
+narias, Espa˜na).
+Nakamura, T.K., Genestreti, K., Liu, Y.H., Nakamura, R., Teh, W.L.,
+Hasegawa, H., Daughton, W., Hesse, M., Torbert, R., Burch, J., et al., 2018.
+Measurement of the magnetic reconnection rate in the earth’s magnetotail.
+Journal of Geophysical Research: Space Physics 123, 9150–9168.
+Navarro, A., Lora-Clavijo, F., Gonz´alez, G.A., 2017. Magnus: a new resistive
+mhd code with heat flow terms. The Astrophysical Journal 844, 57.
+Navarro, A., Lora-Clavijo, F., Murawski, K., Poedts, S., 2021. Thermal conduc-
+tion effects on formation of chromospheric solar tadpole-like jets. Monthly
+Notices of the Royal Astronomical Society 500, 3329–3334.
+Navarro, A., Murawski, K., W´ojcik, D., Lora-Clavijo, F., 2019. Numerical
+simulations of the emerging plasma blob into a solar coronal hole. Monthly
+Notices of the Royal Astronomical Society 489, 2769–2774.
+Ni, L., Kliem, B., Lin, J., Wu, N., 2015. Fast magnetic reconnection in the
+solar chromosphere mediated by the plasmoid instability. The Astrophysical
+Journal 799, 79.
+N´obrega-Siverio, D., Martinez-Sykora, J., Moreno-Insertis, F., Carlsson, M.,
+2020. Ambipolar diffusion in the bifrost code. Astronomy & Astrophysics
+638, A79.
+Parker, E.N., 1957. Sweet’s mechanism for merging magnetic fields in con-
+ducting fluids. Journal of Geophysical Research 62, 509–520.
+Parker, E.N., 1963. The solar-flare phenomenon and the theory of reconnection
+and annihiliation of magnetic fields. The Astrophysical Journal Supplement
+Series 8, 177.
+Price, L., Swisdak, M., Drake, J.F., Cassak, P., Dahlin, J., Ergun, R., 2016.
+The effects of turbulence on three-dimensional magnetic reconnection at the
+magnetopause. Geophysical Research Letters 43, 6020–6027.
+Priest, E., Forbes, T., 2000. Magnetic reconnection. Cambridge University
+Press.
+Pritchett, P., 2001. Geospace environment modeling magnetic reconnection
+challenge: Simulations with a full particle electromagnetic code. Journal of
+Geophysical Research: Space Physics 106, 3783–3798.
+Schiesser, W.E., Griffiths, G.W., 2009. A compendium of partial differential
+equation models: method of lines analysis with Matlab. Cambridge Univer-
+sity Press.
+Schmitz, H., Grauer, R., 2006. Kinetic vlasov simulations of collisionless mag-
+netic reconnection. Physics of plasmas 13, 092309.
+Schnack, D.D., 2009. Lectures in magnetohydrodynamics: with an appendix
+on extended MHD. Springer.
+Shen, C., Chen, B., Reeves, K.K., Yu, S., Polito, V., Xie, X., 2022. The origin
+of underdense plasma downflows associated with magnetic reconnection in
+solar flares. Nature Astronomy 6, 317–324.
+Shibata, K., Takasao, S., Reeves, K.K., 2022. Numerical study on excitation
+of turbulence and oscillation in above-the-loop-top region of a solar flare.
+arXiv preprint arXiv:2212.05802 .
+Singh, K., Sakaue, T., Nakamura, N., Kawamura, A.D., Isobe, H., Shibata, K.,
+2019. Effect of ionization and recombination on the evolution of the harris-
+type current sheet in partially ionized plasmas. The Astrophysical Journal
+884, 161.
+Strumik, M., Stasiewicz, K., 2017. Multidimensional hall magnetohydrody-
+namics with isotropic or anisotropic thermal pressure: Numerical scheme
+and its validation using solitary waves. Journal of Computational Physics
+330, 846–862.
+Sweet, P., 1958a. The production of high energy particles in solar flares. Il
+Nuovo Cimento (1955-1965) 8, 188–196.
+Sweet, P.A., 1958b. The neutral point theory of solar flares, in: Electromagnetic
+phenomena in cosmical physics, p. 123.
+T´oth, G., Ma, Y., Gombosi, T.I., 2008. Hall magnetohydrodynamics on block-
+adaptive grids. Journal of Computational Physics 227, 6967–6984.
+Uzdensky, D.A., Kulsrud, R.M., 2006. Physical origin of the quadrupole out-of-
+plane magnetic field in hall-magnetohydrodynamic reconnection. Physics of
+Plasmas 13.
+Vainshtein, S., Chitre, S., Olinto, A., 2000. Rapid dissipation of magnetic fields
+due to the hall current. Physical Review E 61, 4422.
+Vigan`o, D., Mart´ınez-G´omez, D., Pons, J.A., Palenzuela, C., Carrasco, F.,
+Mi˜nano, B., Arbona, A., Bona, C., Mass´o, J., 2019. A simflowny-based
+high-performance 3d code for the generalized induction equation. Computer
+13
+
+Physics Communications 237, 168–183.
+Wandurraga, P.C., Navarro, A., Lora-Clavijo, F.D., 2021.
+Torsional alfv´en
+waves propagation in a stratified solar atmosphere. Revista de la Academia
+Colombiana de Ciencias Exactas, F´ısicas y Naturales 45, 52–66.
+Zaqarashvili, T.V., Khodachenko, M.L., Rucker, H.O., 2011. Magnetohydrody-
+namic waves in solar partially ionized plasmas: two-fluid approach. Astron-
+omy and Astrophysics 529, A82. doi:10.1051/0004-6361/201016326,
+arXiv:1101.3913.
+Zweibel, E.G., 2015. Ambipolar diffusion, in: Magnetic Fields in Diffuse Me-
+dia. Springer, pp. 285–309.
+Zweibel, E.G., Yamada, M., 2009. Magnetic reconnection in astrophysical and
+laboratory plasmas. Annual review of astronomy and astrophysics 47, 291–
+332.
+14

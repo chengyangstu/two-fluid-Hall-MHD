@@ -1,0 +1,1315 @@
+Tearing and Kelvin–Helmholtz dynamics in fully kinetic particle-in-cell
+simulations of electron-scale current sheets
+Sushmita A. Mishra1 and *Gurudatt Gaur2
+1)Institute of Advanced Research, Koba Institutional Area, Gandhinagar 382 426,
+India.
+2)St.
+Xavier’s College (Autonomous), Navarangpura, Ahmedabad 380 009,
+India.
+(*Electronic mail: gurudatt.gaur@sxca.edu.in)
+(Dated: 31 March 2026)
+We investigate the stability and nonlinear evolution of localized electron-scale current sheets using
+fully kinetic, electromagnetic particle-in-cell (PIC) simulations in two and three dimensions. By
+varying the current-sheet thickness, we examine how it influences the dominant instability and
+subsequent nonlinear dynamics. In two dimensions, the evolution is governed by electron inertial
+tearing, with growth rates in good agreement with linear electron magnetohydrodynamics (EMHD)
+predictions. In three dimensions, however, a thickness-dependent transition emerges. For wider
+current sheets, a velocity-shear–driven Kelvin–Helmholtz–type instability dominates the early and
+intermediate evolution, leading to vortex formation and strong modulation of the current layer,
+followed by the re-emergence of tearing at later times. In contrast, thinner sheets remain tearing-
+dominated throughout, with no transition to a shear-driven regime, although their effective growth
+rate is reduced relative to linear predictions, suggesting the influence of mode coupling and three-
+dimensional effects. These results establish a thickness-dependent transition from tearing-dominated
+to shear-driven dynamics and reveal a nonlinear sequence of instability evolution in fully kinetic
+systems, providing new insight into the competition between curvature-driven and shear-driven
+instabilities in electron-scale current sheets.
+I.
+INTRODUCTION
+Current sheets with thickness comparable to
+the electron skin depth are frequently observed
+in
+a
+wide
+range
+of
+collisionless
+plasma
+envi-
+ronments, including the solar wind1–3, planetary
+magnetospheres4,5, astrophysical jets6, laboratory
+plasmas7,8, and numerical simulations of plasma
+turbulence9 and reconnection10–12.
+These struc-
+tures naturally arise through processes such as mag-
+netic reconnection13,14, turbulent cascade15,16, and
+current-driven plasma flows17,18.
+Because of their
+small spatial scales and strong gradients in mag-
+netic field and electron velocity, electron-scale cur-
+rent sheets are generally unstable and can evolve
+through a variety of plasma instabilities driven by
+current gradients, velocity shear, and magnetic cur-
+vature.
+The evolution of such current sheets is believed
+to play a crucial role in the conversion of large-scale
+magnetic energy into particle energy in collisionless
+plasmas18–20.
+In particular, their instability and
+nonlinear evolution can lead to rapid magnetic re-
+connection, particle acceleration, and the conversion
+of large-scale magnetic energy into heat, even in the
+absence of classical collisional processes such as vis-
+cosity and resistivity21–23. Understanding the sta-
+bility and nonlinear evolution of electron-scale cur-
+rent sheets is therefore essential for explaining en-
+ergy conversion processes in laboratory, space, and
+astrophysical plasmas.
+At electron spatial and temporal scales, the dy-
+namics of such thin current sheets is governed pri-
+marily by electron motion, while ions respond only
+weakly on these timescales and effectively act as
+a stationary, charge-neutralizing background. Un-
+der these conditions, the plasma dynamics can be
+described within the framework of electron magne-
+tohydrodynamics (EMHD), which is obtained from
+the two-fluid description by neglecting ion motion
+while retaining electron inertia in the magnetic-field
+evolution24,25.
+EMHD therefore provides a useful
+reduced model for studying electron-scale current
+sheets in regimes where the characteristic length
+scales are comparable to the electron skin depth
+(de = c/ωpe) and the evolution occurs on timescales
+comparable to ω−1
+pe , where ωpe denotes the electron
+plasma frequency.
+Within this framework, several studies have in-
+vestigated the linear stability and nonlinear evo-
+lution of electron-scale current sheets26,27.
+Elec-
+tron inertial tearing modes driven by current gra-
+dients and magnetic-field curvature have been ex-
+tensively studied as a mechanism for electron-scale
+reconnection and magnetic-island formation28–30.
+In addition to tearing, EMHD systems can sup-
+port surface-preserving or non-tearing modes asso-
+ciated with magnetic curvature and electron shear
+arXiv:2603.27173v1  [physics.plasm-ph]  28 Mar 2026
+
+2
+flows31,32. The coexistence and interaction of tear-
+ing and surface-preserving modes in two-dimensional
+EMHD current sheets were examined by Gaur and
+Kaw33, who showed that equilibrium curvature can
+allow both instabilities to develop simultaneously
+and significantly influence the nonlinear evolution
+of the current layer.
+When strong velocity shear is present along the
+current direction, Kelvin–Helmholtz–type instabili-
+ties may also arise in the EMHD regime, leading
+to vortex formation and deformation of the cur-
+rent sheet34,35.
+More recently, three-dimensional
+EMHD studies have demonstrated that the domi-
+nant instability in electron current sheets can de-
+pend sensitively on the current-sheet thickness and
+equilibrium shear, with tearing modes and shear-
+driven Kelvin–Helmholtz–type modes competing in
+thin electron current layers17,36.
+These investiga-
+tions established an important theoretical frame-
+work for predicting the hierarchy of instabilities in
+electron-scale current sheets and highlighted the role
+of current-sheet geometry in determining the domi-
+nant mode.
+While these EMHD studies provide important
+predictions for the dominant instability regime, they
+do not fully capture the nonlinear evolution and in-
+teraction between competing modes in fully kinetic
+systems. In particular, it remains unclear how ac-
+curately EMHD mode-selection predictions persist
+in kinetic regimes, and how the interplay between
+tearing, surface-preserving, and shear-driven insta-
+bilities unfolds during the nonlinear evolution of lo-
+calized current sheets.
+Fully kinetic particle-in-cell (PIC) simulations
+provide
+a
+natural
+framework
+for
+investigating
+electron-scale current sheets in collisionless plasmas.
+By self-consistently evolving particle dynamics and
+electromagnetic fields, PIC simulations capture ki-
+netic effects such as particle trapping, pressure ten-
+sor contributions, and nonlinear wave–particle in-
+teractions that are not included in EMHD models.
+Previous kinetic studies have confirmed the develop-
+ment of electron inertial tearing modes and demon-
+strated the formation of electron-scale magnetic is-
+lands, current-sheet thinning, and complex nonlin-
+ear dynamics6,37,38. Multidimensional PIC simula-
+tions have further revealed current-sheet filamenta-
+tion, vortex formation, and coupling between recon-
+nection and shear-driven instabilities in turbulent
+collisionless plasmas11,39.
+However, most previous
+kinetic studies have focused on either reconnection
+in extended current layers or turbulent current-sheet
+formation, rather than the controlled evolution of lo-
+calized electron-scale current sheets.
+Consequently, a systematic understanding of the
+early and late nonlinear evolution of localized elec-
+tron current sheets remains limited.
+In partic-
+ular,
+the temporal ordering and mutual inter-
+action of tearing, surface-preserving, and shear-
+driven instabilities in fully kinetic systems have
+not been examined in a controlled manner.
+Al-
+though previous studies have shown that sec-
+ondary Kelvin–Helmholtz–like instabilities can de-
+velop within magnetic islands during reconnection40,
+the dependence of such processes on current-sheet
+thickness and dimensionality, as well as their role
+in determining the dominant nonlinear pathway, re-
+mains poorly understood.
+In this work, we investigate the stability and
+nonlinear evolution of localized electron-scale cur-
+rent sheets using fully kinetic particle-in-cell (PIC)
+simulations in both two and three spatial dimen-
+sions. Two equilibrium configurations correspond-
+ing to thin and wide current sheets (ϵ = 0.3 and
+ϵ = 0.9) are considered, allowing us to examine
+how current-sheet thickness influences the hierar-
+chy of instabilities.
+By comparing the simulation
+results with predictions from linear EMHD theory,
+we assess the validity of EMHD mode-selection pre-
+dictions and examine how kinetic effects modify
+the nonlinear evolution.
+The simulations reveal a
+clear thickness-dependent transition in the domi-
+nant instability: while thin sheets remain primar-
+ily tearing-dominated, wider sheets develop strong
+shear-driven vortex structures characteristic of a
+Kelvin–Helmholtz–type instability in three dimen-
+sions.
+More importantly, we identify a clear nonlinear
+sequence of instability development in fully kinetic
+systems. For wider current sheets, the evolution pro-
+ceeds through an initial shear-dominated phase, fol-
+lowed by saturation of the Kelvin–Helmholtz–type
+instability and the subsequent re-emergence of tear-
+ing dynamics as the dominant mechanism responsi-
+ble for magnetic topology change. In contrast, thin
+current sheets remain tearing-dominated through-
+out, with no transition to a shear-driven regime.
+These results provide new insight into how di-
+mensionality and current-sheet geometry control not
+only the dominant instability, but also the tempo-
+ral ordering of nonlinear processes in electron-scale
+current sheets, with direct implications for electron-
+scale reconnection and current-sheet stability in col-
+lisionless plasmas..
+The remainder of this paper is organized as fol-
+lows. In Sec. II, we describe the numerical method,
+the equilibrium configuration, and the initial and
+boundary conditions used in the simulations. Sec-
+tion III presents the results obtained from the two-
+and three-dimensional simulations. In Sec. IV, we
+provide a detailed comparison between the two- and
+three-dimensional evolution of the system for the
+
+3
+two current-sheet thicknesses considered.
+Finally,
+Sec. V summarizes the main conclusions of this
+work.
+II.
+SIMULATION MODEL AND NUMERICAL
+SETUP
+We perform fully kinetic Particle-in-Cell (PIC)
+simulations using the OSIRIS 4.0 framework to
+investigate the evolution of electron-scale tearing
+instabilities in thin current sheets in both two
+and three dimensions41.
+The PIC approach self-
+consistently evolves particle dynamics and electro-
+magnetic fields by solving the Vlasov–Maxwell sys-
+tem, thereby retaining electron inertia and fully non-
+linear electromagnetic interactions at electron scales.
+This fully kinetic treatment avoids the need for fluid
+closures and enables a self-consistent description of
+the evolution of electron-scale current sheets, partic-
+ularly during the linear growth and nonlinear satu-
+ration of the instability.
+A.
+Equilibrium Configuration and Initial Conditions
+FIG. 1. Schematic of the simulation geometry. The equi-
+librium magnetic field Beq is along y and varies across x,
+forming a localized current sheet. The equilibrium elec-
+tron flow veq is along z. The x-direction is the gradient
+(inflow) direction, and y corresponds to the magnetic
+field (outflow) direction.
+The
+simulations
+are
+performed
+in
+a
+three-
+dimensional Cartesian domain with coordinates
+(x, y, z), as illustrated in Fig. 1.
+We consider an
+electron-only current sheet in which the equilibrium
+magnetic field is directed along ˆy and varies across
+ˆx,
+Beq(x) = ˆy [B00 sech(x/ϵ) tanh(x/ϵ)] ,
+(1)
+where ϵ characterizes the shear width and B00 sets
+the field amplitude. This profile produces a local-
+ized magnetic shear layer centered in the domain, en-
+abling the study of electron-scale instabilities with-
+out imposing large-scale reconnection geometry.
+Assuming stationary ions (vi = 0), the equilib-
+rium current is entirely supported by electron mo-
+tion. From Amp`ere’s law, the corresponding elec-
+tron flow is directed along ˆz,
+veq = −∇×Beq = ˆz v0(x) = ˆz B00 sinh2(x/ϵ)
+ϵ cosh3(x/ϵ) . (2)
+In this configuration, ions provide a station-
+ary,
+uniform neutralizing background,
+isolating
+the electron-scale dynamics and suppressing ion-
+timescale effects.
+The system therefore corre-
+sponds to the inertial electron magnetohydrody-
+namic (EMHD) limit, in which the evolution is gov-
+erned by electron inertia and current-driven mag-
+netic shear.
+Unlike the classical Harris sheet, which relies on
+pressure balance between magnetic and plasma pres-
+sures, the present configuration is compatible with
+the cold, electron-only framework adopted here,
+where thermal pressure is absent. The chosen profile
+thus provides a self-consistent way to model a local-
+ized current sheet sustained by electron motion and
+magnetic structure alone.
+The x-direction corresponds to the gradient (in-
+flow) direction, while the magnetic field is aligned
+along y and the equilibrium current and electron
+flow are along z, as shown in Fig. 1.
+No explicit
+perturbations are imposed; instead, the instability
+develops self-consistently from intrinsic numerical
+noise, allowing unstable modes to emerge without
+bias toward a particular wavelength or symmetry.
+The equilibrium profiles are shown in Fig. 2.
+B.
+Numerical Parameters
+TABLE I. Simulation domain sizes and grid resolutions
+used in two- and three-dimensional PIC simulations. All
+lengths are normalized to the electron skin depth de.
+Dimension
+ϵ
+Lx/de Ly/de Lz/de Grid Resolution
+2D
+0.3
+3.0
+1.5
+–
+256 × 128
+2D
+0.9
+9.0
+4.5
+–
+256 × 128
+3D
+0.3
+3.0
+1.5
+1.5
+256 × 128 × 128
+3D
+0.9
+9.0
+4.5
+4.5
+256 × 128 × 128
+
+4
+Simulations are performed for multiple current-
+sheet shear widths, ϵ = 0.3 and ϵ = 0.9, in or-
+der to investigate the dependence of the growth
+and saturation of electron-scale tearing instabilities
+on the thickness of the current layer.
+All sim-
+ulations employ the fully relativistic OSIRIS PIC
+framework, with quantities normalized to character-
+istic electron-scale parameters. Lengths are normal-
+ized to the electron skin depth de = c/ωpe, time to
+the inverse electron plasma frequency ω−1
+pe , veloci-
+ties to the speed of light c, and magnetic fields to
+B0 = mecωpe/e. Unless otherwise stated, all quan-
+tities are expressed in these normalized units.
+The simulation domain sizes and grid resolutions
+used in the two- and three-dimensional simulations
+are summarized in Table I. The spatial resolution
+is chosen to adequately resolve both the equilib-
+rium current layer and the linearly unstable electron-
+scale modes.
+Two-dimensional (2D) and three-
+dimensional (3D) simulations are performed with
+identical physical parameters, differing only in the
+inclusion of the third spatial dimension.
+The two-dimensional simulations employ 10 × 5
+particles per cell, while the three-dimensional runs
+use 10 × 5 × 5 particles per cell. Only electrons are
+treated as kinetic particles, while ions are modeled as
+a stationary, uniform neutralizing background and
+are not explicitly evolved in the simulation. Elec-
+trons are initialized with a cold (zero-temperature,
+zero-momentum) distribution, so that the system
+has no thermal spread at initialization. This cold
+electron-only setup isolates inertial electron-scale
+dynamics and enables direct comparison with Elec-
+tron Magnetohydrodynamics (EMHD) predictions
+without the influence of thermal-pressure effects.
+The time step satisfies the Courant condition, ∆t ≤
+0.99 ∆x/c, and periodic boundary conditions are ap-
+plied in all spatial directions.
+The simulation do-
+main is chosen sufficiently large in the x direction
+such that boundary effects do not influence the evo-
+lution of the current sheet or the tearing dynamics.
+C.
+Physical Regimes Considered
+The narrow current-sheet case (ϵ = 0.3) is associ-
+ated with stronger magnetic shear and larger elec-
+tron drift velocities (v ≃0.3c), whereas the wider
+sheet (ϵ = 0.9) exhibits weaker shear with lower drift
+velocities (v ≃0.1c). The corresponding equilibrium
+magnetic-field and electron flow profiles are shown in
+Fig. 2.
+These two configurations provide a controlled
+framework for examining how current-sheet thick-
+ness and electron flow strength influence the linear
+growth and nonlinear evolution of electron-scale in-
+FIG. 2. The equilibrium magnetic field (top row) and
+velocity (bottom row) profiles for two values of the ϵ =
+0.3 (left panel) and ϵ = 0.9 (right panel).
+stabilities in two and three dimensions.
+III.
+RESULTS
+We now examine the evolution of electron-scale
+instabilities in the localized current-sheet configura-
+tion using fully kinetic PIC simulations. Particular
+attention is given to the role of current-sheet thick-
+ness and dimensionality in determining the domi-
+nant instability and subsequent nonlinear dynamics.
+Simulations are performed for two equilibrium shear
+widths, ϵ = 0.9 (wide sheet) and ϵ = 0.3 (thin sheet),
+in both two and three spatial dimensions.
+We first establish the two-dimensional baseline,
+where the instability is governed by electron-scale
+physics alone, and compare the measured linear
+growth rates with predictions from linear EMHD
+theory. We then examine how nonlinear evolution
+depends on current-sheet thickness before turning
+to the fully three-dimensional dynamics.
+A.
+Linear growth and equilibrium diagnostics
+A useful diagnostic for identifying regions suscep-
+tible to different EMHD instabilities is the quan-
+tity B0B′′
+0 , which distinguishes tearing-favorable
+and surface-preserving regions. In EMHD, tearing
+modes arise where B0B′′
+0
+< 0, allowing changes
+in magnetic topology, whereas regions satisfying
+B0B′′
+0 > 0 support non-tearing, surface-preserving
+modes33. Both instabilities originate from current
+gradients and magnetic-field curvature; however,
+they differ in their spatial character and nonlinear
+
+5
+behavior. Tearing is intrinsically a nonlocal insta-
+bility that depends on the global structure of the
+current sheet, whereas the surface-preserving mode
+is a local instability, typically associated with short-
+wavelength perturbations satisfying kϵ ≫1, and
+does not involve reconnection.
+Figure 3 shows the spatial variation of B0B′′
+0
+across the current sheet for both equilibrium widths
+considered. For the thinner sheet (ϵ = 0.3), the mag-
+nitude of B0B′′
+0 is significantly larger and exhibits
+pronounced regions of both signs near the center of
+the sheet. In contrast, for the wider sheet (ϵ = 0.9),
+the curvature is weaker and the regions favorable to
+non-tearing activity are much less prominent. This
+difference anticipates a stronger influence of shear-
+driven, non-tearing dynamics in the thin-sheet case.
+FIG. 3. Variation of the quantity B0B′′
+0 across the cur-
+rent sheet for (top) ϵ = 0.3 and (bottom) ϵ = 0.9. Re-
+gions with B0B′′
+0 < 0 correspond to tearing-favorable lo-
+cations, while B0B′′
+0 > 0 identifies regions where surface-
+preserving EMHD modes may develop.
+The stronger
+curvature for ϵ = 0.3 indicates enhanced susceptibility
+to non-tearing dynamics.
+The linear growth of the instability is quantified
+using the perturbed total energy (Epert), which mea-
+sures the energy contained in magnetic and velocity
+fluctuations. Since the perturbed energy scales with
+the square of field amplitudes, the linear phase is
+expected to follow
+Epert ∝e2γt,
+(3)
+where γ is the linear growth rate.
+Figure 4 shows the temporal evolution of the per-
+turbed total energy (Epert) for both values of ϵ in
+two- and three-dimensional simulations. In two di-
+mensions (left column), the early-time evolution fol-
+lows the expected exponential scaling. For the wider
+FIG. 4.
+Temporal evolution of the logarithm of per-
+turbed total energy Epert for ϵ = 0.3 (top panels) and
+ϵ = 0.9 (bottom panels) in two-dimensional (left) and
+three-dimensional (right) simulations. Dashed lines de-
+note slopes corresponding to linear EMHD growth rates.
+The 2D results exhibit exponential growth consistent
+with electron inertial tearing in both cases. In contrast,
+the 3D evolution shows a thickness-dependent modifi-
+cation: the thin sheet remains tearing-dominated with
+reduced effective growth, while the wide sheet exhibits
+faster growth associated with the onset of shear-driven
+(Kelvin–Helmholtz) dynamics.
+current sheet (ϵ = 0.9), the theoretical growth rate
+γ = 0.0224 yields a slope 2γ that closely matches
+the exponential growth observed in the PIC simula-
+tions. Similarly, for the thinner sheet (ϵ = 0.3), the
+theoretical prediction γ = 0.098 reproduces the lin-
+ear regime with good accuracy, giving a measured
+growth rate γPIC ≃0.196.
+These results confirm
+that the linear phase in 2D is governed by electron
+inertial tearing and is quantitatively consistent with
+EMHD theory.
+In three dimensions (right column), the early-time
+evolution also exhibits an approximately exponen-
+tial growth phase; however, the growth rates and
+subsequent evolution differ from their 2D counter-
+parts. The dashed reference lines in the 3D panels
+correspond to linear growth rates of the dominant
+two-dimensional modes: for ϵ = 0.3, the slope cor-
+responds to the tearing mode with kz = 0, while
+for ϵ = 0.9, it corresponds to the Kelvin–Helmholtz
+mode with ky = 0.
+For the thin current sheet (ϵ = 0.3), the growth
+remains broadly consistent with tearing-dominated
+dynamics; however, the effective growth rate is re-
+duced relative to the 2D tearing prediction, indi-
+cating the influence of three-dimensional effects (see
+Sec. III.C). In contrast, for the wider sheet (ϵ = 0.9),
+the growth deviates from the 2D tearing behav-
+ior and instead reflects the onset of a shear-driven
+
+6
+Kelvin–Helmholtz–type instability. In this case, the
+linear growth rate agrees well with the correspond-
+ing two-dimensional Kelvin–Helmholtz prediction.
+Deviations from the linear slope at later times in
+both dimensions mark the transition to nonlinear
+evolution, with the nature of the nonlinear state de-
+termined by the competition between tearing and
+shear-driven dynamics in three dimensions.
+B.
+Nonlinear evolution in two dimensions
+FIG. 5. Evolution of the out-of-plane magnetic field Bz
+in the 2D simulation for ϵ = 0.9 (wide sheet), with in-
+plane magnetic field lines superimposed.
+We now examine the evolution of the system in
+two-dimensional simulations, focusing on the devel-
+opment and nonlinear interaction of magnetic struc-
+tures.
+The dynamics are visualized using contour
+plots of the out-of-plane magnetic field Bz, with
+in-plane magnetic field lines superimposed (Figs. 5
+and 6).
+At early times, magnetic field lines remain straight
+and follow the equilibrium configuration, while Bz
+exhibits small-amplitude fluctuations arising from
+intrinsic numerical noise. As the system enters the
+linear growth phase, these fluctuations organize into
+coherent structures, and a characteristic quadrupo-
+lar Bz pattern develops around the neutral line, in-
+dicating the onset of reconnection associated with
+electron inertial tearing.
+The
+subsequent
+nonlinear
+evolution
+depends
+strongly on the current-sheet thickness. For the wide
+sheet (ϵ = 0.9), the small magnitude of B0B′′
+0 near
+the center implies that tearing governs the evolu-
+tion. As shown in Fig. 5, a single coherent magnetic
+FIG. 6. Evolution of the out-of-plane magnetic field Bz
+in the 2D simulation for ϵ = 0.3 (thin sheet), with in-
+plane magnetic field lines superimposed.
+island forms at the neutral line and remains sym-
+metric about x = 0. The nonlinear dynamics closely
+resemble classical EMHD tearing, with steady island
+growth and smooth deformation of the current layer.
+In contrast, the thin-sheet case (ϵ = 0.3) exhibits
+qualitatively different behavior.
+The equilibrium
+contains regions with B0B′′
+0 > 0 adjacent to the neu-
+tral line (Fig. 3), which support surface-preserving
+EMHD modes in addition to tearing. As a result,
+the instability involves the coexistence of global tear-
+ing and localized surface-preserving perturbations.
+Linear EMHD analyses33 show that while the tear-
+ing mode is symmetric about the neutral line, the
+surface-preserving mode is intrinsically asymmetric
+and localized away from the center. In the thin-sheet
+regime, the superposition of these modes therefore
+introduces an inherent asymmetry in the unstable
+eigenstructure.
+This is reflected in Fig. 6, where the primary is-
+land initially forms at the neutral line but exhibits
+a clear structural asymmetry from early times. This
+asymmetry leads to an imbalance in magnetic ten-
+sion and electron flow across the island, causing it
+to drift away from the neutral line as the system
+evolves. At later times, the island settles at a finite
+offset from x = 0, accompanied by a partial reduc-
+tion of its asymmetry, indicating relaxation toward
+a more dynamically balanced configuration.
+The asymmetry is further evident in the secondary
+islands that form on either side of the neutral line,
+which are not identical in strength or structure.
+These islands arise self-consistently from the pres-
+ence of multiple unstable regions associated with
+
+7
+strong curvature gradients and the coexistence of
+tearing and surface-preserving modes. Seconday is-
+lands are weaker for ϵ = 0.9 case. As the system
+evolves, the secondary islands convect along the cur-
+rent sheet under the influence of electron flows, in-
+teract with the primary island, and undergo merg-
+ing or collision, resulting in a dynamically evolving
+multi-island state.
+In the late nonlinear stage, the two configurations
+follow distinct saturation pathways. For the wider
+current sheet (ϵ = 0.9), magnetic energy remains
+concentrated within a single dominant island. The
+strong bidirectional electron outflows generate shear
+layers along the separatrices and within the island
+interior. These shear layers become unstable to a
+secondary Kelvin–Helmholtz type instability in the
+EMHD regime, leading to vortical distortions and
+the onset of small-scale turbulence40. As these fluc-
+tuations intensify, the initially coherent quadrupolar
+Bz structure becomes progressively distorted, mark-
+ing a transition from organized tearing to shear-
+driven turbulent mixing.
+In contrast, the thin-sheet case evolves toward a
+multi-island state governed by the coupled action
+of tearing and surface-preserving modes.
+Because
+magnetic energy is distributed among multiple in-
+teracting structures, no single coherent shear layer
+develops, and the reconnection outflows remain frag-
+mented and time-dependent.
+This suppresses the
+onset of secondary Kelvin–Helmholtz type instabil-
+ity within the primary island.
+As the evolution proceeds, the secondary islands
+undergo coalescence, forming larger structures that
+continue to interact with the primary island. This
+hierarchical merging leads to continuous redistribu-
+tion of magnetic flux and current within the system.
+At later times, the initially asymmetric configura-
+tion partially relaxes through this coalescence pro-
+cess, leading to a more symmetric large-scale struc-
+ture, although signatures of multi-island interaction
+persist. The quadrupolar Bz pattern remains iden-
+tifiable, and saturation proceeds primarily through
+island merging rather than shear-driven turbulence.
+These results establish a clear two-dimensional
+baseline. Wide current sheets evolve through sym-
+metric EMHD tearing, followed by the development
+of shear layers that drive Kelvin–Helmholtz insta-
+bility and lead to turbulent saturation. In contrast,
+thin sheets exhibit intrinsically asymmetric evolu-
+tion due to the coexistence of tearing and surface-
+preserving modes, resulting in island displacement,
+multi-island interaction, and coalescence-driven re-
+laxation.
+This thickness-dependent distinction highlights
+the competing roles of magnetic curvature and elec-
+tron shear in determining the nonlinear pathway.
+The contrast between these regimes becomes even
+more pronounced when three-dimensional effects are
+introduced, as discussed in the following subsection.
+C.
+Nonlinear evolution in three dimensions
+FIG. 7. Evolution of the magnetic field component By in
+the xz plane (y = 0) for the 3D simulation with ϵ = 0.9.
+FIG. 8. Evolution of the out-of-plane magnetic field Bz
+in the xy plane (z = 0) for ϵ = 0.9 in the 3D simulation,
+with magnetic field lines superimposed.
+We now examine the fully three-dimensional evo-
+lution of the system, where perturbations along the
+equilibrium flow direction are allowed. In contrast
+to the two-dimensional case, where ∂/∂z = 0 sup-
+presses shear-driven instabilities. The inclusion of
+the third dimension enables velocity-shear–driven
+modes to develop and interact with tearing dynam-
+ics. The evolution is analyzed using Bz in the xy
+plane, which captures reconnection and magnetic
+
+8
+topology, and By in the xz plane, which reveals mod-
+ulation along the current direction and serves as a
+diagnostic for shear-driven dynamics.
+Wide sheet: ϵ = 0.9
+For the wider current sheet, the three-dimensional
+evolution
+differs
+qualitatively
+from
+the
+two-
+dimensional case. The xz plane evolution of By (rep-
+resenting the flow lines in the xz plane), shown in
+Fig. 7, exhibits the development of clear alternating
+structures along the current direction, which later
+evolve into vortex-like patterns. These features are
+characteristic of a Kelvin–Helmholtz-type instability
+driven by the equilibrium electron velocity shear.
+The corresponding xy plane evolution of Bz
+(Fig. 8) indicates that no tearing signatures are
+present at early times; however, a magnetic island
+appears later, which is elongated and distorted.
+The reconnection structures are strongly modulated
+along the third dimension, leading to thin, stretched
+island-like structures rather than the coherent, sym-
+metric islands observed in two dimensions at early
+times.
+The measured growth rate agrees well with lin-
+ear theory predictions for the dominant three-
+dimensional
+shear
+mode,
+confirming
+that
+the
+Kelvin–Helmholtz–type instability governs the early
+and intermediate nonlinear evolution for ϵ = 0.9.
+Tearing is therefore present but becomes secondary,
+with its structures continuously reshaped by shear-
+driven dynamics.
+The appearance of a magnetic island in the xy
+plane at later times (t ≳600), although elongated,
+indicates that tearing is not suppressed but rather
+temporarily masked by the faster-growing shear-
+driven instability during the early and intermediate
+stages.
+As the Kelvin–Helmholtz–type mode sat-
+urates and redistributes the velocity shear, tearing
+re-emerges as the dominant mechanism driving mag-
+netic topology change. The resulting island thus re-
+flects tearing evolution on a background modified by
+prior shear-driven dynamics.
+The nonlinear evolution thus exhibits a sequential
+interplay between shear-driven and reconnection-
+driven processes.
+Thin sheet: ϵ = 0.3
+In contrast, the thin current sheet exhibits a qual-
+itatively different three-dimensional evolution. The
+xy plane evolution of Bz (Fig. 9) shows the rapid for-
+mation of multiple magnetic islands with the charac-
+teristic quadrupolar structure associated with elec-
+FIG. 9. Evolution of the out-of-plane magnetic field Bz
+in the xy plane (z = 0) for ϵ = 0.3 in the 3D simulation,
+with magnetic field lines superimposed.
+FIG. 10. Evolution of the magnetic field component By
+in the xz plane (y = 0) for the 3D simulation with ϵ =
+0.3.
+tron inertial tearing. These islands remain relatively
+coherent and are distributed along the current sheet,
+closely resembling the structures observed in the
+two-dimensional simulations.
+A slight asymmetry in the island structure is ob-
+served (at t = 280,) consistent with the influence
+of surface-preserving perturbations identified in the
+two-dimensional simulations. In contrast to the two-
+dimensional case, secondary islands do not interact
+with the primary island, and the primary island does
+not exhibit gradual drift away from the nutral line.
+The corresponding xz plane evolution of By
+(Fig. 10) does not exhibit the clear vortex roll-
+up
+or
+alternating
+patterns
+characteristic
+of
+a
+Kelvin–Helmholtz instability.
+Instead, only weak
+distortions and localized modulation of the flow-
+
+9
+aligned structures are observed.
+These distor-
+tions do not develop into coherent vortices, indi-
+cating that shear-driven dynamics remain subdom-
+inant and do not manifest as a fully developed
+Kelvin–Helmholtz–type instability in this case.
+This behavior is consistent with linear theory,
+which predicts tearing to be the fastest-growing
+mode for ϵ = 0.3. However, the growth rate mea-
+sured in fully kinetic three-dimensional simulations
+is lower than the theoretical prediction.
+This re-
+duction suggests that, although tearing remains the
+dominant instability, its effective growth is moder-
+ated by three-dimensional effects, including mode
+coupling and the redistribution of energy among
+multiple modes.
+The discrepancy between the measured growth
+rates and their two-dimensional counterparts can be
+attributed to the inherently multimode nature of the
+three-dimensional system, in which energy is shared
+among competing instabilities and finite-kz pertur-
+bations modify the effective linear growth. A com-
+prehensive three-dimensional linear stability analy-
+sis is required to accurately determine the growth
+rate and eigenstructure of the fastest-growing mode;
+however, such an analysis lies beyond the scope of
+the present work.
+Consistently, no transition to a shear-dominated
+regime is observed for ϵ = 0.3, even in fully three-
+dimensional simulations.
+Mode competition and dimensional transition
+The comparison between the two cases demon-
+strates that the dominant instability in three di-
+mensions is controlled by the competition between
+curvature-driven and shear-driven dynamics.
+For
+ϵ = 0.3, strong magnetic curvature promotes tear-
+ing and surface-preserving modes, suppressing the
+development of Kelvin–Helmholtz instability and re-
+sulting in similar behavior in two and three dimen-
+sions.
+For ϵ = 0.9, weaker curvature allows ve-
+locity shear to dominate, leading to the emergence
+of Kelvin–Helmholtz–type instability and a qualita-
+tively different nonlinear evolution in three dimen-
+sions.
+These
+results
+establish
+a
+clear
+thickness-
+dependent
+transition:
+thin
+current
+sheets
+are
+curvature-dominated and remain tearing-controlled
+even
+in
+three
+dimensions,
+whereas
+wider
+cur-
+rent
+sheets
+are
+shear-dominated
+and
+develop
+Kelvin–Helmholtz–type
+dynamics
+when
+three-
+dimensional
+perturbations
+are
+allowed.
+This
+highlights the critical role of dimensionality in
+enabling shear-driven instabilities and demonstrates
+that two-dimensional models are sufficient for thin
+sheets but insufficient for capturing the dynamics
+of wider current layers.
+IV.
+COMPARISON BETWEEN TWO- AND
+THREE-DIMENSIONAL DYNAMICS
+The results presented above enable a direct com-
+parison between the two- and three-dimensional evo-
+lution of electron-scale instabilities in localized cur-
+rent sheets. This comparison highlights the critical
+role of dimensionality in determining both the domi-
+nant instability and the nonlinear pathways through
+which magnetic energy is redistributed.
+In two dimensions, the evolution is governed pri-
+marily by electron inertial tearing. For both current-
+sheet thicknesses considered, the linear growth rates
+measured in the simulations agree closely with pre-
+dictions from linear EMHD theory (Fig. 4), confirm-
+ing that the early-time dynamics are well described
+by electron-scale tearing physics. The nonlinear evo-
+lution proceeds through the formation and growth of
+magnetic islands accompanied by the characteristic
+quadrupolar Bz structure (Figs. 5 and 6).
+While
+the wide sheet (ϵ = 0.9) exhibits symmetric island
+growth centered at the neutral plane, the thin sheet
+(ϵ = 0.3) shows weak asymmetry and gradual is-
+land displacement. As demonstrated by the curva-
+ture profile in Fig. 3, this asymmetry arises from
+the presence of regions where B0B′′
+0 > 0, allowing
+a surface-preserving EMHD mode to coexist with
+tearing. Nevertheless, in two dimensions, tearing re-
+mains the dominant mechanism responsible for mag-
+netic topology change in both cases.
+The inclusion of the third spatial dimension in-
+troduces a qualitatively new degree of freedom by
+allowing perturbations along the equilibrium flow di-
+rection. This enables velocity-shear–driven instabili-
+ties to develop and compete with tearing, fundamen-
+tally altering the nonlinear dynamics. The relative
+importance of these instabilities is found to depend
+sensitively on current-sheet thickness.
+For the wide current sheet (ϵ = 0.9), the three-
+dimensional evolution is initially dominated by a
+Kelvin–Helmholtz–type instability driven by elec-
+tron velocity shear. This results in vortex formation,
+strong modulation of the current layer, and signifi-
+cant distortion of reconnecting structures. However,
+this shear-dominated phase is transient: following
+the saturation of the Kelvin–Helmholtz–type insta-
+bility, tearing re-emerges at later times and leads to
+the formation of a elongated but coherent magnetic
+island.
+This demonstrates that, although shear-
+driven dynamics can dominate the early nonlinear
+evolution, magnetic reconnection remains essential
+in determining the late-time behavior.
+
+10
+For the thin current sheet (ϵ = 0.3), the dynamics
+remain primarily tearing-dominated even in three di-
+mensions. The evolution of magnetic islands closely
+resembles the two-dimensional case, with only mod-
+erate three-dimensional modulation.
+No coherent
+Kelvin–Helmholtz vortices develop, indicating that
+shear-driven instabilities do not become dominant.
+Instead, the nonlinear evolution reflects the coex-
+istence of tearing and surface-preserving dynamics,
+leading to asymmetric island growth and enhanced
+structural complexity. The reduction in growth rate
+relative to linear theory can be attributed to three-
+dimensional mode coupling and redistribution of en-
+ergy among interacting modes, rather than a tran-
+sition to a shear-driven regime.
+However, in con-
+trast to the two-dimensional case, secondary islands
+remain very weak, and the primary island does not
+exhibit the gradual drift observed in two dimensions.
+These results demonstrate that dimensionality
+does not affect all current sheets uniformly. Rather,
+it introduces a thickness-dependent transition in
+the dominant instability mechanism.
+Thin cur-
+rent sheets remain curvature-dominated and tearing-
+controlled even in three dimensions, whereas wider
+current sheets become susceptible to shear-driven
+instabilities that significantly modify the nonlinear
+evolution.
+A key outcome of this study is the identifica-
+tion of a nonlinear sequence of instability devel-
+opment in three dimensions.
+For wider current
+sheets, the evolution proceeds through an initial
+shear-dominated phase, followed by saturation of the
+Kelvin–Helmholtz–type instability and subsequent
+re-emergence of tearing.
+In contrast, thin current
+sheets do not exhibit such a transition and remain
+tearing-dominated throughout. This highlights the
+role of current-sheet geometry in controlling not only
+the dominant instability, but also the temporal or-
+dering of nonlinear processes.
+Overall, these findings demonstrate that while
+two-dimensional
+models
+capture
+the
+essential
+features
+of
+electron-scale
+tearing,
+fully
+three-
+dimensional simulations are required to identify the
+dominant instability regime and to accurately de-
+scribe the nonlinear evolution of electron-scale cur-
+rent sheets, particularly in regimes where velocity
+shear plays a significant role.
+V.
+SUMMARY
+In this work, we have investigated the evolution
+of localized electron-scale current sheets using fully
+kinetic, electromagnetic particle-in-cell (PIC) simu-
+lations in both two and three spatial dimensions. By
+considering two equilibrium configurations charac-
+terized by different shear widths, ϵ = 0.3 (thin sheet)
+and ϵ = 0.9 (wide sheet), we systematically exam-
+ined how current-sheet thickness and dimensional-
+ity determine the dominant instability and nonlinear
+evolution.
+In two dimensions, both configurations are gov-
+erned primarily by electron inertial tearing.
+The
+measured linear growth rates agree closely with
+predictions from linear EMHD theory, confirming
+that the early-time evolution is well described by
+electron-scale tearing dynamics.
+In the nonlinear
+phase, the wide sheet exhibits symmetric magnetic
+island formation centered at the neutral plane, while
+the thin sheet develops weak asymmetry due to the
+presence of regions with B0B′′
+0 > 0, which allow a
+surface-preserving EMHD mode to coexist with tear-
+ing. Nevertheless, in 2D, tearing remains the dom-
+inant mechanism responsible for magnetic topology
+change in both cases.
+The inclusion of the third spatial dimension
+introduces
+qualitatively
+new
+behavior
+by
+en-
+abling
+velocity-shear–driven
+instabilities.
+The
+three-dimensional simulations reveal a thickness-
+dependent transition in the dominant instabil-
+ity.
+For the wide current sheet (ϵ
+=
+0.9), a
+Kelvin–Helmholtz–type instability driven by elec-
+tron velocity shear dominates the early and inter-
+mediate nonlinear evolution, leading to strong mod-
+ulation and fragmentation of the current layer. How-
+ever, this shear-dominated phase is transient: follow-
+ing its saturation, tearing re-emerges at later times
+and produces distorted but coherent magnetic is-
+lands.
+In contrast, for the thin sheet (ϵ = 0.3),
+electron inertial tearing remains the primary insta-
+bility even in three dimensions, with no transition
+to a shear-dominated regime, although its effective
+growth rate is reduced due to mode coupling and
+nonlinear interactions.
+These
+results
+demonstrate
+that
+current-sheet
+thickness and dimensionality together determine the
+hierarchy of electron-scale instabilities. While two-
+dimensional models capture the essential tearing
+physics, they can misidentify the dominant instabil-
+ity regime when velocity shear is significant. Fully
+three-dimensional modeling is therefore required to
+accurately describe both the dominant instability
+and the nonlinear evolution of electron-scale current
+sheets.
+A key outcome of this study is the identification
+of a nonlinear sequence of instability development
+in three dimensions.
+In wider current sheets, the
+system evolves through an initial shear-dominated
+phase followed by the re-emergence of tearing af-
+ter saturation of the Kelvin–Helmholtz–type insta-
+bility, whereas thin sheets remain tearing-dominated
+throughout. This highlights the role of current-sheet
+
+11
+geometry in controlling not only the dominant insta-
+bility, but also the temporal ordering of nonlinear
+processes.
+The
+thickness-dependent
+transition
+between
+tearing-dominated
+and
+shear-driven
+regimes
+identified
+here
+has
+important
+implications
+for
+electron-scale reconnection in laboratory plasmas,
+collisionless space environments, and high-energy
+astrophysical systems.
+In particular, the balance
+between magnetic curvature and electron shear may
+determine whether current sheets evolve through
+coherent reconnection structures or through shear-
+driven fragmentation and turbulence at electron
+scales.
+ACKNOWLEDGMENTS
+The authors acknowledge the use of computa-
+tional resources provided by the High Performance
+Computing (HPC) facility at the Inter-University
+Centre for Astronomy and Astrophysics (IUCAA),
+Pune, India. We also thank the IUCAA HPC sup-
+port team for their valuable assistance. The authors
+are grateful to Dr. Bhavesh G. Patel, Institute for
+Plasma Research, Gandhinagar, India, for valuable
+discussions on PIC simulations.
+1T. D. Phan, J. P. Eastwood, M. Shay, J. Drake, B. ¨O.
+Sonnerup, M. Fujimoto, P. Cassak, M. Øieroset, J. Burch,
+R. Torbert, et al., “Electron magnetic reconnection without
+ion coupling in earth’s turbulent magnetosheath,” Nature
+557, 202–206 (2018).
+2X. Cheng, Y. Li, L. Wan, M. Ding, P. Chen, J. Zhang, and
+J. Liu, “Observations of turbulent magnetic reconnection
+within a solar current sheet,” The Astrophysical Journal
+866, 64 (2018).
+3C. H. Chen, K. G. Klein,
+and G. G. Howes, “Evidence
+for electron landau damping in space plasma turbulence,”
+Nature communications 10, 740 (2019).
+4J. Burch, R. Torbert, T. Phan, L.-J. Chen, T. Moore, R. Er-
+gun, J. Eastwood, D. Gershman, P. Cassak, M. Argall,
+et al., “Electron-scale measurements of magnetic reconnec-
+tion in space,” Science 352, aaf2939 (2016).
+5C. Norgren, D. B. Graham, Y. V. Khotyaintsev, M. Andr´e,
+A. Vaivads,
+M. Hesse,
+E. Eriksson,
+P.-A. Lindqvist,
+B. Lavraud, J. Burch, et al., “Electron reconnection in
+the magnetopause current layer,” Journal of geophysical re-
+search: Space physics 123, 9222–9238 (2018).
+6S. Zenitani and M. Hoshino, “Relativistic particle accelera-
+tion in a folded current sheet,” The Astrophysical Journal
+Letters 618, L111–L114 (2005).
+7M. Yamada, R. Kulsrud,
+and H. Ji, “Magnetic reconnec-
+tion,” Reviews of modern physics 82, 603–664 (2010).
+8W. Fox, A. Bhattacharjee,
+and K. Germaschewski, “Fast
+magnetic reconnection in laser-produced plasma bubbles,”
+Physical review letters 106, 215003 (2011).
+9F. Califano, S. S. Cerri, M. Faganello, D. Laveder, M. Sisti,
+and M. W. Kunz, “Electron-only reconnection in plasma
+turbulence,” Frontiers in Physics 8, 317 (2020).
+10J. Birn, J. Drake, M. Shay, B. Rogers, R. Denton, M. Hesse,
+M. Kuznetsova, Z. Ma, A. Bhattacharjee, A. Otto, et al.,
+“Geospace environmental modeling (gem) magnetic recon-
+nection challenge,” Journal of Geophysical Research: Space
+Physics 106, 3715–3719 (2001).
+11H.
+Karimabadi,
+V.
+Roytershteyn,
+M.
+Wan,
+W.
+H.
+Matthaeus, W. Daughton, P. Wu, M. Shay, B. Loring,
+J. Borovsky, E. Leonardis, et al., “Coherent structures, in-
+termittent turbulence, and dissipation in high-temperature
+plasmas,” Physics of Plasmas 20 (2013).
+12M. Wan, W. Matthaeus, V. Roytershteyn, H. Karimabadi,
+T. Parashar, P. Wu,
+and M. Shay, “Intermittent dissipa-
+tion and heating in 3d kinetic plasma turbulence,” Physical
+review letters 114, 175002 (2015).
+13Y.-N. Liu, K. Fujimoto, and J.-B. Cao, “Intense magnetic
+reconnection process embedded in three-dimensional tur-
+bulent current sheet,” Geophysical Research Letters 51,
+e2023GL106466 (2024).
+14T. C. Li, Y.-H. Liu, Y. Qi, and M. Zhou, “Extended mag-
+netic reconnection in kinetic plasma turbulence,” Physical
+Review Letters 131, 085201 (2023).
+15C. Dong, L. Wang, Y.-M. Huang, L. Comisso, T. A. Sand-
+strom, and A. Bhattacharjee, “Reconnection-driven energy
+cascade in magnetohydrodynamic turbulence,” Science Ad-
+vances 8, eabn7627 (2022).
+16J. E. Stawarz, P. A. Mu˜noz, N. Bessho, R. Bandyopad-
+hyay, T. Nakamura, S. Eriksson, D. B. Graham, J. B¨uchner,
+A. Chasapis, J. F. Drake, et al., “The interplay between
+collisionless magnetic reconnection and turbulence,” Space
+Science Reviews 220, 90 (2024).
+17N. Jain and J. B¨uchner, “Nonlinear evolution of three-
+dimensional instabilities of thin and thick electron scale
+current sheets: Plasmoid formation and current filamen-
+tation,” Physics of Plasmas 21 (2014).
+18N. Jain, J. B¨uchner, H. Comi¸sel,
+and U. Motschmann,
+“Free energy sources in current sheets formed in collisionless
+plasma turbulence,” The Astrophysical Journal 919, 103
+(2021).
+19D. Biskamp, “Magnetic reconnection in plasmas,” Astro-
+physics and Space Science 242, 165–207 (1996).
+20E. Priest and T. Forbes, “Magnetic reconnection,” Mag-
+netic Reconnection (2007).
+21D. Biskamp, “Resistive and collisionless magnetic reconnec-
+tion,” in Plasma Astrophysics: Lectures Held at the Astro-
+physics School VII Organized by the European Astrophysics
+Doctoral Network (EADN) in San Miniato, Italy, 4–14 Oc-
+tober 1994 (Springer, 2006) pp. 1–29.
+22R. Treumann and W. Baumjohann, “Basic space plasma
+physics/advanced space plasma physics,” Plasma Physics
+and Controlled Fusion 43, 371–371 (2001).
+23J. Drake, M. Swisdak, H. Che,
+and M. Shay, “Electron
+acceleration from contracting magnetic islands during re-
+connection,” Nature 443, 553–556 (2006).
+24A. Kingsep, K. Chukbar, V. Yankov,
+and B. Kadomtsev,
+“Reviews of plasma physics,” Consultant bureau, New York
+16 (1990).
+25A. V. Gordeev, A. S. Kingsep, and L. I. Rudakov, “Elec-
+tron magnetohydrodynamics,” Physics Reports 243, 215–
+315 (1994).
+26N. Jain, A. Das, P. Kaw,
+and S. Sengupta, “Nonlinear
+electron magnetohydrodynamic simulations of sausage-like
+instability of current channels,” Physics of Plasmas 10, 29–
+36 (2003).
+27G. Gaur, S. Sundar, S. K. Yadav, A. Das, P. Kaw,
+and
+S. Sharma, “Role of natural length and time scales on shear
+driven two-dimensional electron magnetohydrodynamic in-
+stability,” Physics of Plasmas 16 (2009).
+28S. Bulanov, F. Pegoraro, and A. Sakharov, “Magnetic re-
+connection in electron magnetohydrodynamics,” Physics of
+Fluids B: Plasma Physics 4, 2499–2508 (1992).
+
+12
+29K. Avinash, S. Bulanov, T. Esirkepov, P. Kaw, F. Pego-
+raro, P. Sasorov,
+and A. Sen, “Forced magnetic field line
+reconnection in electron magnetohydrodynamics,” Physics
+of Plasmas 5, 2849–2860 (1998).
+30D. Del Sarto, F. Califano,
+and F. Pegoraro, “Secondary
+instabilities and vortex formation in collisionless-fluid mag-
+netic reconnection,” Physical review letters 91, 235001
+(2003).
+31V. Lukin, “Stationary nontearing inertial scale electron
+magnetohydrodynamic instability,” Physics of Plasmas 16
+(2009).
+32S. A. Mishra, G. Gaur, and B. Patel, “Investigating the ki-
+netic effects on current gradient-driven instabilities of elec-
+tron current layers via particle-in-cell simulations,” Physica
+Scripta (2024).
+33G. Gaur and P. K. Kaw, “Tearing and surface preserving
+electron magnetohydrodynamic modes in a current layer,”
+Physics of Plasmas 23 (2016).
+34N. Jain, A. Das, S. Sengupta,
+and P. Kaw, “Nonlinear
+electron-magnetohydrodynamic simulations of three dimen-
+sional current shear instability,” Physics of Plasmas 19
+(2012).
+35G.
+Gaur
+and
+A.
+Das,
+“Linear
+and
+nonlinear
+stud-
+ies of velocity shear driven three dimensional electron-
+magnetohydrodynamics instability,” Physics of Plasmas 19
+(2012).
+36N.
+Jain,
+A.
+von
+Stechow,
+P.
+A.
+Mu˜noz,
+J. B¨uchner,
+O. Grulke,
+and T. Klinger, “Electron-
+magnetohydrodynamic
+simulations
+of
+electron
+scale
+current
+sheet
+dynamics
+in
+the
+vineta.
+ii
+guide
+field
+reconnection experiment,” Physics of Plasmas 24 (2017).
+37K. M. Schoeffler, J. Drake,
+and M. Swisdak, “The effects
+of plasma beta and anisotropy instabilities on the dynam-
+ics of reconnecting magnetic fields in the heliosheath,” The
+Astrophysical Journal 743, 70 (2011).
+38M. Hesse, C. Norgren, P. Tenfjord, J. Burch, Y.-H. Liu, L.-
+J. Chen, N. Bessho, S. Wang, R. Nakamura, J. Eastwood,
+et al., “On the role of separatrix instabilities in heating the
+reconnection outflow region,” Physics of Plasmas 25 (2018).
+39N. Sioulas, H. Isliker, and L. Vlahos, “Particle heating and
+acceleration by reconnecting and nonreconnecting current
+sheets,” Astronomy & Astrophysics 657, A8 (2022).
+40D. Del Sarto, F. Califano, and F. Pegoraro, “Current layer
+cascade in collisionless electron-magnetohydrodynamic re-
+connection and electron compressibility effects,” Physics of
+plasmas 12 (2005).
+41R. A. Fonseca, L. O. Silva, F. S. Tsung, V. K. Decyk, W. Lu,
+C. Ren, W. B. Mori, S. Deng, S. Lee, T. Katsouleas, et al.,
+“Osiris: A three-dimensional, fully relativistic particle in
+cell code for modeling plasma based accelerators,” in In-
+ternational conference on computational science (Springer,
+2002) pp. 342–351.

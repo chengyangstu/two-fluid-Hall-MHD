@@ -1,0 +1,4248 @@
+ABSTRACT
+Title of dissertation:
+THE KINETIC STRUCTURE OF
+COLLISIONLESS SLOW SHOCKS AND
+RECONNECTION EXHAUSTS
+Yi-Hsin Liu
+Doctor of Philosophy, 2011
+Dissertation directed by:
+Professor James F. Drake
+Department of Physics
+A 2-D Riemann problem is designed to study the development and dynamics of
+the slow shocks that are thought to form at the boundaries of reconnection exhausts.
+Simulations are carried out for various ratios of normal magnetic ﬁeld to the trans-
+verse upstream magnetic ﬁeld (i.e., propagation angle with respect to the upstream
+magnetic ﬁeld). When the angle is suﬃciently oblique, the simulations reveal a large
+ﬁrehose-sense (P∥> P⊥) temperature anisotropy in the downstream region, accom-
+panied by a transition from a coplanar slow shock to a non-coplanar rotational mode.
+In the downstream region the ﬁrehose stability parameter ε = 1 −µ0(P∥−P⊥)/B2
+tends to plateau at 0.25. This balance arises from the competition between coun-
+terstreaming ions, which drives ε down, and the scattering due to ion inertial scale
+waves, which are driven unstable by the downstream rotational wave.
+At very
+oblique propagating angles, 2-D turbulence also develops in the downstream region.
+An explanation for the critical value 0.25 is proposed by examining anisotropic
+ﬂuid theories, in particular the Anisotropic Derivative Nonlinear-Schr¨odinger-Burgers
+
+equations, with an intuitive model of the energy closure for the downstream counter-
+streaming ions. The anisotropy value of 0.25 is signiﬁcant because it is closely related
+to the degeneracy point of the slow and intermediate modes, and corresponds to the
+lower bound of the transition point in a compound slow shock(SS)/rotational dis-
+continuity(RD) wave. This work implies that it is a pair of compound SS/RD waves
+that bounds the reconnection outﬂow, instead of a pair of switch-oﬀslow shocks as
+in Petschek’s model.
+
+THE KINETIC STRUCTURE OF COLLISIONLESS SLOW
+SHOCKS AND RECONNECTION EXHAUSTS
+by
+Yi-Hsin Liu
+Dissertation submitted to the Faculty of the Graduate School of the
+University of Maryland, College Park in partial fulﬁllment
+of the requirements for the degree of
+Doctor of Philosophy
+2011
+Advisory Committee:
+Professor James F. Drake, Chair/Advisor
+Dr. Michael M. Swisdak
+Professor Adil B. Hassam
+Professor William D. Dorland
+Professor Christopher S. Reynolds, Dean’s Representative
+
+c⃝Copyright by
+Yi-Hsin Liu
+2011
+
+Dedication
+To my Dad, my Mom and my Wife.
+ii
+
+Acknowledgments
+First and foremost I thank my advisor, Professor Jim Drake for bringing me
+here into his group at University of Maryland and giving me an invaluable oppor-
+tunity to work on challenging and interesting topics over the past six years. It is
+a pleasure and unforgettable experience to work with and learn from such an ex-
+traordinary individual. I also thank my co-advisor, Dr. Marc Swisdak, who always
+made himself available for help and advice; there has never been an occasion when
+I’ve knocked on his door and he hasn’t given me time. I thank Dr. Cheng-Chin
+Wu, Prof. Yi Lin and Prof. Steve Spangler for helpful discussions that were rele-
+vant to this thesis work. Thanks are also due to Professor Roald Sagdeev, Professor
+Adil Hassam, Professor Bill Dorland and Professor Christ Reynolds for agreeing
+to serve on my thesis committee and for sparing their valuable time reviewing the
+manuscript.
+My colleagues at the plasma theory group have enriched my graduate life in
+many ways and deserve a special mention, Dr. Parvez Guzdar, Prof. Mike Shay,
+Prof. Paul Cassak, Dr. Haihong Che, Kevin Schoeﬂler, Ray Fermo, Tak Chu Li
+and Joe Dalin. I thank my past advisors when I was in Taiwan, Prof. Ming-Feng
+Shih, Prof. Jiun-Huei Wu, Prof. Shin-Nan Yang and Prof. Chi Yuan. I especially
+would like to express my appreciation to Prof. Chi Yuan for being my role model as
+a respectful scholar. I also thank Prof. Chien-Chang Yen, Dr. Chao-Chin Yang and
+Dr. Bau-Ching Hsieh for leading me into the ﬁeld of computational physics. Finally,
+I deeply thank Prof. Lin-Ni Hau for encouraging me to pursue plasma physics for
+iii
+
+my doctoral degree.
+I also wish to acknowledge help and support from some of the staﬀmembers.
+Jane Hessing and Nancy Boone are highly appreciated, as is the computer hardware
+support from Edward Condon, the LaTex template from Dorothea Brosius.
+I owe my deepest thanks to my family - to my my wife, Min-Chun Liao, my
+mother, Ching-Kuai Peng, my father, Ping-Chang Liu, and my sisters, Chen-Yu
+Liu and Chia-Hui Liu who have always supported me. Words cannot express the
+gratitude I owe them.
+iv
+
+Table of Contents
+List of Figures
+vii
+List of Abbreviations
+xiii
+1
+Introduction
+1
+1.1
+Magnetic Reconnection: General . . . . . . . . . . . . . . . . . . . . .
+1
+1.2
+Magnetic Reconnection: Theory . . . . . . . . . . . . . . . . . . . . .
+7
+1.2.1
+Sweet-Parker Model
+. . . . . . . . . . . . . . . . . . . . . . .
+9
+1.2.2
+Petschek Model- the Role of Slow Shocks . . . . . . . . . . . .
+11
+1.3
+The Structure of the Magnetic Reconnection Exhaust . . . . . . . . .
+16
+1.3.1
+Solar Flare Heating by Slow Shocks . . . . . . . . . . . . . . .
+16
+1.3.2
+In-situ Satellite Crossing . . . . . . . . . . . . . . . . . . . . .
+18
+1.3.3
+Large-Scale Kinetic Simulations . . . . . . . . . . . . . . . . .
+20
+1.3.4
+Summary of Unsolved Issues and Motivation . . . . . . . . . .
+24
+1.4
+Our Approach: The Riemann Problem . . . . . . . . . . . . . . . . .
+24
+1.4.1
+Linear and Nonlinear MHD Waves
+. . . . . . . . . . . . . . .
+26
+1.4.2
+MHD Riemann Problems . . . . . . . . . . . . . . . . . . . . .
+32
+1.5
+Anisotropic MHD . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+36
+2
+PIC simulations of Riemann Problem
+37
+2.1
+Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+37
+2.2
+Simulation Models and Details . . . . . . . . . . . . . . . . . . . . . .
+39
+2.3
+General Features of the 75◦Case
+. . . . . . . . . . . . . . . . . . . .
+41
+2.4
+The Source of Temperature Anisotropy: Alfv´enic Counter-Streaming
+Ions
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+45
+2.5
+Temperature Anisotropy vs. Propagation Angles . . . . . . . . . . . .
+49
+2.6
+The Downstream Turbulent Waves and Particle Scattering . . . . . .
+55
+2.7
+Summary and Discussion . . . . . . . . . . . . . . . . . . . . . . . . .
+62
+3
+Anisotropic Fluid Theory
+64
+3.1
+Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+64
+3.2
+The Anisotropic Derivative Nonlinear Schr¨odinger-Burgers Equation .
+66
+3.3
+The Conservative Form- Wave Propagation . . . . . . . . . . . . . . .
+68
+3.4
+A New Degeneracy Point due to the Temperature Anisotropy
+. . . .
+70
+3.5
+An Energy Closure based on Counter-Streaming Ions . . . . . . . . .
+73
+3.6
+The Pseudo-Potential: Looking for a Stationary Solution . . . . . . .
+75
+3.6.1
+The Formation of Compound SS/RD Waves and SS/IS Waves
+75
+3.6.2
+The Signiﬁcance of ε = 0.25 . . . . . . . . . . . . . . . . . . .
+81
+3.7
+Toward the Critical ε = 0.25: Time-Dependent Dynamics . . . . . . .
+83
+3.8
+The Supporting Evidence from Numerical Experiments . . . . . . . .
+84
+3.9
+Conclusion and Discussion . . . . . . . . . . . . . . . . . . . . . . . .
+87
+v
+
+4
+Summary
+90
+4.1
+Summary of Results
+. . . . . . . . . . . . . . . . . . . . . . . . . . .
+90
+4.2
+Implications and Unsolved Issues
+. . . . . . . . . . . . . . . . . . . .
+91
+A Overview
+97
+A.1 From Anisotropic MHD to the Anisotropic DNLSB Equation . . . . .
+97
+A.2 Non-Steepening and Non-Spreading of the Intermediate Mode
+. . . . 100
+A.3 The Integral Curves and Hugoniot Locus . . . . . . . . . . . . . . . . 101
+A.4 The Pseudo-Potential of Anisotropic MHD (AMHD)
+. . . . . . . . . 102
+A.5 The Equal-Area Rule and Intermediate Shocks . . . . . . . . . . . . . 106
+Bibliography
+110
+vi
+
+List of Figures
+1.1
+A cartoon of reconnection
+. . . . . . . . . . . . . . . . . . . . . . . .
+2
+1.2
+A cartoon of reconnections at Earth’s magnetopause and magnetotail.
+Reconnection locations are denoted by the symbol N. The distance
+from Earth to the tail reconnection site is around 20Re. (image from
+http://journalinformationalmedicine.org/cr1.htm) . . . . . . . . . . .
+3
+1.3
+The magnetic islands formed by multiple reconnection sites in the
+sector ﬁelds between the Sun’s termination shock and heliopause. The
+left panel is from a global MHD simulation, and the color represents
+the strength of the total magnetic ﬁeld.
+The right panel is from
+a PIC simulation, and the redder color represents a larger magnetic
+ﬁeld. (Adapted with permission from Ref. [Opher et al., 2011] c⃝2011
+by the American Astronomical Society).
+. . . . . . . . . . . . . . . .
+5
+1.4
+The formation of the accretion disk and jets of a spinning black hole
+under the inﬂuence of magnetic reconnection.
+The spatial unit is
+normalized to the black hole mass and the speed of light. The color
+represents plasma β. (Adapted with permission from Ref. [Beckwith
+et al., 2008]. c⃝2008 by the American Astronomical Society) . . . . .
+6
+1.5
+The Sweet-Parker model of reconnection. . . . . . . . . . . . . . . . .
+10
+1.6
+The Petschek model of reconnection.
+. . . . . . . . . . . . . . . . . .
+12
+1.7
+A soft X-ray image of solar corona loops on November 6, 1999. The
+major loop spans around 60Re, and are of the same type as the soft X-
+ray loops shown in Fig. 1.8. Courtesy of TRACE, a satellite mission
+of NASA.
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+16
+1.8
+An observation of a solar ﬂare exhibits heating by reconnection-
+associated slow shocks. Data from Y ohkoh satellite on February 21,
+1992. (Adapted with permission from Ref. [Tsuneta, 1996].
+c⃝1996
+by the American Astronomical Society) . . . . . . . . . . . . . . . . .
+17
+1.9
+An in-situ observation of a slow shock crossing. Data from the GEOTAIL
+satellite on March 9, 1993 at GSM coordinate (−181.8, 27.2, 25.0)Re
+(Adapted with permission from Ref. [Seon et al., 1996].
+c⃝1996 by
+the American Geophysical Union.)
+. . . . . . . . . . . . . . . . . . .
+19
+1.10 A large-scale hybrid reconnection simulation. λ0 is the ion-inertial
+scale. (Adapted with permission from Ref. [Lottermoser et al., 1998]
+c⃝1998 by the American Geophysical Union.)
+. . . . . . . . . . . . .
+21
+1.11 The exhaust from steady reconnection in a PIC simulation. Panel
+(a): The out-of-plane electron current density Jez; Panel (b): B2ε,
+where positive values have been set to 0. The colored region is ﬁrehose
+unstable; Panel (c): The magnitude of Bx showing the development
+of 2-D turbulence; Panel (d): A cut of ε at x/di = −35 (the vertical
+line in (b)). The horizontal lines demarcate ε = 0.25 and ε = 0.
+. . .
+23
+1.12 A cartoon showing the relationship between our Riemann problem
+simulation and the structure of an X-line. . . . . . . . . . . . . . . . .
+25
+vii
+
+1.13 The Friedrich diagrams display the phase speeds of MHD modes as a
+function of propagation angle. The direction of the ambient magnetic
+ﬁeld is upward. (Reprinted with permission from Ref. [Lin and Lee,
+1993] c⃝1993 by the Kluwer Academic Publishers) . . . . . . . . . . .
+28
+1.14 MHD waves that propagate out from a central interface.
+. . . . . . .
+28
+1.15 The basic magnetic ﬁeld structures (thin blue arrowed lines) of MHD
+shocks and discontinuities. (Q∥means quasi-parallel, Q⊥means quasi-
+perpendicular. When the downstream is super-sonic, the fast shock
+is also termed supercritical.)
+. . . . . . . . . . . . . . . . . . . . . .
+31
+1.16 A Riemann problem with a symmetric antiparallel ambient state.
+(Adapted with permission from Ref. [Lin and Lee, 1993]. c⃝1993 by
+the Kluwer Academic Publishers) . . . . . . . . . . . . . . . . . . . .
+33
+1.17 The same Riemann problem as Fig. 1.16, but with a initial uniform
+guide ﬁeld. (Reprinted with permission from Ref. [Lin and Lee, 1993]
+c⃝1993 by the Kluwer Academic Publishers) . . . . . . . . . . . . . .
+34
+1.18 The same Riemann problem as Fig. 1.16, but with a strong asymme-
+try in the ambient plasma density. (Adapted with permission from
+Ref. [Lin and Lee, 1993] c⃝1993 by the Kluwer Academic Publishers)
+35
+2.1
+The evolution of a system with θBN = 75◦(Run f). Panel (a): The
+evolution of B from time 0 −200/Ωci. A pair of fast rarefactions
+(FR) propagate out from the symmetry line, followed by a pair of
+slow shocks (SS). Each curve has been shifted so that it intersects
+the vertical axis at the given time.
+The time between the yellow
+curves is 100/Ωci; Panel (b): The predicted FR and switch-oﬀslow
+shock (SSS) from ideal MHD theory; Panel (c): The same as (a) but
+with the vertical axis measuring B; Panel (d): The evolution of Bz
+from time 0 −200/Ωci. . . . . . . . . . . . . . . . . . . . . . . . . . .
+42
+2.2
+Parameters from the run with θBN = 75◦(Run f) at time 200/Ωci.
+Panel (a): Temperature anisotropy ε and x-direction heat ﬂux Qx;
+Panel (b): Magnetic ﬁeld components; Panel (c): Parallel and per-
+pendicular temperatures (the oﬀ-diagonal components Tixy, Tixz, Tiyz
+are plotted together in green, denoted as Toﬀ, and are small) ; Panel
+(d): Total plasma pressure components and Px + B2/2µ0. Panel (e):
+The plasma β and local θBN = cos−1(Bx/B); Panel (f): Plasma den-
+sity. The dotted curves in each panel are the predicted magnitude
+and position of the switch-oﬀslow shocks (SSS) from isotropic MHD
+for Bz in (b), T in (c), P in (d), β in (e), and n in (f). . . . . . . . . .
+43
+2.3
+A cartoon showing the mechanism of forming counter-streaming ions
+46
+viii
+
+2.4
+The phase space of the run with θBN = 75◦(Run f) at time 200/Ωci.
+From top to bottom the left column shows the ion distribution in:
+Vz −x space, where the backstreaming ions from the discontinuities
+are clearly seen; Vy −x space; Vx −x space. The right column is
+the electron distribution in Vz −x space, Vy −x space and Vx −x
+space. The white dashed lines indicate the locations of the velocity
+distributions shown in Fig. 2.5. The color bar is normalized to the
+maximum value in each panel. . . . . . . . . . . . . . . . . . . . . . .
+47
+2.5
+The ion velocity distributions measured at locations 409.1 −410.1di,
+415−416di and 430−431di of Fig. 2.4 (the white dashed lines). From
+top to bottom are Vz −Vx, Vz −Vy and Vx −Vy distributions. The
+distributions are color coded and the white contours help identify
+diﬀerent ion parcels.
+The local magnetic ﬁeld is denoted by blue
+arrowed lines beginning at origin. The axis scales, when cut by a
+factor of 2, also measure the magnitude of the ﬁeld. Ions that stream
+along the magnetic ﬁeld are clearly seen at these locations. . . . . . .
+48
+2.6
+From top to bottom are runs with θBN = 30◦(Run a) at 100/Ωci, 45◦
+(Run b) at 200/Ωci, 52◦(Run c) at 100/Ωci, 60◦(Run d) at 250/Ωci,
+75◦(Run f) at 400/Ωci, and 83◦(Run k) at 700/Ωci. The ﬁrst column
+shows the temperature anisotropy, and the second column the mag-
+netic ﬁeld components as a function of x. The third column displays
+hodograms taken from the right half of the simulation domains. The
+dotted curves in the second column are the predicted magnitudes and
+positions of switch-oﬀslow shocks (SSS) and fast rarefactions (FR)
+from isotropic MHD theory for Bz.
+. . . . . . . . . . . . . . . . . . .
+50
+2.7
+Evolution of ε for the case with θBN = 60◦(Run d) for equally spaced
+times between 100 −500/Ωci from lighter grey to darker grey in (a),
+the θBN = 75◦case (Run f) for time 100 −500/Ωci in (b), and the
+θBN = 83◦case (Run k) for time 100 −700/Ωci in (c). The bottom is
+a plot of Bx for the θBN = 83◦case at time 700/Ωci showing the 2-D
+turbulence that develops.
+. . . . . . . . . . . . . . . . . . . . . . . .
+53
+2.8
+The ε distributions of runs θBN = 60◦(Run d) at 500/Ωci, 75◦(Run
+f) at 200/Ωci, 83◦(Run k) at 700/Ωci. (The 83◦case is shifted to the
+right by 204.8di)
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+54
+2.9
+Panel (a): The evolution of ε, Bz and By for equally spaced times
+between 50−500/Ωci (from left to right) in the θBN = 75◦, wi = 10di
+case (Run g). The downstream larger-scale rotational wave breaks
+into waves of wavelength ∼6di. Panel (b): A blowup of the down-
+stream By at time 450/Ωci.
+. . . . . . . . . . . . . . . . . . . . . . .
+56
+ix
+
+2.10 The evolution of By, Bz and B for equally spaced times between
+0−100/Ωci. The red curve indicates the time 100/Ωci. Panel (a): Run
+1 with both initial streaming ions and modulated rotational parent
+wave. Panel (b): The same as panel (a) without the initial spatial
+modulation (Run 3). Panel (c): The same as panel (a) without initial
+beams (Run 5). Panel (d): The same as panel (c) without initial
+polarization (Run 6).
+. . . . . . . . . . . . . . . . . . . . . . . . . .
+59
+2.11 The evolution of Ti∥−Ti⊥for equally spaced times between 0 −
+100/Ωci(from lighter grey to darker grey) of Run 1 (Fig. 2.10(a)).
+The temperature anisotropy of the ions is reduced, which indicates
+particle scattering is taking place. . . . . . . . . . . . . . . . . . . . .
+61
+3.1
+Panel (a): An initial discontinuity between qr and ql results in two
+waves, the “1-wave” and “2-wave”, that propagate in the η direction
+along time τ. The middle state qm needs to be determined; Panel (b):
+The state space plot in the (bz, by) plane. The value qr = (bz0, 0) is
+chosen since there is no out-of-plane By upstream of the slow shocks
+in chapter 2. qr straightly connects to ql and forms a switch-oﬀslow
+shock; Panel (c): In order to connect qr to ql, it is necessary to cross
+the degeneracy band into the reversal region, which could cause the
+path to rotate at qm. . . . . . . . . . . . . . . . . . . . . . . . . . . .
+72
+3.2
+The ε distribution vs. 1/B2 for the cases θBN = 30◦(yellow), 45◦(magenta),
+52◦(green), 60◦(blue), 75◦(red) and 83◦(black) from Fig. 2.6.
+The
+dashed line has slope -0.5. In comparison, the diamond curve is the
+theoretical prediction with the CGL condition for the θBN = 75◦case.
+74
+3.3
+Panel (a): A pseudo-potential Ψ with VS = 0. Upstream (point qr),
+θ0 = 42◦, β0 = 1, ε0 = 1, c2 = 0.5 and we choose Ψ(qr) = 0. Since
+the transition occurs within the radius bt = bz0, we set Ψ = 0 for
+bt > bz0 for a better visualization. The potential for negative By is
+mirror symmetric to the part shown here; Panel (b): ε(bt); Panel (c):
+Cuts of Ψ, Fz, and αeﬀalong the Bz axis with By = 0; Panel (d): λI
+and λSL along the Bz axis with By = 0. The vertical axis measures
+speed (normalized to CAn). “D” stands for degeneracy. The red area
+above VS (zero here) equals the red area below VS, and the same rule
+applies to the blue area.
+. . . . . . . . . . . . . . . . . . . . . . . . .
+77
+3.4
+Same format as Fig. 3.3 but with VS = 0.015 ≳0. . . . . . . . . . . .
+80
+3.5
+The pseudo-potential with ε0 = 0.24 < 0.25, while other parameters
+are the same as Fig. 3.3. . . . . . . . . . . . . . . . . . . . . . . . . .
+82
+x
+
+3.6
+Results of PIC simulations (runs f, g and h of chapter 2). Row (a):
+A case with θBN = 75◦, β0 = 0.4 and initial width wi = 1di at time
+200/Ωci. ε is shown on the left, diﬀerent magnetic components in
+the middle, Bz-By hodogram on the right; Row (b): A similar case
+with a wider initial width wi = 10di at time 450/Ωci; Row (c): A
+similar case to (a), but with a weak guide ﬁeld By0 = 0.2B0 at time
+200/Ωci. The dotted curves in the center column are the predicted Bz
+magnitudes and positions of switch-oﬀslow shocks (SSS) or rotational
+discontinuities (RD) from isotropic MHD theory [65]. . . . . . . . . .
+85
+3.7
+In panel (a), the possible jumps of ε of an anisotropic-RD, are con-
+strained by requiring positive P⊥d, P∥d and B2
+d. The red region is
+forbidden. In panel (b), the plot is further constrained by the require-
+ment that entropy increases (with an entropy from the H-theorem
+deﬁned as ln(P 1/3
+∥
+P 2/3
+⊥/ρ5/3) for a bi-Maxwellian distribution). The
+constraint of increasing entropy has eliminated the region above the
+diagonal line when εup > 0.25, and the region below the diagonal line
+when εup < 0.25. Here β0 = 1; a higher β0 would collapse the valid
+region into a narrower region along the diagonal line. . . . . . . . . .
+88
+4.1
+An observation of “Double Discontinuity” at Earth’s magnetotail by
+GEOTAIL on February 14, 1994 at XGSM = −54Re. (Reprinted
+with permission from Ref. [Whang, 2004].
+c⃝2004 by the European
+Geosciences Union) . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+92
+4.2
+A larger PIC reconnection simulation shows a clearer ε ∼0.25 plateau
+at farther downstream. Panel (a) is the out-of-plane current density;
+Panel (b) are the distributions of ﬁrehose stability parameter ε along
+cuts (coded by colors) in (a). . . . . . . . . . . . . . . . . . . . . . . .
+94
+A.1 Results with fully anisotropic MHD. Panel (a) is the pseudo-potential
+Ψ with our closure, Eq. (3.15). Upstream (point qr), VS = 0, θ0 =
+42◦, β0 = 1, ε0 = 1 and c2 = 0.5; Panel (b) is Ψ with the CGL closure.
+Upstream (point qr), VS = 0, θ0 = 42◦, β0 = 1 and ε0 = 1.5; Panel
+(c) is Ψ for VS = 0, θ0 = 75◦, β0 = 0.4, ε0 = 1, and c2 = 0.2 with
+our closure; Panel (d) is the shock curve with upstream parameters
+θ0 = 42◦, β0 = 1 and ε0 = 1. In the green curve (εd = ε0 case),
+the portion from A-RD (anisotropic-RD) to SSS is the IS branch,
+from SSS to LS (linear slow mode) is the SS branch. Diﬀerent curves
+represent cases with diﬀerent εd of values 1, 0.95, 0.9, 0.85 (from outer
+curve to inner curve). Other than the A-RD, a new SS exists at (1,1)
+when εd < ε0. Both the IS and SS branches shrink toward the point
+(1,1) as εd decreases. . . . . . . . . . . . . . . . . . . . . . . . . . . . 105
+xi
+
+A.2 Application of equal-area rules with cases in ideal (isotropic) MHD.
+The λI and λSL along bz are measured in the upstream intermediate
+frame with upstream (point qr) parameters, θ0 = 42◦, β0 = 1, ε0 = 1.
+The vertical axis measures speed (normalized to CAn). Once the ql
+is chosen, the shock speed VS (measured by the red horizontal line)
+can be determined by equating area (between the λSL and the red
+line) above the red line to area below the red line. This rule results
+in shock speeds (a) VS = −0.1; (b) VS = 0.05; (c) VS = 0.05; (d)
+VS = 0.0958. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 108
+xii
+
+List of Abbreviations
+θBN
+propagation angle
+β
+plasma beta (the ratio of thermal pressure to magnetic pressure)
+ε
+1 −µ0(P∥−P⊥)/B2, ﬁrehose stability parameter
+ACR
+Anomalous Cosmic Ray
+ADNLSB
+Anisotropic Derivative Nonlinear Schr¨odinger Burgers Equation
+AU
+Astronomical Unit (distance between the Sun and Earth)
+CME
+coronal mass ejection
+EMIIC
+Electromagnetic Ion Ion Cyclotron instability
+E
+entropy mode
+F
+fast mode
+FR
+fast rarefaction
+FS
+fast shock
+I
+intermediate mode
+IMF
+interplanetary magnetic ﬁeld
+IS
+intermediate shock
+KAW
+kinetic Alfv´en wave
+MHD
+magnetohydrodynamic
+nT
+nano-Tesla
+PIC
+Particle-in-Cell simulation
+RD
+rotational discontinuity
+Re
+Earth’s radius
+SL
+slow mode
+SLAMs
+short large-amplitude magnetic structures
+SR
+slow rarefaction
+SS
+slow shock
+SSS
+switch-oﬀslow shock
+SS/IS
+compound slow shock/intermediate shock wave
+SS/RD
+compound slow shock/rotational discontinuity wave
+xiii
+
+Chapter 1
+Introduction
+1.1
+Magnetic Reconnection: General
+The complex interaction of charged particles and electromagnetic ﬁelds drives a
+nontrivial phenomenon called magnetic reconnection. The simple cartoon in Fig. 1.1
+shows the basic idea. Magnetic reconnection takes place in a thin current sheet
+sandwiched by oppositely directed ambient magnetic ﬁelds. Whenever the ambient
+magnetic ﬁelds (blue) approach each other, they reconnect inside a narrow dissipa-
+tion region (the intense current region). The reconnected ﬁelds (red) act like rubber
+bands that release their tension force to drive high-speed hot outﬂows away from
+the reconnection site, since magnetic ﬁelds and the plasma are tied together (the
+frozen-in phenomenon) outside the central dissipation region. Once the reconnected
+hot plasma shoots out, the pressure in the central region drops, and therefore sucks
+in more plasma and magnetic ﬂux from the upper and lower ambient regions to
+reconnect. This process is self-driven.
+Magnetic reconnection is the primary mechanism for converting magnetic en-
+ergy into kinetic and thermal energy in collisionless plasma. It also acts as a major
+transport mechanism in collisionless plasmas. In addition, by coupling small- and
+large-scale physics — electron-scale kinetic processes break the frozen-in condition
+tying the ﬁeld lines to the plasma, while the overall energy release reshapes the global
+1
+
+Figure 1.1: A cartoon of reconnection
+environment — reconnection provides an excellent example of coupling across dis-
+parate spatial scales. Since 99% of visible matter in the universe is in the plasma
+state [37], magnetic reconnection is ubiquitous. It occurs in a wide variety of en-
+vironments ranging from sawtooth crashes in fusion experiments [35, 49, 122, 58],
+geo-magnetic storms [2, 55, 90], solar ﬂares [91, 63, 64], and the solar dynamo to
+various astrophysical phenomena such as Gamma Ray Bursts [76], pulsar winds
+[18, 73, 87] and astrophysical jets [75, 6]. We point out its active roles in the follow-
+ing cosmic plasma systems.
+The most well established examples of astrophysical reconnection are found, as
+predicted by Dungy (1953, 1958) [30, 31], at the terrestrial magnetotail and magne-
+topause when southward interplanetary magnetic ﬁeld (IMF) from the Sun smashes
+into Earth’s magnetosphere. In Fig. 1.2 the solar wind comes from the left. The
+reconnection sites are marked by the symbol N, one on the dayside and one on the
+night side about 20 Re away from the Earth. Once the southward IMF encounters
+the Earth’s northward dipole ﬁeld, reconnection takes place at the magnetopause,
+and then the reconnected ﬁeld lines are dragged by the solar wind over the poles and
+2
+
+Figure 1.2: A cartoon of reconnections at Earth’s magnetopause and
+magnetotail.
+Reconnection locations are denoted by the symbol N.
+The distance from Earth to the tail reconnection site is around 20Re.
+(image from http://journalinformationalmedicine.org/cr1.htm)
+stretch out on the night side of the Earth, where magnetotail reconnection then oc-
+curs. Tail reconnection is thought to trigger magnetic substorms ([2] and references
+therein) and also the formation of polar aurorae when reconnected plasma traces
+the magnetic ﬁeld lines (the red arrows) back to the north and south poles of the
+Earth and interacts with the atmosphere. In between the Sun and Earth, gigantic
+reconnection current sheets in the turbulent solar wind are also observed [89, 36].
+On the Sun, coronal mass ejections (CMEs) in large solar ﬂares are driven by the
+topological change caused by reconnection [3, 63, 91]. Similar mechanisms apply to
+stellar ﬂares and coronas of astrophysical accretion disks [25, 111].
+Recently, reconnection was suggested to take place in the “sectored” ﬁeld re-
+gion between the termination shock of the solar wind and the heliopause, about 100
+3
+
+AU away from the Sun [26, 82]. If the rotational axis and magnetic dipole axis of
+the Sun were aligned, a heliospheric current sheet would form in the Sun’s equato-
+rial plane between the spiral-shaped magnetic ﬁelds in the northern and southern
+hemispheres [84]. However, these two axes are not aligned in reality, and therefore
+the current sheet ﬂaps in the latitudinal (vertical) direction, creating a sectored
+region near the equator where the heliospheric ﬁeld periodically reverses sign. As
+the sectored current sheet approaches the heliopause, the sectors narrow and trigger
+magnetic reconnection. In Fig. 1.3 Opher et al. (2011) [82] show a high resolution
+global magnetohydrodynamic (MHD) simulation performed to study the interac-
+tion between the interstellar medium (on the left) and the solar wind. The total
+strength of the magnetic ﬁeld is color-coded and the ﬂow streamlines are shown in
+black arrowed curves. The simulation shows that the heliosheath in between the
+heliopause and the termination shock is ﬁlled with a “sectored” ﬁeld. The current
+sheets that separate the “sectored” ﬁeld appear as vertical black striped structures
+which can be more clearly seen close to the right side (upstream) of the termina-
+tion shock. Downstream of the termination shock, the striped structure is too ﬁne
+scale to be resolved and so magnetic ﬁeld dissipation occurs at the grid scale. As a
+result, the strength of the magnetic ﬁeld around the downstream “sectored” region
+is weak (denoted by blue-black color). In order to better understand kinetic eﬀects
+inside this region, the small red box displays the occurrence of reconnection and
+the formation of magnetic islands between reconnection sites in a Particle-in-Cell
+(PIC) simulation with parameters based on the global MHD run. A redder color
+represents a higher strength of magnetic ﬁeld. This study aims to explain the source
+4
+
+Figure 1.3: The magnetic islands formed by multiple reconnection sites
+in the sector ﬁelds between the Sun’s termination shock and heliopause.
+The left panel is from a global MHD simulation, and the color repre-
+sents the strength of the total magnetic ﬁeld. The right panel is from a
+PIC simulation, and the redder color represents a larger magnetic ﬁeld.
+(Adapted with permission from Ref. [Opher et al., 2011] c⃝2011 by the
+American Astronomical Society).
+of anomalous cosmic ray (ACRs) and energetic electrons generated during reconnec-
+tion and posits that they are accelerated by a ﬁrst-order Fermi mechanism inside
+contracting magnetic islands [27, 26]. A similar “sectored” ﬁeld could also form in
+pulsar winds driven by spinning neutron stars [18, 73, 87].
+Magnetic reconnection also potentially plays an important dynamic role in
+the astrophysical jets from spinning black holes and the surrounding accretion disks
+[6, 75]. In Fig. 1.4 we show the results of a fully general relativistic MHD simulation
+by Beckwith et al. (2008) [6]. The left panel shows the initial state of a spinning
+black hole located at (0, 0) with a vertical rotational axis, and the cross section of
+5
+
+Figure 1.4: The formation of the accretion disk and jets of a spinning
+black hole under the inﬂuence of magnetic reconnection. The spatial unit
+is normalized to the black hole mass and the speed of light. The color
+represents plasma β. (Adapted with permission from Ref. [Beckwith et
+al., 2008]. c⃝2008 by the American Astronomical Society)
+6
+
+a toroidal accretion disk with seeded magnetic ﬁelds. The plasma β (the ratio of
+thermal pressure to magnetic pressure) is color coded and magnetic ﬁeld lines are
+white contours where solid and dashed curves represent opposite parity. In the right
+panel, the magnetic ﬁeld has been ampliﬁed by the magnetorotational instability
+and is carried by the inﬂowing plasma into the black hole.
+Once the magnetic
+ﬁeld has been attached to the event horizon of the spinning black hole, jets are
+rapidly launched upward and downward from the black hole. The jets are marked
+by the strong vertical magnetic ﬁeld (dark blue), and the jet formation mechanism
+presented here is a combination of models from Blandford & Znajek (1977) [11] and
+Blandford & Payne (1982) [10]. We notice the turbulent nature in the interface
+between the jet ﬁeld and the accretion disk. Many magnetic islands are formed,
+which provides direct evidence that magnetic reconnection has occurred. Magnetic
+reconnection plays a role in changing the global topology of the magnetic ﬁeld
+and hindering the formation of highly aligned jets [6]. Therefore, the reconnection
+rate must be considered as a critical dynamic time scale in constraining theoretical
+models.
+1.2
+Magnetic Reconnection: Theory
+We write down the resistive-MHD equations here, Eqs. (1.1) to (1.7). All the
+theories presented throughout the rest of this thesis are sourced from these equations
+and its anisotropic extension. Ideal MHD uses the same equations, but neglects the
+resistivity in Ohm’s law, Eq. (1.6).
+7
+
+Continuity equation:
+∂ρ
+∂t + ∇· (ρV) = 0
+(1.1)
+Momentum equation:
+ρdV
+dt = J × B −∇P
+(1.2)
+Energy equation:
+∂
+∂t
+ρV 2
+2
++ B2
+2µ0
++ 3
+2P
+
++ ∇·
+ρV 2
+2
++ 5
+2P
+
+V + E × B
+µ0
++ Q
+
+= 0
+(1.3)
+Faraday’s law:
+∂B
+∂t = −∇× E
+(1.4)
+Amp´ere’s law:
+∇× B = µ0J
+(1.5)
+Ohm’s law:
+E = −V × B + ηrJ
+(1.6)
+The absence of magnetic monopoles:
+∇· B = 0
+(1.7)
+P, ρ, V, B, E, J, Q and ηr are the plasma pressure, mass density, velocity of the
+bulk ﬂow, magnetic ﬁeld, electric ﬁeld, current density, heat ﬂux, and the magnetic
+resistivity (assumed constant). Note that J × B = −∇(B2/2µ0) + (B · ∇)B/µ0.
+Hence the J × B force in the momentum equation (Eq. (1.2)) is usually expressed
+as the sum of a magnetic pressure gradient force and a magnetic tension force.
+8
+
+From Eq. (1.2), (1.4), (1.5), (1.6) and (1.7) under the assumptions of incom-
+pressibility (∇· V = 0) and 2-D (∂y = 0), we can write the simpler reduced-MHD
+equations, which are ideally compact for the purpose of explaining the basic recon-
+nection model.
+∂
+∂t∇2φ + V · ∇∇2φ = B
+µ0ρ · ∇∇2ψ
+(1.8)
+∂
+∂tψ + V · ∇ψ = ηr
+µ0
+∇2ψ
+(1.9)
+V = ˆy × ∇φ,
+B = ˆy × ∇ψ + Byˆy.
+(1.10)
+Here φ is the in-plane (x-z plane) stream function and ψ is the in-plane magnetic ﬂux.
+Eq. (1.8) comes from the momentum equation with the right hand side being the
+J×B force. Eq. (1.9) comes from Faraday’s law and Ohm’s law with the right hand
+side being the resistive term. Eqs. (1.10) follow directly from the incompressibility
+limit and ∇· B = 0. We keep the resistivity term since it is essential for breaking
+the frozen-in condition inside the dissipation region, and therefore the occurrence of
+reconnection. Note that ∂ψ/∂t = Ey is a spatially uniform constant in stationary
+2-D solutions (according to Faraday’s law), while ∂∇2φ/∂t = 0.
+1.2.1
+Sweet-Parker Model
+Sweet (1958) [106] and Parker (1957) [83] oﬀered the ﬁrst theory as to how
+reconnection occurs. In Fig. 1.5, we show a cartoon of the Sweet-Parker model. The
+dissipation region (the hatched box) has dimensions L × w where L is the system
+size in the z-direction and w is the width in the x-direction. Based on the symmetry
+9
+
+Figure 1.5: The Sweet-Parker model of reconnection.
+of this 2-D model, a scaling analysis gives us ∂x ∼1/w, ∂z ∼1/L and Eq. (1.10)
+becomes,
+Vu = Vinˆx ∼∆φ
+L ˆx,
+Vd = Voutˆz ∼∆φ
+w ˆz
+(1.11)
+Bu = Bz,uˆz ∼∆ψ
+w ˆz,
+Bd = Bx,dˆx ∼∆ψ
+L ˆx
+(1.12)
+where the subscripts “u” and “d” denote upstream and downstream respectively.
+These also give us the relations,
+Vin
+Vout
+= Bx,d
+Bz,u
+= w
+L
+(1.13)
+Since we are looking for a steady state solution, from Eq. (1.8) V · ∇∇2φ =
+B/(µ0ρ) · ∇∇2ψ, and hence the plasma convection term and the J × B force are
+balanced. With the relations Eq. (1.11) and (1.12), we obtain
+Vout ∼Bz,u
+√µ0ρ ≡CAz
+(1.14)
+Vin ∼Bx,d
+√µ0ρ
+(1.15)
+From Eq. (1.9) Ey ∼V · ∇ψ outside the dissipation region, Ey ∼(ηr/µ0)∇2ψ
+inside the dissipation region. We equate them in the boundary of the dissipation
+10
+
+region, V · ∇ψ ∼(ηr/µ0)∇2ψ, since Ey is spatially uniform in a stationary solution.
+Therefore the convection of magnetic ﬂux and the dissipation of magnetic ﬂux are
+balanced. With (1.13) and (1.14), we obtain the reconnection rate,
+Vin
+CAz
+∼
+r
+ηr
+µ0CAzL
+(1.16)
+Note that the reconnection rate is deﬁned as Vin/CAz, which is also equal to Vin/Vout =
+w/L, the aspect ratio of the dissipation region. In this model, the energy of the re-
+connecting magnetic ﬁelds is dissipated by the magnetic resistivity and convected
+to Alfv´enic ﬂow. The biggest problem of this model is the predicted reconnection
+rate. A large system size (L) and small resistivity (ηr) will make the reconnection
+rate, Eq. (1.16), extremely small. Using values observed in solar ﬂares in the for-
+mula yields predicts time scales of reconnection energy release of months, which
+contradicts the observed time scale of minutes.
+1.2.2
+Petschek Model- the Role of Slow Shocks
+Following the publication of the MHD reconnection scenario of Sweet and
+Parker [106, 83], Petschek [88] noted that a pair of back-to-back slow shocks bound-
+ing the reconnection outﬂow could signiﬁcantly raise the eﬃciency of the process by
+acting as a transition between the inﬂowing and reconnected outﬂowing plasma.
+Petschek’s primary insight is that waves from the singular dissipation region
+tend to propagate out in the x-direction, therefore changing the morphology of
+reconnection into an open outﬂow fan as shown in Fig. 1.6. First, we derive the
+properties of the external conﬁguration (outside of the hatched box) where the
+11
+
+Figure 1.6: The Petschek model of reconnection.
+dissipation of the magnetic ﬁeld is negligible. We jump to the shock frame, denoted
+by the solid black line at the upper-right quadrant, with “n” and “T” being the
+normal and tangential direction respectively. From Eq. (1.10),
+Vt = ∂nφ,
+Vn = −∂Tφ
+(1.17)
+Bt = ∂nψ,
+Bn = −∂Tψ
+(1.18)
+In the stationary shock frame, this is essentially a 1-D problem along the normal
+direction since the upstream and downstream are assumed to be uniform, and there-
+fore ∂T(V or B)=0. From Eq. (1.8), V · ∇∇2φ = B/(µ0ρ) · ∇∇2ψ, and therefore
+the plasma convection term and the J × B force are again balanced.
+Vn∂3
+nφ = Bn
+µ0ρ∂3
+nψ
+(1.19)
+Integrating over n twice, using Eqs. (1.17), (1.18) and the fact that Vn and Bn are
+12
+
+constant, we obtain a jump relation,
+Vn[Vt]d
+u = Bn
+µ0ρ[Bt]d
+u
+(1.20)
+where [Q]d
+u ≡Qdown −Qup. From Eq. (1.9) Ey + V · ∇ψ = 0 (note that we do not
+need to consider the resistivity in this outer region), we use the constancy of Ey, Vn
+and Bn to get another relation,
+Vn[Bt]d
+u = Bn[Vt]d
+u
+(1.21)
+From Eq. (1.20) and (1.21), we obtain the inﬂow speed in the shock frame,
+Vn =
+Bn
+√µ0ρ
+(1.22)
+In order to get a standing shock wave, the wave propagation speed needs to equal the
+velocity of the inﬂowing plasma. Based on this velocity constraint and the overall
+magnetic ﬁeld conﬁguration downstream, the only possible MHD shock wave is a
+switch-oﬀslow shock (SSS). A SSS is the fastest and strongest slow shock, and has
+propagation speed equal to Eq. (1.22) (see Sec. 1.4.1).
+In the θ1 ≪1 limit, Bd ≃Bnˆn and Vu ≃Vnˆn, then Eq. (1.21) becomes
+VnBt,u ≃BnVt,d. Combined with Eq. (1.22), we obtain the tangential plasma speed
+in the downstream region,
+Vt,d ≃Bt,u
+√µ0ρ
+(1.23)
+Therefore the slow shock directly converts the tangential magnetic ﬁeld into plasma
+bulk ﬂow velocity and, unlike the Sweet-Parker conﬁguration, the conversion is not
+limited to slow dissipation by small ηr. In addition, in the θ1 ≪1 and θ2 ≪1 limit,
+θ1 ≃w/l, and θ2 ≃Bn/Bt,u ∼Bx,d/Bz,u = w/l. Therefore θ1 ∼θ2.
+13
+
+The ﬂow speeds Eq. (1.23) and (1.22) are very similar to those inner solutions
+Eq. (1.14) and Eq. (1.15), and so one can smoothly match this external standing
+shock solution to the interior dissipation region to obtain a possible maximum re-
+connection rate (see Petschek (1964) for details) ,
+Vin
+CAz
+∼
+
+lnL
+l
+−1
+∼
+
+ln L
+ηr
+−1
+(1.24)
+The logarithmic dependence on (ηr/L) largely eliminate the reduction of the re-
+connection rate for small ηr and large L (which is the case for most astrophysical
+systems of interest). Regardless of the matching details, the reconnection rate will
+naturally be much higher since the dissipation region is signiﬁcantly shortened in
+the Petschek conﬁguration (l ≪L).
+However, Biskamp (1986) [9] tested the Petschek solution by conducting re-
+connection simulations with the resistive-MHD model and a uniform resistivity. He
+found that reconnections sites collapse into elongated Sweet-Parker current sheets,
+instead of developing Petschek conﬁgurations. This calls into question the claim
+that Petschek’s model is a valid stationary solution. The Petschek picture can be
+realized if the resistivity is allowed to vary with position, and in particular increase
+in regions of stronger current [94, 110, 96]. This locally enhanced anomalous re-
+sistivity could be generated by micro-scale instabilities [44, 29, 15], but conclusive
+proof of its existence has, to date, not been presented.
+There is strong numerical evidence, however, that two-ﬂuid eﬀects, arising
+from the mass diﬀerence between ions and electrons in the reconnection dissipation
+region can open the reconnection outﬂow jet. This eﬀect can be incorporated by
+14
+
+adding the Hall term (J × B/ne) into Ohm’s law (Eq. (1.6)). The resulting equa-
+tion describes the dynamics of dispersive whistler waves that rotate the out-of-plane
+current into the outﬂow direction, and therefore open the reconnection nozzle into a
+Petscheck-like conﬁguration [74, 92]. The GEM challenge [8] compared reconnection
+simulations performed with resistive-MHD, Hall-MHD, hybrid and Particle-in-Cell
+models. Only reconnection in the latter three models (all of which include two-ﬂuid
+eﬀects) spontaneously developed into Petschek-like conﬁgurations with a localized
+current sheet and, therefore, a fast reconnection rate. This ﬁnding supports the im-
+portance of two-ﬂuid eﬀects. By balancing the convection of magnetic ﬂux with the
+Hall term (instead of the resistive term as in Sweet-Parker analysis) in a generalized
+Ohm’s law, V × B ∼J × B/ne, then Vin ∼Jy/ne. Using Eq. (1.15), (1.5) and
+(1.13) we obtain w ∼
+p
+mi/µ0ne2 ≡di. The current sheet width w is determined to
+be the ion-inertial scale, with a nested smaller electron-inertial scale region where
+the frozen-in condition is broken. A fast reconnection rate ∼O(0.1) is observed in
+simulations to be insensitive to ηr and L [101, 102, 13].
+No matter how complicated the real physics in the inner region however,
+Petschek’s work showed that for fast reconnection to occur the outer, ideal MHD-
+dominated region must connect to the reconnection outﬂow via a pair of standing
+switch-oﬀslow shocks.
+15
+
+Figure 1.7: A soft X-ray image of solar corona loops on November 6,
+1999. The major loop spans around 60Re, and are of the same type as
+the soft X-ray loops shown in Fig. 1.8. Courtesy of TRACE, a satellite
+mission of NASA.
+.
+1.3
+The Structure of the Magnetic Reconnection Exhaust
+In this section we show some examples of the kinetic structure of reconnection
+exhausts observed in space and in simulations, and discuss unsolved issues.
+1.3.1
+Solar Flare Heating by Slow Shocks
+One of the important reasons for trying to understand the exhaust structure of
+reconnection is to study its potential heating ability. Ion heating by these Petschek-
+reconnection-associated slow shocks is one of the mechanisms that has been proposed
+for solar ﬂares [109, 70] and the solar wind.
+In Fig. 1.7, we show a soft X-ray image of solar corona loops. There is a
+long standing “Coronal Heating Problem”, which asks why the temperature of the
+16
+
+Figure 1.8:
+An observation of a solar ﬂare exhibits heating by
+reconnection-associated slow shocks.
+Data from Y ohkoh satellite on
+February 21, 1992. (Adapted with permission from Ref. [Tsuneta, 1996].
+c⃝1996 by the American Astronomical Society)
+corona is a thousand times hotter than the photosphere (∼6000K). As a possible
+solution, Parker (1983, 1988 ) [85, 86] suggested that the energy release from many
+nano-ﬂares (which are triggered by reconnection), is adequate to heat the corona to
+several million degrees.
+Another possible mechanism for producing a hot corona is the heating by
+slow shocks [109, 69]. In Fig. 1.8 Tsuneta (1996) [109] shows a large ﬂare event
+that occurred on February 21, 1992. The left panel is a 2-D cartoon of solar ﬂares
+where the arrowed curves represent magnetic ﬁelds, and the reconnection takes
+place at the top X-point where the slow shocks meet. The upper magnetic loop (not
+shown) becomes a coronal mass ejection (CME), and the post-ﬂare corona loop is
+17
+
+snapping downward toward the photosphere. The corresponding observational data
+is shown on the right. The temperature along the separatrix has reached 10 million
+degrees, while intense X-ray emission extends along the reconnection nozzle to the
+top of the lower corona loop anchored on the photosphere. The emission measure
+measures the density of electrons. Since the observed X-rays are mainly emitted
+by the bremsstrahlung process associated with electrons, the high electron density
+region coincides with the intense X-ray region. The plasma pressure is high between
+the pair of separatrices. Tseuneta suggested that these high temperature ridges are
+heated by the standing slow shocks, while the soft-X ray loops are reconnected ﬂux
+tubes ﬁlled with evaporated plasma from the photosphere.
+1.3.2
+In-situ Satellite Crossing
+Ever since the proposal of Petschek’s reconnection model, various satellite
+missions have tried to resolve the reconnection-associated slow shocks in Earth’s
+magnetotail and magnetopause with in-situ observations [32, 33, 103, 99, 100, 79,
+42, 112]. In Fig. 1.9 we show a slow shock structure documented in Seon et al.
+(1996). It is data collected from time 2145 UT to 2205 UT March 9 1993, when the
+Geotail satellite ﬂew across the distant magnetotail from the plasma sheet (yellow
+region in Fig. 1.2) to the tail lobe (white region of Fig. 1.2) at (−181.8, 27.2, 25.0)Re
+in GSM coordinates (to the right of the tail N of Fig. 1.2). Proﬁles of the electron
+density, ion velocity in the x, y, z directions, ion and electron temperatures, x, y, z
+magnetic ﬁeld components, and the total magnetic ﬁeld are shown.
+18
+
+Figure 1.9:
+An in-situ observation of a slow shock crossing.
+Data
+from the GEOTAIL satellite on March 9, 1993 at GSM coordinate
+(−181.8, 27.2, 25.0)Re (Adapted with permission from Ref. [Seon et al.,
+1996]. c⃝1996 by the American Geophysical Union.)
+19
+
+The shock upstream and downstream regions are bounded by the dashed verti-
+cal lines, and the Rankine-Hugoniot jump relations were tested. The most signiﬁcant
+features are the high |Vix| and Ti seen between 2145 and 2150 UT, associated with
+the dramatic decrease in Bx (the reconnecting ﬁeld) and |B|. Note that this slow
+shock is not a switch-oﬀslow shock, since the downstream |B| ∼4nT. There is a
+long wavelength large-amplitude sinusoidal By ∼4nT component (the out-of-plane
+ﬁeld) in the downstream region, that appears turbulent with many small-scale waves
+sitting on it.
+However, although in-situ observations of slow shocks in the magnetotail exist,
+they are relatively rare and mostly non-switch-oﬀ, suggesting that the MHD picture
+of Petschek may not tell the complete story.
+1.3.3
+Large-Scale Kinetic Simulations
+In-situ observations of switch-oﬀslow shocks in space are rare when satellites
+traverse reconnection exhausts. The same is true in hybrid and PIC simulations of
+reconnection. Unlike resistive-MHD simulations (with localized resistivity), switch-
+oﬀslow shocks do not appear in large-scale kinetic reconnection simulations [66, 71,
+78].
+In Fig. 1.10 we show results from 2-D hybrid simulations conducted by Lot-
+termoser et al. (1998). The left panel shows the reconnection outﬂow structure that
+reaches 480λ0 away from the reconnection site, where λ0 is the upstream ion-inertial
+scale. The reconnection site is at (x/λ0, y/λ0) = (0, 0), and the contours represent
+20
+
+Figure 1.10: A large-scale hybrid reconnection simulation. λ0 is the ion-
+inertial scale. (Adapted with permission from Ref. [Lottermoser et al.,
+1998] c⃝1998 by the American Geophysical Union.)
+21
+
+the in-plane magnetic ﬁeld. The right panels show cuts along the red line in the
+2-D picture. We see the Alfv´enic reconnection outﬂow (Vx, top right) as expected,
+but several unexpected features are also prominent. There is no switch-oﬀbehavior
+in the reconnecting magnetic ﬁeld (Bx, top left), the downstream has a large out-
+of-plane component (Bz, 3rd down on left), and a strong ﬁrehose-sense temperature
+anisotropy (T∥> T⊥, bottom right) exists inside the exhaust. In the 2-D picture,
+a clear warping behavior of the in-plane magnetic ﬁeld within the exhaust is seen.
+These authors attribute the disappearance of switch-oﬀslow shocks to the ﬁrehose-
+like or kink-like instability that causes this warping. They have also pointed out the
+existence of a “step-like” slow shock (non-switch-oﬀ) as seen in the Bx component
+from Bx = 0.5 to 1.0 (normalized to the upstream ﬁeld).
+No signature of Petscheck’s switch-oﬀslow shocks has been seen in PIC recon-
+nection simulations as well (see Fig. 1.11) [28]. A contributing factor may be to the
+relatively small domain sizes in the shock normal direction (ˆx), which only extends
+for 10 di in this simulation, where di is, again, the ion-inertial scale. In Fig. 1.11,
+panel (a) shows the out-of-plane electron current density, with the reconnection site
+at (x/di, z/di) ∼(0, 20). The plasma downstream of the reconnection site exhibits
+large ﬁrehose-sense temperature anisotropies. In panels (b) and (c), we see turbu-
+lence in the Bx component correlated with the unstable ﬁrehose region where ε < 0;
+a cut of the ﬁrehose stability parameter ε = 1 −µ0(P∥−P⊥)/B2 at z = −35di is
+shown in (d).
+22
+
+Figure 1.11: The exhaust from steady reconnection in a PIC simulation.
+Panel (a): The out-of-plane electron current density Jez; Panel (b): B2ε,
+where positive values have been set to 0. The colored region is ﬁrehose
+unstable; Panel (c): The magnitude of Bx showing the development of
+2-D turbulence; Panel (d): A cut of ε at x/di = −35 (the vertical line in
+(b)). The horizontal lines demarcate ε = 0.25 and ε = 0.
+23
+
+1.3.4
+Summary of Unsolved Issues and Motivation
+The ﬁrehose-sense temperature anisotropy is notable since in-situ observations
+of the solar wind clearly show that the proton temperature anisotropy is bounded
+by the marginal ﬁrehose and mirror mode stability boundaries [4]. Hence, it is of
+interest to study the fully self-consistent generation of temperature anisotropy dis-
+tributions across the reconnection exhaust more closely, and their feedback on the
+propagation and steepening of slow shocks. We particular wish to answer the fol-
+lowing questions that naturally arise from the discussions of the previous sections.
+Why are the observations of Petschek-reconnection-associated switch-oﬀslow shocks
+rare? Is the downstream 2-D turbulence in the reconnection outﬂow region asso-
+ciated with the ﬁrehose instability? Does the temperature anisotropy itself aﬀect
+the formation of slow shocks? Can the reconnection exhaust boundary accelerate
+particles to super-thermal energies?
+1.4
+Our Approach: The Riemann Problem
+We are interested in the exhaust structure far downstream of the x-line (re-
+connection site).
+Instead of simulating reconnection in a very large domain, we
+perform simulations in narrow boxes with dimensions lz ≪lx. The strategy is to
+use time as a proxy for space in order to reduce the computational burden. As in
+Fig. 1.12, and unlike the initial set-up for reconnection, we begin with oppositely
+directed reconnecting ﬁelds plus a uniform normal ﬁeld Bx at time t0. The existence
+of Bx induces a unbalanced tension force that shoots plasma downward, and also
+24
+
+Figure 1.12: A cartoon showing the relationship between our Riemann
+problem simulation and the structure of an X-line.
+25
+
+drives waves away (via, the kinked magnetic ﬁeld) from the current sheet in the
+x-direction. As time goes on (for instance, from t0, t1, t2 to t3 in the diagram),
+the simulation box will correspond to locations farther and farther away from the
+x-line. Therefore a stacked time sequence of plots would show the 2-D structure
+of the reconnection exhaust, which is similar to the idea of “Computerized Tomog-
+raphy” used in scanning the full structure of the human brain. When θBN ∼83◦,
+the simulation will closely correspond to a reconnection exhaust with a normalized
+reconnection rate Bx/Bz,up ∼0.1 [101, 102].
+When lz is small our simulations are essentially 1-D, although we do perform
+runs with larger lz to investigate the possibility of developing 2-D turbulence. In
+this Riemann formulation, waves (e.g., fast, intermediate, and slow modes in the
+ﬂuid model) will propagate away from the reconnection current sheet, at their char-
+acteristic speeds, and steepen into shocks, spread into rarefactions, or maintain their
+initial shapes based on their own nonlinearities.
+Before we introduce the full kinetic results in the next chapter, we need to
+outline some background knowledge of waves and the 1-D Riemann problem in
+ideal MHD.
+1.4.1
+Linear and Nonlinear MHD Waves
+There are seven equations in 1-D ideal-MHD (Eq.(1.1)-(1.7) without the ηr
+term and ∂y = ∂z = 0) that include partial derivatives on both time and space.
+Therefore there are seven waves: two fast (F) modes that propagate in the positive
+26
+
+and negative normal direction (ˆx here), two intermediate (I) modes, two slow (SL)
+modes, and a non-propagating entropy (E) mode. By linearizing the 1-D ideal-MHD
+equation, we obtain their speeds,
+CE = 0
+(1.25)
+CI = CA cos θ
+(1.26)
+CF,SL =
+1
+2
+
+(C2
+S + C2
+A) ±
+q
+(C2
+S + C2
+A)2 −4C2
+SC2
+I
+1/2
+(1.27)
+where the sound speed CS =
+p
+γP/ρ with γ being the adiabatic index which is
+5/3 in monatomic plasmas when the heat ﬂux Q vanishes, and the Alfv´en speed
+CA = B/√µ0ρ. The plus (minus) sign of Eq. (1.27) corresponds to the fast (slow)
+mode. The Friedrich diagrams in Fig. 1.13 show the dependence of these phase
+speeds on propagation angle (θ). The magnetic ﬁeld is in the vertical direction, a
+radial vector from the origin to a given point on a curve measures the speed and
+the propagation angle. It is apparent that the three propagating waves always have
+the speed ordering CF ≥CI ≥CSL in both the plasma β < 1 and β > 1 cases.
+Therefore we expect to see waves propagate out from a central discontinuity in the
+order shown in Fig. 1.14. Note that the structures of the Friedrich diagrams diﬀer
+when β crosses unity. For β < 1, the fast mode and intermediate mode propagate
+at the same speed (are degenerate) in the parallel direction, while the slow mode
+propagates at the sound speed. When β > 1, the slow mode and intermediate mode
+degenerate in the parallel direction, while the fast mode propagates at the sound
+speed.
+There are nonlinear waves related to each of these linear MHD modes. By
+27
+
+Figure 1.13: The Friedrich diagrams display the phase speeds of MHD
+modes as a function of propagation angle. The direction of the ambient
+magnetic ﬁeld is upward. (Reprinted with permission from Ref. [Lin
+and Lee, 1993] c⃝1993 by the Kluwer Academic Publishers)
+Figure 1.14: MHD waves that propagate out from a central interface.
+28
+
+Table 1.1: Overview of MHD nonlinear waves (Ref. [Lin and Lee, 1993]).
+type
+wave
+properties
+shock
+FS:
+[Vn] < 0,
+[|Bt|] > 0,
+[ρ] > 0,
+[P] > 0
+SS:
+[Vn] < 0,
+[|Bt|] < 0,
+[ρ] > 0,
+[P] > 0
+IS:
+[Vn] < 0,
+[|Bt|] ̸= 0,
+[ρ] > 0,
+[P] > 0
+discontinuity
+RD:
+Vn = Bn/√µ0ρ,
+[Vt] = [Bt]/√µ0ρ,
+[ρ] = 0,
+[P] = 0
+CD:
+Vn = 0,
+Bn ̸= 0,
+[Vt] = 0,
+[Bt] = 0,
+[ρ] ̸= 0,
+[P] = 0
+TD:
+Vn = 0,
+Bn = 0,
+[Bt] ̸= 0,
+[ρ] ̸= 0,
+[P + B2/(2µ0)] = 0
+rarefaction
+FR:
+[Vn] > 0,
+[|Bt|] < 0,
+[ρ] < 0,
+[P] < 0
+SR:
+[Vn] > 0,
+[|Bt|] > 0,
+[ρ] > 0,
+[P] < 0
+Subsrcipts “n” and “t” denote the normal and tangential components with respect to the shock front.
+writing the 1-D ideal MHD equations in conservative form, we can easily write
+down the Rankine-Hugoniot jump relations (these are the ε = 1 limit of Appendix
+A. 4). From the Rankine-Hugoniot (RH) jump conditions we can identify all possible
+shocks and discontinuities. These are presented in Table 1.1 (note that [Bn] = 0
+always holds). A fast shock (FS) requires a super-fast to sub-fast transition, which
+means the upstream fast Mach number Mu,F ≡Vn,u/CF,u > 1 and the downstream
+fast Mach number Md,F ≡Vn,d/CF,d < 1 where Vn,u and Vn,d are measured in the
+shock frame. This is a transition from region 1 to region 2 in the Friedrich diagram in
+Fig. 1.13, therefore the FS is also conventionally called a 1-2 FS. Similarly, the slow
+shock (SS) requires a super-slow to sub-slow transition and therefore is called a 3-4
+SS. The intermediate shock (IS) requires a super-intermediate to sub-intermediate
+transition, and there are four possible solutions 1-3 IS, 1-4 IS, 2-3 IS and 2-4 IS. A
+rotational discontinuity (RD) is the weak limit of an IS, with both the upstream and
+downstream intermediate Mach number being unity. The contact discontinuity (CD)
+originates from the non-propagating entropy mode, with the density changing on the
+29
+
+two sides of the discontinuity. The tangential discontinuity (TD) is just a stationary
+solution where nothing occurs, since the two diﬀerent states are pressure balanced
+and peacefully sit side by side. Note that a shock always requires a compression
+ratio, ρd/ρu, larger than unity. Depending on the circumstances, the fast and slow
+modes can also spread out as fast rarefactions (FR) and slow rarefactions (SR)
+in which the density decreases (ρd/ρu < 1).
+Instead of steepening into a sharp
+transition as in shocks, the transition regions of rarefactions become broader with
+time. The weak rarefaction solutions can be found by replacing the energy jump
+relation in the RH jump conditions with the conservation of entropy, [Pρ−γ] = 0.
+The basic conﬁgurations of the magnetic ﬁeld for these shocks and disconti-
+nuities are shown in Fig. 1.15. In the lower right, we introduce the basic format
+with the magnetic ﬁeld denoted as blue arrowed lines (the arrow direction can be
+reversed), and shock front as a black vertical line. The right (left) side is the up-
+stream (downstream). One important property of MHD shocks and discontinuities
+is their coplanar behavior, which means that upstream magnetic ﬁeld, downstream
+magnetic ﬁeld and the shock normal all lie in the same plane.
+Across a FS the magnetic ﬁeld bends away from the normal, and therefore the
+strength of the magnetic ﬁeld increases (|B| is proportional to the magnetic ﬁeld
+line density). In contrast, across a SS the downstream magnetic ﬁeld bends toward
+the normal, and therefore the strength of magnetic ﬁeld decreases. The tangential
+magnetic ﬁeld across fast and show shocks never changes sign. The RD only reverses
+the tangential direction of the magnetic ﬁeld, without changing the thermal state.
+The IS also changes the sign of tangential magnetic ﬁeld, the magnitude of the total
+30
+
+Figure 1.15: The basic magnetic ﬁeld structures (thin blue arrowed
+lines) of MHD shocks and discontinuities.
+(Q∥means quasi-parallel,
+Q⊥means quasi-perpendicular. When the downstream is super-sonic,
+the fast shock is also termed supercritical.)
+31
+
+magnetic ﬁeld, and the thermal state. The ﬁeld does not change across a CD. The
+existence of a TD requires zero normal direction magnetic ﬁeld.
+The kinetic structure of fast shocks has been intensely studied (see the review
+article [108] and references therein), since, for instance, the heliospheric termination
+shock, the Earth’s bow shock, and shocks associated with coronal mass ejections,
+supernova explosions, Gamma Ray Bursts and astrophysical jets are all fast shocks.
+Compared to fast shocks, kinetic slow and intermediate shocks are not as well un-
+derstood. The downstream region of oblique slow shocks is expected to have high
+β, strong temperature anisotropy, kinetic streaming eﬀects, strong damping, etc.,
+that greatly complicate the analysis. In addition, the slow propagation, and there-
+fore slow formation, of oblique slow shocks requires substantially more computer
+resources to explore.
+1.4.2
+MHD Riemann Problems
+The general Riemann problem addresses the question of how characteristic
+nonlinear waves connect to each other as they propagate out from an interface
+between two uniform states that initially adjoin. As in Fig. 1.14, a way to solve the
+Riemann problem is to numerically ﬁnd a set of nonlinear solutions of the seven MHD
+waves (shocks or rarefactions) that connect regions I to VIII. The two ambient sides
+(regions I and VIII) of reconnection vary in diﬀerent physical systems, Hence we
+expect to see diﬀerent structures propagating out from the central narrow current
+sheet. We examine three diﬀerent Riemann problems in 1-D ideal-MHD systems
+32
+
+Figure 1.16: A Riemann problem with a symmetric antiparallel ambient
+state. (Adapted with permission from Ref. [Lin and Lee, 1993]. c⃝1993
+by the Kluwer Academic Publishers)
+that are most relevant to basic reconnection theory (all adapted from Lin and Lee’s
+review paper (1993) [65]).
+Fig. 1.16 shows a case with most of the physical parameters being equal across
+the interface, with the only diﬀerence being the direction of Bz. A uniform nonzero
+Bx is chosen. This case directly corresponds to the case of symmetric anti-parallel
+reconnection, which should develop into a Petschek-like structure. As time goes on,
+waves propagate out of the center, x = 0, as shown in the right panel. A pair of weak
+FR have already propagated out of the domain at the time shown in the left panels,
+and what remains is a pair of switch-oﬀslow shocks (SSS), as expected. Jumps of
+various physical quantities across the SSS are documented. A switch-oﬀslow shock
+is the strongest slow shock, with a maximum compression ratio, and its downstream
+33
+
+Figure 1.17: The same Riemann problem as Fig. 1.16, but with a initial
+uniform guide ﬁeld. (Reprinted with permission from Ref. [Lin and Lee,
+1993] c⃝1993 by the Kluwer Academic Publishers)
+tangential magnetic ﬁeld (Bz) vanishes. It propagates at the intermediate speed of
+the upstream state, and therefore the presence of a nonlinear intermediate mode
+in front of the SSS is unnecessary. The SSS has converted most of the upstream
+magnetic ﬁeld energy (Bz) into Alfv´enic outﬂows (Vz) and thermal energy (T).
+Fig. 1.17 is the same as Fig. 1.16 but with an initial out-of-plane ﬁeld By ̸= 0.
+This case is directly related to the case of guide ﬁeld reconnection with a constant
+initial out-of-plane magnetic ﬁeld. We can see that the pair of SSS’s in Fig. 1.16
+are now replaced by a pair of RD’s and SS’s. The RD’s rotate the Bz out to By
+while maintaining Bt constant, and are responsible for the switch-oﬀbehavior of Bz
+in this case. The SS’s slightly decrease By.
+Fig. 1.18 is the same as Fig. 1.16 but with an initially strong asymmetry in
+34
+
+Figure 1.18: The same Riemann problem as Fig. 1.16, but with a strong
+asymmetry in the ambient plasma density. (Adapted with permission
+from Ref. [Lin and Lee, 1993] c⃝1993 by the Kluwer Academic Publish-
+ers)
+the plasma density, where the density on the left side is higher than the density
+on the right side. The left SSS in Fig. 1.16 is replaced by a RD and a SR (its
+transition region broadens with time) now. In addition, there is a CD between the
+slow modes propagating to the right. This structure is closely related to Levy et
+al.’s (1964) [62] asymmetric reconnection model, which applies to magnetopause
+reconnection, with the left-hand side being solar wind plasma and the right-hand
+side being magnetosphere plasma.
+In the next two chapters, we primarily focus on the kinetic version of the
+symmetric case shown in Fig. 1.16, and we will see how kinetic eﬀects alter the
+picture predicted by ideal MHD. Some of the unsolved issues discussed in Sec. 1.3.4
+will also be addressed.
+35
+
+1.5
+Anisotropic MHD
+Since they will be used in the following chapters, we document the anisotropic
+version of resistive-MHD here. The ﬁrst three equations are derived from moment
+integrations of the Vlasov equation and the oﬀ-diagonal components of the pressure
+tensor are neglected [14, 45]. These equations are not closed, since an energy closure
+is undetermined.
+∂ρ
+∂t + ∇· (ρV) = 0
+(1.28)
+ρdV
+dt = −∇
+
+P⊥+ B2
+2µ0
+
++ ∇·
+
+1 −µ0(P∥−P⊥)
+B2
+ BB
+µ0
+
+(1.29)
+∂
+∂t
+ρV 2
+2
++ B2
+2µ0
++ 3
+2P
+
++∇·
+ρV 2
+2
++ 3
+2P
+
+V + P · V + E × B
+µ0
++ Q
+
+= 0 (1.30)
+∂B
+∂t = −∇× E
+(1.31)
+∇× B = µ0J
+(1.32)
+E = −V × B + ηrJ + 1
+ne(J × B)
+(1.33)
+∇· B = 0
+(1.34)
+where P∥, P⊥are the pressure parallel and perpendicular to local magnetic ﬁeld,
+respectively. P ≡(P∥+ 2P⊥)/3, P ≡P⊥I + (P∥−P⊥)BB/B2 where I is the unit
+tensor, and Q ≡
+R
+d3v(1
+2mδv2δv)f (where δv ≡v −⟨v⟩) is the heat ﬂux in the
+energy equation, Eq. (1.30). We have also included the Hall term J × B/ne in the
+generalized Ohm’s law, Eq. (1.33). This is the same Hall term that induces whistler
+waves to open the reconnection nozzle. It also causes shocks to radiate rotational
+dispersive wavetrains in the upstream or downstream regions, which will be brieﬂy
+commented on later in this work.
+36
+
+Chapter 2
+PIC simulations of Riemann Problem
+2.1
+Overview
+Unanswered questions remain concerning the kinetic structure of slow shocks
+in a collisionless plasma and the associated mechanisms leading to particle heating.
+In previous work, kinetic slow shocks were studied numerically in hybrid codes
+by initializing the system with the slow shock jumps predicted by MHD [107] or,
+later, by the piston [118] and ﬂow-ﬂow methods [81]. Some of the main focuses of
+these works were the backstreaming beam-driven electromagnetic ion-ion cyclotron
+instability (EMIIC) [118, 81], which has been suggested to as the cause of the
+nonsteady behavior of slow shocks, and the formation and damping of downstream
+large amplitude dispersive wavetrains [107, 65]. Recently, the dissipation due to
+electrons and kinetic Alfv´en waves (KAWs) exited by the EMIIC instability was
+studied by the piston method in particle-in-cell (PIC) simulations [22, 125, 123].
+To address this issue, we perform 2-D PIC simulations that extend the sim-
+ulation size in the normal direction to ∼800di by ignoring the X-line and instead
+examining the conceptually simpler Riemann problem. This set-up as discussed in
+Sec. 1.4 more closely resembles the reconnection outﬂow exhaust than that pro-
+duced by other methods of generating shocks. Similar kinetic simulations of these
+Riemann problems have been carried out with a 1-D hybrid model [66]. 2-D Riemann
+37
+
+problems have also been carried out in hybrid simulations [98] where the 2-D down-
+stream turbulence appeared to diminish the downstream wavetrains associated with
+switch-oﬀslow shocks. Upstream perpendicular heating from the by EMIIC insta-
+bility and the subsequent excitation of anisotropic (Alfv´en/ion cyclotron (AIC)-like)
+instability and the resultant parallel AIC waves have also been studied in similar
+2-D Riemann problems [19, 20].
+In Sec. 2.2 we introduce our simulation model and the initial set-up of the
+Riemann problem. In Sec. 2.3 we discuss the general proﬁles of a run with θBN =
+75◦(the angle between the upstream magnetic ﬁeld and the normal direction (ˆx)).
+Section 2.4 points out that the counterstreaming ions drive the ﬁrehose stability
+parameter ε ≡1 −µ0(P∥−P⊥)/B2 down (increase the ﬁrehose-sense temperature
+anisotropy) in the downstream region. In Sec. 2.5 we show that a more oblique
+shock results in a lower ε in the downstream region. The structure of the magnetic
+ﬁeld performs a transition from a coplanar decrease to a non-coplanar rotation at
+ε ∼0.25, which diﬀers from the traditional slow shock transition with dispersive
+wavetrains. In Sec. 2.6 the stability of the downstream rotational wave is studied
+with numerical experiments.
+The tendency for a spatially modulated rotational
+wave to radiate di-scale waves is identiﬁed. The resulting di-scale waves counter-
+balance the ε decrease driven by the counterstreaming ions. Finally, we summarize
+the results and discuss potential implications in Sec. 2.7.
+38
+
+2.2
+Simulation Models and Details
+Most of our PIC simulations use a narrow computational domain, lz × lx =
+1.6di × 1638.4di to capture the nonlinear wave propagation (mainly the slow shock
+pair in Petscheck’s reconnection model) far downstream from the reconnection site.
+The simulations presented here are two-dimensional, i.e., ∂/∂y = 0, and periodic
+in the z −x plane. The initial equilibrium consists of a double Harris-like current
+sheet (although we only focus on a single current sheet) superimposed on an ambient
+population of uniform density na:
+Bz = Bz,a tanh(x/wi);
+np,e = nhsech2(x/wi) + na,
+(2.1)
+where Bz,a, nh, na are constants, the subscript “a” stands for the asymptotic (far
+upstream) values, “h” stands for Harris and wi is the initial half-width of the current
+sheet (this is the symmetric case corresponding to Fig. 1.16). We initialize both the
+Harris plasma and background plasma with an isotropic Maxwellian distribution.
+Unlike the initial set-up for reconnection, we begin with a constant normal ﬁeld
+Bx. Although the initial total pressure is balanced, the existence of Bx causes a
+tension force that drives wave propagation away from the current sheet in the x-
+direction. Again, the Bx,a/Bz,a = 0.1 case (i.e., θBN ∼83◦with cos θBN ≡Bx,a/Ba)
+corresponds to a reconnection exhaust with a normalized reconnection rate of 0.1
+[101, 102].
+In our particle-in-cell code p3d [126], the electromagnetic ﬁelds are deﬁned on
+gridpoints and advanced in time with an explicit trapezoidal-leapfrog method using
+second-order spatial derivatives. The Lorentz equation of motion for each particle
+39
+
+is evolved by a Boris algorithm where the velocity v is accelerated by E for half a
+timestep, rotated by B, and accelerated by E for the ﬁnal half timestep. To ensure
+that ∇· E = ρ/ϵ0 a correction electric ﬁeld is calculated by inverting Poisson’s
+equation with a multigrid algorithm.
+The magnetic ﬁeld is normalized to the asymptotic magnetic ﬁeld Ba, the den-
+sity to the asymptotic density na, velocities to the Alfv´en speed CA ≡Ba/√µ0mina,
+lengths to the ion inertial length di ≡
+p
+mi/µ0nae2, times to the inverse ion cyclotron
+frequency Ω−1
+ci ≡mi/Bae, and temperatures to miC2
+A. Other important parameters
+are mi/me = 25, c/CA = 15, na = 1, nh = 1.5, Ba = 1, and the asymptotic value
+of initial Ti,e = 0.1, which imply that βa = 0.4. The initial electron temperature is
+uniform, while the ion temperature varies so as to ensure pressure balance in the
+x-direction. We take the time step ∆t = 0.0025 and grid size ∆= 0.025. We usually
+take wi = di since the thickness of the dissipation region during reconnection is on
+the di scale [101, 13]. There are ∼4 × 108 particles in a single run. Table 2.1 gives
+further details of the various runs.
+Runs a, b, c, d, f, g, h and k (all have lz = 1.6di, except the θBN = 83◦
+case) will be further discussed in this work. Even though the 75◦case with a larger
+lz = 6.4di (Run i) shows downstream 2-D turbulence, the evolution is quite similar
+to the narrow Run f. As can be seen in Table 2.1, 2-D turbulence tends to occur
+for oblique (θBN > 75◦) cases when lz is large enough. Curves plotted throughout
+the rest of this chapter are quantities averaged in the z-direction, since most runs
+discussed here do not have any signiﬁcant variation in the z-direction. The 2-D
+turbulence of θBN = 83◦(Run k) will also be discussed.
+40
+
+Table 2.1: Overview of runs.
+Run
+θBN
+wi
+Bg1
+Domain Size (lz × lx)
+Gridpoints
+→2 2-D turbulence
+a
+30◦
+1
+0
+1.6 × 1638.4
+64 × 65536
+x
+b
+45◦
+1
+0
+1.6 × 1638.4
+64 × 65536
+x
+c
+52◦
+1
+0
+1.6 × 1638.4
+64 × 65536
+x
+d
+60◦
+1
+0
+1.6 × 1638.4
+64 × 65536
+x
+e
+60◦
+1
+0
+6.4 × 819.2
+256 × 32768
+x
+f
+75◦
+1
+0
+1.6 × 1638.4
+64 × 65536
+x
+g
+75◦
+10
+0
+1.6 × 1638.4
+64 × 65536
+x
+h
+75◦
+1
+0.2
+1.6 × 1638.4
+64 × 65536
+x
+i
+75◦
+1
+0
+6.4 × 1638.4
+256 × 65536
+√
+j
+83◦
+1
+0
+1.6 × 819.2
+64 × 32768
+x
+k
+83◦
+1
+0
+6.4 × 819.2
+256 × 32768
+√
+1 Bg is an initial uniform guide ﬁeld in the y-direction.
+2 “→” means “resulting in”.
+2.3
+General Features of the 75◦Case
+A representative case of θBN = 75◦, wi = 1di, Bg = 0 (Run f; hereafter re-
+ferred to as the “75◦run”) at time 200/Ωci is documented in Fig. 2.1. As soon as
+the simulation begins, a pair of fast rarefaction waves propagate out from the discon-
+tinuity with speed ∼1.1CA, while the slow shocks with their downstream rotational
+waves have speed ∼0.15CA. As in ideal MHD with a symmetric initial condition
+and zero guide ﬁeld, a pair of switch-oﬀslow shocks are expected to follow the fast
+rarefaction waves, as shown in Fig. 2.1(b) [65]. A switch-oﬀslow shock (i.e., the
+strongest slow shock, whose tangential magnetic ﬁeld vanishes downstream of the
+shock) propagates at the upstream intermediate speed, while the downstream linear
+slow mode speed equals the downstream linear intermediate speed. The linear slow
+mode and intermediate mode are known to become degenerate at parallel propa-
+41
+
+Figure 2.1: The evolution of a system with θBN = 75◦(Run f). Panel
+(a): The evolution of B from time 0−200/Ωci. A pair of fast rarefactions
+(FR) propagate out from the symmetry line, followed by a pair of slow
+shocks (SS). Each curve has been shifted so that it intersects the vertical
+axis at the given time. The time between the yellow curves is 100/Ωci;
+Panel (b): The predicted FR and switch-oﬀslow shock (SSS) from ideal
+MHD theory; Panel (c): The same as (a) but with the vertical axis
+measuring B; Panel (d): The evolution of Bz from time 0 −200/Ωci.
+gation when the plasma β (plasma thermal pressure/magnetic pressure) exceeds 1.
+The downstream rotational waves are often identiﬁed as dispersive wavetrains. The
+essential physics of this wavetrain can be described by a two-ﬂuid model [17], or by
+Hall-MHD [40].
+Further details of the slow shock pair are shown in Fig. 2.2. The most signif-
+icant feature diﬀering from the ideal MHD model is the presence of a large down-
+stream temperature anisotropy ε ≡1 −µ0(P∥−P⊥)/B2 shown in panel (a). The
+corresponding magnetic ﬁeld structure is shown in panel (b), where the left-hand-
+42
+
+Figure 2.2: Parameters from the run with θBN = 75◦(Run f) at time
+200/Ωci. Panel (a): Temperature anisotropy ε and x-direction heat ﬂux
+Qx; Panel (b): Magnetic ﬁeld components; Panel (c): Parallel and per-
+pendicular temperatures (the oﬀ-diagonal components Tixy, Tixz, Tiyz are
+plotted together in green, denoted as Toﬀ, and are small) ; Panel (d):
+Total plasma pressure components and Px + B2/2µ0. Panel (e): The
+plasma β and local θBN = cos−1(Bx/B); Panel (f): Plasma density. The
+dotted curves in each panel are the predicted magnitude and position of
+the switch-oﬀslow shocks (SSS) from isotropic MHD for Bz in (b), T in
+(c), P in (d), β in (e), and n in (f).
+43
+
+polarized rotational wave is clearly seen (the polarization will be discussed further
+in the hodograms of Fig. 2.6).
+The value of ε drops from 1.0 upstream of the
+slow shock to ∼0.25 around the nearly constant-magnitude rotational waves found
+downstream. The anisotropy factor ε aﬀects the strength of the tension force, which
+in the ﬂuid theory is proportional to ε[(B · ∇)B/µ0]⊥[95] (see the last term of
+Eq. (1.29)). When ε is positive, the magnetic ﬁeld has a restoring tension force,
+while a negative value makes the tension force operate in the opposite way, driv-
+ing the ﬁrehose instability. Viewed another way, the phase speed of an intermediate
+mode is CI ≡√εCA cos(θBN). Therefore, as ε drops the intermediate mode becomes
+slower, or even stops propagating, going ﬁrehose unstable for ε < 0. The x-direction
+heat ﬂux Qx ≡
+R
+d3v(1
+2mδv2δvx)f, where δv ≡v −⟨v⟩, is also documented in (a).
+The heat ﬂux peaks inside the transition from upstream of the slow shock to the
+downstream rotational waves, and then becomes negligible. This fact is used in the
+next chapter. In panel (c), the parallel ion temperature increases sharply in the
+weak ﬁeld region, while the perpendicular ion temperature is nearly constant. The
+electrons are nearly isotropic across the shock. In panel (d), the parallel plasma
+pressure and perpendicular plasma pressure are shown, and the nearly constant
+normal direction pressure balance Px + B2/2µ0 indicates the absence of fast modes
+in the reversal region. Panel (e) shows the associated variations in β and the local
+θBN and panel (f) documents the density proﬁles. For comparison, the black dotted
+curves in each panel show the predicted jumps and positions of slow shocks in the
+ideal MHD version of this global Riemann problem [65].
+Within the MHD predicted switch-oﬀslow shock (SSS) jump (Bz from ∼0.9
+44
+
+to 0) shown in panel (b), a coplanar transition decreases the upstream Bz (black
+solid curve) from ∼0.9 to ∼0.5. After this, the magnetic ﬁeld structure rotates
+in the non-coplanar direction and exhibits nearly constant |B| ∼0.5 inside the
+downstream rotational waves. The tangential magnetic ﬁeld eventually drops to zero
+in the center, as the symmetry of the initial conditions demands. We identify the
+coplanar transition as a slow shock transition, where the major enhancements of the
+temperatures, pressures, and densities and the decrease in |B| occur. Note the jumps
+of |B| and Bz from ∼0.9 to ∼0.5 are well maintained from the beginning to the later
+time in Fig. 2.1(c) and (d), which suggests that this transition is associated with one
+of the MHD nonlinear waves with a jump determined by the initial condition. The
+constancy of the total magnetic ﬁeld (∼0.5), density (∼1.5) and β (∼4.0) inside
+the downstream rotational wave and the fact that it propagates at the intermediate
+speed (√εBx/√µ0ρ) suggest an intermediate-wave-like behavior. A similar step-like
+decrease in |B| identiﬁed as a slow shock was also reported in the downstream of a
+large-scale hybrid reconnection simulation [71].
+2.4
+The Source of Temperature Anisotropy: Alfv´enic Counter-Streaming
+Ions
+Using the Wal´en relation Vt,d −Vt,u = ±
+p
+ρuεu/µ0(Bt,d/ρd −Bt,u/ρu) for
+switch-oﬀslow shocks or rotational discontinuities (“t” for tangential, “u” for up-
+stream and “d” for downstream), an outﬂow in the z-direction with Alfv´enic velocity,
+Bz,u/√µ0ρu ∼CAz ≡Bz,a/√µ0mina is predicted [104]. The energy source of the
+45
+
+Figure 2.3: A cartoon showing the mechanism of forming counter-streaming ions
+downstream outﬂow is the diﬀerence in the tangential component of the magnetic
+ﬁeld across the discontinuity. If we jump to the outﬂow frame (the deHoﬀmann-
+Teller frame) as schematized in Fig. 2.3, there will be inﬂowing Alfv´enic streaming
+ion beams from both discontinuities along the downstream magnetic ﬁeld as ob-
+served by Gosling in the solar wind [36] and in kinetic reconnection simulations
+[56, 71, 43, 78, 28].
+These counter-streaming ions cause an enhancement in the
+downstream parallel ion temperature (Ti∥∼O(miC2
+Az)) and, therefore, the temper-
+ature anisotropy.
+In the phase space of the 75◦case at time 200/Ωci (see Fig. 2.4) a signature of
+the counter-streaming beams is not obvious in the downstream region (since the ion
+distribution does not peak in the upper and lower parts of a single wave oscillation),
+perhaps because of the large-amplitude rotational wave. However, Alfv´enic back-
+streaming ions in the z-direction (close to the parallel direction in the upstream
+46
+
+Figure 2.4: The phase space of the run with θBN = 75◦(Run f) at time
+200/Ωci. From top to bottom the left column shows the ion distribution
+in: Vz −x space, where the backstreaming ions from the discontinuities
+are clearly seen; Vy −x space; Vx −x space. The right column is the
+electron distribution in Vz −x space, Vy −x space and Vx −x space. The
+white dashed lines indicate the locations of the velocity distributions
+shown in Fig. 2.5. The color bar is normalized to the maximum value in
+each panel.
+47
+
+Figure 2.5: The ion velocity distributions measured at locations 409.1 −
+410.1di, 415−416di and 430−431di of Fig. 2.4 (the white dashed lines).
+From top to bottom are Vz −Vx, Vz −Vy and Vx −Vy distributions.
+The distributions are color coded and the white contours help identify
+diﬀerent ion parcels. The local magnetic ﬁeld is denoted by blue arrowed
+lines beginning at origin. The axis scales, when cut by a factor of 2, also
+measure the magnitude of the ﬁeld. Ions that stream along the magnetic
+ﬁeld are clearly seen at these locations.
+48
+
+region) are observed in Fig. 2.4. The time-of-ﬂight eﬀect (faster ions escape far-
+ther upstream) slowly broadens the transition region of slow shocks with time. The
+nearly uniform electron distribution in all directions is due to their high thermal
+conductivity and much lighter mass compared to the ions.
+In Fig. 2.5, we show the ion distributions at the three locations demarcated
+by the white dashed lines in Fig. 2.4. Ions that stream along local magnetic ﬁelds
+(blue arrowed lines) are seen at these locations. Closer to the symmetry line, the
+drifting speed between these two ion parcels appears to be reduced, perhaps due
+to mixing by the rotational waves and some small-scale waves excited downstream.
+However, a complete thermalization at the symmetry line previously reported in
+2-D low β ≲0.01 hybrid simulations [19, 20] is not seen, a discrepancy perhaps
+explained by additional instabilities allowed by the lower β and their wider box
+(lz ∼50di). The Vx −Vy distribution at the symmetry line (409.1 −410.1di) is a
+complex non-Maxwellian, which indicates the ions undergo complicated meandering
+motions. The distributions of electrons at this time and locations appear Maxwellian
+without a clear signature of the backstreaming beam as reported before [22, 123],
+and are therefore not shown.
+2.5
+Temperature Anisotropy vs. Propagation Angles
+In order to understand how the temperature anisotropy varies with other pa-
+rameters, we perform runs with diﬀerent upstream angles θBN. Fig. 2.6 documents
+the results of Runs a, b, c, d, f and k. From the ﬁrst column, the downstream ε
+49
+
+Figure 2.6: From top to bottom are runs with θBN = 30◦(Run a) at
+100/Ωci, 45◦(Run b) at 200/Ωci, 52◦(Run c) at 100/Ωci, 60◦(Run d)
+at 250/Ωci, 75◦(Run f) at 400/Ωci, and 83◦(Run k) at 700/Ωci. The
+ﬁrst column shows the temperature anisotropy, and the second column
+the magnetic ﬁeld components as a function of x. The third column
+displays hodograms taken from the right half of the simulation domains.
+The dotted curves in the second column are the predicted magnitudes
+and positions of switch-oﬀslow shocks (SSS) and fast rarefactions (FR)
+from isotropic MHD theory for Bz.
+50
+
+tends to lower values in the more oblique cases and the plasma becomes turbulent
+once ε is comparable to or lower than ∼0.25. We can estimate at which θBN the
+downstream ε will drop below 0.25 as follows. In the cold plasma limit, the temper-
+ature anisotropy due to the Alfv´enic counter-streaming ions at the symmetry line is
+(where P∥−P⊥∼namiC2
+Az and |B| ∼Bx,a),
+εdown ∼0.25 ∼1 −B2
+z,a
+B2
+x,a
+→tan2θBN,c ∼0.75
+→θBN,c ∼40◦
+(2.2)
+This argument qualitatively shows the tendency to develop stronger ﬁrehose-sense
+temperature anisotropies for higher obliquities. The diﬀerence between θBN,c and
+the observed value of 60◦is probably due to the simpliﬁed assumptions, such as a
+cold streaming plasma.
+In the second column of Fig. 2.6, the corresponding magnetic structures are
+shown. When the obliquity is large enough, especially when ε < 0.25, the down-
+stream magnetic ﬁeld rotates into the out-of-plane direction and becomes turbulent.
+Combined with the hodograms in the third column, we can deduce that the dom-
+inant downstream rotational waves are all left-handed (LH, counter-clockwise in
+our hodogram). When the wavelength of the primary LH wave is large, as in the
+θBN = 60◦case, its front part breaks into ﬁner right-handed (RH) waves with scale
+∼6di. In the 75◦case, the scale of the primary LH wave is already as small as
+6di, and so it is more stable than the 60◦case, albeit still turbulent. (A 75◦case
+with a wider initial current layer is discussed in the next section. It exhibits wave-
+generation phenomena similar to the 60◦case). In the 83◦case, we observe RH
+small-scale waves in front of the downstream primary LH wave.
+51
+
+For comparison, the dotted curves in the second column of Fig. 2.6 are the
+predicted Bz structure from MHD theory [65]. The overall predictions agree well
+for the oblique cases (see, for instance, the upstream Bz of the slow shocks in the
+60◦and 75◦cases), although the reﬂected weak fast rarefactions from our boundary
+have caused a discrepancy in the slow shock upstream Bz for the 83◦case. In less
+oblique cases, the intermediate and fast characteristic speeds approach one another
+just upstream of the switch-oﬀslow shock according to MHD theory. Therefore there
+is no clear separation between the slow shocks upstream and the fast rarefactions,
+as can be seen in the simulations. We treat the place where the inﬂow speed Vx (not
+shown) starts to decrease as the upstream of the slow shocks, which corresponds
+to the beginning of the LH rotational wavetrains in the 30◦and 45◦cases. Their
+upstream will hence correspond to Bz ∼0.15 and Bz ∼0.2 respectively. Therefore
+the stable small amplitude rotational waves in the θBN = 30◦and 45◦cases are
+more similar to the conventional dispersive stationary downstream wavetrains, which
+immediately follow the slow shock upstream. (We note that the model in Lin and
+Lee [65] approximates the rarefactions by replacing the energy jump condition in
+the Rankine-Hugoniot relations by [Pρ−γ] = 0, arguing that the entropy across a
+weak rarefaction does not change. This is only valid for weak rarefaction waves, but
+the overall tendency as the propagation angle becomes more parallel should be in
+the correct sense).
+An interesting feature in the oblique cases is the coincidence between the
+start of the primary LH magnetic rotation and the location where the anisotropy
+parameter ε ∼0.25. The anisotropy parameter seems to be locked to this critical
+52
+
+Figure 2.7: Evolution of ε for the case with θBN = 60◦(Run d) for equally
+spaced times between 100 −500/Ωci from lighter grey to darker grey in
+(a), the θBN = 75◦case (Run f) for time 100 −500/Ωci in (b), and the
+θBN = 83◦case (Run k) for time 100 −700/Ωci in (c). The bottom is
+a plot of Bx for the θBN = 83◦case at time 700/Ωci showing the 2-D
+turbulence that develops.
+53
+
+Figure 2.8: The ε distributions of runs θBN = 60◦(Run d) at 500/Ωci,
+75◦(Run f) at 200/Ωci, 83◦(Run k) at 700/Ωci. (The 83◦case is shifted
+to the right by 204.8di)
+value for long periods of time, as is shown in Fig. 2.7. Moreover, this is also the
+location where turbulence develops. Given these coincidences the following questions
+naturally arise. If the rotational wave is really a normal dispersive wavetrain, why
+does it appear in the middle of the MHD predicted switch-oﬀslow shocks? Why do
+the dispersive waves not start directly from the slow shock upstream? Is it not more
+similar to a new transition at Bz ∼0.3 for θBN = 60◦, or Bz ∼0.5 for θBN = 75◦
+and 83◦? What is special about ε = 0.25? (The importance of ε ∼0.25 is shown for
+diﬀerent obliquities in Fig. 2.8.) Are there other instabilities associated with this
+anisotropy value? Or is it due to the nonlinear structure of a system with a large
+temperature anisotropy that cannot be explained by ideal MHD?
+We describe a possible theoretical explanation for why ε ∼0.25 in the next
+54
+
+chapter. In short, ε = 0.25 represents a transition where the slow and intermediate
+mode speeds become degenerate. Unlike the conventional picture, the downstream
+rotational waves can not then be explained by slow dispersive waves, but instead
+take the form of rotational intermediate modes. The coplanar and non-coplanar
+part will later be identiﬁed as a single nonlinear wave, called a compound SS/RD
+wave.
+2.6
+The Downstream Turbulent Waves and Particle Scattering
+The region downstream of oblique (θBN ≥60◦) slow shocks is turbulent. High
+wavenumber waves are continually excited whenever the Bz component begins to
+rotate into the out-of-plane direction, as can be seen for the 60◦, 75◦and 83◦cases in
+Fig. 2.6, and more clearly in the evolution of the B ﬁeld for the case 75◦, wi = 10di
+(Run g) in Fig. 2.9. The downstream LH rotational parent waves break into λx ∼
+6di-scale waves. The large oscillation in ε at later times is due to the small magnetic
+ﬁeld magnitude near the symmetry line, where both Bz and By vanish. The particle
+scattering associated with these small-scale waves plays a role in counter-balancing
+the decrease in ε due to the streaming ions and keeping the temperature anisotropy
+around the value 0.25, as is seen in the time evolution of the oblique cases in Fig. 2.7.
+In order to understand the downstream turbulent di-scale waves (∼6di), we
+tried to systematically pin down the possible drivers and energy sources via numeri-
+cal experiments. We separately checked the temperature anisotropy, counterstream-
+ing beams, and rotational parent waves (such as the larger LH wave in Fig. 2.9) to
+55
+
+Figure 2.9: Panel (a): The evolution of ε, Bz and By for equally spaced
+times between 50 −500/Ωci (from left to right) in the θBN = 75◦, wi =
+10di case (Run g). The downstream larger-scale rotational wave breaks
+into waves of wavelength ∼6di. Panel (b): A blowup of the downstream
+By at time 450/Ωci.
+determine which factors are responsible for generating the di-scale waves.
+We carried out spatially homogeneous simulations with an initial wave struc-
+ture of the following form:
+Bz = Bcir cos(2πx/λp) + Bz,oblique;
+By = P × Bcir sin(2πx/λp)
+(2.3)
+When Bcir ̸= 0, there is a rotational ﬁeld with P = +1 for LH, −1 for RH, and 0 for
+planar polarizations. The constant Bz,oblique controls the obliquity of this circularly
+polarized wave and provides a spatial modulation in the magnitude of the total
+magnetic ﬁeld. The general expression for the initial ion distribution is
+fi ∝exp
+
+−mi(v∥−u)2
+2Ti∥
+−miv2
+⊥
+Ti⊥
+
++ exp
+
+−mi(v∥+ u)2
+2Ti∥
+−miv2
+⊥
+Ti⊥
+
+(2.4)
+which has bi-Maxwellian counterstreaming beams for u ̸= 0. Note that Ti∥,eﬀ=
+Ti∥+miu2, so both u ̸= 0 and Ti∦= Ti⊥can contribute to the temperature anisotropy
+ε. The initial plasma density varies so as to ensure a constant value of P⊥+B2/(2µ0).
+56
+
+Since the small-scale waves that interest us do not induce variation in the z-direction,
+they are intrinsically 1-D waves along the x-direction. The common parameters used
+here are a domain size of 1.6 × 51.2di, with grid 64 × 2048, λp = 51.2di, uniform
+Ti,e⊥= Te∥= 0.15, Bx = 0.25 and ni,e = 1.5 at x = 0.
+The resultant β in
+the following case is always > 1. These parameters are meant to represent those
+observed in the downstream of the 75◦case.
+Table 2.2: Overview of runs
+Run
+Bcir
+Polar. (P)
+Bz,oblique
+Ti∥
+Beams (u)
+→1 Ti∥,eﬀ
+→ε
+→1-D waves2
+1
+0.25
++1
+0.25
+0.15
+0.5
+0.4
+-0.2 ∼-7
+√
+2
+0.25
++1
+0.25
+0.4
+0
+0.4
+-0.2 ∼-7
+√
+3
+0.25
++1
+0
+0.15
+0.5
+0.4
+-2
+x
+4
+0.25
++1
+0
+0.4
+0
+0.4
+-2
+x
+5
+0.25
++1
+0.25
+0.15
+0
+0.15
+1
+√
+6
+0.25
+0
+0.25
+0.15
+0
+0.15
+1
+x
+1 “→” means “resulting in”.
+2 di-scale waves generated within time 100/Ωci.
+Run 1 of Table 2.2 is a representative example of the downstream structure
+seen in the Riemann simulations. The initial obliquely propagating LH polarized
+waves with Alfv´enic counter-streaming ions along the local magnetic ﬁeld break
+into ∼6di small-scale waves, as shown in Fig. 2.10(a). In Run 2, we replace the
+counter-streaming ions with a bi-Maxwellian plasma with the same eﬀective parallel
+temperature, therefore the same temperature anisotropy ε, and ﬁnd similar wave-
+generation phenomena. In Runs 3 and 4, we remove the obliquity (Bz,oblique) from
+Runs 1 and 2 respectively. No di-scale waves are excited within a time of 100/Ωci
+in Run 3, as is shown in Fig. 2.10(b). This indicates the importance of spatial
+57
+
+modulation for the development of the turbulence.
+In Run 5, we replace the beams or anisotropic plasma of Runs 1 and 2, respec-
+tively, with a Maxwellian isotropic plasma. Waves with scale ∼6di are excited and
+are shown in Fig. 2.10(c). However, if we further remove the initial out-of-plane mag-
+netic ﬁeld of the parent wave (Run 6), no small-scale waves appear; see Fig. 2.10(d).
+This indicates that a necessary condition for producing these small-scale waves is
+the existence of circularly polarized parent waves. From this suite of runs we con-
+clude that the presence of a spatially modulated rotational wave is the major driver
+of di-scale coherent waves seen downstream of the shock (see Fig. 2.9(b)). Although
+not shown, we see similar behvior for RH (P = −1) parent waves.
+A non-modulated, constant-amplitude, circularly polarized Alfv´en wave is a
+known stationary solution of the MHD equations. Although it is subject to a long-
+wavelength modulational instability under some conditions [77], simulations show
+that it is also stable in a collisionless plasma.
+Spangler & Plapp [105] explored
+a similar wave-generation phenomena, as well as the formation of solitary waves
+with a system with initial conditions similar to our Run 5. He cast his system in
+terms of the Derivative-Nonlinear-Schr¨odinger-Equations, which are simpliﬁed MHD
+equations that possess the MHD nonlinearity and dispersion terms. This suggests
+the importance of both the nonlinearity and the Hall dispersion term for these di-
+scale waves. We also note that the time of onset of these waves is proportional to
+λp and inversely proportional to the amplitude Bcir, which are closely related to
+the steepening time scale of ﬁnite amplitude waves, Ts ∼(τwave/2π)(B/∆B), with
+τwave ∝λp (the gradient scale of the ﬁnite amplitude wave) [5]. Although a ﬁrehose-
+58
+
+Figure 2.10: The evolution of By, Bz and B for equally spaced times be-
+tween 0 −100/Ωci. The red curve indicates the time 100/Ωci. Panel (a):
+Run 1 with both initial streaming ions and modulated rotational parent
+wave. Panel (b): The same as panel (a) without the initial spatial mod-
+ulation (Run 3). Panel (c): The same as panel (a) without initial beams
+(Run 5). Panel (d): The same as panel (c) without initial polarization
+(Run 6).
+59
+
+sense temperature anisotropy (ε < 1) would weaken the nonlinearity, the spatial
+variation of ε enhances the nonlinearity, as will be shown in the next chapter [68].
+Runs 3 and 4 suggest that temperature anisotropy and Alfv´enic beams are not,
+by themselves, suﬃcient for generating the small-scale waves seen in the downstream
+region. The time scale for these parent rotational waves to break into smaller-scale
+waves is faster than the beam driven EMIIC instability, which excites oblique AIC
+waves in hybrid models [117], or oblique KAWs in PIC models [124]. Perhaps the
+higher β in our simulations (e.g., upstream βi = βe = 0.2) has slowed or suppressed
+the development of the EMIIC instability [21]. We also note that the KAWs in Yin
+et al. [123] are generated upstream of the rotational front where the beam eﬀect
+is stronger (T∥peaks), while our small-scale waves coexist with the rotational part
+as clearly seen in Fig. 2.9, where the local β’s of both ion parcels are higher. This
+further suggests a mechanism other than the EMIIC instability. In addition, we
+have not observed clear perpendicular heating in both ion parcels [124, 19, 20] and
+parallel heating in electrons [124, 123] by oblique KAWs (if present), since these
+heating eﬀects could also be suppressed by higher β. As for the growth rate of the
+anisotropy driven ﬁrehose instability, γ2 ∼−εk2C2
+A [23]. The unstable wavelength
+that interests us is k ∼1, and anisotropy ε = −2 (in Run 3, 4), then a small growth
+rate of the ﬁrehose instability is due to a small CA based on the local magnetic ﬁeld
+Bx ∼0.25. However, these beam/anisotropy-driven waves are still potential players
+in the downstream turbulence at late time. By comparing Fig. 2.10(a) to (c), we
+see that the interplay of the steepening process and the free-streaming beams makes
+the wave more turbulent. In Fig. 2.11, the ion temperature anisotropy Ti∥−Ti⊥of
+60
+
+Figure 2.11: The evolution of Ti∥−Ti⊥for equally spaced times between
+0−100/Ωci(from lighter grey to darker grey) of Run 1 (Fig. 2.10(a)). The
+temperature anisotropy of the ions is reduced, which indicates particle
+scattering is taking place.
+Run 1 (which corresponds to Fig. 2.10(a)) decreases. This conﬁrms the ability of
+these smaller-scale dispersive waves to scatter ions.
+The polarization of a linear wave can be determined by the phase between the
+tangential magnetic ﬁeld variations δBz and δBy. In the ﬂuid model iδBz/δBy =
+(C2
+I −(ω/k)2)/(ωdiCAcos(θBN)) [112]. A wave has a LH polarization when (ω/k)2 <
+C2
+I , and RH otherwise. As observed in our oblique shock simulations (discussed in
+Sec. 2.5), the small-scale waves at the upstream of the rotational front are mostly
+RH, while the downstream waves are mostly LH. This suggests that the primary
+rotational front propagates at the local intermediate speed (as also measured in the
+simulations). We do not address which modes are responsible for these ﬁne-scale
+waves here, since the polarization of the linear mode in kinetic theory is very com-
+plicated. Both temperature anisotropy and high plasma β play roles in changing the
+linear wave properties [57]. A better understanding of the nature of these turbulent
+61
+
+waves could be gained by comparing the downstream spectrum to the dispersion
+relation calculated from linear Vlasov theory. With a larger lz and very oblique
+propagation angle, as in the 83◦case, 2-D turbulence with λz ∼6di is excited
+around the ﬁrehose-unstable region. Its signature is most clear in Bx, as can be
+seen in the bottom plot of Fig. 2.7. A similar mechanism is postulated to excite
+2-D turbulence in the ﬁrehose-unstable region seen in the reconnection simulation
+of Fig. 1.11(c) (and, perhaps, the 2-D turbulence previously reported [98]). This
+2-D turbulence could be driven by temperature anisotropy (ﬁrehose-like) or by the
+sharp front of the primary rotational wave. It does not appear to be similar to the
+parallel AIC waves driven by the AIC-like instability observed in Cremer & Scholer
+[19, 20], since no signiﬁcant perpendicular heating in both ion parcels is seen in the
+simulation of Fig. 1.11.
+2.7
+Summary and Discussion
+We have studied the temperature anisotropy distribution across slow shocks
+with diﬀerent obliquities in PIC simulations. An abnormal transition and an anisotropy
+ε = 0.25 locking phenomena downstream of the MHD predicted switch-oﬀslow
+shocks is documented. The Alfv´enic counter-streaming ions serve as the driver for
+decreasing ε (increasing the ﬁrehose-sense temperature anisotropy) in the down-
+stream region, while downstream di-scale turbulent waves scatter particles and raise
+ε. This dynamical balance makes the downstream ε plateau at a value of ε = 0.25
+and not the marginal ﬁrehose criterion ε = 0. The theoretical signiﬁcance of ε = 0.25
+62
+
+will be addressed in the next chapter. By means of PIC numerical experiments we
+show that the turbulent di-scale waves are radiated from a spatially modulated
+rotational parent wave .
+The Riemann problem for the θBN = 83◦case is closely related to that of
+reconnection exhausts with normalized reconnection rates of 0.1. The very center is
+a ﬁrehose-unstable region where a Bx variation is observed, as in the reconnection
+simulations discussed in Fig. 1.11(c). Although we cannot conﬁdently identify the
+0.25 plateau in present PIC reconnection simulations (since the spatial extension in
+the normal direction (ˆx), is ∼10di; see Fig. 1.11(d)), we expect to see the signature
+of a ε = 0.25 plateau outside the ﬁrehose unstable region in very large kinetic anti-
+parallel reconnection simulations and in-situ satellite observations of anti-parallel
+magnetic reconnection outﬂows.
+In reconnection with lower upstream β (≲0.1), it has been suggested that
+backstreaming ions drive the electromagnetic ion-ion cyclotron instability, which
+excites oblique kinetic-Alfv´en waves (or Alfv´en/ion cyclotron waves in a hybrid
+model) that propagate to the upstream region. Oblique propagating KAWs then
+heat ions in the perpendicular direction while heating electrons in the parallel di-
+rection [116, 117, 124, 123].
+The resultant higher perpendicular temperature of
+each ion parcel (i.e., the backstreaming ions and inﬂowing ions) can further drive
+an anisotropic (AIC-like) instability, which excites parallel propagating AIC waves
+in the upstream region [19, 20]. It could be of interest to investigate how these
+processes aﬀect the ε distribution and the critical ε = 0.25 plateau observed here.
+63
+
+Chapter 3
+Anisotropic Fluid Theory
+3.1
+Overview
+The structures of shock transitions in isotropic MHD have been intensively
+studied, including the existence of intermediate shocks (IS) ([12, 119, 52, 120] and
+references therein), the occurrence of dispersive wavetrains [17, 40, 121], and the
+nested subshocks inside shocks predicted by the Rankine-Hugoniot jump condi-
+tions [51, 69]. In a collisionless plasma, the eﬀects of temperature anisotropy need
+to be considered, which can be done for linear waves with the Chew-Goldberger-
+Low (CGL) framework [1, 41]. Hau and Sonnerup [41] have pointed out the ab-
+normal properties of the linear slow mode under the inﬂuence of a ﬁrehose-sense
+(P∥> P⊥) pressure anisotropy, including a faster phase speed compared to the in-
+termediate mode, a fast-mode-like positive correlation between magnetic ﬁeld and
+density, and the steepening of the slow expansion wave.
+In kinetic theory both
+anisotropy and high β can greatly alter the linear mode behavior [57, 50]. The
+anisotropic Rankine-Hugoniot jump conditions have been explored while taking the
+downstream anisotropy as a free parameter [14, 45, 46, 47]. Hudson [46] calculated
+the possible anisotropy jumps across an anisotropic rotational discontinuity, while
+Karimabadi et al. [50] noticed the existence of a slow shock whose upstream and
+downstream are both super-intermediate. But, a comprehensive nonlinear theory
+64
+
+describing the coupling between slow and intermediate shocks under the inﬂuence
+of temperature anisotropy has not yet been presented.
+In Petschek’s description of magnetic reconnection, the reconnection exhaust
+is bounded by a pair of back-to-back standing switch-oﬀslow shocks.
+Particle-
+in-cell (PIC) simulations of such shocks [67, 123] exhibit large downstream tem-
+perature anisotropies.
+In chapter 2 we show that when the parameter ε = 1 −
+µ0(P∥−P⊥)/B2 = 0.25, the behavior of the coplanar shock undergoes a transition
+to non-coplanar rotation. This ﬁrehose-sense temperature anisotropy slows the lin-
+ear intermediate mode and speeds up the linear slow mode enough so that, at some
+point, their relative velocities can be reversed [1, 41]. This reversal is reﬂected in
+the structure of the Sagdeev potential (also called the pseudo-potential) [93], which
+characterizes the nonlinearity of the system. In this chapter a simpliﬁed theoretical
+model is developed to explore the eﬀect of temperature anisotropy on the structure
+of the Sagdeev potential and to provide an explanation for the extra transition inside
+the switch-oﬀslow shock (SSS) predicted by isotropic MHD. The theory suggests
+that in PIC simulations a compound slow shock (SS)/ rotational discontinuity (RD)
+is formed instead of a switch-oﬀslow shock. This work may help to explain satellite
+observations of compound SS/RD waves [115, 114], anomalous slow shocks [112] and
+the trapping of an RD by the internal temperature anisotropy of a slow shock in
+hybrid simulations [59].
+In Sec. 3.2 of this chapter we introduce our model equations for studying the
+nonlinear coupling of slow and intermediate waves under the inﬂuence of a tempera-
+ture anisotropy. In Sec. 3.3 we calculate the speeds and the eigenmodes of slow and
+65
+
+intermediate waves. Sec. 3.4 points out the existence of extra degeneracy points be-
+tween slow and intermediate modes introduced by the temperature anisotropy, and
+comments on the consequences (in the context of the Riemann problem) of having
+the slow wave faster than the intermediate wave. In Sec. 3.5 we introduce a simple
+energy closure. In Sec. 3.6.1 we calculate the pseudo-potential of stationary solu-
+tions, and apply the equal-area rule to identify the existence of compound SS/RD
+waves and compound SS/IS waves. In Sec. 3.6.2 we demonstrate the signiﬁcance of
+ε = 0.25 as being the lower bound of the SS to RD transition in compound SS/RD
+waves. In Sec. 3.7 we discuss the time-dependent dynamics that help keep ε = 0.25.
+In Sec. 3.8 we provide more evidence from PIC simulations to support the existence
+of compound SS/RD waves at the boundaries of reconnection exhausts. In Sec. 3.9,
+we summarize the results and point out the relation between compound SS/RD
+waves and anisotropic rotational discontinuities [46].
+3.2
+The Anisotropic Derivative Nonlinear Schr¨odinger-Burgers Equa-
+tion
+Instead of analyzing the anisotropic MHD equations, which have seven char-
+acteristics (waves), we simplify the system into a model equation that possesses
+only two characteristics. This model equation will be ideal for demonstrating the
+underlying coupling between the nonlinear slow and intermediate modes. Beginning
+with the anisotropic MHD equations [14], we follow the procedure of Kennel et al.
+[52, 53] to derive the Anisotropic Derivative Nonlinear Schr¨odinger-Burgers equation
+66
+
+(ADNLSB) (see Appendix A.1 for details),
+∂τbt + ∂η[αbt(b2
+t −b2
+t0) + Ωbt(ε −ε0)] = ∂η(R∂ηbt) −
+1
+2√ε0
+di∂2
+η(ˆx × bt)
+(3.1)
+This equation describes waves that propagate in the x-direction in the upstream
+intermediate speed frame. In this frame η ≡x′ −√ε0CAnt is the spatial coordinate
+with C2
+An ≡B2
+x/(µ0ρ0), and τ ≡√ε0CAnt is the time used to measure the slow
+variations (such as steepening processes). bt = Bt/Bx, where the subscript “t”
+represents the component tangential to the wave-vector and here will be in the y-
+z plane. The anisotropy parameter ε = 1 −µ0(P∥−P⊥)/B2. The subscript “0”
+denotes the upstream parameters. The right hand side term proportional to the
+ion inertial length, di ≡
+p
+mi/(µ0ne2), represents dispersion (which can be viewed
+as the spreading tendency of Fourier decomposed waves of diﬀerent wavenumbers),
+while the term containing R describes dissipation from magnetic resistivity. Here R
+is a constant. The terms proportional to α and Ωare the nonlinearities of this wave
+equation, where
+α ≡
+(4ε0 −1)C2
+An
+12[(ε0 −A)C2
+An −C2
+S]
+(3.2)
+Ω≡
+(b2
+t0 −2)C2
+An
+6[(ε0 −A)C2
+An −C2
+S] + 1
+2ε0
+(3.3)
+and
+A ≡4
+9(1 −ε0)(1 + b2
+t0)
+(3.4)
+Here C2
+S ≡(5/3)P0/ρ0. Since we are studying reconnection exhausts, θ0 (the
+angle between the upstream magnetic ﬁeld and ˆx) is typically large (∼80◦). There-
+fore βn ≡β/ cos2 θ0 = C2
+S/C2
+An ≫1, and (ε0 −A)C2
+An −C2
+S ∼−C2
+S < 0. Hence
+67
+
+this equation describes only the slow and intermediate modes [52] (this is shown ex-
+plicitly in the next section). This fact relates to the degeneracy properties of ideal
+MHD for parallel propagating waves, namely that the fast and intermediate modes
+degenerate in β < 1 plasmas, while the slow and intermediate mode degenerate in
+β > 1 plasmas. Finally, we note that Eq. (3.1) is applicable in the weak nonlinearity
+limit.
+3.3
+The Conservative Form- Wave Propagation
+In order to explore the structure of the reconnection exhaust, a comprehensive
+understanding of how waves connect to each other across a transition is required.
+This is called a Riemann problem. Neglecting the source terms on the right hand side
+(RHS), the left hand side (LHS) of Eq. (3.1) is a hyperbolic equation in conservative
+form.
+Letting ε −ε0 ≡δε(bz, by), and bt0 = bz0ˆz, we obtain,
+∂τq + ∂ηf(q) = 0,
+(3.5)
+with
+q ≡
+
+
+q1
+q2
+
+=
+
+
+bz
+by
+
+,
+f ≡
+
+
+f1
+f2
+
+=
+
+
+αbz(b2
+z + b2
+y −b2
+z0) + Ωbzδε
+αby(b2
+z + b2
+y −b2
+z0) + Ωbyδε
+
+.
+(3.6)
+We can obtain the characteristics (waves) of this equation by analyzing its ﬂux
+function, f. Its Jacobian is
+∂qf =
+
+
+α(3b2
+z + b2
+y −b2
+z0) + Ω(δε + bzδεbz)
+2αbzby + Ωbzδεby
+2αbzby + Ωbyδεbz
+α(3b2
+y + b2
+z −b2
+z0 + Ω(δε + byδεby))
+
+,
+(3.7)
+68
+
+where δεbz ≡∂(δε)/∂bz, δεby ≡∂(δε)/∂by. One eigenvalue (also called the charac-
+teristic speed) is
+λSL = α(3b2
+t −b2
+t0) + Ω(δε + bzδεbz + byδεby)
+(3.8)
+with eigenvector
+rSL = 1
+bt
+
+
+bz
+by
+
+.
+(3.9)
+In isotropic ideal MHD, where the (ε −ε0) term is dropped, the eigenvalue in
+the inﬁnitesimal limit (bt →bt0) is λSL = 2αb2
+t0, which is the phase speed of the
+linear slow mode in the intermediate mode frame [52]. The subscript “SL” means
+the slow mode. The eigenvector indicates that slow mode is coplanar (i.e., in the
+radial direction in bz −by space).
+The other mode has eigenvalue
+λI = α(b2
+t −b2
+t0) + Ωδε
+(3.10)
+and eigenvector
+rI ∝
+
+
+αby + Ωδεby/2
+−αbz −Ωδεbz/2
+
+.
+(3.11)
+In isotropic ideal MHD, where the (ε −ε0) term is dropped, the eigenvalue in the
+inﬁnitesimal limit is λI = 0, which is the phase speed of the linear intermediate mode
+in the intermediate mode frame [52]. The subscript “I” means the intermediate
+mode. The eigenvector indicates that this intermediate mode is non-coplanar (i.e.,
+in a non-radial direction).
+It can be shown that ∇qλI(q) · rI(q) = 0 for all q. This means that along
+the eigen-direction of the intermediate mode the characteristic speed is constant,
+69
+
+and thus the mode exhibits no steepening or spreading, just as is the case for its
+counterpart in isotropic MHD. (This behavior is also conﬁrmed by the anisotropic
+MHD simple wave calculation; see Appendix A.2). Therefore the intermediate mode
+is termed “linearly degenerate”.
+If we are looking for a transition in the −rSL
+direction (toward bt = 0), then the portion of the slow mode with ∇qλSL(q) ·
+rSL(q) < 0 will steepen into a slow shock.
+When λSL at the downstream of a
+transition is larger than that at the upstream, the downstream wave will catch up
+with the upstream wave and thus steepen.
+3.4
+A New Degeneracy Point due to the Temperature Anisotropy
+In the Riemann problem for our two mode system, we seek to determine the
+middle state qm that connects the faster “2-wave” from a given state qr, to the
+slower “1-wave” from a given state ql (see Fig. 3.1 (a); the subscripts “r” and “l”
+mean right and left respectively). In order to determine the path that connects qr
+to ql in the state space (bz −by space, in this case), the Hugoniot locus that connects
+ql or qr to a possible asymptotic state by shock waves needs to be calculated, as
+do the integral curves for possible rarefaction waves (see, for example, [61]). The
+Hugoniot locus in state space is a curve formed by allowing one of the parameters
+in the standard Rankine-Hugoniot jump condition to vary. The integral curve is
+formed by following the eigenvector from a given state in state space.
+In order to proceed we further assume a gyrotropic energy closure, δε = δε(bt),
+70
+
+which allows us to write
+rSL = 1
+bt
+
+
+bz
+by
+
+
+rI = 1
+bt
+
+
+by
+−bz
+
+
+λSL −λI = 2αb2
+t + Ωδεbtbt
+(3.12)
+The Hugoniot locus and integral curves of the intermediate mode are identical in
+our system. This is also the case for the slow mode (we perform the calculation
+in Appendix A.3). For a given state, qr = bt0 = (bz0, 0), the Hugoniot locus and
+integral curve of the slow mode are
+by = 0
+(3.13)
+which is in the radial direction in state space. This direction implies that the slow
+shock is coplanar, even in the presence of temperature anisotropy, just as is the case
+for its counterpart in full anisotropic MHD [14]. In the isotropic case, this curve
+forms a slow shock if the path is toward the origin, and a slow rarefaction if the
+path is away from the origin. For the intermediate mode, the Hugoniot locus and
+integral curve are
+b2
+y = b2
+z0 −b2
+z
+(3.14)
+which is a circle in state space. Note that even though we can calculate the Hugoniot
+locus and integral curve for the intermediate mode, the solution is the same as for
+a ﬁnite amplitude intermediate mode that does not steepen into a shock or spread
+into a rarefaction.
+The state qr can connect to ql = (0, 0) by following the Hugoniot locus of a
+slow mode that starts from qr, as shown in Fig. 3.1(b). In isotropic MHD this forms a
+switch-oﬀslow shock. However, a strong enough temperature anisotropy introduces
+71
+
+Figure 3.1: Panel (a): An initial discontinuity between qr and ql results
+in two waves, the “1-wave” and “2-wave”, that propagate in the η direc-
+tion along time τ. The middle state qm needs to be determined; Panel
+(b): The state space plot in the (bz, by) plane. The value qr = (bz0, 0)
+is chosen since there is no out-of-plane By upstream of the slow shocks
+in chapter 2. qr straightly connects to ql and forms a switch-oﬀslow
+shock; Panel (c): In order to connect qr to ql, it is necessary to cross the
+degeneracy band into the reversal region, which could cause the path to
+rotate at qm.
+72
+
+new degeneracy points (which occur where λSL −λI = 0) when 2αbt + Ωδεbt = 0,
+other than the traditional degeneracy point at bt = 0. These points form a band
+circling the origin as shown in Fig. 3.1(c). Inside the band, the intermediate mode
+is slower than the slow mode. Physically, this implies that a rotational intermediate
+mode can arise downstream of a slow mode, something which is not allowed in a
+Riemann problem in isotropic MHD. This eﬀect is realized when the path along the
+Hugoniot locus (−rSL direction) of the slow mode from qr switches to the solution
+of the intermediate mode (circular direction) somewhere (qm) inside the degeneracy
+band.
+This behavior can explain the morphological diﬀerences between the shock
+simulations in the cases θBN = 30◦, 45◦and those for θBN = 60◦, 75◦, 83◦of Fig. 2.6.
+The latter has an extra transition to the rotational direction that is similar to the
+path in Fig. 3.1(c). We now look for a similar eﬀect in state space and a way of
+determining qm in a more detailed analytical model.
+3.5
+An Energy Closure based on Counter-Streaming Ions
+In order to close the ADNLSB equations, we need a energy closure ε(bt).
+The modeling of the energy closure for a collisionless plasma has historically been
+diﬃcult. The Chew-Goldberger-Low (CGL) condition [16] is one choice, but it does
+not work well when streaming ions are present. Since we are here just trying to
+qualitatively demonstrate the underlying physics, we will assume that we have a
+73
+
+Figure 3.2: The ε distribution vs. 1/B2 for the cases θBN = 30◦(yellow),
+45◦(magenta), 52◦(green), 60◦(blue), 75◦(red) and 83◦(black) from
+Fig. 2.6.
+The dashed line has slope -0.5.
+In comparison, the dia-
+mond curve is the theoretical prediction with the CGL condition for
+the θBN = 75◦case.
+ε(bt), where ε and |B| are simply related by
+ε = c1 −c2
+B2
+(3.15)
+with positive constants c1 and c2 and the condition c1−c2/B2
+0 = ε0 is imposed. This
+functional form is motivated by the nearly constant parallel pressure maintained by
+free-streaming ions (c2 ∼P∥).
+Although Eq. (3.15) is strictly empirical, results
+from PIC simulations (see Fig. 3.2) suggest that c2 = 0.5 provides a reasonable ﬁrst
+approximation and will be used in the following calculations.
+We take the variation,
+δε = ε −ε0 ∼
+c2
+B2
+xb4δ(b2
+t) =
+c2
+B2
+xb4(b2
+t −b2
+t0)
+(3.16)
+where b2 = 1 + b2
+t.
+This parameterization will be valid whenever δε(bt) ≪ε0.
+74
+
+Therefore, an eﬀective nonlinearity in Eq. (3.1) can be written as,
+αeﬀ(bt) = α + Ωc2
+B2
+xb4
+(3.17)
+The most important conclusions in the remainder of this work do not depend on
+the details of the closure, but only that ε decreases as |B| decreases. Note that
+Ω∼1/2ε0 is mostly positive in the limit in which we are interested. This fact will
+be used in the following section.
+3.6
+The Pseudo-Potential: Looking for a Stationary Solution
+3.6.1
+The Formation of Compound SS/RD Waves and SS/IS Waves
+In order to determine both where the path in the state space of Fig. 3.1(c)
+will turn to the intermediate rotation and the nontrivial coupling of the slow and
+intermediate modes when temperature anisotropies are present, we construct the
+pseudo-potential of a stationary solution. We will look for a equation that possesses
+traveling stationary waves, by substituting bt = bt[ξ(η −VSτ)] (where VS is the
+speed of the stationary wave observed in the upstream intermediate frame) into
+Eq. (3.1) and integrating over ξ once. We obtain
+R∂ξbt−
+1
+2√ε0
+di∂ξ(ˆx×bt) = −VS(bt−bt0)+αeﬀ(bt)bt(b2
+t −b2
+t0) ≡−F ≡∂btΨ. (3.18)
+In this formulation we can treat bt as a spatial coordinate, and ξ as time. The
+terms on the LHS of Eq. (3.18) behave analogously to, respectively, a frictional
+force and a Coriolis force with rotational frequency di/√ε0 and rotational axis ˆx.
+75
+
+A pseudo-potential Ψ that characterizes the nonlinearity is uniquely deﬁned be-
+cause ∂Fz/∂by = ∂Fy/∂bz. We are only interested in the small VS limit, because
+the upstream values with subscript “0” are expected to be the upstream values of
+a switch-oﬀslow shock in ideal isotropic MHD, which propagates at the upstream
+intermediate speed. The anisotropy in our PIC simulations does not seem to signif-
+icantly change this behavior as shown in chapter 2.
+Calculating the pseudo-work done on the pseudo-particle,
+R
+[Eq.(3.18)]·∂ξbtdξ,
+we obtain
+Ψ|down
+up
+= R
+Z down
+up
+(∂ξbt)2dξ < 0
+(3.19)
+Note that from upstream to downstream is in the negative ξ direction. The pseudo-
+particle will move to a lower potential, while its total energy is dissipated by the
+resistivity and the rate of the drop depends on the strength of the resistivity. Ken-
+nel et al. [52] have shown that when pseudo-particles move toward lower pseudo-
+potentials, the entropy increases and so the resulting shock is admissible. Note that
+the Coriolis-like force does not do work. It only drives rotation of the pseudo-particle
+on the iso-surface of the pseudo-potential and hence causes stable nodes to become
+stable spiral nodes and unstable nodes to become unstable spiral nodes, thus leading
+to the formation of dispersive wavetrains [40, 121]. We will neglect its eﬀect in the
+following discussion.
+The pseudo-potential is shown in Fig. 3.3(a) for the parameters θ0 = 42◦,
+β0 = 1, ε0 = 1, c2 = 0.5 and VS = 0. The temperature anisotropy has turned the
+origin from a local minimum of the pseudo-potential in the isotropic MHD model to
+76
+
+Figure 3.3: Panel (a): A pseudo-potential Ψ with VS = 0. Upstream
+(point qr), θ0 = 42◦, β0 = 1, ε0 = 1, c2 = 0.5 and we choose Ψ(qr) = 0.
+Since the transition occurs within the radius bt = bz0, we set Ψ = 0
+for bt > bz0 for a better visualization. The potential for negative By is
+mirror symmetric to the part shown here; Panel (b): ε(bt); Panel (c):
+Cuts of Ψ, Fz, and αeﬀalong the Bz axis with By = 0; Panel (d): λI and
+λSL along the Bz axis with By = 0. The vertical axis measures speed
+(normalized to CAn). “D” stands for degeneracy. The red area above VS
+(zero here) equals the red area below VS, and the same rule applies to
+the blue area.
+77
+
+a local maximum. We term this the “reversal behavior”. A pseudo-particle initially
+at point qr will slide down the hill in the slow mode eigen-direction, and then follow
+the circular valley in the intermediate eigen-direction. Without the reversal behavior
+(e.g., in isotropic MHD) the pseudo-particle will slide down to the origin and form
+a switch-oﬀslow shock. The trajectory of the pseudo-particle can also be calculated
+by numerically integrating Eq. (3.18) with respect to ξ. In (b) the variation of the
+temperature anisotropy is shown. Similar reversal behaviors can be found in fully
+anisotropic MHD with the energy closure used here, or with the CGL closure (see
+Appendix A.4.1).
+In Fig. 3.3 (c), we plot a cut of the pseudo-force, Fz, eﬀective αeﬀand the
+pseudo-potential Ψ along the bz axis (by = 0), which is the eigen-direction of a slow
+mode beginning at qr = (bz0, 0). Here
+Fz = −αeﬀ(bz)bz(b2
+z −b2
+z0) + VS(bz −bz0).
+(3.20)
+It is clear that Ψmin occurs at Fz = 0 in Fig. 3.3(c), since Ψ is constructed by
+integrating the pseudo-force F. In Fig. 3.3 (d) we plot cuts of the characteristics of
+the slow and intermediate modes along the bz axis.
+λSL = α(3b2
+z −b2
+z0) + Ωc2
+B2
+x
+ 1
+b4 −4b2
+z
+b6
+
+(b2
+z −b2
+z0) + 2b2
+z
+b4
+
+(3.21)
+λI = αeﬀ(bz)(b2
+z −b2
+z0)
+(3.22)
+The temperature anisotropy has changed the structure of these characteristics. As
+a result, there are new degeneracy points (λSL = λI) between slow and intermediate
+waves such as the point “D”. The slow characteristic shows extra nonconvexity
+78
+
+points, where no steepening and spreading occurs (i.e., ∇qλSL(q) · rSL(q) = 0),
+such as the point a (the local maximum of λSL). This is clearer when we compare
+the slow characteristic here to that in the isotropic case shown in Fig. A.2, where
+bt = 0 is the only degeneracy point and the nonconvexity point of the slow mode.
+In order to identify the nonlinear waves determined by the route of the pseudo-
+particle, we apply the equal-area rule, which tells how shocks are steepened from
+characteristics. The equal-area rule (see Appendix A.5 for more details) applied
+to λSL shows that the sliding route (point qr to qm) forms a slow shock. Since
+∇qλSL(q) · rSL(q) < 0 therefore λSL|qm > λSL|qr, and thus the slow mode will
+steepen until the red area above the horizontal line VS = 0 equals the red area
+below VS = 0. The slow shock transition immediately connects to the intermediate
+mode (point qm to b, which is also from the equal-area rule on λSL) in the valley.
+The fact that both the upstream (point qm) and downstream (point b) travel at
+the local λI makes the intermediate discontinuity a RD. By comparing (c) and (d),
+we note that the potential minimum is exactly the location of qm as expected and
+it is below the degeneracy point (bz|D > bz|qm). This fact is consistent with the
+comment in section 3.4, which predicts that qm will be inside the degeneracy band.
+The horizontal lines qr −qm and qm −b measure the propagation speed of the SS
+and the RD, which in this case are both zero in the upstream intermediate frame.
+They therefore form a compound SS/RD wave. The downstream of the slow shock
+(point qm) is not able to connect to the slow rarefaction (SR) wave (point a) and
+thus not able to form a compound SS/SR, since the rarefaction is faster than the
+shock itself. This model gives an theoretical explanation for the possible satellite
+79
+
+Figure 3.4: Same format as Fig. 3.3 but with VS = 0.015 ≳0.
+observations of compound SS/RD [115, 114], and the “compound SS/RD/SS waves”
+seen in hybrid simulations [59].
+When VS ≳0 the potential tilts down in the negative bz direction (see Fig. 3.4).
+In this case, the slow shock (point qr to qm in Fig. 3.4(d)) with shock speed VS is
+connected by an intermediate shock (IS) (point qm to b) with shock speed VS,
+whose upstream is super-intermediate (VS > λI|qm) while the downstream is sub-
+intermediate (VS < λI|b).
+This forms a compound SS/IS wave.
+Note that the
+intermediate shock is not steepened from the intermediate mode (which is consistent
+with the discussion in Sec. 3.4), but is steepened from the slow mode. The slow shock
+is abnormal with both upstream (point qr) and downstream (point qm) being super-
+intermediate. Karimabadi et al. [50] call a similar kind of slow shock an anomalous
+slow shock. When VS ≲0 the potential tilts up in the negative bz direction and
+80
+
+there is no extra transition at the SS downstream, since Ψ(b) > Ψ(qm) in this case
+and is therefore not accessible.
+These conclusions are independent of the details of ε(bt), but only require
+the reversal behavior somewhere downstream of the slow shock. This fact can be
+inferred from a simple relation: VS −λI(bz) = (bz0/bz)VS for bz = bz|qm or bz|b,
+regardless of the detail of ε(bt) (from Eq. (3.20) and (3.22)). When VS = 0, this
+relation ensures that the SS can always connect to a RD since VS −λI = 0 at both
+points qm and b. When VS ≳0, the SS can always connect to an IS since VS −λI
+is positive (super-intermediate) at qm and negative (sub-intermediate) at b. We
+therefore conclude that the abnormal transitions of magnetic ﬁeld structures seen
+in the PIC simulations of chapter 2 are most likely the transitions from the SS to
+the RD in a compound SS/RD wave or the SS to the IS in an SS/IS wave. We can
+hardly distinguish between these two compound waves in our PIC simulation, since
+VS is small and the time-dependent dynamics add uncertainties in measuring the
+exact value. We focus on further analyzing the compound SS/RD wave.
+3.6.2
+The Signiﬁcance of ε = 0.25
+For SS/RD waves (VS = 0), the stationary points along bz,s are the roots of
+Fz = 0,
+αeﬀ(bz,s)bz,s(b2
+z,s −b2
+z0) = 0
+(3.23)
+Here the subscript “s” represents “stationary”. We have three traditional stationary
+points, bz,s = bz0 (point qr), −bz0 and 0, as well as a new stationary point due to the
+81
+
+−1
+−0.5
+0
+0.5
+1
+0
+0.5
+1
+−0.1
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+qr
+Bz
+ε0 < 0.25
+By
+Ψ
+Figure 3.5: The pseudo-potential with ε0 = 0.24 < 0.25, while other
+parameters are the same as Fig. 3.3.
+temperature anisotropy, bz,m (the transition point qm) determined by αeﬀ(bz,m) = 0.
+The ﬁxed-point analysis of the ﬁrst three points in isotropic ﬂuid theory can be
+found in the literature [52, 121, 39, 40].
+As shown in Fig. 3.5, there is no slow mode transition if
+ε0 < 1
+4 = 0.25
+(3.24)
+(note that this relation is independent of θBN and β), which occurs when the non-
+linearity α of Eq. (3.1) changes sign from α < 0 to α > 0.
+A positive α will
+result in a positive αeﬀin Eq. (3.17), and therefore no solution for bz,m. Only ro-
+tation of the magnetic ﬁeld is thus allowed. If ε0 > 0.25, we can further show that
+ε0 ≥εm(≡ε|qm) ≥0.25 is always true for a slow shock transition from ε0 to εm
+in this compound wave by the full jump conditions of anisotropic-MHD (Appendix
+A.4.2). Therefore, the nonlinear ﬂuid theory provides a lower bound of εm ≥0.25
+at the SS to RD transition inside these compound waves, regardless of the details
+82
+
+of ε(bt). In other words, the downstream magnetic ﬁeld cannot exhibit switch-oﬀ
+behavior if the ﬁrehose-sense temperature anisotropy is strong enough. This fact
+explains the non-switch-oﬀslow shocks often seen in kinetic simulations discussed
+in Sec. 1.3.3 [71] and satellite crossings discussed in Sec. 1.3.2 [100]. Once it tran-
+sitions to the intermediate mode, a gyrotropic ε(bt) will stay close to εm, since the
+intermediate-rotation nearly preserves the magnitude of the B ﬁeld and therefore ε.
+Note the assumption of gyrotropic ε(bt) is expected to be valid only in length scale
+larger than local ion inertial length and ion gyro-radius.
+In these demonstrations we use shocks with moderate parameters, such as
+θBN = 42◦and β0 = 1. In general, larger θBN, β0, and smaller ε0 will make the ratio
+|Ω|/|α| larger, and therefore generate a stronger reversal tendency.
+An analysis
+with full anisotropic MHD (Appendix A.4) should be used for strong slow shock
+transitions, due to the limits of the ADNLSB, although the underlying physical
+picture will be similar.
+3.7
+Toward the Critical ε = 0.25: Time-Dependent Dynamics
+The initial conditions that characterize the exhaust of anti-parallel reconnec-
+tion (initial by = 0) require bt = 0 at the symmetry line at later time.
+This
+eventually forces the pseudo-particle to climb up the potential hill to the local max-
+imum (bz = 0, by = 0), which implies an intrinsic time-dependent process at the
+symmetry line since Eq. (3.18) does not yield such a solution. Meanwhile, the fact
+that bt needs to go to zero at the symmetry line provides a spatial modulation on
+83
+
+the amplitude of the rotational intermediate mode. Note that the transition point
+from SS to RD in compound SS/RD waves could potentially induce modulation too.
+As suggested in Sec. 2.6, a spatially modulated rotational wave tends to break into
+di-scale dispersive waves, which can make the rotational component of the transition
+very turbulent.
+As pointed out in Sec. 3.6.2, the nonlinear ﬂuid theory of the time-independent
+stationary solutions only provides a lower bound εm > 0.25 for the transition point
+inside these compound SS/RD waves. Counter-streaming ions, by raising P∥, push
+εm lower. Once εm is lower than 0.25, the magnetic ﬁeld rotates, generates di-scale
+waves, and scatters P∥into P⊥. This raises εm, changing the functional form of
+δε and driving it toward 0, which self-consistently results in a transition at the
+potential minimum where αeﬀ= α = 0, and thus ε = 0.25. This argument explains
+the ε = 0.25 plateau observed in the PIC simulations for diﬀerent shock angles (see
+Fig. 2.8). With δε = 0, this point is exactly the degenerate point of the slow and
+intermediate modes.
+3.8
+The Supporting Evidence from Numerical Experiments
+The evidence for a slow mode connecting to rotational waves can be seen in
+the PIC simulations that are discussed in detail in chapter 2. In previous kinetic
+simulations, the downstream rotational waves were often identiﬁed as slow dispersive
+wavetrains arising from, for instance, the second term in the RHS of Eq. (3.1). Here
+we present further evidence, in addition to the numerical evidence that ε = 0.25, to
+84
+
+Figure 3.6: Results of PIC simulations (runs f, g and h of chapter 2).
+Row (a): A case with θBN = 75◦, β0 = 0.4 and initial width wi = 1di
+at time 200/Ωci. ε is shown on the left, diﬀerent magnetic components
+in the middle, Bz-By hodogram on the right; Row (b): A similar case
+with a wider initial width wi = 10di at time 450/Ωci; Row (c): A similar
+case to (a), but with a weak guide ﬁeld By0 = 0.2B0 at time 200/Ωci.
+The dotted curves in the center column are the predicted Bz magnitudes
+and positions of switch-oﬀslow shocks (SSS) or rotational discontinuities
+(RD) from isotropic MHD theory [65].
+85
+
+support the idea that the downstream rotational mode is tied to the intermediate
+mode. Fig. 3.6 shows the results from three PIC simulations that were designed to
+explore the structure of reconnection exhausts in the normal direction. The format
+is the same as for Fig. 2.6, with the ﬁrst column showing ε, the second column the
+magnetic ﬁeld components, and the third column a hodogram of the ﬁelds. The
+dashed curves in the second column (the predicted Bz by ideal isotropic MHD [65])
+indicate that a pair of switch-oﬀslow shocks or a pair of rotational discontinuities
+will propagate out from the center. All three cases show the correlation between
+ε = 0.25 and the transition from coplanar to non-coplanr rotation of the downstream
+magnetic ﬁelds. The hodograms are readily comparable to the state space plots such
+as Fig. 3.1 (c). In Fig. 3.6(a), the downstream region of a slow shock shows a high
+wavenumber (∼6di) left-handed (LH) polarized rotational wave, which is diﬃcult to
+distinguish from the predicted downstream ion inertial scale dispersive slow mode
+wavetrain [17].
+Fig. 3.6(b) shows results from a simulation with a larger initial
+current sheet width and exhibits a longer wavelength (∼30di) LH rotational wave
+which can be identiﬁed as an intermediate mode The intermediate mode breaks into
+smaller ion inertial scale waves, which have been identiﬁed as dispersive waves in
+Sec. 2.6. By comparing (a) and (b), we note that the downstream primary rotational
+wave tends to maintain its spatial scale as an intermediate mode with non-steepening
+and non-spreading properties. Another way to distinguish the dispersive behavior
+from the non-dispersive rotation is by including a weak guide ﬁeld. In Fig. 3.6(c),
+the front of the rotational downstream wave turns into a well-deﬁned RD when a
+weak guide ﬁeld is included. Its amplitude is about the same as that of the large
+86
+
+amplitude rotational waves in (a). Most importantly, there is a clear slow shock
+ahead of the RD. Because the symmetry of the initial condition is broken by the
+guide ﬁeld, the downstream RD does not need to end at by = 0; instead it ends
+inside the potential valley at bt = (0, bz,m) (see the hodogram of (c)), as expected.
+3.9
+Conclusion and Discussion
+The existence of compound SS/RD, SS/IS waves arising from ﬁrehose-sense
+and |B|-correlated ε (temperature anisotropies) are theoretically demonstrated by
+analyzing the anisotropy-caused reversal of a pseudo-potential. The pseudo-potential
+is known to characterize the nonlinearity of hyperbolic wave equations. Extra de-
+generacy points between slow and intermediate modes as well as extra non-convexity
+points in the slow characteristics are introduced by the temperature anisotropy. The
+slow shock portion of a compound SS/IS wave is an anomalous slow shock with both
+up and downstream being super-intermediate. The nonlinear ﬂuid theory provides
+a lower bound of ε = 0.25 for the SS to RD transition, regardless of the details
+of the energy closure ε(bt). The wave generation from the rotational intermediate
+mode discussed here and in Sec. 2.6 helps keep ε = 0.25. This explains the critical
+anisotropy plateau observed in the oblique slow shock PIC simulations documented
+in chapter 2. The critical ε value 0.25 is calculated from the degree of freedom of
+monatomic plasmas. A general expression of this value is (6 −Dfree)/(6 + 2Dfree)
+where the degree of freedom Dfree = 3 for monatomic plasmas, and Dfree = 5 for
+diatomic plasmas. This study also suggests that it is a pair of compound SS/RD
+87
+
+εup
+εdown
+(a)
+0
+0.2
+0.4
+0.6
+0.8
+1
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+εup
+εdown
+(b)
+0
+0.2
+0.4
+0.6
+0.8
+1
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+Figure 3.7: In panel (a), the possible jumps of ε of an anisotropic-RD,
+are constrained by requiring positive P⊥d, P∥d and B2
+d. The red region is
+forbidden. In panel (b), the plot is further constrained by the require-
+ment that entropy increases (with an entropy from the H-theorem deﬁned
+as ln(P 1/3
+∥
+P 2/3
+⊥/ρ5/3) for a bi-Maxwellian distribution). The constraint
+of increasing entropy has eliminated the region above the diagonal line
+when εup > 0.25, and the region below the diagonal line when εup < 0.25.
+Here β0 = 1; a higher β0 would collapse the valid region into a narrower
+region along the diagonal line.
+waves that bound the antiparallel reconnection outﬂow, instead of a pair of switch-
+oﬀslow shocks as in Petschek’s reconnection model. In previous hybrid and PIC
+simulations, the downstream sharp rotational waves were often identiﬁed as slow
+dispersive waves of a switch-oﬀslow shock. Instead, we propose that they are the
+intermediate portion of the compound SS/RD wave. The slow shock portion be-
+comes less steep due to the time-of-ﬂight eﬀect of backstreaming ions.
+The singularity of ε = 0.25 was also noticed by P. D. Hudson (1971) [46] in
+his study on the anisotropic rotational discontinuity (A-RD). Unlike the RD in a
+compound SS/RD wave, an A-RD changes ε, magnetic ﬁeld strength and thermal
+states. Through the constraint of the positivity of P∥, P⊥and B2, he derived all
+88
+
+of the possible jumps (independent of the energy closure used) of the temperature
+anisotropy across an A-RD, as shown in Fig. 3.7(a). The ADNLSB inherits most of
+the hyperbolic properties (such as the extra nonconvexity and degeneracy points)
+of anisotropic MHD and also the singular behavior, ∆ε = εup −εdown →0 when
+ε →0.25. We can tell this by searching for stationary solutions where the pseudo-
+force Fz = 0 (the general form of Eq. (3.20)). Again,
+VS(bz −bz0) −αbz(b2
+z −b2
+z0) −Ωbz(ε −ε0) = 0
+(3.25)
+A stationary A-RD exists at ε0 = 0.25 (i.e., VS = 0, α = 0 and bz ̸= 0), only if we
+require ε −ε0 = 0. An arbitrary magnetic ﬁeld magnitude and rotation are then
+allowed, as shown by Hudson. After further constraining the possible jumps by
+requiring that entropy increase, the solution above the diagonal line in Fig. 3.7(b) is
+eliminated when εup > 0.25 while the solution below the diagonal line is eliminated
+when εup < 0.25. He also noticed that the jump behavior of an A-RD for εup > 0.25
+is slow-mode-like (i.e. δn and δB are anti-correlated), while it is fast-mode-like (i.e.
+δn and δB are correlated) for εup < 0.25. This directly relates to the fact that the
+jump of an A-RD equals the jump of the compound SS/RD wave (see Appendix
+A.4.3), and a slow mode turns fast-mode-like when α > 0 [52].
+89
+
+Chapter 4
+Summary
+4.1
+Summary of Results
+The physics of plasmas has played increasingly important role in modern space
+physics and astronomy. The topological change of magnetic ﬁelds and the plasma
+heating caused by reconnection and associated shocks play an important role in
+many macro-scale plasma systems.
+Therefore a better understanding of the de-
+tailed kinetic behavior of these processes can make a profound contribution to these
+ﬁelds. Fast magnetic reconnection takes the form of a Petschek-like conﬁguration
+with opened reconnection nozzles. The well-accepted Petschek model predicts the
+existence of a pair of switch-of-slow shocks that bound the reconnection exhausts
+and help convert magnetic energy into plasma kinetic and thermal energy. However,
+a self-generated ﬁrehose-sense temperature anisotropy caused by kinetic streaming
+ions slows the propagation of intermediate modes and speeds up the propagation of
+slow shocks. As a consequence, a rotational intermediate mode can arise downstream
+of a slow shock. The nontrivial coupling of these modes forms a single nonlinear
+wave that is a mixture of both slow and intermediate modes. We call it a compound
+SS/RD wave. Under some circumstances, a compound SS/IS can also form. When
+the ﬁrehose stability parameter ε ≡1 −µ0(P∥−P⊥)/B2 reaches the critical value
+of 0.25, the slow-to-intermediate transition inside these compound waves occurs, a
+90
+
+transition closely associated with the degenerate behavior of these two characteristic
+MHD modes.
+4.2
+Implications and Unsolved Issues
+The results of this thesis provide a theoretical explanation of the observations
+of “Double Discontinuity” by Whang et al. [115, 114, 113] in GEOTAIL and WIND
+data.
+In Fig. 4.1, Whang shows the results of an in-situ observation with high
+temporal resolution (62.5 millisecond compared to a standard 3-12 seconds) of the
+boundary of the tail lobe (on the left) and the plasma sheet (on the right) on
+February 14, 1994. Here the “S” on the top denotes a suspected slow shock (SS)
+and “R” denotes a suspected rotational discontinuity (RD). A major decrease in the
+total magnetic ﬁeld (B) and the tangential magnetic ﬁeld (Bt) are seen, while the
+electron and ion densities (Ne and Ni) increase. These transitions ﬁt the proﬁles of a
+SS. φ measures the rotation angle of the tangential magnetic ﬁeld with the rotation
+axis pointing in the normal direction (ˆx). Note the large rotation in the tangential
+magnetic ﬁeld while the total magnetic ﬁeld remains constant downstream of the SS,
+which is the signature of a RD. These “Double Discontinuities” strongly resemble
+the compound SS/RD waves theoretically identiﬁed in this thesis. The existence
+of these compound waves also potentially explains the in-situ observations by Seon
+(1996). As mentioned in Sec. 1.3.2, the non-switch-oﬀslow shock is likely to be
+followed by a large-amplitude and long-wavelength intermediate rotational wave that
+radiates ion-inertial scale dispersive waves. We see the similarity in the structure of
+91
+
+Figure 4.1: An observation of “Double Discontinuity” at Earth’s mag-
+netotail by GEOTAIL on February 14, 1994 at XGSM = −54Re.
+(Reprinted with permission from Ref. [Whang, 2004].
+c⃝2004 by the
+European Geosciences Union)
+92
+
+the magnetic ﬁelds when we compare Fig. 2.9 to Fig. 1.9. A satellite mission that
+highly resolves both ε and the magnetic ﬁelds across the tail reconnection exhaust
+would help judge the validity of our theory.
+A larger PIC reconnection simulation with a reconnection outﬂow that reaches
+∼100di downstream from the X-line is shown in Fig. 4.2. The outﬂow length is
+about twice that of the simulation shown in Fig. 1.11. Panel (a) shows the out-
+of-plane current density, and vertical cuts coded with diﬀerent colors. The ﬁrehose
+stability parameter ε along each cut is plotted in panel (b). ε shows a clear tendency
+towards forming a plateau at ε = 0.25 in the farthest downstream cut. However,
+convincing evidence of the SS to RD transition in compound SS/RD waves requires
+even larger simulations.
+The compound wave also explains the “step-like” slow
+shocks seen in Lottermoser et al.’s large-scale hybrid reconnection simulation [71] as
+mentioned in Sec. 1.3.3. The smooth non-switch-oﬀtransition in the reconnecting
+magnetic ﬁeld component of kinetic simulations is the intermediate portion of the
+compound wave.
+Compared to slow shocks, fast shocks have been intensively studied (see, for
+instance, the review article [108]).
+The formation of shocklet and short, large-
+amplitude magnetic structures (SLAMs) in the upstream region of Earth’s quasi-
+parallel bow shock has been observed [72] and simulated [80, 97]. The formation
+mechanism of SLAMs could be similar to that of the turbulent waves observed at
+our simulations. In our slow shock simulations, the downstream rotational parent
+waves break into SLAMs-like structures, as in Fig. 2.9(b). Since the transition of the
+magnetic ﬁeld across the front in a fast shock is opposite to that in a slow shock, any
+93
+
+Figure 4.2: A larger PIC reconnection simulation shows a clearer ε ∼
+0.25 plateau at farther downstream. Panel (a) is the out-of-plane current
+density; Panel (b) are the distributions of ﬁrehose stability parameter ε
+along cuts (coded by colors) in (a).
+94
+
+SLAMs associated with a slow shock are expected to exist in the downstream region,
+especially since the downstream of a switch-oﬀslow shock is locally quasi-parallel.
+Other than the 1-D waves generated by the competition between the nonlinear
+steepening and the dispersion, we also observe 2-D turbulence that develops in the
+ﬁrehose unstable region of the reconnection outﬂow, and whose signatures are clear
+in the Jy component of Fig. 4.2, and the Jey and Bx components of Fig. 1.11.
+However, we are not able to deﬁnitively identify it as the ﬁrehose instability at this
+stage, because in this highly inhomogeneous plasma factors such as magnetic ﬁeld
+gradients or shear ﬂows could also potentially act as instability drivers.
+As to the question of the heating ability of these compound waves, we have
+not seen super-thermal particles other than Alfv´enic streaming ions in our shock
+simulations. However, it is still an open question whether particles could be ac-
+celerated by slow shock associated reconnection exhausts in larger 2-D systems via
+mechanisms recognized in fast shocks such as the 1st-order Fermi mechanism [7],
+diﬀusive shock acceleration (DSA) [60, 34], and those possible injection mechanisms
+for DSA such as shock-drift [24], or shock surﬁng [93]. In addition, Drake et al.
+(2009) [28] studied the pick-up process by the reconnection outﬂow which is also
+relevant to accelerating particles.
+This thesis work will help observers explain in-situ satellite data of anti-parallel
+reconnection, and help guide future satellite missions such as the Magnetospheric
+Multiscale Mission (MMS) and Solar Probe Plus. With a strong guide ﬁeld, even
+though streaming ions still persist, the ﬁrehose stability parameter ε will stay close
+to unity. We therefore expect the Riemann solution of Fig. 1.18 in isotropic MHD to
+95
+
+do a better job of explaining the overall wave structures of reconnection exhausts. In
+this case, a pair of rotational discontinuities will be responsible for switching oﬀthe
+downstream reconnecting magnetic ﬁeld, not a pair of switch-oﬀslow shocks. This
+fact has already been observed in kinetic simulations [66], and may help explain the
+structure of reconnection in the solar wind, where strong guide ﬁelds usually exist.
+96
+
+Appendix A
+Overview
+A.1
+From Anisotropic MHD to the Anisotropic DNLSB Equation
+From moment integrations of the Vlasov equation that neglect the oﬀ-diagonal
+components of the pressure tensor (the empirical validity of this approximation
+for our system is shown in Fig. 2.2(c)), we can write down the anisotropic MHD
+(AMHD) equations, as documented in Sec. 1.5 [14, 45]. The energy closure is unde-
+termined.
+In Lagrangian form,
+d
+dtρ + ρ∂xVx = 0,
+(A.1)
+ρ d
+dtVx + ∂xP + ∂x
+1
+3
+
+ε + 1
+2
+ B2
+t
+µ0
+
+−2
+3
+B2
+x
+µ0
+∂xε = 0,
+(A.2)
+ρ d
+dtVt −Bx
+µ0
+∂x(εBt) = 0,
+(A.3)
+d
+dtBt −Bx∂xVt + Bt∂xVx = ∂x(ηr∂xBt) −∂x
+ Bx
+µ0ne ˆx × ∂xBt
+
+,
+(A.4)
+d
+dtP −γP
+ρ
+d
+dtρ + (γ −1)
+1
+3(ε + 2)B2
+µ0
+−εB2
+x
+µ0
+−B2
+t
+µ0
+
+∂xVx
++(γ −1)(1 −ε)BxBt
+µ0
+· ∂xVt + (γ −1)∂xQx = 0,
+(A.5)
+where
+ε ≡1 −P∥−P⊥
+B2/µ0
+,
+P ≡P∥+ 2P⊥
+3
+.
+(A.6)
+γ = 5/3 or 7/5 for monatomic or diatomic plasma, respectively [38]. ε, P∥, P⊥, ρ,
+Vx, Vt, Bx, Bt, Qx and ηr are the temperature anisotropy factor, pressure parallel
+97
+
+to the local magnetic ﬁeld, pressure perpendicular to the local magnetic ﬁeld, mass
+density, velocity of the bulk ﬂow in the normal direction (ˆex), velocity of the bulk
+ﬂow in the tangential direction (y-z plane), normal component of the magnetic ﬁeld,
+tangential components of the magnetic ﬁeld, the heat ﬂux in the x-direction and
+the magnetic resistivity (assumed constant). The ﬁrst and the second term on the
+RHS of Eq. (A.4) are from the magnetic dissipation and the Hall term respectively.
+We follow the procedure of Kennel et al. [52]. We ignore the resistivity and
+dispersion terms in our derivation ﬁrst; they will be added back in the end. Using
+Lagrangian mass spatial coordinates,
+d
+dt →∂t,
+x′ ≡
+Z
+ρ
+ρ0
+dx,
+(A.7)
+and deﬁnitions U ≡ρ0/ρ, bT ≡Bt/Bx and C2
+An ≡B2
+x/(µ0ρ0), then Eq.(A.1) to
+(A.4) (without the resistivity and dispersion) become
+∂tU = ∂x′Vx,
+(A.8)
+∂tVx + ∂x′
+ P
+ρ0
++ 1
+3
+
+ε + 1
+2
+
+C2
+Anb2
+T
+
+−2
+3C2
+An∂x′ε = 0,
+(A.9)
+∂tVt −εC2
+An∂x′bT −C2
+AnbT∂x′ε = 0,
+(A.10)
+∂tbT + bT
+U ∂x′Vx −1
+U ∂x′Vt = 0.
+(A.11)
+Combined with Eq.(A.8) and (A.11), Eq.(A.5) becomes
+U
+ρ0
+∂tP = −
+γP
+ρ0
++ (γ −1)
+2
+3(1 −ε)C2
+An + 1
+3(ε −1)C2
+Anb2
+T
+
+∂tU
+−(γ −1)(1 −ε)C2
+AnbT∂t(UbT) −γ −1
+ρ0
+∂x′Qx.
+(A.12)
+By ∂x′(Eq.(A.9)), we obtain
+∂2
+t U + ∂2
+x′
+ P
+ρ0
++ 1
+3
+
+ε + 1
+2
+
+C2
+Anb2
+T
+
+−2
+3C2
+An∂2
+x′ε = 0.
+(A.13)
+98
+
+By ∂x′(Eq.(A.10))+∂t(U Eq.(A.11)), we obtain
+∂2
+t (UbT) −C2
+An∂2
+x′(εbT) = 0.
+(A.14)
+Jumping to the upstream (subscripted by “0”) intermediate frame in order to
+separate the slow and fast variations, we take
+τ ≡√ε0CAnt,
+η ≡x′ −√ε0CAnt,
+(A.15)
+with the approximation ∂τ ≪∂η to separate slow and fast variation. Then
+∂x′ = ∂η,
+∂t = −√ε0CAn(∂η −∂τ),
+∂2
+t = ε0C2
+An(∂2
+η −2∂η∂τ).
+(A.16)
+By substituting Eq.(A.16) into Eq.(A.12) and assuming δb2
+T ≪b2
+T0, δε ≪ε0, δU ≪
+U0 and δP ≪P0 (where δ means variation),
+R
+dη once, we obtain
+δP
+ρ0
+= −
+γP0
+ρ0
++ (γ −1)2
+3(1 −ε0)(1 + b2
+T0)C2
+An
+
+δU
+−1
+2(γ −1)(1 −ε0)C2
+Anδb2
+T +
+γ −1
+ρ0√ε0CAn
+δQx.
+(A.17)
+By substituting Eq.(A.16) into Eq.(A.13),
+R
+dη twice, then assuming δb2
+T ≪b2
+T0, we
+obtain
+ε0C2
+AnδU + δP
+ρ0
++ 1
+3C2
+An
+
+ε0 + 1
+2
+
+δb2
+T + 1
+3C2
+Anb2
+T0δε −2
+3C2
+Anδε = 0.
+(A.18)
+By substituting Eq.(A.16) into Eq.(A.14), assuming δU ≪U0, then
+R
+dη once, we
+obtain
+∂η(δUbT) −∂η
+δε
+ε0
+bT
+
+−2∂τbT = 0.
+(A.19)
+By combining Eq.(A.17),(A.18) and (A.19) and adding the resistivity and dispersion
+back, we ﬁnally arrive at,
+∂τbt+∂η[αbt(b2
+t −b2
+t0)+Ωbt(ε−ε0)+Λbt( ¯Qx−¯Qx0)] = ∂η(R∂ηbt)−
+1
+2√ε0
+di∂2
+η(ˆx×bt)
+(A.20)
+99
+
+with
+α ≡[(3γ −1)ε0 −(3γ −4)]C2
+An
+12[(ε0 −A)C2
+An −C2
+S]
+,
+Ω≡
+(b2
+t0 −2)C2
+An
+6[(ε0 −A)C2
+An −C2
+S] + 1
+2ε0
+,
+(A.21)
+Λ ≡
+(γ −1)C2
+An
+2√ε0[(ε0 −A)C2
+An −C2
+S],
+A ≡2
+3(γ −1)(1 −ε0)(1 + b2
+t0),
+(A.22)
+where C2
+S ≡γP0/ρ0, R ≡ηr/(2√ε0CAn), di ≡
+p
+mi/(µ0ne2) and ¯Qx ≡Qx/(ρ0C3
+An).
+In summary, the approximations used are:
+∂τ ≪∂η;
+δb2
+t ≪b2
+t0;
+δε ≪ε0;
+δρ ≪ρ0;
+δP ≪P0.
+(A.23)
+Since the heat ﬂux Qx is approximately proportional to ∇|B| (as pointed
+out in Fig. 2.2(a)), it should enter the source term on the RHS as −Λ∂2
+η|bt|. In
+plasmas with βn > 1, Λ is negative and hence the heat ﬂux helps shocks dissipate
+energy. We implicitly incorporate it into the resistivity R (as, for instance, is done
+for the shear and longitudinal viscosities discussed in [52]). We then arrive at the
+anisotropic DNLSB equation, Eq. (3.1). This equation can also be derived from
+regular reductive perturbation methods with a proper ordering scheme. For instance,
+a DNLS equation with the CGL condition and more corrections, including ﬁnite ion
+Larmor radius eﬀects and electron pressure, was derived using regular reductive
+perturbation methods [54].
+A.2
+Non-Steepening and Non-Spreading of the Intermediate Mode
+Beginning with the anisotropic MHD equations in Lagrangian form in Ap-
+pendix A.1, we neglect the dissipation and the Hall term on the RHS of Eq. (A.4).
+Then the simple wave solution can be obtained by substituting d/dt →−Cδ,
+100
+
+∂x →ˆxδ, where C is the wave speed and δ means variation. [48]
+−Cδρ + ρδVx = 0
+(A.24)
+−CρδVx + δP⊥−B2
+x
+µ0
+δε + Bz
+µ0
+δBz = 0
+(A.25)
+−CρδVz −εBx
+µ0
+δBz −BxBz
+µ0
+δε = 0
+(A.26)
+−CρδVy −εBx
+µ0
+δBy = 0
+(A.27)
+−CδBz + BzδVx −BxδVz = 0
+(A.28)
+−CδBy −BxδVy = 0
+(A.29)
+Eq. (A.27) and Eq. (A.29) give us the intermediate speed CI = √εBx/√µ0ρ.
+Combined with Eq. (A.24), the steepening tendency of an intermediate mode can
+then be expressed as,
+δ(CI + Vx) = CI
+2
+δρ
+ρ + δε
+ε
+
+(A.30)
+Using Eqs. (A.24), (A.25), (A.26) and (A.28), we get δ(CI +Vx) = 0. Therefore, the
+intermediate mode in anisotropic MHD does not steepen or spread, no matter what
+energy closure is used. It is linearly degenerate, as is its counterpart in isotropic
+MHD.
+A.3
+The Integral Curves and Hugoniot Locus
+To ﬁnd the integral curves, we follow the eigenvector of the slow mode to form
+a curve,
+dbz
+dζ = bz,
+dby
+dζ = by,
+(A.31)
+101
+
+where ζ is a dummy variable. The integral curve is by = (by0/bz0)bz.
+For the intermediate mode,
+dbz
+dζ = by,
+dby
+dζ = −bz.
+(A.32)
+Therefore, the integral curve is b2
+t = b2
+t0.
+As to the Hugoniot locus, we need to compute the shock speed S = (fi(q) −
+fi(q0))/(qi −q0i) where fi is the ﬂux of Eq. (3.6) and i = 1 or 2.
+S(bz −bz0) = αbz(b2
+t −b2
+t0) + Ωbzδε
+S(by −by0) = αby(b2
+t −b2
+t0) + Ωbyδε
+(A.33)
+These can be combined to give,
+(bz0by −by0bz)[α(b2
+t −b2
+t0) + Ωδε] = 0.
+(A.34)
+The ﬁrst root is the Hugoniot locus of the slow mode: by = (by0/bz0)bz. For ε(bt), so
+that δε ≃[∂(δε)/∂(b2
+t)](b2
+t −b2
+t0), the second root gives us the Hugoniot locus of the
+intermediate mode: b2
+t = b2
+t0. Although these results are the same as derived from
+the integral curves, this is not generally the case.
+A.4
+The Pseudo-Potential of Anisotropic MHD (AMHD)
+In the de Hoﬀmann-Teller frame, the jump conditions can be written as (fol-
+lowing Hau and Sonnerup’s procedure [39, 40]),
+[ρVx]0 = 0
+(A.35)
+
+ρV 2
+x + P + 1
+3
+
+ε + 1
+2
+ B2
+µ0
+−εB2
+x
+µ0
+0
+= 0
+(A.36)
+102
+
+
+ρVxVt −εBxBt
+µ0
+0
+= 0
+(A.37)
+1
+2ρV 2 +
+γ
+γ −1P + 1
+3(ε −1)B2
+µ0
+
+Vx −(ε −1)BxBt
+µ0
+· Vt −(ε −1)B2
+x
+µ0
+Vx
+0
+= 0
+(A.38)
+where we deﬁne a jump relation [Q]0 ≡Q0 −Q, with Q0 the upstream value and
+Q the value inside the transition region. γ = 5/3 or 7/5 for monatomic or diatomic
+plasma, respectively. From Eq. (A.35)-(A.38), we can derive
+A2
+x ≡
+V 2
+x
+B2
+x/(µ0ρ) = −b ±
+√
+b2 −4ac
+2a
+(A.39)
+where
+a =1 −γ −1
+2γ ,
+(A.40)
+b = −A2
+x0 −
+β0
+2 + 1
+3
+
+ε0 + 1
+2
+
+sec2θ0 + ε0 + 1
+3
+
+ε + 1
+2
+ B2
+B2
+x
+−ε + 2γ −2
+3γ
+(ε −1) −γ −1
+3γ (ε −1)B2
+t
+B2
+x
+,
+(A.41)
+c =γ −1
+2γ sec2θ0A4
+x0 +
+β0
+2 −2γ −2
+3γ
+(ε0 −1)
+
+sec2θ0A2
+x0
+−γ −1
+2γ
+
+(A2
+x0 −ε0)tanθ0 + ε Bt
+Bx
+2
++ γ −1
+γ
+(ε −1) Bt
+Bx
+
+(A2
+x0 −ε0)tanθ0 + ε Bt
+Bx
+
+(A.42)
+with cos θ0 ≡Bx/B0.
+The generalized Ohm’s law is
+E + V × B = ηrJ + 1
+ne(J × B),
+(A.43)
+where the ﬁrst and the second terms on the RHS are the magnetic dissipation and
+103
+
+the Hall term respectively. With the ﬁnal jump condition [Et]0 = 0, we obtain
+Ax0
+h0
+di0(1+h2)dBy
+dx = (A2
+x−ε)(By−hBz)+(A2
+x0−ε0)(hBz0−By0) ≡Fy,AMHD ≡∂ΨAMHD
+∂By
+(A.44)
+Ax0
+h0
+di0(1+h2)dBz
+dx = (A2
+x−ε)(Bz+hBy)−(A2
+x0−ε0)(hBy0+Bz0) ≡Fz,AMHD ≡∂ΨAMHD
+∂Bz
+(A.45)
+where h ≡Bx/neηr measures the ratio of the dispersion to the resistivity. The
+pseudo-potential ΨAMHD is uniquely deﬁned since ∂Fz,AMHD/∂By = ∂Fy,AMHD/∂Bz.
+A.4.1: Fig. A.1(a) shows the pseudo-potential of AMHD for the same pa-
+rameters as Fig. 3.3(a) (which was calculated based on the reduced ADNLSB for-
+mulation).
+If VS = 0 then A2
+x0 = ε0, and thus the potential minimum (where
+Fz,AMHD = 0) occurs at A2
+x = ε. This implies that in the shock frame (also the
+upstream intermediate frame), λI,AMHD = −Vx + CI = (−Ax + √ε)Bx/√µ0ρ = 0
+at the potential minimum. This is essentially the same point qm (where λI = 0) of
+Fig. 3.3(d) with ADNLSB. Fig. A.1(b) shows a similar reversal with the CGL clo-
+sure. We note that the CGL closure exhibits an even stronger tendency to reverse
+the pseudo-potential. In Fig. A.1(c), the pseudo-potential for θBN = 75◦, β0 = 0.4
+and c2 = 0.2 is shown, these parameters are more similar to those seen in our PIC
+simulation.
+A.4.2: Now we consider the jump conditions to an asymptotic downstream
+by neglecting the LHS and terms with h of Eqs. (A.44) and (A.45). The relation
+Bt,d/Bx = tanθ0(A2
+x0 −ε0)/(A2
+x,d −εd) can be derived where we label quantities
+Q →Qd (“d” for downstream).
+We can eventually invert A2
+x0 as a function of
+104
+
+Figure A.1: Results with fully anisotropic MHD. Panel (a) is the pseudo-
+potential Ψ with our closure, Eq. (3.15). Upstream (point qr), VS = 0,
+θ0 = 42◦, β0 = 1, ε0 = 1 and c2 = 0.5; Panel (b) is Ψ with the CGL
+closure. Upstream (point qr), VS = 0, θ0 = 42◦, β0 = 1 and ε0 = 1.5;
+Panel (c) is Ψ for VS = 0, θ0 = 75◦, β0 = 0.4, ε0 = 1, and c2 = 0.2
+with our closure; Panel (d) is the shock curve with upstream parameters
+θ0 = 42◦, β0 = 1 and ε0 = 1. In the green curve (εd = ε0 case), the
+portion from A-RD (anisotropic-RD) to SSS is the IS branch, from SSS
+to LS (linear slow mode) is the SS branch. Diﬀerent curves represent
+cases with diﬀerent εd of values 1, 0.95, 0.9, 0.85 (from outer curve to
+inner curve).
+Other than the A-RD, a new SS exists at (1,1) when
+εd < ε0. Both the IS and SS branches shrink toward the point (1,1) as
+εd decreases.
+105
+
+A2
+x,d from Eq. (A.39). The result is plotted in Fig. A.1(d) which shows possible
+shock solutions as functions of the downstream intermediate Mach number M 2
+I,d ≡
+V 2
+x,d/C2
+I,d = A2
+x,d/εd [50]. In the green curve (εd = ε0 case), the portion from A-RD
+(anisotropic-RD) to SSS is the IS branch, from SSS to LS (linear slow mode) is the
+SS branch. When εd < ε0, a new slow-shock transition from A2
+x0 = ε0 > 0.25 to
+A2
+x,d = εd is noted at the point (1,1). This new SS constitutes the slow shock portion
+of a compound SS/RD wave. For a given ε0, the smallest possible εd,min shrinks the
+SS and IS branches to the point (1,1). It can be shown that εd,min > 0.25 is always
+true for ε0 > 0.25. Therefore the existence of the new slow shock requires εd > 0.25.
+In other words, ε0 > εm(= εd) > 0.25 is always true for a SS/RD compound wave
+in full anisotropic MHD.
+A.4.3: From Fig. A.1(d) and further investigations, it can be shown that the
+anisotropic-RD(A-RD) at (1,1) has the same jump as that of the new SS at (1,1)
+plus a RD that does not change ε and thermal states. Therefore an A-RD and the
+corresponding compound SS/RD wave have the same jump relations.
+A.5
+The Equal-Area Rule and Intermediate Shocks
+The equal-area rule applies to conserved quantities in hyperbolic equations,
+which in our case is bz. From Eq. (3.6) and the general form of Eq. (3.20), we ﬁnd
+a simple relation between the pseudo-force and the ﬂux function,
+Fz|by=0 = −αbz(b2
+z−b2
+z0)−Ωbzδε(bz, by)+VS(bz−bz0) = −f1|by=0+VS(bz−bz0) (A.46)
+From Eq. (3.6) and Eq. (3.8), a simple relation between the slow characteristic
+106
+
+and the ﬂux function is
+λSL|by=0 = ∂f1
+∂bz
+
+by=0,
+(A.47)
+It is then easy to show that,
+Z bz
+bz0
+(λSL|by=0 −VS)dbz = −Fz|by=0
+(A.48)
+This indicates that a stationary point bz, where Fz = 0, will be located where
+the integral on the LHS is zero. This is called the equal-area rule. From this re-
+lation, with a given bz0 and bz, we can determine the shock speed VS that causes
+the integral to vanish. Or for a given bz0 and VS, we can determine the possible
+downstream state bz. We apply it to the following examples to demonstrate the for-
+mation of intermediate shocks (which have a super-intermediate to sub-intermediate
+transition) in isotropic MHD.
+When the upstream qr = (bz0, 0) is given and ﬁxed, we can vary ql = (bz, 0)
+to see the eﬀect on possible shock solutions.
+In Fig. A.2(a), when ql is chosen
+above bz = 0, a slow shock solution is found by determining a proper horizontal line
+(qr −ql; note that the vertical position measures the shock speed VS), which makes
+the red area below the line qr −ql equal the red area above. The shock speed is
+slower than the upstream intermediate speed (black horizontal line across 0), the
+upstream (point qr) is super-slow and sub-intermediate (VS > λSL|qr, VS < λI|qr.
+Since λ is equivalent to C −u where C is the phase speed and u is the bulk ﬂow
+speed measured in upstream intermediate frame, VS ≷λ implies that the Mach
+number measured in shock frame M ≡(VS + u)/C ≷1) and the downstream (point
+ql) is sub-slow (VS < λSL|ql). Traditionally in isotropic MHD, the super-fast state is
+107
+
+−1
+−0.8
+−0.6
+−0.4
+−0.2
+0
+0.2
+0.4
+0.6
+−0.6
+−0.4
+−0.2
+0
+0.2
+Bz
+velocity 
+(c) 2−3 IS
+λSL
+λI
+qr
+ql
+−1
+−0.8
+−0.6
+−0.4
+−0.2
+0
+0.2
+0.4
+0.6
+−0.6
+−0.4
+−0.2
+0
+0.2
+Bz
+velocity 
+(d) 2−3=4 IS
+λSL
+λI
+qr
+qm
+ql
+−1
+−0.8
+−0.6
+−0.4
+−0.2
+0
+0.2
+0.4
+0.6
+−0.6
+−0.4
+−0.2
+0
+0.2
+Bz
+velocity 
+(a) 3−4 SS
+λSL
+λI
+qr
+ql
+−1
+−0.8
+−0.6
+−0.4
+−0.2
+0
+0.2
+0.4
+0.6
+−0.6
+−0.4
+−0.2
+0
+0.2
+Bz
+velocity 
+(b) 2−4 IS
+λSL
+λI
+qr
+ql
+Figure A.2: Application of equal-area rules with cases in ideal (isotropic)
+MHD. The λI and λSL along bz are measured in the upstream intermedi-
+ate frame with upstream (point qr) parameters, θ0 = 42◦, β0 = 1, ε0 = 1.
+The vertical axis measures speed (normalized to CAn). Once the ql is
+chosen, the shock speed VS (measured by the red horizontal line) can be
+determined by equating area (between the λSL and the red line) above
+the red line to area below the red line. This rule results in shock speeds
+(a) VS = −0.1; (b) VS = 0.05; (c) VS = 0.05; (d) VS = 0.0958.
+108
+
+termed number 1, sub-fast and super-intermediate is 2, sub-intermediate and super-
+slow is 3, and sub-slow is 4. Therefore a slow shock is also called a 3-4 SS (as
+mentioned in Sec. 1.4.1).
+In Fig. A.2 (b), if ql is chosen below the point bz = 0, a 2-4 intermediate shock
+(qr −ql) is formed, with upstream being super-intermediate and downstream being
+sub-intermediate and sub-slow. In Fig. A.2(c), with the same shock speed, a 2-3 IS
+transitions to a ql with a more negative value is also possible. Note that the jump
+cross a compound 2-3 IS/ 3-4 SS (from this ql to the ql in (b) ) equals to that of the
+2-4 IS in (b). In Fig. A.2(d), with the same ql of Fig. A.2(c), a 2-3=4 IS (qr −qm)
+with the maximum IS speed could be formed and attached by a slow rarefaction
+(qm −ql). This is a compound IS/SR wave, with bz|qm = −bz0/2 which can also be
+determined by λSL(bz|qm) = [f1(bz0)−f1(bz|qm)]/(bz0 −bz|qm), as shown by Brio and
+Wu [12]. Similar arguments can be made in a system with fast and intermediate
+modes.
+Therefore, an intermediate shock is not directly associated with an interme-
+diate mode. It is steepened by magneto-sonic waves (slow or fast modes), not by
+intermediate mode itself. This was ﬁrst justiﬁed by Wu’s (1987) coplanar simula-
+tions [119] (i.e., no out-of-plane magnetic ﬁeld is allowed), where the intermediate
+shock forms even though the intermediate mode is not included (since the out-of-
+plane δBy is necessary for nontrivial solutions of the intermediate mode, as shown in
+Appendix A.2). The coupling of intermediate and magneto-sonic waves and the ad-
+missibility of intermediate shocks in the ideal MHD system was discussed by Kennel
+et al. [52].
+109
+
+Bibliography
+[1] B. Abraham-Shrauner.
+Propagation of hydromagnetic waves through an
+anisotropic plasma. J. Plasma. Phys., 1:361–378, 1967.
+[2] V. Angelopoulos, J. P. McFadden, D. Larson, and et al. Tail reconnection
+triggering substorm onset. Science, 321:931–935, 2008.
+[3] M. Aschwanden. Physics of the Solar Corona. Springer, 2005.
+[4] S.D. Bale, J.C. Kasper, G. G. Howes, E. Quataert, C. Salem, and D. Sund-
+kvist. Magnetic ﬂuctuation power near proton temperature anisotropy insta-
+bility thresholds in the solar wind. Phys. Rev. Lett., 103:211101, 2009.
+[5] A. Barnes and J. V. Hollweg.
+Large-amplitude hydromagnetic waves.
+J.
+Geophys. Res., 79(16):2302–2318, 1974.
+[6] K. Beckwith, J. F. Hawley, and J. H. Krolik.
+The inﬂuence of magnetic
+ﬁeld geometry on the evolution of black hole accretion ﬂows: similar disks,
+drastically diﬀerent jets. Astrophys. J., 678:1180–1199, 2008.
+[7] A. R. Bell. The acceleration of cosmic rays in shock fronts-i. Mon. Not. R.
+astr. Soc., 182:147–156, 1978.
+[8] J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Dention, M. Hesse,
+M. Kuznetsova, Z. W. Ma, A. Bhattacharjee, A. Otto, and P. L. Pritchett.
+Geospace Environmental Modeling (GEM) magnetic reconnection challenge.
+J. Geophys. Res., 106(A3):3715–3719, 2001.
+[9] D. Biskamp. Magnetic reconnection via current sheets. Phys. Fluids, 29:1520,
+1986.
+[10] R. D. Blandford and D. G. Payne. Hydromagnetic ﬂows from accretion discs
+and the production of radio jets. Mon. Not. R. Astron. Soc., 199:883–903,
+1982.
+[11] R. D. Blandford and R. L. Znajek. Electromagnetic extraction of energy from
+kerr black holes. Mon. Not. R. Astron. Soc., 179:443–456, 1977.
+[12] M. Brio and C. C. Wu. An upwind diﬀerencing scheme for the equations of
+magnetohydrodynamics. J. Comp. Physics, 75:400–422, 1988.
+[13] P. A. Cassak, M. A. Shay, and J. F. Drake.
+Catastrophe model for fast
+magnetic reconnection onset. Phys. Rev. Lett., 95:235002, 2005.
+[14] J. K. Chao.
+Interplanetary collisionless shock waves.
+Rep. CSR TR-70-s,
+Mass. Inst. of Technology. Cent. for Space Res., Cambridge, Mass., 1970.
+110
+
+[15] H. Che, J. F. Drake, M. Swisdak, and P. H. Yoon. Electron holes and heating
+in the reconnection dissipation region. Geophys. Res. Lett., 37:L11105, 2010.
+[16] C. F. Chew, M. L. Goldberger, and F. E. Low. The boltzmann equation and
+the one-ﬂuid hydromagnetic equations in the absence of particle collisions.
+Proc. Roy. Soc. London Ser. A, 236(1204):112–118, 1956.
+[17] F. V. Coroniti. Laminar wave-train structure of collisionless magnetic slow
+shocks. Nucl. Fusion, 11:261–283, 1971.
+[18] F. V. Coroniti. Magnetically striped relativistic magnetohydrodynamic winds:
+The crab nebula revisited. Astrophys. J., 349:538–545, 1990.
+[19] M. Cremer and M. Scholer. Collisionless slow shocks in magnetotail reconnec-
+tionr. Geophys. Res. Lett., 26(17):2709–2712, 1999.
+[20] M. Cremer and M. Scholer. Structure of the reconnection layer and the as-
+sociated slow shocks: Two-dimensional simulations of a riemann problem. J.
+Geophys. Res., 105(A12):27621–27632, 2000.
+[21] W. Daughton and S. P. Gary. Electromagnetic proton/proton instabilities in
+the solar wind. J. Geophys. Res., 103(A9):20613–20620, 1998.
+[22] W. Daughton, D. Winske, L. Yin, and S. P. Gary. Role of electron physics in
+slow mode shocks. J. Geophys. Res., 106(A11):25031–25039, 2001.
+[23] Ronald C. Davidson and Heinrich J. Volk. Macroscopic quasilinear theory of
+the garden-hose instability. Physics of Fluids, 11(10):2259, 1968.
+[24] R. B. Decker.
+Computer modeling of test particle acceleration at oblique
+shocks. Space Science Reviews, 48:195–262, 1988.
+[25] J. B. Dove, J. Wilms, and M. C. Begelman. Self-consistent thermal accretion
+disk corona models for compact objects: I. properties of the corona and the
+spectrum of escaping radiation. Astrophys. J., 999:L1–L4, 2000.
+[26] J. F. Drake, M. Opher, M. Swisdak, and J. N. Chamoun. A magnetic reconnec-
+tion mechanism for the generation of cosmic rays. Astrophys. J., 709:963–974,
+2009.
+[27] J. F. Drake, M. Swisdak, H. Che, and M. A. Shay. Electron acceleration from
+contracting magnetic islands during reconnection. Nature, 442:553–556, 2006.
+[28] J. F. Drake, M. Swisdak, T. D Phan, P. A. Cassak, M. A. Shay, S. T. Lepri,
+R. P. Lin, E. Quataert, and T. H. Zurbuchen. Ion heating resulting from
+pickup in magnetic reconnection exhausts. J. Geophys. Res., 114(A):05111–
+05124, 2009.
+111
+
+[29] J. F. Drake, M. Swisdak, M. A. Shay, B. N. Rogers, A. Zeiler, and C. Cat-
+tell. Formation of electron holes and particle energization during magnetic
+reconnection. Science, 299:873, 2003.
+[30] J. W. Dungey. Conditions for the occurrence of electrical discharges in astro-
+physical systems. Phil. Mag., 44:725, 1953.
+[31] J. W. Dungey. Cosmic Electrodynamics. Cambridge University Press, 1958.
+[32] W. C. Feldman, S. J. Schwartz, S. J. Bame, D. N. Baker, J. T. Gosling, Jr.
+E. W. Hones, D. J. McComas, J. A. Slavin, E. J. Smith, and R. D. Zwickl.
+Evidence for slow-mode shocks in the deep geomagnetic tail. Geophys. Res.
+Lett., 11(6):599–602, 1984.
+[33] W. C. Feldman, R. L. Tokar, J. Birn, Jr. E. W. Hones, S. J. Bame, and
+C. T. Russell. Structure of a slow mode shock observed in the plasma sheet
+boundary layer. J. Geophys. Res., 92(A1):83–94, 1987.
+[34] L. A. Fisk, G. Gloeckler, and T. H. Zurbuchen. Acceleration of low-energy
+ions at the termination shock of the solar wind. Astrophys. J., 644:631–637,
+2006.
+[35] S. Von Geoler, W. Stodiek, and N. R. Sautoﬀ. Studies of internal disruptions
+and m = 1 oscillations in tokmak discharges with soft-x-ray techniques. Phys.
+Rev. Lett., 33:1201, 1974.
+[36] J. T. Gosling, R. M. Skoug, D. J. McComas, and C. W. Smith. Direct evidence
+for magnetic reconnection in the solar wind near 1 au.
+J. Geophys. Res.,
+110:A01107, 2005.
+[37] D. A. Gurnett and A. Bhattacharjee. Introduction to Plasma Physics: With
+Space and Laboratory. Cambridge University Press, 2005.
+[38] L. -N. Hau. A note on the energy laws in gyrotropic plasmas. Phys. Plasmas,
+9(6):2455–2457, 2002.
+[39] L. -N. Hau and B. U. ¨O. Sonnerup. On the structure of resistive MHD inter-
+mediate shocks. J. Geophys. Res., 94(A6):6539–6551, 1989.
+[40] L. -N. Hau and B. U. ¨O. Sonnerup. The structure of resistive-dispersive inter-
+mediate shocks. J. Geophys. Res., 95(A11):18791–18808, 1990.
+[41] L. -N. Hau and B. U. ¨O. Sonnerup. On slow-mode waves in an anisotropic
+plasma. Geophys. Res. Lett., 20(17):1763–1766, 1993.
+[42] M. Hoshino, T. Mukai, I Shinohara, Y. Saito, and S. Kokubun. Slow shock
+downstream structure in the magnetotail. J. Geophys. Res., 105(A1):337–347,
+2000.
+112
+
+[43] M. Hoshino, T. Mukai, and T. Yamamoto. Ion dynamics in magnetic recon-
+nection: Comparison between numerical simulation and geotail observations.
+J. Geophys. Res., 103(A3):4509–4530, 1998.
+[44] J. D. Huba, N. T. Gladd, and K. Papadopoulos. The lower-hybrid-drift in-
+stability as a source of anomalous resistivity for magnetic ﬁeld reconnection.
+Geophys. Res. Lett., 4:125, 1977.
+[45] P. D. Hudson. Discontinuities in an anisotropic plasma and their identiﬁcation
+in solar wind. Planetary and Space Science, 18:1611–1622, 1970.
+[46] P. D. Hudson. Rotational discontinuities in an anisotropic plasma. Planetary
+and Space Science, 19:1693–1699, 1971.
+[47] P. D. Hudson. Shocks in an anisotropic plasma. J. Plasma Physics, 17:419–
+432, 1977.
+[48] A. Jeﬀrey and T. Taniuti.
+Non-linear wave propagation, chapter 4, pages
+167–194. Academic Press Inc., 1964.
+[49] B. B. Kadomtsev. Disruptive instability in tokamaks. Sov. J. Plasma Phys.,
+1:389–391, 1975.
+[50] H. Karimabadi, D. Krauss-Varban, and N. Omidi. Temperature anisotropy
+eﬀects and the generation of anomalous slow shocks.
+Geophys. Res. Lett.,
+22(20):2689–2692, 1995.
+[51] C. F. Kennel. Shock structure in classical magnetohydrodynamics. J. Geophys.
+Res., 93(A8):8545–8557, 1988.
+[52] C. F. Kennel, R. D. Blandford, and C. C. Wu. Structure and evolution of small-
+amplitude intermediate shock waves. Phys. Fluids B, 2(2):253–269, 1990.
+[53] C. F. Kennel, B. Buti, T. Hada, and R. Pellat. Nonlinear, dispersive,elliptically
+polarized alfven waves. Phys. Fluids, 31(7):1949–1961, 1988.
+[54] M. Khanna and R. Rajaram. Evolution of nonlinear alfven waves propagating
+along the magnetic ﬁeld in a collisionless plasma. J. Plasma. Phys., 28:459–
+468, 1982.
+[55] M. G. Kivelson and C. T. Russell. Introduction to Space Physics. Cambridge
+University Press, 1995.
+[56] D. Krauss-Varban and N. Omidi. Large-scale hybrid simulations of magneto-
+tail during reconnection. Geophys. Res. Lett., 22(23):3271–3274, 1995.
+[57] D. Krauss-Varban, N. Omidi, and K. B. Quest.
+Mode properties of low-
+frequency waves:
+Kinetic theory versus Hall-MHD.
+J. Geophys. Res.,
+99(A4):5987–6009, 1994.
+113
+
+[58] E. A. Lazarus, F. L. Waelbroeck, T. C. Luce, M. E. Austin, K. H. Burrell, J. R.
+Ferron, A. W. Hyatt, T. H. Osborne, M. S. Chu, D. P. Brennan, P. Gohil, R. J.
+Groebner, C. L. Hsieh, R. J. Jayakumar, L. L. Lao, J. Lohr, M. A. Makowski,
+C. C. Petty, P. A. Politzer, R. Prater, T. L. Rhodes, J. T. Scoville, E. J.
+Strait, A. D. Turnbull, M. R. Wade, G. Wang, H. Reimerdes, and C. Zhang. A
+comparison of sawtooth oscillations in bean and oval shaped plasmas. Plasma
+Phys. Control. Fusion, 48:L65–L72, 2006.
+[59] L. C. Lee, B. H. Wu, J. K. Chao, C. H. Lin, and Y. Li.
+Formation of a
+compound slow shock-rotational discontinuity structure. J. Geophys. Res.,
+105(A6):13045–13053, 2000.
+[60] M. A. Lee. Coupled hydromagnetic wave excitation and ion acceleration up-
+stream of earth’s bow shock. J. Geophys. Res., 87(A7):5063–5080, 1982.
+[61] Randall J. Leveque. Finite Volume Methods for Hyperbolic Problems, chap-
+ter 13. Press Syndicate of the U. of Cambridge, 2002.
+[62] R. H. Levy, H. E. Petschek, and G. L. Siscoe. Aerodynamic aspects of mag-
+netospheric ﬂow. AIAA J., 2:2065, 1964.
+[63] J. Lin, W. Soon, and S. L. Baliunas. Theories of solar eruptions: a review.
+New Astron. Rev., 47:53–84, 2003.
+[64] R. P. Lin, R. A. Schwartz, S. R. Kane, R. M. Pelling, and K. C. Hurley. Solar
+hard x-ray microﬂares. Astrophys. J., 283:421–425, 1984.
+[65] Y. Lin and L. C. Lee. Structure of reconnection layers in the magnetosphere.
+Space Science Reviews, 65:59–179, 1993.
+[66] Y. Lin and D. W. Swift. A two-dimensional hybrid simulation of the magne-
+totail reconnection layer. J. Geophys. Res., 101(A9):19859–19870, 1996.
+[67] Yi-Hsin Liu, J. F. Drake, and M. Swisdak. The eﬀects of strong temperature
+anisotropy on the kinetic structure of collisionless slow shocks and reconnection
+exhausts. I: PIC simulations. In press, POP, 2011.
+[68] Yi-Hsin Liu, J. F. Drake, and M. Swisdak. The eﬀects of strong temperature
+anisotropy on the kinetic structure of collisionless slow shocks and reconnection
+exhausts. II: Theory. submitted to POP, 2011.
+[69] D. W. Longcope and S. J. Bradshaw. Slow shocks and conduction fronts from
+petscheck reconnection of skewed magnetic ﬁelds: Two-ﬂuid eﬀects. Astrophys.
+J., 718:1491–1508, 2010.
+[70] D. W. Longcope, S. E. Guidoni, and M. G. Linton. Gas-dynamic shock heating
+of post-ﬂare loops due to retraction following localized, impulsive reconnection.
+Astrophys. J., 690:L18–L22, 2009.
+114
+
+[71] R. F. Lottermoser, M. Scholer, and A. P. Matthews. Ion kinetic eﬀects in
+magnetic reconnection: Hybrid simulations. J. Geophys. Res., 103(A3):4547–
+4559, 1998.
+[72] E. A. Lucek, T. S. Horbury, M. W. Dunlop, P. J. Cargill, S. I. Schwartz,
+A. Balogh, P. Brown, C. Carr, K. H. Fornacon, and E. Georgescu. Cluster
+magnetic ﬁeld observations at a quasi-parallel bow shock. Ann. Geophysicae,
+20:1699–1710, 2002.
+[73] Y. Lyubarsky and J. G. Kirk. Reconnection in a striped pulsar wind. Astro-
+phys. J., 547:437–448, 2001.
+[74] M. E. Mandt, R. E. Denton, and J. F. Drake. Transition to whistler mediated
+reconnection. Geophys. Res. Lett., 21(1):73–76, 1994.
+[75] J. C. McKinney and R. D. Blandford. Stability of relativistic jets from rotat-
+ing, accreting black holes via fully three-dimensional magnetohydrodynamic
+simulations. Mon. Not. R. Astron. Soc., 000:1–6, 2009.
+[76] J. C. McKinney and D. A. Uzdensky. A reconnection switch to trigger gamma-
+ray burst jet dissipation. Mon. Not. R. Astron. Soc., 000:1–43, 2010.
+[77] E. Mjolhus. On the modulational instability of hydromagnetic waves parallel
+to the magnetic ﬁeld. J. Plasma. Phys., 16:321–334, 1976.
+[78] M. S. Nakamura, M. Fujimoto, and K. Maezawa. Ion dynamics and resul-
+tant velocity space distributions in the course of magnetotail reconnection. J.
+Geophys. Res., 103(A3):4531–4546, 1998.
+[79] M. Øieroset, T. D. Phan, R. P. Lin, and B. U. ¨O. Sonnerup.
+Wale´n and
+variance analyses of high-speed ﬂows observed by wind in the midtail plasma
+sheet: Evidence for reconnection. J. Geophys. Res., 105(A11):25247–25263,
+2000.
+[80] M. Omidi and D. Winske.
+Steepening of kinetic magnetosonic waves into
+shocklets: Simulations and consequences for planetary shocks and comets. J.
+Geophys. Res., 95(A3):2281–2300, 1990.
+[81] N. Omidi and D. Winske. Kinetic structure of slow shocks: eﬀects of the elec-
+tromagnetic ion/ion cyclotron instability. J. Geophys. Res., 97(A10):14801–
+14821, 1992.
+[82] M. Opher, J. F. Drake, M. Swisdak, K. M. Schoeﬄer, J. D. Richardson, R. B.
+Decker, and G. Toh. Is the magnetic ﬁeld in the heliosheath laminar or a
+turbulent bath of bubbles. Astrophys. J., 734:71, 2011.
+[83] E. N. Parker. Sweet’s mechanism for merging magnetic ﬁelds in conducting
+ﬂuids. J. Geophys. Res., 62(4):509–520, 1957.
+115
+
+[84] E. N. Parker. Dynamics of the interplanetary gas and magnetic ﬁelds. Astro-
+phys. J., 128:664, 1958.
+[85] E. N. Parker. Magnetic neutral sheets in evolving ﬁelds. ii. formation of the
+solar corona. Astrophys. J., 264:642–647, 1983.
+[86] E. N. Parker. Nanoﬂares and the solar x-ray corona. Astrophys. J., 330:474–
+479, 1988.
+[87] J. P´etri and Y. Lyubarsky. Magnetic reconnection at the termination shock
+in a striped pulsar wind. AIP Conf. Proc., 983:207–209, 2008.
+[88] Harry E. Petschek. Magnetic ﬁeld annihilation. In Proc. AAS-NASA Symp.
+Phys. Solar Flares, volume 50 of NASA-SP, pages 425–439, 1964.
+[89] T. D. Phan, J. T. Gosling, M. S. Davis, R. M. Skoug, M. Øieroset, R. P. Lin,
+R. P. Lepping, D. J. McComas, C. W. Smith, H. R`eme, and A. Balogh. A
+magnetic reconnection X-line extending more than 390 Earth radii in the solar
+wind. Nature, 439:175–178, 2006.
+[90] E. R. Priest and T. R. Forbes. Magnetic Reconnection. Cambridge University
+Press, 2000.
+[91] E. R. Priest and T. R. Forbes. The magnetic nature of solar ﬂares. Astron.
+Astrophs. Rev., 10:313–377, 2002.
+[92] B. N. Rogers, R. E. Denton, J. F. Drake, and M. A. Shay. Role of dispersive
+waves in collisionless magnetic reconnection. Phys. Rev. Lett., 87(19):195004,
+2001.
+[93] R. Z. Sagdeev. Cooperative phenomena and shock waves in collisionless plas-
+mas. Reviews of Plasma Physics, 4:23, 1966.
+[94] T. Sato and T. Hayashi. Externally driven magnetic reconnection and a pow-
+erful magnetic converter. Phys. Fluids, 22:1189, 1979.
+[95] G. Schmidt. Physics of high temperature plasmas- an introduction, chapter 7,
+pages 248–250. Academic Press Inc., 1966.
+[96] M. Scholer. Undriven magnetic reconnection in an isolated current sheet. J.
+Geophys. Res., 94(A7):8805–8812, 1989.
+[97] M. Scholer. Upstream waves, shocklets, short large-amplitude magnetic struc-
+tures and the cyclic behavior of oblique quasi-parallel collisionless shocks. J.
+Geophys. Res., 98(A1):47–57, 1993.
+[98] M. Scholer and R. F. Lottermoser. On the kinetic structure of the magnetotail
+reconnection layer. Geophys. Res. Lett., 25(17):3281–3284, 1998.
+116
+
+[99] J. Seon, L. A. Frank, W. R. Paterson, J. D. Scudder, F. V. Coroniti,
+S. Kokubun, and T. Yamamoto. Observations of a slow-mode shock at the
+lobe-plasma sheet boundary in earth’s distant magnetotail.
+Geophys. Res.
+Lett., 22(21):2981–2984, 1995.
+[100] J. Seon, L. A. Frank, W. R. Paterson, J. D. Scudder, F. V. Coroniti,
+S. Kokubun, and T. Yamamoto.
+Observations of slow-mode shocks in
+earth’s distant magnetotail with the geotail spacecraft.
+J. Geophys. Res.,
+101(A12):27383–27398, 1996.
+[101] M. A. Shay, J. F. Drake, B. N. Rogers, and R. E. Denton. The scaling of
+collisionless, magnetic reconnection for large systems. Geophys. Res. Lett.,
+26:2163–2166, 1999.
+[102] M. A. Shay, J. F. Drake, and M. Swisdak. Two-scale structure of the electron
+dissipation region during collisionless magnetic reconnection. Phys. Rev. Lett.,
+99:155002, 2007.
+[103] E. J. Smith, J. A. Slavin, B. T. Tsurutani, W. C. Feldman, and S. J. Bame.
+Slow mode shocks in the earth’s magnetotial: Isee-3. Geophys. Res. Lett.,
+11(10):1054–1057, 1984.
+[104] B. U. ¨O. Sonnerup, G. Paschmann, I. Papamastorakis, N. Sckopke, G. Haeren-
+del, S. J. Bame, J. R. Asbridge, J. T. Gosling, and C. T. Russell. Evidence
+for magnetic reconnection at the earth’s magnetopause.
+J. Geophys. Res.,
+86(A12):10049–10067, 1981.
+[105] S. R. Spangler and B. B. Plapp. Characteristics of obliquely propagating,
+nonlinear alfven waves. Phys. Fluids B, 4(10):3356–3370, 1992.
+[106] P. A. Sweet.
+The neutral point theory of solar ﬂares.
+In IAU Symp. in
+Electromagnetic Phenomena in Cosmical Physics, ed. B. Lehnet (New York:
+Cambridge Univ. Press), page 123, 1958.
+[107] D. W. Swift.
+On the structure of the magnetic slow switch-oﬀshock.
+J.
+Geophys. Res., 88(A7):5685–5691, 1983.
+[108] R. A. Treumann. Fundamentals of collisionless shocks for astrophysical appli-
+cation, 1. non-relativistic shocks. Astron. Astrophys. Rev., 17:409–535, 2009.
+[109] S. Tsuneta. Structure and dynamics of magnetic reconnection in a solar ﬂare.
+Astrophys. J., 456:840–849, 1996.
+[110] M. Ugai and T. Tsuda. Magnetic ﬁeld line reconnection by localized enhance-
+ment of resistivity, 1, evolution in a compressible MHD ﬂuid. J. Plasma Phys.,
+17:337, 1977.
+[111] D. A. Uzdensity and J. Goodman. Statistical description of magnetized corona
+above turbulent accretion disk. Astrophys. J., 682:608–629, 2008.
+117
+
+[112] D. W. Walthour, J. T. Gosling, B. U. ¨O. Sonnerup, and C. T. Russell. Obser-
+vation of anomalous slow-mode shock and reconnection layer in the dayside
+magnetopause. J. Geophys. Res., 99(A12):23705–23722, 1994.
+[113] Y. C. Whang. Role of electron physics in slow mode shocks. Nonlinear Proc.
+in Geophys., 11:259–266, 2004.
+[114] Y. C. Whang, D. Fairﬁeld, E. J. Smith, R. P. Lepping, S. Kokubun, and
+Y. Saito. Observations of double discontinuities in the magnetotail. Geophys.
+Res. Lett., 24(24):3153–3156, 1997.
+[115] Y. C. Whang, J. Zhou, R. P. Lepping, and K. W. Ogilvie. Interplanetary slow
+shock observed from wind. Geophys. Res. Lett., 23(10):1239–1242, 1996.
+[116] D. Winske and N. Omidi. Electromagnetic ion/ion cyclotron instability at
+slow shocks. Geophys. Res. Lett., 17(12):2297–2300, 1990.
+[117] D. Winske and N. Omidi. Electromagnetic ion/ion cyclotron instability: the-
+ory and simulations. J. Geophys. Res., 97(A10):14779–14799, 1992.
+[118] D. Winske, E. K. Stover, and S. P. Gary. The structure and evolution of slow
+shocks. Geophys. Res. Lett., 12(5):295–298, 1985.
+[119] C. C. Wu. On MHD intermediate shocks. Geophys. Res. Lett., 14(6):668–671,
+1987.
+[120] C. C. Wu. MKDVB and CKB shock waves. Space Science Reviews, 107:403–
+421, 2003.
+[121] C. C. Wu and C. F. Kennel. Evolution of small-amplitude intermediate shocks
+in a dissipative and dispersive system. J. Plasma. Phys., 47:85–109, 1992.
+[122] M. Yamada, F. M. Levinton, N. Pomphrey, R. Budny, J. Manickam, and
+Y. Nagayama. Investigation of magnetic reconnection during a sawtooth crash
+in a high-temperature tokmak plasma. Phys. Plasmas, 1:3269–3276, 1994.
+[123] L. Yin, D. Winske, and W. Daughton. Kinetic Alfv´en waves and electron
+physics. II. Oblique slow shocks. Phys. Plasmas, 14, 2007.
+[124] L. Yin, D. Winske, W. Daughton, and K. J. Bowers. Kinetic Alfv´en waves
+and electron physics. I. Generation from ion-ion streaming. Phys. Plasmas,
+14, 2007.
+[125] L. Yin, D. Winske, W. Daughton, and F. V. Coroniti. Dissipation in oblique
+slow shocks. J. Geophys. Res., 110(A09217), 2005.
+[126] A. Zeiler, D. Biskamp, J. F. Drake, B. N. Rogers, M. A. Shay, and M. Scholer.
+Three-dimensional particle simulations of collisionless magnetic reconnection.
+J. Geophys. Res., 107(A9):1230, 2002.
+118

@@ -1,0 +1,5350 @@
+The Physics of a Collisionless Micro-scale
+Tearing Mode
+Chen Geng
+Doctor of Philosophy
+University of York
+Physics
+August 2020
+
+
+Abstract
+Microtearing modes and electron temperature gradient modes are two types of micro-
+instability that are driven by the electron temperature gradient in magnetised plasmas.
+Both have been widely studied and are well known respectively as an electromagnetic
+tearing parity mode and an electrostatic twisting parity mode. Microtearing modes, as
+the tearing parity one, can cause ﬁne scale reconnection of the magnetic ﬁeld lines in
+the vicinity of rational ﬂux surfaces. This leads to formation of magnetic islands, which
+increases the heat and particle ﬂux across the magnetic conﬁnement devices. Microtearing
+modes therefore are considered as a candidate for anomalous electron heat transport in
+tokamak plasmas.
+Gyrokinetic theories are used in modelling the physics drive mechanism and the stability
+of micro-scale modes. Early theories for microtearing modes in slab geometry concludes
+that the drive mechanism of this mode requires a ﬁnite collision frequency; thus it is sta-
+bilised at low collision frequencies. However, we ﬁnd in linear gyrokinetic simulations
+that a ﬁne scale tearing parity instability, driven also by the electron temperature gradients,
+persists even in the collisionless or electrostatic limit. We demonstrate that this mode has
+a much larger radial wavenumber than the binormal one and poses numerical challenges
+to resolve in simulations. The mode growth rate is sensitive to electron ﬁnite Larmor ra-
+dius effects, which are often neglected in previous studies. We develop two linear analytic
+gyrokinetic models to identify that this collisionless tearing parity mode is consistent with
+a higher harmonic of the electron temperature gradient mode, which becomes more un-
+stable than the conventional twisting eigenmode under the parameter range in this thesis.
+When including electromagnetic ﬁelds, this mode is capable of forming magnetic islands
+even in the absence of collisions.
+Our study provides an example that tearing parity micro-instabilities can arise from vari-
+ous physics drives. This result brings up thoughts for further studies on turbulent transport
+in magnetised plasmas.
+i
+
+
+Contents
+Abstract
+i
+List of Figures
+vii
+Acknowledgements
+xi
+Declaration
+xiii
+1
+Controlled fusion energy
+1
+1.1
+Demands for fusion energy . . . . . . . . . . . . . . . . . . . . . . . . .
+2
+1.2
+Solutions to controlled fusion conﬁnement . . . . . . . . . . . . . . . . .
+5
+1.2.1
+Ignition and self-sustaining conditions . . . . . . . . . . . . . . .
+5
+1.2.2
+Challenges and solutions . . . . . . . . . . . . . . . . . . . . . .
+9
+2
+Magnetic conﬁnement fusion
+11
+2.1
+Plasma in electromagnetic ﬁeld . . . . . . . . . . . . . . . . . . . . . . .
+11
+2.1.1
+Charged particle motion . . . . . . . . . . . . . . . . . . . . . .
+11
+2.1.2
+Kinetic theory and ﬂuid description . . . . . . . . . . . . . . . .
+15
+2.2
+Magnetic ﬁeld geometries and coordinates . . . . . . . . . . . . . . . . .
+19
+2.2.1
+From magnetic mirror to tokamak . . . . . . . . . . . . . . . . .
+19
+2.2.2
+Flux surface coordinates . . . . . . . . . . . . . . . . . . . . . .
+22
+2.2.2.1
+Mapping between toroidal and slab geometries . . . . .
+23
+2.3
+Transport and Micro-instabilities . . . . . . . . . . . . . . . . . . . . . .
+24
+2.3.1
+Temperature gradient modes . . . . . . . . . . . . . . . . . . . .
+25
+2.3.2
+Microtearing modes
+. . . . . . . . . . . . . . . . . . . . . . . .
+26
+3
+Gyrokinetic theory
+31
+3.1
+Guiding centre coordinates . . . . . . . . . . . . . . . . . . . . . . . . .
+31
+3.2
+Gyrokinetic ordering . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+32
+3.3
+Gyrophase averaging . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+33
+iii
+
+Contents
+3.3.1
+Finite Larmor radius effects
+. . . . . . . . . . . . . . . . . . . .
+34
+3.3.2
+Nonlinear effects . . . . . . . . . . . . . . . . . . . . . . . . . .
+34
+3.3.3
+Collision operator
+. . . . . . . . . . . . . . . . . . . . . . . . .
+34
+3.4
+Applications of gyrokinetic theory . . . . . . . . . . . . . . . . . . . . .
+35
+3.4.1
+MTMs in the slab geometry
+. . . . . . . . . . . . . . . . . . . .
+35
+3.4.2
+Gyrokinetic simulation programmes . . . . . . . . . . . . . . . .
+40
+4
+The limitation of the classic slab MTM model
+43
+4.1
+Numerical approach for solving simultaneous eigenmode equations
+. . .
+43
+4.1.1
+Benchmark with previous results . . . . . . . . . . . . . . . . . .
+46
+4.2
+Benchmark slab MTMs with GS2
+. . . . . . . . . . . . . . . . . . . . .
+47
+4.2.1
+The slab collisionless unstable branch . . . . . . . . . . . . . . .
+49
+4.2.2
+Convergence veriﬁcation for simulation data
+. . . . . . . . . . .
+51
+4.3
+Reviewing and verifying the assumptions in slab model derivation . . . .
+53
+4.3.1
+Ion dynamics model
+. . . . . . . . . . . . . . . . . . . . . . . .
+53
+4.3.2
+FLR effects from electrons . . . . . . . . . . . . . . . . . . . . .
+54
+4.4
+Impact of the collision model . . . . . . . . . . . . . . . . . . . . . . . .
+56
+4.5
+Electrostatic limit of the collisionless mode
+. . . . . . . . . . . . . . . .
+59
+5
+Developing the collisionless micro-scale tearing mode model
+61
+5.1
+Electrostatic model at zero collision frequency . . . . . . . . . . . . . . .
+61
+5.2
+Electromagnetic model at ﬁnite collision frequency . . . . . . . . . . . .
+64
+6
+Numerical calculation and discussion
+71
+6.1
+Conﬁrming the collisionless instability . . . . . . . . . . . . . . . . . . .
+71
+6.1.1
+Validation for the small binormal wavenumber condition . . . . .
+73
+6.1.2
+Validation for the electrostatic limit . . . . . . . . . . . . . . . .
+73
+6.1.3
+The eigenmode harmonic series . . . . . . . . . . . . . . . . . .
+75
+6.2
+Magnetic islands in the collisionless model
+. . . . . . . . . . . . . . . .
+77
+6.3
+The limitation of our collisionless models . . . . . . . . . . . . . . . . .
+79
+iv
+
+Contents
+7
+Conclusions and future work
+81
+7.1
+The physics of the collisionless micro-scale tearing mode in slab geometry
+81
+7.2
+Extending to toroidal geometry . . . . . . . . . . . . . . . . . . . . . . .
+82
+Appendix A Auxiliary derivations
+85
+A.1
+Lagrangian in single particle motion . . . . . . . . . . . . . . . . . . . .
+85
+A.2
+Bessel functions from gyroaveraging . . . . . . . . . . . . . . . . . . . .
+86
+A.3
+Differential of the matrix product . . . . . . . . . . . . . . . . . . . . . .
+87
+Appendix B
+Complexity regarding a Bessel-Legendre integration for develop-
+ing the electromagnetic model
+89
+Glossary
+93
+References
+95
+v
+
+
+List of Figures
+1.1
+Nuclear binding energy chart . . . . . . . . . . . . . . . . . . . . . . . .
+1
+1.2
+World energy supply by source from 1990 to 2016 . . . . . . . . . . . . .
+3
+1.3
+Increasing amount of carbon emission from fossil fuel and the growth of
+global temperature since 1880
+. . . . . . . . . . . . . . . . . . . . . . .
+4
+1.4
+Fusion reaction cross sections in the laboratory reference frame . . . . . .
+5
+1.5
+Fusion reactivity and Lawson criterion as a function of temperature . . . .
+8
+2.1
+Single particle motion trajectory in uniform constant magnetic and elec-
+tric ﬁelds
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+12
+2.2
+Illustration of a non-uniform magnetostatic ﬁeld with gradient and curvature,
+and a uniform electrostatic ﬁeld
+. . . . . . . . . . . . . . . . . . . . . .
+13
+2.3
+Illustration of the magnetic mirror concept and the velocity loss cone . . .
+19
+2.4
+Illustration of the tokamak magnetic ﬁeld lines and coils
+. . . . . . . . .
+21
+2.5
+Sketch to explain the toroidal and poloidal magnetic ﬁelds in a tokamak .
+21
+2.6
+Sketch of tokamak ﬂux surface coordinates
+. . . . . . . . . . . . . . . .
+23
+2.7
+Mapping between toroidal and slab geometries
+. . . . . . . . . . . . . .
+24
+2.8
+Illustration of the mechanism for temperature gradient modes . . . . . . .
+26
+2.9
+Illustration of the mechanism for microtearing modes . . . . . . . . . . .
+27
+2.10 Structure of MTMs in a tokamak simulation . . . . . . . . . . . . . . . .
+28
+2.11 Comparison of the MTM growth rate as a function of collision frequency
+for slab and toroidal geometries in the literature . . . . . . . . . . . . . .
+29
+3.1
+Illustration of the slab geometry
+. . . . . . . . . . . . . . . . . . . . . .
+36
+4.1
+Comparison of the numerical results in the reference slab model
+. . . . .
+47
+4.2
+Benchmark of eigenmode, comparing analytically reduced slab MTM
+model and full gyrokinetic simulation GS2 as a function of collision fre-
+quency . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+48
+4.3
+Mode structures in normalised perturbed electrostatic potential and par-
+allel magnetic vector potential for collisional and collisionless instability
+branches in GS2 simulations . . . . . . . . . . . . . . . . . . . . . . . .
+49
+4.4
+Contour plot showing the eigenvalues of ω calculated from the slab model
+50
+vii
+
+List of Figures
+4.5
+Convergence veriﬁcation for GS2 numerical parameter ntheta in the col-
+lisionless branch . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+51
+4.6
+Comparison of the mode structure with sufﬁcient and insufﬁcient grid
+extent in GS2 simulations . . . . . . . . . . . . . . . . . . . . . . . . . .
+52
+4.7
+Validation test for the small k∥vi assumption using GS2 calculated |ω|/k∥vi
+values for different collision frequencies . . . . . . . . . . . . . . . . . .
+53
+4.8
+Validation for the inference of adiabatic ions using GS2 . . . . . . . . . .
+54
+4.9
+Validation for the small kx assumption using GS2 calculated kxρi values
+along the collision frequencies . . . . . . . . . . . . . . . . . . . . . . .
+55
+4.10 Impact of the electron FLR effects on the growth rate of collisionless and
+collisional branches in GS2 simulations
+. . . . . . . . . . . . . . . . . .
+55
+4.11 Comparison of the GS2 collision models . . . . . . . . . . . . . . . . . .
+58
+4.12 Growth rate and mode frequency of the collisionless instability as a func-
+tion of plasma beta
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+58
+6.1
+Benchmark for eigenvalue as a function of collision frequency between
+the electromagnetic model and GS2
+. . . . . . . . . . . . . . . . . . . .
+72
+6.2
+Mode structures of two harmonics in GS2 simulations of the collisionless
+instability . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+73
+6.3
+Validation for the small ky condition with GS2 simulations . . . . . . . .
+74
+6.4
+Comparison of impact of plasma beta in the electromagnetic model and
+GS2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+74
+6.5
+Mode structures of the most unstable harmonic in GS2 simulations at
+different plasma beta . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+75
+6.6
+Contour plot of ω calculated from the electrostatic model . . . . . . . . .
+76
+6.7
+Growth rate and mode frequency of different harmonics calculated from
+the electrostatic model and GS2
+. . . . . . . . . . . . . . . . . . . . . .
+77
+6.8
+Magnetic islands structure evolution calculated by the electromagnetic
+model . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+78
+6.9
+Benchmark for the collision operators between GS2 and the electromag-
+netic model . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+80
+7.1
+GS2 simulations of the collisionless micro-scale tearing parity mode in
+cylindrical geometry against normalised curvature . . . . . . . . . . . . .
+82
+viii
+
+List of Figures
+7.2
+GS2 simulations showing the impact of the Bessel factor on this collision-
+less micro-scale tearing parity mode in cylindrical geometry for varying
+curvature
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+83
+ix
+
+
+Acknowledgements
+The four year’s PhD life in York has been a treasurable experience for me. I feel exceed-
+ingly grateful for every transferable skills I have developed, for every trustworthy friends
+I have made, for every scenic places I have been to, and for every cheerful moments I
+have enjoyed.
+I would like to address my special appreciation to my supervisors, Prof. Howard Wilson
+and Dr. David Dickinson, who have offered invaluable support and guidance throughout
+my research. Their solid knowledge, intellectual insight and rigorous attitude have greatly
+inspired me and are a target for me to aspire to. I have made substantial progress through
+their meticulous feedback and comments, not only in physics but also in English. Partic-
+ularly, it was a challenging time when we ﬁrst found the disagreement with an existing
+theory; it was my supervisors’ wisdom that encouraged me to move out of the confusion
+and to make the breakthrough.
+My next thanks come to all PhD, CDT students, postdocs and the administration teams in
+YPI and the university. Your enthusiastic support on both academic and well-being has
+made me feel part of a big family. There are too many to thank individually, but all the
+physics discussions, the science outreach events, the board games and the Christmas trips
+with you have fulﬁlled our motivated days. I would also thank all my mountaineering
+friends in Ben Lairig society. The ridges and caves, the sunshine and storms, and the
+aurora in the Skye have all become my indelible memories.
+Finally and particularly, I give my sincere gratitude to all my family and friends from
+China, who have consistently cared about and supported me, especially during the last
+couple of months of the pandemic.
+This PhD work was made possible through funding provided by China Scholarship Coun-
+cil and University of York. It was also part of the TDoTP project funded by EPSRC with
+Grant No. EP/R034737/1. The computationally intensive gyrokinetic simulations were
+carried out on YARCC and Viking High Performance Computing facilities provided by
+University of York.
+xi
+
+
+Declaration
+I, Chen Geng, declare that the work presented in this Thesis is my own original work
+performed at the University of York under the joint supervision of Prof. H. R. Wilson
+and Dr. D. Dickinson. This work has not been presented for an award at this, or any
+other, University. All sources are acknowledged as References with the exceptions given
+below.
+Several components of the results given in Chapter 4, Chapter 5 and Chapter 6 have been
+presented or published in the following forms:
+1. (Conference talk) C. Geng, D. Dickinson, and H. Wilson, Pinning down the colli-
+sionless microtearing mode, the 46th IoP Plasma Physics Conference, Loughbor-
+ough UK, 2019;
+2. (Conference poster and in conference proceedings) C. Geng, D. Dickinson, and H.
+Wilson, Physics of the collisionless microtearing mode, the 46th EPS Conference
+on Plasma Physics, Milan Italy, 2019;
+3. (Journal article) C. Geng, D. Dickinson, and H. Wilson, The physics of a small-
+scale tearing mode in collisionless slab plasmas, Plasma Physics and Controlled
+Fusion 62 (085009), 2020.
+xiii
+
+
+Chapter 1
+Controlled fusion energy
+Fusion is the process in which two or more nuclei combine into heavier nuclei and
+byproduct particles. The total nuclear binding energy1 of the reactants and products usu-
+ally changes. This results in the release or absorption of energy as well as the change
+of total mass. Figure (1.1) reproduced from [1] shows the average binding energy per
+Figure 1.1: The nuclear binding energy chart. The isotope notations in this graph H1, H2
+and H3 stand for hydrogen (1H), deuterium (2D) and tritium (3T). Separated
+by iron (Fe56 in graph), nuclei on the left side of the curve release energy
+through fusion reactions while nuclei on the right side release energy through
+ﬁssion reactions. Graph reproduced from [1].
+1Nuclear binding energy is the minimum required energy to disassemble or form a nucleus into or from
+its nucleons.
+1
+
+1.1. Demands for fusion energy
+nucleon as a function of the number of nucleons in nucleus. For the elements which are
+lighter than iron (56Fe), the fusion process will release energy. In nature, fusion of light
+elements, especially by hydrogen (1H) and deuterium (2D), is the process that powers the
+stars. More commonly, the most preferred2 fusion reactions include the following.
+2D + 3T
+−→
+4He + 1n
++17.6 MeV
+(1.1)
+2D + 2D
+−→
+(
+3T + 1H
+3He + 1n
++4.0 MeV
++3.3 MeV
+(1.2)
+2D + 3He
+−→
+4He + 1H
++18.3 MeV
+(1.3)
+In general, controlled fusion research aims to ﬁnd a solution to generate energy from
+fusion reactions in a safe, controlled and self-sustaining way here on Earth, so that it can
+be used as an energy source for our human society.
+1.1
+Demands for fusion energy
+Most of the world energy consumption today comes directly or indirectly from the sun,
+the nearest star to the earth. Solar cells and thermal panels are direct ways of using
+solar energy. Fossil fuel, wind turbine and hydroelectricity are indirect ways. Fossil fuel,
+including coal, crude oil plus their petroleum products, and natural gas, is a chemical
+storage of the historical solar energy over the millions of years; both wind and hydropower
+rely on atmospheric circulation, which is also driven by the solar heat. Other substantial
+energy sources include nuclear ﬁssion, geothermal and biomass. Figure (1.2) reproduced
+from [3] shows the total supply of energy in the world from 1990 to 2016. The demand
+of energy is increasing and fossil fuel constitutes over 80% to the total supply.
+These energy sources have downsides. Fossil fuel has limited reserves. Studies [4, 5, 6]
+predict the signiﬁcant risk for oil supplies to be depleted in about twenty years and for gas
+and coal in about a hundred years. Meanwhile, burning fossil fuel releases carbon dioxide,
+which is well known as one of the greenhouse gases. Since the Industrial Revolution, the
+rapid growth of population and economy has produced billions of tons of carbon dioxide
+as well as other greenhouse gases into the atmosphere. Studies [7, 8, 9] have shown that
+the increasing amount of greenhouse gases in the atmosphere caused by human activities,
+typically carbon dioxide as a primary example, have strong and irreplaceable contribu-
+tions to the global temperature rising over the last hundred years. Figure (1.3) shows the
+2This means that these reactions have a higher cross section than others. Reaction (1.2) has two ap-
+proaches with approximately equal possibilities. Details will be discussed in Section 1.2.1. The stellar
+1H-1H reaction is not listed here because of its small cross section [2].
+2
+
+Chapter 1. Controlled fusion energy
+Figure 1.2: The world total energy supply by source from 1990 to 2016. The colours
+of each category represent the source of the supply, in which coal, oil and
+natural gas are components of fossil fuel. The nuclear category in this graph
+represents only the ﬁssion energy supply. Figure reproduced from [3].
+correlation between carbon emission from fossil fuel and global temperature since 1880
+[10, 11]. Further increase of global temperature will result in serious climate and ecolo-
+gical crises [12, 13]; therefore we need to replace the use of fossil fuel with other energy
+resources. However, renewable energy sources, including solar, wind, hydro and geo-
+thermal energy, strongly depend on geographic localisation and are distributed unevenly
+in space and time. Long-distance ultrahigh voltage electricity transmission and advanced
+energy storage techniques can partially overcome this problem but not completely. Nuc-
+lear ﬁssion energy does not have site limitation in theory, but maintaining the safety of
+ﬁssion reactors and processing the radioactive waste are a challenge. Overall, we need to
+look for a better energy resource.
+Compared with the above energy resources, fusion has many advantages. The fuels for
+fusion reactors (deuterium, tritium and helium-3) can be obtained directly or indirectly
+from seawater and brine3, which is globally abundant and transportable; the reaction does
+not produce greenhouse gases nor large amounts of long-lived radioactive waste4, there-
+3In the reactants of reactions (1.1) to (1.3), only deuterium can be considered as abundant on earth: it
+constitutes about 0.0115% among isotopes of hydrogen thus can be extracted from seawater without much
+difﬁculty; tritium is not stable with the half-life being only 12.32 years thus it is rare in nature; helium-3 is
+plentiful in the solar system (for example, on the moon) but is scarce on earth [14]. However, tritium and
+helium-3 can be produced using lithium-6 which is also sufﬁcient in seawater and brine. In fact, the current
+design of fusion reactors requires deuterium and lithium as the fuels (see Section 1.2.2).
+4The productions of reactions (1.1) to (1.3) do not contain radioactive particles. However, neutrons (1n)
+3
+
+1.1. Demands for fusion energy
+Figure 1.3: The increasing amount of carbon emission from fossil fuel (top) and the
+growth of global temperature (bottom) since 1880. In the top graph, the total
+amount (black) is the sum of each individual sector (other colours); data ob-
+tained from [10]. In the bottom graph, orange and blue curves are global
+annual mean temperature anomalies averaged over the surface of land and
+open ocean areas with respect to 1951-1980, ﬁtted with ﬁve-year Lowess
+smoothing; data obtained from [11].
+fore fusion reactors are both cleaner and safer; because of the sharp gradient around the
+fusion reactants on the binding energy curve in ﬁgure (1.1), fusion reactions have a much
+higher energy yield per fuel mass than any other energy resources above, and the potential
+capacity of fusion energy from available fuel is sufﬁcient to supply our energy demands
+in the foreseen future.
+With the continuous growth of the world economy, the demands for energy will keep
+increasing [15]. To overcome both energy shortage and climate crisis, research towards
+realising the potential of fusion energy becomes a must.
+can activate other materials when ﬁred into them. Therefore, the materials in the chamber and structures of a
+fusion reactor, such as stainless steel, can become damaged and radioactive after a period of operating. How
+to upgrade and recycle those related materials is another important research branch in the fusion research
+community (see Section 1.2.2).
+4
+
+Chapter 1. Controlled fusion energy
+1.2
+Solutions to controlled fusion conﬁnement
+1.2.1
+Ignition and self-sustaining conditions
+The happening of a fusion reaction requires the reactant nuclei to get close into the nuclear
+force range. These positive charged particles overcome the Coulomb repulsion during
+the approaching, therefore intuitively one may believe that the particles’ kinetic energy is
+required to be comparable to the Coulomb potential barrier. However, quantum tunnelling
+effects allow particles to penetrate the barrier without climbing over the barrier peak [16],
+so that the fusion reactions actually can occur at a lower impact energy5. This quantum
+tunnelling process determines the outcome of the reaction, which leads the fusion reaction
+probability to depend on the impact energy. Such a probability is deﬁned as the cross
+section σ. Figure (1.4) shows the cross sections for fusion reactions (1.1) to (1.3) as a
+function of kinetic energy. 2D-3T fusion generally has the largest cross section compared
+to the other reactions at the lower end of the temperature range. This makes it the most
+promising approach. The highest cross section value on top 2D-3T curve appears when
+the kinetic energy is just above 100 keV.
+Figure 1.4: Cross sections for the fusion reactions (1.1) to (1.3) in the laboratory refer-
+ence frame. The two dashed lines illustrate the two approaches in reaction
+(1.2) while the solid line labelled with 2D-2D (total) is the sum of the two.
+Data obtained from [2].
+5Figures (1.4) and (1.5) to be presented later actually indicate that the majority of fusion reaction occurs
+in the tail of the distribution.
+5
+
+1.2. Solutions to controlled fusion conﬁnement
+However, even the peak value of fusion cross section is still very small comparing with
+the collision cross section, which is around 10−19∼10−20 m2 for isotopes of hydrogen at
+this range of temperature [17]. This around 108 times difference means that ordinary
+collisional scattering is the dominant process when reactant nuclei collide. For fusion to
+become useful, it requires the energy output to be larger than the ignition input. But each
+fusion reaction releases only about 102 times more energy than incident kinetic energy,
+taking into account the 108 energy loss in collisions, so it is not possible to gain net
+energy by injecting particles into each other. In fact, it requires the reactive species to be
+thermalised and conﬁned together for plenty of contact to take place, and that the kinetic
+energy of the scattered particles is not wasted. Note that this temperature range is well
+above the ﬁrst ionisation energy (for isotopes of hydrogen it is about 13.6 eV; for isotopes
+of helium it is about 24.6 eV [18]), therefore those thermalised particles are in the state of
+plasma (see Section 2.1).
+The minimum conﬁnement requirement for net energy output can be calculated by bal-
+ancing input and output power of a fusion reactor. Considering a unit volume in a 2D-3T
+magnetic conﬁnement fusion6 reactor, for instance, the released energy is carried by the
+kinetic energies in the products: α particles (4He) and neutrons. Due to the mass dif-
+ference of the two, α particles carry about 20% of the produced energy while neutrons
+carry the remaining 80%. The α particles have positive charge so will be constrained
+in the magnetic ﬁeld in the reactor and thus heat up the reactants. The neutrons do not
+have charge so will transport the energy away from the reactor core to be captured for
+electricity production. Let us assume that reactants deuterium and tritium are fully ion-
+ised and their densities are both 1
+2n (so that the total plasma density is n). Writing the
+α particle kinetic energy per reaction as Eα, so the fuel heating from the α particles is
+Pα−heating = (1
+2n)2⟨σv⟩Eα. To maintain the thermal energy in this unit volume at the
+given temperature7 T, the minimum energy conﬁnement time τE for a reactor running in
+steady state is given through the power balance condition
+Pα−heating · τE = 1
+4n2⟨σv⟩EατE ⩾Wthermal = 3nT,
+(1.4)
+in which Wthermal = 3nT considers the contribution to the plasma thermal energy from
+6The two types of fusion realisation approaches, magnetic conﬁnement fusion (MCF) and inertial con-
+ﬁnement fusion (ICF), will be introduced in Section 1.2.2. The minimum conﬁnement requirement example
+here is based on the MCF approach, which concerns the relation of particle density and conﬁnement time.
+The requirement for ICF approach, on the other hand, is equivalently converted to the relation of size and
+density of the fuel pellet because of its different ignition process.
+7Unless otherwise speciﬁed, temperature T in this thesis means the thermal kinetic energy and is in the
+unit of electron-Volts (eV); it converts to the temperature in the unit of Kelvin (K) following T [in eV] =
+kBT [in K], where kB = 1.380649 × 10−23 m2 kg s−2 K−1 ≈8.617333 × 10−5 eV K−1 is the Boltzmann
+constant.
+6
+
+Chapter 1. Controlled fusion energy
+both ions and electrons and ⟨σv⟩represents the reactivity (reaction rate averaged over the
+velocity distribution). Note that this is the ideal power balance condition, which considers
+only α-heating and plasma thermal energy, but does not include the heating that comes
+from the “recycled” neutron energy, and does not include any energy loss due to engineer-
+ing reality or other related physics processes [19], for example, Bremsstrahlung. In other
+words, this ideal condition gives out the lower limit for the conﬁnement requirement in
+reality.
+The power balance condition (1.4) gives the Lawson criterion
+nτE ⩾
+12T
+⟨σv⟩Eα
+.
+(1.5)
+The reactivity ⟨σv⟩can be calculated as follows. If the species are described by the
+Maxwellian distribution f(v) = n
+  m
+2πT
+3/2 e−mv2/2T and considering only two-body im-
+pact,
+⟨σv⟩= (mDmT)3/2
+(2πT)3
+Z ∞
+−∞
+Z ∞
+−∞
+σ(vr)vre−(mDv2
+D +mTv2
+T)/2T dvD dvT
+= (mDmT)3/2
+(2πT)3
+Z ∞
+−∞
+e−(mD+mT)v2
+c/2T dvc
+Z ∞
+−∞
+σ(vr)vre−µv2
+r/2T dvr
+= 4π
+ µ
+2πT
+3/2 Z ∞
+0
+σ(vr)v3
+re−µv2
+r/2T dvr
+=
+ 8
+π
+1/2  µ
+T
+3/2 1
+m2
+D
+Z ∞
+0
+σ(ε)εe−µε/mDT dε,
+(1.6)
+in which the subscripts D and T represent deuterium and tritium nuclei, respectively, vr =
+vD −vT is the relative particle velocity, vc = (mDvD + mTvT) / (mD + mT) is the centre of
+mass velocity, µ = (mD + mT) / (mD + mT) is the reduced mass, ε is the impact energy
+and σ(ε) is the reaction cross section in ﬁgure (1.4).
+The Lawson criterion describes a condition on the triple product (n, τE, T), which reﬂects
+the level of difﬁculty to operate a controlled fusion facility in engineering. In the form
+of equation (1.5), the right hand side of the Lawson criterion is a function of temper-
+ature. This means that at a given temperature, for the reaction being self-sustaining, it
+requires the product of density and conﬁnement time of the reactant plasma to be large
+enough.
+Substituting the 2D-3T fusion cross section data from ﬁgure (1.4) into equation (1.6)
+then equation (1.5), we can plot the reactivity ⟨σv⟩and the conﬁnement requirement
+nτE as functions of temperature. Figure (1.5) shows the results for reactions (1.1) to
+7
+
+1.2. Solutions to controlled fusion conﬁnement
+(1.3). The peaks of the reactivity curves appear at lower temperature than that on the
+cross section curves because of the velocity distribution. Combining the two graphs, the
+optimised temperature for igniting a 2D-3T fusion reactor (in this simple ideal scenario)
+Figure 1.5: The fusion reactivity ⟨σv⟩(top) and Lawson criterion nτE (bottom) as a func-
+tion of temperature T for fusion reactions (1.1) to (1.3). It is unnecessary to
+calculate nτE for individual approaches of reaction (1.2).
+8
+
+Chapter 1. Controlled fusion energy
+should be around 30∼60 keV, which converts to 3.5∼7.0 × 108 K. If the density of fusion
+plasmas reaches 1019∼1020 m−3 (for example, the ITER project design [20]), the minimum
+required conﬁnement time will be 101∼102 s. Longer operation time can eventually
+output net energy.
+1.2.2
+Challenges and solutions
+The ﬁrst challenge is how to tackle the high temperature. As the reaction temperature is
+extremely high, there is no normal material that can hold the activating fuels for a long
+time. Currently there are two main solutions, magnetic conﬁnement fusion (MCF) and
+inertial conﬁnement fusion (ICF); whilst some other novel solutions try to combine MCF
+and ICF features together, for example magnetised target fusion (MTF) [21].
+In MCF, magnetic ﬁelds are used to constrain the hot plasma via its electromagnetic
+characteristics. The plasma consists of free-moving ions and electrons. These charged
+particles are affected by the Lorentz force and can be tethered around the magnetic ﬁelds
+(see Section 2.1). Therefore, the contact of hot plasma and the inner wall of the re-
+actor chamber is limited by magnetic ﬁelds and it becomes possible to conﬁne the hot
+plasma for a sufﬁcient time. Researchers have been studying different designs of mag-
+netic ﬁeld topology. Many early designs have been proved non-realistic because of the
+highly chaotic turbulence and transport events in the plasma (see Section 2.3). The most
+promising MCF designs now are the tokamak [22, 23], stellarator [24, 25] and reversed-
+ﬁeld pinch [26, 27]. Generally speaking, these devices all conﬁne plasma in a toroidal
+magnetic ﬁeld geometry, but the different ﬁeld conﬁgurations brings in unique character-
+istics and physics challenges [28, 29], for example, how to heat the plasma and how to
+generate the required current. This thesis focuses on one type of physics challenge about
+the transport issues (micro-instabilities, see Section 2.3.2).
+ICF, on the other hand, aims at achieving an ultra high density while conducting the
+reaction for a very short time. The reactant fuels in a pellet shape are rapidly compressed
+by high energy laser pulses to create the ignition reaction before the fuel disperses apart.
+ICF designs include direct drive and indirect drive, in which the former focuses the lasers
+directly at the pellet while the latter converts the energy in lasers to X-rays ﬁrst.
+The second challenge is material, which includes structural material designing and fuel
+mining. Although the MCF conﬁnement designs reduce the heating load on the surface of
+the reactor chamber, the material is still in extreme conditions. Meanwhile, the generated
+neutrons in reaction (1.1) or (1.2) can cause degradation of the material structures around
+the reactor. Consequences include activation of the material, reduction in the structural
+9
+
+1.2. Solutions to controlled fusion conﬁnement
+strength or changes in the (super-)conductivity characteristics. The related material study
+is also an important part of fusion research community.
+Apart from the carrying output energy (positive effect) and causing material degradation
+(negative effect), the generated neutrons can also be used to produce tritium or helium-3.
+As mentioned in Section 1.1, these two elements are not naturally abundant. One solution
+for this is to produce the fuel from lithium-6 (6Li) and lithium-7 (7Li). This process is
+called lithium breeding.
+6Li + 1n
+−→
+4He + 3T
++4.8 MeV
+(1.7)
+6Li + 1H
+−→
+4He + 3He
++4.0 MeV
+(1.8)
+7Li + 1n
+−→
+4He + 3He + 1n
+−2.5 MeV
+(1.9)
+For reactions (1.7) and (1.9), the process can be integrated within a reactor via design of
+the lithium wall.
+As the proverb says “where there is a will there is a way”, though challenges exist, we
+strongly believe that with the efforts from generations of fusion scientist community, the
+utilisation of controlled fusion energy is coming.
+10
+
+Chapter 2
+Magnetic conﬁnement fusion
+2.1
+Plasma in electromagnetic ﬁeld
+The reactant particles for fusion are thermalised to an energy that is signiﬁcantly higher
+than its ionisation energy, thus the particles unbind into free-moving electrons and ions
+(fully ionised). The system is deﬁned as a plasma when the mixture state of these elec-
+trons, ions and remaining neutral particles (in a more general sense) features with quasineut-
+ral and collective behaviour [30]. Since the plasma consists of charged components, it
+interacts with electromagnetic ﬁelds. However, the two fundamental characteristics of the
+plasma give its ability to shield out distant external electric potentials by redistributing
+the ample free-moving charged particles in space. This ability is called Debye shielding.
+External magnetic ﬁelds cannot be shielded out in the same way, and will provide a way
+to conﬁne the plasma. One of the core tasks for MCF research is to ﬁnd out the special
+conﬁguration of magnetic ﬁelds to be able to conﬁne plasma to meet the requirement in
+equation (1.4).
+2.1.1
+Charged particle motion
+Charge particles experience the Lorentz force in the electromagnetic ﬁeld. In the most
+simple but general case which exhibits ﬁnite uniform constant magnetostatic ﬁeld B and
+electric static ﬁeld E, a single charged particle with mass m and charge q obeys the
+Lorentz force
+m dv
+dt = q (E + v × B) .
+(2.1)
+The solution of the particle velocity v for this linear non-homogeneous differential equa-
+tion is a superposition of a gyromotion about the magnetic ﬁeld line and a transverse drift
+11
+
+2.1. Plasma in electromagnetic ﬁeld
+Figure 2.1: An example illustration for the single particle motion trajectory in uniform
+constant magnetic ﬁeld B and electric ﬁeld E. The coordinates are chosen
+as such that z axis is parallel to magnetic ﬁeld while electric ﬁeld is parallel
+to y-z plane. The blue solid spiral is the trajectory for an electron, as an
+example; the red dashed curve notates the positions of the guiding centre.
+Gyroradius ρL and E ×B drift velocity vE×B are labelled in this illustration.
+motion across the magnetic ﬁeld line, as is illustrated in ﬁgure (2.1). In the coordinates
+which are deﬁned as in the ﬁgure, the motion of the particle at time t follows
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+vx = −v⊥sin(qB
+m t + θ0) + Ey
+B ,
+vy = v⊥cos(qB
+m t + θ0),
+vz = vz0 + qEz
+m t,
+(2.2)
+(2.3)
+(2.4)
+in which v⊥=
+q
+(vx −Ey/B)2 + v2
+y =
+q
+(vx0 −Ey/B)2 + v2
+y0 where vx0, vy0 and vz0
+are initial velocity components along x, y and z axes, respectively; phase θ0 depends
+on the initial direction of v⊥. If we deﬁne the central point of the gyration as the guiding
+centre, then the motion of the particle can be described as the guiding centre’s translational
+motion plus the particle’s circular motion around the guiding centre. This guiding centre
+description can simplify mathematical equations under certain conditions - the derived
+gyrokinetic theory will be introduced in Section 3.3. The radius of the particle’s circular
+12
+
+Chapter 2. Magnetic conﬁnement fusion
+motion is named the Larmor radius or gyroradius ρL,
+ρL = mv⊥
+qB = v⊥
+ωc
+,
+(2.5)
+in which ωc = qB/m is the gyrofrequency. The guiding centre’s perpendicular motion
+component is perpendicular to both magnetic ﬁeld and electric ﬁeld. This is referred to as
+the E × B drift vE×B and is
+vE×B = E × B
+B2
+.
+(2.6)
+Note that the E × B drift is independent of either perpendicular velocity nor particle’s
+charge and mass, therefore ions and electrons drift with the same velocity.
+In a more general scenario when the magnetic ﬁeld is not uniform but has gradient and
+curvature, the particle will experience other drifts. Let us consider the layout of a mag-
+netostatic ﬁeld B as is illustrated in ﬁgure (2.2) and a homogeneous electrostatic ﬁeld
+E. The magnetic ﬁeld gradient vector ∇B and the curvature vector (normal vector) Rc
+are labelled in the ﬁgure. The solution for vx, vy and vz depends on the speciﬁc shape
+of B and can be very complex. An insight expression uses the guiding centre descrip-
+tion and calculates the velocity components parallel to and perpendicular to the magnetic
+Figure 2.2: The illustration of a non-uniform magnetostatic ﬁeld B with gradient and
+curvature, and a uniform electrostatic ﬁeld E. In this ﬁgure, b is the unit dir-
+ection vector of the magnetic ﬁeld at the guiding centre position r; ∇B is the
+magnitude gradient vector; Rc is the curvature vector; ρL is the particle’s po-
+sition with respect to the guiding centre; v∥and v⊥are the particle’s velocity
+components parallel to and perpendicular to b, respectively. The direction of
+v⊥shown here is for the electrons as an example.
+13
+
+2.1. Plasma in electromagnetic ﬁeld
+ﬁeld. As shown in the ﬁgure, the velocity components are v∥= |v∥| = |v · b| and
+v⊥= |v⊥| = | −(v × b) × b|, where b = B/B is the unit direction vector along the
+magnetic ﬁeld line. A more rigorous, Lagrangian approach [31] to derive the particle’s
+motion can be found in Appendix A.1. Here, we present an intuitive picture by looking at
+the effective forces. The gyration of a charged particle in a magnetic ﬁeld has magnetic
+moment µ
+µ = −mv2
+⊥
+2B b = −µb,
+(2.7)
+which leads to the potential energy −µ · B in the magnetic ﬁeld. The force related to this
+is −∇(−µ · B). Besides, the parallel motion along the curved magnetic ﬁeld requires a
+centripetal force which is given by mv2
+∥Rc/R2
+c. Note that Rc/R2
+c = (b · ∇)b, therefore
+the particle’s motion equation becomes
+m dv
+dt = q (E + v × B) + ∇(µ · B) −mv2
+∥(b · ∇) b.
+(2.8)
+When the variation of B is small compared with the Larmor radius, µ is an adiabatic in-
+variant1 (see Appendix A.1). Therefore, the parallel component of equation (2.8) is
+dv∥
+dt = q
+mE∥−µ
+m∇∥B,
+(2.9)
+in which E∥= E · b and ∇∥B = ∇B · b. Compared with the z direction in equation
+(2.4), the additional term −µ∇∥B/m indicates that the particle experiences a reﬂecting
+force when moving at the direction of increasing magnetic strength, regardless of whether
+positive or negative charge. This force redistributes the particle energy in v∥and v⊥, and
+is called the magnetic mirror force.
+Note that the magnetic ﬁeld does not vary with time. The perpendicular component of
+equation (2.8) can be obtained from the cross product with B
+dv
+dt × B = dv⊥
+dt × B =
+h q
+m (E + v⊥× B) −µ
+m∇B −v2
+∥(b · ∇) b
+i
+× B.
+(2.10)
+When E and ∇B are small, in a posterior condition that dv∥/ dt ≪| dv⊥/ dt|, the
+solution can be written as v⊥(t) = vc(t)+vD, in which vc(t) is the homogeneous solution
+for dv⊥/ dt = (q/m)v⊥× B. This gives the gyration motion with ωc and ρL as in the
+1An adiabatic variant is a constant of the motion. In the further general case where B and E vary in both
+space and time, slow temporal variation is also required for µ being an adiabatic invariant. Mathematically
+that is to say, µ is conserved to leading order of x/ρL and ω/ωc, where x and ω are spatial and temporal
+characteristic variation of the ﬁeld, respectively.
+14
+
+Chapter 2. Magnetic conﬁnement fusion
+uniform ﬁelds. The quantity vD is the drift velocity, which is given by
+q
+m (E × B + vD × B × B) −µ
+m∇B × B −v2
+∥(b · ∇) b × B = 0.
+(2.11)
+Therefore,
+vD = E × B
+B2
++ µ
+q
+B × ∇B
+B2
++
+mv2
+∥
+qB2 B × (b · ∇) b
+= vE×B + v∇B + vR,
+(2.12)
+in which the two new drifts are the grad-B drift v∇B and the curvature drift vR. These
+two drifts are charge- and mass-dependent.
+The equations describing single particle motion give a clear picture of a charged particle’s
+behaviour in a given (known) ﬁeld. However, in a real plasma each ion and electron
+contributes to the electromagnetic ﬁeld; vice versa the ﬁeld inﬂuences each particle’s
+motion. The time-varying self-consistent situation makes it difﬁcult to solve the plasma’s
+evolution using simple single particle motion method. Considering the large number of
+particles in a plasma, a statistical method is to be introduced in the next section.
+2.1.2
+Kinetic theory and ﬂuid description
+Kinetic theory employs the phase-space distribution function fs(r, v, t) for each species
+s to describe the system. The macroscopic physics quantities are determined by the en-
+semble average of this distribution function. Integrating over the whole velocity domain
+gives the number density of one species ns(r, t) =
+R ∞
+−∞fs(r, v, t) dv. Furthermore, the
+total particle number of a species is Ns(t) =
+R ∞
+−∞
+R
+V fs(r, v, t) dv dr, where the integral
+range over the spatial domain covers the whole volume V. The average ﬂow velocity is
+us =
+1
+ns
+R ∞
+−∞vfs(r, v, t) dv. The charged particles’ contribution to the electromagnetic
+ﬁeld can be determined using the overall charge density σ(r, t) and the current density
+j(r, t) via Maxwell’s equations, in which
+σ(r, t) =
+X
+s
+qs
+Z ∞
+−∞
+fs(r, v, t) dv,
+(2.13)
+j(r, t) =
+X
+s
+qs
+Z ∞
+−∞
+vfs(r, v, t) dv.
+(2.14)
+15
+
+2.1. Plasma in electromagnetic ﬁeld
+The continuity equation in the six dimensional phase-space gives the general kinetic equa-
+tion (Boltzmann equation)
+dfs
+dt = ∂fs
+∂t + dr
+dt · ∇fs + dv
+dt · ∇vfs = Cs(fs, fs′),
+(2.15)
+in which Cs(fs, fs′) represents collisions between species s and s′, and we consider no
+source term. The collisions between charged particles in a plasma differ from those in
+a neutral gas. Due to the long-range Coulomb interaction, the collisions in plasmas are
+dominated by small-angle scattering. Taking only binary interactions into account gives
+the well-known Fokker-Planck collision operator, though the exact form of it will not be
+discussed in this thesis. When Cs = 0 and substituting the Lorentz force from equation
+(2.1), equation (2.15) becomes the Vlasov equation
+∂fs
+∂t + v · ∇fs + qs
+ms
+(E + v × B) · ∇vfs = 0.
+(2.16)
+Taking the moments2 of the kinetic equation will give a ﬂuid description for the plasma.
+The lowest (zeroth) order moment of the Vlasov equation results in the continuity equa-
+tion as follows
+0 =
+Z ∞
+−∞
+∂fs
+∂t + v · ∇fs + qs
+ms
+(E + v × B) · ∇vfs
+
+dv
+= ∂
+∂t
+Z ∞
+−∞
+fs dv + ∇·
+Z ∞
+−∞
+vfs dv
++ qs
+ms 
+: 1
+Z ∞
+−∞
+∇v · [fs (E + v × B)] dv
+−qs
+ms
+Z ∞
+−∞
+fs
+: 2
+∇v × (v × B)
+dv
+=⇒
+∂ns
+∂t + ∇· (nsus) = 0.
+(2.17)
+The term 1 is zero provided that fs →0 as v →∞; the term 2 is zero because of
+(v × B) ⊥v. Furthermore, the ﬁrst order moment is the momentum (force-balance)
+equation
+msns
+∂us
+∂t + (us · ∇) us
+
+= ns (E + us × B) −∇· Ps,
+(2.18)
+in which Ps = ms
+R ∞
+−∞(vv −uu)fs dv is the pressure tensor. In an isotropic system, this
+reduces to the scalar pressure ps times the identity matrix, where ps = 1
+3ms
+R ∞
+−∞v2fs d3v =
+2The moment is an integral measure of the shape of a function. In general, the n-th order moment µn
+for a real continuous function f(x) is µn =
+R ∞
+−∞xnf(x) dx.
+16
+
+Chapter 2. Magnetic conﬁnement fusion
+nsTs if fs is Maxwellian.
+Equations (2.17) and (2.18) provide a ﬂuid description. To close the set of equations can
+include Maxwell’s equations for E and B, which couple to the charge density and current
+density in equations (2.13) and (2.14), and the adiabatic thermodynamic equation of state
+for ps
+∇ps
+ps
+= γs
+∇ns
+ns
+,
+(2.19)
+in which γ is the heat capacity ratio. This set of equations, also referred to as mag-
+netohydrodynamics (MHD) equations, provide a more comprehensive description for the
+plasma system than the single particle motion picture. One inference conclusion com-
+ing from this ﬂuid description is the diamagnetic drift v∇p. Considering an isotropic
+and slowly varying approximation where −i∂/∂t ≪ωc, taking the cross product of the
+momentum equation (2.18) with B, we can get the perpendicular drift in this situation
+as
+usD = E × B
+B2
++ B × ∇ps
+qsnsB2 .
+(2.20)
+The ﬁrst term is the E × B drift in equation (2.6). The second term is a new drift caused
+by the pressure gradient in the ﬂuid, which is deﬁned as the diamagnetic drift
+v∇p = B × ∇ps
+qsnsB2 .
+(2.21)
+Note that this diamagnetic drift is charge-dependent, thus the motion of electrons and ions
+leads to a diamagnetic current, which generates a magnetic ﬁeld that mitigates the external
+magnetic ﬁeld B. Although the diamagnetic drift can be regarded as a combination of
+the gyromotion and the magnetic drift, the phenomena of diamagnetic drift cannot be
+captured by the single particle motion equations.
+In the most simple plasma system where there are two species, ions with qi = +e and
+electrons with qe = −e, the equilibrium of the force-balance equation (2.18) gives
+j × B = ∇p,
+(2.22)
+where p is the total pressure. Considering ∇× B = µ0j, we have
+∇p = 1
+µ0
+
+(B · ∇) B −1
+2∇B2
+
+=⇒
+1
+µ0
+(B · ∇) B −∇
+
+p + B2
+2µ0
+
+= 0.
+(2.23)
+The ﬁrst term is the magnetic tension which is caused by the curvature of the ﬁeld line;
+17
+
+2.1. Plasma in electromagnetic ﬁeld
+from the second term we can deﬁne the magnetic pressure as B2/2µ0 and a ratio of plasma
+pressure to the magnetic pressure as β
+β =
+p
+B2/2µ0
+.
+(2.24)
+This ratio measures the efﬁciency of a magnetic conﬁnement system [32]. For the plasma
+instabilities to be discussed later in this thesis, β also determines the strength of the mag-
+netic ﬂuctuations compared to the electrostatic ones (see Section 4.5).
+Both MHD equations and kinetic theory can demonstrate that plasma in an electromag-
+netic ﬁeld is not stationary but usually supports waves and instabilities, which is where the
+MCF research heavily focuses3. A famous fundamental example can be seen by assuming
+a small perturbation in the electron distribution function and electric ﬁeld
+f(r, v, t) = f0(v) + f1(r, v, t),
+(2.25)
+E = E0 + E1,
+B = 0
+(2.26)
+Here we drop the subscripts for species and use 0 and 1 to represent the equilibrium part
+and ﬂuctuations, respectively. For our present purpose, the ions can be considered as
+stationary due to their large mass compared to the electrons. When there is no external
+electric ﬁeld E0 = 0 and letting f0 be Maxwellian, the linearised Vlasov equation for
+electrons is
+∂f1
+∂t + v · ∇f1 −e
+mE1 · ∂f0
+∂v = 0.
+(2.27)
+Applying the Poisson’s equation ε0∇· E1 = −
+R ∞
+−∞f1 dv and employing the x direction
+plane wave expression for the perturbation f1 ∼ei(kx−ωt), we can derive the dispersion
+relation after integral over vy and vz as
+1 = n0e2
+ε0mk2
+Z ∞
+−∞
+∂¯f0(vx)/∂vx
+vx −(ω/k) dvx.
+(2.28)
+Here, ¯f0(vx) =
+  m
+2πT
+3/2 e−mv2
+x/2T is the normalised one-dimensional Maxwellian distri-
+bution. This result gives the frequency4 ω of an electron wave that propagates along the
+x direction. This wave is called the electron plasma wave or Langmuir wave. It is re-
+lated to the electron oscillation in response to the perturbation, which is called the plasma
+3However, MHD equations do not describe kinetic effects thus cannot capture micro-instabilities which
+are the main focus of this thesis; therefore, kinetic theory is needed for the following chapters.
+4Usually the wave frequency is a complex number and its imaginary part identiﬁes the growth rate of
+the wave.
+18
+
+Chapter 2. Magnetic conﬁnement fusion
+oscillation and its frequency ωpe is
+ωpe =
+s
+n0e2
+ε0m .
+(2.29)
+Note that the integral of the dispersion equation (2.28) contains a singularity (resonant)
+thus it should be treated carefully. L. Landau was the ﬁrst to correctly analyse this integral
+using contour integration [30, 33]. A rigorous calculation shows that the growth rate of
+this electron plasma wave is not zero, but is
+Im(ω) = −√πωpe
+ ωpe
+kvth
+3
+e
+−
+ω2pe
+k2v2
+th
+−3
+2.
+(2.30)
+It reveals a collisionless energy exchange mechanism between wave and resonant particles.
+This is called Landau damping. Although in this example the growth rate is negative,
+which means that the wave is stable, in later sections we will discuss other examples of
+unstable modes and our research focus.
+2.2
+Magnetic ﬁeld geometries and coordinates
+2.2.1
+From magnetic mirror to tokamak
+It is well-known that in a magnetic ﬁeld the plasma spreads faster along the magnetic
+ﬁeld lines than across them; in the parallel direction, the gradient of magnetic strength
+puts a force towards the weak ﬁeld area. This informs the early design of the magnetic
+Figure 2.3: An illustration of the magnetic mirror concept (left) and the velocity loss
+cone (right). The plasma can be trapped around the central region where the
+magnetic strength is weak. However, the particles with a velocity in the loss
+cone will not be conﬁned by this ﬁeld and the leaking from the ends of the
+magnetic mirror design is signiﬁcant.
+19
+
+2.2. Magnetic ﬁeld geometries and coordinates
+mirror for conﬁning plasma. Shown in ﬁgure (2.3) is the concept of the magnetic mirror
+created by a pair of Helmholtz coils. The magnetic ﬁeld is strong near the coils but has a
+minimum in between. Due to the grad-B drift v∇B in equation (2.12), the plasma can be
+trapped near the central region. However, this conﬁnement is not perfect. The collisions
+and instabilities can cause diffusion across the ﬁeld line; but more importantly the leaking
+at the ends of the magnetic mirror is signiﬁcant. The leaking portion can be shown using
+the adiabatic invariant µ in equation (2.7) and the conservation of kinetic energy mv2/2,
+with neglecting electric ﬁeld. These two conserved quantities give a limitation in the pitch
+angle5 of the trapped particles. Particles with the pitch angle
+v∥
+v⊥
+⩾
+r
+Bmax
+B
+−1
+(2.31)
+cannot be trapped by the magnetic mirror. Here Bmax is the maximum magnetic strength
+towards the Helmholtz coils and B is the magnetic strength at the particle’s position where
+v∥and v⊥are measured. This pitch angle range is known as the loss cone in the velocity
+space in ﬁgure (2.3). Unless Bmax →∞, all particles will eventually enter the loss cone
+due to collisions and leak from the device. Considering the inefﬁciency of conﬁnement
+as well as other instabilities [30], alternative conﬁnement designs are needed.
+Over the decades, fusion scientists have explored many other possible magnetic conﬁne-
+ment conﬁgurations. Though a perfect magnetic trap does not exist, the most optimised
+concepts are the tokamak, stellarator and reversed-ﬁeld pinch. Here we introduce the
+tokamak as the closest one to the research focus of this thesis.
+The tokamak uses a toroidal magnetic ﬁeld to eliminate the leaking ends of the magnetic
+mirror design. Figure (2.4) reproduced from [34] shows the layout of the magnetic ﬁelds
+and coils in the tokamaks. The toroidal ﬁeld coils and central column generate a toroidal
+magnetic ﬁeld that loops along the torus geometry. The Maxwell’s equation ∇× B = 0
+in cylindrical coordinates shows that the toroidal magnetic ﬁeld is inversely proportional
+to the radius, so there is a strength gradient radially inwards. Ions and electrons therefore
+will drift apart due to the charge dependence in the curvature drift and the grad-B drift
+in equation (2.12). This is shown as vR+∇B in ﬁgure (2.5). The separation of charges
+establishes a vertical electric ﬁeld which causes E × B drift as the consequence. The
+E × B drift is charge- and mass-independent and will eventually push the plasma off to
+the vessel wall and lose the conﬁnement. To resolve this problem, in tokamaks a poloidal
+magnetic ﬁeld Bθ is generated by inducing a plasma current in the toroidal direction
+5Pitch angle is deﬁned as the cotangent of the angle between velocity and parallel direction, or the ratio
+of parallel velocity component to the perpendicular component.
+20
+
+Chapter 2. Magnetic conﬁnement fusion
+Figure 2.4: An illustration of the tokamak magnetic ﬁeld lines and coils. Central column
+and toroidal ﬁeld coils generate toroidal magnetic ﬁeld; inner and outer po-
+loidal ﬁeld coils generate plasma current which produce poloidal magnetic
+ﬁeld. The combination results in the helical magnetic ﬁeld. Figure repro-
+duced from [34].
+Figure 2.5: A sketch to explain the toroidal and poloidal magnetic ﬁelds in a tokamak.
+The toroidal magnetic ﬁeld Bφ causes the curvature drift and the grad-B drift
+vR+∇B which separates charges. This establishes an electric ﬁeld which
+brings in E × B drift vE×B. A poloidal magnetic ﬁeld Bθ is required to
+average the charge separation to zero, and maintain the conﬁnement.
+using the solenoid. The resultant helical magnetic ﬁeld lines loop between outward and
+inward, upside and downside of the chamber. This helical magnetic ﬁeld is axisymmetric,
+in which particles will spend approximately same time at the inward side and the outward
+side while looping along the ﬁeld lines. This offsets the charge separation noting the faster
+parallel velocity than the perpendicular drift velocity. As the result, plasma is conﬁned
+21
+
+2.2. Magnetic ﬁeld geometries and coordinates
+within the torus area.
+As the poloidal magnetic ﬁeld is important in retaining the conﬁnement, its relative
+strength is a key factor related to the “safety” of the control. The safety factor q is deﬁned
+as the slope of helical magnetic ﬁeld with respect to toroidal direction φ and poloidal
+direction θ, averaged over a 2π period in the poloidal plane
+q = 1
+2π
+I
+dφ
+dθ dθ = 1
+2π
+I
+1
+R
+Bφ
+Bθ
+ds,
+(2.32)
+in which R is the major radius (see Section 2.2.2) and ds is the differential poloidal
+arc length. In other words, q is the number of times a ﬁeld line migrates toroidally for
+each poloidal rotation. Note that as mentioned before, the tokamak conﬁnement is not
+perfect. The instabilities that occur in the tokamaks affect the conﬁnement. Generally
+speaking, a higher q value can put a limit on the instabilities therefore can beneﬁt the
+stability [32].
+In tokamaks, there exists a self-generated toroidal current caused by the diamagnetic drift
+and the momentum transfer between trapped particles and passing particles6 [32, 35, 36,
+37]. This current is called bootstrap current. It can contribute to a large portion of required
+poloidal magnetic ﬁeld therefore can reduce the external induction expense [35, 38].
+2.2.2
+Flux surface coordinates
+Equation (2.22) indicates that j · ∇p = 0 and B · ∇p = 0, which means that in an
+equilibrium both magnetic ﬁeld lines and current density lie in surfaces of constant pres-
+sure. Furthermore, the deﬁnition of q implies that q is also a function of the surface where
+magnetic ﬁeld lines lie in, and the magnetic surfaces in a tokamak are nested about the
+toroidal axis (known as magnetic axis). In real (3D) machines, toroidal ﬁeld ripple and
+other perturbations may mean that the ﬁeld is not exactly axisymmetric in the toroidal dir-
+ection. Nevertheless, it is convenient to introduce a coordinate that can reveal the insight
+of the magnetic geometry.
+Considering ∇· B = 0 in a cylindrical coordinate system and the symmetry in toroidal
+angle, we have
+∇· B = 1
+R
+∂
+∂R(RBR) +
+
+>0
+1
+R
+∂Bφ
+∂φ
++ ∂BZ
+∂Z = 0,
+(2.33)
+6Following the helical ﬁeld lines the magnetic strength varies between inward and outward, whose
+magnetic mirror effect traps a fraction of particles into a smaller orbit (known as banana orbit or potato
+orbit) - these particles are referred to as trapped particles; particles with a higher parallel velocity component
+are not trapped and can move through the toroidal trajectory - these are called passing particles.
+22
+
+Chapter 2. Magnetic conﬁnement fusion
+Figure 2.6: A sketch of the tokamak ﬂux surface coordinates {ψ, θ, φ}. Three ﬂux sur-
+faces are coloured and the illustration of magnetic ﬁeld lines on the ﬂux sur-
+faces are shown. The major radius R, minor radius r and magnetic axis are
+also labelled.
+in which R is the radial direction in the cylindrical coordinate7. A poloidal ﬂux function
+ψ is deﬁned through
+BR = −1
+R
+∂ψ
+∂Z ,
+BZ = 1
+R
+∂ψ
+∂R,
+(2.34)
+which satisﬁes that
+B · ∇ψ = 1
+R
+∂ψ
+∂Z
+∂ψ
+∂R −1
+R
+∂ψ
+∂R
+∂ψ
+∂Z = 0.
+(2.35)
+As a result, ﬁeld lines lie in the surfaces of constant ψ, which are deﬁned as ﬂux surfaces.
+The plasma pressure and safety factor are therefore both functions of ﬂux surfaces p =
+p(ψ), q = q(ψ). And the plasma equilibrium can be solved by a differential equation
+for ψ. This equation, which we do not go into details in this thesis, is called the Grad-
+Shafranov equation [32, 39, 40]. A sketch of the ﬂux surface coordinates {ψ, θ, φ} is
+shown in ﬁgure (2.6).
+2.2.2.1
+Mapping between toroidal and slab geometries
+We shall be concerned with short wavelength instabilities in a tokamak plasma, which
+are then localised near a ﬂux surface, or even locally to the vicinity of a ﬁeld line - a
+ﬂux tube. Sometimes it is helpful to consider toroidal annulus. Meanwhile, towards the
+7The radial direction in the cylindrical coordinate is referred to as the major radius in the torus view;
+the radius in poloidal plane is referred to as the minor radius. Here, to avoid confusion we use R for major
+radius direction and r for minor radius direction. For a given tokamak device, the minor radius of the edge
+of the plasma is customarily noted as a while the major radius to the centre of the plasma is R0. An inverse
+aspect ratio is deﬁned as a/R0.
+23
+
+2.3. Transport and Micro-instabilities
+Figure 2.7: Illustration for mapping between toroidal geometry {ψ, θ, φ} (left) and slab
+geometry {x, y, z} (right). An example magnetic ﬁeld line within θ-φ ﬂux
+surface and y-z plane is also shown.
+edge of a tokamak where the minor radius is large (ideally r →∞) and the curvature is
+small, a reduced slab geometry can provide a simple approximation of the physics model
+when the main drive mechanism does not require curvature effects8. In this thesis, the
+instability to be studied is mainly driven by the electron temperature gradient, therefore
+we will predominantly use slab geometry.
+The relation between the toroidal ring and the slab geometry9 is shown in ﬁgure (2.7). The
+x direction in slab corresponds to radial direction ψ in toroidal geometry, which is con-
+sidered as a thin layer; the y direction maps to poloidal direction θ and is usually treated
+with periodic boundaries; the z direction relates to toroidal direction φ. An example mag-
+netic ﬁeld line on θ-φ ﬂux surface is shown in the illustration, which lies in y-z plane in
+the corresponding slab.
+2.3
+Transport and Micro-instabilities
+A long plasma conﬁnement time is the key goal in MCF, but it is limited by the diffusive
+losses caused by transport across ﬂux surfaces. The conﬁnement time can be estimated by
+8Caution that in the complete tokamak model the curvature effects can be important. Some modes or
+instabilities can be localised only in the outward region where the curvature vector and the pressure gradient
+are parallel (bad curvature region), for example, interchange instability [41] and ballooning modes [42].
+9The mapping relation shown here is the most simple and straightforward one. Another common choice
+maps the magnetic direction (b) to z direction and the binormal direction (perpendicular to b) to y direction.
+24
+
+Chapter 2. Magnetic conﬁnement fusion
+the size of a machine and the transport rate towards the wall. In early theory and practice,
+the transport rate is predicted using classical diffusion equations (for example, Fick’s
+second law [43]) with the complex modelling of trapped and passing particles, effective
+collision frequency, and impurities [30, 32, 44, 45, 46]. These studies are referred to
+as neoclassical estimates. However, experiments observe that the actual transport rate is
+much higher than the neoclassical estimates, especially for electrons [47, 48, 49]. This
+extra transport is called anomalous transport. Studies have revealed that the source of the
+anomalous transport is likely related with small scale ﬂuctuations and instabilities driven
+by gradients in the plasma [50, 51, 52, 53]. In this thesis, we do not discuss more details
+of neoclassical calculations for the transport, but focus on the physics of two types of
+micro-instabilities that are driven by the electron temperature gradient.
+2.3.1
+Temperature gradient modes
+Electron temperature gradient (ETG) modes and ion temperature gradient (ITG) modes
+are electrostatic instabilities10 driven by electron or ion temperature gradient, respectively.
+In toroidal geometry, they occur due to the temperature-dependent drift velocity variation
+in the plasma. Figure (2.8) illustrates the fundamental mechanism of these instabilities in
+an equivalent slab cross section. In a magnetised plasma where a perpendicular magnetic
+drift exists, for example, the grad-B drift11, when a temperature gradient also exists, the
+magnetic drift velocity is faster for higher temperature. Along a perturbed contour of the
+temperature proﬁle, the drift velocity variation leads to charge separation which creates
+the perturbed electric ﬁelds as shown in the ﬁgure. The electric ﬁelds cause E × B drift
+which will modify the original perturbation. If the temperature gradient is parallel to the
+magnetic gradient, this ends up in a positive feedback so that the instability grows. On
+the contrary, if the direction of gradients are anti-parallel, the perturbation is suppressed.
+In tokamaks, these instabilities can happen in the bad curvature region.
+The physics of ETG and ITG modes have been widely studied [54, 55, 56, 57, 58, 59, 60].
+Usually these instabilities are believed to cause rippling of the equilibrium magnetic ﬂux
+surfaces. Measuring along the x direction, on two sides of this ﬂux surface, the parallel
+component of the ﬂuctuating magnetic vector potential12 is an odd function, while the
+electrostatic potential13 is an even function. Such a parity characteristic is deﬁned as the
+10The magnetic ﬂuctuations are not essential for electrostatic instabilities, therefore the modes can exist
+at β = 0. Though electromagnetic effects are still important especially at high β.
+11In a slab geometry where the grad-B drift does not exist, the mechanism of the temperature gradient
+modes is actually more complicated. The parallel ﬂow causes a density variation along the perturbed ﬁeld
+lines, which gives rise to the instability [54]. Analytic calculations are presented in later chapters.
+12The magnetic vector potential A is deﬁned through B = ∇× A.
+13The electrostatic potential φ is deﬁned through E = −∇φ −∂A/∂t.
+25
+
+2.3. Transport and Micro-instabilities
+Figure 2.8: Illustration of the mechanism for temperature gradient modes. The cartoon
+shows the x-y cross section in the equivalent slab coordinates for toroidal
+geometry. The magnetic ﬁeld is along the z direction. A magnetic strength
+gradient ∇B and temperature gradient ∇T is set as parallel to the x dir-
+ection. The drift velocity direction is shown as the electron species for an
+example. The dash-dotted line is unperturbed temperature contour while the
+curled line illustrates for a perturbation of the equilibrium temperature pro-
+ﬁle.
+twisting parity, in which the converse parity characteristic can be seen through the spacial
+derivative in the deﬁnition of electrostatic potential. Another type of parity, tearing parity,
+is to be introduced in the next section. The parity (or parity mixture) of a mode gives a
+boundary condition for solving the eigenmode equations for an instability, and leads to
+speciﬁc physics impacts. Detailed discussions can be found in later chapters.
+2.3.2
+Microtearing modes
+The microtearing mode (MTM), on the contrary, is a tearing parity micro-instability
+driven by the electron temperature gradient - the component of magnetic vector potential
+parallel to B is an even function about the ﬂux surface while the electrostatic potential
+is odd. Note that in tokamak geometry, the safety factor q of this perturbed ﬂux surface
+is required to be a rational number, where one ﬁeld line re-joins with itself and forms an
+enclosed period. Such a ﬂux surface is named a rational surface. In rational surfaces, the
+26
+
+Chapter 2. Magnetic conﬁnement fusion
+ﬁeld lines are easier to bend compared with in irrational surfaces [32]. Therefore, in the
+vicinity of rational surfaces when a shearing perturbation14 happens, the ﬁeld lines are
+able to reconnect to another ﬁeld line which forms a magnetic island structure. The mag-
+netic island structure is characterised by a set of nested magnetic ﬂux surfaces appearing
+in the vicinity of the original rational surface position. This phenomenon is also referred
+to as magnetic reconnection. The size of magnetic islands are characterised by toroidal
+and poloidal wavenumbers, which are assumed large for MTMs.
+Figure (2.9) shows the fundamental mechanism of MTM instability in the slab cross sec-
+tion. On the rational surface denoted with a dash-dotted line, a current density jz along
+the z direction causes the sheared magnetic ﬁeld By along ±y directions. With ﬁnite
+inertia or resistivity, the sheared magnetic ﬁeld can reconnect into a chain of magnetic
+Figure 2.9: Illustration of the mechanism for microtearing modes. The cartoon shows
+the x-y cross section in the equivalent slab coordinates for toroidal geometry.
+The magnetic ﬁeld Bz is along the z direction. A current density jz at the
+rational surface (the dash-dotted line) causes the sheared magnetic ﬁeld By
+in ±y directions. The reconnection of the sheared magnetic ﬁeld lines form a
+chain of magnetic islands in the nearby region. When a temperature gradient
+∇T exists, the width of magnetic islands may grow which leads to the growth
+of the instability. The labels for O-point and X-point are shown.
+14The shearing perturbation means that the perturbation has opposite directions across the perturbed
+surface, for example, ±By in ﬁgure (2.9).
+27
+
+2.3. Transport and Micro-instabilities
+islands, which lowers the magnetic energy state [61]. At the point where reconnection
+occurs, the ﬂux surface cross into a singularity topology. This crossing place is named
+the “X-point”, while the middle place in a magnetic island is named the “O-point”. When
+a temperature gradient ∇T exists, a similar mechanism to ﬁgure (2.8) can apply to the
+magnetic island surfaces, thus the width of magnetic islands may grow. This results in
+the growth of the instability. Figure (2.10) reproduced from [62] shows an example of the
+existence of MTMs in a tokamak simulation.
+Once a magnetic island forms, the inward and outward sides of the island becomes the
+same ﬂux surface. This allows an increasing particle and heat transport across the radial
+direction and may result in signiﬁcant energy loss in tokamak plasmas [65]. Although
+the rate of the transport can be affected by many reasons and sometimes can be hard to
+estimate, MTMs have been studied extensively and are believed to be a candidate for
+anomalous electron thermal transport in tokamaks [66, 67, 68], where they can cause loss
+of conﬁnement towards the edge pedestal region where the pressure gradient is high and
+the rational surfaces are close to each other [64, 69]. In the earliest studies in the simple
+slab geometry by R. D. Hazeltine et. al [70], J. F. Drake et. al [61] and N. T. Gladd et.
+al [63], the detailed mechanism driven by the electron temperature gradient is shown to
+closely rely on the collision process, which is energy-dependent. Their work shows that
+MTMs are stable at both low and high collision frequencies, and are unstable at only semi-
+collisional conditions. However, recently, many different toroidal gyrokinetic simulations
+Figure 2.10: Structure of MTMs in a tokamak simulation. Figure reproduced from [62].
+The left ﬁgure shows the contour of perturbed magnetic vector potential near
+two rational surfaces in the poloidal cross section; the right ﬁgure shows the
+contour of a typical current layer for the magnetic island crossing the radial
+direction.
+28
+
+Chapter 2. Magnetic conﬁnement fusion
+Figure 2.11: Comparison of slab and toroidal MTM results in the literature. The left
+ﬁgure is reproduced from [63] for slab geometry (the layout of the slab geo-
+metry will be introduced in ﬁgure (3.1)), in which four curves with differ-
+ent electron temperature gradients are shown; the right ﬁgure is reproduced
+from [64] for toroidal geometry, in which the curves have different binor-
+mal wavenumbers. Although the two ﬁgures are calculated with different
+parameters, both show the growth rate as a function of collision frequency.
+have found a micro-scale tearing parity instability, which is believed to be a MTM, with
+the collision operator that neglects the energy dependence or even in the collisionless limit
+[64, 71, 72, 73]. Figure (2.11) shows the growth rate as a function of collision frequency in
+slab geometry [63] and toroidal geometry [64]. These toroidal and slab results are at odds
+at low collision frequency. Studies [64, 71, 74, 75] have explored a couple of possible
+effects of the toroidal geometry but the full drive mechanism is not yet understood. As
+modern MCF reactors are designed to operate at higher temperature where the collision
+frequency is low, comprehending the drive mechanism for the collisionless MTM is vital
+for identifying the impact on transport.
+The following sections of this thesis focus on the physics of this collisionless micro-
+scale tearing parity mode. In Section 3.4.1 we review the gyrokinetic MTM theory in
+[61, 63, 70] in the slab geometry; in Section 4.1.1 we correct some mistakes in [63]; in
+Section 4.2.1 we demonstrate the existence of a collisionless MTM in GS2 simulations
+even in the slab geometry; in Section 4.3 and Section 4.5 we probe the physics behind
+this novel instability; in Chapter 5 we develop analytic models; and in Chapter 6 we
+benchmark our models with simulations.
+29
+
+
+Chapter 3
+Gyrokinetic theory
+The kinetic theory in Section 2.1.2 is a six dimensional system which in principle can de-
+scribe the evolution with various spatial and temporal scales, but on the other hand, it can
+be expensive to solve. In many situations where the frequency of the interesting physics
+process is much smaller than the rapid gyrofrequency, it is possible to provide a simpliﬁed
+tractable analysis by averaging over the gyroangle. This approach is called the gyrokinetic
+theory. It results in a ﬁve dimensional system1 for the gyroaveraged distribution function,
+which can be considered as a distribution function of charged rings.
+The validation for the time scale separation assumption is important. This is called the
+gyrokinetic ordering though the speciﬁc form can vary with the physics problems. In the
+following sections, we will outline the general key ideas of gyrokinetic theory then apply
+the theory to MTMs in slab geometry as one example2; at the end we will introduce the
+gyrokinetic simulation codes.
+3.1
+Guiding centre coordinates
+As the gyrokinetic theory exploits the rapid gyromotion feature, it is convenient to choose
+the coordinates based on the guiding centre. We recall the illustration shown previously
+in ﬁgure (2.2) to demonstrate the guiding centre coordinates. The particle’s position is
+x = r + ρL = r + b × v⊥/ωc, in which r is the position of the guiding centre and the
+positive or negative sign of charge q in ωc is required. The velocity can be composed
+as v = v∥+ v⊥= v∥b + v⊥(e1 sin α −e2 cos α) = v(v∥, v⊥, α), in which α is the
+1Under some special circumstances where there is also a fast periodic motion along the magnetic ﬁeld
+lines, a further averaging can be conducted and the system can be reduced to four dimensional [32].
+2The discussion in these sections are based from [40, 53, 76, 77, 78, 79].
+31
+
+3.2. Gyrokinetic ordering
+gyrophase angle of the gyration, with respect to a set of orthogonal basis {e1, e2} on
+the perpendicular plane; the basis vectors {e1, e2, b} are right-handed. Considering the
+guiding centre’s drift equation (2.12), it may be more convenient to express the velocity
+in a phase space of (ε, µ, α)3, in which ε = v2/2 and µ = v2
+⊥/2B are kinetic energy per
+unit mass and magnetic moment per unit mass, respectively. In this adopted coordinate
+system,
+∇v = v ∂
+∂ε + v⊥
+B
+∂
+∂µ + b × v⊥
+v2
+⊥
+∂
+∂α.
+(3.1)
+From here we drop the subscript s for species. Note that here b includes the ﬂuctuating
+magnetic ﬁeld contribution. Using equations (3.1) and (2.12), the Vlasov equation (2.16)
+becomes
+∂f
+∂t +
+ v∥+ vD
+
+· ∂f
+∂r −ωc
+∂f
+∂α + q
+mE ·
+
+v ∂
+∂ε + v⊥
+B
+∂
+∂µ + b × v⊥
+v2
+⊥
+∂
+∂α
+
+f = 0. (3.2)
+3.2
+Gyrokinetic ordering
+Firstly, we consider −i∂/∂t = ω ≪ωc and L ≫ρL, in which ω represents a character-
+istic frequency associated with plasma ﬂuctuations and L is the characteristic length of a
+physics parameter, for example, for density gradient L−1
+n = −(∇n)/n = −∇ln n and for
+temperature gradient L−1
+T
+= −(∇T)/T = −∇ln T. Note that the spatial and temporal
+scales are linked via the thermal velocity, thus the two inequalities have the same order of
+magnitude, noting
+ω
+ωc
+∼ρL
+L ∼δ ≪1.
+(3.3)
+Secondly, we assume a small perturbation on the physics quantities, for example, the
+distribution function f. The linearised expansion up to the ﬁrst order can be written
+as
+f = f0 + ϵf1 + O(ϵ2),
+(3.4)
+in which f0 is the equilibrium (or slow variation) term, f1 ∼ei(k·r−ωt) is the perturbation
+(or fast variation) term and the long-wavelength corrections to the equilibrium, and ϵ ≪1
+denotes the order of the perturbation. Note that although the magnitude of perturbations is
+small, the gradient of perturbations can be comparable with the gradient in the equilibrium
+terms. This allows sharp variation in perturbations. Meanwhile, for plasma instabilities
+with wavelengths comparable to gyroradius, it is useful to assume ϵ ∼δ [40]4. This
+3Note that the dimensions in this expression have changed and the direction of velocity is ambiguous.
+Another coordinate variable ι = v∥/|v∥| deﬁning the velocity direction should be introduced if necessary.
+4For studying equilibrium, transport processes or other instabilities, a drift-kinetic ordering ϵ ≪δ
+[40, 53] is more often used.
+32
+
+Chapter 3. Gyrokinetic theory
+can be expressed as ∇f0 ∼f0/L and ∇f1 ∼f1/ρL. Using ∇⊥and ∇∥to represent
+the gradient operator in the perpendicular and parallel directions, we can link the two as
+∇⊥∼k⊥∼1/L⊥∼1/ρL and ∇∥∼k∥∼1/L∥∼1/L. Therefore, the orderings can be
+summarised as
+ω
+ωc
+∼ρL
+L ∼k∥
+k⊥
+∼L⊥
+L∥
+∼f1
+f0
+∼δ ≪1.
+(3.5)
+We can now evaluate the ordering for each term in equation (3.2) and separate the equa-
+tions of each order as
+δ−1 order :
+−ωc
+∂f0
+∂α = 0,
+(3.6)
+δ0 order :
+v∥· ∂f0
+∂r −
+q
+mBE · v⊥
+∂f0
+∂µ −ωc
+∂f1
+∂α = 0,
+(3.7)
+δ1 order :
+∂f1
+∂t + v∥· ∂f1
+∂r + vD · ∇(f0 + f1) −ωc
+∂f2
+∂α
++ q
+mE ·
+
+v∂f0
+∂ε + v⊥
+B
+∂f1
+∂µ + b × v⊥
+v2
+⊥
+∂f1
+∂α
+
+= 0.
+(3.8)
+3.3
+Gyrophase averaging
+The leading order equation (3.6) informs us that f0 is independent of α. Gyroaveraging
+over the δ1 order eliminates f2 term and gives the non-trivial gyrokinetic equation for
+f0. The gyroaveraging operation is represented by ⟨. . . ⟩=
+1
+2π
+R 2π
+0
+. . . dα. Assuming the
+perturbation can be separated into gyrophase independent and dependent parts as f1 =
+¯f1 + ˜f1, the gyroaveraged equation can be written as
+∂¯f1
+∂t +v∥· ∂¯f1
+∂r + ⟨vD⟩· ∇(f0 + ¯f1) + ⟨vD · ∇˜f1⟩+ q
+m⟨E · v⟩∂f0
+∂ε
++
+q
+mB⟨E · v⊥⟩∂¯f1
+∂µ +
+q
+mB⟨E · v⊥
+∂˜f1
+∂µ ⟩+
+q
+mv2
+⊥
+⟨E · b × v⊥
+∂˜f1
+∂α ⟩= 0.
+(3.9)
+Note that E = −∇φ −∂A/∂t, in which φ is the electric potential and A is the magnetic
+vector potential. Expanding the expression around the guiding centre x −ρL and using
+∂ρL/∂α = v⊥/ωc give E · v⊥∼−iωc∂(φ −vA)/∂α. Further proceeding with a large
+amount of algebra, the gyrokinetic equation can be eventually derived as
+ ∂
+∂t +
+ v∥+ vD
+
+· ∇
+
+g =
+ q
+m
+∂f0
+∂ε
+∂
+∂t −∇(f0 + g)
+B
+· b × ∇
+
+ φ −v∥A∥
+
+J0(k⊥ρL) + v⊥B∥
+k⊥
+J1(k⊥ρL)
+
+,
+(3.10)
+33
+
+3.3. Gyrophase averaging
+in which g is the gyroaveraged distribution perturbation and J0(k⊥ρL) and J1(k⊥ρL) are
+the zeroth and ﬁrst order Bessel functions of the ﬁrst kind
+Jn(x) = (−i)n
+π
+Z π
+0
+eix cos α cos(nα) dα,
+x, α ∈R and n ∈N.
+(3.11)
+This is in agreement with equation (2.11.3) in [32].
+3.3.1
+Finite Larmor radius effects
+The Bessel functions in the gyrokinetic equation (3.10) arise from the gyroaveraging.
+Usually the ﬂuctuating electromagnetic ﬁelds vary around the guiding centre. One com-
+mon assumption for the rapid variation of perturbations is in the eikonal form of ∝eik⊥·ρL.
+Then the gyrophase averaging gives (see Appendix A.2)
+⟨eik⊥·ρL⟩= J0(k⊥ρL),
+(3.12)
+⟨ρLeik⊥·ρL⟩= iρLJ1(k⊥ρL)k⊥
+k⊥
+,
+(3.13)
+⟨v⊥eik⊥·ρL⟩= iv⊥J1(k⊥ρL)k⊥× b
+k⊥
+.
+(3.14)
+This is named the ﬁnite Larmor radius (FLR) effects. Because J0(0) = 1 and J1(0) = 0,
+FLR effects are often neglected when ρL is small compared with the ﬁeld variation scale
+length, for example, for electrons.
+3.3.2
+Nonlinear effects
+The ∇g · b × ∇term on the right hand side of equation (3.10) contains the nonlinear
+interactions which can provide quantitative information on amplitude saturation. It is
+important for calculating heat or particle transport, though it does not typically affect the
+basic physics drive mechanism contained in linear theories. Dropping this term gives
+the linear gyrokinetic equation. In this thesis, we focus only on the linear physics. The
+nonlinear interaction is to be investigated in the future work.
+3.3.3
+Collision operator
+The gyrokinetic equation (3.10) does not include a collision term. A gyroaveraged col-
+lision operator can be implemented to the left hand side of the equation. However, the
+explicit gyroaveraged form of the full Fokker-Planck collision operator can be very com-
+plicated [32]. In a simple model considering the small pitch angle scattering between
+34
+
+Chapter 3. Gyrokinetic theory
+electrons and ions5, a good approximation can be obtained with the pitch angle scattering
+Lorentz collision operator [80]
+CL(ν) = ν
+2
+∂
+∂ξ
+ 1 −ξ2 ∂
+∂ξ,
+(3.15)
+in which ν is the velocity-dependent collision frequency and ξ = v∥/v. In the simple pitch
+angle scattering model, the collision frequency can be estimated as ν ≈(nq4)/(16πε2
+0m2v3).
+The spread of particle speeds v is described via a distribution f(v). However, the col-
+lision frequency of a system can be characterised by its value at the thermal velocity
+νth = ν(vth), so that ν = νth · (v/vth)−3.
+Note that actually this form of Lorentz collision operator does not consider the conserva-
+tion of momentum nor the change of gyrophase angle [80, 81, 82]. Typically, these are
+higher order corrections, so the expression presented here is widely adopted in analytic
+work. Nevertheless, in certain circumstances the deviation cannot be neglected; therefore,
+in the full gyrokinetic calculations, a correction term is added to this operator to account
+for their effect [82, 83] (see Section 4.4).
+3.4
+Applications of gyrokinetic theory
+3.4.1
+MTMs in the slab geometry
+We demonstrate the derivation of the linear slab MTM model in [61, 63, 70] from gyrokin-
+etic theory as one example of the application. We consider an inﬁnite slab layer of plasma
+as illustrated in ﬁgure (3.1) in an external magnetic ﬁeld Bz = B0. A current density jz
+is applied along the z direction, which generates a sheared magnetic ﬁeld By. In this slab
+the total magnetic ﬁeld can be express by B = B0(1z + (x/Ls)1y), in which Ls repres-
+ents the magnetic shearing scale length. We consider |By| ≪|Bz| and x ≪Ls. Two
+species, hydrogen ions and electrons, are included, each carrying one elementary charge
+q = ±e. A density gradient ∇n and a temperature gradient ∇T are applied and their
+scale lengths are Ln and LT, respectively. The normalised temperature gradient is deﬁned
+as η = Ln/LT.
+The nature of the MTM arises from the sheared magnetic ﬁeld coupling with the elec-
+trons, so that the parallel ﬁeld dynamic B∥and the ion collision are non-essential. Further
+assumptions in the linear slab MTM model of [61, 63, 70] include that the grad-B and
+5From the centre of mass frame it can be seen that the collisions between the same particle species have
+little impact on the system; the interesting physics is associated with collisions between unlike particles
+[30].
+35
+
+3.4. Applications of gyrokinetic theory
+curvature perpendicular drift vD for both species is zero; the ion parallel perturbation dy-
+namics v∥· ∇gi is neglected considering the electron parallel streaming is much faster,
+which determines the frequency of the mode; the density gradient Ln is the same for both
+species; the ion and electron temperatures are equal in the middle of slab, Ti = Te = T,
+but the ion temperature gradient ηi is zero while allowing a ﬁnite electron temperature
+gradient ηe; and the mode wavenumber in the x direction is smaller than that of the y dir-
+ection, kx < ky, which brings the authors’ attention to an elongated mode. Applying the
+collisionless gyrokinetic equation (3.10) to ions, dropping the nonlinear term and the par-
+allel perturbation term, and assuming the equilibrium distribution function is Maxwellian
+f0 = fM yield
+gi = −fM
+ω
+ e
+T ω −∇n
+n
+k⊥
+B
+
+J0(k⊥ρi)
+ φ −v∥A∥
+
+,
+(3.16)
+in which k⊥= pk2
+x + k2
+y and ρi is ion gyroradius. A diamagnetic frequency ω∗can be
+deﬁned through the diamagnetic drift equation (2.21) as6
+ω∗s = kyTs
+qsB
+∇ns
+ns
+= ∓kyvsρs
+2Ln
+,
+(3.17)
+Figure 3.1: The illustration for the slab geometry for the MTM derivation. The magnetic
+ﬁeld Bz and By, the current density jz, the density gradient ∇n and the
+temperature gradient ∇T are shown in the ﬁgure.
+6Note the factor “2” in the denominator. In [63] there is a typographical error in deﬁning the diamag-
+netic frequency (see Section 4.1.1).
+36
+
+Chapter 3. Gyrokinetic theory
+in which vs represents the thermal velocity of species s. The last ∓sign is used to de-
+note the (ion or electron) direction7 of the frequency, thus ω∗i/ω∗e = −1 holds in this
+model.
+The ion density ni is given by
+ni = n0
+eφ
+T +
+Z ∞
+−∞
+d3v · giJ0(k⊥ρi)
+= n0
+e
+T
+
+1 −
+2
+v3
+i
+√π
+
+1 −ω∗i
+ω
+ Z ∞
+−∞
+dv∥
+Z ∞
+0
+v⊥dv⊥· e−(v2
+∥+v2
+⊥)/v2
+i J2
+0(k⊥v⊥
+ωci
+)
+
+φ
+= n0
+e
+T
+
+1 −
+
+1 −ω∗i
+ω
+ 
+Γ0(k2
+yv2
+i
+2ω2
+ci
+) −v2
+i
+2ω2
+ci
+Γ
+′
+0(k2
+yv2
+i
+2ω2
+ci
+) ∂2
+∂x2
+
+φ,
+(3.18)
+in which Γ0(z) = e−zI0(z) = e−zJ0(iz) with I0(z) being the modiﬁed Bessel function.
+Here, the integration on A∥becomes zero due to the odd function with respect to v∥;
+equation (6.615) of [84] and equation (9.6.27) of [85] are used in the calculation.
+For electrons, considering the Lorentz collision operator (3.15) and ignoring the FLR
+effects, the gyrokinetic equation (3.10) becomes
+
+ω −k∥v∥−iν
+2
+∂
+∂ξ(1 −ξ2) ∂
+∂ξ
+
+ge = e
+T fM
+ ω −ωT
+∗e
+  φ −v∥A∥
+
+,
+(3.19)
+in which k∥= kyx/Ls and ωT
+∗e = ω∗e[1 + ηe(v2
+v2e −3
+2)]. The Legendre polynomial series
+can be adopted to expand ge as ge(x, v, ξ) = P∞
+n=0 hn(x, v)Pn(ξ), where
+Pn(ξ) =
+1
+2nn!
+dn
+dξn
+ ξ2 −1
+n ,
+ξ ∈R and n ∈N,
+(3.20)
+so that
+v∥Pn = vξPn = v(n + 1)Pn+1 + nPn−1
+2n + 1
+,
+(3.21)
+∂
+∂ξ(1 −ξ2) ∂
+∂ξPn = −n(n + 1)Pn.
+(3.22)
+7Customarily, the electron direction ω∗e is chosen positive.
+37
+
+3.4. Applications of gyrokinetic theory
+Equation (3.19) results in
+∞
+X
+n=0
+hn
+
+ω + iν
+2 n(n + 1)
+
+Pn −k∥v(n + 1)Pn+1 + nPn−1
+2n + 1
+
+= e
+T fM
+ ω −ωT
+∗e
+  φ −vξA∥
+
+.
+(3.23)
+Multiplying equation (3.23) with Pm (m ∈N) then applying the orthogonality relation
+of Legendre polynomials in integrating over ξ from −1 to 1
+Z 1
+−1
+Pn(ξ)Pm(ξ) dξ =
+
+
+
+2/ (2m + 1) ,
+for m = n,
+0,
+for m ̸= n
+(3.24)
+give a set of recurrence relations on hm
+m = 0 :
+ωh0 −k∥v
+3 h1 = efM
+T
+ ω −ωT
+∗e
+
+φ,
+(3.25)
+m = 1 :
+(ω + iν) h1 −k∥v
+
+h0 + 2
+5h2
+
+= −efM
+T
+ ω −ωT
+∗e
+
+vA∥,
+(3.26)
+m ⩾2 :
+
+ω + iν
+2 m(m + 1)
+
+hm −k∥v
+
+m
+2m −1hm−1 + m + 1
+2m + 3hm+1
+
+= 0. (3.27)
+After some algebra, equation (3.27) derives a continued fraction for the ratio deﬁned
+as
+αm =
+m
+(2m −1)
+k∥v
+[ω + iνm(m + 1)/2]
+hm−1
+hm
+= 1 −
+k2
+∥v2(m + 1)2
+(2m + 1)(2m + 3)
+
+ω + iν
+2 (m + 1)(m + 2)
+ 
+ω + iν
+2 m(m + 1)
+
+αm+1
+−1
+(3.28)
+with αm →1 as m →∞. This continued fraction gives the implicit solution on the series
+of hm.
+Equations (3.25) and (3.26) give the parallel electric ﬁeld
+E∥= iωA∥−ik∥φ = iT
+e
+h
+ω (ω + iν) α1 −k2
+∥v2/3
+i
+vfM (ω −ωT
+∗e)
+h1.
+(3.29)
+38
+
+Chapter 3. Gyrokinetic theory
+Substituting equation (3.28), the parallel current density
+j∥= σ∥E∥= −e
+Z ∞
+−∞
+d3v · gev∥
+= −2πe
+Z ∞
+0
+v2 dv · v
+∞
+X
+n=0
+hn
+Z 1
+−1
+P1Pn dξ
+= −4πe
+3
+Z ∞
+0
+v3h1 dv
+(3.30)
+gives the parallel electron conductivity σ∥as
+σ∥= −4πe
+3
+Z ∞
+0
+v3h1
+E∥
+dv
+=
+4i
+3√π
+n0e2
+v3
+eT
+Z ∞
+0
+ω −ωT
+∗e
+ω (ω + iν) α1 −k2
+∥v2/3e−v2/v2
+ev4 dv
+=
+8i
+3√πε0ω2
+pe
+Z ∞
+0
+ω −ωT
+∗e
+ω (ω + iν) α1 −k2
+∥v2
+eu2/3e−u2u4 du,
+(3.31)
+in which u = v/ve. The electron density ne is given by
+ne = −n0
+eφ
+T +
+Z ∞
+−∞
+d3v · ge
+= −n0
+eφ
+T + 4π
+Z ∞
+0
+v2h0 dv
+= −n0
+eφ
+T + 4π
+Z ∞
+0
+v2
+eφ
+T fM
+
+1 −ω∗e
+ω
+
+1 + ηe
+v2
+v2
+e
+−3
+2
+
++ k∥v
+3ω h1
+
+dv
+= −n0
+eφ
+T
+ω∗e
+ω −k∥σ∥
+eω E∥.
+(3.32)
+Therefore, the quasi-neutrality ni = ne eventually derives
+β
+v2
+i
+(ω + ω∗e)
+2ω2
+ci
+v2
+i
+
+Γ0(k2
+yv2
+i
+2ω2
+ci
+) −1
+
+−Γ
+′
+0(k2
+yv2
+i
+2ω2
+ci
+) ∂2
+∂x2
+
+φ = k∥µ0σ∥E∥,
+(3.33)
+in which β is the plasma beta deﬁned in equation (2.24). Another equation to close this
+system is the Maxwell’s equation −∇2A = µ0j in the parallel direction
+ ∂2
+∂x2 −k2
+y
+
+A∥= µ0σ∥E∥.
+(3.34)
+In conclusion, equations (3.34), (3.33), (3.31) and (3.28) give the set of eigenmode equa-
+39
+
+3.4. Applications of gyrokinetic theory
+tions for the slab MTM model, with ω being the eigenvalue. These equations agree8 with
+equations (2), (3), (7) and (8) summarised in [63]. The spatially localised tearing parity
+boundary condition is adopted when calculating the eigenmode equations
+|φ|, |A∥| →0 as |x| →∞,
+φ(0) = 0,
+∂A∥
+∂x
+
+x=0
+= 0.
+(3.35)
+3.4.2
+Gyrokinetic simulation programmes
+Usually a realistic physics system can be too complex to derive or solve the analytic
+eigenmode equations. Simpliﬁcation under certain assumptions can sometimes miss out
+important physics factors while its applicability is limited. Although the analytic solutions
+are useful for demonstrating the underlying physics mechanism and instability character-
+istics, advanced numerical iterative methods are more and more often adopted in research,
+especially with the help of the rapidly developing high-performance supercomputers. The
+computational simulation approaches can provide assistance in studying experimental
+data, exploring possible drive mechanisms and estimating transport impact.
+In general, a simulation code should consider the following characteristics of a gyrokin-
+etic system and for each characteristic it should provide options to control the physics
+accounted in the calculation.
+1. Electrostatic or electromagnetic ﬁeld. This implies the nature of the instability.
+2. Adiabatic or kinetic particle species. This indicates the source of the instability.
+3. Linear or nonlinear gyrokinetic equations. Linear solution can identify the key
+physics while nonlinear coupling between different eigenmodes is important for
+quantitative transport calculation.
+4. Local or global spatial domain. If the scale length of the instability is much smal-
+ler than that of the equilibrium proﬁle variation, a localised approximation can be
+adopted to reduce the calculation cost.
+The most widely used gyrokinetic simulation codes in MCF research include GS2 [86],
+GENE [87], GEM [88], GKW [89] and GYRO [90]. Each code adopts different al-
+gorithms when solving the gyrokinetic equations, which makes it possible to benchmark
+with each other to provide conﬁdence in drawing conclusions. A complete topical review
+on different approaches in gyrokinetic simulation codes can be found in [91]; a veriﬁc-
+8The sign deﬁnition differences for charge ±e and diamagnetic frequency ω∗between our demonstra-
+tion and [63] leads to the −E∥and ω∗i expression in the reference. The β deﬁnition in [63] is twice as ours.
+Besides, another typographical error in the reference is dropping the coefﬁcient “2” in the 2(Γ0 −1) term.
+40
+
+Chapter 3. Gyrokinetic theory
+ation between GS2, GEM and GYRO focusing on micro-instabilities can be found in
+[92].
+In this thesis, we employ GS2 to benchmark the numerical solutions of analytic models.
+GS2 solves the gyrokinetic equations with an implicit initial value and eigenvalue solving
+algorithm as described in [93, 94, 95]. It is developed with full electromagnetic physics
+effects and particles in a general local ﬂux tube domain, with both linear and nonlinear
+options. The simulation results presented in this thesis are calculated with the linear
+simulation option by the version v8.0.1 [96].
+41
+
+
+Chapter 4
+The limitation of the classic slab MTM
+model
+4.1
+Numerical approach for solving simultaneous eigen-
+mode equations
+The eigenmode equations (3.33) and (3.34) are a set of second order differential equations
+in which the electromagnetic ﬁelds φ and A∥are coupled. The analytic solution can
+be difﬁcult to ﬁnd, thus a numerical approach is needed. The eigenvalue of ω relies
+on both equations, thus we implement an iterative algorithm1 that can update φ and A∥
+simultaneously as ω is adjusted towards self-consistency. This method is outlined as
+follows.
+First we discretise the derivatives into a ﬁnite difference representation following
+∂f(x)
+∂x
+
+x=xi
+= fi+1 −fi−1
+2h
+,
+(4.1)
+∂2f(x)
+∂x2
+
+x=xi
+= fi+1 −2fi + fi−1
+h2
+,
+(4.2)
+where fi represents the value of f(xi) and xi is on a uniform discrete space with the grid
+spacing h. Here, the discretisation rule applies to both φ and A∥and we deﬁne a new
+vector variable U as
+Ui =
+ 
+A∥i
+φi
+!
+(4.3)
+1This approach is modiﬁed based on that introduced in Section 5.4.1 of [53].
+43
+
+4.1. Numerical approach for solving simultaneous eigenmode equations
+to combine the two equations together. In this way, equations (3.33) and (3.34) can be
+written as
+Pi · Ui−1 + Qi · Ui + Si · Ui+1 = 0,
+(4.4)
+in which Pi, Qi and Si are square 2 × 2 matrices containing the coefﬁcients for φ and
+A∥on adjacent grids xi−1, xi and xi+1. Note that these coefﬁcients are functions of ω,
+therefore the eigenvalue of ω relates to the eigenvalue of the matrices and acts as the
+link between the adjacent grids. The boundary condition (3.35) can be written using the
+combined variable U as
+U∞=
+ 
+0
+0
+!
+,
+U0 =
+ 
+A∥(0)
+0
+!
+,
+U1 −U−1 =
+ 
+0
+φ
+′(0)
+!
+.
+(4.5)
+To solve the equation we start with the ansatz
+Ui−1 = κi−1 · Ui + ζi−1,
+(4.6)
+where κ is a 2 × 2 matrix and ζ is a 2 × 1 column vector. The values of κ and ζ are to be
+found at each grid point. Provided that κ and ζ have been determined, starting from one
+boundary point they will give values of U at all grid points. Substituting the generated
+set of U into eigenmode equation (4.4) will ﬁnd the eigenvalue of ω. In practice, we ﬁrst
+use a trial ω to determine the trial κ and ζ; then use the trial κ and ζ to iterate and update
+ω until equation (4.4) is satisﬁed at the boundary.
+To ﬁnd the iteration relation, we substitute equation (4.6) into equation (4.4) and get
+(Pi · κi−1 + Qi) · Ui = −Si · Ui+1 −Pi · ζi−1.
+(4.7)
+Therefore,
+κi = −(Pi · κi−1 + Qi)−1 · Si,
+(4.8)
+ζi = −(Pi · κi−1 + Qi)−1 · (Pi · ζi−1) .
+(4.9)
+The initial values for κ0 and ζ0 at the centre of the grid are determined by the boundary
+conditions at the centre point. For example, the tearing parity condition (4.5) gives
+κ0 =
+ 
+0
+0
+0
+0
+!
+,
+ζ0 =
+ 
+A∥(0)
+0
+!
+Normalising to
+=⇒
+ 
+1
+0
+!
+.
+(4.10)
+The steps to update ω can then be summarised as follows.
+44
+
+Chapter 4. The limitation of the classic slab MTM model
+1. Determine Pi, Qi and Si at all grid points i using the trial ω;
+2. Calculate κi and ζi from the grid centre i0 towards the edge imax using boundary
+conditions κ0, ζ0 at the centre grid and iteration relations (4.8), (4.9);
+3. Apply the boundary condition at the edge Umax and use equation (4.6) step by step
+to get the ﬁeld variables U−1, U0 and U1 at the centre grid;
+4. Substitute P0, Q0, S0 and U−1, U0, U1 into the left hand side of the eigenmode
+equation (4.4), noting as L; note that as the trial ω may not be the correct eigenvalue,
+L ̸= 0;
+5. Update ω to make L →0 and repeat from step 1 until |L| ⩽δ is reached, where δ
+is the required numerical precision; the latest converged ω is one of the eigenvalues
+for equation (4.4).
+There are different methods to update ω in the last step, of which the most common and
+well-known choice is the Newton–Raphson method. However, note that one eigenmode
+equation may have multiple eigenvalues; this algorithm might not be able to ﬁnd all of
+them. Usually both methods rely on the initial guess and the function smoothness around
+one eigenvalue, and may have “preferred” or “non-preferred” converged solutions among
+all eigenvalues. When all eigenvalues are required, a variant of this approach traverses
+through a range of ω and applies each ω value to only steps 1 to 4 but records the value
+of L for each initial ω. A contour plot for L = 0 then gives all possible eigenvalues of ω
+within the tested range.
+With regard to numerical precision, the grid size imax is determined by both eigenmode
+equation and the programme ﬂoating point precision. Usually a physics system has the
+vanishing boundary condition where U∞→0. The calculation in step 3 is at risk of
+truncation error accumulation. In practice, an extra level of iteration can be designed to
+monitor the precision.
+In general, this method can also be applied to more complicated systems where m simul-
+taneous equations and variables exist. In such a case, P , Q, S and κ are m×m matrices.
+Sometimes U and ζ are also treated as m × m matrices, where each column represents
+independent solutions based on different settings of boundary condition.
+We develop a numerical programme code in Fortran 90 based on the above algorithm.
+The numerical results for the slab MTM model in this thesis is solved by this code. In this
+code, to calculate the parallel conductivity σ∥in equation (3.31), a numerical complex
+integration is modiﬁed from a recursive adaptive numerical quadrature method described
+45
+
+4.1. Numerical approach for solving simultaneous eigenmode equations
+in Section 18.8 of [97]. Note that the integration in equation (3.31) may contain a residue
+if γ ∼−ν/2, where γ is the growth rate of the mode (imaginary part of eigenmode
+frequency ω) and ν is the collision frequency. This requires a careful treatment in the
+code.
+Compared with modern full gyrokinetic simulation codes, our eigenvalue solver code cal-
+culates within the set of eigenmode equations that has been derived, in which the gyrokin-
+etic mode is reduced and only the essential physics is kept. This stands as an independent
+veriﬁcation against full gyrokinetic simulation codes to help reveal the insight physics of
+one problem. Meanwhile, due to the reduced system size, our numerical code is faster
+than the equivalent calculation in full gyrokinetic simulation codes.
+4.1.1
+Benchmark with previous results
+We can reproduce the numerical results presented in [63] using our algorithm above, cor-
+recting some mistakes we have identiﬁed in the reference. In ﬁgure (4.1) we display
+the comparisons with ﬁgure (1) and ﬁgure (4) from [63] as the key results. These two
+graphs present the normalised mode growth rate γ/ω∗e and the normalised mode fre-
+quency ωr/ω∗e as functions of the normalised collision frequency νth/ω∗e at the electron
+temperature gradient ηe = 0.0, 1.0, 2.0 and 3.0, respectively.
+First we notice that there are several typographical errors in [63] when setting the para-
+meters. Some conﬂict between context and captions, for example, kyρi is said to be 0.05
+in the captions of ﬁgure (1) and ﬁgure (4) but is 0.1 in the context of ﬁgure (4). Actually,
+the data in ﬁgure (1) match with points at kyρi = 0.1 in ﬁgure (2) and ﬁgure (5). There are
+also other errors in other graphs, for example, the data in ﬁgure (3) are 10 times smaller
+than they should be. After detailed cross check with all other results presented in this
+reference and benchmark against GS2 simulations, we ﬁnd that the corrected parameters
+for ﬁgure (1) and ﬁgure (4) should be kyρi = 0.1, β = 0.01 in the reference’s deﬁnition
+(β = 0.005 in our deﬁnition) and Ln/Ls = 0.05.
+Figure (4.1) presents the comparison and correction to the numerical results in the refer-
+ence. Both the results presented in the reference and calculated from the correct eigen-
+mode equations (with ω∗e deﬁnition presented in Section 3.4.1) agree with GS2 results.
+However, the results calculated from the equations published in the reference show a sig-
+niﬁcant deviation compared to procedures. As we have mentioned in Section 3.4.1, we
+now once again conﬁrm with GS2 that in the reference paper there are missing factors
+of “2” in the denominator of ω∗e and in the coefﬁcient for 2(Γ0 −1) term, although the
+numerical calculation results presented in the reference are correct; both our derived ei-
+46
+
+Chapter 4. The limitation of the classic slab MTM model
+genmode equations and numerical algorithm are correct. In the following sections of this
+thesis, the slab MTM model results are calculated with the corrected eigenmode equa-
+tions (3.34), (3.33), (3.31) and (3.28), with ω∗e deﬁnition in (3.17) and β deﬁnition in
+(2.24).
+4.2
+Benchmark slab MTMs with GS2
+Numerical results of the simpliﬁed analytic MTM model in equations (3.33) and (3.34)
+match well with full gyrokinetic simulation GS2 results in the collisional regime. Shown
+in ﬁgure (4.2) is the mode frequency and growth rate as functions of collision frequency,
+in which the mode frequency ωr is the real part of the eigenmode ω while the growth
+rate γ is the imaginary part. The parameters are set in a similar range to those in [63], in
+which a relatively strongly magnetised (β = 0.005) hydrogen plasma (mi/me = 1836) is
+adopted; ky = 0.3, ηe = 5.0 and Ln/Ls = 0.05 are set as the datum case. Both eigenmode
+Figure 4.1: Comparison of the numerical results in the reference slab model. The blue
+lines with circles are GS2 simulation results; the green dashed lines are res-
+ults presented in ﬁgure (1) and ﬁgure (4) of [63]; the yellow dash-dotted
+lines are calculated from the eigenmode equations deﬁned in equations (2),
+(3), (7), (8) of [63] together with the deﬁnition of ω∗e deﬁned there; the red
+lines are calculated with the corrected eigenmode equations provided in this
+thesis (3.34), (3.33), (3.31), (3.28) and ω∗e deﬁnition (3.17). The abscissa is
+in the log scale. The physics parameters are kyρi = 0.1, ηe = 3.0, β = 0.005
+(in our deﬁnition) and Ln/Ls = 0.05.
+47
+
+4.2. Benchmark slab MTMs with GS2
+Figure 4.2: The benchmark of eigenmode, comparing analytically reduced slab MTM
+model and full gyrokinetic simulation GS2 as a function of collision fre-
+quency. The physics parameters are kyρi = 0.3, β = 0.005 and Ln/Ls =
+0.05. Three electron temperature gradients ηe = 3.0, 5.0 and 7.0 are shown
+with red, green, blue colours.
+and collision frequencies are normalised to electron diamagnetic frequency ω∗e. The lines
+in the graph are numerical results from the slab MTM model, while the symbols are linear
+GS2 simulation results. The simulations are set to calculate the most unstable (with the
+largest γ) tearing parity eigenmode2. The GS2 geometry is set as the s−alpha option
+with const−curve and epsl = 0, which is equivilant to the slab geometry illustrated
+in ﬁgure (3.1); the collision option in GS2 is set to the Lorentz model3 including only
+electron-ion collisions; a kinetic species model for both ions and electrons is adopted in
+GS2; and the parallel magnetic ﬁeld perturbation is turned off to align with our physics
+model. Additional numerical parameters for GS2 are nperiod = 16, ntheta = 4 and
+delt = 0.2 for collision frequency νth/ω∗e ⩾10 whilst nperiod = 128, ntheta = 8 and
+delt = 0.05 for νth/ω∗e < 10; for both cases, negrid = 8, ngauss = 16, shat = 1 and
+fprim = 1. The convergence of these numerical parameters will be discussed in Section
+4.2.2.
+A higher ηe value corresponds to a large electron temperature gradient. Both analytically
+reduced model and GS2 conﬁrm that the MTM can be driven unstable by the electron
+2Here the GS2 is compiled to the initial value solver mode and in the input parameters the ginit option
+is set as default odd. Another option to compile GS2 is to use the eigenvalue solver, which calculates a
+series of possible eigenmodes. That option will be used in Section 6.1.3 to investigate the harmonic series.
+3Note that the GS2 Lorentz model differs from the Lorentz collision operator in equation (3.15); this
+will be discussed in Section 4.4.
+48
+
+Chapter 4. The limitation of the classic slab MTM model
+temperature gradient at moderately collisional conditions. However, GS2 reveals a tearing
+parity instability at the low collision frequency range where the mode is found to be stable
+in the slab MTM model. Note that this is in a slab geometry, thus such a result is quite
+unexpected. This implies that the conventional slab MTM model might not be complete,
+requiring an extra drive mechanism for the collisionless MTM. Therefore, it is priority to
+understand the drive mechanism of this collisionless mode in the slab geometry, which
+may in turn shed light on the physics mechanisms of collisionless MTMs in toroidal
+geometry.
+4.2.1
+The slab collisionless unstable branch
+We investigate the slab collisionless unstable branch in GS2 simulations. This collision-
+less branch shown in ﬁgure (4.2) is also driven more unstable by the electron temperature
+gradient. However, note that the mode frequency of the collisionless branch is discon-
+tinuous with the collisional one, which indicates that these two branches are not the same
+Figure 4.3: The mode structures in normalised perturbed electrostatic potential ¯φ and
+parallel magnetic vector potential ¯A∥for collisional (top panels, νth/ω∗e =
+20) and collisionless (bottom panels, νth/ω∗e = 0) instability branches in
+GS2 simulations. The real and imaginary parts of the ﬁelds are shown with
+blue solid lines and red dashed lines, respectively. The collisional branch is
+shown with the νth/ω∗e = 20 and ηe = 5.0 data point in ﬁgure (4.3); the
+collisionless branch is shown with νth/ω∗e = 0 and ηe = 5.0.
+49
+
+4.2. Benchmark slab MTMs with GS2
+eigenmode.
+Figure (4.3) shows the comparison for the mode structure in perturbed electrostatic po-
+tential φ and parallel magnetic vector potential A∥between the two branches in GS2
+simulations. The original output of GS2 is in Fourier space along the ﬁeld line, but here
+the data have been transformed into real space for convenience. In this and later ﬁgures
+about mode structures, the plotted range is zoomed to the centre of the slab; the simula-
+tion range is much larger where the ﬁelds smoothly decay to approximately zero at larger
+x values. The potentials are normalised such that ¯A∥|x/ρi=0 = 1 and max(|¯φ|) = 1. It
+is clear that for both branches, the perturbed parallel magnetic vector potential A∥has
+an even symmetry across the slab while the electrostatic potential φ is odd. The integral
+of A∥across the slab is non-zero, which leads to the “wandering” of the magnetic ﬁeld
+and forms the magnetic island (see Section 6.2). The parity characteristic demonstrates
+that both branches are a tearing parity mode. One may suspect the collisionless unstable
+branch to be another tearing parity eigenmode solution. However, using the traverse con-
+tour code with the slab MTM equations, we do not ﬁnd any eigenvalue near the GS2
+result, as is shown in ﬁgure (4.4). Note that importantly the mode width shown in ﬁgure
+(4.3) for the collisionless branch is much smaller than the collisional one. This narrow
+Figure 4.4: The contour plot showing the eigenvalues of ω calculated from the slab model
+at ηe = 5.0, νth/ω∗e = 2.0 of ﬁgure (4.2). The blue and red curves are real
+and imaginary parts, respectively, for contours of L = 0 as described in
+Section 4.1, whilst the colour illustrates the relative value of L. The green
+dot denotes the only eigenvalue of this model within the shown ω range.
+50
+
+Chapter 4. The limitation of the classic slab MTM model
+radial structures relate to extended structures along the ﬁeld line. In other words, the
+characteristic radial wavenumber kx is much larger in the collisionless branch than in the
+collisional one. We will further investigate this point in Section 4.3.2.
+4.2.2
+Convergence veriﬁcation for simulation data
+It is worth noting here the convergence of GS2 data. As the radial wavenumber kx is
+so large for the collisionless branch, GS2 simulations indeed require sufﬁcient grid ex-
+tent and resolution to capture this unstable mode accurately. The simulation in GS2 is
+conducted in a local ﬂux tube domain. The extent of the ﬂux tube is controlled by a nu-
+merical parameter nperiod, such that the number of 2π segments along the ﬁeld line is
+2nperiod −1. Another numerical parameter, ntheta, deﬁnes the grid resolution within
+each segments. Both high nperiod and ntheta is needed to resolve the collisionless
+branch, otherwise the simulation result can be wrong and sometimes the mode may even
+appear stable. Figure (4.5) shows an example of the convergence veriﬁcation results re-
+garding the GS2 numerical parameter ntheta in the collisionless branch. The sufﬁcient
+grid extent and resolution requirement can be explained by the vanishing boundary con-
+dition. If grid extent is not consistent with the wavenumber requirement, the edge of the
+mode in the simulation is forced to zero, which gives either a non-physical oscillating ﬁeld
+or an inaccurate ﬁeld, which thus interferes with the accuracy of the eigenmode frequency.
+Figure 4.5: The convergence veriﬁcation on mode growth rate and frequency for the GS2
+numerical parameter ntheta in the collisionless branch. The physics para-
+meters are kyρi = 0.3, ηe = 5.0, β = 0.005, Ln/Ls = 0.5 and νth/ω∗e = 0.
+51
+
+4.2. Benchmark slab MTMs with GS2
+Figure 4.6: The comparison of the mode structure with sufﬁcient and insufﬁcient grid
+extent in GS2 simulations. The graph shows the modulus of ˆφ in GS2 sim-
+ulations as a function of the GS2 grid kθ. The top panel is calculated with
+sufﬁcient grid extent (nperiod = 128) while the bottom panel is calculated
+with insufﬁcient grid extent (nperiod = 64). The dash lines in the bottom
+panel denotes the grid size of the simulations. The physics parameters are
+kept the same as in ﬁgure (4.5).
+Figure (4.6) shows the comparison of the accurate and inaccurate ﬁeld calculated with suf-
+ﬁcient or insufﬁcient grid extent in GS2, respectively. It can be seen that in the bottom
+panel where the nperiod is not large enough, the edge of the ﬁeld cannot well resolve to
+zero. In this case the simulation gives an inaccurate result. The GS2 results presented in
+ﬁgure (4.2) require nperiod = 128 and ntheta = 8 for the collisionless branch while for
+the collisional branch nperiod = 16 and ntheta = 4 are already adequate. Similarly, the
+velocity space resolution parameters, negrid (energy grid parameter) and ngauss (pitch
+angle grid parameter) are also checked. For both branches, we need negrid = 8 and
+ngauss = 16. Besides, a relatively ﬁne time step delt is required for the correctly re-
+solved result. For our simulations it requires delt = 0.2 for the collisional branch and
+delt = 0.05 for the collisionless branch.
+The highly extended grid size and ﬁne spatial and temporal resolutions make the simula-
+tions for the collisionless branch very expensive4. We suspect that this might be a reason
+for the collisionless tearing parity mode not been seen in previous slab work, for example,
+in [101].
+4Although some recent studies [98, 99, 100] probe the possibility of advanced re-mapping algorithm to
+reduced the need of large resolutions, those methods have not yet been implemented in simulation codes.
+52
+
+Chapter 4. The limitation of the classic slab MTM model
+Some other numerical parameters, on the other hand, does not affect the accuracy of
+simulation results, for example, unit length fprim and reference shear length shat. As
+our simulations are linear, as long as these related numerical parameters are kept in the
+correct ratio regarding the real physics parameters, the GS2 simulation results are correct
+and accurate.
+4.3
+Reviewing and verifying the assumptions in slab model
+derivation
+To understand why the collisionless branch is not recovered in the slab model, we recall
+the assumptions taken for the derivation in Section 3.4.1. The two most important ones
+are small v∥· ∇gi and small kx assumption. Mathematically these two can be written as
+|ω| ≫k∥vi and kxρi ≪1. The ﬁrst one is related to the ion dynamics model while the
+second one is about FLR effects.
+4.3.1
+Ion dynamics model
+The assumption |ω| ≫k∥vi is tested in ﬁgure (4.7). It is shown to be broadly satisﬁed
+across the collision frequency range. Note that this assumption is equivalent to treat-
+ing ions as stationary compared with electrons, therefore the eigenmode equations for
+Figure 4.7: The validation test for the small k∥vi assumption for the data points in ﬁgure
+(4.2) for different collision frequencies. Shown in the graph are |ω|/k∥vi
+values in GS2 calculation.
+53
+
+4.3. Reviewing and verifying the assumptions in slab model derivation
+Figure 4.8: The validation for the inference of adiabatic ions using GS2. Data points for
+ηe = 5.0 in ﬁgure (4.2) are calculated in GS2 with kinetic ions or adiabatic
+ions, respectively, and benchmarked against the numerical results from the
+slab MTM model. Electrons are kept kinetic.
+MTM should be able to be further reduced by employing adiabatic ions. Without deriv-
+ing another set of equations, we can conveniently test this argument in GS2 simulations
+by switching the ion dynamics model from kinetic to adiabatic. Figure (4.8) proves that
+the adiabatic ion model has little impact on both collisional and collisionless branches.
+This result is consistent with the physics picture that the main driving mechanism for
+MTMs lies in electrons. Exploiting this conclusion, we will use adiabatic ions to derive
+the eigenmode model of the collisionless branch in Chapter 5.
+4.3.2
+FLR effects from electrons
+We have seen in ﬁgure (4.3) that the collisionless branch has narrower mode structures
+than the collisional one. In ﬁgure (4.9) we conﬁrm that the radial wavenumber kx be-
+comes approximately 102 times larger when collision frequency decreases to zero. This
+transition, however, is not affected by the electron temperature gradient or other paramet-
+ers. The kx value is calculated through the width of the mode structures in GS2 data (in
+Fourier space, see ﬁgure (4.6)) as kx = wθˆsky, where wθ is the measured mode structure
+width in GS2 coordinates and ˆs is a reference shear scale length set in GS2 simulations;
+shown in the ﬁgure it is normalised to kxρi (the left hand side coordinate) and kxρe (the
+right hand side coordinate). Due to the ambiguity in deﬁning the width shown in ﬁgure
+(4.6) in the linear simulations, the measured kx values are ﬁtted with error bars. Never-
+54
+
+Chapter 4. The limitation of the classic slab MTM model
+theless, it can be concluded that the observed kx value violates the employed small kx
+assumption in the collisionless condition, therefore the collisionless branch is actually
+excluded from the conventional slab MTM theory.
+Figure 4.9: The validation for the small kx assumption using GS2 calculated kxρi values
+for the data points in ﬁgure (4.2) along the collision frequencies. The right
+axis shows the value of kxρe as a comparison.
+Figure 4.10: The impact of the electron FLR effects on the growth rate of collisionless
+and collisional branches in GS2 simulations. A collisionless case (left panel,
+νth/ω∗e = 0.1) and collisional case (right panel, νth/ω∗e = 20) are shown
+with kyρi = 0.3, ηe = 5.0, β = 0.005 and Ln/Ls = 0.05.
+55
+
+4.4. Impact of the collision model
+Speciﬁcally, ﬁgure (4.9) shows that kxρe increases to comparable to 1 when collision fre-
+quency drops. This leads to a surmise that the Bessel function argument in the gyrokinetic
+equation (3.10) for electrons is actually not neglectable for the collisionless branch: it
+gives a clue that the electron FLR effects could be an important factor at the collisionless
+conditions.
+To further test this surmise, we probe the impact of FLR effects directly in GS2 simula-
+tions by including a Bessel scaling parameter. This parameter, bessfac (noting as αb),
+is deﬁned within the Bessel function argument as a multiplying factor of the original ar-
+gument, which can be written in the form of J0(αbk). By default αb = 1 and all kinetic
+species are treated with full gyrokinetic effects including FLR effects. Such a treatment
+provides a means to suppress the weight of FLR effects in gyroaveraging. By tuning αb
+down towards 0, we can investigate the impact of ignoring the electron FLR effects in the
+analytic model. Figure (4.10) shows the impact on collisionless and collisional branches
+respectively. The growth rate of the collisionless branch is shown to drop rapidly with αb
+decreasing, while the collisional one is insensitive to this parameter. Note that here for
+the collisionless case, we have set collision frequency νth/ω∗e = 0.1 rather than exact by
+zero. This is because the GS2 simulation requires certain dissipation to conﬁne the mode;
+thus if the Bessel parameter and collision frequency are both zero, it needs inﬁnite simu-
+lation domain and calculation time. The different behaviour of the two branches in ﬁgure
+(4.10) demonstrates that the electron FLR effects can be safely neglected for the colli-
+sional branch, but should be taken into consideration for the collisionless model.
+4.4
+Impact of the collision model
+As mentioned in Section 3.3.3, GS2 employs a more complete collision model [82, 83]
+than the reduced pitch angle scattering operator. In Fourier space, the full set of electron-
+ion collision operator terms in GS2 can be summarised in the form of [95, 102]
+CGS2(ˆg) = CGS2
+L
+(ˆg) + CGS2
+E
+(ˆg) + CGS2
+M
+(ˆg),
+(4.11)
+in which
+CGS2
+L
+(ˆg) = ν
+2
+ ∂
+∂ξ
+ 1 −ξ2 ∂
+∂ξ −k2
+⊥ρ2
+2
+ 1 + ξ2
+ˆg
+(4.12)
+is the full Lorentz operator derived from the linearised Landau collision operator [80],
+CGS2
+E
+is an energy diffusion operator and CGS2
+M
+contains momentum and energy con-
+serving corrections. The ﬁrst term in CGS2
+L
+is the pitch angle scattering in equation (3.15);
+the second term is derived from the change of gyrophase angle during the collisions [80],
+56
+
+Chapter 4. The limitation of the classic slab MTM model
+which can be described as a gyro-diffusion effect, and is excluded from our slab MTM
+model. We notice that the second term in CGS2
+L
+is in the magnitude of (kxρe)2, which be-
+comes large only in the collisionless conditions. Therefore, this term in principle should
+be considered for the collisionless branch, but should not play an important role for the
+collisional mode.
+In the input parameters for GS2 there are instructions to control which collision operators
+are included in the calculation, which provides a means to validate the choice of pitch
+angle scattering Lorentz operator in the slab MTM model. In the above GS2 simulations,
+the collision model is set as the lorentz option, which includes CGS2
+L
+and a ﬂow correction
+term5 in CGS2
+M
+[95]. The full collision option takes CGS2
+E
+and the rest of CGS2
+M
+into account
+and can be adopted by using the default option. Apart from the modular design of the
+GS2 collision model options, the diffusion term in CGS2
+L
+can be independently tested
+using another scaling parameter, cfac (noting as αc), acting on k⊥in GS2. Similar to
+αb, taking αc = 0 turns off this term. Furthermore, by default the collision frequency ν
+is velocity-dependent; based on a conclusion in [71] that the collisionless toroidal MTM
+can even be seen with a velocity-independent collision operator, it is worth conducting a
+test of the velocity dependency in the collision frequency for the collisionless branch in
+slab geometry. In GS2, this can be implemented with the const v option, which adopts
+ν = νth in the calculation and also turns off the diffusion term in CGS2
+L
+as well as the ﬂow
+correction term.
+Figure (4.11) compares the following four scenarios: the full collision model adopts all
+terms in CGS2 (with the default option); the GS2 Lorentz model uses both terms in CGS2
+L
+(with the lorentz option and αc = 1); the pitch angle scattering model includes only the
+ﬁrst term in CGS2
+L
+(with the lorentz option and αc = 0); and the velocity-independent
+model takes ν = νth by the lorentz and const v options. The fact that the collisionless
+mode has positive growth rate even with simple collision operator implies that the choice
+of collision operator does not affect whether these modes are stable or unstable. It can
+be conﬁrmed that the pitch angle scattering model matches well with the full Lorentz
+collision operator in the collisional regime, but in the collisionless regime the diffusion
+term is required. This result is consistent with the higher kx of the collisionless branch
+identiﬁed in ﬁgure (4.9).
+On the other hand, in the collisionless condition, the GS2 Lorentz operator gives a good
+agreement with the full collision model which also considers the conservation correction
+terms; however, in the collisional branch the slab MTM is shown to be suppressed signi-
+5The form of this correction term can be found in equation (28) of [82]. We will discuss its impact in
+Section 6.3.
+57
+
+4.4. Impact of the collision model
+ﬁcantly by CGS2
+E
+and CGS2
+M
+terms. Although this is a concern that requires further study
+for the collisional slab MTM theory, this is not the main focus of this thesis so we do not
+Figure 4.11: Comparison of the GS2 collision models in four options: the full collision
+model (all terms in CGS2), the GS2 Lorentz model (CGS2
+L
+with αc = 1),
+the pitch angle scattering model (CGS2
+L
+with αc = 0), and the velocity-
+independent model (CGS2
+L
+with const v option). The related physics para-
+meters are kyρi = 0.3, ηe = 5.0, β = 0.005 and Ln/Ls = 0.05.
+Figure 4.12: The growth rate and mode frequency of the collisionless instability as a
+function of plasma beta. Here kyρi = 0.3, ηe = 5.0, Ln/Ls = 0.05 and
+νth/ω∗e = 0.0.
+58
+
+Chapter 4. The limitation of the classic slab MTM model
+look into it here. Figure (4.11) also concludes that the velocity dependency in the collision
+frequency is necessary to capture the mode correctly. Actually the velocity-independent
+results shown in the collisional condition are the extension of the collisionless branch.
+Substituting ν = νth into the slab MTM model, we calculate that here the eigenvalue ω
+has a negative growth rate, which therefore is not identiﬁed by GS2.
+Focusing on the collisionless branch, we will adopt the full Lorentz collision operator6
+in equation (4.12) to derive the collisionless eigenmode model in Chapter 5, in which the
+collision frequency is velocity-dependent.
+4.5
+Electrostatic limit of the collisionless mode
+In this subsection, we investigate the inﬂuence of the electromagnetic ﬁeld ﬂuctuations on
+this collisionless mode. This can be done by varying the value of plasma beta β. A higher
+β relates to stronger ﬂuctuations in the magnetic ﬁeld, while β = 0 provides the elec-
+trostatic limit. The result is shown in ﬁgure (4.12). We ﬁnd that the collisionless branch
+persists, and is even more unstable, in the electrostatic limit. Recalling the neglectable ion
+dynamics leads to a supposition that this collisionless mode, even though featuring with
+tearing parity, might fundamentally be an ETG mode. To verify this point, in Chapter 5
+we ﬁrst develop an electrostatic analytic model then an electromagnetic analytic model to
+allow detailed study.
+6Note that ﬁgure (4.11) actually implies that the pitch angle scattering term in the collision operator
+does not play an important role. However, this does not reduce the complexity of derivation to be discussed
+in the next chapter due to the ﬁve-diagonal matrix P in equation (5.28). In this thesis, we keep both terms.
+59
+
+
+Chapter 5
+Developing the collisionless micro-scale
+tearing mode model
+The GS2 simulation results demonstrate that the collisionless micro-scale tearing par-
+ity mode requires considering FLR effects for electrons. Meanwhile, as this mode can
+even exist in the electrostatic limit, we identify it with a tearing parity branch of an ETG
+mode, though the electromagnetic effects are still important (see Section 6.2). To demon-
+strate the physics interpretation of the drive mechanism, we develop two models from the
+gyrokinetic theory. In Section 5.1 we develop an electrostatic model in the zero collision
+frequency limit to prove the ETG nature of this mode. In Section 5.2, an electromag-
+netic model with ﬁnite collision frequency gives a more complete picture of this mode
+and provides a direct benchmark with GS2 results. The derivation is based on the same
+slab geometry as illustrated in ﬁgure (3.1). Adiabatic ions are adopted in both models as
+informed by GS2 and the assumptions for f0 = fM and Ti = Te = T are kept.
+5.1
+Electrostatic model at zero collision frequency
+The electron gyrokinetic equation for this case includes both the parallel perturbation
+term and the Bessel function. Following a similar procedure to that in Section 3.4.1 when
+calculating for ion perturbation and density, we can derive a second order differential
+eigenmode equation. However, due to the extreme complexity regarding the coupling
+of Bessel function and Legendre polynomial (see Appendix B), the previous derivation
+method does not work for an electromagnetic model in Section 5.2. We therefore develop
+an alternative expansion approach and we demonstrate the derivation for both models in
+this approach. It is more convenient to analyse in Fourier space. Fourier transformation
+61
+
+5.1. Electrostatic model at zero collision frequency
+of the electron gyrokinetic equation and the quasi-neutrality equation yields
+
+ω −i ky
+Ls
+v∥
+∂
+∂k
+
+ˆg(k) = e
+T fM
+ ω −ωT
+∗e
+
+J0(k⊥ρe)ˆφ(k),
+(5.1)
+−n0
+eˆφ(k)
+T
++
+Z ∞
+−∞
+d3v · ˆg(k)J0(k⊥ρe) = n0
+eˆφ(k)
+T
+,
+(5.2)
+where we have adopted a Boltzmann response for the ions. Here, theˆsymbol represents
+the functions in Fourier space and we have omitted the species subscript. Expanding
+Bessel functions to the second order, equations (5.1) and (5.2) become
+
+ω −i ky
+Ls
+v∥
+∂
+∂k
+
+ˆg = e
+T fM
+ ω −ωT
+∗e
+ 
+1 −k2
+yv⊥
+4ω2
+ce
+−k2
+xv⊥
+4ω2
+ce
+
+ˆφ,
+(5.3)
+2n0
+eˆφ
+T =
+Z ∞
+−∞
+d3v ·
+
+1 −k2
+yv2
+⊥
+4ω2
+ce
+−k2
+xv2
+⊥
+4ω2
+ce
+
+ˆg.
+(5.4)
+Conducting the inverse Fourier transform to real space gives
+
+ω −kyx
+Ls
+v∥
+
+g = e
+T fM
+ ω −ωT
+∗e
+ 
+1 −k2
+yv2
+⊥
+4ω2
+ce
++ v2
+⊥
+4ω2
+ce
+∂2
+∂x2
+
+φ,
+(5.5)
+2n0
+eφ(x)
+T
+=
+Z ∞
+−∞
+d3v ·
+
+1 −k2
+yv2
+⊥
+4ω2
+ce
++ v2
+⊥
+4ω2
+ce
+∂2
+∂x2
+
+g.
+(5.6)
+Substituting g from (5.5) into (5.6) gives the second order differential equation for φ with
+ω being the eigenvalue
+2π3/2v3
+eφ =
+Z ∞
+−∞
+d3v · e−v2/v2
+e
+
+1 −k2
+yv2
+⊥
+4ω2
+ce
++ v2
+⊥
+4ω2
+ce
+∂2
+∂x2
+
+
+ω −ωT
+∗e
+ω −kyxv∥/Ls
+
+1 −k2
+yv2
+⊥
+4ω2
+ce
++ v2
+⊥
+4ω2
+ce
+∂2
+∂x2
+
+φ
+
+.
+(5.7)
+To simplify the notation, we normalise the variables as ¯ω = ω/ω∗e, ¯ky = kyρe, ¯x = x/ρe,
+¯φ = −eφ/T and note s = v∥/ve, t = v⊥/ve, ϵ = Ln/Ls. The normalised equation
+becomes
+16√π ¯φ =
+Z ∞
+−∞
+ds
+Z ∞
+0
+t dt · e−(s2+t2)
+
+¯ω −1 −η
+
+s2 + t2 −3
+2
+
+"
+ 4 −¯k2
+yt2
+ 
+4 −¯k2
+yt2 + t2 ∂2
+∂¯x2
+¯ω −2ϵ¯xs
+!
++ t2 ∂2
+∂¯x2
+ 
+4 −¯k2
+yt2 + t2 ∂2
+∂¯x2
+¯ω −2ϵ¯xs
+!#
+¯φ.
+(5.8)
+62
+
+Chapter 5. Developing the collisionless micro-scale tearing mode model
+In the parameter range relevant to our study, ¯ky ≪1 holds1, so that ¯k2
+y terms can be safely
+neglected. Furthermore, the third and fourth orders of the differential operator are also
+negligible. Equation (5.8) then becomes
+√π ¯φ =
+Z ∞
+−∞
+ds
+Z ∞
+0
+dt · e−s2e−t2t
+
+¯ω −1 + 3
+2η −ηs2 −ηt2
+
+
+1
+¯ω −2ϵ¯xs +
+2ϵ2s2t2
+(¯ω −2ϵ¯xs)3
+
+¯φ +
+ϵst2
+(¯ω −2ϵ¯xs)2
+∂
+∂¯x
+¯φ
++
+
+t2
+2(¯ω −2ϵ¯xs) +
+ϵ2s2t4
+2(¯ω −2ϵ¯xs)3
+ ∂2
+∂¯x2 ¯φ
+
+.
+(5.9)
+The integration with respect to t is simply the Gaussian integral
+Z ∞
+0
+e−t2tn dt = 1
+2Γ(n + 1
+2
+),
+t ∈R and n ∈N.
+(5.10)
+To evaluate the integration with respect to s, we deﬁne a set of recursive functions in the
+form of a generalised plasma dispersion function
+Zm,n(α) =
+Z ∞
+−∞
+e−s2sm
+(s −α)n+1 ds,
+α ∈C, s ∈R and m, n ∈N.
+(5.11)
+When α = 0, it reduces to the Gaussian integral. When α ̸= 0, using integration by parts,
+all Zm,n(α) can be related to Z0,0(α) through
+Zm,n(α) = m
+n Zm−1,n−1(α) −2
+nZm+1,n−1(α),
+for n ⩾1,
+(5.12)
+Zm,0(α) = αZm−1,0(α) + 1 + (−1)m−1
+2
+Γ(m
+2 ),
+(5.13)
+Z0,0(α) =
+Z ∞
+−∞
+e−s2
+s −α ds = iπW(α),
+(5.14)
+where W(α) is known as the Faddeeva function
+W(α) = e−α2 
+1 + 2i
+√π
+Z α
+0
+et2 dt
+
+,
+α, t ∈C.
+(5.15)
+Therefore, when ¯x ̸= 0, equation (5.9) can be eventually simpliﬁed into a second order
+1Note the anisotropy in ky and kx. As a consequence, the binormal wavelength of this mode is at the ion
+scale while the radial wavelength is at the electron scale. Such a parameter range is not typically captured
+by many gyrokinetic simulations. A very recent gyrokinetic study in [103] also ﬁnds a novel toroidal ETG
+mode in the small ky condition. On the other hand, another recent gyrokinetic study in [104] demonstrates
+that it is possible for the modes at multiple (even largely separated) scales to nonlinearly interact, which
+gives a challenge regarding the future work (see Section 7.2).
+63
+
+5.2. Electromagnetic model at ﬁnite collision frequency
+differential equation in the form of
+C0 ¯φ + C1
+∂
+∂¯x
+¯φ + C2
+∂2
+∂¯x2 ¯φ = 0,
+(5.16)
+in which the coefﬁcients C0, C1 and C2 are given by
+C0 = −√π −1
+4ϵ¯x
+
+¯ω −1 + 1
+2η
+
+Z0,0 −ηZ2,0
+
+−
+1
+8ϵ¯x3
+
+¯ω −1 −1
+2η
+
+Z2,2 −ηZ4,2
+
+,
+(5.17)
+C1 =
+1
+8ϵ¯x2
+
+¯ω −1 −1
+2η
+
+Z1,1 −ηZ3,1
+
+,
+(5.18)
+C2 = −1
+8ϵ¯x
+
+¯ω −1 −1
+2η
+
+Z0,0 −ηZ2,0
+
+−
+1
+16ϵ¯x3
+
+¯ω −1 −3
+2η
+
+Z2,2 −ηZ4,2
+
+,
+(5.19)
+with Zm,n = Zm,n(¯ω/2ϵ¯x). For the centre of the slab where ¯x = 0, these coefﬁcients are
+well-deﬁned as
+C0
+
+¯x=0 = √π
+
+−1 + ¯ω −1
+2¯ω
++ ϵ2 (¯ω −1 −2η)
+2¯ω3
+
+,
+(5.20)
+C1
+
+¯x=0 = 0,
+(5.21)
+C2
+
+¯x=0 = √π
+ ¯ω −1 −η
+4¯ω
++ ϵ2 (¯ω −1 −3η)
+4¯ω3
+
+.
+(5.22)
+Note that ¯ky does not appear explicitly in the coefﬁcients, but is contained implicitly in
+the normalisation by ω∗e. This means that the eigenmode frequency and growth rate,
+if normalised to ωc, are approximately proportional to ky when ky is small; this is in
+agreement with the slab ETG dispersion relation ω(ky) [54, 103]. The coefﬁcients also
+indicate that this mode is mostly sensitive to magnetic shear and electron temperature
+gradient. Numerical solution results for this model will be presented in Chapter 6.
+5.2
+Electromagnetic model at ﬁnite collision frequency
+To study the electromagnetic effects and the impact of collision frequency on this mode,
+we include the parallel magnetic vector potential and full Lorentz collision operator in
+64
+
+Chapter 5. Developing the collisionless micro-scale tearing mode model
+equation (4.12). The gyrokinetic equation for electrons is
+
+ω −i ky
+Ls
+vξ ∂
+∂k −iν
+2
+∂
+∂ξ
+ 1 −ξ2 ∂
+∂ξ + iν
+4 k2
+⊥ρ2  1 + ξ2
+ˆg
+= e
+T fM
+ ω −ωT
+∗e
+
+J0(k⊥ρ⊥)
+h
+ˆφ(k) −vξ ˆA∥(k)
+i
+.
+(5.23)
+Following the same expansion approach and orthogonality relation explained in Section
+5.1 and Section 3.4.1, equation (5.23) can be normalised to
+1
+2n + 1
+
+¯ω + i¯ν
+2 n(n + 1)
+
+hn −2ϵ¯xs
+
+n
+2n −1hn−1 + n + 1
+2n + 3hn+1
+
++i¯ν
+4 u2
+
+¯k2
+y −∂2
+∂¯x2
+ 
+n(n −1)
+(2n −3)(2n −1)hn−2
++
+6n2 + 6n −4
+(2n −1)(2n + 3)hn +
+(n + 1)(n + 2)
+(2n + 3)(2n + 5)hn+2
+
+= −
+n0
+π3/2v3
+e
+e−u2 
+¯ω −1 −η
+
+u2 −3
+2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+h 1 −1
+6¯k2
+yu2 ¯φ + 1
+6u2 ∂2
+∂¯x2 ¯φ
+i
+,
+for n = 0,
+h
+−
+  2
+3u −4
+15¯k2
+yu3 ¯A∥−4
+15u3 ∂2
+∂¯x2 ¯A∥
+i
+,
+for n = 1,
+h
+1
+30¯k2
+yu2 ¯φ −1
+30u2 ∂2
+∂¯x2 ¯φ
+i
+,
+for n = 2,
+h
+−1
+35¯k2
+yu3 ¯A∥+ 1
+35u3 ∂2
+∂¯x2 ¯A∥
+i
+,
+for n = 3,
+0,
+for n ⩾4,
+(5.24)
+in which u = v/ve, ¯ν = ν/ω∗e = ¯νth/u3 and ¯A∥= A∥/ρeB. Compared with equations
+(3.25) to (3.27), the FLR effects result in a series of differential equations on the right
+hand side; the diffusion term in the full Lorentz collision operator broadens the coupling
+in {hn} series to the second neighbours.
+To derive a tractable eigenmode model, we introduce a matrix approach by writing the
+equation (5.24) in the form of
+ M + ¯k2
+yP
+
+· h −P · ∂2h
+∂¯x2 = KD,
+(5.25)
+65
+
+5.2. Electromagnetic model at ﬁnite collision frequency
+in which M is a two dimensional inﬁnite tridiagonal matrix
+M =
+
+
+
+
+
+
+
+
+
+
+
+
+¯ω
+−2
+3ϵ¯xu
+0
+0
+0
+· · ·
+−2
+3ϵ¯xu
+1
+3(¯ω + i¯ν)
+−4
+15ϵ¯xu
+0
+0
+· · ·
+0
+−4
+15ϵ¯xu
+1
+5(¯ω + 3i¯ν)
+−6
+35ϵ¯xu
+0
+· · ·
+...
+...
+...
+...
+...
+...
+0
+· · ·
+−
+2(n−1)ϵ¯xu
+(2n−3)(2n−1)
+1
+2n−1(¯ω + n(n−1)
+2
+i¯ν)
+−
+2nϵ¯xu
+(2n−1)(2n+1)
+· · ·
+...
+...
+...
+...
+...
+...
+
+
+
+
+
+
+
+
+
+
+
+
+,
+(5.26)
+h is an inﬁnite column vector containing hn terms
+h =
+
+
+
+
+
+
+h0
+h1
+h2
+...
+
+
+
+
+
+
+,
+(5.27)
+P is a two dimensional inﬁnite ﬁve-diagonal matrix (whose nearest subdiagonal and su-
+perdiagonal elements are zero)
+P = i¯ν
+4 u2
+
+
+
+
+
+
+
+
+
+
+
+
+4
+3
+0
+2
+15
+0
+0
+· · ·
+0
+8
+15
+0
+2
+35
+0
+· · ·
+2
+15
+0
+32
+105
+0
+4
+105
+· · ·
+...
+...
+...
+...
+...
+...
+0
+· · ·
+(n−2)(n−1)
+(2n−5)(2n−3)(2n−1)
+0
+6n2−6n−4
+(2n−3)(2n−1)(2n+1)
+0
+n(n+1)
+(2n−1)(2n+1)(2n+3) · · ·
+...
+...
+...
+...
+...
+...
+
+
+
+
+
+
+
+
+
+
+
+
+,
+(5.28)
+K is the coefﬁcients for the matrices
+K = −
+n0
+π3/2v3
+e
+e−u2 
+¯ω −1 −η
+
+u2 −3
+2
+
+,
+(5.29)
+and D is an inﬁnite column vector containing the differential terms on the right hand
+66
+
+Chapter 5. Developing the collisionless micro-scale tearing mode model
+side
+D =
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 1 −1
+6¯k2
+yu2 ¯φ + 1
+6u2 ∂2
+∂¯x2 ¯φ
+−
+  2
+3u −4
+15¯k2
+yu3 ¯A∥−4
+15u3 ∂2
+∂¯x2 ¯A∥
+1
+30¯k2
+yu2 ¯φ −1
+30u2 ∂2
+∂¯x2 ¯φ
+−1
+35¯k2
+yu3 ¯A∥+ 1
+35u3 ∂2
+∂¯x2 ¯A∥
+0
+0
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.
+(5.30)
+Exploiting the small ¯ky condition, equation (5.25) can be reduced to
+M · h −P · ∂2h
+∂¯x2 = KD∗,
+(5.31)
+in which
+D∗=
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+¯φ + 1
+6u2 ∂2
+∂¯x2 ¯φ
+−2
+3u ¯A∥−4
+15u3 ∂2
+∂¯x2 ¯A∥
+−1
+30u2 ∂2
+∂¯x2 ¯φ
+1
+35u3 ∂2
+∂¯x2 ¯A∥
+0
+0
+...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.
+(5.32)
+We will drop the subscript in D∗in our following discussions. Equation (5.31) gives a
+set of second order differential equations about h, in which, however, both M and D are
+matrix functions of ¯x.
+Using the matrix operation, we symbolically have
+h = KM −1 · D + M −1 · P · ∂2h
+∂¯x2 .
+(5.33)
+With the assumption that ∂3h/∂¯x3 and higher orders are all small, and noticing that in
+our matrix M it holds ∂2M/∂¯x2 = 0, the second order differential ∂2h/∂¯x2 can be
+approximated as (see Appendix A.3)
+∂2h
+∂¯x2 ≈K (I −2N2 · P )−1 ·
+
+2N2 · D −2N1 · ∂D
+∂¯x + M −1 · ∂2D
+∂¯x2
+
+,
+(5.34)
+67
+
+5.2. Electromagnetic model at ﬁnite collision frequency
+in which I is the inﬁnite two dimensional identity matrix, and
+N1 = M −1 · ∂M
+∂¯x · M −1,
+(5.35)
+N2 = M −1 · ∂M
+∂¯x · M −1 · ∂M
+∂¯x · M −1.
+(5.36)
+The quasi-neutrality equation (5.6) provides
+¯φ = −πv3
+e
+n0
+Z ∞
+0
+u2 du
+∞
+X
+n=0
+Z 1
+−1
+dξ · Pn(ξ)
+
+1 + 1
+4u2 ∂2
+∂¯x2 −1
+4u2ξ2 ∂2
+∂¯x2
+
+hn
+= −2πv3
+e
+n0
+Z ∞
+0
+u2 du ·
+
+h0 + 1
+6u2 ∂2
+∂¯x2h0 −1
+30u2 ∂2
+∂¯x2h2
+
+,
+(5.37)
+which can be presented as a product of vectors using the expressions in equations (5.33)
+and (5.34). We now deﬁne two row vectors as
+Rφ =
+
+1
+0
+0
+0
+0
+· · ·
+
+,
+(5.38)
+Qφ =
+
+1
+6u2
+0
+−1
+30u2
+0
+0
+· · ·
+
+.
+(5.39)
+Then the quasi-neutrality equation (5.37) gives the ﬁrst eigenmode equation about ¯φ in
+the matrix form
+¯φ = −2πv3
+e
+n0
+Z ∞
+0
+u2 du ·
+
+Rφ · h + Qφ · ∂2h
+∂¯x2
+
+=
+2
+√π
+Z ∞
+0
+du · u2e−u2 
+¯ω −1 −η
+
+u2 −3
+2
+ 
+Rφ · M −1 · D
++
+ Rφ · M −1 · P + Qφ
+
+· (I −2N2 · P )−1 ·
+
+2N2 · D −2N1 · ∂D
+∂¯x + M −1 · ∂2D
+∂¯x2
+
+.
+(5.40)
+Note that although the right hand side of this expression is in a matrix product form, it
+eventually results in a scalar quantity. But because that these matrices or vectors are all
+functions of u, the complexity in M −1 coming into the integration makes it difﬁcult to
+further simplify the scalar expression.
+Similarly, from the perturbed parallel current density j∥we can derive the other required
+68
+
+Chapter 5. Developing the collisionless micro-scale tearing mode model
+equation for ¯A∥
+
+
+¯k2
+y −∂2
+∂¯x2
+
+¯A∥= −2πµ0eρev4
+e
+B
+Z ∞
+0
+u2 du · u
+
+RA · h + QA · ∂2h
+∂¯x2
+
+= 2β
+√π
+Z ∞
+0
+du · u3e−u2 
+¯ω −1 −η
+
+u2 −3
+2
+ 
+RA · M −1 · D
++
+ RA · M −1 · P + QA
+
+· (I −2N2 · P )−1 ·
+
+2N2 · D −2N1 · ∂D
+∂¯x + M −1 · ∂2D
+∂¯x2
+
+,
+(5.41)
+in which
+RA =
+
+0
+2
+3
+0
+0
+0
+0
+· · ·
+
+,
+(5.42)
+QA =
+
+0
+1
+15u2
+0
+−1
+35u2
+0
+0
+· · ·
+
+.
+(5.43)
+Equations (5.40) and (5.41) form the set of second order differential eigenmode equa-
+tions for the electromagnetic model. Directly comparing with the conventional slab MTM
+model in equations (3.33) and (3.34), the expressions for parallel conductivity σ∥and par-
+allel electric ﬁeld E∥can be considered as embedded in these matrix productions2. The
+calculation of M −1 is the most challenging, which in principle requires the full inﬁnite
+size of M, even though only a few elements in M −1 actually contributes to the coef-
+ﬁcients due to the small number of non-zero terms in Rφ, Qφ, RA, QA and D. In
+practice, due to the decreasing value of the elements towards the higher rank, the mat-
+rix M can be truncated, albeit still at a large size, during the calculation (see Section
+6.1). Some mathematics discussions on inverse of tridiagonal matrices can be found in
+[105, 106, 107, 108], especially [105] provides a technique to estimate the upper and
+lower bounds for the truncation.
+In a few special cases it is possible to conduct a simpliﬁcation. For the conventional slab
+MTM model where the FLR effects for electrons are ignored and only the pitch angle
+scattering model is included in the collision operator, if we apply this matrix approach
+to the derivation, matrix D contains only the ﬁrst two elements which are also ordinary
+terms. In this case, matrices Qφ and QA are not required and the need of elements in
+M −1 is also further reduced. After some cumbrous algebra, this can eventually result in
+the continued fraction expression in equation (3.28). For another case where the collision
+frequency ¯νth = 0 and at the centre of the slab ¯x = 0, the matrix M becomes diagonal.
+Dropping the electromagnetic terms in this case, the eigenmode equation (5.40) becomes
+2Attempts on simplifying the matrix expression indicate that σ∥and E∥may be re-deﬁned with an extra
+phase in the scalar expression (see Appendix B).
+69
+
+5.2. Electromagnetic model at ﬁnite collision frequency
+the same as our electrostatic collisionless model (5.16).
+In the next chapter, we include the matrix operations into the numerical integration al-
+gorithm to calculate the eigenmodes of our models. Note that the ¯ky also does not appear
+in the coefﬁcients of electromagnetic model in the small ¯ky condition. This will be valid-
+ated in Section 6.1.1.
+70
+
+Chapter 6
+Numerical calculation and discussion
+6.1
+Conﬁrming the collisionless instability
+We upgrade our numerical calculation code to solve the new electrostatic and electromag-
+netic models developed in Chapter 5. The main algorithm of the code has been described
+in Section 4.1. For the electrostatic model, the generalised plasma dispersion function
+Zm,n in coefﬁcients C0, C1 and C2 are calculated through the recursive relations (5.12),
+(5.13) and (5.14) when ¯x is not too small, in which the Faddeeva function calculation uses
+the routine in [109]. When ¯x is close to zero, the truncation error regarding W(1/¯x) can
+be very large, therefore the expansion form
+C0 = C0
+
+¯x=0 +
+√πϵ2¯x2
+¯ω3
+
+¯ω −1 −η + 18ϵ2
+¯ω2 (¯ω −1 −3η)
+
+,
+(6.1)
+C1 = C1
+
+¯x=0 +
+√πϵ2¯x
+¯ω3
+(¯ω −1 −2η) ,
+(6.2)
+C2 = C2
+
+¯x=0 +
+√πϵ2¯x2
+2¯ω3
+
+¯ω −1 −2η + 18ϵ2
+¯ω2 (¯ω −1 −4η)
+
+,
+(6.3)
+is adopted for small ¯x values, in which C0
+
+¯x=0, C1
+
+¯x=0 and C2
+
+¯x=0 are given in equations
+(5.20), (5.21) and (5.22).
+In the code for the electromagnetic model, zgetrf, zgetri, zgttrf and zgttrs modules
+in LAPACK [110] are adopted in calculating the inverse of the matrices. The size of M
+depends on collision frequency ¯νth and magnetic shear scale length ϵ; the grid size ¯xmax
+depends on these two parameters, as well as plasma beta β. For the parameters in the
+range of our calculations, the matrix size is set to 30 × 30 and the grid size is 40¯x, with
+which the code has been tested to provide a relative precision of 10−6. A special treatment
+71
+
+6.1. Conﬁrming the collisionless instability
+for β = 0 is required, as then the special solution of ¯A∥= 0 holds from the eigenmode
+equation (5.41) and the tearing boundary condition in (3.35), which however conﬂicts
+with the discrete boundary condition in (4.10) at ¯A∥(¯x = 0) for the β ̸= 0 case.
+The calculation results are presented in ﬁgure (6.1), which provides the mode frequency
+and growth rate as functions of collision frequency. The parameters are kept the same
+as for the slab MTM results in ﬁgure (4.2), in which the GS2 adopts the default Lorentz
+collision model. The electromagnetic model matches with GS2 to a good extent and also
+conﬁrms the instability drive from the electron temperature gradient. Both show that this
+collisionless instability tends to be stabilised by collisions. The deviation between the
+electromagnetic model and GS2 increase with the collision frequency; the reason for this
+difference are to be discussed in Section 6.3. One phenomenon to note here is that the
+GS2 result switches to a slightly different branch at νth/ω∗e = 1.0 when ηe = 5.0 and
+νth/ω∗e = 0.7 when ηe = 7.0, as indicated by the jump in frequency1. However, unlike the
+intrinsically different physics mode change as investigated in Section 4.2.1, the branches
+here are actually different orders of harmonic (see Section 6.1.3) of the same eigenmode
+equations. Figure (6.2) shows the difference in mode structures at different harmonics at
+νth/ω∗e = 0.1, ηe = 5.0 and νth/ω∗e = 1.0, ηe = 5.0, where in the higher order harmonic,
+the mode has more ﬁne structures. Different from GS2, our numerical code by default
+calculates the eigenmodes having the same order of harmonic.
+Figure 6.1: The benchmark for eigenvalue ω as a function of collision frequency between
+the electromagnetic model and GS2. The physics parameters are kept the
+same as in ﬁgure (4.2), which are β = 0.005, ϵ = 0.05 and kyρi = 0.3 for
+GS2 simulations.
+1As a time-dependent code, GS2 delivers the most unstable mode.
+72
+
+Chapter 6. Numerical calculation and discussion
+Figure 6.2: The mode structures of two harmonics in GS2 simulations of the collisionless
+instability. Samples taken from ηe = 5.0 in ﬁgure (6.1), the top panels with
+νth/ω∗e = 0.1 have a lower order of harmonic than the bottom panels with
+νth/ω∗e = 1.0. The real and imaginary parts of the ﬁelds are shown with
+blue solid lines and red dashed lines, respectively. The mode structures for
+νth/ω∗e = 0 can be found in ﬁgure (4.3).
+6.1.1
+Validation for the small binormal wavenumber condition
+Both our models have dropped the binormal wavenumber ky in their coefﬁcients due to
+the ky ≪kx condition applied. In other words, when the eigenmode ω is normalised
+to ω∗e, it does not vary with ky. (Note again that ω∗e = kyveρe/2Ln.) This can be
+conﬁrmed in GS2 simulations. As shown in ﬁgure (6.3), the normalised mode frequency
+and growth rate are constant with respect to ky. This also infers that the collisionless
+mode has a linear dispersion relation with respect to ky, which agrees with the slab ETG
+characteristics [55, 59, 103].
+6.1.2
+Validation for the electrostatic limit
+We now benchmark both electromagnetic and electrostatic models at various plasma beta
+(β = 0 for the electrostatic model). Figure (6.4) shows the mode growth rate and fre-
+quency as functions of β in electromagnetic and electrostatic models at zero collision
+frequency. The result at β = 0 is the same whether using the electromagnetic model
+or electrostatic model, which conﬁrms the fundamental ETG nature of this mode. The
+73
+
+6.1. Conﬁrming the collisionless instability
+GS2 results from ﬁgure (4.12) are also plotted in the ﬁgure. The electromagnetic model
+shows a trend that is consistent with GS2, though the difference between the two models
+becomes larger when plasma beta increases. This difference is partly due to the fact that
+with higher plasma beta the eigenmode with a higher harmonic becomes more unstable
+Figure 6.3: The validation for the small ky condition with GS2 simulations. The normal-
+ised mode frequency and growth rate does not vary with ky. The parameters
+for this graph include ηe = 5.0, ϵ = 0.05, β = 0.005.
+Figure 6.4: The comparison of the impact of plasma beta in the electromagnetic model
+and GS2. The parameters are kept the same as in ﬁgure (4.12), which are
+ηe = 5.0, νth/ω∗e = 0.0, ϵ = 0.05 and kyρi = 0.3 for GS2 simulations. The
+data points at β = 0 matches well with the electrostatic model.
+74
+
+Chapter 6. Numerical calculation and discussion
+Figure 6.5: The mode structures of the most unstable harmonic in GS2 simulations at
+β = 0, 0.01 and 0.1 in ﬁgure (6.4), in which β = 0 corresponds to the
+electrostatic case where magnetic vector potential is not relevant. The real
+and imaginary parts of the ﬁelds are shown with blue solid lines and red
+dashed lines, respectively. The mode structures for β = 0.005 can be found
+in ﬁgure (4.3).
+and is therefore picked out in GS2. Figure (6.5) shows the change in mode structure with
+varying plasma beta, where more ﬁne structures can be seen as β increases.
+6.1.3
+The eigenmode harmonic series
+We have shown that this collisionless micro-scale tearing parity mode has the nature of
+ETG modes, though usually ETG modes are associated with twisting parity. In practice,
+if the boundary condition is not restricted, mathematically one eigenmode problem in
+general will have a family of harmonic solutions alternating between twisting and tearing
+75
+
+6.1. Conﬁrming the collisionless instability
+parity. In other words, even if the twisting parity eigenmode is the fundamental harmonic,
+there might also be higher orders of harmonic with tearing parity. These harmonics do
+not conﬂict with each other, and sometimes they can co-exist. Indeed, there actually
+is no physical or mathematical reason for the fundamental harmonic to always be the
+most unstable one. The phenomenon that higher order harmonics can be more unstable
+have been previously reported for the ITG mode [111, 112], ETG mode [113, 114] and
+ballooning mode [115, 116]. High harmonics excitation, parity mixture and transition
+under certain scenarios can be found in [117, 118].
+In our models, the different harmonics can be found numerically using the contour method
+described in Section 4.1. Figure (6.6) shows the contour plot calculated with the electro-
+static model. The cross points of blue lines (Re(L) = 0) and red lines (Im(L) = 0) are
+at the eigenvalue ω of different harmonics, in which those solutions indicated with green
+dots are found to have tearing parity. Note the rapidly changing L values around yellow
+dots - these have eigenmodes with twisting parity, and can be conﬁrmed by solving the
+eigenmode equations with the twisting boundary condition. These twisting solutions are
+allowed in our eigenmode equations, and should be part of the harmonic set, because
+in the derivation we do not take any assumptions on the parity. The only restriction for
+the parity comes from the boundary conditions imposed for the calculation, such that the
+Figure 6.6: The contour plot of ω is calculated from the electrostatic model at ηe = 5.0.
+The cross points of blue and red curves are at ω eigenvalues.
+76
+
+Chapter 6. Numerical calculation and discussion
+Figure 6.7: The growth rate and mode frequency of different harmonics calculated from
+the electrostatic model and GS2. In this ﬁgure, νth/ω∗e = 0.0, ηe = 5.0,
+β = 0.0, ϵ = 0.05 and kyρi = 0.3 for GS2 simulations.
+twisting parity eigenmodes are found under the boundary condition
+|φ|, |A∥| →0 as |x| →∞,
+A∥(0) = 0,
+∂φ
+∂x
+
+x=0
+= 0.
+(6.4)
+Therefore, the odd harmonics are tearing parity modes while the even harmonics are twist-
+ing.
+GS2 can also calculate our different harmonics if the code is used with its eigensolver
+setting. Extracting the harmonics calculated from GS2 and our models, we can compare
+them. Figure (6.7) shows in the electrostatic collisionless limit the different harmonic
+eigenmodes calculated by the electrostatic model and GS2. It can be seen that the most
+unstable eigenmode in this case is the third harmonic. This is a tearing parity mode even
+though the equation contains only ETG physics. In ﬁgure (6.1), the results from our
+electromagnetic model are consistent with the third harmonic, while the GS2 data points
+where the frequency jumps actually corresponds to the ﬁfth harmonic.
+6.2
+Magnetic islands in the collisionless model
+Although the underlying mechanism behind this small-scale collisionless tearing parity
+mode in slab geometry has been shown to come from ETG modes, we demonstrate that
+this mode is still capable of forming magnetic islands. This mechanism can be explained
+by the electron inertia - it is also the rationality behind the consideration for the electron
+77
+
+6.2. Magnetic islands in the collisionless model
+FLR effects. The structure of a magnetic island can be calculated from the magnetic
+vector potential A∥by taking the contours of ﬂux surface
+ψ(x, y) = B0x2
+2Ls
++ Re(A∥· eikyy).
+(6.5)
+A set of necessary but not sufﬁcient conditions2 for a magnetic island surface is
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+∂ψ
+∂x
+
+x=0,y=y0
+= 0,
+∂ψ
+∂y
+
+x=xw,y=yw
+= 0,
+ψ(0, y0) = ψ(xw, yw).
+(6.6)
+(6.7)
+(6.8)
+The island width w is given by the maximum of xw which depends on the magnitude and
+the proﬁle of A∥. As in our linear model the amplitude of A∥is arbitrary, the width of the
+island is actually undetermined.
+Figure 6.8: The magnetic islands structure evolution calculated by the electromagnetic
+model with ηe = 5.0, νth/ωe = 0.0, β = 0.005 and ϵ = 0.05. The amplitudes
+of A∥in the centre panel and the right-hand panel is 12 times larger and 60
+times large, respectively, than that of the left-hand panel; the size of magnetic
+islands accordingly grows from order of ρe to ρi and a subsidiary island forms
+near original X-points.
+2Equation (6.6) is trivial, noticing the boundary condition A
+′
+∥(0) = 0.
+78
+
+Chapter 6. Numerical calculation and discussion
+Figure (6.8) demonstrates the magnetic island structure for the collisionless condition
+in the electromagnetic model. The three panels show the evolution of the island shape
+with growing island width.
+In the left-hand panel the width is of the order of elec-
+tron gyroradius ρe while to the right-hand panels it grows to the order of ion gyrora-
+dius ρi. The left-hand panel corresponds to the classic island structure which occurs
+when A∥is sufﬁciently small that its radial variation across the island can be neglected.
+Sometimes this is called the “constant-ψ” approximation. Under this approximation,
+A∥(0) ≈A∥(xw) ≈Re(A∥(0)), so the island width w is proportional to the square root of
+the A∥magnitude
+w ≈
+r
+4Ls
+B0
+A∥(0).
+(6.9)
+However, as A∥increases in the centre and right-hand panels, from a certain point its
+radial variation across the island cannot be neglected. This results in the more complex
+structures shown in the ﬁgure, where the disconnection of the island separatrix happens
+and subsidiary islands can arise near the X-points. The island width can still be found
+through equations (6.7) and (6.8) provided the proﬁle of A∥is known, but usually there is
+not a general analytic expression.
+Nevertheless, magnetic islands short circuit the ﬂux surfaces at two sides, which as a
+consequence can increase radial transport. When a tearing parity eigenmode exists, even
+if it is not the most unstable eigenmode linearly, it is still possible that such a mode might
+provide a background degradation to the conﬁnement nonlinearly. Although we must
+acknowledge that the order of kxρe and β in our research implies that the level of transport
+might be moderate [65, 119, 120]. How quantitatively this collisionless magnetic island
+affects the particle and heat transport is to be answered in future work.
+6.3
+The limitation of our collisionless models
+Our models for the collisionless micro-scale tearing parity mode have been shown to
+present a good agreement with GS2 full gyrokinetic simulation results, but the agreement
+weakens at relatively higher collision frequency and at higher orders of eigenmode har-
+monic. This is due to two main simpliﬁcations in our derivation: the reduced collision
+operator and the limited order of expansions.
+As mentioned in Section 4.4, the lorentz option in GS2 contains not only the full Lorentz
+collision operator in equation (4.12), but also a correction term regarding the ﬂow velo-
+city of the background, whose magnitude is proportional to the collision frequency (see
+equation (28) in [82]). Although here we do not discuss the form of this correction term
+79
+
+6.3. The limitation of our collisionless models
+Figure 6.9: The benchmark for the collision operators between GS2 and the electromag-
+netic model. Three forms of the collision operator are shown in the ﬁgure.
+The related physics parameters are kept the same as in ﬁgure (4.11).
+or re-derive the eigenmode equations including this term, we can estimate the impact
+of it by comparing the three different collision options as shown in ﬁgure (6.9) in GS2
+and in our electromagnetic model. Both the lorentz option and the pitch angle scat-
+tering option in GS2 contains this ﬂow correction term; however, it is turned off in the
+velocity-independent option. In our electromagnetic model, taking the matrix P deﬁned
+in equation (5.28) being zero reduces to the pitch angle collision operator; further taking
+ν = νth corresponds to the GS2 velocity-independent option. As shown in the ﬁgure,
+all three cases show good agreement and the distinguishable trend. Besides, the velocity-
+independent option, as the most alike model between GS2 and our electromagnetic model,
+matches better in the growth rate than the other two. The result differences using the other
+two options increases as the collision frequency rises, which agrees with the description of
+the ﬂow correction term. Nevertheless, this concludes that the Lorentz operator contains
+the most important physics relevant to our study.
+The limited expansion order leads to the discrepancy for higher harmonics. In our deriv-
+ation, we expand the Bessel function to the second order only, and we neglect the higher
+order differential of the perturbed distribution function. This naturally loses information
+from higher harmonic components, and thus reduces the ability to capture more ﬁne struc-
+tures. In GS2, a full Bessel function is kept throughout the numerical calculation. The
+analytic derivation without expanding the Bessel function is needed for a more accurate
+model; however it faces mathematical challenges regarding a coupling that associates the
+FLR effects with pitch angle scattering. The detail is presented in Appendix B.
+80
+
+Chapter 7
+Conclusions and future work
+7.1
+The physics of the collisionless micro-scale tearing
+mode in slab geometry
+MTMs are one of the concerns for the effectiveness of conﬁnement in MCF. They form
+ﬁne scale magnetic islands thus enhancing the unwanted radial thermal transport. In
+this thesis, we demonstrate a collisionless physics mechanism that drives an ETG-based
+micro-scale tearing parity mode, which leads to the same consequence of magnetic islands
+as that of MTM. In slab geometry, this collisionless micro-scale tearing parity mode is
+also driven by the electron temperature gradient, but the radial wavenumber of this mode
+is much larger than the binormal wavenumber. Therefore FLR effects from electrons play
+an important role in the drive mechanism. The collision frequency and plasma beta tend
+to stabilise this mode, thus there may exist a window where both conventional MTMs and
+this collisionless micro-scale tearing parity mode are stable.
+In numerical simulations, the large radial wavenumber poses difﬁculties to resolve this
+mode. A large Fourier space simulation domain and a ﬁne resolution are required. This
+creates an extreme challenge for nonlinear simulations for the future work because the
+memory space is limited even with high performance supercomputers. Therefore interac-
+tions between this mode and others can be hard to study.
+Using analytic gyrokinetic theory, we develop an electrostatic model and an electromag-
+netic model to interpret the physics of the drive mechanism. The electrostatic model
+proves the ETG nature of this mode, and demonstrates that FLR effects affect this mode
+through a series of plasma dispersion relation. The electromagnetic model can describe
+the inﬂuence of collision frequency and plasma beta, but the expression is in a complic-
+81
+
+7.2. Extending to toroidal geometry
+ated matrix form, which disadvantages the calculation. Further simpliﬁcation is needed
+to give a better physics interpretation and beneﬁt to understand the impact of this mode in
+MCF. There is still more work in improving these models.
+7.2
+Extending to toroidal geometry
+The models developed in this thesis are in slab geometry. To apply to real tokamaks, a
+toroidal model is necessary. In toroidal geometry, the drift term vD · ∇g in the gyrokin-
+etic equation (3.10) is non-zero due to the curvature, which introduces a further expansion
+in g in toroidal direction; besides, the magnetic ﬁeld along the parallel direction is non-
+constant due to the poloidal pathway of ﬁeld lines, which causes different dynamics in
+trapped and passing electrons. Figures (7.1) and (7.2) show preliminary linear GS2 sim-
+ulation results in a cylindrical geometry. Here, the cylindrical geometry can be regarded
+as a transition between slab and toroidal geometries. The curvature parameter in GS2 is
+normalised as ϵL = 2Ls/R, in which R is the radius of the cylinder; slab geometry cor-
+responds to ϵL = 0. Both ﬁgures show that curvature acts as a strong driving parameter
+and that there exists two different branches of the mode at low or high curvature; the inﬂu-
+ence of electron FLR effects is shown to decrease when curvature increases. Considering
+Figure 7.1: The GS2 simulations of the collisionless micro-scale tearing parity mode in
+cylindrical geometry against normalised curvature ϵL. The red, green and
+blue colours are shown for νth/ω∗e = 0.0, 0.1, and 0.5. Other physics para-
+meters for this plot are kyρi = 0.3, ηe = 5.0, ϵ = 0.05 and β = 0.005. Note
+the frequency jump in the most unstable eigenmode at ϵL ∼0.05.
+82
+
+Chapter 7. Conclusions and future work
+Figure 7.2: The GS2 simulations showing the impact of the Bessel factor αb on this col-
+lisionless micro-scale tearing parity mode in cylindrical geometry for vary-
+ing curvature, ϵL. The yellow, red, green and blue colours are shown for
+αb = 0.3, 0.5, 0.8 and 1.0.
+Other physics parameters for this plot are
+kyρi = 0.3, νth/ω∗e = 0.1, ηe = 5.0, ϵ = 0.05 and β = 0.005.
+the ETG nature of the slab mode, this phenomenon matches with the slab and toroidal
+ETG transition and dominance studies in [103, 121]. However, further research is needed
+regarding the tearing parity and its impact.
+In addition to geometry, nonlinear effects are also required in order to determine the amp-
+litude of this mode. When including nonlinear terms, modes with different wavenumbers
+can interact with each other. As a result, some modes will saturate while others may be-
+come more unstable. Modes with widely separated scales can also signiﬁcantly couple
+together [104], which introduces further challenges in simulations. On the other hand,
+in collisionless conditions the ﬂuctuating distribution function may not be a Maxwellian.
+Determine amplitude of the mode also helps better understanding and evaluating the crit-
+ical threshold parameters for the unstable range.
+83
+
+
+Appendix A
+Auxiliary derivations
+A.1
+Lagrangian in single particle motion
+As shown in ﬁgure (2.2), the particle’s position is r + ρL, in which r is the guiding
+centre’s position. Using the dot notation above a variable to denote the time derivative,
+˙r is the motion of the guiding centre and ˙ρL is the gyration component. Therefore, ˙r · b
+is the parallel motion along the magnetic ﬁeld line and −( ˙r × b) × b is the drift motion
+perpendicular to the ﬁeld line.
+When the spatial variation of the magnetic ﬁeld is slow compared with gyroradius, [31]
+gives an expression for the guiding centre system’s Lagrangian as
+L(r, v∥, µ, θ, ˙r, ˙v∥, ˙µ, ˙θ; t) =
+ mv∥b + qA
+
+· ˙r + m
+q µ ˙θ −qΦ −µB −1
+2mv2
+∥,
+(A.1)
+in which t is time; θ = θ(t) is the gyrophase angle of the particle; magnetic vector poten-
+tial A = A(r, t), electric potential Φ = Φ(r, t), unit direction vector b = B/B = b(r, t)
+and magnetic ﬁeld strength B = B(r, t) are all functions of both r and t. Therefore, the
+Lagrangian equations for the four generalised coordinates r, v∥, µ and θ give
+d
+dt
+∂L
+∂˙r
+
+−∂L
+∂r = 0
+=⇒
+˙r × B + E −m
+q
+
+˙v∥b + v∥˙b + µ
+m∇B
+
+= 0, (A.2)
+d
+dt
+ ∂L
+∂˙v∥
+
+−∂L
+∂v∥
+= 0
+=⇒
+v∥= ˙r · b,
+(A.3)
+d
+dt
+∂L
+∂˙µ
+
+−∂L
+∂µ = 0
+=⇒
+˙θ = qB
+m ,
+(A.4)
+d
+dt
+∂L
+∂˙θ
+
+−∂L
+∂θ = 0
+=⇒
+˙µ = 0.
+(A.5)
+85
+
+A.2. Bessel functions from gyroaveraging
+Equations (A.3) and (A.4) are trivial. Equation (A.5) proves that the modulus of the
+magnetic motion µ = |µ| = mv2
+⊥/2B is an adiabatic invariant. The dot product and
+cross product for equation (A.2) with regard to B result in equations (2.9) and (2.12),
+respectively. Here, we do not need to assume dv∥/ dt ≪| dv⊥/ dt| as we did in Section
+2.1.
+A.2
+Bessel functions from gyroaveraging
+In the guiding centre coordinates described in Section 3.1, basis vectors e1 and e2 can be
+chosen as e1 = k⊥/k⊥and e2 = b × k⊥/k⊥. The gyroradius and perpendicular velocity
+can be expressed in {e1, e2} as ρL = ρL(cos α, sin α) and v⊥= v⊥(sin α, −cos α), with
+α being the gyroangle. Note the minus sign in the velocity expression. This is due to that
+the physics nature of gyromotion direction, considering the sign of charge, is against the
+mathematically deﬁned positive angular direction (anti-clockwise). Therefore, equations
+(3.12), (3.13) and (3.14) can be derived as follows.
+⟨eik⊥·ρL⟩= 1
+2π
+Z 2π
+0
+eik⊥ρL cos α dα
+= 1
+π
+Z π
+0
+eik⊥ρL cos α dα
+= J0(k⊥ρL).
+(A.6)
+⟨ρLeik⊥·ρL⟩= ρL
+2π
+Z 2π
+0
+k⊥
+k⊥
+cos α + b × k⊥
+k⊥
+sin α
+
+eik⊥ρL cos α dα
+= iρL
+k⊥
+k⊥
+· −i
+π
+Z π
+0
+eik⊥ρL cos α cos α dα
+= iρLJ1(k⊥ρL)k⊥
+k⊥
+.
+(A.7)
+⟨v⊥eik⊥·ρL⟩= v⊥
+2π
+Z 2π
+0
+k⊥
+k⊥
+sin α −b × k⊥
+k⊥
+cos α
+
+eik⊥ρL cos α dα
+= iv⊥
+k⊥× b
+k⊥
+· −i
+π
+Z π
+0
+eik⊥ρL cos α cos α dα
+= iv⊥J1(k⊥ρL)k⊥× b
+k⊥
+.
+(A.8)
+86
+
+Appendix A. Auxiliary derivations
+A.3
+Differential of the matrix product
+The second order differential ∂2h/∂¯x2 in equation (5.34) is derived from equation (5.31)
+as follows. Note that ∂P /∂¯x = 0 and ∂2M/∂¯x2 = 0.
+Taking the ﬁrst order differential of equation (5.31) gives
+∂M
+∂¯x · h + M · ∂h
+∂¯x −P · ∂3h
+∂¯x3 = K ∂D
+∂¯x .
+(A.9)
+Substituting the expression of h in equation (5.33) gives
+∂h
+∂¯x = KM −1 · ∂D
+∂¯x −KN1 · D −N1 · P · ∂2h
+∂¯x2 + M −1 · P · ∂3h
+∂¯x3 ,
+(A.10)
+with N1 deﬁned in equation (5.35). The next order differential of equation (A.9) is
+2∂M
+∂¯x · ∂h
+∂¯x + M · ∂2h
+∂¯x2 −P · ∂4h
+∂¯x4 = K ∂2D
+∂¯x2 .
+(A.11)
+Substituting equation (A.10) results in
+(I −2N2 · P ) · ∂2h
+∂¯x2 = KM −1 · ∂2D
+∂¯x2 −2KN1 · ∂D
+∂¯x + 2KN2 · D
+−2N1 · P · ∂3h
+∂¯x3 + M −1 · P · ∂4h
+∂¯x4 ,
+(A.12)
+in which N2 is deﬁned in equation (5.36). Assuming that ∂3h/∂¯x3 and ∂4h/∂¯x4 are all
+small gives the expression of ∂2h/∂¯x2 in equation (5.34).
+87
+
+
+Appendix B
+Complexity regarding a
+Bessel-Legendre integration for
+developing the electromagnetic
+model
+In Chapter 5 we have introduced a derivation approach based on Taylor expansion of the
+Bessel function. In Chapter 6 we have shown that this expansion approach is less accurate
+for higher harmonics of the eigenmode because of neglect of higher orders of differentials.
+A complete gyrokinetic operator is preferred; however, now we address the challenges in
+deriving this full gyrokinetic operator, most of which come from the complexity in a
+Bessel-Legendre integral.
+We start with the gyrokinetic equation (5.23), but employ only the pitch angle scattering
+operator in equation (3.15) for now. Apply the Legendre series and conducting the inverse
+Fourier transform, the equation without expanding the Bessel function becomes
+2
+2n + 1
+
+ω + iν
+2 n(n + 1)
+
+hn −k∥v
+
+n
+2n −1hn−1 + n + 1
+2n + 3hn+1
+
+= e
+T fM
+ ω −ωT
+∗e
+
+F−1
+
+ˆφ(k)Tn( kv
+ωce
+) −
+n
+2n + 1v ˆA∥(k)Tn−1( kv
+ωce
+) −n + 1
+2n + 1v ˆA∥(k)Tn+1( kv
+ωce
+); x
+
+,
+(B.1)
+in which F−1[ ˆf(k); x] represents the inverse Fourier transform operation from ˆf(k) to
+89
+
+f(x), and Tn(k) is deﬁned as
+Tn(k) =
+Z 1
+−1
+J0(k
+p
+1 −ξ2)Pn(ξ) dξ,
+k, ξ ∈R and n ∈N.
+(B.2)
+It can be seen that Tn(k) = 0 if n is an odd number. We write the inverse Fourier
+transform of Tn(k) as Sn(x)
+Sn(x) = F−1 [Tn(k); x]
+=
+Z 1
+−1
+F−1 h
+J0(k
+p
+1 −ξ2); x
+i
+Pn(ξ) dξ
+= 1
+π
+Z √
+1−x2
+−
+√
+1−x2
+Pn(ξ)
+p
+1 −x2 −ξ2 dξ,
+(|x| < 1).
+(B.3)
+Here, the inverse transform of Bessel function J0(k) is calculated using equation (6.677.2)
+in [84] as
+F−1 [J0(k); x] = 1
+2π
+Z ∞
+−∞
+J0(k)eikx dk
+= 1
+π
+Z ∞
+0
+J0(k) cos(kx) dk
+=
+
+
+
+(1 −x2)−1/2 /π,
+for |x| < 1,
+0,
+elsewhere.
+(B.4)
+The scaling relation F−1[ ˆf(ak); x] = f(x/a)/|a| is also applied. For a given small n, it
+may be possible to solve Tn(k) and Sn(x) to provide simple forms, for example,
+T0(k) = 2 sin k
+k
+,
+(B.5)
+S0(x) =
+
+
+
+1,
+for |x| < 1,
+0,
+elsewhere,
+(B.6)
+T2(k) = 3 sin k
+k3
+−3 cos k
+k2
+−sin k
+k
+,
+(B.7)
+S2(x) =
+
+
+
+(1 −3x2) /4,
+for |x| < 1,
+0,
+elsewhere.
+(B.8)
+Equations (6.517), (6.554.2) and (6.567.1) in [84] are used here in the simpliﬁcation. The
+general expressions for Tn(k) or Sn(x) at any given n is still too complex to analyse
+and present here. However, they are required for the next step, which gives the ﬁrst
+90
+
+Appendix B. Complexity regarding a Bessel-Legendre integration for developing the
+electromagnetic model
+challenge in deriving the eigenmode equations. For now, we keep the notations of Tn(k)
+and Sn(x).
+Equation (B.1) therefore can be written as
+RHS = e
+T fM
+ ω −ωT
+∗e
+
+ωce
+ 1
+|v|φ(x) ⊛Sn(ωce
+v x)
+−
+n
+2n + 1
+v
+|v|A∥(x) ⊛Sn−1(ωce
+v x) −n + 1
+2n + 1
+v
+|v|A∥(x) ⊛Sn+1(ωce
+v x)
+
+,
+(B.9)
+in which ⊛is the convolution operator1
+F(x) ⊛S(ax) =
+Z ∞
+−∞
+F(λ)S(a(x −λ)) dλ.
+(B.10)
+Again, the extraction for lower n orders are simpler than higher ones. Considering the
+v > 0 half of phase space provides
+n = 0 :
+ωh0 −k∥v
+3 h1 = efM
+T
+ ω −ωT
+∗e
+ ωce
+2v
+Z x+v/ωce
+x−v/ωce
+φ(λ) dλ,
+(B.11)
+n = 1 :
+(ω + iν) h1 −k∥v
+
+h0 + 2
+5h2
+
+= −efM
+T
+ ω −ωT
+∗e
+ ωce
+2v
+"
+3v
+2
+
+1 −ω2
+cex2
+v2
+ Z x+v/ωce
+x−v/ωce
+A∥(λ) dλ
++3vω2
+cex
+v2
+Z x+v/ωce
+x−v/ωce
+A∥(λ)λ dλ −3v
+2
+ω2
+ce
+v2
+Z x+v/ωce
+x−v/ωce
+A∥(λ)λ2 dλ
+#
+,
+(B.12)
+n ⩾2 :
+RHS ̸= 0.
+(B.13)
+The coefﬁcient ωce/2v acts as the averaging factor, thus the integral gives the moments of
+the ﬁelds over (x−v/ωce, x+v/ωce) range. Note that this v is expected to be absorbed into
+the integration over the velocity space with the distribution function to give the expres-
+sions for n and j∥as in equations (3.32) and (3.30). However, the distribution functions
+{hn(x, v)} require solving the recursive relation regarding n ⩾2, of which the right hand
+side is now an interlocked function series about the ﬁelds φ(x) and A∥(x). This loses the
+effectiveness of the technique of the continued fraction in (3.28). As φ(x) and A∥(x) are
+now in an implicit form, the integral over v brings in the next level of complexity.
+1Note the coefﬁcient difference compared with the standard deﬁnition.
+91
+
+We can write the averaged momentum of the ﬁelds as ⟨φ⟩, ⟨A∥⟩, ⟨A∥x⟩, ⟨A∥x2⟩and so
+on, thus the parallel electric ﬁeld E∥in equation (3.29) can be symbolically deﬁned as
+E∥= iω⟨A∥⟩−ik∥⟨φ⟩= iω(A∥+ ψA) −ik(φ + ψφ), where ψ represents for the extra
+phase arising from the momentum average.
+In the limit of ignoring FLR effects, which is equivalent to ωce →∞, it holds that
+limωce→∞T0(kv/ωce) = 2 and limωce→∞Tn(kv/ωce) = 0 for n ⩾2. One may con-
+clude that equations (B.11), (B.12) and (B.13) reduce to the conventional theory (3.25),
+(3.26) and (3.27). However, they do not. The difference is arisen from the convolution
+step, which in some sense is related with a differential operation. A further picture for the
+impacts of FLR effects is to be understood.
+The procedure above has already demonstrated the mathematical challenge in deriving the
+electromagnetic model. With the diffusion term in equation (4.12) included, the algebra
+becomes too heavy to analyse. Therefore, an approach based on the expansion of the
+Bessel function and the matrix operations is developed in Section 5.2.
+92
+
+Glossary
+ETG mode
+Electron temperature gradient mode
+FLR effects
+Finite Larmor radius effects
+ICF
+Inertial conﬁnement fusion
+ITG mode
+Ion temperature gradient mode
+MCF
+Magnetic conﬁnement fusion
+MTM
+Microtearing mode
+93
+
+
+References
+[1] Wikipedia contributors. Nuclear binding energy - Wikipedia, the free encyclo-
+pedia, 2020. Online https://en.wikipedia.org/wiki/Nuclear binding energy; Image
+File Date/Time: 09:59 23 August 2019. [Cited on page 1]
+[2] IAEA Nuclear Data Services. Evaluated nuclear data ﬁle, 2020. Online https:
+//www-nds.iaea.org/exfor/endf.htm; Database Version: ENDF/B-VIII.0. [Cited on
+pages 2 and 5]
+[3] United Nations Department of Economic and Social Affairs. 2019 energy statistics
+pocketbook, 2019. Online https://unstats.un.org/unsd/energystats/pubs/documents/
+2019pb-web.pdf; Series E No.2. [Cited on pages 2 and 3]
+[4] S. Shaﬁee and E. Topal. When will fossil fuel reserves be diminished?
+Energy
+Policy, 37(1):181, 2009. doi:10.1016/j.enpol.2008.08.016. [Cited on page 2]
+[5] S. Sorrell, J. Speirs, R. Bentley, A. Brandt, and R. Miller.
+Global oil
+depletion:
+A review of the evidence.
+Energy Policy, 38(9):5290, 2010.
+doi:10.1016/j.enpol.2010.04.046. [Cited on page 2]
+[6] Al. Valero and A. Valero.
+A prediction of the exergy loss of the
+world’s mineral reserves in the 21st century.
+Energy, 36(4):1848, 2011.
+doi:10.1016/j.energy.2010.02.041. [Cited on page 2]
+[7] A. Stips, D. Macias, C. Coughlan, E. Garcia-Gorriz, and X. S. Liang. On the causal
+structure between CO2 and global temperature. Scientiﬁc Reports, 6:21691, 2016.
+doi:10.1038/srep21691. [Cited on page 2]
+[8] S. Solomon, G.-K. Plattner, R. Knutti, and P. Friedlingstein. Irreversible climate
+change due to carbon dioxide emissions. Proceedings of the National Academy of
+Sciences, 106(6):1704, 2009. doi:10.1073/pnas.0812721106. [Cited on page 2]
+95
+
+References
+[9] A. A. Lacis, G. A. Schmidt, D. Rind, and R. A. Ruedy.
+Atmospheric
+CO2:
+Principal control knob governing earth’s temperature.
+Science, 330
+(6002):356, 2010. doi:10.1126/science.1190653. Corrected on 18 March 2011
+doi:10.1126/science.331.6023.1387-b. [Cited on page 2]
+[10] T. Boden, G. Marland, and R. J. Andres. Global, regional, and national fossil-fuel
+CO2 emissions (1751 - 2014) (v. 2017), 2017. doi:10.3334/CDIAC/00001 V2017.
+[Cited on pages 3 and 4]
+[11] NASA Goddard Institute for Space Studies.
+GISS surface temperature ana-
+lysis (v4), 2020.
+Online https://data.giss.nasa.gov/gistemp/graphs v4; Updated
+monthly; Accessed on March 2020. [Cited on pages 3 and 4]
+[12] United Nations. The intergovernmental panel on climate change (webpage), 2020.
+Online https://www.ipcc.ch. [Cited on page 3]
+[13] NASA. Global climate change (webpage), 2020. Online https://climate.nasa.gov.
+[Cited on page 3]
+[14] Brookhaven National Laboratory. Nuclear database, 2020. Online https://www.
+nndc.bnl.gov/nudat2; Database Version: 2.8. [Cited on page 3]
+[15] United States Energy Information Administration. International energy outlook
+2019, 2019.
+Online https://www.eia.gov/outlooks/ieo/pdf/ieo2019.pdf; Updated
+on 18 October 2019. [Cited on page 4]
+[16] K. S. Krane. Introductory Nuclear Physics. John Wiley & Sons, 1987. ISBN
+9780471805533. [Cited on page 5]
+[17] I. Amdur, M. C. Kells, and D. E. Davenport.
+Collision cross sections of hy-
+drogen and of deuterium. The Journal of Chemical Physics, 18(12):1676, 1950.
+doi:10.1063/1.1747561. [Cited on page 6]
+[18] A. Kramida, Yu. Ralchenko, J. Reader, and NIST ASD Team.
+NIST atomic
+spectra database ionization energies form, 2019. Online https://physics.nist.gov/
+PhysRefData/ASD/ionEnergy.html; Database Version: 5.7.1. [Cited on page 6]
+[19] J. P. Freidberg. Plasma Physics and Fusion Energy. Cambridge University Press,
+2007. ISBN 9780511755705. doi:10.1017/CBO9780511755705. [Cited on page 7]
+[20] ITER project. ITER webpage, 2020. Online https://www.iter.org. [Cited on page 9]
+96
+
+References
+[21] M. Laberge. Magnetized target fusion with a spherical tokamak. Journal of Fusion
+Energy, 38(1):199, 2018. doi:10.1007/s10894-018-0180-3. [Cited on page 9]
+[22] G. G. Dolgov-Saveliev, D. P. Ivanov, V. S. Mukhovatov, et al.
+Investigations
+of the stability and heating of plasmas in toroidal chambers.
+Proceedings of
+Second United Nations International Conference on the Peaceful Use of Atomic
+Energy, Geneva, 32:82, 1958. Online https://www-naweb.iaea.org/napc/physics/
+2ndgenconf/data/Proceedings%201958/papers%20Vol32/Paper09 Vol32.pdf.
+[Cited on page 9]
+[23] S. V. Mirnov.
+Tokamak evolution and view to future.
+Nuclear Fusion, 59(1):
+015001, 2018. doi:10.1088/1741-4326/aaee92. [Cited on page 9]
+[24] L. Spitzer.
+The stellarator concept.
+The Physics of Fluids, 1(4):253, 1958.
+doi:10.1063/1.1705883. [Cited on page 9]
+[25] T. Klinger, T. Andreeva, S. Bozhenkov, et al.
+Overview of ﬁrst Wendel-
+stein 7-X high-performance operation.
+Nuclear Fusion, 59(11):112004, 2019.
+doi:10.1088/1741-4326/ab03a7. [Cited on page 9]
+[26] H. A. B. Bodin and A. A. Newton. Reversed-ﬁeld-pinch research. Nuclear Fusion,
+20(10):1255, 1980. doi:10.1088/0029-5515/20/10/006. [Cited on page 9]
+[27] H. A. B. Bodin. The reversed ﬁeld pinch. Nuclear Fusion, 30(9):1717, 1990.
+doi:10.1088/0029-5515/30/9/005. [Cited on page 9]
+[28] P. Helander, C. D. Beidler, T. M. Bird, et al. Stellarator and tokamak plasmas:
+a comparison.
+Plasma Physics and Controlled Fusion, 54(12):124009, 2012.
+doi:10.1088/0741-3335/54/12/124009. [Cited on page 9]
+[29] Y. Xu. A general comparison between tokamak and stellarator plasmas. Matter
+and Radiation at Extremes, 1(4):192, 2016. doi:10.1016/j.mre.2016.07.001. [Cited
+on page 9]
+[30] F. F. Chen. Introduction to Plasma Physics and Controlled Fusion. Springer Inter-
+national Publishing, 3 edition, 2016. ISBN 9783319223087. doi:10.1007/978-3-
+319-22309-4. [Cited on pages 11, 19, 20, 25, and 35]
+[31] R. G. Littlejohn. Variational principles of guiding centre motion. Journal of Plasma
+Physics, 29(1):111, 1983. doi:10.1017/S002237780000060X.
+[Cited on pages 14
+and 85]
+97
+
+References
+[32] J. Wesson. Tokamaks. OUP Oxford, 4 edition, 2011. ISBN 9780199592234. [Cited
+on pages 18, 22, 23, 25, 27, 31, and 34]
+[33] L. Landau. On the vibrations of the electronic plasma. Journal of Physics, X(1):
+25, 1946. doi:10.1016/B978-0-08-010586-4.50066-3. [Cited on page 19]
+[34] EUROfusion project. Tokamak illustration, 2020. Online https://www.euro-fusion.
+org; Previously known as EFDA-JET project. [Cited on pages 20 and 21]
+[35] C. E. Kessel. Bootstrap current in a tokamak. Nuclear Fusion, 34(9):1221, 1994.
+doi:10.1088/0029-5515/34/9/i04. [Cited on page 22]
+[36] M. Kikuchi and M. Azumi.
+Experimental evidence for the bootstrap current
+in a tokamak.
+Plasma Physics and Controlled Fusion, 37(11):1215, 1995.
+doi:10.1088/0741-3335/37/11/003. [Cited on page 22]
+[37] J. P. Freidberg.
+Ideal MHD.
+Cambridge University Press, 2014.
+ISBN
+9780511795046. doi:10.1017/CBO9780511795046. [Cited on page 22]
+[38] M. Kikuchi. Steady state tokamak reactor based on the bootstrap current. Nuclear
+Fusion, 30(2):265, 1990. doi:10.1088/0029-5515/30/2/006. [Cited on page 22]
+[39] V. D. Shafranov. Equilibrium of a toroidal plasma in a magnetic ﬁeld. Journal of
+Nuclear Energy. Part C, Plasma Physics, Accelerators, Thermonuclear Research,
+5(4):251, 1963. doi:10.1088/0368-3281/5/4/307. [Cited on page 23]
+[40] R. D. Hazeltine and J. D. Meiss. Plasma Conﬁnement. Dover Publications, 2003.
+ISBN 9780486432427. [Cited on pages 23, 31, and 32]
+[41] E. S. Benilov and O. A. Power. A drift model of interchange instability. Physics of
+Plasmas, 14(8):082101, 2007. doi:10.1063/1.2752815. [Cited on page 24]
+[42] C. H. Ma and X. Q. Xu. Global kinetic ballooning mode simulations in BOUT++.
+Nuclear Fusion, 57(1):016002, 2017. doi:10.1088/0029-5515/57/1/016002. [Cited
+on page 24]
+[43] A. Fick.
+V. on liquid diffusion.
+The London, Edinburgh, and Dub-
+lin
+Philosophical
+Magazine
+and
+Journal
+of
+Science,
+10(63):30,
+1855.
+doi:10.1080/14786445508641925. [Cited on page 25]
+[44] F. L. Hinton and R. D. Hazeltine.
+Theory of plasma transport in tor-
+oidal conﬁnement systems.
+Reviews of Modern Physics, 48(2):239, 1976.
+doi:10.1103/RevModPhys.48.239. [Cited on page 25]
+98
+
+References
+[45] R. S. Pease. The UK fusion programme. Plasma Physics and Controlled Fusion,
+29(10B):1439, 1987. doi:10.1088/0741-3335/29/10b/405. [Cited on page 25]
+[46] T. F¨ul¨op and P. Helander. Nonlinear neoclassical transport in toroidal edge plasmas.
+Physics of Plasmas, 8(7):3305, 2001. doi:10.1063/1.1372179. [Cited on page 25]
+[47] F. L. Hinton, J. C. Wiley, D. F. D¨uchs, H. P. Furth, and P. H. Rutherford. Neoclas-
+sical transport in tokamaks in banana/plateau regimes. Physical Review Letters,
+29:698, 1972. doi:10.1103/PhysRevLett.29.698. [Cited on page 25]
+[48] S. Tsuji. Experimental scaling of particle conﬁnement in tokamaks. Fusion Engin-
+eering and Design, 15(4):311, 1991. doi:10.1016/0920-3796(92)90017-x. [Cited on
+page 25]
+[49] S. S. Henderson, L. Garzotti, F. J. Casson, et al. Neoclassical and gyrokinetic ana-
+lysis of time-dependent helium transport experiments on MAST. Nuclear Fusion,
+54(9):093013, 2014. doi:10.1088/0029-5515/54/9/093013. [Cited on page 25]
+[50] J. W. Connor. Pressure gradient turbulent transport and collisionless reconnec-
+tion. Plasma Physics and Controlled Fusion, 35(6):757, 1993. doi:10.1088/0741-
+3335/35/6/009. [Cited on page 25]
+[51] A. I. Smolyakov. Nonlinear evolution of tearing modes in inhomogeneous plas-
+mas. Plasma Physics and Controlled Fusion, 35(6):657, 1993. doi:10.1088/0741-
+3335/35/6/002. [Cited on page 25]
+[52] J. W. Conner and H. R. Wilson.
+Survey of theories of anomalous transport.
+Plasma Physics and Controlled Fusion, 36(5):719, 1994.
+doi:10.1088/0741-
+3335/36/5/002. [Cited on page 25]
+[53] D. Dickinson. Effects of proﬁles on microinstabilities in tokamaks. PhD thesis,
+University of York, 2012. Online https://etheses.whiterose.ac.uk/3331.
+[Cited on
+pages 25, 31, 32, and 43]
+[54] S. C. Cowley, R. M. Kulsrud, and R. Sudan. Considerations of ion-temperature-
+gradient-driven turbulence.
+Physics of Fluids B: Plasma Physics, 3(10):2767,
+1991. doi:10.1063/1.859913. [Cited on pages 25 and 64]
+[55] B. Coppi, M. N. Rosenbluth, and R. Z. Sagdeev. Instabilities due to temperature
+gradients in complex magnetic ﬁeld conﬁgurations. Physics of Fluids, 10(3):582,
+1967. doi:10.1063/1.1762151. [Cited on pages 25 and 73]
+99
+
+References
+[56] P. N. Guzdar. Ion-temperature-gradient instability in toroidal plasmas. Physics of
+Fluids, 26(3):673, 1983. doi:10.1063/1.864182. [Cited on page 25]
+[57] D. L. Brower, W. A. Peebles, S. K. Kim, et al. Observation of a high-density
+ion mode in tokamak microturbulence.
+Physical Review Letters, 59:48, 1987.
+doi:10.1103/PhysRevLett.59.48. [Cited on page 25]
+[58] M. Artun and W. M. Tang. Gyrokinetic analysis of ion temperature gradient modes
+in the presence of sheared ﬂows. Physics of Fluids B: Plasma Physics, 4(5):1102,
+1992. doi:10.1063/1.860118. [Cited on page 25]
+[59] W. Dorland, F. Jenko, M. Kotschenreuther, and B. N. Rogers.
+Electron tem-
+perature gradient turbulence. Physical Review Letters, 85(26 Pt 1):5579, 2000.
+doi:10.1103/PhysRevLett.85.5579. [Cited on pages 25 and 73]
+[60] F. Jenko, W. Dorland, and G. W. Hammett.
+Critical gradient formula for tor-
+oidal electron temperature gradient modes. Physics of Plasmas, 8(9):4096, 2001.
+doi:10.1063/1.1391261. [Cited on page 25]
+[61] J. F. Drake and Y. C. Lee. Kinetic theory of tearing instabilities. Physics of Fluids,
+20:1341, 1977. doi:10.1063/1.862017. [Cited on pages 28, 29, and 35]
+[62] H. Doerk. Gyrokinetic Simulation of Microtearing Turbulence. PhD thesis, Uni-
+versity Ulm, 2012. [Cited on page 28]
+[63] N. T. Gladd, J. F. Drake, C. L. Chang, and C. S. Liu.
+Electron temper-
+ature gradient driven microtearing mode.
+Physics of Fluids, 23:1182, 1980.
+doi:10.1063/1.863119. [Cited on pages 28, 29, 35, 36, 40, 46, and 47]
+[64] D. Dickinson, C. M. Roach, S. Saarelma, et al.
+Microtearing modes at the
+top of the pedestal.
+Plasma Physics and Controlled Fusion, 55:074006, 2013.
+doi:10.1088/0741-3335/55/7/074006. [Cited on pages 28 and 29]
+[65] A. B. Rechester and M. N. Rosenbluth.
+Electron heat transport in a toka-
+mak with destroyed magnetic surfaces.
+Physical Review Letters, 40:38, 1978.
+doi:10.1103/PhysRevLett.40.38. [Cited on pages 28 and 79]
+[66] K. L. Wong, S. Kaye, D. R. Mikkelsen, et al. Microtearing instabilities and electron
+transport in the NSTX spherical tokamak. Physical Review Letters, 99:135003,
+2007. doi:10.1103/PhysRevLett.99.135003. [Cited on page 28]
+100
+
+References
+[67] H.
+Doerk,
+F.
+Jenko,
+M.
+J.
+Pueschel,
+and
+D.
+R.
+Hatch.
+Gyrokin-
+etic microtearing turbulence.
+Physical Review Letters, 106:155003, 2011.
+doi:10.1103/PhysRevLett.106.155003. [Cited on page 28]
+[68] W. Guttenfelder, J. Candy, S. M. Kaye, et al.
+Electromagnetic transport from
+microtearing mode turbulence.
+Physical Review Letters, 106:155004, 2011.
+doi:10.1103/PhysRevLett.106.155004. [Cited on page 28]
+[69] D. R. Hatch, M. Kotschenreuther, S. Mahajan, et al. Microtearing turbulence lim-
+iting the JET-ILW pedestal. Nuclear Fusion, 56(10), 2016. doi:10.1088/0029-
+5515/56/10/104003. [Cited on page 28]
+[70] R. D. Hazeltine, D. Dobrott, and T. S. Wang. Kinetic theory of tearing instability.
+Physics of Fluids, 18(12):1778, 1975. doi:10.1063/1.861097. [Cited on pages 28, 29,
+and 35]
+[71] D. J. Applegate, C. M. Roach, J. W. Connor, et al. Micro-tearing modes in the
+mega ampere spherical tokamak. Plasma Physics and Controlled Fusion, 49(8):
+1113, 2007. doi:10.1088/0741-3335/49/8/001. [Cited on pages 29 and 57]
+[72] I. Predebon and F. Sattin.
+On the linear stability of collisionless microtearing
+modes. Physics of Plasmas, 20(4):040701, 2013. doi:10.1063/1.4799980. [Cited on
+page 29]
+[73] A. K. Swamy, R. Ganesh, J. Chowdhury, et al. Global gyrokinetic stability of col-
+lisionless microtearing modes in large aspect ratio tokamaks. Physics of Plasmas,
+21(8):082513, 2014. doi:10.1063/1.4893314. [Cited on page 29]
+[74] S. Moradi, I. Pusztai, W. Guttenfelder, T. F¨ul¨op, and A. Moll´en. Microtearing
+modes in spherical and conventional tokamaks. Nuclear Fusion, 53(6):063025,
+2013. doi:10.1088/0029-5515/53/6/063025. [Cited on page 29]
+[75] A. K. Swamy, R. Ganesh, S. Brunner, J. Vaclavik, and L. Villard. Collisionless mi-
+crotearing modes in hot tokamaks: Effect of trapped electrons. Physics of Plasmas,
+22(7):072512, 2015. doi:10.1063/1.4927579. [Cited on page 29]
+[76] P. H. Rutherford. Drift instabilities in general magnetic ﬁeld conﬁgurations. Phys-
+ics of Fluids, 11(3):569, 1968. doi:10.1063/1.1691954. [Cited on page 31]
+[77] J. B. Taylor and R. J. Hastie. Stability of general plasma equilibria - I formal
+theory. Plasma Physics, 10(5):479, 1968. doi:10.1088/0032-1028/10/5/301. [Cited
+on page 31]
+101
+
+References
+[78] G. Hammett. Lecture notes on gyrokinetics, 2014. Online https://https://w3.pppl.
+gov/∼hammett/talks/2014/gk intro/Hammett GK slab derivation handwritten.pdf.
+[Cited on page 31]
+[79] H. Wilson. Private notes on gyrokinetics, 2018. [Cited on page 31]
+[80] P. Helander and D.J. Sigmar. Collisional Transport in Magnetized Plasmas. Cam-
+bridge University Press, 2005. ISBN 9780521020985. [Cited on pages 35 and 56]
+[81] P. H. Rutherford, L. M. Kovrizhnikh, M. N. Rosenbluth, and F. L. Hinton. Effect
+of longitudinal electric ﬁeld on toroidal diffusion. Physical Review Letters, 25(16):
+1090, 1970. doi:10.1103/PhysRevLett.25.1090. [Cited on page 35]
+[82] I. G. Abel, M. Barnes, S. C. Cowley, W. Dorland, and A. A. Schekochihin. Linear-
+ized model fokker–planck collision operators for gyrokinetic simulations. I. theory.
+Physics of Plasmas, 15:122509, 2008. doi:10.1063/1.3046067. [Cited on pages 35,
+56, 57, and 79]
+[83] M. Barnes, I. G. Abel, W. Dorland, et al. Linearized model fokker–planck colli-
+sion operators for gyrokinetic simulations. II. numerical implementation and tests.
+Physics of Plasmas, 16:072107, 2009. doi:10.1063/1.3155085. [Cited on pages 35
+and 56]
+[84] I.S. Gradshteyn and I.M. Ryzhik. Table of Integrals, Series, and Products. Aca-
+demic Press, 8 edition, 2014. ISBN 9780123849335. doi:10.1016/C2010-0-64839-
+5. [Cited on pages 37 and 90]
+[85] M. Abramowitz and I. A. Stegun. Handbook of Mathematical Functions with For-
+mulas, Graphs, and Mathematical Tables. U.S. National Bureau of Standards, 9
+edition, 1970. ISBN 0486612724. [Cited on page 37]
+[86] GS2 developers. GS2 webpage, 2020. Online https://bitbucket.org/gyrokinetics/
+gs2/wiki/Home. [Cited on page 40]
+[87] GENE developers. GENE webpage, 2020. Online https://genecode.org. [Cited on
+page 40]
+[88] GEM developers. GEM webpage, 2020. Online https://www.gemgyrokinetic.org.
+[Cited on page 40]
+[89] GKW developers. GKW webpage, 2020. Online https://www.gkw.org.uk/tikiwiki/
+HomePage. [Cited on page 40]
+102
+
+References
+[90] GYRO developers. GYRO webpage, 2020. Online https://gafusion.github.io/doc/
+gyro.html. [Cited on page 40]
+[91] X. Garbet, Y. Idomura, L. Villard, and T.H. Watanabe. Gyrokinetic simulations
+of turbulent transport. Nuclear Fusion, 50(4):043002, 2010. doi:10.1088/0029-
+5515/50/4/043002. [Cited on page 40]
+[92] R. V. Bravenec, Y. Chen, J. Candy, W. Wan, and S. Parker. A veriﬁcation of the
+gyrokinetic microstability codes GEM, GYRO, and GS2. Physics of Plasmas, 20
+(10):104506, 2013. doi:10.1063/1.4826511. [Cited on page 41]
+[93] M. Kotschenreuther, G. Rewoldt, and W. M. Tang. Comparison of initial value
+and eigenvalue codes for kinetic toroidal plasma instabilities. Computer Physics
+Communications, 88:128, 1995. doi:10.1016/0010-4655(95)00035-E. Errata at
+https://w3.pppl.gov/∼hammett/gyroﬂuid/papers/kot95errata.html. [Cited on page 41]
+[94] E. A. Belli. Studies of Numerical Algorithms for Gyrokinetics and the Effects of
+Shaping on Plasma Turbulence.
+PhD thesis, Princeton University, 2006.
+On-
+line https://w3.pppl.gov/∼hammett/gyroﬂuid/papers/2006/thesis-belli.pdf. [Cited on
+page 41]
+[95] E. Highcock.
+The Zero-Turbulence Manifold in Fusion Plasmas.
+PhD
+thesis, University of Oxford, 2012.
+Online https://ora.ox.ac.uk/objects/uuid:
+7ed1774d-88a5-4764-ba06-1de00c348d26. [Cited on pages 41, 56, and 57]
+[96] M. Barnes,
+D. Dickinson,
+W. Dorland,
+et al.
+GS2 (v8.0.1).
+2019.
+doi:10.5281/zenodo.2551067. [Cited on page 41]
+[97] T. M. R. Ellis, I. R. Philips, and T. M. Lahey. Fortran 90 Programming. Addison-
+Wesley Publishing, 1994. ISBN 0201544466. [Cited on page 46]
+[98] B. Scott.
+Shifted metric procedure for ﬂux tube treatments of toroidal geo-
+metry:
+Avoiding grid deformation.
+Physics of Plasmas, 8(2):447, 2001.
+doi:10.1063/1.1335832. [Cited on page 52]
+[99] T.-H. Watanabe, H. Sugama, A. Ishizawa, and M. Nunami. Flux tube train model
+for local turbulence simulation of toroidal plasmas. Physics of Plasmas, 22(2):
+022507, 2015. doi:10.1063/1.4907793. [Cited on page 52]
+[100] J. Ball, S. Brunner, and A. C.J. Eliminating turbulent self-interaction through the
+parallel boundary condition in local gyrokinetic simulations. Journal of Plasma
+Physics, 86(2):905860207, 2020.
+doi:10.1017/S0022377820000197.
+[Cited on
+page 52]
+103
+
+References
+[101] M. Hamed, M. Muraglia, Y. Camenen, X. Garbet, and O. Agullo. Impact of electric
+potential and magnetic drift on microtearing modes stability. Physics of Plasmas,
+26(9):092506, 2019. doi:10.1063/1.5111701. [Cited on page 52]
+[102] M. Barnes, W. Dorland, and T. Tatsuno.
+Resolving velocity space dynam-
+ics in continuum gyrokinetics.
+Physics of Plasmas, 17(3):032106, 2010.
+doi:10.1063/1.3313348. [Cited on page 56]
+[103] J. F. Parisi, F. I. Parra, C. M. Roach, et al.
+Toroidal and slab ETG instability
+dominance in the linear spectrum of JET-ILW pedestals. Nuclear Fusion, 60(12):
+126045, 2020. doi:10.1088/1741-4326/abb891. [Cited on pages 63, 64, 73, and 83]
+[104] M. R. Hardman, M. Barnes, C. M. Roach, and F. I. Parra. A scale-separated ap-
+proach for studying coupled ion and electron scale turbulence. Plasma Physics and
+Controlled Fusion, 61(6):065025, 2019. doi:10.1088/1361-6587/ab1323. [Cited on
+pages 63 and 83]
+[105] P. N. Shivakumar and C. X. Ji. Upper and lower bounds for inverse elements of
+ﬁnite and inﬁnite tridiagonal matrices. Linear Algebra and its Applications, 247:
+297, 1996. doi:10.1016/0024-3795(95)00113-1. [Cited on page 69]
+[106] C. M. da Fonseca and J. Petronilho.
+Explicit inverses of some tridiagonal
+matrices. Linear Algebra and its Applications, 325(1):7, 2001. doi:10.1016/s0024-
+3795(00)00289-5. [Cited on page 69]
+[107] H.-B. Li, T.-Z. Huang, X.-P. Liu, and H. Li.
+On the inverses of general tri-
+diagonal matrices.
+Linear Algebra and its Applications, 433(5):965, 2010.
+doi:10.1016/j.laa.2010.04.042. [Cited on page 69]
+[108] V. Tomeo.
+Factorization and inversion of ﬁnite and inﬁnite comrade
+matrices.
+Computational and Mathematical Methods,
+2(1):e1071,
+2019.
+doi:10.1002/cmm4.1071. [Cited on page 69]
+[109] G. P. M. Poppe and C. M. J. Wijers.
+Algorithm 680: Evaluation of the com-
+plex error function. ACM Transactions on Mathematical Software, 16(1):47, 1990.
+doi:10.1145/77626.77630. [Cited on page 71]
+[110] E. Anderson, Z. Bai, C. Bischof, et al. LAPACK Users’ Guide. Society for Indus-
+trial and Applied Mathematics, third edition, 1999. ISBN 0898714478. [Cited on
+page 71]
+104
+
+References
+[111] Z. Gao, J. Q. Dong, G. J. Liu, and C. T. Ying. Electromagnetic ion temperature
+gradient modes of tearing mode parity in high β sheared slab plasmas. Physics of
+Plasmas, 9(5):1692, 2002. doi:10.1063/1.1471516. [Cited on page 76]
+[112] G. G. Plunk, P. Helander, P. Xanthopoulos, and J. W. Connor. Collisionless mi-
+croinstabilities in stellarators. III. the ion-temperature-gradient mode. Physics of
+Plasmas, 21(3):032112, 2014. doi:10.1063/1.4868412. [Cited on page 76]
+[113] Y. C. Lee, J. Q. Dong, P. N. Guzdar, and C. S. Liu. Collisionless electron temperat-
+ure gradient instability. Physics of Fluids, 30:1331, 1987. doi:10.1063/1.866248.
+[Cited on page 76]
+[114] A. Zocco, N. F. Loureiro, D. Dickinson, R. Numata, and C. M. Roach. Kinetic
+microtearing modes and reconnecting modes in strongly magnetised slab plasmas.
+Plasma Physics and Controlled Fusion, 57(6):065008, 2015. doi:10.1088/0741-
+3335/57/6/065008. [Cited on page 76]
+[115] H.-S. Xie and Y. Xiao.
+Unconventional ballooning structures for toroidal drift
+waves. Physics of Plasmas, 22(9):090703, 2015. doi:10.1063/1.4931072. [Cited on
+page 76]
+[116] H.-S. Xie, Z.-X. Lu, and B. Li. Kinetic ballooning mode under steep gradient:
+High order eigenstates and mode structure parity transition. Physics of Plasmas,
+25(7):072106, 2018. doi:10.1063/1.5025949. [Cited on page 76]
+[117] M. J. Pueschel, D. R. Hatch, D. R. Ernst, et al. On microinstabilities and turbulence
+in steep-gradient regions of fusion devices. Plasma Physics and Controlled Fusion,
+61(3):034002, 2019. doi:10.1088/1361-6587/aaf8c1. [Cited on page 76]
+[118] A. Ishizawa, Y. Kishimoto, and Y. Nakamura. Multi-scale interactions between
+turbulence and magnetic islands and parity mixture - a review. Plasma Physics and
+Controlled Fusion, 61(5):054006, 2019. doi:10.1088/1361-6587/ab06a8. [Cited on
+page 76]
+[119] E. Vanden Eijnden and R. Balescu.
+Statistical description and trans-
+port in stochastic magnetic ﬁelds.
+Physics of Plasmas, 3(3):874, 1996.
+doi:10.1063/1.871791. [Cited on page 79]
+[120] M. Neuer and K. H. Spatschek.
+Diffusion of test particles in stochastic mag-
+netic ﬁelds for small Kubo numbers.
+Physical Review E, 73:026404, 2006.
+doi:10.1103/PhysRevE.73.026404. [Cited on page 79]
+105
+
+References
+[121] A. Balbaky, V. Sokolov, and A. K. Sen. The study of the transition regime between
+slab and mixed slab-toroidal electron temperature gradient modes in a basic exper-
+iment. Physics of Plasmas, 22(5):052108, 2015. doi:10.1063/1.4919617. [Cited on
+page 83]
+106

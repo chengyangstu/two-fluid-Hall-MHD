@@ -1,0 +1,1549 @@
+ASYMMETRIC MAGNETIC RECONNECTION IN WEAKLY IONIZED
+CHROMOSPHERIC PLASMAS
+Nicholas A. Murphy
+Harvard-Smithsonian Center for Astrophysics, 60 Garden Street, Cambridge, Massachusetts
+02138, USA
+namurphy@cfa.harvard.edu
+Vyacheslav S. Lukin1
+National Science Foundation, 4201 Wilson Boulevard, Arlington, Virginia 22230, USA
+ABSTRACT
+Realistic models of magnetic reconnection in the solar chromosphere must take into
+account that the plasma is partially ionized and that plasma conditions within any
+two magnetic ﬂux bundles undergoing reconnection may not be the same. Asymmetric
+reconnection in the chromosphere may occur when newly emerged ﬂux interacts with
+pre-existing, overlying ﬂux. We present 2.5D simulations of asymmetric reconnection
+in weakly ionized, reacting plasmas where the magnetic ﬁeld strengths, ion and neutral
+densities, and temperatures are diﬀerent in each upstream region.
+The plasma and
+neutral components are evolved separately to allow non-equilibrium ionization.
+As
+in previous simulations of chromospheric reconnection, the current sheet thins to the
+scale of the neutral-ion mean free path and the ion and neutral outﬂows are strongly
+coupled. However, the ion and neutral inﬂows are asymmetrically decoupled. In cases
+with magnetic asymmetry, a net ﬂow of neutrals through the current sheet from the weak
+ﬁeld (high density) upstream region into the strong ﬁeld upstream region results from
+a neutral pressure gradient.
+Consequently, neutrals dragged along with the outﬂow
+are more likely to originate from the weak ﬁeld region. The Hall eﬀect leads to the
+development of a characteristic quadrupole magnetic ﬁeld modiﬁed by asymmetry, but
+the X-point geometry expected during Hall reconnection does not occur. All simulations
+show the development of plasmoids after an initial laminar phase.
+Subject headings: magnetic reconnection — methods: numerical — plasmas — Sun:
+chromosphere
+1Formerly of U.S. Naval Research Laboratory. Any opinion, ﬁndings, and conclusions or recommendations ex-
+pressed in this material are those of the authors and do not necessarily reﬂect the views of the National Science
+Foundation.
+arXiv:1504.01425v1  [astro-ph.SR]  6 Apr 2015
+
+– 2 –
+1.
+INTRODUCTION
+Magnetic reconnection in the lower solar atmosphere manifests itself through dynamical events
+such as jets (e.g., Shibata et al. 2007; Tian et al. 2014), explosive events such as Ellerman bombs
+(Ellerman 1917; Chen et al. 2001; Nelson et al. 2013; Yang et al. 2013; Peter et al. 2014), and possi-
+bly Type II spicules (De Pontieu et al. 2007). Reconnection events contribute to the heating of the
+chromosphere (e.g., Jess et al. 2014), and the contribution of jets and Type II spicules to the mass
+and energy budgets of the corona and solar wind is under active investigation (De Pontieu et al.
+2011; Cranmer & van Ballegooijen 2010; Madjarska et al. 2011). Arge & Mullan (1998) proposed
+that chromospheric reconnection could cause the elemental fractionation that is responsible for the
+ﬁrst ionization potential (FIP) eﬀect (see also Sturrock 1999; Feldman & Widing 2002). Partial
+ionization eﬀects are important not just in the chromosphere but also in molecular clouds, pro-
+toplanetary disks, the neutral phases of the interstellar medium, some exoplanetary atmospheres
+(Koskinen et al. 2010), Earth’s ionosphere (Leake et al. 2014), the edge of tokamaks (Adams 2003),
+and dedicated reconnection experiments (e.g., Lawrence et al. 2013).
+Theories and simulations of reconnection have generally assumed that the plasma is fully
+ionized. This approximation is valid for the fully ionized solar corona but invalid for weakly ionized
+plasmas such as the solar chromosphere which has ionization fractions ranging from ≲0.01 to ∼0.5.
+Partial ionization eﬀects modify the dynamics of reconnection in several ways (Zweibel 1989; Zweibel
+et al. 2011). Before the onset of reconnection, current sheets thin signiﬁcantly due to ambipolar
+diﬀusion (Brandenburg & Zweibel 1994, 1995). When there is strong coupling between ions and
+neutrals (e.g., on length scales longer than the neutral-ion mean free path, λni), the eﬀective ion
+mass is increased by the ratio of the total mass density ρ to the ion mass density ρi. This decreases
+the bulk Alfv´en speed and consequently the predicted reconnection rate (Zweibel 1989). The plasma
+resistivity has contributions from both electron-ion and electron-neutral collisions (e.g., Piddington
+1954; Cowling 1956; Ni et al. 2007).
+The Hall eﬀect is expected to be important on scales comparable to or less than the ion inertial
+length di. However, the eﬀective ion inertial length is predicted to be enhanced in plasmas with
+strong ion-neutral coupling: d′
+i = di
+p
+ρ/ρi (e.g., Pandey & Wardle 2008). Consequently, it has
+been proposed that Hall reconnection may occur at longer length scales or larger densities than
+would be predicted from the ion density alone (Malyshkin & Zweibel 2011; Vekstein & Kusano
+2013). Malyshkin & Zweibel (2011) predict that enhancement of the Hall eﬀect will lead to fast
+reconnection in molecular clouds and protoplanetary disks, but that this transition is less likely
+to be important in the solar chromosphere. In general, two regimes may be considered. When
+λni ≪di, the Hall eﬀect will be enhanced because of strong coupling and fast reconnection is
+predicted to occur. When di ≲λni ≲d′
+i, some enhancement of the Hall eﬀect due to ion-neutral
+coupling is also expected. However, as shown previously by Leake et al. (2012, hereafter, L12) and
+Leake et al. (2013, hereafter, L13), the ion density (and therefore also the local values for di, d′
+i,
+and λni) may vary by more than an order of magnitude between the reconnection current sheet
+and the ambient plasma, which makes it diﬃcult to a priori evaluate the importance of the Hall
+
+– 3 –
+eﬀect in determining the rate of reconnection and the structure of the reconnection region in this
+parameter regime.
+The behavior of weakly ionized plasmas can be modeled using either single-ﬂuid or multi-ﬂuid
+formulations. A single-ﬂuid approach incorporates the ambipolar diﬀusion term into the generalized
+Ohm’s law to account for relative drift between ions and neutrals (e.g., Brandenburg & Zweibel
+1994, 1995). This approach is less computationally expensive but implicitly assumes that the ions
+and neutrals are in ionization equilibrium. Multi-ﬂuid models evolve each of the ion, neutral, and
+sometimes electron components separately to allow relative drifts between each of these populations
+and the ﬂuid to be out of ionization equilibrium (e.g., Meier & Shumlak 2012).
+In recent years, considerable progress has been made in modeling magnetic reconnection in
+the lower solar atmosphere. Sakai et al. (2006), Smith & Sakai (2008), Sakai & Smith (2008), and
+Sakai & Smith (2009) performed two-ﬂuid (ion-neutral) simulations of coalescing current loops in
+the solar chromosphere. Smith & Sakai (2008) found that the rate of reconnection in simulations
+of the upper chromosphere was about ∼20 times greater than in the lower chromosphere which
+has a considerably lower ionization fraction.
+Sakai & Smith (2008) and Sakai & Smith (2009)
+investigated the role of reconnection in penumbra ﬁlaments. These models assume ﬁxed ionization
+and recombination rates rather than assuming a dependence on temperature and density. However,
+it is essential to incorporate rates that depend on physical conditions in order to accurately capture
+the important role of recombination during chromospheric reconnection.
+L12 and L13 used the plasma-neutral module of the HiFi framework (Lukin 2008; Meier 2011)
+to model chromospheric reconnection. The simulations showed a strong enhancement of ion density
+inside the current sheet as a result of ions being preferentially dragged along by the reconnecting
+magnetic ﬁeld. Recombination and ion outﬂow were of comparable importance in the ion continuity
+equation for removing ions from the current sheet. The ions and neutral inﬂows were decoupled,
+but the ion and neutral outﬂow jets were strongly coupled.
+Late in time, the simulations by
+L12 and L13 showed the development of the secondary tearing instability known as the plasmoid
+instability (Loureiro et al. 2007). The increase in the ion and electron densities in the plasmoids led
+to an increase in the recombination rate that allowed further contraction of the magnetic islands
+on timescales comparable to the advection time of islands out of the current sheet.
+Ni et al.
+(2015) present one-ﬂuid simulations of the plasmoid instability in the solar chromosphere using the
+NIRVANA code with and without guide ﬁelds. They ﬁnd that the onset of the plasmoid instability
+leads to fast reconnection, and that slow shocks develop near the X-points. Cases without guide
+ﬁelds show rapid thinning of the current sheet due to ambipolar diﬀusion and radiative cooling,
+but these eﬀects are not signiﬁcant during guide ﬁeld simulations.
+Prior models of magnetic reconnection in weakly ionized plasmas have generally assumed
+symmetric inﬂow. In general, however, there will be some asymmetry in the upstream magnetic
+ﬁeld strengths, temperatures, and densities. The standard model for anenome jets predicts that
+chromospheric reconnection occurs when newly emerged ﬂux interacts with pre-existing, overlying
+
+– 4 –
+ﬂux (e.g., Shibata et al. 2007). It is reasonable to expect that these diﬀerent plasma domains will
+have diﬀerent plasma parameters, so this conﬁguration naturally leads to asymmetric reconnection.
+Because the chromosphere is a dynamic magnetized environment (Leenaarts et al. 2007), asymmetry
+in the reconnection process is likely to be the norm.
+The physics of asymmetric inﬂow reconnection has been investigated in detail for fully ionized
+plasmas. One of the principal applications of this work has been Earth’s dayside magnetopause.
+Asymmetric inﬂow reconnection has also been investigated in the context of Earth’s magnetotail
+and elsewhere in the magnetosphere (Øieroset et al. 2004; Muzamil et al. 2014), the solar atmosphere
+(Nakamura et al. 2012; Murphy et al. 2012; Su & van Ballegooijen 2013; Su et al. 2013), laboratory
+experiments (Yamada 2007; Yoo et al. 2014; Murphy & Sovinec 2008), and plasma turbulence
+(Servidio et al. 2009, 2010). Cassak & Shay (2007) performed a scaling analysis for asymmetric
+inﬂow reconnection. They found that the outﬂow is governed by a hybrid upstream Alfv´en speed
+that is a function of the magnetic ﬁeld strength and density in both upstream regions (see also
+Birn et al. 2010) and that the ﬂow stagnation point in the simulation frame and magnetic ﬁeld
+null were not colocated. The structure and dynamics of asymmetric reconnection in fully ionized
+collisionless and two-ﬂuid plasmas have been studied previously in several works (e.g., Cassak &
+Shay 2008, 2009; Malakit et al. 2010, 2013; Pritchett 2008; Pritchett & Mozer 2009; Mozer et al.
+2008; Mozer & Pritchett 2009; Swisdak et al. 2003; Aunai et al. 2013a,b; Murphy & Sovinec 2008).
+Simulations of the plasmoid instability during reconnection with asymmetric upstream magnetic
+ﬁelds by Murphy et al. (2013) showed that the resultant magnetic islands developed primarily into
+the weak ﬁeld upstream region. Because the reconnection jets impacted the islands obliquely rather
+than directly, the islands developed net vorticity. In addition to asymmetric inﬂow reconnection,
+several groups have investigated asymmetric outﬂow reconnection (e.g., Oka et al. 2008; Murphy
+et al. 2010; Murphy 2010) and reconnection with three-dimensional asymmetry (e.g., Al-Hachami
+& Pontin 2010; Wyper & Jain 2013).
+Observational investigations of partially ionized reconnection in the chromosphere are chal-
+lenging because the dissipation length scales are signiﬁcantly shorter than can be resolved with
+current instrumentation. Diagnosing the chromospheric magnetic ﬁeld is an important but very
+diﬃcult problem that requires inversion of spectropolarimetric data (e.g., Kleint 2012), and this will
+be even more challenging for short-lived dynamical events. Comparisons between simulations and
+observations should therefore concentrate on the large-scale consequences of chromospheric recon-
+nection which depend on small-scale processes. A complementary approach to solar observations
+is to study partially ionized reconnection in the laboratory. Lawrence et al. (2013) have performed
+such studies at the Magnetic Reconnection Experiment (MRX; Yamada et al. 1997).
+Our motivation is to investigate the role of asymmetry on the small-scale physics of reconnec-
+tion in partially ionized chromospheric plasmas. While there are similarities to symmetric cases,
+there are also physical eﬀects such as neutral ﬂows through the current sheet that do not occur in
+cases with symmetric inﬂow. We use the plasma-neutral module of the HiFi modeling framework
+(Lukin 2008) to perform simulations of magnetic reconnection with asymmetric upstream magnetic
+
+– 5 –
+ﬁeld strengths, temperatures, and/or densities in the weakly ionized solar chromosphere. In Section
+2, we describe the numerical method and problem setup (see also L12 and L13). In Section 3, we
+describe the global dynamics of reconnection, the structure of the current sheet, the role of the Hall
+eﬀect, the dynamics of the plasmoid instability, the motion of the X-point, and ion/neutral ﬂows
+at the X-point. We discuss our results in Section 4.
+2.
+NUMERICAL MODEL AND PROBLEM SETUP
+The HiFi framework2 (Lukin 2008; Glasser & Tang 2004) uses a spectral element spatial
+representation and implicit time advance to solve systems of partial diﬀerential equations. The
+modular approach makes new physical models straightforward to implement (e.g., Gray et al. 2010;
+Lukin & Linton 2011; Ohia et al. 2012; Le et al. 2013; Stanier et al. 2013; Browning et al. 2014; Lee
+et al. 2014). In this paper, we use the module for partially ionized, reacting plasmas (Meier 2011,
+L12, L13). These plasmas consist of neutral and ionized hydrogen and electrons. A multi-ﬂuid
+approach allows the plasma and neutral components to be modeled separately. We summarize the
+equations used for our 2.5D simulations in this section, but direct the reader to L12 and L13 for
+further detail. In general, we use the notation and conventions from L12 and L13. The subscripts
+‘n’, ‘i’, and ‘e’ refer to neutrals, ions, and electrons, respectively.
+2.1.
+Normalizations
+Following L12 and L13, we normalize the ﬂuid equations to values characteristic of the lower
+chromosphere. We choose a characteristic length scale of L⋆≡1 × 104 m, a characteristic number
+density of n⋆≡3×1016 m−3, and a characteristic magnetic ﬁeld strength of B⋆≡1×10−3 T. From
+these quantities, we derive additional normalizing values to be V⋆≡B⋆/√µ0mpn⋆= 1.26 × 105
+m s−1 for velocity, t⋆≡L⋆/V⋆= 0.0794 s for time, T⋆≡B2
+⋆/kBµ0n⋆= 1.92×106 K for temperature,
+P⋆≡B2
+⋆/µ0 = 0.796 Pa for pressure, J⋆≡B⋆/µ0L⋆= 7.96 × 10−2 A · m−2 for current density, and
+η⋆≡µ0L⋆V⋆= 1.58 × 103 Ω· m for resistivity. Unless otherwise indicated (e.g., Sections 2.2 and
+2.4), the equations presented for the simulation will be in dimensionless units according to these
+normalizations.
+2.2.
+Ionization and Recombination
+The HiFi module for partially ionized plasmas includes both ionization and recombination of
+hydrogen to allow departures from ionization equilibrium (L12; L13). The ionization and recombi-
+2See http://faculty.washington.edu/vlukin/HiFi Framework.html
+
+– 6 –
+nation rates are given by
+Γion
+n
+≡
+−nnνion,
+(1)
+Γrec
+i
+≡
+−niνrec,
+(2)
+with Γion
+i
+= −Γion
+n
+and Γrec
+i
+= −Γrec
+n . The ionization frequency of hydrogen is approximated to be
+νion =
+neA
+X + φion/T ∗e
+φion
+T ∗e
+K
+exp
+
+−φion
+T ∗e
+
+m3 s−1,
+(3)
+with A = 2.91 × 10−14, K = 0.39, X = 0.232, and φion = 13.6 eV (Voronov 1997). Here, T ∗
+e
+is the electron temperature in eV. Smirnov (2003) approximates the recombination frequency of
+hydrogen to be
+νrec = 2.6 × 10−19 ne
+p
+T ∗e
+m3 s−1.
+(4)
+At a characteristic temperature of 9000 K, this corresponds to an equilibrium ionization fraction
+of 4.1 × 10−4.
+These expressions do not include the consequences of non-local thermodynamic
+equilibrium radiative transfer. For example, if Lyman α is optically thick, then there will be more
+neutral hydrogen in the n = 2 state than predicted from these expressions which would allow for
+enhanced ionization.
+At lower temperatures, ionization from low-FIP elements may contribute
+more to the electron density than hydrogen.
+2.3.
+Multi-ﬂuid Equations
+In this section, we summarize the equations solved by the plasma-neutral module of HiFi. The
+equations are described more thoroughly by L12 and L13 (see also Meier 2011; Meier & Shumlak
+2012). Our simulations include the modiﬁcations and extensions to the model described by L13.
+The ion and neutral continuity equations are
+∂ni
+∂t + ∇· (niVi)
+=
+Γrec
+i
++ Γion
+i
+,
+(5)
+∂nn
+∂t + ∇· (nnVn)
+=
+Γrec
+n
++ Γion
+n .
+(6)
+These equations include ionization and radiative recombination as described in Section 2.2, L12,
+and L13. We assume quasineutrality such that ni = ne.
+The ion and neutral momentum equations are given by
+∂
+∂t (miniVi) + ∇· (miniViVi + Pi + Pe) =
+J × B + Rin
+i + Γion
+i
+miVn −Γrec
+n miVi + Γcxmi (Vn −Vi) + Rcx
+in −Rcx
+ni,
+(7)
+∂
+∂t (minnVn) + ∇· (minnVnVn + Pn) =
+−Rin
+i + Γrec
+n miVi −Γion
+i
+miVn + Γcxmi (Vi −Vn) −Rcx
+in + Rcx
+ni.
+(8)
+
+– 7 –
+The Lorentz force acts directly on the plasma but not the neutrals, while the neutral pressure
+gradient acts directly on the neutrals but not the plasma.
+Coupling between the plasma and
+neutrals is achieved though many of the terms on the right hand side of Eqs. 7 and 8. The term
+Rin
+i
+represents momentum transfer from neutrals to ions due to identity preserving collisions and
+is given by
+Rin
+i = minniνin (Vn −Vi) ,
+(9)
+where min = mimn/(mi+mn) and the collision frequency νin is given by Eq. 7 of L13. The pressure
+tensor for species α is
+Pα = PαI + πα,
+(10)
+where Pα is the scalar pressure and I is the identity tensor. The viscous stress tensor is then
+πα = −ξα
+h
+∇Vα + (∇Vα)⊤i
+,
+(11)
+with ξα as the isotropic dynamic viscosity coeﬃcient. The terms that depend on the ionization and
+recombination rates represent momentum transfer by particles that change identity from neutrals to
+ions and vice-versa. We follow L13 and include charge exchange. Here, Γcx is the charge exchange
+reaction rate and Rcx
+αβ is the momentum transfer due to charge exchange rections from species β
+to species α. Charge exchange leads to increased momentum and energy transfer between species
+by about a factor of two, and therefore more eﬀective coupling. We use the formulation for charge
+exchange given by Eqs. 4–6 of L13 (see also Meier 2011; Meier & Shumlak 2012; Leake et al. 2012;
+Barnett et al. 1990).
+We adjust the collisional cross sections to be Σin = Σni = 5×10−19 m2 (used in Eq. 7 of L13 to
+calculate νin) and Σnn = 5 × 10−19 m2 (used in Eq. 9 of L13 to calculate νnn). These values diﬀer
+from L12 and L13, but the value for Σin is consistent with Khomenko & Collados (2012) and Ni
+et al. (2015). These cross sections are a function of energy, but we use constant values appropriate
+for the chromosphere as a simplifying assumption (see also Draine et al. 1983). The neutral and ion
+viscosity coeﬃcients ξn and ξi are set by Eq. 8 of L13 using the revised value of Σnn. While ξn is a
+function of local physical conditions, ξi and ξe are constant throughout the domain and correspond
+to the parallel component of the Braginskii viscosity for each species computed using the mean of
+the asymptotic upstream densities and temperatures. We use ξi = 2.8 × 10−6 and ξe = 4.6 × 10−14
+with a normalization of ξ⋆= mpn⋆L⋆V⋆.
+The neutral-ion mean free path
+λni = VT,n
+ν†
+ni
+(12)
+governs the lengths scales above which the neutrals and ions are coupled to each other. Here,
+the neutral thermal velocity is VT,n =
+p
+2kBTn/mn where kB is the Boltzmann constant, the
+neutral temperature is Tn, and the neutral mass is mn. The frequency ν†
+ni = νni + νCX
+ni
+includes
+contributions from the neutral-ion collision frequency νni (see Eq. 16 of L12) and the neutral-ion
+charge exchange frequency νCX
+ni
+(see also Eqs. 4–6 of L13). The ions and neutrals will be coupled
+on length scales much longer than λni, and decoupled on scales much shorter than λni.
+
+– 8 –
+The energy equations for the plasma and neutral components are given by Eqs. 19 and 20
+of L12. Both equations include frictional heating due to identity preserving collisions, thermal
+transfer due to changes in identity, and the eﬀects of charge exchange. The energy equation for the
+plasma component combines the electron and ion energy equations and includes Ohmic heating,
+optically thin radiative losses, and anisotropic thermal conduction (Eq. 21 of L12). The neutral
+energy equation includes isotropic thermal conduction that depends on plasma parameters and is
+set by Eq. 10 of L13. Neutral thermal conduction dominates thermal diﬀusion, in part due to
+rapid thermal transfer between neutrals and ions. For characteristic values of T = 9000 K and
+nn = 7.6 × 1018 m−3, the neutral thermal conductivity is κn = 3.05 × 1022 m−1 s−1. We assume
+that the ion and electron temperatures are equal, but the neutral temperature is evolved separately.
+The generalized Ohm’s law for this paper is given by
+E + Vi × B = ηJ + J × B
+ene
+−∇Pe
+ene
+−meνen
+e
+(Vi −Vn)
+(13)
+The resistivity includes both electron-ion and electron-neutral collisions and is given by
+η = mene (νei + νen)
+(ene)2
+,
+(14)
+where the electron-ion collision frequency νei and the electron-neutral collision frequency νen are
+functions of number density and temperature and are given by Eq. 13 of L13 with Σen = Σne =
+1 × 10−19 m2 as used previously in L12, L13, Khomenko & Collados (2012), and Ni et al. (2015).
+The resistivity therefore depends on plasma parameters and is not a constant as in L12. We include
+the Hall term and evolve scalar plasma and neutral pressures.
+2.4.
+Initial Conditions
+Here we describe the procedure to establish an approximate initial equilibrium with asym-
+metric upstream magnetic ﬁeld strengths, densities, temperatures, and ionization fractions. Before
+proceeding, we deﬁne several parameters to quantify asymmetries in diﬀerent ﬁelds. The magnetic,
+temperature, number density (of ions and neutrals), and ionization fraction asymmetries are deﬁned
+as
+B
+≡
+B2
+B1
+,
+(15)
+T
+≡
+T2
+T1
+,
+(16)
+N
+≡
+ni,2 + nn,2
+ni,1 + nn,1
+,
+(17)
+F
+≡
+f2
+f1
+,
+(18)
+
+– 9 –
+where the subscripts ‘1’ and ‘2’ correspond to the asymptotic upstream magnitudes of each ﬁeld
+for y > 0 and y < 0, respectively, and the ionization fraction is deﬁned as
+f ≡
+ni
+ni + nn
+.
+(19)
+All of these quantities are functions of time, so the subscript ‘0’ in expressions below indicates
+correspondence to the initial conditions.
+The equilibrium magnetic ﬁeld is speciﬁed as a modiﬁed Harris sheet,
+Bx0 (y) = B1,0
+
+
+tanh
+
+y
+λψ −b
+
++ b
+1 + b
+
+,
+(20)
+where λψ is the initial thickness of the current sheet (see also Birn et al. 2008, 2010; Murphy et al.
+2012, 2013). The initial magnetic asymmetry is given by B0 = (1 −b)/(1 + b) with the convention
+that 0 ≤b < 1 so that B2,0 ≤B1,0. We describe the in-plane magnetic ﬁeld using the magnetic
+ﬂux, Az, such that
+B = ∇× (Azˆz) + Bzˆz.
+(21)
+The ﬂux corresponding to Eq. 20 is
+Az0(y) = B1,0
+1 + b
+
+λψ ln cosh
+ y
+λψ
+−b
+
++ by
+
+.
+(22)
+The out-of-plane current density is then
+Jz0(y) = −B1,0
+µ0λψ
+
+
+sech2
+y
+λψ −b
+
+1 + b
+
+.
+(23)
+The initial temperature is set using the relations
+T0(y)
+=
+T1,0
+
+1 + (T0 −1)
+ 1 −ζ2
+,
+(24)
+ζ
+=
+1
+2
+
+1 + tanh
+ y
+λψ
+−b
+
+.
+(25)
+The initial ionization fraction is found numerically by equating the ionization rate Γion
+i
+with the
+recombination rate Γrec
+i
+using Eqs. 1–4. The initial conditions are therefore in ionization equilib-
+rium. If the initial temperature is non-uniform, then the initial ionization fraction will also be
+non-uniform: if T0 ̸= 1, then F0 ̸= 1. This is in contrast to L12 and L13 which both assume that
+the temperature and ionization fraction are both initially uniform.
+We deﬁne Ptot to be the sum of the plasma and neutral pressures and the plasma pressure Pp
+to be the sum of the electron an ion pressures,
+Ptot
+≡
+Pn + Pp,
+(26)
+Pp
+≡
+Pi + Pe.
+(27)
+
+– 10 –
+For equal temperatures, the neutral and plasma pressures are related to the ionization fraction by
+Pn
+=
+Ptot
+1 −f
+1 + f
+
+,
+(28)
+Pp
+=
+Ptot
+ 2f
+1 + f
+
+,
+(29)
+where we recall that the total number of particles depends on the ionization fraction and that
+electrons are included in the plasma pressure. We calculate Ptot,0 to balance the Lorentz force
+associated with the magnetic ﬁeld proﬁle given by Eq. 20,
+Ptot,0(y) = (1 + β1,0) B2
+1,0
+2µ0
+−Bx0(y)2
+2µ0
+,
+(30)
+where β1,0 is the ratio of Ptot,0 to the magnetic pressure for y ≫0. The number densities are then
+given by
+nn
+=
+Pn
+kBT ,
+(31)
+ni
+=
+Pp
+2kBT .
+(32)
+We assume that the ions and electrons have equal temperatures and number densities.
+The above magnetic and pressure proﬁles satisfy the relation
+0 = −∇(Pp + Pn) + J × B.
+(33)
+However, there must also be a relative velocity between the plasma and neutrals to allow coupling
+via the momentum equations of the diﬀerent species through collisions and charge exchange. In
+the absence of charge exchange, the steady state momentum equations for the plasma and neutral
+components are
+0
+=
+−∇Pp + J × B + Rin
+i ,
+(34)
+0
+=
+−∇Pn −Rin
+i ,
+(35)
+respectively, where the frictional force Rin
+i
+is deﬁned in Eq. 9. In this approximation, the initial
+ion and neutral velocities along the inﬂow direction can be chosen so that the initial conﬁguration
+contains no net force on either of the plasma and neutral components,
+Viy0 −Vny0 = ∂Pn/∂y
+minniνin
+,
+(36)
+where the neutral pressure gradient is calculated analytically using the expression
+∂Pn
+∂y = −
+1 −f0
+1 + f0
+ 
+B1,0
+µ0λψ (1 + b)
+
+Bx0(y) sech2
+ y
+λψ
+−b
+
+.
+(37)
+
+– 11 –
+1.0
+0.5
+0.0
+0.5
+1.0
+Bx
+(a)
+Case E: Initial Conditions
+0.00455
+0.00460
+0.00465
+0.00470
+0.00475
+0.00480
+0.00485
+T
+(b)
+0
+50
+100
+150
+200
+250
+300
+350
+nn
+(c)
+0.00
+0.02
+0.04
+0.06
+0.08
+0.10
+0.12
+0.14
+ni
+(d)
+0.3
+0.2
+0.1
+0.0
+0.1
+0.2
+0.3
+y
+0.005
+0.004
+0.003
+0.002
+0.001
+0.000
+0.001
+0.002
+Viy−Vny
+(e)
+Fig. 1.— The initial conditions for case E with B0 = 1, T0 = 0.95, N0 = 1.47, and F0 = 0.35.
+Because our simulations include charge exchange, momentum transfer between the ions and neutrals
+is of order twice as eﬀective as the case with frictional coupling alone. In lieu of an exact solution
+to the steady state momentum equation, we reduce the initial ion-neutral drift velocity given in Eq.
+36 by a factor of two so that the initial conditions for both ions and neutrals are in approximate but
+not exact force balance. We set Viy0 and Vny0 so that they have the same magnitude but opposite
+sign. Example initial conditions are shown in Fig. 1.
+The initial state does not represent an exact equilibrium, which leads to an outward moving
+pulse along the inﬂow direction that propagates from the initial current sheet. This pulse is mostly
+damped by placing a layer of signiﬁcantly enhanced viscosity near the conducting walls at y = ±1.
+
+– 12 –
+2.5.
+Boundary Conditions
+We simulate a half-domain that extends from 0 ≤x ≤Lx and from −Ly ≤y ≤Ly, where x is
+the outﬂow direction and y is the inﬂow direction. We assume that the ﬁelds Az, ni, nn, pi, pn, Viy,
+Vny, Viz, Vnz, and Jz are symmetric about x = 0 [e.g., Az(x, y) = Az(−x, y)], and that the ﬁelds
+Vx and Bz are antisymmetric about x = 0 [e.g., Vx(x, y) = −Vx(−x, y)]. We assume that all ﬁelds
+are periodic along the x direction with a period of 2Lx. We apply perfectly conducting, zero-ﬂux
+boundary conditions along the boundaries at y = ±Ly.
+The choice of initial and boundary conditions enforces that the reconnection outﬂow is sym-
+metric about x = 0. The development of the plasmoid instability under these conditions often leads
+to the formation of a magnetic island centered about x = 0 that cannot be advected out of the
+system. In general, there will be some degree of asymmetry along the outﬂow direction that can
+modify the internal structure of the reconnection layer and the dynamics of reconnection (Oka et al.
+2008; Murphy et al. 2010; Murphy 2010). This can be achieved by simulating the whole domain of
+interest and allowing the driving term, the outﬂow boundaries, or the initial perturbations to be
+asymmetric (e.g., Murphy et al. 2013).
+2.6.
+Initializing Reconnection
+To initialize reconnection, we apply a source function to the evolution equation for magnetic
+ﬂux of the form
+dAz
+dt
+= ϵλψΛ (x, y) Ω(x, y) Θ (t)
+(38)
+where
+Λ (x, y)
+=
+exp
+"
+−
+ x
+hx
+2
+−
+ y
+hy
+2# (
+1 −1
+2 exp
+"
+−3
+ y
+hy
+2#)
+,
+(39)
+Ω(x, y)
+=
+"
+1 −
+ x
+Lx
+16# "
+1 −
+ y
+Ly
+16#
+,
+(40)
+Θ (t)
+=
+1
+2
+
+1 −cos
+2πt
+tD
+
+.
+(41)
+The spatial length scales for this source function are given by hx = 4λψ and hy = λψ.
+The
+function Λ(x, y) localizes the source function in a form akin to a tearing mode eigenfunction to
+create an X-point at the ﬁeld reversal along x = 0. The function Ω(x, y) ensures that the pulse
+goes to zero along the outer boundaries. The pulse is applied between 0 ≤t ≤tD with a waveform
+given by Θ (t). We use ϵ = 0.05 and tD = 5. The application of this electric ﬁeld ceases before
+the reconnection layer has had a chance to develop. In contrast, L12 applied a small, localized
+perturbation to the magnetic ﬂux while L13 applied a small amplitude localized rotational ﬂow
+perturbation to initialize reconnection.
+
+– 13 –
+3.
+LOCAL AND GLOBAL DYNAMICS OF RECONNECTION
+We present ﬁve simulations to investigate the impact of asymmetry during magnetic recon-
+nection in partially ionized chromospheric plasmas. The simulation parameters are shown in Ta-
+ble 1. Case A is the symmetric test case. Case B has asymmetric upstream temperatures, and
+consequently asymmetric upstream densities and ionization fractions, but symmetric upstream
+magnetic ﬁeld strengths.
+Case C has symmetric upstream temperatures but a factor of two
+diﬀerence in the upstream magnetic ﬁeld strengths. Cases D and E have asymmetric tempera-
+tures and magnetic ﬁeld strengths. We keep three parameters constant between runs: the sum
+of the initial magnetic pressure, neutral pressure, and plasma pressure which equals 1.495 (1.19
+Pa); the mean of the initial asymptotic upstream magnetic energy densities which is given by
+1
+2
+ B2
+1,0/2 + B2
+2,0/2
+
+= 0.3125 (0.249 J m−3); and the mean of the initial asymptotic upstream
+temperatures which is (T1,0 + T2,0)/2 = 4.69 × 10−3 (9000 K).
+The domain size for all simulations is (Lx, Ly) = (2, 1). The resolution in Case A is mx = 256
+elements along the outﬂow direction and my = 128 elements along the inﬂow direction.
+The
+resolution in Cases B–E is mx = my = 256. We use sixth order basis functions for all simulations,
+resulting in eﬀective total resolution of (Mx, My) = 6(mx, my). Grid packing is used to concentrate
+mesh in the reconnection region. In Case A, the current sheet does not move from y = 0 so the
+mesh packing along the inﬂow direction is concentrated to a thin region near y = 0. In Cases B–D,
+the current sheet drifts slowly in the −ˆy direction so the highest resolution is needed over a much
+longer distance to resolve the dynamics (see also Murphy et al. 2012, 2013). High resolution along
+the outﬂow direction helps capture the front end of the reconnection jet as well as the dynamics
+of the plasmoid instability.
+The resolution along the outﬂow direction from 0 ≤x ≲1.2 and
+1.95 ≲x ≤2 is approximately twice as high as from 1.2 ≲x ≲1.95.
+3.1.
+Structure of Reconnection Region
+All ﬁve simulations show broadly similar evolution. The electric ﬁeld application from t = 0
+to t = 5 described in Section 2.6 allows the inﬂow/outﬂow pattern associated with two-dimensional
+reconnection to develop in the portion of the current sheet near the origin. The outﬂow jet lengthens
+as it plows into a region of enhanced ion density associated with current sheet thinning outside of
+the reconnection region. By t ∼25, laminar reconnection is well-established. The current sheet has
+thinned from its initial thickness of 0.1 to a thickness of δ ∼1.0×10−3 (∼10 m). This is comparable
+to the value of the neutral-ion mean free path evaluated inside the current sheet: λni ≳6.0 × 10−4
+to 1.0 × 10−3 (≳6 to 10 m). The ionization fraction inside each current sheet is of order 0.01
+at this time. The structure of the reconnection region for all simulations at t = 25 is shown in
+Figures 2, 3, 4, and 5. At t = 25, the current sheets have thinned to ∼λni, laminar reconnection is
+well-established, and plasmoid formation has not yet begun. The plasmoid instability onsets during
+all of these simulations. The simulations end when structures develop on scales comparable to the
+
+– 14 –
+Table 1.
+Simulation initial parameters
+Case
+B1,0
+B2,0
+T1,0
+T2,0
+n1,0
+n2,0
+f1,0
+f2,0
+β1,0
+β2,0
+λni,1,0
+λni,2,0
+A
+7.9
+7.9
+9000
+9000
+7.6
+7.6
+0.00041
+0.00041
+3.8
+3.8
+220
+220
+B
+7.9
+7.9
+8750
+9250
+7.8
+7.4
+0.00024
+0.00068
+3.8
+3.8
+366
+136
+C
+10
+5
+9000
+9000
+8.8
+6.4
+0.00041
+0.00041
+11.0
+2.0
+261
+190
+D
+10
+5
+8750
+9250
+6.6
+8.6
+0.00024
+0.00068
+2.0
+11.0
+432
+117
+E
+10
+5
+9250
+8750
+6.2
+9.1
+0.00068
+0.00024
+2.0
+11.0
+163
+314
+Note. — The units are G for magnetic ﬁeld, K for temperature, 1018 m−3 for number density
+(including both neutrals and ions), and m for the neutral-ion mean free paths. The neutral-ion
+mean free path λni is calculated using Eq. 12 and includes charge exchange reactions.
+When
+calculating the charge exchange cross section using Eqs. 5–6 of L13, we use that the relative
+velocity between ions and neutrals is much less than the neutral and ion thermal speeds for the
+initial conditions.
+
+– 15 –
+resolution scale as a result of the plasmoid instability.
+Figure 2 shows the out-of-plane current density and the ion outﬂow. In Case B, the current
+sheet is slightly arched so that the X-point is closer to the low temperature upstream region (y > 0)
+than the ends of the current sheet. In the cases with magnetic asymmetry, the current sheet is
+arched so that the X-point is closer to the strong ﬁeld upstream region than the ends of the outﬂow
+jets (see also Fig. 5b). Case E, which has the strong ﬁeld side coincident with the high temperature
+side, shows the fastest development of these three cases and the strongest current density.
+As in L12 and L13, the ion and neutral outﬂows are tightly coupled. The right half of each
+panel in Figure 2 only show pseudocolor maps of Vix because Vnx is very similar in the outﬂow
+jet. The strong coupling of the ion and neutral outﬂow jets occurs because the mean free path
+for neutral-ion collisions is comparable to the current sheet thickness which is signiﬁcantly shorter
+than the length of the current sheet.
+Figure 3 shows the inﬂow components of the ion velocity on the left side of each panel and
+the neutral inﬂow speed on the right side (see also Figs. 5d and 5e). As in L12 and L13, the
+inﬂow velocities are decoupled. In Cases B–E, the decoupling is asymmetric in part because λni is
+diﬀerent in each upstream region. The neutrals and the ions at the X-point are moving in opposite
+directions. For simulations with magnetic asymmetry (Cases C, D, and E), there is neutral ﬂow
+through the current sheet from the weak magnetic ﬁeld side toward the strong magnetic ﬁeld side.
+This corresponds to a neutral pressure gradient that is pushing neutrals from the weak ﬁeld side
+into the strong ﬁeld side (see Fig. 5f).
+The ion density is strongly peaked within the current sheet for all cases, as shown on the left
+side of each panel in Fig. 4 (see also L12; L13). The decoupling of ions and neutrals on scales below
+the neutral-ion mean free path allows the ions to be swept into the current sheet by the magnetic
+ﬁeld. Neutrals are dragged along by collisions with ions, though less eﬀectively on these short length
+scales. The current sheet is therefore out of ionization equilibrium: the ionization fraction is much
+higher than the equilibrium value. As a result, recombination becomes of comparable importance
+to the outﬂow in the ion continuity equation.
+Next we consider the consequences of changing the temperature asymmetry while maintaining
+the same magnetic asymmetry. As we go from D to C to E, the magnetic asymmetry remains
+constant (B = 0.5) but the temperature asymmetry goes from T = 1.06 to 1 to 0.95. Case D has
+higher temperature in the weak ﬁeld upstream region; Case C has initially uniform temperature;
+and Case E has higher temperature in the strong ﬁeld upstream region.
+Switching the temperature asymmetry while maintaining the same magnetic asymmetry has
+a signiﬁcant impact on how quickly reconnection develops, the reconnection rate at a given time,
+and the onset time and mode structure of the plasmoid instability. Reconnection develops more
+quickly and occurs at a faster rate in Case E where the strong ﬁeld upstream region has a higher
+temperature than the weak ﬁeld upstream region. As we proceed from Case D to C to E, the
+
+– 16 –
+Fig. 2.— The out-of-plane current density Jz (left) and the ion outﬂow (right) at t = 25 for Cases
+A–E. The right half of each plot shows color contours of the outﬂow component of ion velocity Vix,
+ion velocity vectors, and contours of magnetic ﬂux Az. This image is scaled signiﬁcantly along the
+y direction which exaggerates the inﬂow y-component of velocity.
+
+– 17 –
+Fig. 3.— The inﬂow components of the ion velocity Viy (left) and the neutral velocity Vny (right) in
+the reconnection region at t = 25 for Cases A–E. The solid black contours represent the magnetic
+ﬂux Az. The dashed green contour indicates the locations where the inﬂow component of velocity
+equals zero.
+
+– 18 –
+Fig. 4.— The logarithm of the ion number density log10 ni (left) and the out-of-plane magnetic
+ﬁeld Bz (right) at t = 25 for Cases A–E. The solid black contours represent the magnetic ﬂux Az.
+
+– 19 –
+0.4
+0.2
+0.0
+0.2
+0.4
+Bx
+(a)
+Case A
+Case B
+Case C
+Case D
+Case E
+400
+300
+200
+100
+0
+Jz
+(b)
+1.0
+0.5
+0.0
+0.5
+log10 ni
+(c)
+0.002
+0.001
+0.000
+0.001
+0.002
+Viy
+(d)
+0.0002
+0.0000
+0.0002
+0.0004
+0.0006
+0.0008
+0.0010
+Vny
+(e)
+0.003
+0.002
+0.001
+0.000
+0.001
+0.002
+0.003
+y−yn
+1.38
+1.40
+1.42
+1.44
+1.46
+1.48
+Pn
+(f)
+Fig. 5.— The structure of the current sheet along x = 0 at t = 25 very near the current sheet
+relative to the X-point. Shown are (a) the reconnecting component of the magnetic ﬁeld Bx, (b) the
+out-of-plane current density Jz, (c) the logarithm of ion density log10 ni, (d) the inﬂow component
+of ion velocity Viy, (e) the inﬂow component of neutral velocity Vny, and (f) the neutral pressure.
+
+– 20 –
+0.006
+0.004
+0.002
+0.000
+0.002
+0.004
+0.006
+y−yn
+3.0
+2.5
+2.0
+1.5
+log10 λni
+Case A
+Case B
+Case C
+Case D
+Case E
+Fig. 6.— The logarithm of the neutral-ion mean free path λni = VT,n/ν†
+ni along x = 0 at t = 25.
+The minimum values of λni in this plot are 6.5 × 10−4, 6.3 × 10−4, 7.9 × 10−4, 7.2 × 10−4, and
+8.3 × 10−4 for cases A through E, respectively.
+relative velocity between the ions and neutrals increases in magnitude on the weak ﬁeld side but
+does not change substantially on the strong ﬁeld side (see, e.g., Fig. 5d while noting that the Vny
+proﬁles in Fig. 5e are nearly identical between these three runs). The neutral-ion mean free path
+λni along x = 0 at t = 25 is shown in Fig. 6. In this ﬁgure, the minimum value of λni increases by
+10% from Case D to C and another 5% from Case C to E. In contrast, the values of λni increase by
+∼30% to ∼60% from D to C to E in both near-upstream regions. The reconnection rate at t = 25
+measured as dAz/dt evaluated at the X-point along x = 0 is 3.4×10−4, 3.8×10−4, and 4.5×10−4 in
+Cases D, C, and E, respectively, which suggests that diﬀerences in ion-neutral coupling inside and
+around the current sheet are largely responsible for the observed diﬀerences between simulations.
+In particular, the reconnection rate in these simulations is greater when there is weaker coupling
+between neutrals and ions. The Vny proﬁle in Fig. 5d remains nearly unchanged between simulations
+with the same magnetic asymmetry, which suggests that the neutral ﬂow across the current sheet
+depends strongly on magnetic asymmetry but only weakly on temperature asymmetry.
+3.2.
+Role of the Hall Eﬀect
+The Hall eﬀect is not expected to be signiﬁcant in the solar chromosphere during magnetic
+reconnection unless structures develop on scales comparable to or below the ion inertial length di
+(Malyshkin & Zweibel 2011). In the case of strong coupling between ions and neutrals, it has been
+proposed that the ion inertial length may be enhanced because each ion will be dragging along a
+much larger mass (Pandey & Wardle 2008; Malyshkin & Zweibel 2011); consequently the eﬀective
+ion inertial length is proposed to be d′
+i = di
+p
+ρ/ρi. We therefore include the Hall eﬀect in these
+simulations.
+
+– 21 –
+The characteristic thickness of the current sheet is ∼10−3 (10 m; see Fig. 5). The ion inertial
+length in the upstream regions is initially of order di ∼4 × 10−4 (4 m; using upstream parameters
+from Case A), while d′
+i ∼0.02 (200 m). In the current sheet, the pileup of ions leads to a local ion
+inertial length of di ≈8 × 10−5 (0.8 m; based on an ion density of ∼3n0), which corresponds to
+d′
+i ∼8 × 10−4 (8 m). These lengths scales can also be compared to λni which is of order ∼0.01 to
+0.03 in the regions just upstream of the current sheet and ∼10−3 in the current sheet.
+The right side of Figure 4 shows the quadrupole structure of the out-of-plane magnetic ﬁeld
+Bz that forms as a result of the Hall eﬀect during laminar reconnection. The quadrupole ﬁeld
+strength remains about an order of magnitude smaller than the asymptotic values of Bx, but
+|Bz|/
+q
+B2x + B2y locally reaches ∼0.5 near the location where |Bz| is largest on the weak ﬁeld
+upstream region in Cases C–E. This occurs in part because the in-plane ﬁeld is weaker in the near
+upstream regions than in the far upstream regions. Despite the locally high value of the ratio of
+|Bz| to the in-plane ﬁeld, these cases show neither the signiﬁcant enhancement of the reconnection
+rate nor the development of the low aspect ratio (X-point) geometry expected during Hall-mediated
+reconnection in fully ionized plasmas (e.g., Biskamp et al. 1997).
+The structure of the quadrupole ﬁeld is modiﬁed by both temperature and magnetic asym-
+metries. When the temperature or magnetic asymmetries are changed, this also impacts the neu-
+tral density, ion density, and ionization fraction asymmetries and therefore λni. In Case B, the
+quadrupole lobe on the low ion density side (y < 0) has a greater spatial extent and higher mag-
+nitude than the high ion density side. In Cases C–E with magnetic asymmetry, the quadrupole
+lobe on the strong magnetic ﬁeld side is localized near the current sheet while the quadrupole lobe
+on the weak magnetic ﬁeld side has a greater spatial extent. This asymmetry of the quadrupole
+ﬁeld is qualitatively similar with previous fully kinetic simulations (see, e.g., Fig. 8c of Pritchett
+2008). As we proceed from Case D to C to E at t = 25, the quadrupole ﬁeld on the strong ﬁeld
+side increases in strength while the quadrupole ﬁeld on the weak ﬁeld side decreases in magnitude
+but increases in spatial extent.
+Even though the ion inertial scale is shorter than the current sheet thickness throughout these
+simulations, this might not be the case during the long-term evolution of the plasmoid instability.
+While simulations of fully ionized plasmas have shown that the plasmoid instability allows recon-
+nection to occur at a rate that is roughly independent of Lundquist number, Daughton et al. (2009)
+and Shepherd & Cassak (2010) have proposed that the most important role of the plasmoid insta-
+bility might actually be to allow structure to develop on scales smaller than the ion inertial length
+which would then allow fast collisionless reconnection to take place. This proposed mechanism
+has not yet been tested in weakly ionized plasmas, which would require capturing highly nonlinear
+behavior at later times and will be explored in future work.
+
+– 22 –
+Fig. 7.— The ion density ni (left) and current density Jz (right) for Cases A–E near the end of
+each simulation after plasmoids form.
+
+– 23 –
+3.3.
+Plasmoid Formation
+Each simulation shows the formation of plasmoids after the current sheets have thinned suf-
+ﬁciently. Figure 7 shows the ion density, out-of-plane current density, and magnetic ﬂux during
+the early nonlinear evolution of the plasmoid instability for each case. In contrast to Figures 2–6,
+the times for each panel were chosen to be near the end of each simulation but before the plasma
+substructures associated with the cascading nonlinear evolution of the plasmoids reached the grid
+scale. The appearance of additional in-plane null points occurs at t = 27.9 for Case A, t = 29.8
+for Case B, t = 29.6 for Case C, t = 31.1 for Case D, and t = 25.9 for Case E. In all cases, the
+secondary islands develop in the central portion of the current sheet: within x ≲0.16 compared to
+a current sheet length of ∼0.8. The out-of-plane current density has a local extremum near each
+X-point.
+We ﬁrst consider the eﬀect of introducing a temperature asymmetry by comparing Cases A and
+B. The plasmoid instability takes longer to develop in Case B which has temperature asymmetry,
+but the mode structure does not change substantially. Both cases show a central O-point with two
+X-points on each side with an additional X-point/O-point pair further out. The symmetry about
+x = 0 allows a pitchfork bifurcation to change the central X-point into an O-point. The resulting
+island then grows due to reconnection and is unable to be advected out of the reconnection region
+by the outﬂow. Prior simulations of the plasmoid instability in resistive MHD have avoided this
+situation by simulating the entire domain and including a slight asymmetry along the outﬂow
+direction so that any central islands that form do not remain in the current sheet indeﬁnitely.
+The structure of the current sheet and the resultant plasmoid instability are more directly
+modiﬁed by magnetic asymmetry, including when it is coupled with temperature asymmetry. While
+Case D also undergoes a pitchfork bifurcation to change the central X-point into an O-point, Cases
+C and E maintain a central X-point and develop multiple alternating X-points and magnetic islands.
+As in prior simulations using the resistive MHD approximation (Murphy et al. 2013), the resulting
+islands preferentially grow into the weak ﬁeld upstream region.
+We now compare our simulations with the complementary simulations of the plasmoid insta-
+bility during partially ionized chromospheric reconnection by Ni et al. (2015). Ni et al. capture
+the long term nonlinear evolution of the plasmoid instability using a single ﬂuid approach that
+incorporates ambipolar diﬀusion and assumes ionization equilibrium. The parameter regimes for
+the two sets of simulations diﬀer. For example, Ni et al. assume an initial upstream β of 0.1 which
+allows heating up to ∼8 × 104 K, while our simulations have high β and thus do not result in
+signiﬁcant heating because less magnetic free energy is available. Ni et al. present current sheets
+with lengths of order ∼1 Mm which is a signiﬁcant fraction of the size of the chromosphere, in
+contrast to lengths of ∼10 km in our simulations. The thicknesses of the Ni et al. current sheets
+are generally much larger than λni which suggests that the neutrals and ions are strongly coupled
+in their regime. While recombination plays an important role in the simulations presented by L12,
+L13, and this work, the high temperatures found by Ni et al. make it less likely that net recombi-
+
+– 24 –
+5
+10
+15
+20
+25
+30
+Time
+0.0000
+0.0001
+0.0002
+0.0003
+0.0004
+0.0005
+0.0006
+0.0007
+0.0008
+dAz/dt
+Reconnection Rate
+Case A: (7.9, 7.9) G; (9000, 9000) K
+Case B: (7.9, 7.9) G; (8750, 9250) K
+Case C: (10, 5) G; (9000, 9000) K
+Case D: (10, 5) G; (8750, 9250) K
+Case E: (10, 5) G; (9250, 8750) K
+Fig. 8.— The reconnection rate as a function of time as measured by the maximum change in
+magnetic ﬂux among all X-points in the current sheet, dAz/dt. This rate is presented in dimen-
+sionless units according to Section 2.1; consequently, this rate has not been renormalized to values
+immediately upstream of the reconnection layer.
+nation will play an important role in the plasma continuity equation. Physical parameters such as
+magnetic ﬁeld strength, temperature, density, and ionization fraction vary signiﬁcantly within the
+chromosphere even at a single height, so it is likely that there are regions where each parameter
+regime is valid. These diﬀerences highlight the need for detailed parameter studies on how partial
+ionization impacts the reconnection process including the plasmoid instability at various locations
+in the chromosphere.
+3.4.
+Reconnection Rate
+The reconnection rate for all ﬁve simulations is shown in Fig. 8. This rate was measured as the
+maximum of the time derivatives of Az at all X-points within the reconnection region. A common
+alternative method for measuring the reconnection rate is to measure the inﬂow velocity divided by
+the outﬂow velocity; however, during asymmetric reconnection there is ambiguity in how to deﬁne
+the inﬂow velocity. The reconnection rate before t = 5 is not shown because an electric ﬁeld was
+applied to initialize reconnection at early times. When interpreting this ﬁgure, it is important to
+recall that the initial total pressure and average upstream magnetic energy density are constant
+between runs. With this convention, magnetic and temperature asymmetry reduce the reconnection
+rate for all cases studied.
+From early times until around when plasmoids form, the reconnection rate is highest at the
+
+– 25 –
+X-point along x = 0. The reconnection rate increases as the current sheet thins. Around the time
+that plasmoids form, the reconnection rate at this X-point decreases. For some cases, this X-point
+bifurcates into an O-point. The peak reconnection rate then occurs at one of the nearby X-points
+that is not located along x = 0. Cases A, B, and D show a considerable increase in the reconnection
+rate after the formation of plasmoids. It is likely that Cases C and E would also show a similar
+increase in the reconnection rate; however, the simulations ended before this occurred. At even
+later times, structure on small enough scales could develop so that Hall reconnection could become
+important (see also Daughton et al. 2009; Shepherd & Cassak 2010).
+3.5.
+X-Point Motion and Flows Across the X-Point
+We consider three velocities that are relevant to the small-scale physics near the X-point located
+along the symmetry axis at xn = (0, yn). The ﬁrst velocity is the rate of motion of the X-point
+along the inﬂow direction:
+dyn
+dt . This velocity is not a ﬂuid velocity, but rather the velocity of a
+topologically stable magnetic feature (Murphy 2010). The second is the ion ﬂow at the X-point
+along the inﬂow direction: Viy(yn). The third is the neutral ﬂow at the X-point along the inﬂow
+direction: Vny(yn). Diﬀerences between dyn
+dt and Viy(yn) must be due to non-ideal behavior such
+as resistivity or the Hall eﬀect. Diﬀerences between Viy(yn) and Vny(yn) correspond to momentum
+transfer between ions and neutrals (e.g., Eq. 9).
+Figure 9 shows dyn
+dt , Viy(yn), and Vny(yn) as a function of time for all of the cases with asym-
+metric inﬂow. Case A is not shown because these velocities equal zero due to symmetry. The bump
+in velocity around t = 16 is a consequence of the initial conditions being slightly out of equilibrium;
+the resulting pulse is mostly but not entirely damped by a viscous layer at the boundary and the
+reﬂected pulse returns to the current sheet region at this time. The magnitude of this pulse is weak
+compared to the ion inﬂow speeds, but is the same order of magnitude as the velocities associated
+with each null point. For the rest of this section, we consider t ≳20 for which reconnection is well
+established.
+In general, there is a small but nonzero diﬀerence between dyn
+dt and Viy(yn). This similarity
+indicates that the magnetic ﬁeld is predominantly carried by the ion ﬂow. The residual diﬀerence
+in ﬂow results from resistive diﬀusion of the magnetic ﬁeld and the Hall eﬀect. The diﬀerence
+between either of these velocities and the neutral ﬂow at the X-point Vny(yn) is greater, which
+is consistent with decoupling between the ion and neutral inﬂows.
+The Vny proﬁle along the
+inﬂow direction remains roughly constant between Cases A and B which both have symmetric
+magnetic ﬁelds but diﬀerent temperature proﬁles, and also between Cases C–E which have the
+same asymmetric magnetic ﬁeld conﬁguration but diﬀering initial temperature proﬁles. Case B has
+symmetric upstream magnetic ﬁelds but the y < 0 upstream region is warmer and less dense than
+the y > 0 upstream region. That dyn
+dt ≈Viy(yn) < 0 indicates that the X-point is being carried
+primarily by the ions in the direction of the warmer upstream region.
+
+– 26 –
+5
+10
+15
+20
+25
+30
+Time
+0.0010
+0.0005
+0.0000
+0.0005
+0.0010
+Velocity
+Case B: (7.9, 7.9) G; (8750, 9250) K
+Null pt velocity: dyn /dt
+Ion flow at null: Viy(yn )
+Neutral flow at null: Vny(yn )
+5
+10
+15
+20
+25
+30
+Time
+0.0010
+0.0005
+0.0000
+0.0005
+0.0010
+Velocity
+Case C: (10, 5) G; (9000, 9000) K
+Null pt velocity: dyn /dt
+Ion flow at null: Viy(yn )
+Neutral flow at null: Vny(yn )
+5
+10
+15
+20
+25
+30
+Time
+0.0010
+0.0005
+0.0000
+0.0005
+0.0010
+Velocity
+Case D: (10, 5) G; (8750, 9250) K
+Null pt velocity: dyn /dt
+Ion flow at null: Viy(yn )
+Neutral flow at null: Vny(yn )
+5
+10
+15
+20
+25
+30
+Time
+0.0010
+0.0005
+0.0000
+0.0005
+0.0010
+Velocity
+Case E: (10, 5) G; (9250, 8750) K
+Null pt velocity: dyn /dt
+Ion flow at null: Viy(yn )
+Neutral flow at null: Vny(yn )
+Fig. 9.— A comparison between the X-point velocity dyn
+dt , the ion ﬂow at the X-point along the
+inﬂow direction Viy(yn), and the neutral ﬂow at the X-point Vny(yn) for Cases B–E. We consider
+only the X-point along x = 0 and times after the early electric ﬁeld application and before the
+onset of the plasmoid instability. Case A is not shown because all of these velocities equal zero due
+to symmetry.
+The simulations with magnetic asymmetry (Cases C, D, and E) show neutral ﬂow from the
+weak ﬁeld upstream region into the strong ﬁeld upstream region. This ﬂow results from a neutral
+pressure gradient that is pushing the neutrals from the weak ﬁeld side into the strong ﬁeld side
+where the neutral pressure is lower. This ﬂow is able to occur because of imperfect coupling between
+species on scales below or comparable to the neutral-ion mean free path. Neutrals swept along with
+the outﬂow will have preferentially originated from the weak ﬁeld upstream region. This ﬂow may
+have important observational consequences because the abundances of neutrals swept along with
+the outﬂow are likely to better match the weak ﬁeld upstream region. In contrast, there is net ion
+
+– 27 –
+ﬂow inside the current sheet from the strong ﬁeld upstream region into the weak ﬁeld upstream
+region. While the neutrals are pushed by a neutral pressure gradient, the dominant force on the
+ions is a magnetic pressure gradient.
+4.
+DISCUSSION
+In this paper we perform simulations of asymmetric magnetic reconnection in partially ionized
+chromospheric plasmas using the plasma-neutral module of the HiFi framework. We include cases
+with symmetric or asymmetric upstream temperatures and magnetic ﬁeld strengths. The plasma
+and neutrals are modeled as separate ﬂuids with momentum and energy transfer between species
+due to collisions and charge exchange. These simulations self-consistently include ionization and
+recombination without assuming ionization equilibrium.
+Several of the properties of asymmetric partially ionized reconnection are qualitatively similar
+to the symmetric cases (Case A; L12; L13). The current sheet rapidly thins so that its thickness
+becomes comparable to the neutral-ion mean free path evaluated inside the current sheet. The
+ion and neutral outﬂows are strongly coupled, but the ion and neutral inﬂows are decoupled.
+The reconnecting magnetic ﬁeld drags ions into the current sheet which leads to a signiﬁcant
+enhancement of ion density so that the current sheet is out of ionization equilibrium. Recombination
+becomes of comparable importance to the outﬂow in the equation for ion conservation of mass. In
+this paper, we show that these properties are modiﬁed by the temperature and magnetic ﬁeld
+asymmetries.
+During our simulations of asymmetric reconnection, the ion and neutral inﬂows remain decou-
+pled, but the decoupling is asymmetric. When there is magnetic asymmetry, there is net neutral
+ﬂow through the current sheet from the weak magnetic ﬁeld upstream region into the strong ﬁeld
+upstream region. This neutral ﬂow results from a large scale neutral pressure gradient and imper-
+fect coupling between ions and neutrals along the inﬂow direction. Similarly, the greater Lorentz
+force acting on the ions from the strong ﬁeld upstream region leads to the ions pulling the X-point
+into the weak ﬁeld upstream region. These eﬀects are not present during symmetric simulations.
+An observational consequence of these neutral ﬂows through the current sheet is that most of the
+neutrals swept along with the outﬂow are more likely to have originated from the weak magnetic
+ﬁeld upstream region. This may be especially important if there are diﬀerent elemental abundances
+in each upstream region (e.g., diﬀerent FIP enhancements).
+Prior simulations of asymmetric reconnection in fully ionized plasmas have shown non-ideal
+ﬂows through null points (e.g., Oka et al. 2008; Murphy 2010; Murphy et al. 2012). These ﬂows
+result from non-ideal eﬀects such as resistivity and the Hall eﬀect. In resistive MHD, for example,
+the motion of null points results from a combination of resistive diﬀusion of the magnetic ﬁeld and
+advection by the bulk plasma ﬂow (Murphy 2010). During asymmetric reconnection in partially
+ionized plasmas, an additional contributor to non-ideal plasma ﬂows across null points is the electric
+
+– 28 –
+ﬁeld contribution from electron-neutral drag (see the fourth term on the right hand side of Eq. 13).
+Neutral ﬂow through the current sheet is a new eﬀect that is not present in fully ionized situations.
+We include the Hall eﬀect in our simulations to test whether or not a transition to Hall reconnec-
+tion can develop in this regime. We ﬁnd that the out-of-plane quadrupole magnetic ﬁeld associated
+with antiparallel Hall reconnection does develop. The out-of-plane magnetic ﬁeld strength is a
+signiﬁcant fraction of the in-plane ﬁeld strengths just upstream of the current sheet. However, the
+characteristic low aspect ratio geometry and high reconnection rate expected during Hall recon-
+nection do not develop over the course of these simulations, including during the early nonlinear
+evolution of the plasmoid instability. The transition to Hall reconnection in a partially ionized
+plasma has been investigated analytically by Malyshkin & Zweibel (2011), and will continue to be
+investigated by ongoing simulation eﬀorts to determine the conditions under which such a transition
+is likely to occur.
+After an initial phase, each of our simulations show the development of the plasmoid instability.
+These simulations capture the early nonlinear evolution until structures develop on scales compara-
+ble to the resolution scale. In cases with magnetic asymmetry, the plasmoids develop preferentially
+into the weak ﬁeld upstream region, which is similar to fully ionized simulations. Recombination
+due to the enhanced ion density remains an important loss term in the plasma continuity equation.
+We anticipate that secondary merging of plasmoids will be further modiﬁed by these asymmetries.
+Our simulations complement the work of Ni et al. (2015) who use a single ﬂuid framework to
+investigate the long term nonlinear evolution of the plasmoid instability in a diﬀerent parameter
+regime.
+We investigate the coupling between magnetic and temperature asymmetries by comparing
+cases with the same magnetic asymmetry but diﬀerent temperature asymmetries. We ﬁnd that
+reconnection develops more quickly, occurs at a faster rate, and becomes unstable to plasmoid
+formation as we increase the temperature in the strong ﬁeld upstream region while decreasing the
+temperature in the weak ﬁeld upstream region. This change corresponds to λni increasing in both
+upstream regions.
+The neutral ﬂow through the current sheet does not noticeably change and
+therefore depends more strongly on the magnetic asymmetry than the temperature asymmetry.
+There are many important remaining directions for modeling work to understand how recon-
+nection occurs in the solar chromosphere and other weakly ionized plasmas. The simulations of L12,
+L13, and this paper have all simulated two-dimensional, antiparallel reconnection. The simulations
+presented in these works have modeled the early nonlinear evolution of the plasmoid instability
+in a weakly ionized plasma, and to model the later evolution will likely require a combination
+of increased resolution (including along the outﬂow direction to capture plasmoid merging) and
+increased diﬀusion. An alternative strategy would be to evolve the logarithm of density instead
+of the density itself (e.g., Lee et al. 2014) which precludes the possibility of the number density
+becoming negative. Ni et al. (2015) adopt adaptive mesh reﬁnement to ensure adequate resolu-
+tion. The presence of a guide ﬁeld can suppress the thinning of current sheets due to ambipolar
+
+– 29 –
+diﬀusion (Brandenburg & Zweibel 1994, 1995), and thus should be considered in future eﬀorts (see
+also Ni et al. 2015). Physical conditions in the chromosphere vary signiﬁcantly even at a single
+height, so a detailed examination of parameter space will be necessary to characterize the diﬀerent
+regimes of partially ionized reconnection in the chromosphere. The parameter studies may also
+include regimes relevant to partially ionized plasmas in the laboratory and in astrophysics. Future
+studies should investigate the impact of a realistic geometry and the interplay between small-scale
+physics and global dynamics (e.g., how small and large scales feed back on each other). Finally,
+much remains to be understood about the role of three-dimensional eﬀects during weakly ionized
+reconnection and the behavior of current sheet thinning in cases with and without null points.
+In addition to the modeling eﬀorts, much work remains to compare the simulation results to
+observations of chromospheric reconnection and to validate the results against laboratory experi-
+ments on partially ionized reconnection. A challenge in comparing simulations against observations
+is the disparity in length scales. The current sheets in these simulations have characteristic thick-
+nesses of ≲102 m and lengths of ≲10 km, while the spatial resolution of IRIS observations is of
+order 200 km, so direct diagnostics of the reconnection layer itself remain extremely challenging.
+However, the simulations could be used to predict velocities, spectra (including the charge state
+distributions of minor ions), densities, and morphologies that could then be compared against ob-
+servation. The experiments that have recently been performed at MRX provide an opportunity to
+directly validate HiFi’s plasma-neutral module against laboratory measurements where key quanti-
+ties can be observed using in situ probes. Using a code that has been validated against experimental
+data will improve conﬁdence that it is able to accurately capture the relevant physical processes in
+the lower solar atmosphere and in astrophysical plasmas.
+The authors thank H. Ji, J. Leake, J. Lin, L. Ni, N. Nishizuka, J. Raymond, K. Reeves, C. Shen,
+H. Tian, and E. Zweibel for useful discussions and an anonymous referee for useful comments that
+helped to improve this paper. N.A.M. acknowledges support from NASA grants NNX12AB25G,
+NNX15AF43G, & NNX11AB61G; NSF SHINE grants AGS-1156076 and AGS-1358342; contract
+8100002705 from LMSAL; and NASA contract NNM07AB07C to the Smithsonian Astrophysical
+Observatory (SAO). V.S.L. acknowledges support from the NASA LWS & Solar and Heliospheric
+Physics programs, as well as the National Science Foundation. Resources supporting this work were
+provided by the NASA High-End Computing Program through the NASA Advanced Supercomput-
+ing Division at Ames Research Center. We thank J. Sattelberger formerly from SAO and J. Chang
+from NASA for technical support. This work has beneﬁted from the use of NASA’s Astrophysics
+Data System.
+REFERENCES
+Adams, M. L. 2003, PhD thesis, MIT
+Al-Hachami, A. K., & Pontin, D. I. 2010, A&A, 512, A84
+
+– 30 –
+Arge, C. N., & Mullan, D. J. 1998, Sol. Phys., 182, 293
+Aunai, N., Hesse, M., Black, C., Evans, R., & Kuznetsova, M. 2013a, Phys. Plasmas, 20, 042901
+Aunai, N., Hesse, M., Zenitani, S., Kuznetsova, M., Black, C., Evans, R., & Smets, R. 2013b, Phys.
+Plasmas, 20, 022902
+Barnett, C. F., Hunter, H. T., Fitzpatrick, M. I., Alvarez, I., Cisneros, C., & Phaneuf, R. A. 1990,
+NASA STI/Recon Technical Report N, 91, 13238
+Birn, J., Borovsky, J. E., & Hesse, M. 2008, Phys. Plasmas, 15, 032101
+Birn, J., Borovsky, J. E., Hesse, M., & Schindler, K. 2010, Phys. Plasmas, 17, 052108
+Biskamp, D., Schwarz, E., & Drake, J. F. 1997, Phys. Plasmas, 4, 1002
+Brandenburg, A., & Zweibel, E. G. 1994, ApJ, 427, L91
+—. 1995, ApJ, 448, 734
+Browning, P. K., Stanier, A., Ashworth, G., McClements, K. G., & Lukin, V. S. 2014, Plasma
+Phys. Controlled Fusion, 56, 064009
+Cassak, P. A., & Shay, M. A. 2007, Phys. Plasmas, 14, 102114
+—. 2008, Geophys. Res. Lett., 35, 19102
+—. 2009, Phys. Plasmas, 16, 055704
+Chen, P.-F., Fang, C., & Ding, M.-D. D. 2001, CJAA, 1, 176
+Cowling, T. G. 1956, MNRAS, 116, 114
+Cranmer, S. R., & van Ballegooijen, A. A. 2010, ApJ, 720, 824
+Daughton, W., Roytershteyn, V., Albright, B. J., Karimabadi, H., Yin, L., & Bowers, K. J. 2009,
+Phys. Rev. Lett., 103, 065004
+De Pontieu, B., et al. 2007, PASJ, 59, 655
+De Pontieu, B., et al. 2011, Science, 331, 55
+Draine, B. T., Roberge, W. G., & Dalgarno, A. 1983, ApJ, 264, 485
+Ellerman, F. 1917, ApJ, 46, 298
+Feldman, U., & Widing, K. G. 2002, Phys. Plasmas, 9, 629
+Glasser, A. H., & Tang, X. Z. 2004, Comp. Phys. Comm., 164, 237
+
+– 31 –
+Gray, T., Lukin, V. S., Brown, M. R., & Cothran, C. D. 2010, Phys. Plasmas, 17, 102106
+Jess, D. B., Mathioudakis, M., & Keys, P. H. 2014, ApJ, 795, 172
+Khomenko, E., & Collados, M. 2012, ApJ, 747, 87
+Kleint, L. 2012, ApJ, 748, 138
+Koskinen, T. T., Cho, J. Y.-K., Achilleos, N., & Aylward, A. D. 2010, ApJ, 722, 178
+Lawrence, E. E., Ji, H., Yamada, M., & Yoo, J. 2013, Phys. Rev. Lett., 110, 015001
+Le, A., Egedal, J., Ohia, O., Daughton, W., Karimabadi, H., & Lukin, V. S. 2013, Phys. Rev. Lett.,
+110, 135004
+Leake, J. E., Lukin, V. S., & Linton, M. G. 2013, Phys. Plasmas, 20
+Leake, J. E., Lukin, V. S., Linton, M. G., & Meier, E. T. 2012, ApJ, 760, 109
+Leake, J. E., et al. 2014, Space Sci. Rev., 184, 107
+Lee, E., Lukin, V. S., & Linton, M. G. 2014, A&A, 569, A94
+Leenaarts, J., Carlsson, M., Hansteen, V., & Rutten, R. J. 2007, A&A, 473, 625
+Loureiro, N. F., Schekochihin, A. A., & Cowley, S. C. 2007, Phys. Plasmas, 14, 100703
+Lukin, V. S. 2008, PhD thesis, Princeton University
+Lukin, V. S., & Linton, M. G. 2011, NPGeo, 18, 871
+Madjarska, M. S., Vanninathan, K., & Doyle, J. G. 2011, A&A, 532, L1
+Malakit, K., Shay, M. A., Cassak, P. A., & Bard, C. 2010, J. Geophys. Res., 115, 10223
+Malakit, K., Shay, M. A., Cassak, P. A., & Ruﬀolo, D. 2013, Phys. Rev. Lett., 111, 135001
+Malyshkin, L. M., & Zweibel, E. G. 2011, ApJ, 739, 72
+Meier, E. T. 2011, PhD thesis, University of Washington
+Meier, E. T., & Shumlak, U. 2012, Phys. Plasmas, 19, 072508
+Mozer, F. S., Angelopoulos, V., Bonnell, J., Glassmeier, K. H., & McFadden, J. P. 2008, Geophys.
+Res. Lett., 35, 17
+Mozer, F. S., & Pritchett, P. L. 2009, Geophys. Res. Lett., 36, 7102
+Murphy, N. A. 2010, Phys. Plasmas, 17, 112310
+
+– 32 –
+Murphy, N. A., & Sovinec, C. R. 2008, Phys. Plasmas, 15, 042313
+Murphy, N. A., Sovinec, C. R., & Cassak, P. A. 2010, J. Geophys. Res., 115, 9206
+Murphy, N. A., Young, A. K., Shen, C., Lin, J., & Ni, L. 2013, Phys. Plasmas, 20
+Murphy, N. A., et al. 2012, ApJ, 751, 56
+Muzamil, F. M., et al. 2014, J. Geophys. Res., 119, 7343
+Nakamura, N., Shibata, K., & Isobe, H. 2012, ApJ, 761, 87
+Nelson, C. J., Shelyag, S., Mathioudakis, M., Doyle, J. G., Madjarska, M. S., Uitenbroek, H., &
+Erd´elyi, R. 2013, ApJ, 779, 125
+Ni, L., Kliem, B., Lin, J., & Wu, N. 2015, ApJ, 799, 79
+Ni, L., Yang, Z., & Wang, H. 2007, Ap&SS, 312, 139
+Ohia, O., Egedal, J., Lukin, V. S., Daughton, W., & Le, A. 2012, Phys. Rev. Lett., 109, 115004
+Øieroset, M., Phan, T. D., & Fujimoto, M. 2004, Geophys. Res. Lett., 31, 12801
+Oka, M., Fujimoto, M., Nakamura, T. K. M., Shinohara, I., & Nishikawa, K.-I. 2008, Phys. Rev.
+Lett., 101, 205004
+Pandey, B. P., & Wardle, M. 2008, MNRAS, 385, 2269
+Peter, H., et al. 2014, Science, 346, 1255726
+Piddington, J. H. 1954, MNRAS, 114, 638
+Pritchett, P. L. 2008, J. Geophys. Res., 113, 6210
+Pritchett, P. L., & Mozer, F. S. 2009, J. Geophys. Res., 114, 11210
+Sakai, J. I., & Smith, P. D. 2008, ApJL, 687, L127
+Sakai, J. I., & Smith, P. D. 2009, ApJ, 691, L45
+Sakai, J. I., Tsuchimoto, K., & Sokolov, I. V. 2006, ApJ, 642, 1236
+Servidio, S., Matthaeus, W. H., Shay, M. A., Cassak, P. A., & Dmitruk, P. 2009, Phys. Rev. Lett.,
+102, 115003
+Servidio, S., Matthaeus, W. H., Shay, M. A., Dmitruk, P., Cassak, P. A., & Wan, M. 2010, Phys.
+Plasmas, 17, 032315
+Shepherd, L. S., & Cassak, P. A. 2010, Phys. Rev. Lett., 105, 015004
+
+– 33 –
+Shibata, K., et al. 2007, Science, 318, 1591
+Smirnov, B. M. 2003, Physics of atoms and ions (New York: Springer-Verlag)
+Smith, P. D., & Sakai, J. I. 2008, A&A, 486, 569
+Stanier, A., Browning, P., Gordovskyy, M., McClements, K. G., Gryaznevich, M. P., & Lukin,
+V. S. 2013, Phys. Plasmas, 20, 122302
+Sturrock, P. A. 1999, ApJ, 521, 451
+Su, Y., & van Ballegooijen, A. 2013, ApJ, 764, 91
+Su, Y., Veronig, A. M., Holman, G. D., Dennis, B. R., Wang, T., Temmer, M., & Gan, W. 2013,
+Nature Physics, 9, 489
+Swisdak, M., Rogers, B. N., Drake, J. F., & Shay, M. A. 2003, J. Geophys. Res., 108, 1218
+Tian, H., et al. 2014, Science, 346, 1255711
+Vekstein, G., & Kusano, K. 2013, MNRAS, 434, 1789
+Voronov, G. S. 1997, At. Data Nucl. Data Tables, 65, 1
+Wyper, P., & Jain, R. 2013, Phys. Plasmas, 20, 052901
+Yamada, M. 2007, Phys. Plasmas, 14, 058102
+Yamada, M., et al. 1997, Phys. Plasmas, 4, 1936
+Yang, H., et al. 2013, Sol. Phys., 288, 39
+Yoo, J., Yamada, M., Ji, H., Jara-Almonte, J., Myers, C. E., & Chen, L.-J. 2014, Phys. Rev. Lett.,
+113, 095002
+Zweibel, E. G. 1989, ApJ, 340, 550
+Zweibel, E. G., Lawrence, E., Yoo, J., Ji, H., Yamada, M., & Malyshkin, L. M. 2011, Phys. Plasmas,
+18, 111211
+This preprint was prepared with the AAS LATEX macros v5.2.

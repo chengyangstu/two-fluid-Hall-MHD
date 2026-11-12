@@ -1,0 +1,1212 @@
+Draft version October 9, 2025
+Typeset using LATEX default style in AASTeX7
+Determining the 3D Dynamics of Solar Flare Magnetic Reconnection
+Joel T. Dahlin
+,1, 2 Spiro K. Antiochos,3 Peter F. Wyper,4 Jiong Qiu,5 and C. Richard DeVore6, 1
+1Heliophysics Science Division, NASA Goddard Space Flight Center, Greenbelt, MD, USA
+2Astronomy Department, University of Maryland, College Park, MD 20742, USA
+3Department of Climate and Space Sciences and Engineering, University of Michigan, Ann Arbor, MI, USA
+4Department of Mathematical Sciences, Durham University, Durham DH1 3LE, UK
+5Department of Physics, Montana State University, Bozeman, MT, USA
+6Retired Independent Consultant
+(Received October 9, 2025; Revised October 9, 2025; Accepted October 9, 2025)
+Submitted to ApJ
+ABSTRACT
+Solar flares are major space weather events that result from the explosive conversion of stored
+magnetic energy into bulk motion, plasma heating, and particle acceleration. While the standard flare
+model has proven highly successful in explaining key morphological features of flare observations, many
+aspects of the energy release are not yet understood. In particular, the turbulent three-dimensional
+structure of the flare current sheet is thought to play an important role in fast reconnection, particle
+acceleration, and bursty dynamics. Although direct diagnosis of the magnetic field dynamics in the
+corona remains highly challenging, rich information may be gleaned from flare ribbons, which rep-
+resent the chromospheric imprints of reconnection in the corona. Intriguingly, recent solar imaging
+observations have revealed a diversity of fine structure in flare ribbons that hints at corresponding
+complexity in the reconnection region. We present high-resolution three-dimensional MHD simula-
+tions of an eruptive flare and describe our efforts to interpret fine-scale ribbon features in terms of the
+current sheet dynamics. In our model, the current sheet is characterized by many coherent magnetic
+structures known as plasmoids. We derive a model analogue for ribbons by generating a time series of
+field-line length maps (L-maps) and identifying abrupt shortenings as flare reconnection events. We
+thereby demonstrate that plasmoids imprint transient ‘spirals’ along the analogue of the ribbon front,
+with a morphology consistent with observed fine structure. We discuss the implications of these results
+for interpreting SolO, IRIS, and DKIST observations of explosive flare energy release.
+1. INTRODUCTION
+Solar flares are explosive events in the Sun’s corona that release as much as 1032 ergs in a matter of minutes. The
+vast majority of this energy is ultimately emitted across a broad range of the electromagnetic spectrum, illuminating
+a rich variety of phenomena involved in the energy release process. Among the most striking features of flares is
+their propensity to generate nonthermal particle populations, whose signatures range from radio emission triggered by
+electron beams to gamma rays revealing the presence of relativistic ions.
+The primary observed morphological features of solar flares, the bright chromospheric ribbons and intense X-Ray
+coronal loops, are widely believed to result from magnetic reconnection in the solar corona, as described in the so-called
+‘standard model’ for two-ribbon solar flares (or CSHKP, after its originators: H. Carmichael 1964; P. A. Sturrock 1966;
+T. Hirayama 1974; R. A. Kopp & G. W. Pneuman 1976). While this model convincingly captured the primary observed
+properties of flares, it does not address secondary dynamics observed during the energy release processes. For example,
+there is clear observational evidence for turbulent dynamics (E. P. Kontar et al. 2017), shocks (B. Chen et al. 2015),
+Corresponding author: Joel T. Dahlin
+joeltdahlin@gmail.com, joel.t.dahlin@nasa.gov
+arXiv:2504.00913v2  [astro-ph.SR]  8 Oct 2025
+
+2
+Dahlin et al.
+coherent structures (P. Kumar & K.-S. Cho 2013; S. Takasao et al. 2016; P. Kumar et al. 2019), bursty energy release
+(M. J. Aschwanden 1987; V. M. Nakariakov & V. F. Melnikov 2009), and nonthermal particle acceleration (R. P. Lin
+& H. S. Hudson 1976), none of which is directly addressed by the standard model.
+Furthermore, while the standard model is 2D, advances in solar instrumentation have enabled observation of the
+detailed 3D structure of the flare energy release process. Many of important large-scale morphological features have
+been addressed via extensions to the standard model that accounts for the three-dimensional topology of the flux rope
+(e.g., ribbon hooks encircling flux rope footpoints and the strong-to-weak shear transition of flare loops M. Janvier
+et al. 2014; G. Aulanier et al. 2012; J. T. Dahlin et al. 2022a) and incorporates three-dimensional generalizations of
+reconnection (e.g., quasi-separatrix layers and hyperbolic flux tubes and slipping/slip-running reconnection P. Demoulin
+et al. 1996;
+Aulanier, G. et al. 2005; G. Aulanier et al. 2006; J. Dud´ık et al. 2014). However, these extensions do
+not address the nature of the fine-scale structure such as Supra-Arcade Downflows (SADs), dark finger-like downflows
+moving toward the flare arcade that reveal a highly structured reconnection outflow (D. E. McKenzie 2000; S. L. Savage
+et al. 2012). Coherent structures in the flare current sheet such as ‘blobs’ and bidirectional outflows(S. Takasao et al.
+2011; W. Liu et al. 2013; P. Kumar & K.-S. Cho 2013; P. Kumar et al. 2019; P. Kumar et al. 2023; P. Kumar et al.
+2024; X. Cheng et al. 2018; S. Yu et al. 2020; X. Yan et al. 2022; P. Kumar et al. 2024) are also indicative of bursty 3-D
+structures localized in space and time. Fine-scale features have also been identified in many observations of the flare
+ribbons which are interpreted to be the footprints of the coronal reconnection, and hence indirect proxies for those
+dynamics. Fine scale features in the ribbons has been interpreted as resulting from a variety of physical processes,
+including Kelvin-Helmholtz instabilities (L. Ofman & B. J. Thompson 2011; S. R. Brannon et al. 2015), slipping/slip-
+running reconnection(J. Dud´ık et al. 2014; J. Dud´ık et al. 2016; J. L¨orinˇc´ık et al. 2024), or tearing instabilities (S. R.
+Brannon et al. 2015; R. J. French et al. 2021; P. F. Wyper & D. I. Pontin 2021; J. Thoen Faber et al. 2025).
+The underlying physics of many of these features may be explained in terms of plasmoids, which are coherent magnetic
+structures generated during the reconnection process. Numerical modeling of reconnection indicates that plasmoids are
+a ubiquitous feature spanning plasma regimes from kinetic (J. F. Drake et al. 2006b), to magnetohydrodynamic (N. F.
+Loureiro et al. 2007; Y.-M. Huang & A. Bhattacharjee 2016) scales, with a generic requirement that the dissipation
+scale be greatly separated from the global scale (e.g. K. Shibata & S. Tanuma 2001; H. Ji & W. Daughton 2011).
+In the solar corona, for example, the dissipation scale (e.g., the ion diffusion region) is of order meters, many orders
+of magnitude separated from typical flare dimensions ≳Mm. Plasmoids imply a bursty nature to the reconnection
+process, making them a promising explanation for fluctuating emission in flares. Furthermore, plasmoids may operate
+both as accelerators and traps for particles, and are therefore thought to be important for particle acceleration and
+transport (J. F. Drake et al. 2006a; N. Nishizuka & K. Shibata 2013; J. T. Dahlin et al. 2014; J. T. Dahlin 2020; X.
+Li et al. 2015).
+In order to understand the impact of plasmoids on particle acceleration and transport in observed flares, it is
+necessary to make quantitative measurement of their properties. While hot/dense propagating features in the flare
+current sheet(S. Takasao et al. 2011; W. Liu et al. 2013; P. Kumar & K.-S. Cho 2013; P. Kumar et al. 2019; P. Kumar
+et al. 2023; P. Kumar et al. 2024; X. Cheng et al. 2018; S. Yu et al. 2020; X. Yan et al. 2022) are suggestive of plasmoids,
+it is presently prohibitively difficult to measure the associated fine-scale magnetic structure, a challenge only further
+exacerbated by the necessity of disentangling unavoidable line-of-sight integration. These challenges are well-illustrated
+in recent Coronal Multi-channel Polarimeter (CoMP S. Tomczyk et al. 2008) observations that indicated an absence
+of polarization near a flare current sheet, hinting at the presence of unresolved fine-scale structure (R. J. French et al.
+2019).
+While the three-dimensional structure of the flare current sheet is difficult to observe directly, detailed diagnostics
+of the magnetic field dynamics in the corona can be obtained from the so-called flare ribbons, rapid brightenings
+of the chromospheric footpoints of field lines reconnected in the solar corona. These brightenings sweep across the
+solar surface, providing information on the initiation and three-dimensional spread, allowing important properties of
+the reconnection, such as the rate at which flux is reconnected, to be measured accurately. Recent high resolution
+observations by NASA’s Solar Dynamics Observatory (SDO) (W. D. Pesnell et al. 2012) Atmospheric Imaging Assembly
+(AIA) (J. R. Lemen et al. 2012) and Interface Region Imaging Spectrograph (IRIS) (B. De Pontieu et al. 2014) have
+revealed intriguing fine structure at the smallest observable scales. For example, L. Ofman & B. J. Thompson (2011)
+found evidence of vortex-shaped features in EUV that the authors argued was evidence of Kelvin-Helmholtz instability.
+In another study, T. Li & J. Zhang (2015) used SDO/AIA and IRIS imaging of an eruptive X-class flare to investigate
+small-scale, quasi-periodic bright knots that propagated along a section of the ribbons and suggested this was evidence
+
+3D Dynamics of Flare Reconnection
+3
+of slipping reconnection during the preflare stage (similar features have been observed in a variety of other flares,
+e.g., T. Li & J. Zhang 2014; T. Li et al. 2016, 2018). Slipping reconnection was similarly invoked to interpret IRIS
+observations of ribbon ‘squirming’ (J. Dud´ık et al. 2016), and remarkable super-Alfv´enic apparent motions of bright
+flare kernels identified high-cadence IRIS observations have been argued to be evidence of slip-running reconnection
+(J. L¨orinˇc´ık et al. 2024). On the other hand, S. R. Brannon et al. (2015) identified oscillating, quasi-periodic structures
+in an IRIS observation of an M-class flare, which they argued was most likely due to a current sheet instability such
+as the tearing mode or Kelvin-Helmholtz instability. A string of blobs with length scales ∼140-200 km observed
+by the Swedish Solar Telescope (SST) were likewise suggested to be due to the tearing instability (J. Thoen Faber
+et al. 2025). Goode Solar Telescope (GST) imaging has revealed individual flare kernels may be as small as 80 km
+(J. Jing et al. 2016), which represents the limits of present resolution. Further insights are likely by means of new
+short-exposure (0.04 s) EUV imaging by Solar Orbiter (H. Collier et al. 2024; L. P. Chitta et al. 2025) and upcoming
+observations from the 4-meter Daniel K. Inouye Solar Telescope (DKIST; T. R. Rimmele et al. 2020) which promise
+to further advance our understanding of the smallest-scale dynamics of flares.
+High-resolution ribbon observations, therefore, represent a rich source of information on the time-varying and three-
+dimensional dynamics of flare reconnection.
+However, due to the indirect nature of the observations it is often
+unclear what particular mechanism is ultimately responsible for the fine structure, as evidenced by the competing
+interpretations discussed above. Recently, P. F. Wyper & D. I. Pontin (2021) (henceforth WP21) analyzed an analytical
+model of an eruptive flare in which they imposed small-scale magnetic twist to generate plasmoid-like structure in
+the current sheet. Plasmoid motions were approximated by varying the height of the imposed twist. They found
+that these structures distort the topological analogues of flare ribbons in characteristic ‘breaking-wave‘ and ‘spiral‘
+patterns consistent with the IRIS observations, demonstrating a clear connection between the reconnection dynamics
+and flare ribbons. The qualitative features of the spirals/breaking waves were shown to carry information about the
+plasmoid topology (e.g., whether the structure is quasi-2D or instead oblique to the reconnection axis), and furthermore
+exhibited a chirality that matched that of the associated erupting CME flux rope. These both represent key predictions
+for testing the plasmoid model against observations. While the WP21 study presented important new insights on the
+link between plasmoids and ribbon structure, a key limitation was the absence of true time-dependent dynamics such
+as the self-consistent formation of plasmoids as part of the reconnection process. In this article we present results from
+full three-dimensional numerical modeling that captures both the complete evolution and structure of reconnection-
+generated plasmoids and determines their time-dependent imprint on the ribbon structure. Our results, therefore, can
+be compared directly to observations.
+We describe below our state-of-the-art high-resolution, 3D magnetohydrodynamics (MHD) model of an eruptive
+flare carefully designed to elucidate the signatures of 3D reconnection structure. We first present an overview of the
+eruptive flare model in §2. We then discuss the structure of the flare current sheet (§3) and show that the reconnection
+is characterized by many plasmoids that exhibit complex three-dimensional structure. We then discuss our method
+for identifying the analogues of flare ribbons in §4, and examine in detail the fine structure in these ribbons (§5),
+demonstrating a link to the corresponding plasmoid structures in the flare current sheet. We present observational
+predictions of plasmoid signatures in §6 and discuss the implication of these results in §7.
+2. ERUPTIVE FLARE MODEL
+First, we describe our numerical model for the eruptive flare. Our primary goal is to capture in detail the reconnection
+dynamics in the current sheet, and in particular the formation and evolution of plasmoids as well as the topological
+connections between reconnection sites and the solar surface.
+To achieve this aim, we designed a high-resolution
+eruptive flare simulation that incorporated the formation and destabilization of the flare current sheet (i.e., included the
+build-up and onset phases). We chose for a magnetic configuration an idealized, highly symmetric profile to represent
+a generic two-ribbon morphology while introducing minimal extraneous details that would muddy the analysis. A
+detailed description of this configuration was presented in J. T. Dahlin et al. (2022a). In contrast to our previously
+presented simulation, we here employ a configuration with 6 levels of adaptive refinement, implying a factor of 4 less
+resolution than the simulations we presented in J. T. Dahlin et al. (2022a). This resolution is sufficient to produce
+many plasmoids, while allowing for detailed quantitative analysis of individual features.
+The numerical calculations were performed with the Adaptively Refined Magnetohydrodynamics Solver (ARMS;
+C. R. DeVore & S. K. Antiochos 2008) that has been employed extensively for CME/eruptive flare modeling (B. J.
+Lynch et al. 2008, 2009; J. T. Karpen et al. 2012; S. Masson et al. 2013; B. J. Lynch et al. 2016; J. T. Dahlin et al.
+
+4
+Dahlin et al.
+Figure 1. Initial configuration and driver for the eruptive flare model. (a-b) Magnetic topology shown from two orthogonal
+perspectives: (a) east and (b) above. White (black) shading at the inner boundary corresponds to positive (negative) polarity.
+Four distinct flux regions are indicated in cyan, green, and red (northern and southern sets of green field lines represent distinct
+flux regions). (c) Illustration of initial solar surface grid (shown at half resolution for clarity) and coordinate system. Green,
+red, and blue curves indicate the radial, polar (θ)/latitude and azimuth (ϕ)/longitude coordinates, respectively, with arrows
+indicating their directions of increase. The polarity inversion lines (PILs) are indicated in yellow, with the oval PIL encircling
+the active region extending approximately ±34◦in longitude and ±22◦in latitude. (d) Profile of Bϕ component of the tangential
+flux injected by the STITCH method (see text for details) at the inner boundary. Contours of the radial component of the
+magnetic field are overlaid in grayscale.
+2019, 2022a,b). The magnetic configuration is illustrated in Fig. 1 showing three views of the multipolar ‘breakout’
+configuration employed. The magnetic flux distribution is antisymmetric across the equator, so that the central Polarity
+Inversion Line (PIL) lies along the equator. The corresponding flare current sheet, therefore, will lie above the PIL and
+be approximately planar at its center. This choice simplifies identification and analysis of plasmoids. The symmetry
+and simplicity of the magnetic profile results in flare ribbons that (a) are oriented primarily in the east-west direction
+and (b) exhibit structure due exclusively to the reconnection dynamics and virtually independent of the surface flux
+distribution.
+The initial atmosphere was a spherically symmetric hydrostatic equilibrium with a temperature profile scaling as
+T = Ts/r, a base temperature Ts = 2 × 106 K, and pressure Ps = 4 × 10−1 dyn cm−2. The ideal MHD equations
+were solved with an adiabatic temperature equation. The domain consisted of the spherical wedge, r ∈[1Rs, 30Rs],
+θ ∈[π/16, 15π/16], and ϕ ∈[−π, +π], where r is the radial coordinate, θ the polar angle (or colatitude), and ϕ the
+azimuthal angle, and Rs is the solar radius. For many of the figures in this article, we use degrees latitude (χ = π/2−θ)
+and longitude (ϕ). For these coordinates, the domain extents are χ ∈[−78.75◦, 78.75◦] and ϕdeg ∈[−180◦, 180◦].
+Reconnection was facilitated by grid-scale numerical dissipation that broke the frozen-in flux constraint. We employed 6
+levels of adaptive refinement corresponding to a minimum grid cell size of ∆r = 1.33 Mm and Rs∆θ = Rs∆ϕ = 1.08 Mm
+at the inner boundary. The coordinate system and the initial grid are illustrated in Fig. 1c.
+
+3D Dynamics of Flare Reconnection
+5
+As in J. T. Dahlin et al. (2022a), the initially potential magnetic configuration was energized via the injection of
+tangential flux using the method of STatistical InjecTion of Condensed Helicity (STITCH; D. H. Mackay et al. 2014,
+2018; B. J. Lynch et al. 2021; J. T. Dahlin et al. 2022b). The spatial profile of the Bϕ injection is shown in Fig. 1d. The
+injection of tangential flux was halted at t = 11, 500 s, well prior to the onset of the eruptive flare. The magnetic field is
+line-tied, with all velocity components fixed at zero, across the entire inner radial boundary. Otherwise, the boundary
+conditions are identical to those employed in previous 3D ARMS eruptive-flare calculations (e.g., J. T. Dahlin et al.
+2019, 2022a).
+The temporal evolution of the eruptive flare is summarized in Fig. 2, which shows five stages of the flare evolution
+(Fig.2a-e) and the time evolution of the global energetics (2f). The orange field lines initially form a sheared arcade
+(Fig. 2a) that is subsequently transformed by flare reconnection into a twisted flux rope that erupts outward from the
+solar surface (Fig. 2b-e). Simultaneously, the magenta, blue, and cyan field lines that initially overlay the flux rope
+(Fig. 2a) stretch outward as the flux rope erupts. Each set of field lines successively reconnects, beginning with the
+magenta field lines closest to the PIL and proceeding to the blue then cyan field lines (Fig. 2b-e). A clear strong-to-
+weak shear transition is evident: the magenta flare loops are highly sheared along the PIL, whereas the cyan field lines
+are only weakly sheared. This was previously discussed in our investigation of the shear evolution and its link to the
+reconnection guide field (J. T. Dahlin et al. 2022a), and similar behavior has been noted in many observational flare
+studies (e.g. Y. N. Su et al. 2006; G. Aulanier et al. 2012; J. Qiu et al. 2023).
+Figure 2. Overview of the eruptive flare model evolution. (a-e) Erupting flux rope (orange field lines), overlying flux, and
+flare loops at five different times during the simulation. Magenta, blue, and cyan indicate field lines progressively further from
+the PIL (yellow). Grayscale contours show the magnitude of the radial component of the magnetic field. (f) Time-evolution
+of globally integrated quantities, including the free magnetic energy (black), kinetic energy (red), and reconnection rate (blue).
+Energies are normalized to the initial potential field energy. The temporal profile for the shear injection is shown in the dashed
+magenta line. An animation of this figure is available, showing the eruption of the flux rope and formation of the flare arcade
+during the interval 12,800 s ≤t ≤14,000 s at a 10 s cadence (the animation duration is 5 s).
+The temporal profile of the STITCH driver and the globally integrated free magnetic energy, kinetic energy, and
+rate of reconnected flux are illustrated in Figure 2f. The reconnection rate is calculated via integration of the flux
+
+6
+Dahlin et al.
+swept out by the flare ribbons (the same method employed in J. T. Dahlin et al. (2022a)). We detail our method for
+identifying the flare reconnection and the associated ribbons in §4. We emphasize two points illustrated by the global
+evolution. First, Figure 2f illustrates that we have captured the self-consistent energy buildup and onset: we began
+with a potential magnetic field, imposed magnetic shear, and halted the driving at t = 11, 500 s, well before the onset
+of fast reconnection (t ≈12, 800 s). This ensures that the driving and eruptive phases are well-separated temporally.
+Second, we note the considerable fluctuations in the reconnection rate (blue) that show the dynamic complexity of the
+flare reconnection and hint at the presence of plasmoids.
+3. CURRENT SHEET STRUCTURE
+We next examine the fine structure of the flare current sheet. Figure
+3 shows multiple viewpoints of a volume
+rendering of the current density at t = 13, 400s, when the eruptive flare is well under way. Several notable features
+are evident in this figure: the most intense current (magenta) has a sigmoidal morphology (Fig. 3c), as has been
+discussed in three-dimensional adaptations of the standard model (M. Janvier et al. 2014). It is also clear that the
+flux rope winds through a current structure with an oval cross-section (e.g., Fig. 3d). Finally, the current density is
+highly structured beneath the flux rope, most evident from the viewpoint face-on to the current sheet (Fig. 3b), which
+suggests the presence of plasmoids.
+The detailed magnetic structure is illustrated Fig. 4a, which shows the vertical current density at the solar surface,
+flux rope field lines, and several slices of constant ϕ with plots of the strength of the guide field (Bϕ). A significant
+guide field is expected during the main phase of a flare (J. Qiu et al. 2017; J. T. Dahlin et al. 2022a; J. Qiu et al.
+2023), and upon advection into the current sheet, compression inside plasmoids generates oval-shaped enhancements
+of the guide field. This makes Bϕ an effective proxy for identifying cross-sections of plasmoid cores. Multiple such
+concentrations are evident in the five constant-ϕ slices in Fig. 3a.
+To further illustrate that the Bϕ concentrations are, indeed, plasmoids (i.e., exhibit coherent small-scale magnetic
+twist), we trace several sets of field lines from the regions of Bϕ enhancement (Fig. 4b-f). As expected, each bundle of
+field lines so identified exhibits significant twist near the plane from which they were traced. It is well established that
+the formation and interaction of many such structures throughout the current layer may result in a highly complex,
+stochastic magnetic topology (e.g., W. Daughton et al. 2011; Y.-H. Liu et al. 2013; J. T. Dahlin et al. 2015; J. T. Dahlin
+et al. 2017). However, in order to draw the clearest possible link between plasmoid structures and ribbon features, we
+focus on two limiting topological cases for the plasmoids. Subsequent to transient initial dynamics near the primary
+reconnection X-line, the plasmoids propagate ‘downstream’ toward either the sunward (Figure 4g) or anti-sunward
+direction (Fig. 4h). The structure of the former manifests as a twisted segment along a flare loop, whereas the latter
+behavior corresponds to a short twisted segment along a longer flux tube that wraps around the CME flux rope. These
+represent the simplest 3-D generalizations of simplified 2.5-D flare plasmoids, which would be detached from both the
+CME flux rope and the solar surface. Critically, however, these plasmoids are magnetically connected to the solar
+surface at both ends. We will show that this connectivity imprints complex fine structure in the reconnection topology
+and, hence, along the flare ribbons.
+4. MODEL ANALOGUES OF FLARE RIBBONS
+As is commonly found in previous ARMS modeling (B. J. Lynch & J. K. Edmondson 2013; J. K. Edmondson & B. J.
+Lynch 2017; J. T. Dahlin et al. 2022a), the highly-resolved flare current sheet of the present simulation is characterized
+by a proliferation of plasmoids, which are of such spatial and temporal scales that direct measurement would be
+highly challenging. Furthermore, fully rigorous forward modeling of flare ribbons would require accurate modeling of
+the flare energy release, transport, and loss processes. Given the observation of intense particle acceleration, these
+processes are likely to involve kinetic effects. Consequently, such forward modeling is well-beyond present theoretical
+and computational capabilities.
+We therefore instead endeavor to identify a useful qualitative proxy for the flare
+ribbons, prioritizing the identification of fine-scale structure due to magnetic field dynamics in the current sheet.
+Given that flare ribbons are understood to be the locations where energy released by reconnection is deposited impul-
+sively (e.g. by particle beams), we may proceed with the simplifying approximation that ribbons are the instantaneous
+footpoints of flare-reconnected field lines. However, identifying individual reconnection events in 3-D numerical studies
+can be highly challenging, given that flux surfaces are easily broken by turbulent dynamics. Furthermore, whereas
+in 2-D geometries reconnection involves discontinuous topology changes across separatrix layers, in three-dimensional
+systems a generalized form of reconnection involving continuous changes in connectivity may occur (K. Schindler et al.
+1988), often referred to in flare contexts as ‘slipping’ reconnection (e.g., E. R. Priest & P. D´emoulin 1995).
+
+3D Dynamics of Flare Reconnection
+7
+Figure 3. Three-dimensional volumetric visualization of the total current density in the flaring region at t = 13, 400s. Magenta
+indicates the most intense currents. Grayscale color table indicates the radial component of the magnetic field at the inner
+boundary of the domain, and yellow curves indicate polarity inversion lines. Orange field lines trace the erupting magnetic flux
+rope.
+Despite these challenges, substantial progress in diagnosing 3-D reconnection has been achieved through analysis
+that aims to quantify the changes in magnetic topology. For example, the squashing factor Q, (e.g., P. Demoulin et al.
+1996; V. S. Titov et al. 2002) characterizes deformations in field-line mapping, which may be used to identify ‘quasi-
+separatrix layers’ where the gradient of the magnetic connectivity is strong and reconnection may preferentially occur.
+Another useful quantity correlated with the location of flare ribbons is the vertical current density. As described in
+detail in M. Janvier et al. (2014), the flare current sheet maps to vertical current concentrations at the inner boundary,
+so that as the reconnection proceeds and the flare current sheet rises, the flare ribbons separate in time. A useful
+aspect of the vertical current as a proxy for ribbons is that it may be directly calculated in both observations and in
+simulations.
+Although useful, these measures are not direct signatures of field-line connectivity changes due to reconnection, and
+carry significant limitations for analysis of fine structures as we will illustrate below. Instead, we employ the concept
+of a ‘field-line length map’, or L-map, which is constructed by tracing a field line upward from the solar surface to its
+other end, then assigning the value of its length to the originating footpoint (see further discussion in the Appendix).
+The utility of the L-map is illustrated by the series of snapshots shown in Fig. 5. The region of shortened field lines
+(white) near the central PIL corresponds to the flare arcade; its boundary represents the most recently reconnected
+flare ribbons. Indeed, the successive reconnection of the magenta, blue, and finally cyan field lines corresponds closely
+to the spreading of the region of shortened field lines.
+By contrast, regions of lengthening field lines (dark gray) correspond to the footpoints of the erupting flux rope.
+The growth of these regions therefore indicates the ongoing addition of magnetic flux via the flare reconnection, and
+the lengthening of field lines within this region corresponds to the outward expansion of the flux rope. Key features of
+the L-map are shown in Fig. 6, which illustrates how the flare arcade, flux rope footpoints, and the footpoints of spine
+lines may be discerned in an L-map. Crucially, fine structure present at the leading edge of the field-line shortening
+corresponds to the footpoints of a plasmoid in the current sheet (we examine such structure in detail in §5). These
+results demonstrate that field-line length maps (L-maps) are highly useful for identifying the footprints of reconnected
+field lines and, hence, deriving a proxy for flare ribbons.
+
+8
+Dahlin et al.
+Figure 4. Three-dimensional plasmoid structures in the flare current sheet. (a) Context image showing contours of the vertical
+current density at the inner boundary, illustrating the flare ribbon locations. Yellow field lines indicate the location of the
+erupting CME flux rope.
+Five 2D slices of the flare current sheet are also shown, with a color table indicating the guide
+magnetic field component (Bϕ); concentrations of the guide field indicate plasmoids. Panels (b-f) show distinct sets of field
+lines traced from the slices indicated in panel (a), illustrating the twist and topology of the plasmoids. Examples of plasmoids
+sunward and anti-sunward of the flare reconnection X-line are shown in (g) and (h), respectively.
+In Figure 7a-c we compare high-resolution images of the squashing factor Q, vertical current Jr, and the field-line
+length L (Q and L are calculated using the ARMS suite of topology tools described in P. F. Wyper & D. I. Pontin
+(2021)). Most of the features illustrated in Fig. 6 can be identified using each of these three quantities (the exception
+is that Jr does not show the base of the spine). For example, the boundary of the flare arcade in Fig. 7c (the ribbon
+front) located near ±2 deg. latitude corresponds to both a high-Q layer (7a) and a region of strong |Jr| (7b). Indeed,
+S. Tassev & A. Savcheva (2017) have previously noted that the field-line length can be useful as an efficient ‘quick and
+dirty’ method to identify regions likely to host QSLs. Likewise, fine structure can be discerned along the ribbon fronts
+for all three quantities. Even so, as was illustrated in Fig. 6, the clearest delineation of topological regions is given by
+the L-map.
+For the purpose of identifying flare ribbon fine structure, Q and Jr are further limited in utility with respect to
+the L-map. The vertical current is calculated in terms of gradients of B and therefore subject to significant noise
+and furthermore constrained by the grid resolution. Indeed, fine-scale structures in Fig. 7a,c are more challenging
+to identify in Fig. 7b where they instead show up as intense current blobs. A significant drawback of the squashing
+factor, in turn, is that while many of the fine structures are captured, it is computationally expensive to calculate,
+
+3D Dynamics of Flare Reconnection
+9
+Figure 5.
+Illustration of the link between flare reconnection and field line length length at four different times during the
+evolution of the eruptive flare (the times are identical to those shown in Fig. 2). The field-line length map (L-map) is shown
+at the inner boundary (r = Rs) where white/light gray indicate short field lines and black/dark gray indicate long field lines.
+Yellow curves indicate PILs. The magenta, blue, and cyan field lines are identical to those shown in Fig. 2. As flare reconnection
+proceeds, these field lines expand outward, then reconnect, and form the flare arcade. The resulting lengths of the associated
+field lines abruptly shorten, as reflected in the white region that expands outward from the central PIL. Simultaneously, the
+footpoints of the orange field lines (representing the erupting twisted flux rope) darken, corresponding to the outward expansion
+of the flux rope. An animation of this figure is available, showing the evolution of the L-map on the solar surface during the
+eruption of the flux rope and formation of the flare arcade during the interval 12,800 s ≤t ≤14,000 s at a 10s cadence (the
+animation duration is 5 s).
+because a dense set of field lines is required in order to calculate accurately the gradients in the mapping. This can
+be problematic in the case of small plasmoids. Furthermore, since it does involve calculating gradients, it is inherently
+more sensitive to numerical noise in the results (see for example the flux rope footpoints at ±20 degrees longitude, ∓
+5 degrees latitude in Fig. 7a).
+Further challenges arise when aiming to use either quantity for deriving ribbon proxies. Features in either Jr or Q
+must be both (a) positively identified as the base of the flare current sheet and (b) resolved with sufficient temporal
+resolution to capture the moment that a features sweeps across a point of interest. The regions of large Q illustrated in
+Fig. 7a correspond to a variety of categories of topological structures, which are not limited to flare ribbon fronts but
+also include the base of the spine, the boundary of the flux rope footpoints, and structure within the flux rope itself.
+Therefore, Q on its own is not sufficient to identify locations of flare reconnection. Furthermore, Q only indicates
+strong connectivity gradients where reconnection might be likely to occur, but does not itself identify reconnection
+sites. With regard to the vertical current density, while it is an intuitive quantity for mapping of the flare current
+sheet to the lower solar atmosphere, similar to Q it neither disambiguates between different types of current sheets
+nor definitively indicates reconnection sites, and would also require a cadence sufficient to resolve the ’moment’ of
+reconnection at a given location.
+By contrast, L is specific in that it can be used to classify the relationships of the topological regions (i.e., Lfluxrope >
+Loverlying > Larcade) and therefore the type of reconnection associated with the motion of the boundaries between these
+regions. Additionally, L is robust in that it is comparatively insensitive to the time cadence (the reconnection event
+itself does not need to be resolved, as it is only necessary to show that L has changed within a given interval) as well
+as the spatial resolution of the map (no gradients are computed). Furthermore, reconnection associated with a given
+location requires minimal additional context beyond the local L(t) (for example, the typical field-line length in each
+region, for use in selecting appropriate thresholds for identification of reconnection events).
+The utility of the L-map is further illuminated in a running difference image (Fig. 7d). Field lines that have shortened
+in the previous time interval (∆L < 0) correspond to the footpoints of reconnected field lines, colorized in yellow/white
+to evoke the interpretation that these are locations where flare ribbons would form (we present a more sophisticated
+
+10
+Dahlin et al.
+Figure 6.
+Illustration of important features revealed by an L-map. A three-dimensional representation of four distinct sets
+of field lines (a) is compared to a notated high-resolution L-map (c). Red indicates flux rope field lines and corresponding
+footpoint regions. Blue indicates the flare arcade, the boundary of which is an analogue for flare ribbons. Magenta denotes
+long field lines that pass near coronal null points. Green field lines in (b) show a twisted flux bundle (plasmoid) that maps to
+fine structure in the L-map. Several such regions are highlighted in the middle panel. Panels (d)-(g) show four snapshots of the
+L-map corresponding to the times shown in Fig. 5. An animation of the high-resolution L-map is available, showing the L-map
+evolution during the flare which involves outward spreading of the flare arcade indicated by shortened field lines, the expansion
+of the flux rope indicated by lengthening field lines, and the development of fine structure. The animation covers the interval
+12,800 s ≤t ≤14,000 s at a 10 s cadence (the animation duration is 5 s).
+method for constructing synthetic ribbons in §6). Figure 8 shows L-map running difference images at four different
+times. The large-scale evolution (left panels) reflects an expansion outward of the “ribbons” from the central PIL.
+The right-hand panels, which zoom in on a smaller region of the ribbons, highlight numerous fine-scale structures that
+form along the ribbon frontier. These structures primarily take the form of spirals/breaking waves (as was previously
+discussed in the analytical model presented in WP21).
+
+3D Dynamics of Flare Reconnection
+11
+Figure 7. Three proxies for flare ribbons. (a) Squashing factor (Q), denoting strong gradients in magnetic field connectivity.
+(b) Vertical current density (Jr, marking the footprints of the flare current sheet on the solar surface. (c) Field-line length maps,
+indicating distinct topological regions associated with discontinuous, contrasting field-line lengths. (d) A simple proxy for flare
+ribbons given by ∆L(t) = L(t + 10) −L(t −10).
+For the reasons presented in this section, in the following analysis we focus exclusively on the properties of the
+L-maps in order to investigate the relationship between the flare ribbon structure and current sheet dynamics. Before
+doing so, we we wish to briefly note the broader potential for interpreting flare dynamics in terms of the evolution
+of the field-line length. In addition to ‘brightenings’, the running difference images also reveal locations likely to be
+associated with coronal dimming (dL/dt > 0, indicated by dark colors). The lengthening of field lines in the flux rope
+footpoints correspond well to the well-known coronal dimmings that are thought to result from expansion or opening
+up of the magnetic field (e.g., A. C. Sterling & H. S. Hudson 1997; J. Qiu 2024), and lengthening of field lines just
+outside the flare arcade may be associated with subtler dimmings resulting from the stretching of field lines prior to
+flare reconnection, as was recently pointed out in J. Qiu (2024). Other examples of reconnection can also be identified
+via L-maps and/or running difference images, which include the case of filament threads reconnecting to form flare
+loops (J. L¨orinˇc´ık et al. 2019), reconnection of the flux rope with itself (filament leg-leg reconnection, J. Dud´ık et al.
+2022), as well as reconnection associated with the base of the spine/breakout current sheet (which may involve any of
+the three highlighted regions: flux rope, overlying field, and flare arcade).
+5. RIBBON FINE STRUCTURE
+We have shown that (a) the model current sheet is replete with many plasmoids and (b) our model analogue of flare
+ribbons is likewise characterized by copious fine structure. We now proceed to investigate the nature of the physical
+link between these two features. We first present a snapshot of a plasmoid and its solar surface imprint in Fig. 9 in
+order to illustrate how the localized magnetic twist of the plasmoid distorts the topology of the flare ribbon. We then
+proceed to explore the temporal evolution of two representative plasmoids to illustrate how the dynamics impact the
+L-map signatures.
+A snapshot of a plasmoid and its associated L-map structure is shown in Fig. 9. Regions of long (dark gray) and
+short (light gray) field lines wrap about each other in a ‘spiral’ pattern (similar to what was shown in WP21). Field
+line strips traced from the interior arcs of the spiral twist about each other, passing through a plasmoid (oval feature
+in the guide-field slice) before separating as the green strip maps directly to the solar surface, whereas the orange field
+strip (shown in context in Fig. 9b) wraps around the erupting flux rope and maps to a section of the ribbon hooks
+(visible in Jr). The L-map feature thereforeillustrates how twisted field-line bundles in the corona distort the boundary
+between magnetic field lines that have already (green) or not yet (orange) fully reconnected to become a part of the
+
+12
+Dahlin et al.
+Figure 8. Rudimentary proxy for flare ribbon fronts, illustrated via running difference images of L at different times throughout
+the flare evolution, calculated for a given time as ∆L(t) = L(t + 10) −L(t −10). The left panels depict the entire flare region,
+whereas the right panels show zoomed-in regions corresponding to the rectangles indicated in the context figures. Light colors
+(white-yellow) indicate field-line shortening corresponding to flare reconnection (a proxy for the location of the flare ribbon front),
+whereas dark colors (red-black) indicate field-line lengthening. The left panels illustrate the typical large-scale morphology of
+flare ribbons including the outward spread and development of ribbon hooks.
+The right-hand panels show many fine-scale
+features (e.g., spirals, breaking waves) along the ribbon front. Separate animations of the L-map running difference sequence
+are available for both the large-scale and inset regions indicated in this figure over the interval 12,800 s ≤t ≤14,000 s at a 10s
+cadence. The context animation shows the flare-ribbon-like spread of the field-line shortening, and the inset region highlights
+the spiral-like structure along a patch of the ribbon front (the duration of both animations is 5 s).
+
+3D Dynamics of Flare Reconnection
+13
+Figure 9.
+Illustration of the physical connection between a plasmoid and its topological imprint on the solar surface at
+t = 13340 s. Panel (a) shows two field line strips traced from a small-scale spiral on the solar surface L-map (grayscale) to a
+flare current sheet plasmoid (blue oval in a longitude cut ϕ = 8.5◦of the guide field). The vertical current at the solar surface
+(Jr, green-brown colormap) as well as the flare arcade (light blue field lines), the CME flux rope (magenta field lines), and the
+PILs (yellow) are shown for context. The green field line strip was traced from the light gray region of the spiral (shorter field
+lines) and maps to a conjugate region in the positive polarity region, whereas the orange field line strip was traced from the
+dark gray region (longer field lines) and wraps once about the CME flux rope, mapping to a region along the flux rope hook
+in the positive polarity region. Panel (b) shows a zoomed-out view of (a) illustrating the location of the plasmoid within the
+eruptive flare/CME configuration. Panel (c) shows a zoomed-in view of the solar surface L-map patch and the footpoints of the
+orange and green field-line strips. The temporal evolution of the guide field cut and the L-map patch is shown in Fig. 10.
+flare arcade. We note that the spiral is reminiscent of features that might result from the action of a Kelvin-Helmholtz
+instability (KHI). However, whereas the shear flows involved in the KHI roll up an interface between two fluids and is
+reflected in the local plasma properties, the L-map instead encodes non-local topological information. It is clear from
+Fig. 9a,c that the field line strips do not begin to twist and wrap about each other until well into the corona. Indeed,
+the line-tying boundary conditions imply that the spiral can only formed via topological changes along the field lines
+(i.e., reconnection associated with the plasmoid formation).
+Having established the premise of the physical connection between plasmoids and L-map fine structure, we now
+examine the dynamics associated with the plasmoid evolution. Figures 10 and 11 show the evolution of two repre-
+sentative plasmoids (corresponding to Fig. 4g,h respectively) and their corresponding mappings to the solar surface.
+In both cases, a slice of Bϕ through the current sheet is shown in order to indicate the locations of plasmoids, the
+cores of which correspond to oval concentrations of Bϕ (as previously shown in Fig. 4). For the downward-propagating
+plasmoid, these panels correspond exactly to the L-map and guide field cuts shown in Fig. 9a. A selection of field lines
+are traced from the current sheet (rainbow slit) to the solar surface (rainbow symbols). The L-map patch linked to
+the core of the plasmoid is shown for each time step.
+We focus first on Fig. 10, an example of a downward-propagating plasmoid that forms near ϕ ≈8.5◦(as indicated
+in Fig. 4g) and Fig. 9. In the first frame (t = 13, 290s), no clear plasmoid is visible and the L-map patch shows
+
+14
+Dahlin et al.
+a smooth boundary between long and short field lines. The first hints of a plasmoid appear in t = 13, 320 s. Its
+footpoints are interwoven with a small, flattened spiral that has begun to form on the ribbon front in the L-map.
+By t = 13, 340 s both the plasmoid and the corresponding spiral have fully formed. The plasmoid then begins to
+propagate downward (13, 360 s) while the spiral begins to fill in (indicated by a red arrow in Fig. 10). Finally, the
+plasmoid merges fully into the looptop (t = 13, 400 s) and the L-map once again has a smooth boundary between the
+reconnected and unreconnected flux, as was the case at t = 13, 290 s, although the flare arcade has spread to a higher
+latitude. Interestingly, the warping of the field line mapping remains evident in the wavelike feature formed by the
+footpoints shown at t = 13, 400 s.
+Figure 10.
+Evolution of a downward-propagating plasmoid and its mapping to the solar surface. For each time step shown,
+the left-hand panels show the guide field Bϕ on a 2D slice through the flare current sheet corresponding to ϕ = 8.5◦. The
+rainbow-colored slit indicates the seed points for a set of field lines traced to the solar surface. The right-hand panels show a
+localized patch of the L-map at the solar surface, with the light region corresponding to the footprint of the flare arcade and the
+dark region corresponding to overlying magnetic flux that has not yet reconnected. The boundary between these two regions
+is a proxy for the ribbon front. Rainbow symbols show where the field lines traced from the plasmoid map to the L-map. An
+animation of the mapping from the plasmoid cross-section in the corona to the solar surface is available, covering the interval
+13,290 s ≤t ≤13,400 s at a 1 s cadence. The animation shows the formation, propagation, and merger of a plasmoid into the
+looptop and the concurrent formation and ‘filling-in’ of a spiral feature in an L-map patch. (the animation duration is 5 s).
+We contrast this evolution with that of an upward-propagating plasmoid (Fig. 11, also shown in Fig. 4h). This
+plasmoid is located near the center of the flare configuration at ϕ ≈0.4◦(the guide field weakens earlier here (J. T.
+Dahlin et al. 2022a), which is why the ambient |Bϕ| is smaller than for the example shown in Fig. 10).
+A Bϕ
+enhancement develops and begins to propagate upward, growing significantly larger than its counterpart shown in
+Fig. 10. This occurs because the propagation time is longer (the plasmoid must catch up to the erupting flux rope)
+and the magnetic field is weaker (so that the plasmoid expands as it rises). However, while an L-map spiral forms
+(e.g., t = 13, 320 s), it is significantly smaller than that associated with the downward-propagating plasmoid (Fig. 10),
+despite the larger cross-section of the upward-propagating plasmoid. Furthermore, instead of filling in with reconnected
+flux (white) as in Fig. 10, the spiral appears instead to ‘unwind’ as a light-colored arc of the spiral retracts (indicated
+by the red arrow in Fig. 11) even while the area of the plasmoid cross section continues to grow.
+To determine what is responsible for this behavior, we examine the connectivity of this plasmoid within the context of
+the entire flaring region. We show two different stages of the evolution: t = 13, 340 s in Fig. 12 (when a well-developed
+
+3D Dynamics of Flare Reconnection
+15
+Figure 11.
+Evolution of an upward-propagating plasmoid and its mapping to the solar surface. For each time step shown,
+the left-hand panels show the guide field Bϕ on a 2D slice through the flare current sheet corresponding to ϕ = 0.4◦. The
+rainbow-colored slit indicates the seed points for a set of field lines traced to the solar surface. The right-hand panels show a
+localized patch of the L-map at the solar surface, with the light region corresponding to the footprint of the flare arcade and the
+dark region corresponding to overlying magnetic flux that has not yet reconnected. The boundary between these two regions is
+a proxy for the ribbon frontier. Rainbow symbols show where the field lines traced from the plasmoid map to the L-map. An
+animation of the mapping from the plasmoid cross-section in the corona to the solar surface is available, covering the interval
+13,290 s ≤t ≤13,400 s at a 1 s cadence. The animation shows the formation and upward propagation of a plasmoid toward the
+CME flux rope and the concurrent formation and retraction/unwinding of a spiral feature in an L-map patch. (the animation
+duration is 5 s).
+spiral is present in Fig. 11) and t = 13, 400 s in Fig. 13 (when no spiral remains). In both figures a cross section of
+the plasmoid is shown (a), illustrating its location and the set of seed points that are traced in both directions to the
+solar surface. An L-map of the entire flaring region is also shown for each case (b), overlaid with rectangles indicating
+locations of four L-map patches shown in (c-f). At t = 13, 340 s, (Fig. 12), field lines traced from the plasmoid map
+to four distinct imprints: two along the main ribbon (corresponding to the spiral shown in Fig. 11 as well as its
+conjugate), as well as two along the hooks that wrap around the flux rope footprint (Fig. 12e-f). The structure along
+the hooks is particularly complex; although the bundles of long (dark) and short (light) field lines are wrapped about
+each other in a similar manner, the overall pattern is not the simple spiral that manifests along the main flare ribbons.
+Multiple factors are likely to contribute to this complexity, including (a) the location of these features at the extreme
+ends of the ribbons, (b) multiple wrappings of the interior (dark) field lines about the flux rope axis, and (c) the
+greater length of these field lines in comparison to those of the flare arcade. Each of these contribute to additional
+opportunities for distortion of the topological boundaries along this selection of field lines.
+Further along in the evolution (Fig. 13) the plasmoid has grown and propagated upward toward the CME flux
+rope. No spiral feature remains in Fig. 13c, and although significant structure is present in Fig. 13d, this structure
+is primarily due to the formation of a new plasmoid sunward of the reconnection site (r ≈1.09Rs in Fig. 13a). The
+fine-scale features on the flux rope hooks, on the other hand, have grown significantly in both area and complexity
+(Fig. 13e-f). The field lines drawn from the plasmoid are closely interwoven with this structure, reinforcing the physical
+link between the features.
+We suggest that these dynamics may be explained by the following sequence: initially, the coronal structure is
+comprised of intertwined magnetic flux tubes with distinct topologies: flare loop/downward-propagating (Fig. 4g) vs.
+
+16
+Dahlin et al.
+flux rope sheath/upward-propagating (Fig. 4h). This configuration could correspond to a small scale flux rope centered
+on a Hyperbolic Flux Tube (HFT, the intersection of quasi-separatrix layers that represents a three-dimensional
+generalization of an X-line (V. S. Titov et al. 2003)) as was explored in WP21 (their Fig. 5a), and might in general
+arise from three-dimensional plasmoid dynamics (e.g., interaction and reconnection of oblique modes on distinct flux
+surfaces (W. Daughton et al. 2011; J. T. Dahlin et al. 2017)).
+This intertwined structure is transient, however,
+and eventually the plasmoid evolves into an entirely upward-propagating topology with no remnant imprint on the
+core/straight sections of the flare ribbons. The long-term dynamics and ribbon imprints of this structure are in line
+with the analytical model of WP21, who argued that plasmoids ejected upward would have imprints along the flux rope
+hooks. Nonthermal emission near the footpoints of the CME flux rope have recently been identified in microwave(B.
+Chen et al. 2020) and hard X-ray(M. Z. Stiefel et al. 2023) observations. Such observations, though uncommon, could
+be explained by the release of energetic particles by upward-propagating plasmoids that merge with the outgoing flux
+rope.
+It is apparent that L-maps encode rich information regarding plasmoid formation and evolution in the current sheet.
+The simple case shown in Fig. 10 reveals how the formation and filling-in of the structures reflects the generation, prop-
+agation, and annihilation of the plasmoids. The example of the upward-propagating plasmoid in figs. 11 to 13 further
+fleshes out this picture, illustrating not only how such plasmoids imprint primarily on the flux rope hooks, but hinting at
+complex behavior resulting from the interaction of distinct structures in the current sheet. Poetically, we might declare
+that flare ribbons tell the story of the plasmoid life cycle: birth, search for direction, maturation, and ultimate fate.
+Figure 12.
+Illustration of the four imprints of an upward-propagating plasmoid on the L-map at t = 13, 340 s. Panel (a)
+shows an identical slice through the flare current sheet as was shown in Fig. 11. Panel (b) shows the L-map of the entire flaring
+region. Blue and cyan boxes correspond to insets (c, d respectively) showing conjugate footpoints along the parallel section of
+the ribbons. Yellow and red boxes indicate conjugate patches of the flare ribbon hooks (e, f respectively) that wrap around the
+flux rope footpoints. An animation of the mapping from the plasmoid cross-section in the corona to the solar surface L-map is
+available, illustrating the temporal evolution of four imprints of the plasmoid during its formation and upward propagation for
+the interval 13,290 s ≤t ≤13,400 s at a 1 s cadence (the animation duration is 5 s).
+6. SYNTHETIC OBSERVATIONS
+In the previous section, we demonstrated how plasmoid dynamics imprint complex, fine-scale features on the solar
+surface. We now proceed to derive predictions for observable features associated with plasmoids. We first examine
+coronal signatures for limb observations by constructing synthetic white-light images of the flare current sheet which
+reveal ‘blobs’ of enhanced density corresponding to plasmoids. We then investigate a simple proxy for flare ribbons on
+
+3D Dynamics of Flare Reconnection
+17
+Figure 13.
+Illustration of the four imprints of an upward-propagating plasmoid on the L-map at t = 13, 400 s. The quantities
+and regions shown correspond to those depicted in Fig. 12.
+the disk, which we use to illustrate the formation and disappearance of spirals along the ribbon front. For both cases,
+we present quantitative predictions for the properties of plasmoids and their ribbon imprints.
+6.1. Synthetic White Light Images
+Investigations of the dynamics of the low corona during flares typically focus on UV/EUV imaging and spectroscopy,
+which contain information about plasma temperature, composition, and line-of-sight flows.
+The detailed physics
+required for synthesizing such signatures is beyond the scope of our present model. We aim instead to derive a simple
+tracer for plasmoid dynamics. For this purpose, white-light coronagraph images, which depend only on the electron
+density (and hence encode information about density structure), are sufficient for identifying plasmoid locations and
+trajectories.
+We use the same method for constructing synthetic white-light images as was employed in previous ARMS investi-
+gations (A. Vourlidas et al. 2013; B. J. Lynch et al. 2016, 2021; B. J. Lynch et al. 2025). The procedure, which was
+adapted from the SolarSoft routine eltheory.pro (D. E. Billings 1966; A. Vourlidas & R. A. Howard 2006), calculates
+the total brightness I(t) by integrating the line-of-sight white-light intensity associated with Thomson scattering. Base
+ratio images In(t) = I(t)/I(0) are used in order to compensate for the initial background density profile and emphasize
+small-scale features. We chose a viewing perspective such that the center of the flare current sheet is seen edge-on on
+the west limb. Line-of-sight integration is performed using 256 equally spaced point samples of the plasma density
+over the range −2Rs < l < 2Rs, where l = 0 corresponds to the plane ϕ = 0.
+A representative selection of synthetic white light images are shown in Figure 14. The formation and eruption of a
+CME flux rope with filamentary internal structure is evident in Fig. 14a,b. Development and propagation of a CME
+shock is indicated by the bright region In > 1 further out from the flux rope. We note that the base ratio in the vicinity
+of the erupting structure is less than unity due to expansion resulting from the shearing, a feature commonly observed
+in coronal cavities (e.g., S. Parenti 2014, and references therein) associated with filament channels. Faint blobs along
+the flare current sheet (≈equator) correspond to plasmoids. These blobs appear as tracks in the time-distance plot
+(Fig. 14e) constructed from the slit indicated in Fig. 14a. The acceleration of the CME flux rope and associated shock
+are also apparent in the time-distance figure.
+The properties of the blob trajectories are illustrated in Fig. 14(f-h). We generate a filtered time-distance image (h)
+by applying a Gaussian filter (σ = 3 pixels for both x, t) and subtract the result from the original image (e). The result
+clearly highlights plasmoid tracks. We indicate maximum velocities with dashed lines. A scatter plot of the plasmoid
+
+18
+Dahlin et al.
+Figure 14. Synthetic white light images illustrating plasmoid dynamics in the flare current sheet. (a-d) Snapshots of the
+flare current sheet at four times, showing the formation and propagation of the CME shock, flux rope core, and flare current
+sheet containing faint ‘blobs’ corresponding to plasmoids. (e) Time-distance plot drawn from the slit indicated in (a). Faint
+tracks in the bottom-right (e.g., inside the boxed region) indicate plasmoid trajectories. (f-h) Detailed properties of a selection
+of plasmoid trajectories. (f) Velocities as a function of time corresponding to the fits illustrated in panel (h), plotted against
+the upstream Alfv´en velocity calculated using the total magnetic field (cA) and only the reconnecting component (cAr). (g)
+Plasmoid velocities normalized to cAr. (h) High-pass filtered version of the boxed region indicated in (e). Plasmoid tracks are
+indicated by dashed lines with colors corresponding to the points in (f,g). An animation of the synthetic white-light images is
+available, at a 1 s cadence for 12, 800 s ≤t ≤14, 198 s (the animation duration is 23.3 seconds).
+velocities, with color indicating the associated fit in (h), is shown in Fig. 14(f,g). Figure 14f also shows the upstream
+(i.e, just outside the current layer) evolution of two forms of the Alfv´en velocity (the conventional Alfv´en velocity, cA,
+as well as a velocity calculated only from the reconnection component of the magnetic field (cAr = (Brec/B)cA). The
+latter represents a stronger theoretical constraint on the velocity that results from the fact that only the reconnecting
+component of the magnetic field contributes to the tension force that drives the outflow. Indeed, we see that the
+plasmoid velocities do not exceed this limit (panel g), and furthermore that there is an overall trend of diminishing
+plasmoid velocity. We also note that the mean upward velocity (⟨vup⟩≈1600 km s−1 is significantly larger than the
+mean downward velocity ⟨vdown⟩≈−1000 km s−1. Two related factors are likely at play: (1) downward propagating
+
+3D Dynamics of Flare Reconnection
+19
+plasmoids soon encounter the stationary flare arcade hindering acceleration, whereas the upward propagating plasmoids
+must ‘catch up‘ to the ejected CME flux rope; (2) the primary reconnection X-line is rising, resulting in a net upward
+shift in the velocities measured in the simulation frame.
+Numerous observations have shown similar localized upflows and downflows (S. Takasao et al. 2011; S. Takasao et al.
+2016; W. Liu et al. 2013; P. Kumar & K.-S. Cho 2013; P. Kumar et al. 2019; P. Kumar et al. 2023; P. Kumar et al.
+2024; X. Cheng et al. 2018; S. Yu et al. 2020) with typical velocities ranging from a few 100km s−1 up to > 1000 km s−1
+(W. Liu et al. 2013; X. Cheng et al. 2018). In several of these examples, the mean downflow velocity is substantially
+smaller the mean upflow velocity (W. Liu et al. 2013; X. Cheng et al. 2018; P. Kumar et al. 2019, 2024), in line with the
+pattern identified in the simulation. While the velocities indicated in Fig. 14 are on the high end of what is observed,
+the magnitude scales with the Alfv´en velocity, which can vary widely in the corona and as a function of the guide
+field. Other important observational factors may include limited temporal resolution that can hinder identification of
+fast-moving features with v ≳1000km s−1 (e.g., as noted by J. L¨orinˇc´ık et al. 2024) and projection effects that reduce
+the apparent velocity in the plane-of-sky.
+The velocity of these structures is also worth comparing with Supra-Arcade Downflows (SADs) (D. E. McKenzie
+2000; S. L. Savage et al. 2012), underdense finger-like features that are observed to descend toward the flare arcade.
+SADs have been measured to have typical velocities ∼50 −500km s−1, which has been noted to be much smaller
+than what is expected for the coronal Alfv´en velocity. The contrast with the simulation results may therefore reinforce
+the interpretation that SADs do not correspond to reconnected loops, but rather are manifestations of instabilities
+in the turbulent interface region between the flare loops and the reconnection outflow (such as would occur below a
+flare termination shock C. Shen et al. 2022). In this discussion, it is also worth noting that the density enhancements
+highlighted in Fig. 14 decelerate rather suddenly upon reaching either end of the flare current sheet (acceleration and
+deceleration have been noted in many observations of both bright and dim features), and it may not be obvious from
+a given observation whether a propagating feature is better identified with a structure within or downstream of the
+flare current sheet.
+6.2. Synthetic Flare Ribbons
+We next derive a synthetic proxy for the flare ribbons. As noted previously, full forward modeling of flare ribbons
+would require detailed treatment of the generation, propagation, and deposition of non-thermal particle energy. These
+processes remain an active area of research in 1-D and 2-D numerical modeling (e.g., loop models such as RADYN (J. C.
+Allred et al. 2005) and hybrid particle-MHD codes such as kglobal (J. F. Drake et al. 2019; H. Arnold et al. 2021)),
+and currently represent a prohibitive expense in 3-D MHD modeling. We instead aim to construct tracers of the flare
+ribbon front in order to identify morphological features that may be compared to observations (a similar strategy to
+our approach for coronal images), which we will likewise show is sufficient to reveal important quantitative information
+about the link between the ribbon imprints and the current sheet plasmoids.
+For simplicity, we assume that the onset of brightening at a given location of the solar surface represents an instanta-
+neous response to reconnection along the associated field line. Flare reconnection events are identified using a sequence
+of L-maps (a value of 1 is assigned for a given footpoint at time t = trec if L(t) −L(t −∆t) < −Lrec, and 0 otherwise).
+The threshold Lrec = 0.2Rs was determined by inspection of the data (∆L never takes values between -0.22 and -0.11
+for this dataset, so this choice cleanly selects field-line shortenings that are due to reconnection). The result is then
+convolved with an ad-hoc light curve consisting of a rapid rise to peak intensity followed by an exponential decay (see
+for example Fig. 15q) according to the following expression:
+Ilc(t′) =
+
+
+
+
+
+
+
+
+
+t′/trise,
+0 ≤t′ ≤trise
+A exp
+h
+−t′−trise
+αtdecay
+i
+−B,
+0 ≤t′ −trise ≤tdecay
+0
+otherwise
+(1)
+where t′ = t −trec , α parametrizes the exponential decay, and A and B are chosen so that Ilc(trise) = 1 and
+Ilc(trise + tdecay) = 0. We chose trise = 2 s, tdecay = 20 s, and α = 4 ln 2. These values are somewhat small compared
+to what is typically reported in observations. However, rise times ∼10 −20 s have been observed with IRIS (D. R.
+Graham et al. 2020), and one study identified rise times as small as ∼4 s with exponential decays ∼10 s (M. Penn
+et al. 2016). New short-exposure SolO EUI/FSI observations may shed further light on the time scales associated with
+flare ribbons (H. Collier et al. 2024). Nevertheless, the selected parameters are not reflective a particular observation,
+
+20
+Dahlin et al.
+Figure 15. Synthetic ribbon proxy for the evolution of the downward-propagating plasmoid (Fig. 10. (a) Plasmoid cross
+section at the time of its maximum area. Blue shading indicates the guide field Bϕ and red indicates a selected flux bundle
+that was traced to the solar surface. (b) Flare ribbon proxy (grayscale) at the solar surface superposed with a mapping (red)
+of the plasmoid flux indicated in panel (a) and an L-map contour (cyan) corresponding to L = 0.6Rs. (c-j) Snapshots of the
+synthetic flare ribbon patch (indicated times are measured relative to tm0 = 13, 290 s). Time-distance plots generated at the
+locations of the slits indicated in (c-j) are shown in (k-p); the longitude coordinate (ϕ) is indicated for each panel. Light curves
+corresponding to the latitude-averages of the regions indicated by the green slits in (k-p) are shown in (q-v). An animation
+is available showing the evolution of the synthetic flare ribbons at a 1 s cadence for 13, 290 s ≤t ≤13, 400 s (the animation
+duration is 4.6 seconds). The intensity is represented with a black-red-yellow-white colormap to better evoke solar imagery.
+but rather were chosen in order to adequately illustrate the evolution in this short (110 s) high-cadence interval of
+simulation data.
+The resulting synthetic ribbon proxy for the downward-propagating plasmoid (Fig. 10) is illustrated in Fig. 15. In
+order to examine the quantitative properties (magnetic flux, area) of a plasmoid and its imprint, we mapped the
+plasmoid from the corona to the surface using the following procedure.
+We first identify the cross-section of the
+plasmoid in the corona (for the snapshot in Fig. 15, we select the region Bϕ < −8 G in the vicinity of a minimum
+in the ‘in-plane’ magnetic field). A grid of field lines was then traced from this region to the solar surface. We use
+the resulting footpoint locations to construct a Gaussian kernel density estimation for the mapping of the plasmoid
+
+3D Dynamics of Flare Reconnection
+21
+magnetic flux using the SciPy gaussian kde function (P. Virtanen et al. 2020). In order to minimize the impact of
+outliers of the field-line mapping, we selected a contour of this density that enclosed 90% of the magnetic flux. This
+mapping is illustrated in Fig. 15(a-b).
+The cross-section of the plasmoid in the corona is indicated in Fig. 15a, which shows the plasmoid mask (red)
+superposed on contours of the magnetic guide field (Bϕ). The magnetic flux enclosed by the red contour maps to a
+reversed ‘sigma‘ shaped patch on the solar surface (b) that is co-located with a ‘spiral’ along a patch of the proxy
+ribbon (grayscale) and an L-map contour (cyan) that indicates the boundary between reconnected and unreconnected
+flux. The time-evolution of the synthetic ribbon structure is shown in Fig. 15(c-j) and exhibits a spiral feature similar
+to what was illustrated in the corresponding L-maps (Fig. 10).
+Time-distance plots (Fig. 15k-p) were extracted from the slits indicated in the snapshots, and ‘light curves’ (Fig 15q-
+v) constructed from latitude averages of the green slits are shown in (k-p). These figures illustrate several distinct
+features that emerge from this simple ribbon proxy. A given 1-D slit can show a variety of complex behavior, including
+brightenings ahead of the primary ribbon (n, o) and reversals of the apparent ribbon propagation direction (o, p).
+Selected apparent velocities, indicated with dashed lines, show that the apparent velocity for a given slit may be
+significantly larger (e.g., o, p) than the typical mean velocity (k). The light curves (q-v) also exhibit a variety of
+behaviors including (1) multiple-peaks (s, u, v) and (2) longer-duration features (s, v). We emphasize that the fine
+structure and complex dynamics arise from a simple ad-hoc model for the flare reconnection and resulting footpoint
+emission, which is nevertheless sufficient to mimic the spiral morphology observed in observations.
+The spiral shown in Figure 15 is roughly elliptical, with a major axis measuring ≲10Mm. This is comparable to
+the largest structures identified in IRIS data (e.g., Fig. 1 in WP21). However, these were among the the largest
+such features observed, and are not typical of flares, and many observations have revealed features as small as
+∼
+100–200 km (e.g. J. Jing et al. 2016; H. Collier et al. 2024; J. Thoen Faber et al. 2025).
+To examine how the
+spiral properties in our idealized simulation model might be applied to observations, we can derive a simple scaling
+relation that illustrates the various impacts of model parameters (e.g., characteristic length scale and magnetic field
+strength). Magnetic flux (Φ) must be conserved along the flux tube linking the plasmoid to the solar surface, i.e.,
+Φplasmoid = ⟨Bplasmoid⟩Aplasmoid = ⟨Bspiral⟩Aspiral, where <> indicate spatial averages for a given feature (spiral
+or plasmoid). For the plasmoid shown in Fig. 15(a,b), the magnetic field is weaker in the corona ⟨Bplasmoid⟩≈−9.5
+G < ⟨Bspiral⟩≈−28 G, whereas Aplasmoid ≈52.7 Mm2 > Aspiral ≈16.1 Mm2, illustrating the inverse relationship
+between the area and magnetic field strength.
+In order to apply this expression to observations, we can rewrite this relation in more tangible form by dropping the
+spatial averages and inserting typical values for the solar atmosphere to obtain the following expression for the area
+of a spiral:
+Aspiral ∼Mm2
+Aplasmoid
+10 Mm2
+ Bplasmoid
+100 G
+ 1000 G
+Bspiral
+
+(2)
+We may use this scaling relation to identify several reasons why a typical flare would feature smaller spiral structures
+than in our idealized simulations. First, the inner boundary of the model represents the base of the corona, corre-
+sponding to a magnetic field strength that may be significantly weaker than in the photosphere/chromosphere where
+flare ribbons form. This is only partially offset by the model magnetic field strength in the corona being somewhat
+weaker ( 10 G) than is typical in flares, and the net effect is that the expansion of the magnetic field (Bspiral/Bcorona)
+is greater on the sun than in the model. A second issue is that the model generates larger plasmoids that are typically
+observed in flares, which is a direct consequence of the spatial scale employed for the idealized active region. This
+spatial scale is the primary factor controlling the length of the current sheet, which in turn constrains the maximum
+plasmoid size (in the model, Lplasmoid ≲0.1Lflare cs; see for example Fig. 15a). The MHD model also only resolves
+the upper end of the the range of plasmoid sizes, which would be expected to extend to kinetic scales. Hence, it is
+not surprising that the plasmoid shown in Fig. 15 has a diameter ∼10 Mm is significantly larger than has usually
+been measured in observations, where ‘blobs’ typically span a few Mm (e.g., S. Takasao et al. (2011); P. Kumar et al.
+(2019)).
+Given these factors, we should not expect flare observations to exhibit features quite so large as the structures
+identified in the simulation. Nevertheless, the scaling relation in Eq. 2 would suggest that ‘spirals’ might be expected
+to have scales ∼Mm2, which is more typical of fine structures in observations. Returning to the striking ‘breaking
+waves’ from the Sept. 2014 IRIS X-flare, we point out that the large spatial scale associated with these features is
+
+22
+Dahlin et al.
+likely due to the weak magnetic fields in these regions which would cause the plasmoid footpoints to spread over a
+larger region (Aspiral ∝1/Bspiral).
+In this section, we have presented synthetic observations that represent tracers for the qualitative morphological
+signatures of plasmoids in the flare current sheet and in the ribbons. Full forward modeling (detailed thermodynamics,
+radiative transfer, and treatment of the lower solar atmosphere) would be required for quantitative prediction of
+emission signatures (e.g., Doppler shifts). Nevertheless, these synthetic observations contain quantitative information
+about the dynamics that might be identified from observations. Tracers are indeed sufficient for a variety of routine
+observational calculations such as magnetic flux reconnection rates (J. Qiu et al. 2004) or velocities and acceleration
+of upflows/downflows along the current sheet (W. Liu et al. 2013; P. Kumar & K.-S. Cho 2013; S. Yu et al. 2020; P.
+Kumar et al. 2024). Based on a simple mapping of plasmoid flux to the solar surface, we estimate that the spatial
+scale associated with ribbon spirals should be ≲Mm for typical flares.
+7. DISCUSSION
+In the investigation described above we have shown how the fine structure observed in flare ribbons reveals the
+structure and dynamics of the magnetic reconnection in a flare current sheet, in particular the role of plasmoids. These
+results represent the first such demonstration within a three-dimensional eruptive flare model that self-consistently
+captures the formation and evolution of 3D plasmoids. Importantly, we have shown how the spirals imprinted by the
+ribbons encode information about the plasmoid ‘life cycle’, i.e., formation, propagation, and destruction by reconnection
+either with the flare arcade or CME flux rope.
+By design, the eruptive flare model explored in this study was highly idealized, with a high degree of symmetry and
+a smooth initial magnetic field configuration in order to identify as clearly as possible the impact of plasmoids on flare
+ribbon structure. In the observations, however, a variety of other factors are likely to play a significant role in the
+structuring of flare ribbons, which include for example the convolution with the local magnetic field distribution of the
+chromosphere/photosphere (which is itself highly structured) or variable heating and cooling times. Our model also
+does not exclude the roles of other physical processes (such as slipping reconnection or Kelvin-Helmholtz instabilities).
+Regardless, well-established theory and modeling has found that reconnection in systems such as the solar corona
+(which has a vast separation between the global and dissipative scales) is expected to be mediated by plasmoids(K.
+Shibata & S. Tanuma 2001; H. Ji & W. Daughton 2011). It would in fact be surprising if plasmoids did not play
+a significant role in the reconnection process. Given the likely importance of plasmoids to the flare dynamics, we
+therefore suggest that our model represents an important lens through which to interpret and deconvolve the various
+factors involved in the fine structure of flare ribbons.
+Encouragingly, our study confirms several key results previously demonstrated with the static analytic model explored
+by (P. F. Wyper & D. I. Pontin 2021) (WP21). These include:
+• The chirality of the ribbon spirals is in the same sense as the flux rope footprint (compare Fig. 3 to WP21 Fig.
+13).
+• The formation and propagation of the plasmoid toward the flare arcade manifests as the ‘filling in’ of the spirals
+with reconnected flux (WP21 Fig. 9).
+• The spiral patterns drift parallel to the ribbons (compare Fig. 15 to the prediction in WP21 Fig. 10).
+Furthermore, the following results extend the conclusions drawn from the analytic model:
+• The present model reveals complex topologies that imprint transient spirals at all four relevant footpoints of the
+plasmoids (along each of the conjugate straight and hooked sections of the ribbon).
+• The detachment of a plasmoid from a ribbon patch (Fig. 11) manifests as a‘retraction’/‘unwinding’ of the spiral,
+rather than as a ‘filling-in’.
+• The formation of multiple plasmoids and the interactions of their topological imprints leads to nested structuring
+of the ribbons (a result hinted at in Fig. 13 and anticipated by the 3-D null point study of P. F. Wyper & D. I.
+Pontin (2014)).
+The results of the present study spur a number of intriguing questions for further investigation, which include but
+are not limited to the following:
+
+3D Dynamics of Flare Reconnection
+23
+• Can flare ribbon fine structure be used to infer plasmoid statistics (for example distinguishing between the size
+distribution predicted by reconnection models (R. L. Fermo et al. 2010; S. Y. Huang et al. 2012))?
+• What are the implications of three-dimensional plasmoid structure on particle acceleration and transport (e.g.
+J. T. Dahlin et al. 2015; J. T. Dahlin et al. 2017; X. Li et al. 2019; J. T. Dahlin 2020)?
+• What is the role of upward-propagating plasmoids in the flare particle acceleration process and where do they
+go, given that weak non-thermal emission at the flux rope footpoints and energetic electrons fluxes in the solar
+wind(e.g., S. Krucker et al. 2007) indicate much smaller populations than are present in the flare ribbons?
+• How does the turbulent interaction of many plasmoids manifest in the topological imprints, and can this be
+observed?
+• How does plasmoid structure (and its corresponding imprint) vary with the properties of the flare (e.g., confined
+vs. eruptive; strong vs. weak guide field)?
+A topic of interest in broader heliophysics is the possible relationship between flare ribbon features and the auroral
+structure observed at the Earth. In both contexts, a remote energy release process drives energetic particles, which
+precipitate into a high density plasma interface triggering emission that reveals the magnetic imprint of the source.
+Similar to the ribbon features, the aurora are highly dynamic and often characterized complex fine-scale features
+such as spirals, folds, and curls (T. J. Hallinan 1976).
+Notably, the spirals exhibit a consistent chirality, with a
+rotational sense that is clockwise when viewed anti-parallel to the magnetic field (T. N. Davis & T. J. Hallinan 1976;
+N. Partamies et al. 2001). One proposed explanation is reconnection (tearing) in the field-aligned current sheets of
+the auroral acceleration region (K. Huang et al. 2022), which has intriguing similarities to the flare ribbon scenario,
+but also distinct differences (the more direct analogy for the flare scenario would be reconnection in the magnetotail,
+rather than in the field-aligned currents). Further investigation is warranted to clarify to what degree these phenomena
+involve the same physical origin.
+We have presented in detail a simple yet powerful tool for analyzing the topological evolution of eruptive flares, the
+field-line length map (L-map). Abrupt changes in the field-line length may be transparently identified as resulting
+from reconnection events, making it especially useful for identifying model proxies of flare ribbons and tracking their
+evolution (as previously demonstrated in J. T. Dahlin et al. 2019; B. J. Lynch et al. 2019; B. J. Lynch et al. 2021; J. T.
+Dahlin et al. 2022a). Furthermore, the lengthening of field lines is an indicator of regions where coronal dimming might
+be expected, for example near the flux rope footpoints). As with Q-maps, the L-map encodes similar information about
+the global connectivity of the system and the distinct topological domains (indeed, Q-maps were employed in WP21
+to show how plasmoids distort QSLs associated with flare ribbons). However, while Q-maps are excellent tools in
+particular for identifying finite gradients in the connectivity that may be subject to reconnection, L-maps more clearly
+reveal the relationships between distinct neighboring topologies (compare Fig. 7a,c) and the nature of the reconnection
+that occurs when the connectivity changes. While L-maps are particularly useful for analysis of 3D numerical models,
+where the connectivities are precisely known, we suggest that L-maps may also be helpful for interpreting coronal
+magnetic field extrapolations.
+Finally, our results provide key predictions for observations of flare ribbons. The instantaneous “spirals” that are
+evident in the L-map figures above have already been seen in high-resolution UV and EUV observations. We expect
+that instruments such as EUVI on Solar Orbiter with its ultra-high spatial and temporal resolution will show many
+more such structures, perhaps allowing us to obtain quantitative estimates of the numbers and scales of plasmoids
+resulting from flare reconnection. Important predictions from our results are the single-point light curves shown in
+Figure 15, in particular, the ones with multiple peaks. It should be possible measure such light curves in the data. If
+so, they could provide invaluable new information on the time scales for plasmoid formation and propagation in flares,
+and on the dynamics of solar reconnection in general.
+ACKNOWLEDGMENTS
+JTD was supported by NASA H-LWS grant 80NSSC21K0816, H-ECIP grant 80NSSC23K1065 and H-TMS grant
+80NSSC24K0608. SKA was supported in part by a NASA Living With a Star grant and a NSF SHINE grant to the
+University of Michigan. PFW was supported by an STFC (UK) consortium grant ST/W00108X/1 and a Leverhulme
+
+24
+Dahlin et al.
+Trust Research Project grant. JQ was supported by the NASA HGI grant 80NSSC23K0414, and the NSF grants
+AST-2407849 and AGS-2401228. We acknowledge the use of Peter Wyper’s topology tools (P. F. Wyper & C. R.
+DeVore 2016; P. F. Wyper et al. 2016) and Ben Lynch’s synthetic white light imaging tools (B. J. Lynch et al. 2025).
+JTD acknowledges Masha Kazachenko for coining the term ‘L-map‘. Computational resources supporting this work
+were provided by the NASA High-End Computing (HEC) Program through the NASA Center for Climate Simulation
+(NCCS) at Goddard Space Flight Center and the Texas Advanced Computing Center (TACC) at The University of
+Texas at Austin.
+REFERENCES
+Allred, J. C., Hawley, S. L., Abbett, W. P., & Carlsson, M.
+2005, ApJ, 630, 573, doi: 10.1086/431751
+Arnold, H., Drake, J. F., Swisdak, M., et al. 2021, PhRvL,
+126, 135101, doi: 10.1103/PhysRevLett.126.135101
+Aschwanden, M. J. 1987, SoPh, 111, 113,
+doi: 10.1007/BF00145445
+Aulanier, G., Janvier, M., & Schmieder, B. 2012, A&A,
+543, A110, doi: 10.1051/0004-6361/201219311
+Aulanier, G., Pariat, E., D´emoulin, P., & Devore, C. R.
+2006, SoPh, 238, 347, doi: 10.1007/s11207-006-0230-2
+Aulanier, G., Pariat, E., & D´emoulin, P. 2005, A&A, 444,
+961, doi: 10.1051/0004-6361:20053600
+Billings, D. E. 1966, A guide to the solar corona
+Brannon, S. R., Longcope, D. W., & Qiu, J. 2015, ApJ,
+810, 4, doi: 10.1088/0004-637x/810/1/4
+Carmichael, H. 1964, NASSP, Vol. 50, 451
+Chen, B., Bastian, T. S., Shen, C., et al. 2015, Science, 350,
+1238, doi: 10.1126/science.aac8467
+Chen, B., Yu, S., Reeves, K. K., & Gary, D. E. 2020, ApJL,
+895, L50, doi: 10.3847/2041-8213/ab901a
+Cheng, X., Li, Y., Wan, L. F., et al. 2018, The
+Astrophysical Journal, 866, 64,
+doi: 10.3847/1538-4357/aadd16
+Chitta, L. P., Pontin, D. I., Priest, E. R., et al. 2025, arXiv
+e-prints, arXiv:2503.12235,
+doi: 10.48550/arXiv.2503.12235
+Collier, H., Hayes, L. A., Purkhart, S., et al. 2024, A&A,
+692, A176, doi: 10.1051/0004-6361/202451838
+Dahlin, J. T. 2020, PhPl, 27, 100601,
+doi: 10.1063/5.0019338
+Dahlin, J. T., Antiochos, S. K., & DeVore, C. R. 2019, ApJ,
+879, 96, doi: 10.3847/1538-4357/ab262a
+Dahlin, J. T., Antiochos, S. K., Qiu, J., & DeVore, C. R.
+2022a, ApJ, 932, 94, doi: 10.3847/1538-4357/ac6e3d
+Dahlin, J. T., DeVore, C. R., & Antiochos, S. K. 2022b,
+ApJ, 941, 79, doi: 10.3847/1538-4357/ac9e5a
+Dahlin, J. T., Drake, J. F., & Swisdak, M. 2014, PhPl, 21, ,
+doi: http://dx.doi.org/10.1063/1.4894484
+Dahlin, J. T., Drake, J. F., & Swisdak, M. 2015, PhPl, 22,
+doi: http://dx.doi.org/10.1063/1.4933212
+Dahlin, J. T., Drake, J. F., & Swisdak, M. 2017, PhPl, 24,
+092110, doi: 10.1063/1.4986211
+Daughton, W., Roytershteyn, V., Karimabadi, H., et al.
+2011, Nature Phys., 7, 539, doi: 10.1038/nphys1965
+Davis, T. N., & Hallinan, T. J. 1976, Journal of
+Geophysical Research (1896-1977), 81, 3953,
+doi: https://doi.org/10.1029/JA081i022p03953
+De Pontieu, B., Title, A. M., Lemen, J. R., et al. 2014,
+SoPh, 289, 2733, doi: 10.1007/s11207-014-0485-y
+Demoulin, P., Henoux, J. C., Priest, E. R., & Mandrini,
+C. H. 1996, A&A, 308, 643
+DeVore, C. R., & Antiochos, S. K. 2008, ApJ, 680, 740,
+doi: 10.1086/588011
+Drake, J. F., Arnold, H., Swisdak, M., & Dahlin, J. T. 2019,
+Physics of Plasmas, 26, 012901, doi: 10.1063/1.5058140
+Drake, J. F., Swisdak, M., Che, H., & Shay, M. A. 2006a,
+Nature, 443, 553, doi: 10.1038/nature05116
+Drake, J. F., Swisdak, M., Schoeffler, K. M., Rogers, B. N.,
+& Kobayashi, S. 2006b, GeoRL, 33,
+doi: 10.1029/2006GL025957
+Dud´ık, J., Aulanier, G., Kaˇsparov´a, J., et al. 2022, ApJL,
+937, L10, doi: 10.3847/2041-8213/ac8eaf
+Dud´ık, J., Janvier, M., Aulanier, G., et al. 2014, ApJ, 784,
+144, doi: 10.1088/0004-637X/784/2/144
+Dud´ık, J., Polito, V., Janvier, M., et al. 2016, The
+Astrophysical Journal, 823, 41,
+doi: 10.3847/0004-637X/823/1/41
+Edmondson, J. K., & Lynch, B. J. 2017, ApJ, 849, 28,
+doi: 10.3847/1538-4357/aa83ba
+Fermo, R. L., Drake, J. F., & Swisdak, M. 2010, Phys.
+Plasmas, 17, , doi: http://dx.doi.org/10.1063/1.3286437
+French, R. J., Judge, P. G., Matthews, S. A., & van
+Driel-Gesztelyi, L. 2019, ApJ, 887, L34,
+doi: 10.3847/2041-8213/ab5d34
+French, R. J., Matthews, S. A., Jonathan Rae, I., & Smith,
+A. W. 2021, ApJ, 922, 117,
+doi: 10.3847/1538-4357/ac256f
+Graham, D. R., Cauzzi, G., Zangrilli, L., et al. 2020, ApJ,
+895, 6, doi: 10.3847/1538-4357/ab88ad
+
+3D Dynamics of Flare Reconnection
+25
+Hallinan, T. J. 1976, Journal of Geophysical Research
+(1896-1977), 81, 3959,
+doi: https://doi.org/10.1029/JA081i022p03959
+Hirayama, T. 1974, SoPh, 34, 323,
+doi: 10.1007/BF00153671
+Huang, K., Liu, Y.-H., Lu, Q., et al. 2022, Geophysical
+Research Letters, 49, e2022GL100466,
+doi: https://doi.org/10.1029/2022GL100466
+Huang, S. Y., Vaivads, A., Khotyaintsev, Y. V., et al. 2012,
+Geophysical Research Letters, 39,
+doi: 10.1029/2012GL051946
+Huang, Y.-M., & Bhattacharjee, A. 2016, ApJ, 818, 20,
+doi: 10.3847/0004-637x/818/1/20
+Janvier, M., Aulanier, G., Bommier, V., et al. 2014, ApJ,
+788, 60, doi: 10.1088/0004-637X/788/1/60
+Ji, H., & Daughton, W. 2011, PhPl, 18, 111207,
+doi: 10.1063/1.3647505
+Jing, J., Xu, Y., Cao, W., et al. 2016, NatSR, 6, 24319,
+doi: 10.1038/srep24319
+Karpen, J. T., Antiochos, S. K., & DeVore, C. R. 2012,
+ApJ, 760, 81, doi: 10.1088/0004-637X/760/1/81
+Kontar, E. P., Perez, J. E., Harra, L. K., et al. 2017, Phys.
+Rev. Lett., 118, 155101,
+doi: 10.1103/PhysRevLett.118.155101
+Kopp, R. A., & Pneuman, G. W. 1976, SoPh, 50, 85,
+doi: 10.1007/BF00206193
+Krucker, S., Kontar, E. P., Christe, S., & Lin, R. P. 2007,
+ApJL, 663, L109, doi: 10.1086/519373
+Kumar, P., & Cho, K.-S. 2013, A&A, 557, A115,
+doi: 10.1051/0004-6361/201220999
+Kumar, P., Karpen, J. T., Antiochos, S. K., Wyper, P. F.,
+& DeVore, C. R. 2019, ApJL, 885, L15,
+doi: 10.3847/2041-8213/ab45f9
+Kumar, P., Karpen, J. T., & Dahlin, J. T. 2024, arXiv
+e-prints, arXiv:2412.05193,
+doi: 10.48550/arXiv.2412.05193
+Kumar, P., T. Karpen, J., Antiochos, S. K., et al. 2023,
+The Astrophysical Journal, 943, 156,
+doi: 10.3847/1538-4357/acaea4
+Lemen, J. R., Title, A. M., Akin, D. J., et al. 2012, SoPh,
+275, 17, doi: 10.1007/s11207-011-9776-8
+Li, T., Hou, Y., Yang, S., & Zhang, J. 2018, ApJ, 869, 172,
+doi: 10.3847/1538-4357/aaefee
+Li, T., Yang, K., Hou, Y., & Zhang, J. 2016, ApJ, 830, 152,
+doi: 10.3847/0004-637X/830/2/152
+Li, T., & Zhang, J. 2014, ApJL, 791, L13,
+doi: 10.1088/2041-8205/791/1/L13
+Li, T., & Zhang, J. 2015, ApJL, 804, L8,
+doi: 10.1088/2041-8205/804/1/L8
+Li, X., Guo, F., Li, H., & Li, G. 2015, ApJL, 811, L24.
+http://stacks.iop.org/2041-8205/811/i=2/a=L24
+Li, X., Guo, F., Li, H., Stanier, A., & Kilian, P. 2019, ApJ,
+884, 118, doi: 10.3847/1538-4357/ab4268
+Lin, R. P., & Hudson, H. S. 1976, SoPh, 50, 153,
+doi: 10.1007/BF00206199
+Liu, W., Chen, Q., & Petrosian, V. 2013, ApJ, 767, 168,
+doi: 10.1088/0004-637x/767/2/168
+Liu, Y.-H., Daughton, W., Karimabadi, H., Li, H., &
+Roytershteyn, V. 2013, Phys. Rev. Lett., 110, 265004,
+doi: 10.1103/PhysRevLett.110.265004
+L¨orinˇc´ık, J., Aulanier, G., Dud´ık, J., Zemanov´a, A., &
+Dzifˇc´akov´a, E. 2019, ApJ, 881, 68,
+doi: 10.3847/1538-4357/ab298f
+L¨orinˇc´ık, J., Dud´ık, J., Sainz Dalda, A., et al. 2024, Nature
+Astronomy, doi: 10.1038/s41550-024-02396-4
+Loureiro, N. F., Schekochihin, A. A., & Cowley, S. C. 2007,
+PhPl, 14, doi: 10.1063/1.2783986
+Lynch, B. J., Airapetian, V. S., DeVore, C. R., et al. 2019,
+The Astrophysical Journal, 880, 97,
+doi: 10.3847/1538-4357/ab287e
+Lynch, B. J., Antiochos, S. K., DeVore, C. R., Luhmann,
+J. G., & Zurbuchen, T. H. 2008, ApJ, 683, 1192.
+http://stacks.iop.org/0004-637X/683/i=2/a=1192
+Lynch, B. J., Antiochos, S. K., Li, Y., Luhmann, J. G., &
+DeVore, C. R. 2009, ApJ, 697, 1918.
+http://stacks.iop.org/0004-637X/697/i=2/a=1918
+Lynch, B. J., & Edmondson, J. K. 2013, ApJ, 764, 87,
+doi: 10.1088/0004-637X/764/1/87
+Lynch, B. J., Masson, S., Li, Y., et al. 2016, JGRA, 121,
+10, doi: 10.1002/2016JA023432
+Lynch, B. J., Palmerio, E., DeVore, C. R., et al. 2021, ApJ,
+914, 39, doi: 10.3847/1538-4357/abf9a9
+Lynch, B. J., Wyper, P. F., Palmerio, E., et al. 2025, The
+Astrophysical Journal Supplement Series, 277, 40,
+doi: 10.3847/1538-4365/adb14e
+Mackay, D. H., DeVore, C. R., & Antiochos, S. K. 2014,
+ApJ, 784, 164, doi: 10.1088/0004-637X/784/2/164
+Mackay, D. H., DeVore, C. R., Antiochos, S. K., & Yeates,
+A. R. 2018, ApJ, 869, 62, doi: 10.3847/1538-4357/aaec7c
+Masson, S., Antiochos, S. K., & DeVore, C. R. 2013, ApJ,
+771, 82, doi: 10.1088/0004-637X/771/2/82
+McKenzie, D. E. 2000, SoPh, 195, 381,
+doi: 10.1023/A:1005220604894
+Nakariakov, V. M., & Melnikov, V. F. 2009, Space Sci Rev,
+149, 119, doi: 10.1007/s11214-009-9536-3
+Nishizuka, N., & Shibata, K. 2013, Phys. Rev. Lett., 110,
+051101, doi: 10.1103/PhysRevLett.110.051101
+Ofman, L., & Thompson, B. J. 2011, ApJ, 734, L11,
+doi: 10.1088/2041-8205/734/1/l11
+
+26
+Dahlin et al.
+Parenti, S. 2014, Living Reviews in Solar Physics, 11, 1,
+doi: 10.12942/lrsp-2014-1
+Partamies, N., Kauristie, K., Pulkkinen, T. I., &
+Brittnacher, M. 2001, Journal of Geophysical Research:
+Space Physics, 106, 15415,
+doi: https://doi.org/10.1029/2000JA900172
+Penn, M., Krucker, S., Hudson, H., et al. 2016, ApJL, 819,
+L30, doi: 10.3847/2041-8205/819/2/L30
+Pesnell, W. D., Thompson, B. J., & Chamberlin, P. C.
+2012, The Solar Dynamics Observatory (SDO), ed.
+P. Chamberlin, W. D. Pesnell, & B. Thompson (New
+York, NY: Springer US), 3–15,
+doi: 10.1007/978-1-4614-3673-7 2
+Priest, E. R., & D´emoulin, P. 1995, J. Geophys. Res., 100,
+23443, doi: 10.1029/95JA02740
+Qiu, J. 2024, Frontiers in Astronomy and Space Sciences,
+11, 1401846, doi: 10.3389/fspas.2024.1401846
+Qiu, J., Longcope, D. W., Cassak, P. A., & Priest, E. R.
+2017, ApJ, 838, 17, doi: 10.3847/1538-4357/aa6341
+Qiu, J., Wang, H., Cheng, C. Z., & Gary, D. E. 2004, The
+Astrophysical Journal, 604, 900, doi: 10.1086/382122
+Qiu, J., Alaoui, M., Antiochos, S. K., et al. 2023, ApJ, 955,
+34, doi: 10.3847/1538-4357/acebeb
+Rimmele, T. R., Warner, M., Keil, S. L., et al. 2020, SoPh,
+295, 172, doi: 10.1007/s11207-020-01736-7
+Savage, S. L., McKenzie, D. E., & Reeves, K. K. 2012, Ap.
+J. Lett., 747, doi: 10.1088/2041-8205/747/2/L40
+Schindler, K., Hesse, M., & Birn, J. 1988, JGRA, 93, 5547,
+doi: 10.1029/JA093iA06p05547
+Shen, C., Chen, B., Reeves, K. K., et al. 2022, Nature
+Astronomy, 6, 317, doi: 10.1038/s41550-021-01570-2
+Shibata, K., & Tanuma, S. 2001, Earth, Planets, and
+Space, 53, 473, doi: 10.1186/BF03353258
+Sterling, A. C., & Hudson, H. S. 1997, ApJL, 491, L55,
+doi: 10.1086/311043
+Stiefel, M. Z., Battaglia, A. F., Barczynski, K., et al. 2023,
+A&A, 670, A89, doi: 10.1051/0004-6361/202245044
+Sturrock, P. A. 1966, Nature, 211, 695,
+doi: 10.1038/211695a0
+Su, Y. N., Golub, L., van Ballegooijen, A. A., & Gros, M.
+2006, SoPh, 236, 325, doi: 10.1007/s11207-006-0039-z
+Takasao, S., Asai, A., Isobe, H., & Shibata, K. 2011, The
+Astrophysical Journal Letters, 745, L6,
+doi: 10.1088/2041-8205/745/1/L6
+Takasao, S., Asai, A., Isobe, H., & Shibata, K. 2016, ApJ,
+828, 103, doi: 10.3847/0004-637X/828/2/103
+Tassev, S., & Savcheva, A. 2017, ApJ, 840, 89,
+doi: 10.3847/1538-4357/aa6f06
+Thoen Faber, J., Joshi, R., Rouppe van der Voort, L., et al.
+2025, A&A, 693, A8, doi: 10.1051/0004-6361/202452370
+Titov, V. S., Galsgaard, K., & Neukirch, T. 2003, ApJ, 582,
+1172, doi: 10.1086/344799
+Titov, V. S., Hornig, G., & D´emoulin, P. 2002, Journal of
+Geophysical Research (Space Physics), 107, 1164,
+doi: 10.1029/2001JA000278
+Tomczyk, S., Card, G. L., Darnell, T., et al. 2008, SoPh,
+247, 411, doi: 10.1007/s11207-007-9103-6
+Virtanen, P., Gommers, R., Oliphant, T. E., et al. 2020,
+Nature Methods, 17, 261, doi: 10.1038/s41592-019-0686-2
+Vourlidas, A., & Howard, R. A. 2006, ApJ, 642, 1216,
+doi: 10.1086/501122
+Vourlidas, A., Lynch, B. J., Howard, R. A., & Li, Y. 2013,
+SoPh, 284, 179, doi: 10.1007/s11207-012-0084-8
+Wyper, P. F., & DeVore, C. R. 2016, ApJ, 820, 77,
+doi: 10.3847/0004-637X/820/1/77
+Wyper, P. F., DeVore, C. R., Karpen, J. T., & Lynch, B. J.
+2016, ApJ, 827, 4, doi: 10.3847/0004-637X/827/1/4
+Wyper, P. F., Lynch, B. J., DeVore, C. R., et al. 2024, ApJ,
+975, 168, doi: 10.3847/1538-4357/ad7941
+Wyper, P. F., & Pontin, D. I. 2014, Physics of Plasmas, 21,
+082114, doi: 10.1063/1.4893149
+Wyper, P. F., & Pontin, D. I. 2021, ApJ, 920, 102,
+doi: 10.3847/1538-4357/ac1943
+Yan, X., Xue, Z., Jiang, C., et al. 2022, NatCo, 13, 640,
+doi: 10.1038/s41467-022-28269-w
+Yu, S., Chen, B., Reeves, K. K., et al. 2020, ApJ, 900, 17,
+doi: 10.3847/1538-4357/aba8a6
+
+3D Dynamics of Flare Reconnection
+27
+APPENDIX
+Given the importance of the L-map to the analysis presented in this paper, we present additional discussion for its
+practical use here. Field lines are constructed using full magnetic field data output from ARMS using topology tools
+developed by Peter Wyper (P. F. Wyper & C. R. DeVore 2016; P. F. Wyper et al. 2016, 2024), which employs RK4
+integration to solve the field line equation: dr/ds = b(r), where r is the position vector, ds is the step length, and
+b(r) = B(r)/|B(r)|.
+The field-line length L =
+R s1
+s0 ds is the length of the integrated curve from its source point to where it meets a
+boundary in the domain. In the present case, all field lines in the region of interest close to the solar surface. To
+generate a time-evolving ‘map’, we select a grid of uniformly spaced seed points at r = Rs from which we trace field
+lines at a specified temporal cadence. Table 1 summarizes the parameters for each of the L-maps shown in this article.
+Table 1. L-Map Parameters
+Name
+Lon. Pts.
+Lat. Pts.
+Lon. Range
+Lat. Range
+Cadence
+Fig. 6
+2000
+500
+[−40 , 40]
+[−10 , 10]
+10 s
+Fig. 8b
+2000
+500
+[−10 , 10]
+[0 , 5]
+10 s
+Fig. 10
+2000
+1000
+[2 , 6]
+[1 , 3]
+1 s
+Fig. 12c
+2000
+1000
+[−5.5 , −1.5]
+[1 , 3]
+1 s
+Fig. 12d
+2000
+1000
+[1.5 , 5.5]
+[−3 , −1]
+1 s
+Fig. 12e
+3500
+350
+[−14 , −7]
+[2.3 , 3.0]
+1 s
+Fig. 12f
+5000
+350
+[7 , 17]
+[3.0 , −2.3]
+1 s

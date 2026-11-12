@@ -1,0 +1,3754 @@
+Draft version November 7, 2022
+Typeset using LATEX twocolumn style in AASTeX62
+Multi-Fluid Simulations of Upper Chromospheric Magnetic Reconnection with Helium-Hydrogen mixture
+Q. M. Wargnier,1, 2 J. Mart´ınez-Sykora,1, 2, 3 V. H. Hansteen,1, 2, 3, 4 and B. De Pontieu1, 3, 4
+1Lockheed Martin Solar & Astrophysics Laboratory, 3251 Hanover St, Palo Alto, CA 94304, USA
+2Bay Area Environmental Research Institute, NASA Research Park, Moﬀett Field, CA 94035, USA
+3Rosseland Centre for Solar Physics, University of Oslo, P.O. Box 1029 Blindern, NO0315 Oslo, Norway
+4Institute of Theoretical Astrophysics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway
+Submitted to ApJ
+ABSTRACT
+Our understanding of magnetic reconnection (MR) under chromospheric conditions remains limited.
+Recent observations have demonstrated the important role of ion-neutral interactions in the dynamics of
+the chromosphere. Furthermore, the comparison between spectral proﬁles and synthetic observations of
+reconnection events suggest that current MHD approaches appear to be inconsistent with observations.
+First, collisions and multi-thermal aspects of the plasma play a role in these regions. Second, hydrogen
+and helium ionization eﬀects are relevant to the energy balance of the chromosphere.
+This work investigates multi-ﬂuid multi-species (MFMS) eﬀects on MR in conditions representative
+of the upper chromosphere using the multi-ﬂuid Ebysus code. We compare an MFMS approach based
+on a helium-hydrogen mixture with a two-ﬂuid MHD model based on hydrogen only. The simulations of
+MRs are performed in a Lundquist number regime high enough to develop plasmoids and instabilities.
+We study the evolution of the MR and compare the two approaches including the structure of the
+current sheet and plasmoids, the decoupling of the particles, the evolution of the heating mechanisms,
+and the composition.
+The presence of helium species leads to more eﬃcient heating mechanisms than the two-ﬂuid case.
+This scenario, which is out of reach of the two-ﬂuid or single-ﬂuid models, can reach transition region
+temperatures starting from upper chromospheric thermodynamic conditions, representative of a quiet
+Sun scenario. The diﬀerent dynamics between helium and hydrogen species could lead to chemical
+fractionation and, under certain conditions, enrichment of helium in the strongest outﬂows.
+This
+could be of signiﬁcance for recent observations of helium enrichment in the solar wind in switchbacks
+and CMEs.
+Keywords: Magnetohydrodynamics (MHD) —numerical methods — magnetic reconnection — Sun:
+atmosphere — Sun: chromosphere
+1. INTRODUCTION
+Several plasma state transitions are found in the chro-
+mosphere.
+Indeed, the plasma can be partially or
+fully ionized, weakly or strongly magnetized, weakly or
+strongly collisional, all depending on the region consid-
+ered (see Vernazza & Mason 1978; Mart´ınez-Sykora et
+al. 2020; Ni et al. 2020).
+Furthermore, the solar at-
+mosphere is a complex environment composed of many
+species with a large range of ionization levels. In par-
+tially ionized plasmas, charged species interact with
+other charged and neutral particles through collisions.
+Corresponding author: Q. M. Wargnier
+Recent studies have suggested that ion-neutral interac-
+tion eﬀects play an important role in the dynamics of
+the low solar atmosphere and its energy balance (see
+Mart´ınez-Sykora et al. 2015; Ballester et al. 2018; Soler
+& Ballester 2022, and references therein). Recent ob-
+servations show that many dynamic and heating events,
+including through episodic magnetic reconnection, occur
+at chromospheric and transition region heights De Pon-
+tieu et al. (2009, 2014a); Peter et al. (2014); Hansteen
+et al. (2017); Guo et al. (2020).
+Magnetic reconnection (MR) is a relaxation of the
+magnetic ﬁeld’s topology created by a local change in
+the magnetic ﬁeld connectivity as described by Parker
+(1955). This process is due to relevant dissipative ef-
+fects in localized regions, called current sheets, where
+the magnetic ﬁeld lines are reconnecting.
+This phe-
+arXiv:2211.02157v1  [astro-ph.SR]  3 Nov 2022
+
+2
+Wargnier et al.
+nomenon is continuously present in the solar chromo-
+sphere (Gontikakis, C. et al. 2013; Bharti, L. et al. 2013;
+Cargill 2013; Klimchuk 2015) as revealed by a wide range
+of observations, including the Interface Region Imaging
+Spectrograph (IRIS, De Pontieu et al. 2014b) and the
+Swedish 1-m Solar Telescope (SST) telescopes (e.g., Pe-
+ter et al. 2014; Guo et al. 2020; Rouppe van der Voort
+et al. 2017) which provide unique observations of the
+dynamic outer solar atmosphere. In particular, recent
+observations with IRIS and SST (Rouppe van der Voort
+et al. 2017; Young 2018) of strong brightenings in Si iv
+emission lines, “UV bursts”, reveal evidence for the for-
+mation of plasmoids in the presence of MR events. Ob-
+servations with SST reveal the presence of blob-like fea-
+tures at Alfv´enic speed in the Ca ii K line. However, the
+comparison between spectral proﬁles of observed plas-
+moids and synthetic observations of reconnection sug-
+gests that 1- the number of plasmoids is large and 2-
+the observed motions within the reconnection site are
+much more complicated than those predicted by a clas-
+sical single-ﬂuid MHD approach, (N´obrega-Siverio et al.
+2017). UV bursts may span over extended regions from
+the upper photosphere, the chromosphere to the tran-
+sition region (TR), thus, collisional and multi-thermal
+aspects of the plasma may play a role and need to be
+investigated (Hansteen et al. 2019).
+On the one hand, several studies try to approximate
+collisions and multi-ﬂuid aspects of the plasma by in-
+cluding the generalized Ohm’s Law with the ambipo-
+lar diﬀusion, see for instance Leake & Arber (2006);
+Khomenko et al. (2018); Mart´ınez-Sykora et al. (2020);
+Rempel & Przybylski (2021). This approach is gener-
+ally used to simulate the solar atmosphere and accounts
+for ion-neutral interactions while retaining the simplic-
+ity of a single-ﬂuid approach. On the other hand, sev-
+eral two-ﬂuid MHD models (e.g., Alvarez Laguna et al.
+2016; Ni & Lukin 2018; Popescu Braileanu, B. et al.
+2019; W´ojcik, D. et al. 2020; Ni et al. 2020; Pelekhata,
+M. et al. 2021; Niedziela, R. et al. 2021; Leake & Lin-
+ton 2013) have been constructed to investigate collisions
+and multi-thermal aspects of the plasma in the solar
+chromosphere.
+In that framework, the two ﬂuids can
+interact through collisions and reactions, while the ions
+and electrons can interact with the electromagnetic ﬁeld.
+Alternatively, the multicomponent model (e.g., Graille
+et al. 2009; Wargnier et al. 2018; Wargnier 2019) has
+been derived from kinetic theory and developed from a
+multi-scale analysis of the non-dimensional Boltzmann
+equations for electrons and heavy species using a gener-
+alized Chapman-Enskog expansion. Note that we refer
+to heavy species or ﬂuids to any species except elec-
+trons.
+This model is a sound alternative to two-ﬂuid
+models and is suitable for both partially- and fully-
+ionized multicomponent plasmas. Moreover, it accounts
+for the thermal non-equilibrium between the heavy par-
+ticles (any ions and neutrals) and the electrons with a
+rigorous and detailed description of the dissipative ef-
+fects based on kinetic theory of gases.
+In Leake et al. (2012); Leake & Linton (2013), a
+study of MR with a two-ﬂuid simulation of MR for a
+weakly ionized reacting plasma, focusing on the so-
+lar chromosphere by considering collisions, thermal
+non-equilibrium between ions and neutrals,
+ioniza-
+tion/recombination, as well as optically thin radiative
+losses, was performed.
+The studies cited above focus
+on a two-ﬂuid approach based on a single species with
+one ionized level of hydrogen.
+However, the Sun has
+additional species (such as helium and ionized metals)
+all with several excited and ionized levels with diﬀerent
+degree of magnetization and collisional cross-sections
+that potentially could change the thermodynamics of
+the MR and its topology. Additionally, recent studies
+show evidence of the importance of helium ionization
+in the energy balance of the solar chromosphere, as
+shown in Hansteen et al. (1997); Golding et al. (2014,
+2016); Golding, T. P. et al. (2017); Mart´ınez-Sykora et
+al. (2020). It has been demonstrated that the helium
+ionization state is often far from Local Thermodynamic
+Equilibrium (LTE) and that models require that both
+the temporal state and photo- and collisional-ionization
+eﬀects are considered in order to be consistent with ob-
+servations. Therefore, the most recent multi-ﬂuid simu-
+lations of reconnection lack the self-consistent treatment
+of the relevant physical processes involved in the solar
+atmosphere, such as decoupling between various types
+of species, like hydrogen or helium species, including
+their respective ionized and excited levels.
+In solar chromospheric conditions, and also in other
+astrophysical environments (Gosling 2007; Pucci et al.
+2020b), MR processes mostly evolve in a high Lundquist
+number regimes.
+In this regime, current sheets be-
+come rapidly unstable to resistive tearing instabilities
+which produces plasmoids (e.g., Bhattacharjee et al.
+2009, 2010; Pucci et al. 2020b). Plasmoids are believed
+to play a major role in speeding up reconnection by hav-
+ing an inﬂuence on the variation of the current sheet
+size, as shown by Murtas et al. (2021). Under the for-
+mation of plasmoids, the current sheet breaks into frag-
+ments or sections (see Leake et al. 2020) and the re-
+sulting high current densities in each of these sections
+facilitate a high reconnection rate, as shown by Leake
+et al. (2012); Leake & Linton (2013).
+Plasmoid for-
+mation due to the instability of Sweet-Parker current
+sheets has been extensively examined through numeri-
+cal studies with single-ﬂuids (Guo et al. 2020; Loureiro
+& Uzdensky 2015; Steinolfson & Hoven 1984; Ugai 1995;
+Loureiro et al. 2005; Leake et al. 2020). Recent works
+have proved that in fully ionized plasmas it is possible
+to trigger plasmoids for a critical Lunquist number Sc
+ranging from 103 to 104, as described by Bhattachar-
+jee et al. (2009); Cassak et al. (2009); Huang & Bhat-
+tacharjee (2010); Ni et al. (2010). However, many stud-
+ies have also demonstrated that this critical Lundquist
+
+Magnetic reconnection in the upper chromosphere
+3
+number may vary by several orders of magnitude de-
+pending on the initial setup, such as the current sheet
+conﬁguration, the amplitudes of viscosity and perturba-
+tions, and the plasma beta coeﬃcient βp, (see Ni et al.
+2012, 2013; Huang et al. 2017). Additionally, the role of
+partial ionization on the onset of MR and development
+of the resistive tearing instability has been demonstrated
+Zweibel et al. (2011); Pucci et al. (2020a); Murtas et al.
+(2021).
+However, most of these studies consider only
+hydrogen species and do not consider additional species
+such as helium. Therefore, we aim to expand the stud-
+ies of plasmoid formation and instabilities by including
+several species.
+Recent measurements from SWEAP and FIELD on
+board of Parker Solar Probe (Kasper et al. 2015) re-
+vealed that Alfv´enic magnetic ﬁeld reversals called
+switchbacks (SBs) are associated with a signiﬁcant in-
+crease in alpha particle abundances at the upper layers
+of the solar atmosphere Bale et al. (2021). Even though
+the SBs origin is not clear and could be associated
+with diﬀerent possible mechanisms (magnetic recon-
+nections, nanoﬂares, wave dissipation, footpoint shear-
+ing, or turbulence), observed SBs are characterized by
+strong periodic spatial modulations of the amplitude
+of the magnetic ﬁelds combined with large increase of
+alpha particles at coronal height. This spatial charac-
+teristic scale is consistent with solar super-granulation
+scales suggesting that the driver is connected to the
+super-granular network magnetic ﬁeld (Bale et al. 2021;
+Fargette et al. 2021). These are also distinct features of
+slow solar wind Woolley et al. (2021). The chemical frac-
+tionation involving helium species should occur in the
+chromosphere, where plasma is partially ionized, sug-
+gesting the driver mechanism of these phenomena may
+be connected to this region. Addressing the chemical
+fractionation could help us understand the switchbacks’
+drivers and slow solar wind, and may provide insight
+into the enhancement of alpha particles in the upper
+layers of the solar atmosphere.
+In this work, a magnetic reconnection event in con-
+ditions typical of the upper chromosphere is studied.
+To do so, we consider a Lundquist number environment
+greatly above the critical Lundquist number Sc ≈4×103
+that leads to an instability regime characterized by
+the production of plasmoids, see Murtas et al. (2021)
+and references therein.
+The multi-ﬂuid multi-species
+(MFMS) model accounts for multiple species with diﬀer-
+ent ionized and excited levels, as described by Mart´ınez-
+Sykora et al. (2020). We aim to study many fundamen-
+tal physical processes and assess their impact on the
+reconnection process.
+By focusing on one scenario of
+a magnetic reconnection event, we perform two simula-
+tions based on two diﬀerent mixtures: a two-ﬂuid (TF)
+hydrogen mixture based on H, H+ and electrons and a
+multi-ﬂuid multi-species (MFMS) hydrogen helium mix-
+ture based on H, H+, He, He+ and electrons. This allows
+highlighting the impact of helium species with diﬀerent
+ionized levels on the reconnection process.
+Addition-
+ally, we assess the impact of the MFMS and two-ﬂuid
+approach on the structure of plasmoids and their forma-
+tion.
+The structure of this paper is as follows. In Section 2,
+the MFMS and TF model and their assumptions are de-
+scribed. Section 3 brieﬂy describes the numerical meth-
+ods considered in Ebysus. The initial conditions of the
+MRs simulations are inspired by upper-chromospheric
+conditions (Section 4).
+In Section 5, we analyze the
+results of the numerical simulations based on MFMS
+and TF models at diﬀerent levels: the structure of the
+current sheet and plasmoids, the velocity ﬁelds and de-
+coupling between species, the evolution of the heating
+processes and composition of the plasma. Finally, Sec-
+tion 6 contains the discussion and the summary.
+2. MULTI-FLUID MULTI-SPECIES AND
+TWO-FLUID GOVERNING EQUATIONS
+We brieﬂy summarize the two-ﬂuid (TF) and multi-
+ﬂuid multi-species (MFMS) MHD governing equations
+and their assumptions. Note that all equations are writ-
+ten in SI units. For MFMS, we focus on a hydrogen-
+helium mixture M such as M = H ∪{e}, where
+H =
+
+H, H+, He, He+	
+and e denotes the set of heavy
+particles and electrons, respectively. Whereas TF has
+a pure hydrogen mixture MTF = HTF ∪{e} where
+HTF =
+
+H, H+	
+. No excited levels will be considered in
+this work. nM and nH denote the number of species in
+M and H, respectively.
+For clarity and consistency, we use a similar nomen-
+clature used by Ballester et al. (2018); Khomenko et al.
+(2014) with minor adjustments. The ionization states
+are referred as I, i.e., I = 0 denotes neutrals and
+ˆI = I ≥1 ions. The identity of the chemical species
+(here hydrogen or helium) is indicated by a.
+Conse-
+quently, each set of particles in a given micro-state is
+described by aI ∈M or aI ∈MTF.
+For electrons,
+the notation aI is reduced to just {e}. In both TF and
+MFMS models, we neglect the electron inertia and as-
+sume quasineutrality. Additionally, we neglect the vis-
+cous eﬀects associated with electrons. Each species has
+its own temperature TaI and no internal degrees of free-
+dom. Finally, we neglect the eﬀect of gravity.
+In the following, the governing equations will be writ-
+ten for the general case, i.e., for MFMS based on M.
+The set of equations for TF based on MTF will be pre-
+sented as a simpliﬁcation of MFMS.
+2.1. Continuity Equations for Heavy Particles
+The mass density for each type of ﬂuid in a given
+micro-state aI ∈H is governed by the continuity equa-
+tion in this generic form:
+
+4
+Wargnier et al.
+∂tρaI + ∇· (ρaI uaI) =
+maI (Γion
+aI + Γrec
+aI ),
+aI ∈H, (1)
+where ρaI = maI naI and maI are the mass density and
+particle mass respectively, uaI is the velocity, Γrec
+aI , and
+Γion
+aI are the mass transition rate due to recombination or
+de-excitation, and ionization or excitation, respectively.
+For any aI ∈H, these rates are deﬁned as
+Γion
+aI =
+X
+aI′∈H̸=aI
+(
+naI′νion
+aI,I′,
+if I > I′
+−naIνion
+aI,I′,
+otherwise,
+(2)
+and
+Γrec
+aI =
+X
+aI′∈H̸=aI
+(
+−naIνrec
+aI,I′,
+if I > I′
+naI′νrec
+aI,I′,
+otherwise,
+(3)
+where νion
+aI,I′ and νrec
+aI,I′ are the ionization and recom-
+bination frequencies between particles with micro-state
+aI and aI′ ∈H. In both MFMS and TF, the frequen-
+cies associated with the transition rates νrec and νion
+include radiative and dielectronic recombination where
+the rates have been taken from Aldrovandi & Pequig-
+not (1973). The ionization and three-body recombina-
+tion rates have been taken from Janev et al. (1989).
+Photoionization is roughly modeled by simply assuming
+constant rates taken from Vernazza et al. (1981) for the
+H-H+ and He-He+ transitions. Note that for TF the
+continuity equations presented in Eq. 1 are identical to
+MFMS by simply changing the set of heavy particles H
+by HTF.
+2.2. Momentum Equations for Heavy Particles
+In MFMS, the momentum equation associated with a
+given species deﬁned by its microstate aI ∈H is deﬁned
+as follows:
+∂t(ρaIuaI) +∇· (ρaIuaI ⊗uaI + PaII −τ aI) =
+naIqaI (E + uaI ∧B)
++Rion
+aI + Rrec
+aI + Rcol
+aI ,
+aI ∈H
+(4)
+where qaI and PaI are the ion charge and gas pressure of
+a given species aI ∈H, τ aI is the viscous stress tensor
+associated with species aI ∈H, E and B are the elec-
+tric and magnetic ﬁeld, Rion
+aI and Rrec
+aI are the changes
+in momentum for species aI due to ionization and re-
+combination processes respectively, Rcol
+aI is the sum of
+all the momentum exchange between particles with a
+given micro state aI ∈H with any other particles with
+another micro state a′I′ ∈M.
+In TF, the momentum equation written in Eq. 4
+slightly diﬀers. We solve for 1- a momentum equation
+for neutrals (here H) and 2- a momentum equation for
+all ionized species that is the sum of the momentum
+equations for ions (here H+) and electrons. Therefore,
+the Lorentz force, corresponding to the ﬁrst right-hand
+side term of Eq. 4, reads J ∧B where J is the total
+current density. Additionally, in the momentum equa-
+tions for ions, the pressure term in the convective ﬂuxes
+is simply replaced by the total pressure of charged par-
+ticles ∇· ([PH+ + Pe] I). Note that in MFMS the term
+associated with the gradient of pressure of the electrons
+is involved in the deﬁnition of E.
+In this study, we consider plasmas evolving in a high
+Reynolds number regime leading to characteristic length
+scales associated with viscous eﬀects that are generally
+much smaller than any chosen grid size. In this context,
+an artiﬁcial subgrid-scale model of these viscous terms
+τ aI, aI ∈M or MTF has been considered in order to
+represent shocks and turbulence. This approach is in-
+spired from Nordlund (1982); Gudiksen et al. (2011) and
+has been extended for MFMS and TF models.
+In MFMS, the sum of all the momentum exchange
+for a ﬂuid of a speciﬁc particle with a given micro state
+aI ∈H is deﬁned as:
+Rcol
+aI =
+X
+a′I′∈M
+Rcol
+aI,a′I′
+=
+X
+a′I′∈M
+maI naIνcol
+aI,a′I′(ua′I′ −uaI),
+(5)
+where νcol
+aI,a′I′ is the collision frequency between parti-
+cle aI and a′I′.
+The momentum exchange operators
+are symmetric, i.e., ∀(aI, a′I′) ∈H × M, Rcol
+aI,a′I′ =
+−Rcol
+a′I′,aI. Note that Eq. 5 does not include the term
+associated with the diﬀerence in heat ﬂuxes between
+species, as described by Hansteen et al. (1997) or in the
+13N moment model of Zhdanov (2002). The collision fre-
+quencies νcol
+aI,a′I′ are described in detail in Wargnier et
+al. (2022). In this context, the collisional frequencies are
+consistent with the deﬁnition given by Zhdanov (2002)
+in the context of the 13-N moment model for multicom-
+ponent plasmas, calculated from generalized Chapman-
+Cowling collision integrals. The collision integrals data
+for M and MTF have been taken from Bruno et al.
+(2010) based on a review of experimental measurements.
+These collision integrals include charge-exchange inter-
+actions for H-H+ and He-He+ interactions.
+2.3. Thermal Energy Equations
+In both MFMS and TF models, we account for ther-
+mal decoupling between all particles, including elec-
+trons. Therefore, we solve for the equations of thermal
+energy for each particle aI ∈M or MTF.
+In MFMS, the energy equations for each heavy parti-
+cle and electrons read as follows,
+
+Magnetic reconnection in the upper chromosphere
+5
+∂teaI + ∇· (eaIuaI) + PaI∇· uaI =
+Qion
+aI + Qrec
+aI + Qcol
+aI + Qτ
+aI,
+aI ∈H (6)
+∂tee + ∇· (eeue) + Pe∇· ue =
+Qion
+e
++ Qrec
+e
++ Qcol
+e
++ Qspitz
+e
+,
+(7)
+where eaI and ee are the thermal energies of any heavy
+particles aI ∈H and electrons respectively. Qion
+aI + Qrec
+aI
+and Qion
+e
++Qrec
+e
+are the heating/cooling term due to the
+ionization and recombination processes associated with
+particles aI ∈H and electrons respectively, Qspitz
+e
+is the
+heating term due to the electron thermal conduction
+along the magnetic ﬁeld, Qτ
+aI is the heating term due to
+viscous eﬀects associated with particle aI ∈H, Qcol
+aI and
+Qcol
+e
+are the heating terms due to collisions associated
+with heavy particle aI ∈H and electrons respectively.
+In TF, the energy equations Eqs. 6 and 7 are obtained
+by substituting aI ∈HTF to aI ∈H.
+Note that Qion
+e
+corresponds to the optically thin ra-
+diative losses term which involve hydrogen and helium
+ionization potential coeﬃcients, as described by Leake
+et al. (2012); Leake & Linton (2013). The Spitzer term
+is anisotropic with respect to the magnetic ﬁeld and is
+identical to the deﬁnition from Spitzer (1956); Gudiksen
+et al. (2011). The heating term due to viscous eﬀects
+Qτ
+aI is derived from the viscous terms in momentum
+equations τ aI leading to a similar expression introduced
+by Nordlund (1982); Gudiksen et al. (2011) for a single-
+ﬂuid MHD model.
+The collisional terms associated with any particle aI ∈
+M are deﬁned as
+Qcol
+aI =
+X
+a′I′∈M
+Qcol
+aI,a′I′ =
+X
+a′I′∈M
+Qu,col
+aI,a′I′ + QT,col
+aI,a′I′.
+(8)
+The ﬁrst component of Eq. 8 corresponds to the
+heating produced by the drift velocity between species
+(aI, a′I′) ∈M2 due to collisions. The second compo-
+nent corresponds to a thermalization process where tem-
+perature TaI relaxes towards Ta′I′ at a collisional rate
+νcol
+aI,a′I′. The heating produced by the drift velocity and
+thermalization terms between species aI and a′I′ are
+deﬁned as
+Qu,col
+aI,a′I′ = νcol
+aI,a′I′ maI,a′I′naI|ua′I′ −uaI|2,
+QT,col
+aI,a′I′ = νcol
+aIa′I′
+
+3maI
+maI+ma′I′
+
+naIkB (Ta′I′ −TaI) .
+(9)
+Note that for any (aI, a′I′) ∈M2 or M2
+TF, thermal-
+ization terms QT,col
+aI,a′I′ do not contribute to the total
+thermal energy (sum of all the thermal energy equa-
+tions Eqs. 6 and 7) of the multi-ﬂuid plasma since these
+terms are symmetric with respect to species. Similarly,
+for any aI ∈H or HTF, ionization/recombination terms
+of heavy species Qion
+aI +Qrec
+aI do not contribute to the to-
+tal thermal energy. However, the heating produced by
+drift velocities, optically thin radiative losses and Spitzer
+terms contribute to the total thermal energy.
+2.3.1. Equation of States
+In both MFMS and TF, we assume equation of states
+for electrons and heavy species following classical ideal
+gases laws such as
+PaI = naIkBTaI = (γ −1)eaI,
+aI ∈H or HTF (10)
+and
+Pe = nekBTe = (γ −1)ee,
+(11)
+where γ = 5/3 is the adiabatic constant taken as iden-
+tical for all species.
+2.4. Generalized Ohm’s law and magnetic Induction
+Equation
+In both MFMS and TF, we compute the electric ﬁeld
+from a simpliﬁed electron momentum equation in the
+asymptotic limit where we assume that 1- the electron
+inertia and its time variation is neglected, 2- the mass
+of electrons is much smaller than the mass of any heavy
+particles and 3- the eﬀects associated with ionization
+and recombination are neglected. In this framework, in
+both MFMS and TF, the Ohm’s law reads
+E = −ue ∧B +
+1
+neqe
+
+∇Pe −Rcol
+e
+
+,
+(12)
+where Rcol
+e
+has the same deﬁnition as Eq. 5 by replacing
+a given heavy species aI ∈H by aI = {e}. The elec-
+tromagnetic ﬁeld is not considered as an external force
+but their evolution is governed by the set of Maxwell
+equations. Therefore, combining Eq. 12 with Maxwell-
+Faraday equation,
+∂tB = −∇∧E,
+(13)
+we obtain the magnetic induction equation.
+In MFMS, since several ionized species are considered
+and the quasi-neutrality approximation is assumed, the
+electron velocity can be expressed as a function of the
+hydrodynamic velocity of each ion and the total current
+as follows
+ue =
+X
+aI
+naIqaIuaI
+neqe
+−
+J
+neqe
+.
+(14)
+Note that the contribution of the total current J of
+the electron velocity in the equation of the electric ﬁeld
+
+6
+Wargnier et al.
+in Eq. 12, also known as the Hall term, has not been
+considered for this study (however, we will investigate
+the eﬀect of this term in future studies). In this study,
+since the characteristic speed of each particle is much
+smaller than the speed of light in vacuum, the Maxwell-
+Ampere’s law can be simpliﬁed by neglecting the dis-
+placement current term, which leads to the following
+relation of the total current
+J = (∇∧B)/µ0,
+(15)
+where µ0 is the vacuum permeability. Note that from
+Eq. 12 it is possible to identify one component of the
+resistivity of the MFMS model as function of collision
+integrals, see Section A for further details.
+The set of equations associated with MFMS and TF
+described in Eqs. 1, 4, 6, 7 and 13 is a closed system of
+equations which can be solved and integrated with a
+speciﬁc numerical strategy.
+3. NUMERICAL METHODS
+The two sets of governing equations for MFMS and TF
+models presented in Eqs. 1, 4, 6, 7, and 13 have been
+implemented in a code named Ebysus (Mart´ınez-Sykora
+et al. 2020), which is an extension of the single-ﬂuid ra-
+diative MHD code Bifrost (Gudiksen et al. 2011). Note
+that the governing equations can be rewritten in a more
+compact form which allows us to distinguish the nature
+of the diﬀerent terms involved, as shown in Appendix B.
+Concerning the spatial discretization, a sixth-order
+diﬀerential operator has been considered for the con-
+vective ﬂuxes, as in Bifrost. The conservative quanti-
+ties are not co-located in space and are considered on a
+staggered grid, thus, a ﬁfth-order interpolation is used
+to relocate variables as needed. Since a high-order ﬁnite
+diﬀerence scheme has been considered, it is convenient
+to numerically stabilize shocks and discontinuities with
+artiﬁcial numerical terms. In the literature, several type
+of artiﬁcial terms have been introduced, as described
+by Wilkins (1980); Cook & Cabot (2005) and references
+therein. By inheritance of the Bifrost code, the struc-
+ture of the artiﬁcial terms are the hyperdiﬀusive terms
+described by Nordlund (1982); Gudiksen et al. (2011).
+These terms are considered in order to capture shocks
+and discontinuities while treating correctly turbulence in
+a high Reynolds number regime. In Ebysus the hyper-
+diﬀusive terms have been expanded for the multi-ﬂuid
+case from those considered in Bifrost since they depend
+on the velocity and speeds of sound for each species and
+the Alfven speed of all ions. The constant coeﬃcients
+introduced in these terms have been chosen based on ﬁts
+to a wide variety of shock and turbulence test problems.
+The integration of the two presented systems requires
+some speciﬁc temporal integration methods.
+Indeed,
+these systems can be seen as convective-diﬀusive sys-
+tems with stiﬀsource terms (see Abdulle & Vilmart
+2013; Duarte et al. 2013; Descombes & Massot 2004),
+as presented in Appendix B. Some of these source terms
+(in particular those associated with collisions and ion-
+ization/recombination) are numerically stiﬀsince they
+are associated with physical processes where timescales
+often are much smaller than the convective timescales.
+Therefore, these terms are subject to strong CFL con-
+straints leading to small timesteps and drastically in-
+creased computational costs. To avoid this, our strategy
+is to consider a ﬁrst order Lie splitting approach in or-
+der to split the temporal integration on diﬀerent subsys-
+tems. First, the convective terms have been integrated
+following a third-order predictor-corrector Hyman (Hy-
+man et al. 1979). Alternately, it is possible to consider
+a third-order explicit Runge-Kutta method. Then, the
+diﬀusive term (i.e., the Spitzer term) has been inte-
+grated by solving a non-Fickian (hyperbolic) diﬀusion
+equation as described by (see Rempel 2016). Note that,
+in Ebysus, it is possible to integrate this term following
+an implicit multi-grid method, as described in Gudiksen
+et al. (2011). Finally, the stiﬀsource terms (see Sstiﬀin
+Appendix B) are integrated following an Ordinary Dif-
+ferential Equation (ODE) solver based on a ﬁfth-order
+implicit Runge Kutta method also known as Radau IIA
+method (see Hairer & Wanner 1999, 1996). In order to
+maintain the solenoidal constraint on the magnetic ﬁeld,
+a Hodge projection method has been used (see Brackbill
+& Barnes 1980).
+Ebysus allows the introduction of as many species as
+desired using DIPER format atom ﬁles and the CHI-
+ANTI database (see Judge 2007; Del Zanna, G. et al.
+2015). The number of ionized and excited levels, tran-
+sitions, and rates are detailed in these atom ﬁles. The
+code allows one to easily perform numerical simulations
+with any chosen mixtures following identical numerical
+strategies focusing on the system of equations presented
+in the previous section, as long as the atom ﬁles as-
+sociated with all species considered are provided. The
+Ebysus code also has the possibility of running a single-
+ﬂuid MHD option allowing a comparison with multi-
+ﬂuid MHD models using the same numerical code.
+4. METHODOLOGY AND INITIAL CONDITIONS
+In this study, we focus on a magnetic reconnection
+conﬁguration under speciﬁc thermodynamic conditions
+that aim to represent the upper solar chromosphere. For
+identical initial thermodynamic conditions, we perform
+a comparison between TF based on MTF (similar to
+what was performed by Alvarez Laguna et al. 2016;
+Leake et al. 2012; Leake & Linton 2013) and MFMS
+based on M. Our comparison highlights the impact of
+helium on the reconnection process.
+4.1. Initial reconnection setup
+The reconnection setup is inspired from Leake et al.
+(2012); Leake & Linton (2013), i.e., a magnetic ﬁeld
+
+Magnetic reconnection in the upper chromosphere
+7
+conﬁguration forming a Harris current sheet placed in
+a constant thermodynamic and plasma beta environ-
+ment.
+In this work, we consider an initial tempera-
+ture of T0 = 16 000 K and a total number density
+n0 = 7.47 × 109 cm−3.
+Then, the population asso-
+ciated with each species involved in M and MTF is
+calculated. In both MFMS and TF, the plasma beta
+coeﬃcient is calculated from the total pressure of the
+plasma P0 = n0kBT0 and is deﬁned as βp = 0.2. We
+have considered a 2.5D domain based on a uniform
+grid, with 800 × 800 grid points where each grid cell
+size isdy = dz = 5.333 km. In this conﬁguration, the
+whole computational domain represents a 2.5D box of
+size L0 = 4.2664 Mm. Open boundary conditions have
+been considered in all directions for all the variables
+and ﬁelds with linear extrapolations while minimizing
+strong gradients. In order to mitigate reﬂections, the
+last 0.1332 Mm grid points inside the domain are ded-
+icated for extrapolating the ﬁelds and damping waves
+that could eventually disturb the reconnection site.
+The Harris current sheet, as described by Leake et al.
+(2012); Leake & Linton (2013), is deﬁned as follows
+Ax = −B0
+2 λψ log
+
+cosh( y
+λψ
+)
+
+ex, B = [∇∧Ax] ,
+(16)
+where λψ is the initial thickness of the current sheet de-
+ﬁned as λψ = 0.1L0, B0 is the amplitude of the magnetic
+ﬁeld (in balance with the total pressure P0 = βp
+B2
+0
+2µ0 )
+equal to 1.42 G, Ax is the initial magnetic potential in
+the x direction, and ex is the elementary vector in the
+x direction.
+The pressure of the ionized species P ions is locally
+increased in the current sheet in order to balance the
+decrease of the Lorentz force in the current sheet, as
+follows:
+P ions(y) = P ions
+0
++
+P ions
+0
+cosh2( y
+λψ ),
+(17)
+where P ions
+0
+is the total pressure of the ions computed
+from the initial thermodynamic conditions (T0 and ρ0).
+In order to trigger the reconnection we have considered a
+local-centered perturbation on the magnetic ﬁeld (while
+guaranteeing the divergence free of the magnetic ﬁeld)
+as follows:
+Bα
+z (y, z∗) = −α(y −L0
+2 )f(y, z∗)ez, (y, z∗) ∈[0, L0]2
+(18)
+Bα
+y(y, z∗) = α(z∗−L0
+2 )f(y, z∗)ey, (y, z∗) ∈[0, L0]2
+(19)
+H
+H+
+He
+He+
+M
+MTF
+M
+MTF
+n [%]
+34.55
+37.5
+57.55
+62.5
+7.9
+3.17 × 10−6
+ρ [%]
+28
+37.5
+46.6
+62.5
+25.4
+10−5
+Table 1.
+Initial number and mass densities in percent-
+age for MFMS and TF. The initial number and mass
+densities percentage are calculated as αaI [%] = 100 ×
+αaI/ P
+aI∈β αaI, α ∈{n, ρ} and β ∈{H, HTF}.
+where
+f(y, z∗) = exp(−
+z∗−L0/2
+λψ
+2
+) exp(−
+y −L0/2
+λψ
+2
+),
+(20)
+where α is the amplitude of the perturbation which has
+been chosen in such a way that the maximum ampli-
+tude of |Bα| =
+q
+|Bαy|2 + |Bαz |2 corresponds to approx-
+imately 10% of the amplitude of the magnetic ﬁeld of
+the Harris current sheet B0. This amplitude is chosen
+in accordance with Alvarez Laguna et al. (2016); Leake
+et al. (2012).
+For both MFMS and TF, the characteristic initial
+Alfven speed is calculated as V Alf
+0
+= B0/
+p
+µ0ρions
+0
+=
+60 km s−1, where ρions
+0
+is the total initial mass den-
+sity of ions.
+The initial thermal speed is V therm
+0
+=
+p
+8kBT0/πm0 = 18.3 km s−1, where m0 is the char-
+acteristic mass chosen here as the mass of protons. No
+initial velocity ﬁeld is considered, rather the velocity
+ﬁeld is naturally triggered during the reconnection pro-
+cess. The numerical simulations based on MFMS and
+TF have been run until tend = 454 s and 325 s, respec-
+tively.
+For the rest of this work, we will focus on a
+restricted domain in the z direction where z ∈[0, 4] Mm
+and considering the change of variable z = z∗−δz with
+δz = 0.1332 Mm.
+4.2. Initial composition
+In both TF and MFMS, the initial number and mass
+densities for all species are calculated from the total
+number density n0 and temperature T0 assuming statis-
+tical and thermal equilibrium. The initial total number
+density of the plasma is the same for MFMS and TF but
+the total mass density diﬀers due to the presence of neu-
+tral helium species in MFMS. The initial composition in
+number and mass densities for mixtures M and MTF
+are given in Table 1. Note that, in MFMS, the initial
+abundance of helium species, i.e., with respect to the
+total hydrogen number density, is approximately 8.5%,
+i.e., photospheric abundances (Asplund et al. 2009).
+4.3. Initial multi-ﬂuid parameters
+In our initial setup, the rates associated with ioniza-
+tion or recombination processes have orders of magni-
+tude ranging from 10−4 to 10−1.5 s−1 for helium and
+
+8
+Wargnier et al.
+H-H+
+H-He
+H+-He
+He+-H
+He+-H+
+He+-He
+e-H
+e-He
+νcol [s−1]
+≈10 – 100
+≈0.1 – 1
+≈0.1 – 1
+≈0.1 – 1
+≈100 – 1000
+≈1 – 5
+100 – 500
+≈20 – 50
+λp [km]
+≈0.1 – 1
+≈10 – 100
+≈10 – 100
+≈10 – 100
+≈0.01 – 0.1
+≈3 – 7
+≈2 – 3
+≈15 – 30
+Table 2. Initial range of values (minimum/maximum respectively) of collision frequencies in s−1 and mean free path in km for
+MFMS in orders of magnitude. All the other interactions that are not shown in this table (for example e-H+) have a mean free
+path largely below 0.01 km.
+hydrogen respectively. For MFMS, the initial values of
+collisional frequencies and mean free paths (taken as the
+thermal speed of the colliding species times collisional
+frequencies between the two species) of the diﬀerent in-
+teractions in orders of magnitude are presented in Ta-
+ble 2. These values highlight the large disparities in the
+coupling between ﬂuids due to collisions in MFMS. Note
+that in the TF model, the collisional rate between H and
+H+ is slightly higher than in Table 2 for MFMS due to
+the initial mass density of H+, which is higher in TF
+than in MFMS, as shown in Table 1.
+These preliminary calculations demonstrate that the
+diﬀerent ﬂuids involved in MFMS are expected to be
+strongly or weakly coupled due to collisions at the ini-
+tial stage of the reconnection. For example, interactions
+involving He appears to be less coupled due to colli-
+sions than interaction H-H+ by two orders of magni-
+tude.
+However, interactions associated with He+ and
+H+ are more strongly coupled due to collisions than the
+H-H+ interaction. Note that timescales associated with
+ionization and recombination are much slower than col-
+lisional timescales, thus, collisional processes are much
+faster than ionization and recombination processes.
+One can notice that some of the characteristic mean
+free paths are not spatially resolved by the grid size
+dy = dz, in particular those associated with electrons.
+Therefore, the coupling due to collisions associated with
+electrons appears to be not fully resolved by the cur-
+rent numerical setup and would require a better spatial
+resolution. However, the chosen grid size numerically
+resolves the mean free paths associated with heavy par-
+ticles within the simulation.
+Therefore, the following
+simulations resolve the coupling and decoupling of the
+various ﬂuids except for electrons.
+5. RESULTS
+In this section, we analyze the results of our two
+simulations based on MFMS and TF models, keeping
+in mind that the mixture associated with MFMS is
+M =
+
+H, H+, He, He+, e
+	
+, and the mixture associated
+with TF is MTF =
+
+H, H+, e
+	
+.
+The analysis is per-
+formed at diﬀerent levels. First, we focus on the struc-
+ture of the current sheet and its evolution (Section 5.1),
+and, then, the velocity ﬁelds and highlight the decou-
+pling between ﬂuids (Section 5.2).
+We continue with
+Section 5.3 in which we identify the main heating pro-
+cesses in both mixtures. Finally, we analyze the evolu-
+tion of the ionization level in the current sheet in MFMS
+and TF and the chemical fractionation between helium
+and hydrogen species in MFMS during the reconnection
+process (Section 5.4).
+5.1. Current sheet and plasmoids
+In both MFMS and TF, our calculations show that
+two phases of the reconnection process can be identi-
+ﬁed. Figure 1 and associated animation illustrates the
+distribution of the orthogonal current Jx and total ve-
+locity ﬁelds in both y and z directions for both MFMS
+and TF, at diﬀerent times. The total velocity ﬁelds are
+calculated as utot = (ρu)tot /ρtot. Note that further de-
+tails about each individual velocity are given in the next
+Sections 5.2.
+First, the simulation has a laminar or a Sweet-Parker
+reconnection phase, where only one elongated current
+sheet is formed and develops inﬂow and outﬂow veloc-
+ity ﬁelds corresponding to the y and z direction, respec-
+tively (see Parker 1955, 1963; Sweet 1958) due to the ini-
+tial structure of the magnetic ﬁeld. This can be clearly
+identiﬁed for both MFMS and TF in the ﬁrst column
+of Fig. 1, as well as in the animation corresponding to
+this ﬁgure. After this ﬁrst phase, we have a plasmoid
+instability phase where many plasmoids are formed and
+are advected from the middle of the reconnection region
+towards the outﬂow region along the z axis (the last
+column of Fig. 1). During this phase, the presence of
+plasmoids breaks the current sheet into multiple thin-
+ner current sheets, which reconnect faster than in the
+Sweet-Parker regime (see Murtas et al. 2021). This is
+also in agreement with previous 2D (e.g., Huang & Bhat-
+tacharjee 2010) and 3D (e.g., Huang & Bhattacharjee
+2016) simulations.
+At the very beginning of the laminar phase (t ≈54 s),
+the magnitude of the current inside the reconnection re-
+gion is slightly higher in TF than in MFMS, as shown
+in the animation of Fig. 1. Additionally, the magnitude
+of the total velocity ﬁelds close to the current sheet and
+the magnitude of the total velocity in the z and y di-
+rections are slightly higher in TF than in MFMS. The
+current sheet is thinned sooner in TF than in MFMS,
+as shown in the animation of Fig. 1 and in the top left
+panel of Fig. 2. At the end of the laminar phase and dur-
+ing the plasmoid instability phase, it remains diﬃcult to
+compare the evolution of the current sheet and total ve-
+locity ﬁelds as it is unstable and ﬁelds change rapidly
+on short length scales. Therefore, further analysis has
+been performed and is presented in Fig. 2.
+
+Magnetic reconnection in the upper chromosphere
+9
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+t=54.00 s
+MFMS
+t=100.00 s
+MFMS
+t=250.00 s
+0.00
+0.33
+0.67
+1.00
+Current Ix,  10
+8[A]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+t=54.00 s
+MFMS
+t=100.00 s
+MFMS
+t=250.00 s
+-2.00
+-0.67
+0.67
+2.00
+utot, y [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+t=54.00 s
+MFMS
+t=100.00 s
+MFMS
+t=250.00 s
+-20.00
+-6.67
+6.67
+20.00
+utot, z [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+t=54.00 s
+TF
+t=100.00 s
+TF
+t=250.00 s
+0.00
+0.33
+0.67
+1.00
+Current Ix,  10
+8[A]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+t=54.00 s
+TF
+t=100.00 s
+TF
+t=250.00 s
+-2.00
+-0.67
+0.67
+2.00
+utot, y [km.s-1]
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+t=54.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+t=100.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+t=250.00 s
+-20.00
+-6.67
+6.67
+20.00
+utot, z [km.s-1]
+Figure 1. Distribution of the component x of the current density Jx in Amp`ere and total velocity in km s−1 in the y and z
+directions corresponding to the inﬂow and outﬂow directions of the reconnection region respectively, for the MFMS case (ﬁrst
+three rows) and TF case (last three rows) in a restricted domain deﬁned as (y, z) ∈[1.9, 2.5] × [0, 4] Mm. From left to right:
+evolution of these distributions at t = 54, 100 and 250 s.
+The vertical line corresponds to z = 2.45 Mm.
+The associated
+animation of this ﬁgure shows the time evolution.
+
+10
+Wargnier et al.
+Figure 2 shows the evolution of the thickness of the
+current sheet at a ﬁxed z = 2.45 Mm (top left), the
+mean thickness of the whole current sheet (top right),
+the length of the current sheet (bottom left), and the
+maximum total velocity in the z direction utot,z (bot-
+tom right) taken at the main reconnection site, for both
+MFMS and TF. To calculate the length at a ﬁxed z,
+ﬁrst, we locate the maximum of the magnitude of cur-
+rent for any y ∈[2.1, 2.3] Mm. Then, we consider its
+full-width half maximum (FWHM) in the z direction to
+estimate the length. In our simulations, the maximum
+current is generally located at y = L0/2. Similarly, the
+z component of the maximum total velocity at the re-
+connection site has been taken within the FWHM along
+the z axis of the maximum current.
+Concerning the
+thickness at a ﬁxed z = 2.45 Mm, a similar procedure
+as the estimation of the length of the current sheet has
+been performed. First, we locate the maximum magni-
+tude of the current for any y in the domain at a ﬁxed
+z = 2.45 Mm. We choose the FWHM as it accurately
+represents the termination of the reconnection site for
+both the laminar and plasmoid instability phases. We
+extend these calculations to any z ∈[0.8, 3.2] Mm in or-
+der to calculate the evolution of the mean thickness and
+deviation of the current sheet.
+Focusing on the left column of Fig. 2, from 0 to ap-
+proximately 25 s, for both MFMS and TF, the thickness
+at z = 2.45 Mm and length of the current sheet decreases
+drastically. It corresponds to a fast transition from the
+initial conditions to the beginning of the laminar phase
+leading to the formation of the current sheet. The ini-
+tial thickness of the current sheet is λφ = 0.1L0 and the
+length L0 = 426 km. In both MFMS and TF, from 0
+to ∼100 s, the thickness at z = 2.45 Mm of the cur-
+rent sheet decreases to ∼25 km corresponding to the
+numerical length scale. Additionally, if we focus on the
+mean thickness of the current sheet (top right of Fig. 2),
+it is clear that the thickness is larger in MFMS than in
+TF during the laminar phase. Consequently, TF reduces
+the thickness of the current sheet slightly faster than in
+MFMS, leading to higher velocities during the laminar
+regime, as shown in the bottom right of Fig. 2. Note
+that there are no large disparities between MFMS and
+TF in the evolution of the length of the current sheet.
+At t ≈100 s, the plasmoid instability phase of the
+reconnection process starts. This phase is characterized
+by strong variation in the thickness of the current sheet
+as shown in top left plot of Fig. 2. In MFMS, we can
+clearly see that the thickness at z = 2.45 Mm increases
+around at t = 200 s from 25 to 80 km.
+Similarly in
+TF, a small variation of the thickness at z = 2.45 Mm
+is obtained around t = 140 s where the thickness in-
+creases from 25 to approximately 37 km. In general, at
+any time, the average size of the plasmoids appears to
+be slightly larger in MFMS than in TF meaning that
+the dilatation of the plasmoids during their formation is
+more important in MFMS than in TF, as shown in the
+top right panel of Fig. 2.
+The plasmoid instability phase impacts the length of
+the current sheet that is associated with the maximum
+current Jx in both MFMS and TF (bottom left plot of
+Fig. 2). Indeed, after t ≈100 s, in both MFMS and TF,
+strong variations of the length of the current sheet are
+obtained, but on average decrease. This is because the
+presence of plasmoids breaks the initial current sheet
+formed during the laminar phase into multiple thinner
+current sheets. In summary, even during the plasmoid
+instability phase, on average, the mean frequency at
+which the plasmoids are formed and length scales be-
+tween them is similar between MFMS and TF.
+At any time of the reconnection process, in both
+MFMS and TF, the maximum total velocity in the z di-
+rection utot,z is increasing, as illustrated in the bottom
+right of Fig. 2. However, it is clear that the velocity
+is higher in TF than in MFMS, meaning that stronger
+ﬂows are obtained in TF than in MFMS, in both the
+laminar and plasmoid instability phase.
+Note that a
+similar result has been obtained in the y direction.
+In summary, the average thickness of the current sheet
+and the size of the plasmoids appears to be slightly
+larger in MFMS than in TF, and, reconnection with the
+TF model develop stronger ﬂows than the MFMS model.
+In this context, the presence of helium species appears to
+only slightly impact the evolution of the current sheet as
+well as the ﬂows. The length of the current sheet and the
+frequency at which the plasmoids are formed are simi-
+lar between the two models. In the next sections, we
+will see that, even though these properties only slightly
+diﬀer between the two models, the decoupling of the par-
+ticles and composition of the plasma in the current sheet
+show large disparities, leading to diﬀerent evolution of
+the heating processes and temperatures.
+5.2. Decoupling of the particles and velocity ﬁelds
+In this section, the decoupling of the particles and
+velocity ﬁelds are investigated. To do so, we focus on
+the z and y components of the velocity for each ﬂuid
+separately. These correspond to the outﬂow and inﬂow
+directions of the magnetic reconnection, respectively.
+The ﬁrst four rows (starting from the top) of Figures 3
+(Fig. 4) represent the distribution of the y (z) compo-
+nent of the velocity of protons H+ and the drift velocities
+with all the other particles in MFMS. The last two rows
+of the ﬁgures correspond to the velocity of protons H+
+and drift velocity between H and H+ in TF. From left
+to right columns, it shows the time evolution at times
+t = 89 s, t = 282 s and t = 327.5 s, respectively.
+During the laminar phase, the velocities of H+ in-
+creases up to a maximum achieved at approximately
+1 km s−1 and 20 km s−1 y and z components in both
+simulations. Note that TF seems to show slightly higher
+velocities, as described in Section 5.1. This maximum
+is reached at the end of the laminar phase which cor-
+
+Magnetic reconnection in the upper chromosphere
+11
+0
+50
+100
+150
+200
+250
+300
+Time [s]
+0
+25
+50
+75
+100
+125
+150
+175
+200
+Size of the current sheet in [km]
+Current sheet thickness in [km] in time at z = 2.45 Mm
+Thickness current sheet, MFMS
+Thickness current sheet, TF
+0
+50
+100
+150
+200
+250
+300
+Time [s]
+0
+25
+50
+75
+100
+125
+150
+175
+200
+Size of the current sheet in [km]
+Mean current sheet thickness in [km] in time
+Average thickness, MFMS
+Average thickness, TF
+0
+50
+100
+150
+200
+250
+300
+Time [s]
+0
+200
+400
+600
+800
+1000
+1200
+1400
+Length of the current sheet in [km]
+Length of the current sheet in [km] in time at y = L0/2
+Length current sheet, MFMS
+Length current sheet, TF
+0
+50
+100
+150
+200
+250
+300
+Time [s]
+0
+5
+10
+15
+20
+25
+30
+35
+40
+45
+Maximum utot, z [km.s-1]
+Maximum utot, z at reconnection site in time
+Max utot, z, MFMS 
+Max utot, z, TF
+Figure 2. Evolution in time of the thickness at a ﬁxed z = 2.45 Mm (top left), mean thickness for y ∈[1, 3.5] Mm (top right)
+and length of the current sheet (bottom left), and maximum total velocity in the z direction estimated at the ouﬂow of the
+main reconnection site (bottom right), by taking the full with half maximum (FWMH) of the maximum current density Jx.
+The dashed and full line corresponds to TF and MFMS respectively. Note that z = 2.45 Mm is illustrated in Fig. 1 by the black
+vertical line.
+responds to t ≈100 s for both MFMS and TF. This
+corresponds to the time where the maximum length of
+the current sheet is achieved, as shown in Fig. 2. In the
+ﬁrst column of Figs. 3, and
+4, the drift velocities be-
+tween particles are small compared to uy,H+ and uz,H+
+which implies that there is a large collisional coupling
+between species during the laminar phase. The decou-
+pling between H+ and He is highest, as shown in panel
+D of Fig. 3 and F of Fig. 4.
+Neutral helium species
+moves slightly slower than H+ by approximately 0.25
+and 0.15 km s−1 in the y and z directions respectively.
+Concerning TF, no signiﬁcant decoupling between H and
+H+ is seen.
+In order to understand the evolution of the velocity
+ﬁelds, we have also calculated and analyzed the distri-
+butions of all the forces acting on each ﬂuid involved in
+MFMS or TF, at diﬀerent times. In the following, for
+the sake of simplicity, we brieﬂy summarize them.
+During the laminar phase, the initial structure of the
+magnetic ﬁeld allows the development of a Lorentz force
+and leads to the formation of outﬂow and inﬂow veloc-
+ities. The Lorentz force and gradient of pressure asso-
+ciated with H+ are the dominant forces of the plasma
+in both MFMS and TF. Therefore, during the laminar
+phase, the dynamics of the reconnection process itself in
+the current sheet are dominated by these forces. This is
+also consistent with the fact that H+ is the most domi-
+nant species in number and mass density in both MFMS
+and TF at that time. In MFMS, no drift velocities asso-
+ciated with H+-H and H+-He+ occur since the species
+H+, H and He+ are highly coupled due to collisions.
+In other words, in each individual momentum equation
+associated with H and He+, the magnitude of the mo-
+mentum exchange terms due to collisions with H+ is
+large enough to highly couple the momentum equations
+associated with H, H+ and He+ altogether. Similarly
+
+12
+Wargnier et al.
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+A, t=89.00 s
+MFMS
+G, t=282.00 s
+MFMS
+M, t=327.50 s
+-5.00
+-1.67
+1.67
+5.00
+uy, H+ [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+B, t=89.00 s
+MFMS
+H, t=282.00 s
+MFMS
+N, t=327.50 s
+-1.00
+-0.33
+0.33
+1.00
+uy, H+
+uy, H [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+C, t=89.00 s
+MFMS
+I, t=282.00 s
+MFMS
+O, t=327.50 s
+-1.00
+-0.33
+0.33
+1.00
+uy, H+
+uy, He+ [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+D, t=89.00 s
+MFMS
+J, t=282.00 s
+MFMS
+P, t=327.50 s
+-1.00
+-0.33
+0.33
+1.00
+uy, H+
+uy, He [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+E, t=89.00 s
+TF
+K, t=282.00 s
+TF
+Q, t=327.50 s
+-5.00
+-1.67
+1.67
+5.00
+uy, H+ [km.s-1]
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+F, t=89.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+L, t=282.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+R, t=327.50 s
+-1.00
+-0.33
+0.33
+1.00
+uy, H+
+uy, H [km.s-1]
+Figure 3. Distribution of the y component of the velocity of H+ and drift velocities with other species in km s−1 at diﬀerent
+times for MFMS and TF. From ﬁrst to fourth row: distribution of the velocity uy,H+, the drift velocities uy,H+ −uy,H,
+uy,H+ −uy,He+ and uy,H+ −uy,He in MFMS respectively. The last two rows corresponds to the distribution of the velocity
+uy,H+ and the drift velocity uy,H+ −uy,H in TF. From left to right column: diﬀerent times t = 136, t = 278.5 and 327.5 s are
+presented. An animation of this ﬁgure is available.
+
+Magnetic reconnection in the upper chromosphere
+13
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+A, t=89.00 s
+MFMS
+F, t=282.00 s
+MFMS
+K, t=327.50 s
+-20.00
+-6.67
+6.67
+20.00
+uz, H+ [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+B, t=89.00 s
+MFMS
+G, t=282.00 s
+MFMS
+L, t=327.50 s
+-0.30
+-0.10
+0.10
+0.30
+uz, H+
+uz, H [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+C, t=89.00 s
+MFMS
+H, t=282.00 s
+MFMS
+M, t=327.50 s
+-0.30
+-0.10
+0.10
+0.30
+uz, H+
+uz, He [km.s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+D, t=89.00 s
+TF
+I, t=282.00 s
+TF
+N, t=327.50 s
+-20.00
+-6.67
+6.67
+20.00
+uz, H+ [km.s-1]
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+E, t=89.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+J, t=282.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+O, t=327.50 s
+-0.30
+-0.10
+0.10
+0.30
+uz, H+
+uz, H [km.s-1]
+Figure 4. Similar layout as Fig. 3 for the z component of the velocities. Unlike Fig. 3, the drift velocity between H+ and He+
+is not shown since its magnitude is negligible compared to the other quantities. An animation of this ﬁgure is available.
+in TF, the ﬂuids H and H+ are highly coupled due to
+collisions during the laminar phase.
+In contrast, in MFMS, the neutral helium species is
+decoupled from the other ﬂuids. This drift at the cur-
+rent sheet is due to the fact that neutral He decouple
+from H+ when the thickness of the current sheet thins
+down to the order of the mean free path between He and
+H+ during the laminar phase, and, neutral He are not
+dragged by collisions into the current sheet as quickly
+as H+ or H. The decoupling between He and H+ due to
+the lack of collisions is clearly illustrated in panel D of
+Fig. 3 and in panel C of Fig. 4. The fact that the decou-
+pling between He and H+ is stronger than other inter-
+actions is attributed to the collisional frequencies that
+involves neutral helium species which are much smaller
+by more than two orders of magnitude than all the other
+collisional frequencies, as shown in Table 2 (for the ini-
+tial conditions). These diﬀerences are attributed to the
+magnitude of the collision integrals at the kinetic level
+that leads to smaller collisional frequencies, as described
+with further details in Wargnier et al. (2022). This ef-
+fect leads to a slower velocities for neutral helium species
+with respect to H+, as illustrated by panel D of Fig. 3
+and panel C of Fig. 4.
+In the second and last column of Figs. 3 and 4 cor-
+responding to the plasmoid instability phase, we note
+that drift velocities are increasing during the formation
+of plasmoids for both MFMS and TF. This is also illus-
+trated in the animations. When plasmoids are produced,
+local velocity ﬁelds in opposite directions are generated
+due to a local reconnection of the magnetic ﬁeld lines. It
+should be noted that the structure and evolution of the
+velocity of H+ is similar for both MFMS and TF, how-
+ever, the drift velocities diﬀer between the two. In the
+
+14
+Wargnier et al.
+case of MFMS, the drift between H and H+ is stronger at
+the boundary of plasmoids and inside the current sheet,
+reaching approximately 1 and 0.1 km s−1 for the y and
+z components respectively, as we can see in panels H
+and N of Fig. 3 and panels G and L of Fig. 4. In TF,
+the drift velocity between H and H+ is smaller than in
+MFMS by a factor of three and is showing some oscil-
+lating pattern structure parallel to the current sheet, as
+shown in panel R of Fig. 3. Similar to the decoupling
+between He and H+, the drift between H and H+ devel-
+ops during the plasmoid instability phase, as the current
+sheet thins down to the order of the mean free path (a
+few kilometers corresponding to a few grid points) be-
+tween H and H+ and neutral H does not collide enough
+with H+ to be dragged into the current sheet as quickly
+as H+. This decoupling is consistent with the results
+obtained by Leake et al. (2012); Leake & Linton (2013).
+The drift between H and H+ is higher in MFMS than
+in TF because the collisional frequency associated with
+H-H+ interactions is smaller in MFMS than in TF. As
+shown in Wargnier et al. (2022), the collisional frequen-
+cies are calculated from the products of 1- the collision
+integral associated with H-H+ interaction, 2- H and H+
+number densities and 3- thermal speed associated with
+H-H+ interaction. In our chosen conditions, the num-
+ber densities of H and H+ in MFMS are smaller than
+in TF due to the presence of helium species. Addition-
+ally, the temperature inside the current sheet is higher in
+MFMS than in TF, as shown later in Section 5.3, lead-
+ing to a decrease of the collision integral associated with
+H-H+ interactions, as shown in Wargnier et al. (2022).
+These two eﬀects contribute to decrease the collisional
+frequency associated with H-H+ interactions in MFMS
+compared with TF. Note that if the temperature in-
+creases, the thermal speed contributes to increase the
+collisional frequency, as shown in the deﬁnition from
+Wargnier et al. (2022).
+However, in the chosen con-
+ditions and for H-H+ interactions, this contribution is
+smaller than the contribution of the H-H+ collision in-
+tegral and number densities.
+In panels L and R of Figure 3 and panels J and O
+of Figure 4, the oscillating pattern of the drift velocity
+between H and H+ in TF is attributed to the spatial
+distribution momentum exchange term associated with
+H-H+ interactions. These collisions compensate for the
+localized unbalance of the forces i.e., the Lorentz force
+and pressure gradients, when the current sheet thins
+down to the mean free path between H and H+.
+A
+similar eﬀect has been obtained in the distribution of
+drift velocity between H+ and He+ in panel O of Fig. 3
+where the characteristic wavelength and magnitude of
+this pattern are much smaller than for the drift between
+H and H+. However, this eﬀect is attributed to two phe-
+nomena: the momentum exchange term associated with
+H+-He+ interactions in MFMS tries to compensate for
+the localized unbalance of forces (pressure gradients of
+H, H+, He and He+ and Lorentz forces acting on H+
+and He+ separately) at much smaller spatio-temporal
+scales than in TF. In addition, the ions experience a
+synchronized cyclotron-type motion along the magnetic
+ﬁeld lines, also known as the ion-coupling eﬀect, leading
+to a sinusoidal ion drift velocity distribution perpendic-
+ular to the magnetic ﬁeld line, as described with further
+details in Mart´ınez-Sykora et al. (2020). Note that the z
+component of the drift velocity associated with H+-He+
+interactions is negligible. Consequently, the distribution
+of the latter has not been shown here.
+As in the laminar phase, the decoupling between He
+and H+ remains important due to the lack of collisions
+between the two species. This drift velocity is high both
+inside the current sheet and plasmoids. The maximum
+drift velocity between He and H+ reaches more than
+1 km s−1 and 0.3 km s−1 in the y and z directions re-
+spectively. We can also notice some internal structure
+of the drift velocity inside the plasmoids (panels J and
+P of Fig. 3 and panels H and M of Fig. 4).
+5.3. Multi-ﬂuid heating processes
+5.3.1. Heating processes due to departure in velocities
+In order to analyze the heating processes and identify
+the type of collisions mainly responsible for the increase
+in temperature, we focus on the dominant heating terms
+due to drift velocities Qu,col
+aI,a′I′ in both models MFMS
+and TF. As explained in Section 2.3, the heating terms
+associated with drift velocities are not adiabatic terms
+and can increase the total thermal energy of the plasma.
+Therefore, the heating processes for both MFMS and
+TF could be strongly connected to the structure of the
+drift velocities which have been investigated in previous
+Sections 5.2.
+Under the chosen thermodynamic conditions pre-
+sented in Section 4, the electron thermal conduction
+and the terms associated with ionization or recombina-
+tion processes Qion
+aI or Qrec
+aI have negligible impact on
+the heating processes, in both MFMS and TF. Indeed,
+as described in Section 2, the heating terms associ-
+ated with ionization or recombination processes for any
+aI ∈H do not contribute to the total thermal energy
+of the plasma (apart from radiative losses term). Thus,
+they do not contribute to the current sheet’s temper-
+ature increase.
+In all thermal energy equations, the
+magnitude of these terms is negligible compared to the
+thermalization terms due to collisions since ionization
+and recombination timescales are bigger than collisional
+timescales, as described in Section 4.2 and also in Sec-
+tion 5.4.1.
+Figure 5 represents the distribution of the rate of the
+heating terms Qu,col
+aI,a′I′ in a 1D cut of the current sheet
+located at z = 2.45 Mm for all the possible interac-
+tions involved in both MFMS (top row) and TF (mid-
+dle row) at diﬀerent times t = 11.5 s and t = 28.5 s
+from left to right column. Note that these times cor-
+respond to a diﬀerent stage of the laminar phase. The
+
+Magnetic reconnection in the upper chromosphere
+15
+rates are calculated by dividing the heating terms, pro-
+duced by drift velocities, by the total thermal energy
+eα
+tot = P
+aI∈α eaI, α ∈{M, MTF}.
+We also show
+the distribution of the temperatures of each species in
+MFMS and TF (bottom row) at z = 2.45 Mm. Note
+that an animation of this ﬁgure is available.
+At the beginning of the laminar phase in MFMS, it is
+clear that the heating processes produced by the drifts
+between H+ and He, H and He dominate in the current
+sheet, as observed in panel A of Fig. 5. This eﬀect is
+consistent with the previous Sections 5.2 showing that
+the drift velocities between neutral helium and hydrogen
+species are much higher than any other interactions dur-
+ing the laminar phase. Additionally, the heating due to
+collisions between electrons and all heavy species (ohmic
+collisions) is at the same order of magnitude as H+-He
+and H-He interactions but localized around the current
+sheet. The heating due to the drift between H+ and H
+is not negligible in the current sheet. Still, it is much
+lower than the other interactions (panel A of Fig. 5),
+which is also consistent with the magnitude of the drift
+velocity in Sections 5.2. In the case of TF, the heat-
+ing produced by the drift between electrons and heavy
+species (H and H+) is dominating, as shown in panel B.
+Additionally, the latter is slightly higher in magnitude
+as the heating is produced by the drift between elec-
+trons and heavy species in panel A (black dashed line in
+panel A). However, if we sum all the heating terms of
+panel A and compare it with the sum of all the heating
+terms in panel B, it is clear that the total heating pro-
+duced by velocity drifts is higher, by approximately a
+factor two, in MFMS than TF due to the heating terms
+Qu,col
+H,He + Qu,col
+He,H and Qu,col
+H+,He + Qu,col
+He,H+.
+At a later time of the laminar phase, corresponding
+to the second column of Fig. 5, the temperatures of all
+species in MFMS increase and are higher than in TF.
+The temperature achieves its maximum at the center
+of the current sheet at 27 000 K in MFMS. In contrast,
+in TF, the temperature is approximately 19 000 K at
+the center of the current sheet (panel F). By comparing
+panels A and D, the magnitude of the heating terms
+due to collisions associated with interactions H-He, H+-
+He, and electrons-heavy species increase in time inside
+the current sheet. This increase is attributed to drift
+velocities increasing with time during the laminar phase.
+Similarly, if we sum all the heating terms in panels A
+and B, the sum of all the heating terms is higher in
+MFMS than in TF. Consequently, temperatures inside
+the current sheet are higher in MFMS than in TF. Note
+that temperatures of all species are equal during the
+laminar phase in both MFMS and TF.
+Figure 6 shows the heating rates due to the drift ve-
+locities Qu,col
+aI,a′I′ + Qu,col
+a′I′,aI, (aI, a′I′) ∈M2 or M2
+TF di-
+vided by the total thermal energy and the temperature
+of protons TH+, for MFMS (ﬁrst ﬁve rows) and TF (last
+two rows), at diﬀerent times of the simulation corre-
+sponding to the plasmoid instability phase. From left to
+right columns, it corresponds to times t = 210, 250 and
+282.5 s respectively. Higher temperatures are reached
+inside the current sheet and plasmoids than during the
+laminar phase, as shown in panels E, L, S, G, N, and U
+from Fig. 6 by comparing with temperatures presented
+in Fig. 5.
+Additionally,
+higher temperatures are reached in
+MFMS than in TF, as illustrated in panels E, L, and
+S in comparison with panels G, N, and U of Fig. 6.
+Indeed, in TF, the temperatures achieve a maximum of
+35 000 K, whereas in MFMS the temperatures can reach
+up to approximately 50 000 K. In TF, this temperature
+is reached with the H and H+ drift heating (panels F, M,
+and T). These panels show that the rate of the heating
+terms ranges from 10−2.8 to 10−3 s−1 inside the current
+sheet and plasmoids, increasing the temperature TH+
+from 22 000 K (panel G) to 30 000 K. In the plasmoid
+located at z ≈1.5 Mm, the temperature achieves a
+maximum of 35 000 K due to the H-H+ drift (panel U).
+In MFMS, since many species and interactions are in-
+volved, the heating produced by drift velocities is more
+complex to interpret than TF and requires the analysis
+of several components of the heating terms during the
+plasmoid instability phase.
+First, if we compare panels A, H, and O with F, M,
+and T, the rate associated with the heating terms due
+to the drift between H and H+ is much higher in MFMS
+than in TF. The disparity can reach up to one order of
+magnitude in some regions of the current sheet. For ex-
+ample, at z ≈1.6 or z ≈3.2 Mm of panel O, the rate
+achieves a maximum at 10−2 s−1. Therefore, the tem-
+perature TH+ increases in these regions from 30 000 K
+to ∼50000 K between t = 210 and t = 282.5 s, (panels
+E, L, and S). Even though most of the heating comes
+from the H and H+ collision, the heating due to the
+H+ and He+ collision is not negligible at z ≈1.6 or
+z ≈3.2 Mm (panel R). This last heating rate is approx-
+imately 10−3.1 s−1(panels D, K and R).
+Focusing on the formation of the plasmoid located
+at z ≈1.9 Mm in panels E, L, and S of Fig. 6,
+one can notice that the thickness of this plasmoid in-
+creases. This dilation is the consequence of the balance
+of the thermal pressure of the plasma inside the cur-
+rent sheet that increases with respect to the magnetic
+pressure, which is constant. Therefore, during this dila-
+tion, the temperature inside the plasmoid is constant,
+and ∼50 000
+K, while its thickness increases from
+∼0.08 Mm to ∼0.2 Mm. Therefore, the dilation pro-
+cess of the thermodynamic system deﬁned as the volume
+of plasma located inside the plasmoid at z ≈1.9 Mm be-
+tween t = 210 and t = 282.5 s is not adiabatic. However,
+if we look at panels A, H, and O or D, K, and R, it is clear
+that the heating terms due to the drift between H and
+H+ or H+ and He+ are negligible inside the plasmoid.
+Therefore, one has to focus on other heating sources in-
+
+16
+Wargnier et al.
+1.25
+1.50
+1.75
+2.00
+2.25
+2.50
+2.75
+3.00
+3.25
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+1.4
+Heating rate 10
+3 x [s-1]
+A, t=11.50
+MFMS: heating rate Qu, col/etot at z=2.45 Mm
+H
+H +
+H
+He
+H+
+He
+H+
+He+
+He
+He+
+H
+He+
+e
+aI, aI
+H
+1.25
+1.50
+1.75
+2.00
+2.25
+2.50
+2.75
+3.00
+3.25
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+1.4
+Heating rate 10
+3 x [s-1]
+B, t=11.50
+TF: heating rate Qu, col/etot at z=2.45 Mm
+H
+H +
+e
+aI, aI
+HTF
+1.25
+1.50
+1.75
+2.00
+2.25
+2.50
+2.75
+3.00
+3.25
+y [Mm]
+14000
+16000
+18000
+20000
+22000
+24000
+26000
+28000
+30000
+Temperature, [K]
+C, t=11.50
+Distribution of the temperatures at z=2.45 Mm
+MFMS, TH
+MFMS, TH +
+MFMS, THe
+MFMS, THe +
+MFMS, Te
+TF, TH
+TF, TH +
+TF, Te
+1.25
+1.50
+1.75
+2.00
+2.25
+2.50
+2.75
+3.00
+3.25
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+1.4
+D, t=28.50
+MFMS: heating rate Qu, col/etot at z=2.45 Mm
+H
+H +
+H
+He
+H+
+He
+H+
+He+
+He
+He+
+H
+He+
+e
+aI, aI
+H
+1.25
+1.50
+1.75
+2.00
+2.25
+2.50
+2.75
+3.00
+3.25
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+1.2
+1.4
+E, t=28.50
+TF: heating rate Qu, col/etot at z=2.45 Mm
+H
+H +
+e
+aI, aI
+HTF
+1.25
+1.50
+1.75
+2.00
+2.25
+2.50
+2.75
+3.00
+3.25
+y [Mm]
+14000
+16000
+18000
+20000
+22000
+24000
+26000
+28000
+30000
+F, t=28.50
+Distribution of the temperatures at z=2.45 Mm
+MFMS, TH
+MFMS, TH +
+MFMS, THe
+MFMS, THe +
+MFMS, Te
+TF, TH
+TF, TH +
+TF, Te
+Figure 5. Distribution of the rates of the heating terms Qu,col
+aI,a′I′ + Qu,col
+a′I′,aI, (aI, a′I′) ∈M2 or M2
+TF associated with drift
+velocities divided by the total thermal energy etot = P
+aI∈M eaI in s−1 (top row for MFMS and middle row for TF) and
+temperatures of each particles (bottom row) along the z axis in the current sheet at position y = L0/2 in both MFMS and TF,
+respectively. From left to right column: distributions at diﬀerent times t = 11.5 s and t = 28.5 s corresponding to the laminar
+phase. Note that the vertical axis ranges from 0 to 1.4 × 10−3 s−1. An animation of this ﬁgure is available.
+side the plasmoids to explain the non-adiabaticity of the
+dilation.
+Indeed, the heating due to the friction between He and
+He+ is not negligible inside the plasmoid, as shown in
+panels C, J, and Q of Fig. 6. In panel J, at z ≈1.9 Mm,
+the heating rate associated with He-He+ collisions is
+approximately equal to 10−3.4 s−1 which allows main-
+taining the plasma temperature inside the plasmoid to
+50 000 K during the dilatation. The cooling rate asso-
+ciated with the adiabatic expansion of the plasmoids is
+negligible compared to this heating rate due to He-He+
+collisions (≈10−4.2 s−1). The temperature of the second
+plasmoid located at z ≈3 Mm is slightly lower than the
+other plasmoid and ranges from 35 000 K to 40 000 K.
+This is because the initial plasma temperature in the
+current sheet where this plasmoid is initially formed is
+lower than the initial plasmoid temperature located at
+z ≈1.9 Mm. Indeed, during the plasmoid instability
+phase, the temperature distribution is not uniform along
+the z axis leading to some variations in the temperature
+of the formed plasmoids.
+Furthermore, the heating rate due to He and He+ col-
+lisions in the plasmoid at z ≈3 Mm is lower than at
+z ≈1.9 Mm, and approximately equal to 10−4 s−1, as
+
+Magnetic reconnection in the upper chromosphere
+17
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+A, t=210.00 s
+MFMS
+H, t=250.00 s
+MFMS
+O, t=282.50 s
+-5
+-4
+-3
+-2
+H-H +  [s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+B, t=210.00 s
+MFMS
+I, t=250.00 s
+MFMS
+P, t=282.50 s
+-5
+-4
+-3
+-2
+He-H +  [s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+C, t=210.00 s
+MFMS
+J, t=250.00 s
+MFMS
+Q, t=282.50 s
+-5
+-4
+-3
+-2
+He-He +  [s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+D, t=210.00 s
+MFMS
+K, t=250.00 s
+MFMS
+R, t=282.50 s
+-5
+-4
+-3
+-2
+H + -He +  [s-1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+E, t=210.00 s
+MFMS
+L, t=250.00 s
+MFMS
+S, t=282.50 s
+13000
+28667
+44333
+60000
+TH + [K]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+F, t=210.00 s
+TF
+M, t=250.00 s
+TF
+T, t=282.50 s
+-5
+-4
+-3
+-2
+H-H +  [s-1]
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+G, t=210.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+N, t=250.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+U, t=282.50 s
+13000
+28667
+44333
+60000
+TH + [K]
+Figure 6. From top to bottom, for any (y, z) ∈[1.9, 2.5] × [0, 4] Mm: distribution of the decimal logarithm of the rates of the
+heating terms Qu,col,S
+aI,a′I′, (aI, a′I′) ∈M2 divided by the total thermal energy etot = P
+aI∈M eaI in s−1 in MFMS, the temperature
+of H+ in MFMS, the decimal logarithm of the heating terms Qcol
+aI,a′I′, (aI, a′I′) ∈M2
+TF divided by the total thermal energy
+etot = P
+aI∈MTF eaI in s−1 in TF and the temperature of H+ in TF. The other heating terms have not been shown here since
+their magnitude are negligible compared to the other terms. From left to right: distributions at diﬀerent times t = 210, 250 and
+282.5 s corresponding to diﬀerent stages of the plasmoid instability phase. An animation of this ﬁgure is available.
+
+18
+Wargnier et al.
+we can see in the panel J of Fig. 6. The heating due to
+the friction between He and H+ slightly contributes to
+the heating of the plasmoids, as we can see in panels B,
+I, and P. Note that this contribution is not included in
+the TF model. Thus, during the expansion of the plas-
+moids, the temperature inside the plasmoids decreases
+and diﬀuses with time.
+In summary, the temperature is higher in MFMS than
+in TF both during the laminar (with temperatures of
+30 000 K for MFMS and 20 000 K for TF) and plasmoid
+instability phases (65 000 K for MFMS and 35 000 K for
+TF). Consequently, in MFMS and for the chosen initial
+thermodynamic conditions, the plasma reaches a suﬃ-
+cient temperature inside the current sheet to eventually
+ionize helium species rapidly. During the plasmoid in-
+stability phase, the main heating process is due to the
+collisions between H and H+. It allows increasing the
+temperature inside the current sheet from 30 000 K to
+50 000 K. Then, plasmoids are produced and expanded
+following a non-adiabatic process. In this context, neu-
+tral helium is rapidly ionized (as described with further
+details in Section 5.4) and collides with all the other par-
+ticles, in particular He, inside the plasmoids. It allows
+the maintenance of the temperature of the plasmoids
+at 50 000 K (for the plasmoid located at z = 1.8 Mm).
+A maximum temperature of 65 000 K is achieved inside
+the plasmoids at a later time of the plasmoid instability
+phase.
+5.3.2. Decoupling of the temperatures in MFMS
+In this section, we focus only on MFMS at a later
+time of the plasmoid instability phase.
+Indeed, these
+eﬀects appear to be out of reach in the TF model. In
+MFMS, our previous results from Section 5.3.1 have
+shown that most of the temperatures are in equi-
+librium during the laminar and plasmoid instability
+phase.
+This is because the thermalization terms for
+any possible interactions QT,col
+aI,a′I′, (aI, a′I′) ∈M2 have
+larger magnitude than any other heating terms such
+as Qu,col
+aI,a′I′, (aI, a′I′) ∈M2 or Qspitz
+e
+. In other words,
+the characteristic timescale of the thermalization terms
+range from 10 s to just a few seconds whereas the heat-
+ing terms associated with drift velocities range from
+100 s to higher, as shown in Fig. 6.
+Departures in temperature occur for a couple of
+species (aI, a′I′) ∈M2 if the rate associated with all the
+heating processes of particles aI becomes much higher
+than the rate of the thermalization term QT,col
+aI,a′I′/eaI.
+In other words, for any (aI, a′I′) ∈M2, neglecting the
+electron thermal conduction and radiative losses, this
+condition can be written as
+QT,col
+aI,a′I′
+eaI
+≪
+1
+eaI
+ 
+X
+a∗I∗∈M
+Qu,col
+aI,a∗I∗
+!
+= Qu,col
+aI
+eaI
+,
+(21)
+In order to highlight the thermal decoupling eﬀects oc-
+curring during the reconnection process, we focus only
+on neutral helium. Neutral helium shows strong ther-
+mal decoupling eﬀects due to the high decoupling in
+collisions with other species, as shown in the previous
+sections. Figure 7 shows the rate Qu,col
+He
+/eHe distribution
+compared with all the rates associated with the thermal-
+ization terms QT,col
+He,aI/eHe, aI ∈M at times t = 307.5 s,
+and t = 314.5 s in the current sheet at y = L0/2. On
+top of that, we also show the distributions of all the tem-
+peratures (panels B and E) as well as the diﬀerences in
+temperature ∆T = THe −TaI, aI ∈H with respect to
+the neutral helium temperature THe (panels C and F).
+First, if we focus on the plasmoid located at z ≈2 Mm
+at t = 307.5 s, in panel A, the rate of the total heat-
+ing term Qu,col
+He
+/eHe is slightly higher than the rates
+QT,col
+He,H+/eHe and comparable to QT,col
+He,He+/eHe. After a
+few seconds, corresponding to the panel D of Fig. 7, the
+rate of the total heating term Qu,col
+He
+/eHe increases dras-
+tically (500% in 7 seconds) and becomes much larger
+than the rates of thermalization terms QT,col
+He,H+/eHe and
+QT,col
+He,H/eHe and stay comparable to QT,col
+He,He+.
+In this
+framework, the condition in Eq. 21 is satisﬁed for the
+couples of species (He, H+) and (He, H). This leads to
+a fast and strong thermal decoupling where the depar-
+tures in temperatures THe −TH+ and THe −TH achieve a
+maximum at ≈3000 K, occurring in just a few seconds,
+at the center of the plasmoid.
+During the reconnection process, thermal decoupling
+eﬀects can be stronger leading to a neutral helium tem-
+perature that can become much larger and reach up
+to 90 000 K where other species temperature stay at
+70 000 K. Note that this eﬀect occurs at later time of
+the plasmoid instability phase.
+Additionally, a small
+temperature decoupling is seen in neutral hydrogen, as
+illustrated with the blue line in panels C and F. However,
+this eﬀect remains smaller than temperature decoupling
+eﬀects associated with neutral helium.
+5.4. Evolution of the composition
+5.4.1. Evolution of the ionization levels in MFMS and TF
+Figures 9 (ﬁrst two rows) and 8 show the distribu-
+tion of the total ionization fraction of MFMS and TF.
+Figure 8 is a cut in the middle of the current sheet at
+y = L0/2 during the laminar phase (on the left) and
+plasmoid instability phase (on the right). In Fig. 8, the
+distributions of the ionization fraction of hydrogen and
+helium species are shown. Figure 10 has the same layout
+as Fig. 9 but for the distribution of the ionization and
+recombination frequencies νion
+H,H+, νrec
+H+,H for MFMS and
+TF, and νion
+He,He+ for MFMS. These frequencies allows the
+assesment of the evolution of ionization and recombina-
+tion eﬀects and the composition of the plasma is altered
+during the reconnection process. The recombination fre-
+quency νrec
+He+,He is negligible and much smaller than the
+
+Magnetic reconnection in the upper chromosphere
+19
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25
+0.30
+0.35
+Rate [s
+1]
+A, t=307.50 s
+Rating of heating and thermalization terms for He, y =L0/2
+Qu, col
+He
+/eHe
+|QT, col
+He, H|/eHe
+|QT, col
+He, He +|/eHe
+|QT, col
+He, H +|/eHe
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+20000
+30000
+40000
+50000
+60000
+T [K]
+B, t=307.50 s
+Distribution of the temperatures at y =L0/2
+MFMS, THe
+MFMS, TH
+MFMS, THe +
+MFMS, TH +
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+z [Mm]
+1000
+0
+1000
+2000
+3000
+T [K]
+C, t=307.50 s
+Distribution of the thermal decoupling T at y =L0/2
+MFMS, THe
+TH
+MFMS, THe
+THe +
+MFMS, THe
+TH +
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25
+0.30
+0.35
+D, t=314.50 s
+Rating of heating and thermalization terms for He, y =L0/2
+Qu, col
+He
+/eHe
+|QT, col
+He, H|/eHe
+|QT, col
+He, He +|/eHe
+|QT, col
+He, H +|/eHe
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+20000
+30000
+40000
+50000
+60000
+E, t=314.50 s
+Distribution of the temperatures at y =L0/2
+MFMS, THe
+MFMS, TH
+MFMS, THe +
+MFMS, TH +
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+z [Mm]
+1000
+0
+1000
+2000
+3000
+F, t=314.50 s
+Distribution of the thermal decoupling T at y =L0/2
+MFMS, THe
+TH
+MFMS, THe
+THe +
+MFMS, THe
+TH +
+Figure 7. From top to bottom row: distribution along the z axis at y = L0/2 of the rates of the total heating term Qu,col
+He
+/eHe
+and all the thermalization terms QT,col
+He,aI/eHe, with aI ∈M, distribution of all the temperatures and distribution of temperature
+diﬀerences ∆T with respect to THe in the current sheet at position y = L0/2 for MFMS. From left to right column: distributions
+at diﬀerent times t = 307.5 s and t = 314.5 s.
+other ionization and recombination frequencies, thus, it
+is not shown here.
+During the laminar phase, represented in the ﬁrst col-
+umn of Figures 9 (panels A and B) and 10 (panels A
+to E), and left plot of Fig. 8, the ionization level is in-
+creasing in the current sheet for both MFMS and TF
+due to the ionization of hydrogen species. Indeed, the
+ionization frequency νion
+H,H+ in the current sheet, in both
+MFMS and TF, is higher by more than one order of
+magnitude than the recombination frequency νrec
+H+,H, as
+shown in Fig. 10. Furthermore, the recombination fre-
+quency νrec
+H+,H in MFMS (panel B) is lower than in TF
+(panel E). This leads to an ionization level that is much
+higher in MFMS (ranging from 85% to 95%) than in TF
+(ranging from 70% to 80%) during the laminar phase,
+as shown on the left of Fig. 8.
+These disparities ob-
+tained in the ionization and recombination frequencies
+between MFMS and TF are attributed to the diﬀerence
+in temperature of the plasma in the current sheet during
+the laminar phase. Indeed, as described in the previous
+Section 5.3, the presence of helium species that collide
+with hydrogen species in MFMS leads to higher temper-
+ature in the current sheet than in TF. This increase of
+temperature gives rise to a larger hydrogen ionization in
+MFMS than in TF during the laminar phase.
+The ionization levels in plasmoids are drastically in-
+creasing for both MFMS (right panel in Fig. 8) and
+
+20
+Wargnier et al.
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+z [Mm]
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Ionization degree [-], t=113.5 s
+Distribution of the ionization levels at y = L0/2
+total ionization fraction, TF
+total ionization fraction, MFMS
+ionization of hydrogen, MFMS
+ionization of helium, MFMS
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+4.0
+z [Mm]
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Ionization degree [-], t=282.0 s
+Distribution of the ionization levels at y = L0/2
+total ionization fraction, TF
+total ionization fraction, MFMS
+ionization of hydrogen, MFMS
+ionization of helium, MFMS
+Figure 8. Distribution of the total ionization fraction for both MFMS and TF, ionization of hydrogen and helium species in
+MFMS in the middle of the current sheet at position y = L0/2 at times t = 113.5 s (left) and t = 282 s (right) respectively.
+The full black, dashed black and dot black lines corresponds to the total ionization fraction, the ionization of hydrogen species
+xH+ = nH+/(nH+ +nH) and the ionization of helium species xHe+ = nHe+/(nHe+ +nHe) for MFMS. The full red line correspond
+to the total ionization fraction in TF. An animation of this ﬁgure is available.
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+A, t=113.50 s
+MFMS
+D, t=282.00 s
+MFMS
+G, t=327.50 s
+0.40
+0.60
+0.80
+1.00
+Total ionization [-]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+B, t=113.50 s
+TF
+E, t=282.00 s
+TF
+H, t=327.50 s
+0.40
+0.60
+0.80
+1.00
+Total ionization [-]
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+C, t=113.50 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+MFMS
+F, t=282.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+MFMS
+I, t=327.50 s
+0.01
+0.06
+0.10
+0.15
+Helium fraction [-]
+Figure 9. Distribution of the total ionization fraction in TF (ﬁrst row) and MFMS (second row), molar fraction of helium
+species (third row) (nHe + nHe+)/(P
+aI∈M naI) in MFMS, at diﬀerent times t = 113.5 s, t = 282 s and 327.5 s for any
+(y, z) ∈[1.8, 2.6] × [0, L0] Mm (from left to right column) respectively. The vertical line corresponds to z = 0.825 Mm. An
+animation of this ﬁgure is available.
+TF compared to the laminar phase (left panel).
+In
+TF, we can distinguish three plasmoids located at y =
+1.5 Mm, 3.1 Mm and 3.7 Mm, and, in MFMS, two plas-
+moids located at y = 1.9 Mm and 3 Mm. In TF, at
+the middle of the plasmoid located at y = 1.5 Mm, the
+ionization level increases up to more than 98%. This
+is attributed to a local increase of the temperature in-
+side plasmoids, giving rise to an increase of H+ due to
+ionization process, as illustrated in panel I of Fig. 10.
+In MFMS, the friction of hydrogen species with neu-
+tral helium allows a higher temperature level in the plas-
+moids than in TF during the plasmoid instability phase,
+as described in the previous Section 5.3. This level of
+temperature is high enough to ionize helium, as illus-
+trated in Fig. 8 characterized by a large increase of the
+
+Magnetic reconnection in the upper chromosphere
+21
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+A, t=113.50 s
+MFMS
+F, t=282.00 s
+MFMS
+K, t=327.50 s
+-4.00
+-2.33
+-0.67
+1.00
+log10(
+ion
+H, H +) [s
+1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+B, t=113.50 s
+MFMS
+G, t=282.00 s
+MFMS
+L, t=327.50 s
+-4.00
+-3.00
+-2.00
+-1.00
+log10(
+rec
+H + , H) [s
+1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+MFMS
+C, t=113.50 s
+MFMS
+H, t=282.00 s
+MFMS
+M, t=327.50 s
+-4.00
+-2.33
+-0.67
+1.00
+log10(
+ion
+He, He +) [s
+1]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+D, t=113.50 s
+TF
+I, t=282.00 s
+TF
+N, t=327.50 s
+-4.00
+-2.33
+-0.67
+1.00
+log10(
+ion
+H, H +) [s
+1]
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+1.9
+2.1
+2.3
+2.5
+y [Mm]
+TF
+E, t=113.50 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+J, t=282.00 s
+0.0
+0.8
+1.6
+2.4
+3.2
+4.0
+z [Mm]
+TF
+O, t=327.50 s
+-4.00
+-3.00
+-2.00
+-1.00
+log10(
+rec
+H + , H) [s
+1]
+Figure 10. Distribution of the decimal logarithm of the ionization and recombination frequencies in s−1 of MFMS (ﬁrst three
+rows) and TF (last two rows) at diﬀerent times t = 113.5 s, t = 282 s and 327.5 s for any (y, z) ∈[1.8, 2.6] × [0.4, 4] Mm (from
+left to right column) respectively. From top to bottom row: distribution of νion
+H,H+, νrec
+H+,H and νion
+He,He+ in MFMS, and distribution
+of νion
+H,H+, νrec
+H+,H in TF. Note that the distribution of νrec
+He+,He is not shown since the magnitude is negligible and much smaller
+than 10−4 s−1. An animation of this ﬁgure is available.
+black dot line. This is also illustrated in panels H and
+M of Fig. 10 where we can clearly see that νion
+He+,He in-
+creases drastically, especially in the core of plasmoids.
+At this moment, a self-sustaining mechanism occurs. In-
+deed, when He+ species are produced, they collide with
+both H+ and He, as described in Section 5.3. In this
+context, an additional heating process occurs due to col-
+lisions involving He+. This eﬀect will slightly increase
+the temperature at the center of the plasmoid, leading
+to even more He+ due to the ionization process. This
+is characterized by the increase of νion
+He+,He in the core of
+plasmoids, as illustrated in panels H and M of Fig. 10.
+5.4.2. Chemical fractionation in MFMS
+In this section, we focus only on MFMS and chemi-
+cal fractionation between helium and hydrogen species
+during the reconnection process. In Fig. 9 (last row),
+the distributions of the helium species molar fraction at
+diﬀerent times, corresponding to the laminar and plas-
+moid instability phase, is shown. The molar fraction is
+deﬁned as (nHe + nHe+)/(P
+aI∈M naI).
+During the laminar phase, in MFMS, the helium
+species molar fraction (panel C of Fig. 9) decreases in
+the current sheet (from 7.9% to 6%). Additionally, we
+also notice a small increase of the helium species molar
+fraction at the boundary of the current sheet close to
+the outﬂow regions. Indeed, since helium is not ionized,
+these eﬀects are attributed to the accumulation of neu-
+
+22
+Wargnier et al.
+tral helium species which are decoupled from hydrogen
+species nearby the current sheet, as described in Sec-
+tion 5.2.
+During the plasmoid instability phase, the helium
+species molar fraction increases (from 6% to 10%) in
+the core of plasmoids, as shown in panel F of Fig. 9).
+This separation process, also called chemical fractiona-
+tion, occurs inside the plasmoids and remains even when
+the latter are advected along the z axis. This separation
+process occurs due to the ionization of helium species
+during the instability phase.
+At a later time of the plasmoid instability phase, the
+chemical fractionation process gets stronger, leading to
+more helium species inside the current sheet that are
+advected towards outﬂow regions. This eﬀect is illus-
+trated in panel I of Fig. 9. Indeed, an increase of helium
+species, up to 12%, in the middle of the current sheet
+at y = L0/2 and z ∈[0.4, 1.5] Mm is shown. Note that
+the fusion of plasmoids also leads to a large increase of
+helium abundance as we can see in the same ﬁgure, in
+the current sheet at z = 2.9 Mm.
+To characterize the chemical fractionation in the out-
+ﬂows, the ﬂuxes in number densities of helium and hy-
+drogen species have been calculated and compared at
+the exhaust of the reconnection event until tend = 454 s.
+These calculations have been performed at a ﬁxed z =
+0.825 Mm. For any species aI ∈M, its corresponding
+ﬂux in number density is calculated as
+φ (aI) = dt dx
+Z
+ly
+[uz,aInaI] (y, z = 0.825 Mm) dy,
+(22)
+where dx is the grid size in the x direction and set to one,
+ly is the length in the y direction limited to the outﬂow
+region. We deﬁne the outﬂow regions as the FWHM of
+the maximum outﬂow at z = 0.825 Mm. Similarly as
+the thickness of the current sheet in Section 5.1, this
+length has been calculated by locating the maximum
+outﬂow velocity at z = 0.825 Mm. Then, we consider
+the termination of the exhaust at approximately 90% of
+this maximum in the y direction to estimate ly.
+Figure 11 shows the time evolution of the maximum
+and mean total outﬂow velocity (left) and the ratio of
+ﬂux of helium species with respect to the ﬂux of all
+species φ(He+He+)/(φ(He+He+)+φ(H+H+)) (right).
+In Fig. 11, if the ratio is above 0.079 (corresponding to
+the initial total number density of helium species 7.9%
+shown in Table 1) means helium enrichment and, other-
+wise, hydrogen enrichment.
+Our calculations show that during most of the recon-
+nection process, the ﬂux in the number density of helium
+species represents from 6 to 8% of the total ﬂux of all
+species, as shown in the bottom left panel of Fig. 11.
+Helium is enhanced at the exhaust when the helium
+ionization starts at t ≈250 s during the plasmoid in-
+stability regime. It increases the helium ﬂux up to 14%
+of the total ﬂux, as shown in the bottom left panel of
+Fig. 11. These calculations are consistent with our ﬁg-
+ures presented in Fig. 9. The helium enrichment in the
+outﬂows during the strongest ﬂows and late-formed plas-
+moids also depends on the amount of helium species col-
+lected during the formation of plasmoids and the current
+sheet. In some localized events on the right-hand side of
+the reconnection, we found the opposite behavior when
+He has been previously deployed, and hydrogen is left
+in the latest plasmoids leading to the opposite, i.e., en-
+richment of hydrogen.
+Note that, from t ≈250 s to tend = 454 s, strong vari-
+ations of the maximum and mean total outﬂow velocity
+at the exhaust appear, as shown in the top left of Fig. 11
+ranging between 15 km s−1 to 24 km s−1 for the maxi-
+mum outﬂow velocity. These peaks coincide with peaks
+in the ﬂux of helium species with respect to the total
+ﬂux, as shown in the bottom left of Fig. 11. We note
+that helium species are mostly ionized at the exhaust,
+as illustrated in Fig. 8 on the right.
+Taking into account the complexity of the chemical
+evolution, chromospheric reconnection may play a role
+in helium enrichment. In short, at the laminar phase,
+the ionization fraction for hydrogen is higher, and it is
+slowly expelled.
+At that time, outﬂows are relatively
+small. However, during the second phase, with stronger
+ﬂows and plasmoids, the number of helium atoms is
+larger and helium is ionized due to the temperature in-
+crease, resulting in an enrichment of helium at the out-
+ﬂows. However, as mentioned above, in some locations
+of the right-hand side of the reconnection, stronger ﬂows
+also could produce hydrogen enrichment depending on
+the history of the plasma evolution inside the current
+sheet, so care must be taken when interpreting these
+results.
+6. CONCLUSIONS AND DISCUSSION
+In order to study a magnetic reconnection event under
+upper chromospheric conditions, we have focused on a
+multi-ﬂuid multi-species (MFMS) MHD model and com-
+pared it with a two-ﬂuid (TF) MHD model using Ebysus
+code. The MFMS model is an extension of the TF ap-
+proach, generalized to any possible species with diﬀer-
+ent ionization levels, considered as separate ﬂuids and
+coupled altogether with collisions and ionization or re-
+combination processes. Both models include anisotropic
+electron thermal conductivity and radiative losses. In
+this work, we have focused on two diﬀerent mixtures:
+a helium-hydrogen mixture (MFMS model) M and a
+hydrogen or two-ﬂuid (TF model) mixture MTF. By
+doing so, our strategy allows the comparison of the clas-
+sical two-ﬂuids approach (see Leake et al. 2012, 2013;
+Murtas et al. 2021) with a MFMS approach and high-
+light the role of the helium species in a chromospheric
+reconnection event. Unlike previous studies of chromo-
+spheric magnetic reconnection from the literature (see
+
+Magnetic reconnection in the upper chromosphere
+23
+0
+100
+200
+300
+400
+Time [s]
+0
+5
+10
+15
+20
+25
+Max uz, tot at exhaust [km s-1]
+max(uz, tot)
+mean(uz, tot))
+0
+100
+200
+300
+400
+Time [s]
+0.04
+0.06
+0.08
+0.10
+0.12
+0.14
+Ratio flux [-]
+ratio (He + He + )/( (He + He + ) +
+(H + H + ))
+Figure 11. Distribution of the evolution in time of the maximum and mean total outﬂow velocity (left) and the ratio of ﬂuxes
+φ(He + He+)/(φ(He + He+) + φ(H + H+)) (right) for MFMS at the exhaust. On the left ﬁgure, the full and dashed black lines
+correspond to the maximum and mean total outﬂow velocity.
+Leake et al. 2012, 2013; Murtas et al. 2021), the col-
+lisional frequencies are not assumed constant but are
+calculated accurately based on a formalism with colli-
+sion integrals consistent at the kinetic level with the
+13N moment model, as described with further details
+in Wargnier et al. (2022).
+For the two approaches TF and MFMS, we have con-
+sidered a perturbed Harris current sheet in upper chro-
+mospheric conditions, inspired by Leake et al. (2012);
+Leake & Linton (2013). We have compared and ana-
+lyzed results in both cases at diﬀerent levels: the evo-
+lution of the total current sheet, the velocity ﬁelds and
+decoupling of the particles, the composition and evolu-
+tion of the ionization levels in MFMS and TF, and the
+main heating processes.
+For both cases, we have two diﬀerent phases: 1- a lam-
+inar phase where an elongated current sheet is formed
+and 2- a plasmoid instability phase where many plas-
+moids are formed and are advected from the middle
+of the reconnection region towards the outﬂow regions.
+Our calculations have shown that the evolution of the
+current sheet and the structure of the total velocity
+ﬁelds slightly diﬀers between MFMS and TF. Indeed,
+in MFMS, the presence of helium species slightly slows
+the ﬂow, leading to slightly smaller velocities in MFMS
+than in TF. Additionally, the average thickness of the
+current sheet and plasmoids is larger in MFMS than in
+TF while the average length of the current sheet is sim-
+ilar between the two.
+During the laminar phase, outﬂow and inﬂow veloci-
+ties are formed due to the Lorentz force generated by the
+initial structure of the magnetic ﬁeld. In both MFMS
+and TF, velocities reach 20 km s−1 and 3.5 km s−1 in
+the z and y directions, respectively. In both directions,
+in MFMS, our calculations have shown that the drift
+velocity between H+ and He is much higher than any
+other drift velocities. This decoupling is due to the fact
+that neutrals He decouples from H and H+ when the
+thickness of the current sheet thins down to the order
+of the mean free path between He and H+ or H, and,
+neutral He atoms are not dragged into the current sheet
+as quickly as H and H+. The fact that He decouples
+from H and H+ and not H with H+ is attributed to
+smaller collisional rate for He-H+ or He-H interactions
+than for H-H+ interactions in upper chromospheric con-
+ditions. We refer to Wargnier et al. (2022) for further
+details about the magnitude of these collisional rates.
+The relatively large He and H+ drift velocity in MFMS
+does not occur in the TF model since the latter considers
+only hydrogen species, i.e., H and H+.
+During the plasmoid instability phase, the amplitude
+of all the drift velocities is increasing in both MFMS
+and TF. The amplitude of the drift velocity associated
+with He-H+ interactions is the highest inside plasmoids.
+In MFMS, the drift between H and H+ is stronger at
+the boundary of plasmoids and inside the current sheet,
+while it is approximately three times smaller and shows
+an oscillating pattern parallel to the current sheet in
+TF. In both MFMS and TF, the decoupling between
+H and H+ occurs because the thickness of the current
+sheet continues to thin down to the order of the mean
+free path between H and H+, and, neutral H does not
+collide enough with H+ during the plasmoid instability
+phase, similarly to He-H+ interactions in MFMS during
+the laminar phase. The amplitude of the drift between H
+and H+ is smaller in TF than in MFMS - meaning that
+the collisional coupling is stronger in TF than in MFMS
+due to the presence of helium species, as described with
+further details in Section 5.2.
+
+24
+Wargnier et al.
+In both models, the main heating processes are due to
+the drift velocities between any possible particles, also
+written as Qu,col
+aI,a′I′. During the laminar phase, our cal-
+culations have shown that adding helium in the model
+allows to considerably increase the temperature of the
+plasma in the current sheet compared to TF. Inside the
+current sheet, the temperature is approximately 28000 K
+in MFMS and 19000 K in TF. In this context, a suﬃ-
+cient level of temperature is reached due to collisions
+associated with H-H+ in the current sheet to ionize he-
+lium.
+Finally, collisions associated with He-He+ and
+He-H+ produce a small additional heating in the core of
+plasmoids and allows to maintain the temperature level
+to 60000 K whereas only 30000 K is reached with TF.
+Note that since the electrons are strongly coupled by
+collisions with H+ species, the maximum electron tem-
+perature reached is also at 60000 K.
+In the MFMS approach, due to the weak coupling be-
+tween neutral helium and other species, strong thermal
+decoupling eﬀects have been obtained at a later time of
+the plasmoid instability phase. Our results have demon-
+strated that the temperature of neutral helium inside
+plasmoids can increase drastically up to 90 000 K while
+the temperatures of other species reach a maximum of
+70 000 K. Note that a potential improvement of these
+models would be to include photoionization of helium
+species, as highlighted by Golding et al. (2014, 2016).
+By combining a model where the collisional rates have
+been calculated accurately with an eﬃcient numerical
+strategy, we have demonstrated that in upper chromo-
+spheric magnetic reconnection the inclusion of helium
+species in the system allows a considerable increase tem-
+perature of the plasma while the ﬂows are weaker than a
+model where only hydrogen species are considered. This
+large increase of temperature compared to a classical
+two-ﬂuid case is associated with a weak coupling be-
+tween neutral helium and hydrogen that leads to a high
+energy release due to large drift velocities in the cur-
+rent sheet and inside plasmoids. In addition, during the
+plasmoid instability phase, inside the plasmoids, two ef-
+ﬁcient mechanisms can occur and allow an additional
+increase of the temperature: the production of He+ due
+to ionization and recombination processes and collisions
+with other species, and thermal decoupling eﬀects which
+can increase the temperature of neutral helium species
+locally.
+These mechanisms are able to easily increase
+the temperature of the plasma during the plasmoid in-
+stability regime of a magnetic reconnection event from
+upper chromospheric temperatures (16 000 K) to tran-
+sition region temperatures (90 000 K) on typical spatial
+and temporal scales of Megameters and minutes respec-
+tively.
+During the laminar phase, the total ionization level
+is much higher in MFMS (from 85% to 95%) than in
+TF (from 70%) to 80%) due to more eﬃcient heating
+mechanisms in MFMS, as described previously, leading
+to higher temperature in the current sheet giving rise to
+a large increase of the total ionization level, mostly pop-
+ulated by H+. During the plasmoid instability phase,
+in both MFMS and TF, the total ionization level in-
+creases drastically in the current sheet and plasmoids.
+In MFMS, both neutral hydrogen and helium species
+are ionizing, thus, the plasmoids and current sheet are
+mostly populated by H+ and He+.
+In TF, the total
+ionization level inside the plasmoids, mostly due to the
+presence of H+ species, is slightly smaller than in MFMS
+and is ranging from 80 to 98%.
+Note at a later time of the plasmoid instability phase,
+chemical fractionation eﬀects have been captured in
+MFMS. Indeed, as shown in Section 5.4, helium and
+hydrogen species are separated inside the current sheet,
+characterized by an increase of helium species (from 5
+to 12%) and a decrease of hydrogen species (from 98%
+to 89%), which are advected in the outﬂow directions,
+along the z axis. During the plasmoid instability phase,
+the temperature increase inside the current sheet and re-
+sults in the ionization of helium species leading to helium
+species enrichment at the exhaust of the reconnection.
+Our study suggest that reconnection could lead to an
+enrichment of helium during the strong outﬂow regimes
+under certain conditions. This mechanism, out of reach
+of single-ﬂuid or two-ﬂuid MHD approaches, might ex-
+plain the enhancement of helium species observed at
+upper layers of the solar atmosphere associated to the
+switchbacks (Fargette et al. 2021; Bale et al. 2021) from
+the upper chromosphere. Similarly, intriguing observa-
+tions of enhanced Helium abundance in CMEs have been
+linked to reconnection events in the chromosphere (Fu et
+al. 2020). Our results suggest that in the upper layer of
+the solar atmosphere, any event associated with a large
+variation or reconﬁguration of the magnetic ﬁeld could
+in principle release a suﬃcient level of energy to pro-
+duce this chemical fractionation between hydrogen and
+helium species while increasing the temperature of the
+plasma.However, a simulation of a full stratiﬁed atmo-
+sphere with a helium-hydrogen mixture, including alpha
+particles, while guaranteeing that most of the mean free
+paths in that mixture are spatially resolved, would be
+necessary to further investigate this issue.
+7. ACKNOWLEDGMENTS
+We gratefully acknowledge support by NASA con-
+tracts, NNX17AD33G, 80NSSC18K1285, 80NSSC20K1272,
+and NNG09FA40C (IRIS), NSF contract AST1714955.
+Resources supporting this work were provided by the
+NASA High-End Computing (HEC) Program through
+the NASA Advanced Supercomputing (NAS) Division
+at Ames Research Center. The simulations have been
+run on clusters from the Notur project, and the Pleiades
+cluster through the computing project s1061, s2053
+and s8305.
+We thankfully acknowledge the support
+of the Research Council of Norway through contract
+230938/F50 and through grants of computing time from
+the Programme for Supercomputing.
+
+Magnetic reconnection in the upper chromosphere
+25
+APPENDIX
+A. DEFINITION OF THE MFMS RESISTIVITY IN SMALL DRIFT VELOCITIES ASYMPTOTIC LIMIT
+By considering the deﬁnition of the electric ﬁeld and electron velocity from Eqs. 12 and 14 it is possible to provide
+a new deﬁnition of the resistivity of the MFMS model in terms of collision integrals Ω1,1
+e,aI(µe,aI), aI ∈H following
+Wargnier et al. (2022). Indeed, assuming that the mass of the electrons is much smaller than the mass of any heavy
+particles, the collisional frequencies between e and any aI ∈H reads
+νcol
+e,aI = 4
+3
+me,aI
+me naI|uth
+e,aI| Ω1,1
+e,a′I′(µe,aI) ≈4
+3naI|uth
+e | Ω1,1
+e,a′I′(µe),
+(A1)
+where the thermal speed is simply deﬁned as |uth
+e | =
+p
+8/πµe. If we consider the deﬁnition of Eq. A1 and the third
+term of Eq. 12 we obtain
+−1
+neqe
+Rcol
+e
+= 4
+3
+me|uth
+e |
+q2e xˆ
+I
+X
+aI∈H
+xaIΩ1,1
+e,aI(µe)
+" X
+a′I′∈H
+na′I′qa′I′ua′I′ −J −neqeuaI
+#
+.
+(A2)
+where xˆI = ne/(ne + P
+aI∈H naI) is the ionization fraction of the whole plasma and xaI = naI/(ne + P
+a′I′∈H na′I′)
+is the molar fraction of particle aI ∈H. Eq. A2 can be interpreted as the resistive term of the MFMS model. In the
+limit where drift velocities are smaller than the hydrodynamic velocity of the plasma or if the plasma is fully ionized
+or if the plasma is composed only of one type of ionized species Eq. A2 simpliﬁes to
+1
+neqe
+Rcol
+e
+≈
+"
+4
+3
+me|uth
+e |
+q2e xˆ
+I
+X
+aI∈H
+xaIΩ1,1
+e,aI(µe)
+#
+J = ηJ,
+(A3)
+where the resistivity is deﬁned as η =
+4
+3
+me|uth
+e |
+q2e xˆ
+I
+P
+aI∈H xaIΩ1,1
+e,aI(µe).
+Therefore, we have been able to deﬁne the
+resistivity of the MFMS model in terms of collision integrals for any possible mixture valid in the asymptotic limit
+where where the drift velocities are assumed to be much smaller than the hydrodynamic velocities of the MFMS
+plasma. Note that this resistivity coeﬃcient is always true for the TF case based on M2TF.
+B. COMPACT FORM OF THE MFMS GOVERNING EQUATIONS
+The presented system 1,4,6,7 and 13 of the MFMS model can be rewritten in a compact form. By doing so, we can
+easily distinguish the nature of the diﬀerent terms involved in the system. The system can be rewritten as
+∂tU + ∇· F (U) + ∇· D (U, ∇U) = Sconv (U, ∇U) + Sstiﬀ(U) ,
+(B4)
+where U ∈R5nH+4, F (U) ∈R3×(5nH+4), D (U, ∇U) ∈R3×(5nH+4), Sconv (U, ∇U) ∈R5nH+4 and Sstiﬀ(U) ∈R5nH+4.
+These terms read
+U=
+ (ρaI)aI∈H, (ρaIuT
+aI)aI∈H, (eaI)aI∈H, ee, BT T ,
+F (U)=((ρaIuaI)aI∈H, (ρaIuaI ⊗uaI + PaII)aI∈H, (eaIuaI)aI∈H, eeue, I ∧(ue ∧B))T ,
+D (U, ∇U)=
+ 0nH, 03×nH, 0nH, κe · ∇kBTe, 03
+
+Sconv (U, ∇U)=
+ 
+0nH,
+
+naIqaI
+
+[uaI + ue] ∧B −∇Pe
+neqe
+
+aI∈H
+,
+−(PaI∇· uaI)aI∈H , −Pe∇· ue, −∇∧
+ 1
+neqe
+∇Pe
+
+Sstiﬀ(U)=
+ maIΓion
+aI + maIΓrec
+aI
+
+aI∈H ,
+
+Rion
+aI + Rrec
+aI + Rcol
+aI +
+naIqaI
+neqe
+
+Rcol
+e
+
+aI∈H
+,
+ Qion
+aI + Qrec
+aI + Qcol
+aI
+
+aI∈H , Qion
+e
++ Qrec
+e
++ Qcol
+e , ∇∧
+Rcol
+e
+neqe
+
+where U are the conservative variables of the system, F the convective ﬂuxes, D the diﬀusive ﬂuxes, κe the anisotropic
+electron thermal conductivity, Sconv the source terms as part of the convective system and Sstiﬀthe stiﬀsource terms
+
+26
+Wargnier et al.
+associated with collisions and ionization/recombination processes, 0nH is a null vector of size nH and I is the identity
+matrix.
+Note that in this system the only diﬀusive ﬂux is the one associated with the Spitzer term in the equation of thermal
+energy of the electrons. The source terms Sconv have characteristic timescales which typically can be much larger than
+Sstiﬀ. Indeed, Sstiﬀhave timescales at the order of the collisional, ionization and recombination rates between all the
+particles aI ∈M. One can notice that the Lorentz force terms in momentum equations have been split into two parts,
+one in the Sconv part and the other one in Sstiﬀ. This is because the part of the Lorentz force as
+h
+naIqaI
+neqe
+i
+Rcol
+e
+has a
+characteristic timescale which is at the order of the collisional time between electrons and heavy-particles, which can
+be much smaller than the other terms of the Lorentz force.
+REFERENCES
+Abdulle A., Vilmart G., 2013, Journal of Computational
+Physics, 242, 869, PIROCK: A swiss-knife partitioned
+implicit–explicit orthogonal Runge–Kutta Chebyshev
+integrator for stiﬀdiﬀusion–advection–reaction problems
+with or without noise
+Aldrovandi S. M. V., Pequignot D., 1973, A&A, 25, 137,
+Radiative and Dielectronic Recombination Coeﬃcients
+for Complex Ions
+Alvarez Laguna A., Lani A., Deconinck H., Mansour N. N.,
+Poedts S., 2016, Journal of Computational Physics, 318,
+252, A fully-implicit ﬁnite-volume method for multi-ﬂuid
+reactive and collisional magnetized plasmas on
+unstructured meshes
+Asplund M., Grevesse N., Sauval A. J., Scott P., 2009,
+ARA&A, 47, 481, The Chemical Composition of the Sun
+Bale S. D., Horbury T. S., Velli M., et al., 2021, The
+Astrophysical Journal, 923, 174, A Solar Source of
+Alfv´enic Magnetic Field Switchbacks: In Situ Remnants
+of Magnetic Funnels on Supergranulation Scales
+Ballester J. L., Alexeev I., Collados M., et al., 2018, SSRv,
+214, 58, Partially Ionized Plasmas in Astrophysics
+Bharti, L. , Hirzberger, J. , Solanki, S. K. , 2013, A&A,
+552, L1, Fine structures in the atmosphere above a
+sunspot umbra
+Bhattacharjee A., Huang Y.-M., Yang H., Rogers B., 2009,
+Physics of Plasmas, 16, 112102, Fast reconnection in
+high-Lundquist-number plasmas due to the plasmoid
+Instability
+Bhattacharjee A., Sullivan B., Huang Y.-M., 2010, Current
+sheet formation and the plasmoid instability in large,
+hyperresistive Hall MHD systems, en APS Division of
+Plasma Physics Meeting Abstracts, Vol. 52, p. CP9
+Brackbill J. U., Barnes D. C., 1980, Journal of
+Computational Physics, 35, 426, The Eﬀect of Nonzero
+div B on the numerical solution of the
+magnetohydrodynamic equations
+Bruno D., Catalfamo C., Capitelli M., et al., 2010, Physics
+of Plasmas, 17, 112315, Transport properties of
+high-temperature Jupiter atmosphere components
+Cargill P., 2013, Astronomy and Geophysics, 54, 3.16, From
+ﬂares to nanoﬂares: magnetic reconnection on the Sun
+Cassak P. A., Shay M. A., Drake J. F., 2009, Physics of
+Plasmas, 16, 120702, Scaling of Sweet–Parker
+reconnection with secondary islands
+Cook A. W., Cabot W. H., 2005, Journal of Computational
+Physics, 203, 379, Hyperviscosity for shock-turbulence
+interactions
+De Pontieu B., McIntosh S. W., Hansteen V. H., Schrijver
+C. J., 2009, ApJL, 701, L1, Observing the Roots of Solar
+Coronal Heating in the Chromosphere
+De Pontieu B., Rouppe van der Voort L., McIntosh S. W.,
+et al., 2014a, Science, 346, D315, On the prevalence of
+small-scale twist in the solar chromosphere and transition
+region
+De Pontieu B., Title A. M., Lemen J. R., et al., 2014b,
+SoPh, 289, 2733, The Interface Region Imaging
+Spectrograph (IRIS)
+Del Zanna, G. , Dere, K. P. , Young, P. R. , Landi, E. ,
+Mason, H. E. , 2015, A&A, 582, A56, CHIANTI - An
+atomic database for emission lines. Version 8
+Descombes S., Massot M., 2004, Numerische Mathematik,
+97, 667, Operator splitting for nonlinear
+reaction-diﬀusion systems with an entropic structure:
+Singular perturbation and order reduction
+Duarte M., Descombes S., Tenaud C., Candel S., Massot
+M., 2013, Combustion and Flame, 160, 1083, Time-space
+adaptive numerical methods for the simulation of
+combustion fronts
+Fargette N., Lavraud B., Rouillard A. P., et al., 2021, The
+Astrophysical Journal, 919, 96, Characteristic Scales of
+Magnetic Switchback Patches Near the Sun and Their
+Possible Association With Solar Supergranulation and
+Granulation
+Fu H., Harrison R. A., Davies J. A., et al., 2020, ApJL,
+900, L18, The High Helium Abundance and Charge
+States of the Interplanetary CME and Its Material
+Source on the Sun
+
+Magnetic reconnection in the upper chromosphere
+27
+Golding T. P., Carlsson M., Leenaarts J., 2014, The
+Astrophysical Journal, 784, 30, Detailed and simpliﬁed
+nonequilibrium helium ionization in the solar atmosphere
+Golding T. P., Leenaarts J., Carlsson M., 2016, The
+Astrophysical Journal, 817, 125, Non-equilibrium helium
+ionization in an mhd simulation of the solar atmosphere
+Golding, T. P. , Leenaarts, J. , Carlsson, M. , 2017, A&A,
+597, A102, Formation of the helium extreme-UV
+resonance lines
+Gontikakis, C. , Winebarger, A. R. , Patsourakos, S. , 2013,
+A&A, 550, A16, Spectral diagnostic of a microﬂare.
+Evidences of resonant scattering in C IV 1548 ˚A, 1550 ˚A
+lines
+Gosling J., 2007, The Astrophysical Journal, 671, L73,
+Observations of magnetic reconnection in the turbulent
+high-speed solar wind
+Graille B., Magin T. E., Massot M., 2009, Mathematical
+Models and Methods in Applied Sciences, 19, 527,
+Kinetic theory of plasmas: translational energy
+Gudiksen B. V., Carlsson M., Hansteen V. H., et al., 2011,
+A&A, 531, A154, The stellar atmosphere simulation code
+Bifrost. Code description and validation
+Guo L.-J., Pontieu B. D., Huang Y.-M., Peter H.,
+Bhattacharjee A., 2020, The Astrophysical Journal, 901,
+148, Observations and Modeling of the Onset of Fast
+Reconnection in the Solar Transition Region
+Hairer E., Wanner G., 1996, Solving Ordinary Diﬀerential
+Equations II. Stiﬀand Diﬀerential-Algebraic Problems,
+Vol. 14
+Hairer E., Wanner G., 1999, Journal of Computational and
+Applied Mathematics, 111, 93, Stiﬀdiﬀerential equations
+solved by Radau methods
+Hansteen V., Ortiz A., Archontis V., et al., 2019, A&A,
+626, A33, Ellerman bombs and UV bursts: transient
+events in chromospheric current sheets
+Hansteen V. H., Archontis V., Pereira T. M. D., et al.,
+2017, ApJ, 839, 22, Bombs and Flares at the Surface and
+Lower Atmosphere of the Sun
+Hansteen V. H., Leer E., Holzer T. E., 1997, ApJ, 482, 498,
+The Role of Helium in the Outer Solar Atmosphere
+Huang Y.-M., Bhattacharjee A., 2010, Physics of Plasmas,
+17, 062104, Scaling laws of resistive
+magnetohydrodynamic reconnection in the
+high-Lundquist-number, plasmoid-unstable regime
+Huang Y.-M., Bhattacharjee A., 2010, Physics of Plasmas,
+17, 062104, Scaling laws of resistive
+magnetohydrodynamic reconnection in the
+high-Lundquist-number, plasmoid-unstable regime
+Huang Y.-M., Bhattacharjee A., 2016, ApJ, 818, 20,
+Turbulent Magnetohydrodynamic Reconnection
+Mediated by the Plasmoid Instability
+Huang Y.-M., Comisso L., Bhattacharjee A., 2017, The
+Astrophysical Journal, 849, 75, Plasmoid Instability in
+Evolving Current Sheets and Onset of Fast Reconnection
+Hyman J., Vichnevtsky R., Stepleman R., 1979, Adv. in
+Comp. Meth, PDE’s-III, 313
+Janev R., Harrison M., Drawin H., 1989, Nuclear Fusion,
+29, 109, Atomic and molecular database for fusion
+plasma edge studies
+Judge P., 2007, The HAO Spectral Diagnostic Package for
+Emitted Radiation (HAOS-DIPER) Reference Guide
+(Version 1.0)
+Kasper J. C., Abiad R., Austin G. W., et al., 2015, Space
+Science Reviews, 204, 131, Solar Wind Electrons Alphas
+and Protons (SWEAP) Investigation: Design of the Solar
+Wind and Coronal Plasma Instrument Suite for Solar
+Probe Plus
+Khomenko E., Collados M., D´ıaz A., Vitas N., 2014,
+Physics of Plasmas, 21, 092901, Fluid description of
+multi-component solar partially ionized plasma
+Khomenko E., Vitas N., Collados M., de Vicente A., 2018,
+ArXiv e-prints, Three-dimensional simulations of solar
+magneto-convection including eﬀects of partial ionization
+Klimchuk J. A., 2015, Philosophical Transactions of the
+Royal Society A: Mathematical, Physical and Engineering
+Sciences, 373, 20140256, Key aspects of coronal heating
+Leake J. E., Arber T. D., 2006, A&A, 450, 805, The
+emergence of magnetic ﬂux through a partially ionised
+solar atmosphere
+Leake J. E., DaldorﬀL. K. S., Klimchuk J. A., 2020, The
+Astrophysical Journal, 891, 62, The Onset of 3D
+Magnetic Reconnection and Heating in the Solar Corona
+Leake J. E., Linton M. G., 2013, ApJ, 764, 54, Eﬀect of
+Ion-Neutral Collisions in Simulations of Emerging Active
+Regions
+Leake J. E., Lukin V. S., Linton M. G., 2013, Physics of
+Plasmas, 20, 061202, Magnetic reconnection in a weakly
+ionized plasma
+Leake J. E., Lukin V. S., Linton M. G., Meier E. T., 2012,
+ApJ, 760, 109, Multi-ﬂuid Simulations of Chromospheric
+Magnetic Reconnection in a Weakly Ionized Reacting
+Plasma
+Loureiro N. F., Cowley S. C., Dorland W. D., Haines
+M. G., Schekochihin A. A., 2005, Physical Review
+Letters, 95, X-Point Collapse and Saturation in the
+Nonlinear Tearing Mode Reconnection
+
+28
+Wargnier et al.
+Loureiro N. F., Uzdensky D. A., 2015, Plasma Physics and
+Controlled Fusion, 58, 014021, Magnetic reconnection:
+from the Sweet–Parker model to stochastic plasmoid
+chains
+Mart´ınez-Sykora J., Moreno-Insertis F., Cheung M. C. M.,
+2015, ApJ, 814, 2, Multi-parametric Study of Rising 3D
+Buoyant Flux Tubes in an Adiabatic Stratiﬁcation Using
+AMR
+Mart´ınez-Sykora J., Szydlarski M., Hansteen V. H., Pontieu
+B. D., 2020, The Astrophysical Journal, 900, 101, On the
+Velocity Drift between Ions in the Solar Atmosphere
+Murtas G., Hillier A., Snow B., 2021, Physics of Plasmas,
+28, 032901, Coalescence instability in chromospheric
+partially ionized plasmas
+Ni L., Germaschewski K., Huang Y.-M., et al., 2010,
+Physics of Plasmas, 17, 052109, Linear plasmoid
+instability of thin current sheets with shear ﬂow
+Ni L., Ji H., Murphy N. A., Jara-Almonte J., 2020,
+Proceedings of the Royal Society A: Mathematical,
+Physical and Engineering Sciences, 476, 20190867,
+Magnetic reconnection in partially ionized plasmas
+Ni L., Lin J., Murphy N. A., 2013, Physics of Plasmas, 20,
+061206, Eﬀects of the non-uniform initial environment
+and the guide ﬁeld on the plasmoid instability
+Ni L., Lukin V. S., 2018, The Astrophysical Journal, 868,
+144, Onset of Secondary Instabilities and Plasma Heating
+during Magnetic Reconnection in Strongly Magnetized
+Regions of the Low Solar Atmosphere
+Ni L., Ziegler U., Huang Y.-M., Lin J., Mei Z., 2012,
+Physics of Plasmas, 19, 072902, Eﬀects of plasma beta on
+the plasmoid instability
+Niedziela, R. , Murawski, K. , Poedts, S. , 2021, A&A, 652,
+A124, Chromospheric heating and generation of plasma
+outﬂows by impulsively generated two-ﬂuid
+magnetoacoustic waves
+N´obrega-Siverio D., Mart´ınez-Sykora J., Moreno-Insertis F.,
+Rouppe van der Voort L., 2017, ApJ, 850, 153, Surges
+and Si IV Bursts in the Solar Atmosphere: Understanding
+IRIS and SST Observations through RMHD Experiments
+Nordlund ˚A., 1982, Aap, 107, 1, Numerical simulations of
+the solar granulation. I - Basic equations and methods
+Parker E. N., 1955, ApJ, 122, 293, Hydromagnetic Dynamo
+Models.
+Parker E. N., 1963, ApJS, 8, 177, The Solar-Flare
+Phenomenon and the Theory of Reconnection and
+Annihiliation of Magnetic Fields.
+Pelekhata, M. , Murawski, K. , Poedts, S. , 2021, A&A,
+652, A114, Solar chromosphere heating and generation of
+plasma outﬂows by impulsively generated two-ﬂuid
+Alfv´en waves
+Peter H., Tian H., Curdt W., et al., 2014, Science, 346,
+1255726, Hot explosions in the cool atmosphere of the
+Sun
+Popescu Braileanu, B. , Lukin, V. S. , Khomenko, E. , de
+Vicente, ´A. , 2019, A&A, 627, A25, Two-ﬂuid simulations
+of waves in the solar chromosphere - I. Numerical code
+veriﬁcation
+Pucci F., Singh K. A. P., Tenerani A., Velli M., 2020a, The
+Astrophysical Journal Letters, 903, L19, Tearing Modes
+in Partially Ionized Astrophysical Plasma
+Pucci F., Velli M., Shi C., et al., 2020b, Journal of Plasma
+Physics, 86, 535860601, Onset of fast magnetic
+reconnection and particle energization in laboratory and
+space plasmas
+Rempel M., 2016, The Astrophysical Journal, 834, 10,
+Extension of the MURAM radiative MHD code for
+coronal simulations
+Rempel M., Przybylski D., 2021, The Astrophysical
+Journal, 923, 79, Eﬃcient Numerical Treatment of
+Ambipolar and Hall Drift as Hyperbolic System
+Rouppe van der Voort L., De Pontieu B., Scharmer G. B.,
+et al., 2017, ApJL, 851, L6, Intermittent Reconnection
+and Plasmoids in UV Bursts in the Low Solar
+Atmosphere
+Soler R., Ballester J. L., 2022, Frontiers in Astronomy and
+Space Sciences, 9, Theory of Fluid Instabilities in
+Partially Ionized Plasmas: An Overview
+Spitzer L., 1956, Physics of Fully Ionized Gases.
+Interscience Publishers, New York
+Steinolfson R. S., Hoven G. V., 1984, The Physics of Fluids,
+27, 1207, Nonlinear evolution of the resistive tearing
+mode
+Sweet P. A., 1958, The Neutral Point Theory of Solar
+Flares, en Lehnert B. (ed.), Electromagnetic Phenomena
+in Cosmical Physics, Vol. 6, p. 123
+Ugai M., 1995, Physics of Plasmas, 2, 388, Computer
+studies on powerful magnetic energy conversion by the
+spontaneous fast reconnection mechanism
+Vernazza J. E., Avrett E. H., Loeser R., 1981, ApJS, 45,
+635, Structure of the solar chromosphere. III - Models of
+the EUV brightness components of the quiet-sun
+Vernazza J. E., Mason H. E., 1978, ApJ, 226, 720, Density
+sensitivity of the solar EUV emission from boron-like ions
+Wargnier Q., 2019, Ph.D. thesis, CMAP, Ecole
+Polytechnique
+Wargnier Q., Laguna A. A., Kestener P., et al., 2018,
+Journal of Physics: Conference Series, 1125, 012021,
+Multicomponent ﬂuid model for two-temperature
+plasmas derived from kinetic theory : application to
+magnetic reconnection
+
+Magnetic reconnection in the upper chromosphere
+29
+Wargnier Q. M., Mart´ınez-Sykora J., Hansteen V. H.,
+Pontieu B. D., 2022, The Astrophysical Journal, 933,
+205, Detailed Description of the Collision Frequency in
+the Solar Atmosphere
+Wilkins M. L., 1980, Journal of Computational Physics, 36,
+281, Use of artiﬁcial viscosity in multidimensional ﬂuid
+dynamic calculations
+W´ojcik, D. , Ku´zma, B. , Murawski, K. , Musielak, Z. E. ,
+2020, A&A, 635, A28, Wave heating of the solar
+atmosphere without shocks
+Woolley T., Matteini L., McManus M. D., et al., 2021,
+Monthly Notices of the Royal Astronomical Society, 508,
+236, Plasma properties, switchback patches, and low
+alpha particle abundance in slow Alfv´enic coronal hole
+wind at 0.13 au
+Young P. R., 2018, ApJ, 855, 15, Element Abundance
+Ratios in the Quiet Sun Transition Region
+Zhdanov V., 2002, Transport Processes in Multicomponent
+Plasma, Vol. 44. Taylor & Francis Group
+Zweibel E. G., Lawrence E., Yoo J., et al., 2011, Physics of
+Plasmas, 18, 111211, Magnetic reconnection in partially
+ionized plasmas

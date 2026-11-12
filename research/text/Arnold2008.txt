@@ -1,0 +1,762 @@
+arXiv:0712.2506v1  [physics.comp-ph]  15 Dec 2007
+A semi–implicit Hall-MHD solver using
+whistler wave preconditioning
+Lukas Arnold, J¨urgen Dreher and Rainer Grauer
+Theoretische Physik I, Ruhr-Universit¨at Bochum, Germany
+Abstract
+The dispersive character of the Hall-MHD solutions, in particular the whistler waves,
+is a strong restriction to numerical treatments of this system. Numerical stability
+demands a time step dependence of the form ∆t ∝(∆x)2 for explicit calculations. A
+new semi–implicit scheme for integrating the induction equation is proposed and ap-
+plied to a reconnection problem. It it based on a ﬁx point iteration with a physically
+motivated preconditioning. Due to its convergence properties, short wavelengths
+converge faster than long ones, thus it can be used as a smoother in a nonlinear
+multigrid method.
+Key words: ﬁnite-diﬀerence methods, collisionless plasmas, whistler waves,
+reconnection
+PACS: 02.70.Bf, 52.35.Hr 52.35.Vd 52.65.Kj
+1
+Introduction
+In many space-, astrophysical and high temperature plasma systems collisions
+do not play the most important role in describing the departure from the ideal
+magnetohydrodynamics (MHD)
+∂tρ = −∇· (ρ⃗v)
+(1)
+∂t⃗v = −(⃗v · ∇)⃗v +
+⃗j × ⃗B
+ρ
+−∇p
+ρ
+(2)
+∂t ⃗B = −∇× ⃗E
+(3)
+⃗j = ∇× ⃗B ,
+(4)
+where ρ, ⃗v, ⃗B and p denote mass density, velocity, magnetic ﬁeld and pres-
+sure, respectively. Typical examples include ﬁlamentation and singularity for-
+mation, collisionless reconnection and collisionless shocks [1,2,3,4,5,6,7,8,9].
+Preprint submitted to Elsevier Science
+26 August 2021
+
+Therefore, on scales smaller than the ion inertia length additional processes
+have to be taken into account in a generalized Ohm’s law
+⃗E = η⃗j −⃗v × ⃗B + mi
+Zeρ
+⃗j × ⃗B −∇pe
+
+.
+(5)
+Numerically, the most diﬃcult term is the Hall-term:
+⃗EHall = mi
+Zeρ
+⃗j × ⃗B = di
+ρ
+⃗j × ⃗B .
+(6)
+It allows for whistler wave solutions with a quadratic dispersion relation and
+thus poses a severe time step restriction for a temporal explicit discretisation.
+To introduce our treatment of the Hall-term, we simplify our system and use
+only this electric ﬁeld in the induction equation which decouples it from the
+other part of the MHD equations and yields the following nonlinear equation
+∂t ⃗B = −∇×
+ di
+ρ
+
+∇× ⃗B
+
+× ⃗B
+!
+.
+(7)
+Solutions of the linearized equations are the whistler waves mentioned above
+which satisfy the dispersion relation ω = di| ⃗B|
+ρ k2, for a constant density ρ and
+a guiding ﬁeld magnitude | ⃗B|. Numerical approaches using explicit schemes
+applied to this equation must ensure that the chosen time step fulﬁlls ∆t ∝
+(∆x)2, due to the Courant-Levy-Friedrichs criterion – ∆x denoting the grid
+spacing. The CFL number is given by the ratio of the phase velocity to the
+grid velocity
+
+∆x
+∆t
+
+CFL = ω(k)
+k
+∆t
+∆x =
+di∆t
+ ⃗B
+
+ρ∆x2
+=⇒∆t = CFL
+ρ
+di
+ ⃗B
+
+∆x2 ,
+where k = kmax =
+2π
+∆x is the maximum wave number. Thus resolving small
+structures, e.g. the reconnection zone, results in large computation times, due
+to the unavoidable small time steps.
+Implicit schemes allow to avoid this restrictive condition by providing uncon-
+ditional numerical stability. Much progress on implicit solvers has been done
+by Harned and Miki´c [10] and Chac´on and Knoll [11]. However, the approach
+of [10] requires a guiding magnetic ﬁeld and the approach of [11] can’t eas-
+ily be adopted for simulations with adaptive mesh reﬁnements [12,13,14,15],
+although work in this direction is in progress.
+Here we present a simple physics based semi–implicit Crank-Nicolson type
+scheme which due to its locality properties is suitable for parallel computations
+as well as for use in adaptive mesh reﬁnement simulations. This physics based
+2
+
+solver uses a whistler wave decomposition to accelerate the ﬁx-point iteration.
+Due to its convergence properties it can act as a smoother for a nonlinear
+multigrid scheme.
+The ﬁrst part of this paper presents the general numerical method which then
+is specialized to one dimension. This allows us to show analytically its con-
+vergence. After that the nonlinear two-dimensional case and its convergence
+are presented, while in the last section our method is used to solve a two-
+dimensional reconnection problem.
+2
+Numerical Method
+The Richardson iteration [16] is the base of our solver. A Richardson iteration
+is the most general ﬁx point iteration for a nonlinear equation ⃗F(⃗x) = 0
+⃗xk+1 = ⃗K(⃗xk)
+with
+⃗K(⃗x) = ⃗x −α ⃗F(⃗x) ,
+(8)
+where k is the iteration index. Given a contractive map ⃗K, the ⃗xk converge in
+the limit k →∞. The rate of convergence will in general depend on α. The
+main task is to ﬁnd a suitable preconditioner adapted to the Hall-term. This
+can be realized as a matrix P
+⃗K(⃗x) = ⃗x −αP⃗F(⃗x) .
+(9)
+In the special case of the Newton iteration P is the inverse of the Jacobi matrix
+of ⃗F. Here, we try to ﬁnd a physics based preconditioner which is more local
+and thus suitable for parallel and block-adaptive calculations.
+For the Crank-Nicolson type discretisation, we obtain
+⃗Bn+1 −⃗Bn
+∆t
+= −∇×
+ di
+ρ
+
+∇× ⃗B∗
+× ⃗B∗
+!
+(10)
+with ⃗B∗= 1
+2( ⃗Bn+1 + ⃗Bn) and where ⃗Bn is the magnetic ﬁeld taken at the time
+step n (time steps are indicated by the ﬁrst upper index). The equation to be
+solved reads now
+⃗F( ⃗Bn+1) =
+⃗Bn+1 −⃗Bn
+∆t
++ ∇×
+ di
+ρ
+
+∇× ⃗B∗
+× ⃗B∗
+!
+(11)
+= 0 .
+(12)
+Its solution with a given ⃗Bn is the magnetic ﬁeld at the next time step n + 1.
+To determine a solution we iterate equation (11) following the method given
+by (8). At this point we introduce an additional upper index which deﬁnes
+3
+
+the iteration step. So that ⃗Bn+1,k is k-th iteration of the magnetic ﬁeld for the
+time step n + 1.
+As mentioned above, the important point in this iteration is the precondition-
+ing. To motivate our preconditioner, we start with the one-dimensional version
+of eqn. (7), where ⃗B depends only on x. In the one-dimensional case, we have
+the special situation that the ﬁx-point problem reduces to a linear one. In
+this case, our physics based preconditioner reduces to the standard ω-Jacobi
+iteration. In more than one dimensions the situation is genuinely nonlinear
+but the smoothing properties of our preconditioner are still similar to that of
+a Jacobi iteration for linear problems.
+3
+Linear 1D Case
+Considering only the x direction results in the following system of equations
+∂t
+
+
+
+
+
+
+
+Bx
+By
+Bz
+
+
+
+
+
+
+
+=
+
+
+
+
+
+
+
+0
+B0di
+ρ ∂xx(Bz)
+−B0di
+ρ ∂xx(By)
+
+
+
+
+
+
+
+(13)
+The x component of ⃗B is initially set to a constant B0 in space and stays con-
+stant. The discretised equations for ⃗F are needed for the iteration. Following
+equation (11) and again using ⃗B∗= 1
+2
+ ⃗Bn + ⃗Bn+1
+these are given for each
+grid point i
+Fx( ⃗Bn+1
+i
+) =Bn+1
+x,i
+−Bn
+x,i
+Fy( ⃗Bn+1
+i
+) =Bn+1
+y,i
+−Bn
+y,i −cx(B∗
+z,i−1 −2B∗
+z,i + B∗
+z,i+1)
+(14)
+Fz( ⃗Bn+1
+i
+) =Bn+1
+z,i
+−Bn
+z,i + cx(B∗
+y,i−1 −2B∗
+y,i + B∗
+y,i+1)
+with cx = B0di∆t
+ρ(∆x)2 . To calculate the next time step ⃗Bn+1
+i
+we consider the itera-
+tion such that limk→∞⃗Bn+1,k = ⃗Bn+1.
+The usual choice for a preconditioning matrix would be the inverse of the
+full Jacobian matrix. Even in the one-dimensional case this would lead to
+an inversion of a 2N × 2N matrix (N is the number of grid points). In our
+treatment of the Hall-term, we introduce a local approximation to the Jacobian
+4
+
+matrix. The Richardson iteration (8) for ⃗F = 0 reads
+Fx( ⃗Bn+1,k
+i
+) =Bn+1,k
+x,i
++ rx,i
+Fy( ⃗Bn+1,k
+i
+) =Bn+1,k
+y,i
+−cx
+2 (Bn+1,k
+z,i−1 −2Bn+1,k
+z,i
++ Bn+1,k
+z,i+1 ) + ry,i
+Fz( ⃗Bn+1,k
+i
+) =Bn+1,k
+z,i
++ cx
+2 (Bn+1,k
+y,i−1 −2Bn+1,k
+y,i
++ Bn+1,k
+y,i+1 ) + rz,i ,
+(15)
+where rx,i, ry,i, rz,i are constants depending only on the values ⃗Bn.
+The matrix elements of the local preconditioner are calculated by diﬀerenti-
+ating Eqs. (15) with respect to ⃗Bn+1,k
+i
+; this is a diﬀerentiation with respect to
+the value of ⃗B at one grid point, e.g. the derivative of Bn+1,k
+y,i+1 with respect to
+Bn+1,k
+y,i
+vanishes. This leads to the following local preconditioner
+J∗
+i = ∂⃗F( ⃗Bn+1,k
+i
+)
+∂⃗Bn+1,k
+i
+=
+
+
+
+
+
+
+
+1
+0
+0
+0
+1
+cx
+0 −cx 1
+
+
+
+
+
+
+
+.
+(16)
+The preconditioning matrix J∗is now a block diagonal matrix containing only
+the J∗
+i . This local construction allows an easy inversion, which is again a block
+matrix and thus (J∗)−1 is local. A fast inversion of the general Jacobian is
+not easy and results in a non local matrix. Using (J∗)−1 as a preconditioner
+results in the following local iteration for each grid point i.
+⃗Bn+1,k+1
+i
+= ⃗Bn+1,k
+i
+−
+α
+1 + c2
+x
+
+
+
+
+
+
+
+1 + c2
+x 0
+0
+0
+1 −cx
+0
+cx
+1
+
+
+
+
+
+
+
+⃗F( ⃗Bn+1,k
+i
+) .
+(17)
+This iteration is the ω-Jacobi iteration, which in this case is known to converge.
+This way we have created a well known iteration scheme, but it was motivated
+by the physical properties of a whistler wave. While the Jacobi iteration cannot
+be used for nonlinear problems, we can transfer our iteration to the nonlinear
+two-dimensional case using the same strategy. The iteration obtained so far
+has the desirable property that high wavenumbers converge fast and thus can
+be used as a smoother in a multigrid scheme. We anticipate that this property
+translates to the two-dimensional case.
+5
+
+4
+Nonlinear 2D case
+The strategy here will be the same as above:
+⃗Bn+1,k+1
+i,j
+= ⃗Bn+1,k
+i,j
+−αJ∗−1
+i,j ⃗Fi,j( ⃗Bn+1,k) .
+(18)
+The local preconditioner is motivated by the one-dimensional calculation, tak-
+ing into account the two directions x and y of whistler wave propagation. In
+two dimensions the function ⃗F can be derived the same way as the in the
+one-dimensional case and takes the form
+Fx = Bn+1
+x
+−Bn
+x + di∆t
+ρ
+
+B∗
+y∂yyB∗
+z + ∂yB∗
+y∂yB∗
+z + ∂yB∗
+x∂xB∗
+z + B∗
+x∂xyB∗
+z
+
+Fy = Bn+1
+y
+−Bn
+y −di∆t
+ρ
+
+B∗
+y∂xyB∗
+z + ∂xB∗
+y∂yB∗
+z + ∂xB∗
+x∂xB∗
+z + B∗
+x∂xxB∗
+z
+
+Fz = Bn+1
+z
+−Bn
+z + di∆t
+ρ
+ 
+∂xB∗
+x + ∂yB∗
+y
+ 
+∂xB∗
+y −∂yB∗
+x
+
+(19)
++ B∗
+x
+
+∂xxB∗
+y −∂xyB∗
+x
+
++ B∗
+y
+
+∂xyB∗
+y −∂yyB∗
+x
+ 
+.
+To obtain the local preconditioner, Eq. (19) has to be discretised in space and
+derived with respect to ⃗Bn+1
+ij
+which yields
+J∗
+i,j =
+
+
+
+
+
+
+
+1
+0
+−cy,i,j
+0
+1
+cx,i,j
+cy,i,j −cx,i,j
+1
+
+
+
+
+
+
+
+(20)
+with cx,i,j =
+diBn
+x,i,j∆t
+ρ∆x2
+and cy,i,j =
+diBn
+y,i,j∆t
+ρ∆y2
+. Note that the elements of this
+Jacobian matrix are not constant anymore, but depend on Bn
+x,i,j and Bn
+y,i,j.
+Thus again the preconditioning is it’s inverse
+J∗−1
+i,j
+=
+1
+1 + c2
+x,i,j + c2
+y,i,j
+
+
+
+
+
+
+
+1 + c2
+x,i,j cx,i,jcy,i,j
+cy,i,j
+cx,i,jcy,i,j 1 + c2
+y,i,j −cx,i,j
+cy,i,j
+cx,i,j
+1
+
+
+
+
+
+
+
+.
+(21)
+To show numerically the convergence properties of this iteration, a simple
+numerical experiment is used. The two-dimensional computational domain is
+a periodic box in x- and y-direction. The initial condition is a single whistler
+wave with a wave number in x- and y-direction. This is done for all possible
+modes (combinations of kx and ky) on a 64×64 mesh. The number of iterations
+needed for a prescribed accuracy is plotted in Fig. 1 as a function of k =
+q
+k2
+x + k2
+y. As we already anticipated the convergence rate for the long and the
+6
+
+0
+1
+2
+3
+4
+5
+0
+10
+20
+30
+40
+50
+60
+70
+80
+90
+100
+wavenumber k∆x
+iterations
+Fig. 1. The number of iterations needed to reduce the error by two orders of mag-
+nitude as a function of the norm of the wave vector k =
+q
+k2x + k2y.
+short wavelengths show the same behavior as in the one-dimensional case.
+To accelerate the convergence of the long wavelengths, this iteration is applied
+as a smoothing function for the nonlinear multigrid scheme [17]. Using V-
+cycles and two pre– and post–smoothings in the multigrid scheme one achieves
+convergence already after two to three cycles.
+5
+GEM Reconnection
+To verify the new iteration scheme, we choose a standard reconnection prob-
+lem. A similar setup is used as in GEM reconnection challenge [7]. It is based
+on a perturbed Harris sheet. A schematic plot and the computational domain
+are shown in Fig. 2. The numerical parameter are chosen to: Lx = 2Ly = 5di
+and Nx = 2Ny = 256. Symmetric or antisymmetric boundary conditions are
+applied for all quantities and the initial conditions, including the perturbation,
+are equal to the one in the GEM reconnection challenge [7].
+We solve the full Hall-MHD equations explicitly except for the Hall part of
+the induction equation. This splits the induction equation into the resistive
+7
+
+x
+L y
+L y
+−
+x
+L y
+L
+0
+0
+−1/2
+3/2
+L
+Fig. 2. The GEM reconnection setup. The black lines indicate the magnetic ﬁeld,
+the blue ones the seperatrices and the red box is our computational domain.
+MHD part (22) and the part including only the Hall term (23)
+∂t ⃗BMHD = ∇×
+
+⃗v × ⃗B
+
++ η∆⃗B
+(22)
+∂t ⃗BHall = −∇×
+
+di⃗j × ⃗B
+ρ
+
+
+(23)
+∂t ⃗B = ∂t ⃗BMHD + ∂t ⃗BHall .
+(24)
+The time stepping was performed with a standard second order Runge-Kutta
+method.
+The maximum time step for the semi–implicit simulations is given by the
+linear Alfv´en wave dispersion relation ω = vAk. There is no possibility to use
+larger time steps than these, because the Alfv´en waves must be well resolved.
+To compare the results obtained with the fully explicit simulation and with our
+semi–implicit treatment of the Hall term, we choose as a physically relevant
+measure the reconnected ﬂux ψ given in our setup by
+ψ =
+Z Lx
+0
+By dx.
+(25)
+Four diﬀerent simulation runs have been done, an explicit one, used as the
+reference run, and three semi–implicit ones. The time steps and corresponding
+CFL numbers are shown in Table 1.
+Fig. 3 shows the developed structure of the z-component of the electric current
+density ⃗j = ∇× ⃗B at time t = 12 obtained from a semi–implicit simulation.
+8
+
+∆t · 10−3
+CFL number
+∆timp
+∆texp
+explicit
+0.2
+0.2
+1
+semi–implicit
+2.0
+2
+10
+semi–implicit
+4.0
+4
+20
+semi–implicit
+8.2
+8.2
+41
+Table 1
+Time steps chosen for the simulations. The CFL number is based on the whistler
+wave dispersion relation.
+The corresponding reconnected ﬂux (Fig. 4) obtained from the explicit refer-
+Fig. 3. The z-component of the electric current density at t = 12.
+ence simulation and the semi–implicit runs show that the the semi–implicit
+simulations result in nearly identical reconnection rates and that, by reducing
+the time step, they converge to the values obtained from the explicit simula-
+tion.
+6
+Summary
+We presented a semi–implicit iterative method for solving the Hall part of
+the induction equation to overcome the time step restriction resulting from
+the quadratic whistler wave dispersion relation. The method utilizes a simple
+precondioner based on the whistler wave dispersion. The iteration scheme
+based on this precondioner has the two desirable features of being local and
+possessing strong high frequency smoothing. Therefore, this method can easily
+be implemented in a nonlinear multigrid solver. Due to the locality property, it
+is also best suited for adaptive and parallel simulations. The part of execution
+time of Hall term turns out to be about 7 times longer than the time needed
+9
+
+0
+2
+4
+6
+8
+10
+12
+0.15
+0.2
+0.25
+0.3
+time t
+reconnected flux
+ 
+ 
+exp ∆t=0.2⋅10−3
+imp ∆t=8.2⋅10−3
+imp ∆t=4.0⋅10−3
+imp ∆t=2.0⋅10−3
+Fig. 4. The temporal evolution of the reconnected ﬂux for diﬀerent time steps and
+schemes.
+for ideal MHD part. Using a time step 40 times larger than necessary for an
+explicit treatment, this results in an 80% reduction of the computation time
+for the GEM setup achieving nearly identical results as an expensive explicit
+simulation.
+Acknowledgements
+This work beneﬁted from support through SFB 591 of the Deutsche Forschungs-
+gesellschaft and the HGF virtual Institute VH-VI-123.
+References
+[1] J. Dreher, D. Laveder, R. Grauer, T. Passot, P. Sulem, Formation and
+disruption of Alfv´enic ﬁlaments in Hall-magnetohydrodynamics, Phys. Plasmas
+12 (2005) 052319.
+[2] J. Dreher, V. Ruban, R. Grauer, Axisymmetric ﬂows in Hall-MHD: A tendency
+towards ﬁnite-time singularity formation, Physica Scripta 72 (2005) 450.
+10
+
+[3] R.
+F.
+Lottermoser,
+M.
+Scholer,
+Undriven
+magnetic
+reconnection
+in
+magnetohydrodynamics and Hall magnetohydrodynamics, J. Geophys. Res. 102
+(1997) 4875.
+[4] M. Shay, J. Drake, The role of electron dissipation on the rate of collisionless
+magnetic reconnection, Geophys. Res. Lett. 25 (1998) 3759.
+[5] J. B¨uchner, J.-P. Kuska, Sausage mode instability of thin current sheets as a
+cause of magnetospheric substorms, Ann. Geophys. 17 (1999) 64.
+[6] R.
+Horiuchi,
+T. Sato,
+Three-dimensional particle
+simulation
+of plasma
+instability and collisionless reconnection in a current sheet, Phys. Plasmas 6
+(1999) 4565.
+[7] J. Birn, J. Drake, M. Shay, B. Rogers, R. Denton, M. Hesse, M. Kuznetsova,
+Z. Ma, A. Bhattacharjee, A. Otto, P. Pritchett, Geospace environmental
+modeling (GEM) magnetic reconnection challenge, J. Geophys. Res. 106 (2001)
+3715–3720.
+[8] P. Ricci, G. Lapenta, J. U. Brackbill, GEM reconnection challenge: Implicit
+kinetic simulations with the physical mass ratio, Geophys. Res. Lett. 29 (2002)
+2088.
+[9] H. Schmitz, R. Grauer, Kinetic Vlasov simulations of collisionless magnetic
+reconnection, Phys. Plasmas 13 (2006) 092309.
+[10] D. Harned, Z. Miki´c, Accurate semi-implicit treatment of the Hall eﬀect in
+magnetohydrodynamic computations, J. Comp. Phys 83 (1989) 1–15.
+[11] L. Chac´on, D. Knoll, A 2d high-β Hall MHD implicit nonlinear solver, J. Comp.
+Phys 188 (2003) 573–592.
+[12] M. Berger, P. Collela, Local adaptive mesh reﬁnement for shock hydrodynamics,
+J. Comp. Phys 82 (1989) 64.
+[13] B. Fryxell, K. Olsen, F. T. P. Ricker, M. Zingale, P. M. D.Q. Lamb, H. T.
+R. Rosner, J.W. Truran, FLASH: An adaptive mesh hydrodynamics code for
+modelling astrophysical thermonuclear ﬂashes, Astrophys. J. 131 (2000) 273.
+[14] J. Dreher, R. Grauer, Racoon: A parallel mesh-adaptive framework for
+hyperbolic conservation laws, Parallel Computing 31 (2005) 913–932.
+[15] R. Teyssier, S. Fromang, E. Dormy, Kinematic dynamos using constrained
+transport with high order Godunov schemes and adaptive mesh reﬁnement,
+J. Comp. Phys 218 (2006) 44–67.
+[16] C. T. Kelley, Iterative Methods for Linear and Nonlinear Equations, SIAM,
+1995.
+[17] W. L. Briggs, A Multigrid Tutorial, SIAM, 2000.
+11

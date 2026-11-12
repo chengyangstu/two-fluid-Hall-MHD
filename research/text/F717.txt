@@ -1,0 +1,885 @@
+The scaling of forced collisionless reconnection
+Brian P. Sullivan∗and Barrett N. Rogers
+Department of Physics and Astronomy, Dartmouth, Hanover, NH 03755
+(Dated: August 15, 2021)
+This paper presents two-ﬂuid simulations of forced magnetic reconnection with ﬁnite electron inertia in a
+collisionless three-dimensional (3D) cube with periodic boundaries in all three directions. Comparisons are
+made to analogous two-dimensional simulations. Reconnection in this system is driven by a spatially localized
+forcing function that is added to the ion momentum equation inside the computational domain. Consistent
+with previous results in similar, but larger forced 2D simulations [B. Sullivan, B. N. Rogers, and M. A. Shay,
+Phys. Plasmas 12, 122312 (2005)], for sufﬁciently strong forcing the reconnection process is found to become
+Alfv´enic in both 2D and 3D, i.e., the inﬂow velocity scales roughly like some fraction of the Alfv´en speed based
+on the upstream reconnecting magnetic ﬁeld, and the system takes on a stable conﬁguration with a dissipation
+region aspect ratio on the order of 0.15.
+I.
+INTRODUCTION
+Magnetic reconnection allows a magnetized plasma system
+to convert magnetic energy into high speed ﬂows and thermal
+energy, and is the main driving mechanism behind energetic
+phenomena such as solar ﬂares, magnetospheric substorms,
+and tokamak sawteeth. A deﬁning feature of these phenom-
+ena is that they are very bursty: in a substorm, for example,
+a signiﬁcant fraction of the lobe magnetic ﬂux is reconnected
+over a period of about 10 minutes, while the time between pe-
+riodic substorms is roughly 2.75 hours [1]. Similarly, in the
+case of an X-class solar ﬂare, the energy release may occur
+during several minutes or less in active regions that can last
+for weeks before reconnecting [2]. A viable model of recon-
+nection in such systems must therefore be consistent with the
+relatively long, quasi-stable periods in between reconnection
+bursts, as well as the rapidity of the energy release once a burst
+has somehow been triggered.
+Regarding the rapidity of reconnection, recent research
+(see, e.g., Refs. [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+16, 17]) has suggested that the reconnection process can in-
+deed generate sufﬁciently fast rates of energy release to be
+consistent with observations provided that various conditions
+are met. For example, studies of spontaneous, unforced re-
+connection in systems with sufﬁciently narrow current sheets
+(δ <∼di = c/ωpi in the case without a guide magnetic ﬁeld)
+have found that the reconnection process becomes Alfv´enic -
+that is, the inﬂow velocity of plasma and magnetic ﬂux into
+the reconnection region scales roughly like some fraction of
+the Alfv´en speed based on the upstream reconnecting compo-
+nent of the magnetic ﬁeld. The narrowing of the current layer
+down to widths δ <∼di serves as a trigger point for the on-
+set of fast reconnection in this case due to the important role
+played by non-ideal effects such as the Hall term [3]. Without
+the addition of ad-hoc anomalous resistivity terms, simula-
+tions of systems with substantially thicker current sheets do
+not exhibit such fast reconnection behavior: at best the recon-
+nection rates are throttled by the formation of long, narrow
+outﬂow layers as in the Sweet-Parker model, or in unfavor-
+∗Electronic address: brian.sullivan@unh.edu
+able magnetic geometries (e.g. ∆′ ≤0 [18]) no spontaneous
+reconnection may take place at all.
+The fact that reconnection can occur very rapidly or not at
+all is consistent with the burstyness of the reconnection phe-
+nomena discussed earlier provided one can explain how a sys-
+tem can transition from a quasi-stable phase (characterized,
+for example, by a relatively thick current sheet) to a period
+of fast reconnection (a narrow current sheet). One possible
+mechanism to explain this transition is explored in this paper:
+to externally force a stable, thick current sheet system so that
+the magnetic ﬂux and electric current are compressed in a lo-
+calized region down to the small scales δ <∼di at which non-
+ideal effects such as the Hall term become important. This
+compression is generated in our simulations by a spatially lo-
+calized external forcing term that is added to the ion momen-
+tum equation inside a three-dimensional (3D) computational
+domain. This method allows the scaling of the reconnection
+rate in 3D to be studied over a wide dynamic range: by chang-
+ing the level of forcing, our simulations achieve more than
+an order of magnitude variation in the magnetic ﬁeld just up-
+stream of the reconnection region, and more than two orders
+of magnitude variation in the reconnection rate. The simula-
+tions show that such localized forcing in 3D can indeed in-
+duce fast rates of reconnection similar to those observed in
+2D, spontaneously reconnecting, narrow current sheet sys-
+tems, even in magnetic geometries that would not reconnect at
+all in the absence of forcing. This result - that a system with a
+locally narrow current sheet will exhibit fast reconnection be-
+havior (whether the narrow current sheet is created by external
+forcing or is present initially) - is reasonable but not obvious,
+since the magnetic geometries outside the forced zone in the
+two cases may be very different.
+This ﬁnding extends to 3D a similar result that was obtained
+in a larger 2D study [19], as well as an earlier 2D multi-code
+study of forced reconnection known as the Newton Challenge
+[24, 25, 26]. The simulations in the Newton Challenge were
+initialized with a relatively narrow current sheet that was un-
+stable to spontaneous reconnection but was somewhat thicker
+than the threshold required for fast (Alfv´enic) reconnection
+(two ion skin depths compared to roughly one). The current
+sheet was then pinched by a spatially and temporally depen-
+dent inﬂow velocity imposed at the upstream boundary of the
+simulation domain. The result was that Alfv´enic reconnection
+arXiv:0906.0334v1  [physics.plasm-ph]  1 Jun 2009
+
+2
+indeed occurred in all studies that included the Hall term, al-
+beit with reconnection rates ∼20% −50% lower than those
+found in studies of spontaneous (unforced) reconnection in
+systems with somewhat narrower current sheets (one ion skin
+depth). The work described here goes beyond the Newton
+Challenge to explore, over a wide range of parameters, the
+scaling of forced magnetic reconnection in a tearing mode sta-
+ble (∆′ ≤0) system with an initially broad current sheet and
+a forcing function that is spatially localized in 3D.
+Several limitations of the present work that are worth not-
+ing. Our simulations explore the dynamics of forced recon-
+nection in a cubical box of 25.6 ion skin depths (the 3D ana-
+log of the GEM Challenge system [3]) using a simple isother-
+mal two-ﬂuid model [9] and periodic boundary conditions.
+The frozen-in condition is broken at the smallest scales in
+this model by electron inertia and numerical diffusion effects.
+Particle simulations of reconnection, on the other hand, have
+shown that non-gyrotropic pressure tensor effects, which are
+not included here, should play the dominant role in this re-
+gard. Past 2D studies of unforced reconnection (see, for ex-
+ample, Refs. [3, 4, 5, 6, 7, 8]) have suggested that the recon-
+nection rate is not strongly sensitive to this difference, and it is
+hoped that this insensitivity carries over to the present study.
+In addition, 2D particle simulations in much larger boxes are
+currently being used to study the sensitivity of the reconnec-
+tion process to the boundary conditions and the physics of the
+electron diffusion region [27, 28, 29, 30, 31]. Due to the size
+limitations imposed by the 3D nature of our study, as well as
+the physical simplicity of our model, these important issues
+lie outside the scope of the present work.
+The organization of this paper is as follows. In section II
+we describe the simulation model, equilibrium proﬁles, and
+forcing function. In section III we present and discuss the
+results of the simulations included in this study. The main
+conclusions are summarized in section IV.
+II.
+SIMULATION MODEL
+Our simulations are based on the two-ﬂuid equations with
+the addition of a spatially localized forcing term in the ion
+momentum equation. These equations in normalized form are
+[14]:
+n (∂tVi + Vi · ∇Vi) = J × B −∇p + Fyˆy
+(1)
+∂tB′ = −∇× E′
+(2)
+E′ + Vi × B = 1
+n (J × B′ −∇pe)
+(3)
+∂tn + Vi · ∇n = −n∇· Vi
+(4)
+pe = nTe ,
+pi = nTi ,
+p = pi + pe
+(5)
+B′ =
+
+1 −me
+mi
+∇2
+
+B , Ve = Vi −J/n , J = ∇× B (6)
+Here Fy = Fy(x, y, z, t) is the forcing function, the form
+of which is discussed in below. For simplicity we assume
+an isothermal equation of state for both electrons and ions
+(qualitatively similar to the adiabatic case), and thus take
+Te and Ti to be constant. The normalizations of Eqns. (1)-
+(6) are based on constant reference values of the density
+n0 and the reconnecting component of the magnetic ﬁeld
+Bx0, and are given by (normalized →physical units): t →
+ωcit, ωci = eBx0/(mic), x →x/di, di,e = c/ωpi,e,
+ω2
+pi,e = 4πn0e2/mi,e, n →n/n0, B →B/Bx0, Vi,e →
+Vi,e/VAx, VAx = ωcidi = Bx0/(4πn0mi)1/2, Ti,e →
+Ti,e4πn0/B2
+x0, pi,e →pi,e4π/B2
+x0, J →J/(n0eVAx), and
+Fy →Fydi/(min0V 2
+Ax).
+Our algorithm employs fourth-
+order spatial ﬁnite differencing and the time stepping scheme
+is a second-order accurate trapezoidal leapfrog [32, 33] . We
+consider a cubical 3D simulation box with physical dimen-
+sions L×L×L = 25.6di×25.6di×25.6di (so that L = 25.6
+in normalized units) and periodic boundary conditions im-
+posed at x = ±L/2,y = ±L/2, and z = ±L/2 . The sim-
+ulation grid is nx × ny × nz = 128 × 256, ×128, yielding
+grid scales of ∆x = ∆z = 0.2 and ∆y = 0.1. The electron
+to ion mass ratio is me/mi = 1/25 so that the normalized
+electron skin depth is de =
+p
+me/mi = 0.2. The frozen-in
+law for electrons is broken primarily by the presence of ﬁnite
+electron inertia, which is manifested by the me terms in the
+deﬁnition of B′ in Eq. (6). Very near the x-points, however,
+the electron inertia terms become weak in quasi-steady condi-
+tions, since both the ∂t and v · ∇terms on the left-hand-side
+of Eq. (1) become small. In these small regions the frozen-in
+law is mainly broken by numerical diffusion. Past studies of
+this effect (e.g. Ref. [34]) have found that the rates of recon-
+nection are relatively insensitive to such grid-level diffusion
+and are in reasonable agreement with the rates obtained from
+particle simulations [35].
+A.
+Initial Equilibrium
+We begin with a one dimensional equilibrium. Three di-
+mensional effects will enter via the forcing function described
+in the next section. The normalized magnetic ﬁeld and density
+proﬁles in our initial equilibrium are given by:
+B(y) = sin
+2π
+L
+
+y + L
+4
+
+ˆx
+(7)
+n(y) = 1 +
+1 −B2
+x
+2(Ti + Te)
+(8)
+The boundary conditions are periodic in all three directions.
+As required by these boundary conditions, B is periodic under
+
+3
+y →y + L. Note that the normalization parameter Bx0 has
+been chosen so that the peak value of this initial ﬁeld is unity.
+From the given form of n it is apparent that n = 1 at this
+location, or in physical units, n = n0. The density proﬁle is
+chosen to satisfy the total pressure balance condition, which
+in normalized form is given by
+n(Ti + Te) + 1
+2B2
+x = constant
+(9)
+Unless otherwise stated, we take the (constant) total temper-
+ature to be Ttot = Ti + Te = 1.0, or in physical units
+4πn0Ttot/B2
+x0 = 1, so that the plasma β based on the re-
+connecting ﬁeld has a (minimum) value of 2 where Bx = 1
+and n = 1. The density reaches a maximum value of n = 1.5
+in the center of the equilibrium current sheets (y = ±L/4)
+where Bx = 0. Initially the current is carried entirely by
+the electrons, while the ions begin at rest. To prevent en-
+ergy buildup at the grid scale, the simulations include fourth
+order dissipation in the density and momentum equations of
+the form µ4∇4 where µ4 = 5.1 · 10−5. To avoid physically
+artiﬁcial effects that can arise from exact reﬂection symme-
+tries of the initial condition, a small amount of random noise
+is added to the magnetic ﬁeld and ion current at the levels
+| ˜Bmax| ≈10−4, | ˜Jimax| ≈10−4.
+The linear tearing mode stability parameter is deﬁned as
+∆′ = [∂y ˜ψ(y →0+) −∂y ˜ψ(y →0−)]/ ˜ψ(y = 0) where ˜ψ
+is the perturbation in ﬂux the function [18]. In our system it is
+given by [36]:
+∆′(kx) = −
+ 
+2k0
+s
+k2x
+k2
+0
+−1
+!
+tan
+ s
+k2x
+k2
+0
+−1
+!
+,
+(10)
+where k0 = 2π/L. Since periodicity along the x direction re-
+quires kx ≥2π/L and thus k2
+x/k2
+0 ≥1, one sees that ∆′ ≤0.
+Therefore, as noted in the introduction, the system we con-
+sider is stable to tearing modes in the absence of forcing and
+exhibits no spontaneous reconnection.
+B.
+Forcing Function
+The initial 1D equilibrium described in the previous sec-
+tion does not contain a pre-seeded x-line. Rather, we em-
+ploy a forcing function to drive plasma and magnetic ﬂux into
+the region surrounding the point (x, y, z) = (L/4, −L/4, 0),
+thereby forming an x-line along z through that location.
+The forcing function has the general form Fy(x, y, t) =
+X(x)Y (y)Z(z)Θ(t). Along x and z the forcing function is
+a gaussian with widths wx and wz, respectively, centered at
+(x, z) = (+L/4, 0):
+X(x) = exp
+(
+−
+(x −L/4)
+wx/2
+2)
+,
+Z(z) = exp
+(
+−
+
+z
+wz/2
+2)
+(11)
+Along the inﬂow (y) direction, the forcing function is antisym-
+metric in y about y = −L/4. It varies linearly with y close to
+the reconnection point and then levels off to a constant value
+(Y →±1) over a distance of ∼2wy upstream of the x-point:
+Y (y) = tanh
+y −L/4
+wy
+
+−tanh
+y + L/4
+wy
+
++ 1
+(12)
+The temporal behavior of the forcing is controlled by the
+function Θ(t).
+This function starts at zero and increases
+monotonically with time at the rate dΘ/dt ∼1/τf = 0.1
+until it plateaus at the value F∞:
+Θ(t) = F∞tanh
+
+t
+|F∞|τf
+
+(13)
+Since the initial slope of Θ(t) and hence the initial rate of
+ramping is held constant at 1/τf = 0.1 from one simulation
+to the next, it takes more time to ramp up to the stronger levels
+of forcing (roughly τ ∼|F∞|τf).
+In our simulations the spatial and temporal structure of the
+forcing is controlled by the parameters wx, wy, wz, τf, and
+F∞. The appropriate choice of these parameters presumably
+varies from system to system, depending on the physical ap-
+plication under consideration and the nature of the forcing
+agent. In this study, as a ﬁrst step, we examine the recon-
+nection behavior as a function of the asymptotic strength of
+the forcing function F∞, holding the other forcing function
+parameters ﬁxed at values that are convenient for the size of
+our simulations, e.g. wx = wz = 5.0di, τf = 1.25ω−1
+ci . In
+the substantially larger system considered in Ref. [19], the au-
+thors employed a proportionally broader forcing function with
+results similar to those described here. The detailed study of
+how the geometry of the forcing function impacts the recon-
+nection is left for future work.
+III.
+NUMERICAL RESULTS
+This study includes ten simulations. Five are two dimen-
+sional and differ from each other only in the asymptotic level
+of forcing F∞. These ﬁve simulations are included as a base-
+line for comparison with the other ﬁve, which are three dimen-
+sional with forcing localized as a gaussian in the out of plane
+direction. In the 3D simulations, the width of the forcing func-
+tion along z is equal to its width along x (wx = wz = 5.0di).
+In the next section we will describe the results of a typical 2D
+run and then compare to a similar 3D case. First, however,
+some important deﬁnitions are required.
+Following Ref. [14] and our previous 2D work [19], we
+focus on the ion inﬂow Vin (= Vy), outﬂow Vout (= Vx),
+upstream reconnecting magnetic ﬁeld Bd (= Bx), and up-
+stream density nd, near the boundaries of the ion dissipation
+region where the ions decouple from both the electrons and
+the magnetic ﬁeld. As found in earlier work [19], the ion and
+electron velocities typically decouple approximately 0.5c/ωpi
+upstream of the x-point below the center of the forcing func-
+tion, and we therefore measure the upstream quantities Vin,
+Bd, and nd at this location (+L/4, −L/4 ± 0.5, 0). The re-
+connecting component of the magnetic ﬁeld does not vary
+strongly as a function of y between 0.5 and 1.0 ion skin depths
+
+4
+upstream of the x-point; therefore, the results presented here
+are not strongly dependent upon the method used to determine
+the upstream edge of the dissipation region. This holds in both
+2D and 3D.
+The electron outﬂow (i.e. outﬂow in the x-direction) typ-
+ically becomes quite large very close to the x-point and can
+be in excess of the ion Alfv´en speed. However, at the down-
+stream edge of the dissipation region, the electrons slow down
+to ﬂow roughly with the ions. The location where the two
+ﬂows come together is typically close to the location of the
+maximum in Vix. Therefore the downstream edge of the dis-
+sipation region is taken to be the location of the maximum in
+Vix. Deﬁning the downstream edge as the location of the ion-
+electron velocity crossover point yields nearly identical results
+[14, 19].
+A last important deﬁnition concerns the reconnection rate.
+In 2D, the reconnection rate is deﬁned as the time derivative
+of the reconnected magnetic ﬂux inside the magnetic island
+per unit length in the (uniform) z direction:
+R0 = ∂
+∂t
+Z xx
+xo
+By(x, −Ly/4)dx,
+(14)
+where y = −L/4 is the plane where Bx = 0, and xX, xO are
+the x-locations of the x-point and o-point, respectively. A total
+reconnection rate (rather than a rate per unit length) cannot be
+deﬁned in the 2D limit, since the uniformity of the system
+along z implies that the total reconnected ﬂux is inﬁnite. This
+is not the case in the 3D simulations discussed here, in which
+the extent of the magnetic island and the total reconnected
+ﬂux are both ﬁnite in the z direction. Thus in 3D it is natural
+to deﬁne the reconnection rate as simply the time derivative of
+the total reconnected ﬂux inside the magnetic island:
+Rtot = ∂
+∂t
+Z
+A
+Bydx dz
+(15)
+where A is the area of the magnetic island (found numerically
+using ﬁeld-line tracing) in the central plane of the equilibrium
+current sheet y = −Ly/4. Fig. (1) shows a time series By in
+this plane in a simulation discussed in the next section. The
+location of the forcing function, centered at (x, z) = (6.4, 0),
+can be discerned from the dipolar signature in the right half
+of the ﬁgures. As we show below, nearly all the reconnected
+ﬂux is inside this roughly circular region under the forcing
+function. (In both 2D and 3D, small secondary islands are
+also typically present; however, the total ﬂux in these islands
+is small and they have no signiﬁcant impact on the recon-
+nection rates reported here.) The 3D reconnection rate given
+by Eq. (15) has physical units of [ﬂux/time], in contrast to
+Eq. (14), which has physical units of [ﬂux/time/length]. To
+compare the 2D and 3D reconnection rates, the 3D rate there-
+fore must be somehow translated into a reconnection rate per
+unit length, as in 2D. No unique way exists to do this, mak-
+ing a meaningful comparison of the 2D and 3D reconnection
+rates difﬁcult. Two crude approaches to such a comparison,
+however, are discussed further in the following section.
+A.
+Temporal Behavior
+Fig. (2) shows time series of the dissipation region param-
+eters in typical 2D (left) and 3D (right) simulations. In the
+2D simulation, the asymptotic upstream forcing strength is
+F∞= 0.15, as seen from the solid curve in Fig. (2g). Note
+the level of forcing has become constant by t ≈3. In panel
+(a), we plot the outﬂow velocity (dashed curve), and 5 times
+the inﬂow velocity (dotted curve) in the 2D case (the factor of
+5 serves to place the quantities on a similar scale). As the
+forcing is turned on, the inﬂow velocity increases, causing
+the pressure and density (panel c) to mount under the forc-
+ing function. This back pressure causes the inﬂow velocity
+to level off and then decrease around t ≈4.5. Magnetic ﬂux
+also piles up under the forcing function causing the upstream
+ﬁeld to increase, as seen in panel (e) during the period t < 12.
+Consistent with past studies (e.g. Refs. [14, 16, 19]), at about
+t ∼12, when the ﬂux pile-up has narrowed the current sheet
+to about an ion skin depth, the layer opens up into a Petschek-
+like conﬁguration and fast reconnection begins, as can be seen
+by the rise in the reconnection rate R0 in panel (g). This on-
+set of reconnection causes Vin to increase again and Bd to
+level off, indicating that the rate of reconnection is sufﬁcient
+to prevent further pile up of upstream ﬂux, i.e. ﬂux is liberated
+from the dissipation region by reconnection at a rate compa-
+rable to that with which ﬂux is pumped into the region, so
+that Bd is stable for an extended period (t ∼10 −25). The
+ratio Vin/Vout ∼0.1 −0.2 in this phase is consistent with
+continuity arguments: Assuming in the 2D case that the ion
+diffusion region has a width 2δ and a length 2D, the approx-
+imate incompressibility of the ion ﬂow yields VinD ∼Voutδ
+or Vin/Vout ∼δ/D. As shown in Fig. (3), the value of δ/D
+is typically between 0.1 - 0.2. Here δ/D is computed by di-
+viding the half-width at half-max of the current sheet at the
+location of the x-line by the distance from the x-line to the
+location of the peak ion outﬂow velocity along x. The aspect
+ratio varies somewhat in time, approaching some minimum
+value then generally becoming slightly larger again as the cur-
+rent sheet opens up and shortens into a Petschek-like conﬁg-
+uration. Strong reconnection continues in the 2D system for
+about another 10 time units beyond the ﬁnal time (t = 25)
+shown in the ﬁgures, at which point the system runs out of
+magnetic ﬂux to reconnect and the reconnection rate drops
+sharply to zero. The features described here are observed at
+all levels of forcing in 2D that are sufﬁciently strong to trig-
+ger Alfv´enic reconnection. In Ref. [19] qualitatively similar
+results were found in a larger (L × L = 102.4di × 102.4di)
+2D system. Several differences are apparent in comparing the
+2D data shown in left half of Fig. (2) with the 3D data in the
+right half. For example, the enhancement in the density (panel
+d) and upstream magnetic ﬁeld (panel f) are weaker or more
+gradual in 3D than in 2D. This results from a key difference
+between 2D and 3D: in 2D ﬂux can compress upstream of the
+current sheet or it can reconnect, ﬂowing out along x. Simi-
+larly, density can build up under the forcing function or it can
+be cleared out by reconnection. In 3D, plasma and magnetic
+ﬂux have the option of either reconnecting or ﬂowing away
+from the forced zone along the ±z directions. This differ-
+
+5
+FIG. 1: (color online) Time evolution of By(x, z) at t = 12.1875 (left), t = 16.875 (center), and t = 20.625 (right). The
+reconnected ﬂux moves in the −z direction. Maximum and minimum values of the plotted quantity are shown above each plot.
+ence has at least two important consequences: ﬁrst, the forc-
+ing function is not as effective at compressing plasma and ﬂux
+in 3D. Indeed, the gradual rise in Bd seen in Fig. (2f) results
+largely from the convection of stronger upstream magnetic
+ﬁeld into the reconnection zone rather than from in-situ com-
+pression. To partially compensate for this, in Fig. (2) we com-
+pare 2D and 3D simulations with somewhat different levels of
+forcing (F∞= 0.2 in 3D vs. F∞= 0.15 in 2D as shown
+in Figs. (2g,h)). A second consequence, which we discuss
+further below, is that the reconnection “efﬁciency” in 3D is
+smaller than in 2D – that is, a smaller fraction of the upstream
+magnetic ﬂux that is initially contained within the forced re-
+gion is reconnected in 3D than in 2D, making the reconnecting
+phase of the 3D simulations shorter than those in the 2D runs.
+Two measures of the reconnection rate are shown in
+Fig. (2h). The dotted curve labeled R0, like panel (g), is the
+integral given by Eq. (14) calculated in the z = 0 plane. This
+quantity is a rough measure of the rate of reconnection im-
+mediately under the center of the forcing function. Although
+one might expect this z = 0 location to yield the largest local
+reconnection rate, in fact substantially larger values can occur
+at negative z values near the edge of the forced zone. This can
+be seen from Fig. (4), which shows the z-dependence of the
+reconnected ﬂux per unit z [Eq. (14) without the time deriva-
+tive] at various times. The area under the curves at a given
+time yields the total reconnected ﬂux [Eq. (15) without the
+time derivative]. The ﬂux distributions become skewed to the
+left at later times due to the dragging of the magnetic ﬁeld by
+the electrons. This leftward electron ﬂow carries the bulk of
+the (rightward) electric current density that supports the re-
+versal in the reconnecting magnetic ﬁeld Jz ∝dBx/dy. The
+transport of reconnected ﬂux by the electron ﬂow can also be
+seen in the downward drift of the By proﬁle in the center of
+the sheet shown in Fig. (1). This effect has also been reported
+in other studies of three-dimensional reconnection (see, for
+example, Refs. [20, 21, 22, 23]). A second measure of the
+reconnection rate is shown as the dashed curve in Fig. (2h) la-
+beled Rtot/10. This curve depicts the total reconnection rate
+Rtot given by Eq. (15) divided by the full width of the forc-
+ing function along z (2wz = 10.0di). As can be seen from
+Fig. (4), this width roughly characterizes the extent along z of
+the reconnected ﬂux distribution and thus Rtot/10 is a crude
+measure of the average reconnection rate per unit length in
+the 3D system. Although the reconnection rates as character-
+ized by these measures are somewhat smaller in the 3D sys-
+tem than those in the 2D case, we show in the the following
+section that, when the 2D and 3D reconnection rates are plot-
+ted as a function of the instantaneous values of the upstream
+reconnecting magnetic ﬁeld [Figs. (2e,f)], similar results are
+obtained. That is, for a given value of the upstream magnetic
+ﬁeld, the rates of reconnection characterized by either R0 or
+Rtot/10 are roughly comparable to the corresponding 2D val-
+ues. Another feature apparent in the 3D data of Fig. (2) is the
+downturn in the reconnection rate (panel h) and upstream ﬁeld
+(panel f) seen at t ≃23. At this time, nearly all of the mag-
+netic ﬂux in the forced zone has been expelled by the forcing
+function, and thus the system has effectively run out of ﬂux
+to reconnect. This is much earlier than the otherwise similar
+collapse in the 2D reconnection rate at t ≃38. As was noted
+earlier, less ﬂux is reconnected in 3D because the plasma and
+magnetic ﬁeld are free to ﬂow outward along the ±z direc-
+tions without reconnecting. In 2D, the uniformity of the sys-
+tem along z prevents any net transport of ﬂux in that direction,
+and a much larger fraction of the initial upstream ﬂux in 2D
+(over 70% percent compared to about 10% in 3D) ends up
+inside the magnetic islands at late times.
+A ﬁnal difference between 2D and 3D evident from
+Figs.(2a,b) is that the ratio Vin/Vout in 3D is enhanced by
+roughly a factor of two over the 2D case.
+Given that the
+layer aspect ratio δ/D [Fig. (3)] shows a much smaller in-
+crease, this enhancement is inconsistent with the 2D continu-
+ity argument described earlier, Vin/Vout ∼δ/D. In the 3D
+simulations, however, the continuity relation must be modi-
+ﬁed by a geometric factor. In 2D, the ion outﬂow from the
+reconnection region is almost entirely along the x direction
+with Vix ≫Viz. In 3D, as one can see from the snapshot
+shown in Fig. (5), the ion outﬂow is nearly omnidirectional
+with Viz ∼Vix, and the ion diffusion region is disk-shaped
+
+6
+FIG. 2: Time series of the dissipation region parameters in 2D(left) and 3D(right) with F∞= 0.15, and 0.2, respectively.
+(like a hockey puck) rather than rectangular. Assuming this
+disk has radius D and half-thickness δ, plasma will thus ﬂow
+into an area Ain = πD2 (one surface of the disk) and out
+through an area Aout = 2πDδ. Continuity then demands that
+VinAin = VoutAout or
+Vin =
+Aout
+Ain
+
+Vout =
+2πDδ
+πD2
+
+Vout =
+2δ
+D
+
+Vout.
+(16)
+Thus, for the same aspect ratio δ/D, one would expect
+Vin/Vout to be a factor of two larger in the 3D case, as in-
+deed it is.
+B.
+Scaling of Reconnection
+In this section we test two simple scaling relations for the
+plasma outﬂow and reconnection rate that have been found in
+past studies to characterize reconnection in some forced and
+unforced 2D systems (e.g. [3, 12, 14, 19, 37, 38, 39, 40]).
+
+7
+FIG. 3: Time series of the aspect ratio of the dissipation
+region vs. time in 2D (solid curve) and 3D (dashed curve.
+(Same simulations as the data shown in Fig.( 2))
+FIG. 4: Time evolution of the reconnected ﬂux per unit z as a
+function of z (solid curves), and the shape of the forcing
+function(dashed curve).
+In the case of the outﬂow, the dynamics that cause recon-
+nected ﬁeld lines to accelerate plasma away from the x-point
+are similar to those of an Alfv´en wave, and so Vout ∼VAd
+where VAd = Bd/√4πmin. Regarding the reconnection rate,
+for a given dissipation region of length D and thickness δ,
+the continuity arguments discussed in the last section yield
+Vin ∼C0(δ/D)VAd where C0 ∼1 in 2D and C0 ∼2 in 3D.
+Assuming this inﬂow along y carries an x-directed magnetic
+ﬁeld Bd into the dissipation region, the rate of reconnection
+per unit length along z (equivalent to the rate at which mag-
+netic ﬂux enters the reconnection zone per unit length along
+z) is VinBd. We therefore expect:
+Vout ∼
+ δ
+D
+
+Bd
+√4πmin
+(17a)
+R0 ∼VinBd ∼
+C0δ
+D
+
+B2
+d
+√4πmin .
+(17b)
+Note the reconnection rate R0 is predicted to scale with the
+square of the upstream ﬁeld. In normalized units, isolating the
+upstream ﬁeld Bd as the independent variable, these become
+Voutn1/2 ∼
+ δ
+D
+
+Bd
+(18a)
+R1/2
+0
+n1/4 ∼
+C0δ
+D
+1/2
+Bd
+(18b)
+We now test these scaling laws under the assumption that δ/D
+has an approximately constant value (on the order of 0.1 - 0.2)
+over the duration of the Alfv´enic phase of the reconnection
+process. In Figs. (6a,b), to test the validity of Eq. (18a), the
+quantity Vout√nd is plotted versus Bd with time as a param-
+eter. Each curve represents data from a single simulation and
+is labeled by the value of F∞for that simulation. A sixth 2D
+simulation with F∞= 0.025 is included to extend the range
+of data. (This weakest level of forcing is insufﬁcient to pro-
+duce Alfv´enic reconnection in 3D, so no 3D analog for this
+simulation is included.) The dotted line of slope unity, plot-
+ted for reference, represents an outﬂow velocity equal to the
+upstream Alfv´en speed based on Bd. At the stronger forcing
+levels, the data are indeed in rough agreement with the pre-
+dicted scaling, albeit with signiﬁcant, order-unity time varia-
+tions within any given simulation. At the weakest forcing lev-
+els, the outﬂow (like the reconnection rate discussed in a mo-
+ment) falls below the predicted scaling. The forcing strength
+in these simulations is insufﬁcient to narrow the current sheet
+down to the ion skin depth scale, and fast reconnection is
+never triggered. In Figs. (6c,d), the quantity R1/2
+0
+n1/4
+d
+is plot-
+ted vs. Bd to test the scaling of the reconnection rate given
+by Eq. (18b). Plots based on Rtot/10 rather than R0 yield
+slightly larger but similar results. The dotted lines represent
+the expected scaling, assuming that Vout/VA = 1.0 and that
+the system has an unvarying dissipation region aspect ratio of
+(δ/D) = 1/5 (steeper line) or (δ/D) = 1/10 (less steep).
+At the later times when the reconnection rates are highest, the
+data in the more strongly forced simulations roughly follow
+the expected trend. In the most weakly forced runs, however,
+the scaling progressively breaks down; the perturbation of the
+current sheet in these cases is insufﬁcient to trigger fast recon-
+nection before a nearly force-balanced state is reached.
+IV.
+CONCLUSIONS
+We have examined the scaling behavior of reconnection in
+a forced, three-dimensional, periodic system using two-ﬂuid
+simulations with ﬁnite electron inertia. The forcing in the sim-
+ulations was driven by a spatially localized forcing function
+added to the ion momentum equation inside the computational
+
+8
+FIG. 5: (color online) The gray scale plot in this ﬁgure shows
+Jz in the central plane of the forced current sheet at
+t = 12.188 in the 3D simulation with F∞= 0.2. The
+over-plotted vectors (blue online) show the relative
+magnitude and direction of Vi = Ji/n in the same plane.
+domain. We initialized the system with a one dimensional,
+broad current sheet equilibrium that was tearing-mode stable;
+three dimensional structure entered through the localization
+of the forcing function. Comparisons were made to analogous
+two-dimensional simulations.
+In the two dimensional case, as found our previous work
+in larger 2D systems [19], sufﬁciently strong levels of forc-
+ing were found to produce a quasi-steady Petschek-like re-
+connection conﬁguration with a dissipation region aspect ra-
+tio δ/D ∼0.1 −0.2. The forcing function produces a pileup
+of magnetic ﬂux in the upstream region and hence an increase
+in the upstream magnetic ﬁeld, until the reconnection rate be-
+comes sufﬁcient to prevent further pileup of magnetic ﬂux.
+The ﬂux pile-up typically halts once a relatively thin cur-
+rent sheet is formed—between 0.5 and 1.0 ion skin depths in
+width—at which point the magnetic separatrix opens up, and
+fast, Alfv´enic reconnection begins, leading to a period when
+the upstream reconnecting ﬁeld Bd is relatively stable. The
+rate of reconnection per unit length along the (ignorable) z di-
+rection was found to scale roughly like B2
+d, as expected from
+simple scaling arguments, although signiﬁcant time variations
+are observed during the course of any given run than cannot
+be explained by this simple scaling.
+In three dimensions, freedom of the plasma to ﬂow out in
+the ±z directions makes the forcing function less effective at
+compressing plasma; the resulting ﬂux pile-up is weaker in
+3D, convection dominates over compression in the upstream
+region, and the period of reconnection is shorter than in com-
+parable 2D systems. The localization of the magnetic island
+along z in 3D makes it possible to deﬁne a total reconnection
+rate, rather than a rate per unit length, as in 2D. For sufﬁciently
+strong forcing, this total rate, like in 2D result, was found to
+be roughly proportional B2
+d.
+To directly compare the 2D and 3D reconnection rates one
+must translate the 3D rate into a rate per unit z, as in 2D. Two
+rough methods of extracting such a quasi-2D rate from the 3D
+data were described – one of which is simply to divide the
+total rate in 3D by the width of the forcing function – with
+similar results. When either of these two rates are plotted as a
+function of the upstream magnetic ﬁeld, the 2D and 3D results
+are comparable. On the other hand, the distribution of recon-
+nected magnetic ﬂux in 3D becomes strongly skewed at late
+times by the ﬂow of electrons in the current layer, and near the
+edge of the forcing function, the ﬂux builds at local rates that
+can substantially exceed the 2D values.
+Acknowledgments
+This work was supported by NSF grant 0238694, DOE
+grant DE-FG02-07ER54915, NASA grant NNX07AR49G,
+and EPSCoR. Simulations were done at Dartmouth College.
+[1] J. E. Borovsky, R. J. Nemzek, and R. D. Belian, JGR, 98, A3,
+3807-3813, 1993.
+[2] J. A. Miller, P. J. Cargill, A. G. Emslie, G. D. Holman, B. R.
+Dennis, T. N. LaRosa, R. M. Winglee, S. G. Benka, and S.
+Tsuneta, JGR 102, A7, 14,631-14659, 1997.
+[3] J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton ,M.
+Hesse, M. Kuznetsova , Z. W. Ma , A. Bhattacharjee, A. Otto ,
+et al., J. Geophys. Res. 106 , 3715 (2001).
+[4] J. Birn, M. Hesse, J. Geophys. Res. 106, 3737 (2001).
+[5] Z. W. Ma and A. Bhattacharjee , Geophys. Res. Lett. volume
+106 3773 (2001).
+[6] A. Bhattacharjee, Z. W. Ma, X. Wang, Phys. Plas. 8, 1829
+(2001).
+[7] P. L. Pritchett J. Geophys. Res. 106 3783 (2001).
+[8] B. N. Rogers , R. E. Denton , J. F. Drake , and M. A. Shay , 87
+, 195004 (2001).
+[9] M. A. Shay, J. F. Drake, and B. N. Rogers, J. Geophys. Res.
+106, 3759 (2001).
+[10] A. Zeiler, D. Biskamp, J. F. Drake, B. N. Rogers, M. A. Shay,
+M. Scholer J. Geophys. Res. 107, 1230 (2002).
+[11] M. Scholer, I. Sidorenko, C. H. Jaroschek, R. A. Truman, A.
+Zeiler, Phys. Plas. 10, 3521 (2003).
+[12] J. D. Huba and L. I. Rudakov , Phys. Rev. Lett. 93 , 175003
+(2004).
+[13] R. Fitzpatrick , Phys. Plasmas 11 , 937 (2004).
+[14] M. A. Shay , J. F. Drake , M. Swisdak , and B. N. Rogers ,
+
+9
+f=0.15
+f=0.1
+slope = Vout
+VAd
+= 1
+f=0.1
+f=0.15
+slope =
+
+δ
+D =
+√
+0.2
+
+δ
+D =
+√
+0.1
+f=0.4
+f=0.2
+slope = Vout
+VAd
+= 1
+f=0.4
+f=0.2
+(a)
+(b)
+(c)
+(d)
+
+2 · δ
+D =
+
+2 · (0.1)
+slope =
+
+2 · δ
+D =
+
+2 · (0.2)
+FIG. 6: (color online) (a) Vout
+√n vs. Bd in 2D, (b) Vout
+√n vs. Bd in 3D , (c) √R0
+4√n vs. Bd in 2D, (d)√R0
+4√n vs. Bd in 3D
+Phys. Plasmas 11 , 2199 ( 2004) .
+[15] P. Ricci, J. U. Brackbill, W. Daughton, G. Lapenta, Phys. Plas.
+11, 4489 (2004).
+[16] P. A. Cassak, M. A. Shay, and J. F. Drake, Phys. Rev. Lett. 95,
+235002 (2005).
+[17] L. Chac´on, A. N. Simakov, A. Zocco, Phys. Rev. Lett. 99,
+235001 (2007).
+[18] Furth, H.P., J. Killeen, M.N. Rosenbluth, Phys. Fluids, 6, 459
+(1963).
+[19] B. Sullivan, B. N. Rogers, and M. A. Shay, Phys. Plasmas 12,
+122312 ( 2005 ).
+[20] L. I. Rudakov, J. D. Huba, Phys. Rev. Lett. 89, 095002 (2002).
+[21] J. D. Huba, L. I. Rudakov, Phys. Plas 9, 4435 (2002).
+[22] M. Hesse, M. Kuznetsova, K. Schindler, J. Birn, Phys. Plas. 12,
+100704 ( 2005 ).
+[23] G. Lapenta, D. Krauss-Varban, H. Karimabadi, J. D. Huba, L. I.
+Rudakov, P. Ricci, Geophys. Res. Lett. 33, L10102 ( 2006 ).
+[24] J. Birn, K. Galsard, M. Hesse, M. Hoshino, J. Huba, G. Lapenta,
+P.L. Pritchett, K. Schindler, L. Yin, J. B¨uchner, T. Neukirch, and
+E.R. Priest, Geophys. Res. Lett. 32, L06105 (2005).
+[25] P. L. Pritchett. J. Geophys. Res. 110, A10213 (2005).
+[26] J. D. Huba. Phys. Plas. 13, 062311 (2006).
+[27] N. Bessho, A. Bhattacharjee. Phys. Rev. Lett. 95 245001
+(2005).
+
+10
+[28] H. Karimabadi, W. Daughton, J. Scudder. Geophys. Res. Lett.
+34, L13104 (2007).
+[29] M. A. Shay, J. F. Drake, M. Swisdak. Phys. Rev. Lett. 99,
+155002 (2007).
+[30] J.F. Drake, M. A. Shay, M. Swisdak. Phys. Plas. 15, 042306
+(2008).
+[31] P. L. Pritchett. J. Geophys. Res. 113, A06210 (2008).
+[32] S. T. Zalesak, J. Comput. Phys. 31, 35 (1979).
+[33] S. T. Zalesak, J. Comput. Phys. 40, 497 (1981).
+[34] J. Rem and T. J. Schep, Plasma Phys. Control. Fusion 40, 139
+(1997).
+[35] D. A. Uzdensky and R. M. Kulsrud, Phys. Plasmas 7, 4018
+(2000).
+[36] Ottaviani, M., and F. Porcelli, Phys. Rev. Lett. 71, 3802 (1993).
+[37] M. A. Shay , J. F. Drake , B. N. Rogers , and R. E. Denton ,
+Geophys. Res. Lett. 26 , 2163 (1999).
+[38] M. Hesse , K. Schindler , J. Birn , and M. Kuznetsova , Phys.
+Plasmas 5 , 1781 ( 1999 ).
+[39] M. A. Shay and, J. F. Drake , Geophys. Res. Lett. 25 , 3759 (
+1998 ).
+[40] M. A. Shay ,J. F. Drake , B. N. Rogers , and R. E. Denton , J.
+Geophys. Res. 106 , 3751 ( 2001 ).

@@ -1,0 +1,782 @@
+Post disruption reconnection event driven by a runaway current
+L. Singh1,2, D. Borgogno1, F. Subba2, and D. Grasso1
+1 Istituto dei Sistemi Complessi—CNR and Dipartimento di Energia, Politecnico di Torino, Torino, Italy and
+2 NEMO Group, Dipartimento Energia, Politecnico di Torino, Torino, Italy
+(Dated: September 7, 2023)
+The role of a runaway current in a post disruption plasma is investigated through numerical simulations in
+an asymmetric magnetic reconnection event. While the runaways do not alter the linear growth of the island,
+they lead to a rotation of the island in the poloidal direction as found in [C. Liu et al. Physics of Plasmas 27,
+092507 (2020)]. The role of a microlayer smaller than the resistive one is thoroughly investigated. While the
+resistive layer controls the transition of the island from the linear to the nonlinear stage, the microlayer width
+causes the runaways to become nonlinear as soon as the size of the island exceeds it. Moreover, this transition
+of the runways electrons to the nonlinear phase is accompanied by a drastic redistribution of runaways within
+the island with respect to the symmetric case. The influence of the electron skin depth on the linear evolution is
+also taken into account. Finally, nonlinear simulations show that the rotation frequency tends toward zero when
+the island saturates.
+I.
+INTRODUCTION
+Runaway electrons are a major cause of concern for future
+fusion devices, ITER [1] foremost among them. Because of
+the decrease in electron collision frequency with increasing
+velocity, electrons subjected to a strong electric field can ex-
+perience unlimited "runaway" acceleration. In tokamaks, run-
+away electrons can be produced in the disruptions because of
+the strong inductive electric field formed when the thermal en-
+ergy of the plasma is rapidly lost. The runaway population can
+grow exponentially (avalanche mechanism) due to collisions
+of relativistic electrons with low-energy electrons.
+It is estimated that the impact of electron runaways on the
+walls of a machine such as ITER can cause severe damage. It
+is therefore important to improve the understanding of plasma
+dynamics during all the life time of the RE beam to mitigate its
+effects. Recently [2] a study has been carried out to model the
+RE benign termination observed in the JET shot 95135 [3].
+In particular, during this shot, MHD activity has caused the
+mitigation of RE through a broad deposition of the beam on
+plasma-facing components. It has been demonstrated in [2],
+through numerical simulations done with JOREK [4], that this
+RE suppression is caused by the stochastization of the mag-
+netic field lines causing the crash of the RE current.
+In this perspective, it also becomes important to understand
+what is the interaction mechanism between the runaway pop-
+ulation generated during a disruption and the post-disruption
+plasma. That is, to understand what are the stability proper-
+ties of such a plasma in which the plasma current is replaced
+by the runaway current. More than a decade ago this problem
+was studied in [5] by considering the role of a runaway elec-
+tron current on the spontaneous development of the magnetic
+reconnection instability in a resistive, weakly unstable plasma.
+It was found that when the plasma current is totally carried by
+runaway electrons, two-dimensional (2D) magnetic perturba-
+tions, with no dependence on the spatial coordinate along the
+guiding magnetic field, which resonate on the surface where
+the current peaks, significantly increase the saturated ampli-
+tude of the reconnected region (magnetic island) compared to
+the standard case without runaway electrons, but do not affect
+the linear growth rates. More recently [6] some aspects, which
+had remained unclear in [5] because of the periodic equilib-
+rium magnetic configuration adopted, were clarified with new
+numerical simulations assuming a different equilibrium. In-
+deed, the periodic equilibrium configuration implied the pres-
+ence of two magnetic islands, one at the center of the integra-
+tion domain and one at the boundaries. When the magnetic
+islands grew too large in the nonlinear phase they began to in-
+teract, affecting the saturation results.
+In 2020, Liu et al. [7] extended this analysis by considering
+the linear evolution of 2D asymmetric perturbations, whose
+resonant surfaces do not lie at the current peaks. Two peculiar
+features have been highlighted: firstly, the poloidal rotation
+of the magnetic island, the frequency of which depends on
+the derivative of the runaway electron current on the resonant
+surface, and secondly, the existence of a microscopic layer
+in which the current density of runaway electrons is concen-
+trated. Since the width of these layers depends on the inverse
+of the runaway electron velocity, that is of the order of the
+speed of light, it is expected that they can thin to microscales
+where the kinetic effects can make a non-negligible contribu-
+tion to plasma dynamics. This paper is focused on the self-
+consistent study of the mutual interaction between runaway
+electrons and asymmetric magnetic reconnection in nonlin-
+ear regimes. The analysis is performed by considering a two-
+fluid, collisional plasma model, where the effects of the elec-
+tron inertia and the electron temperature, that introduce the
+electron skin depth and the ion-sound Larmor radius, respec-
+tively, are taken into account. Although these scales are small
+in a post disruption scenario due to the low plasma temper-
+ature and the electron mass, they could become relevant in
+presence of localized current layers, affecting the evolution of
+the global process. The linear analysis of a RE-driven mag-
+netic reconnection reproduced the results obtained in [5] with
+RE not having an influence on the linear growth rates of the
+island both in symmetric and asymmetric cases and the island
+width at saturation being 50% higher with RE with respect to
+the case without RE. With respect to the symmetric case, an
+asymmetric current profile leads to the island rotation and the
+presence of a microlayer on the RE current distribution at the
+X-point consistently with the results shown in [7]. In addition,
+the electron skin depth affects the thermal electron distribution
+arXiv:2309.02549v1  [physics.plasm-ph]  5 Sep 2023
+
+2
+at the X-point of the island. The nonlinear evolution of asym-
+metric modes leads to the generation of a spiral-like structure
+inside the island whereas the island rotation frequency tends
+towards zero locking in at saturation.
+The paper is organized as follows. In section II the model
+equations are introduced. In section III the SCOPE3D numer-
+ical tool is presented and its benchmark and verification test
+is shown in IV. Sections V focus on linear and nonlinear re-
+sults for asymmetric modes rispectivley. Conclusions close
+the paper.
+II.
+MODEL EQUATIONS
+In our analysis we extend the reduced, purely collisional
+model adopted in [5] by considering as in ref. [6] the contri-
+butions of the effects of the electron mass me and the electron
+temperature Te through new terms in the plasma Ohm’s law
+proportional to the electron skin depth de = c/
+p
+4πnee2/me
+and the ion sound Larmor radius ρs =
+p
+(Te/mi)/ωci, with
+ωci the ion gyrofrequency, respectively. Furthermore, here
+we consider a three-dimensional slab geometry, which also
+allows us to deal with perturbations dependent on the coordi-
+nate along the direction of the guiding magnetic field direc-
+tion. The equations normalized on the Alfven time and on the
+characteristic length of variation of the equilibrium magnetic
+field are [6]:
+∂ψ
+∂t +[ϕ,ψ]+d2
+e
+∂J
+∂t +d2
+e[ϕ,J]−ρ2
+s [U,ψ]
++η(J −JRE)+ ∂ϕ
+∂z +ρ2
+s
+∂U
+∂z = 0
+(1)
+∂U
+∂t +[ϕ,U]−[J,ψ]−∂J
+∂z = 0
+(2)
+∂JRE
+∂t
++[ϕ,JRE]+ c
+vA
+([ψ,JRE]−∂JRE
+∂z ) = 0
+(3)
+J = −∇2⊥ψ,U = ∇2⊥ϕ
+(4)
+where ∇2⊥= ∂2
+x + ∂2
+y and [f,g] = ∂x f∂yg −∂xg∂y f.
+The
+model assumes a magnetic field B = B0ez +∇ψ ×ez, where
+B0 represents the uniform magnetic guide field and is set to 1,
+and a velocity field v = −∇ϕ × ez. The fields ψ and ϕ are
+the magnetic flux and the stream function, respectively, while
+J is the current density of the plasma and U its vorticity. Eq.
+3 describes the evolution of the runaway current density JRE,
+where it has been made the assumption that these particles
+move with the (normalized) speed of light along the magnetic
+field lines. Due to their relativistic velocity, in contrast to the
+thermal electrons, runaway electrons do not collide with ions,
+as stated by the dissipative term in the plasma Ohm’s law in
+Eq. 1, where η is the normalized resistivity.
+In this paper, we focus on the analysis of spontaneous mag-
+netic reconnection events induced by single helicity (SH) per-
+turbations in a sheared, unstable equilibrium magnetic config-
+uration, with By = By(x). For a generic field, f, SH modes
+have the following form:
+f(x,y,0) = ∑
+ky,kz
+ˆfky,kz(x)exp(ikyy+ikzz) =∑
+ky
+ˆfky(x)exp(iky(y+kz/kyz))
+where the helicity α = kz/ky is fixed. Here ky = πm/Ly and
+kz = πn/Lz, with m,n integer numbers and Ly and Lz the half-
+widths of the computational box along y and z, respectively.
+As shown in [8, 9], SH problems can be treated as 2D prob-
+lems, i.e. without dependence on the z coordinate, by trans-
+forming the sheared component of the equilibrium magnetic
+field from By to By −α, which corresponds to a rotation in the
+(y,z) plane.
+III.
+THE NUMERICAL TOOL SCOPE3D
+The SCOPE3D (Solver for COllisionless Plasma Equations
+in a 3D slab geometry) code is adopted to solve the equations
+1-4 in a slab geometry. It is based on an explicit, third-order
+Adam-Bashforth temporal discretization and is parallelized
+along the two periodic directions y and z. In order to have a
+high spatial resolution in the reconnection region, a compact
+finite difference scheme [10], specifically designed for a non-
+equispaced grid, is adopted for the spatial discretization along
+the x direction. Fast Fourier methods are applied instead along
+the periodic directions. In addition, numerical filters are used
+in the y and z directions to remove short-length scales caused
+by nonlinear interactions [10], while the physical dissipation
+is sufficient to control the numerical noise along the x direc-
+tion. Since we analyze here only SH modes all the simulations
+have been carried out in the 2D limit, saving computational
+time.
+We consider magnetic reconnection events starting from
+a static plasma, immersed in an asymmetric, Harris-type,
+sheared magnetic field [11], in which all current is carried by
+runaway electrons, such that:
+ϕeq(x) = 0
+(5)
+ψeq(x) = −log(cosh(x))+αx
+(6)
+JREeq(x) = Jeq(x) = −∇2ψeq(x)
+(7)
+Concerning the grid used in this work, for the linear analysis
+a resolution of ny=96 points has been used along the periodic
+direction y. In contrast, for the x-direction, the number of
+grid points has been varied from 1200 to 4800 on the noneq-
+uispaced grid in order to have an adequate resolution in the
+reconnection region. In particular, for the purpose of bench-
+marking, nx = 1200 grid points have been adopted for the x-
+direction so as to guarantee a resolution of dx = 0.0038 around
+x=0 where the reconnection occurs.
+IV.
+SYMMETRIC CASE: α=0
+Here we briefly summarize the linear and nonlinear results
+[6] we obtained assuming a runaway current profile peaked on
+
+3
+the rational surface at x = 0, in order to have at hands a com-
+parison term when exploring the α ̸= 0 cases. These results
+have been validated against the ones reported in [5] and for
+this reason we consider the pure resistive regime (de = 0) and
+the limit c/vA = 1. A [−Lx,Lx]×[−Ly,Ly] with Lx = 3π and
+different Ly domain was used to integrate the equations. Ly
+was varied to account for different degrees of instability.
+Differently from [5], where a periodic in-plane component of
+the equilibrium magnetic field was adopted, i.e. ψeq = cos(x),
+the equilibrium (6) allowed us to carry out analysis on long
+nonlinear times and to investigate the evolution of a single
+magnetic island until saturation. This has not been possible
+in [5] since the periodic equilibrium adopted there led to the
+presence of a second magnetic island at the boundaries of the
+integration domain, influencing the one located at the center.
+The Harris equilibrium leads to an equilibrium current that
+has been discussed in MHD theory as the most probable pro-
+file [12]. Figure 1 shows the numerical and analytical linear
+growth rates with and without runaways. The resistivity is
+fixed at η = 3e −4 and different perturbation wave numbers
+ky are adopted, corresponding to modes with different values
+of the stability parameter ∆′ = 2(1/ky −ky). Furthermore, the
+effect of electron compressibility along magnetic field lines is
+taken into account through the introduction of the ion sound
+Larmor radius scale length, ρs, into the equations. In particu-
+lar, the blue points for runaways and green points for no run-
+aways are compared with the expected theoretical values with
+(blue curve) and without (green curve) runaways. The theo-
+retical prediction given by Eq. 9 and represented by the green
+curve, accounts for the finite resistivity correction because of
+the relatively high value of η [13]. In the same figure red and
+magenta points represent the linear growth rates in presence of
+runaways and when no runaways are present fore cases where
+ρs = 0.1. These points are compared with the results of Eq.
+10, corresponding to the red curve. It can be observed that
+the runaway current’s presence does not significantly alter the
+linear growth rates as in the pure resistive case. The linear
+dispersion relation shown in fig. 1 has been derived in slab
+geometry in Ref. [5] with and without RE, obtaining:
+γ5/4
+η3/4k1/2
+y
+= 0.47∆′
+with runaways
+(8)
+γ1/4(γ −2bη)
+η3/4k1/2
+y
+= 0.47∆′
+without runaways
+(9)
+where b =
+ψIV
+eq
+ψII
+eq |x=0.
+Eq. 8 is the standard Furth, Killeen and Rosenbluth (FKR)
+[14] growth rate in the small ∆′ regime, defined by the inequal-
+ity ∆′η1/3 ≪1. While the derivation of the eq. 9 considers
+the higher-order derivatives corrections of the current density
+at the resonant surface [13]. On the other hand, in presence of
+ρs the dispersion relation for the linear growth rates becomes
+[15],
+γ3/2
+η1/2ky
+γ = 0.32ρs∆′
+(10)
+FIG. 1. Numerical and analytically derived linear growth rates for a
+pure resistive reconnecting mode driven by a runaway current (blue
+points and blue curve) compared with the case without runaway cur-
+rent (green points and green curve) along with the numerical linear
+growth rates with (red points) and without a runaway current (ma-
+genta points) compared with the results of Eq. 10 in presence of
+electron temperature effects (red curve).
+As it can be observed in fig. 1, a good agreement is found
+in both cases. In fig. 2 we compare the nonlinear saturated
+magnetic island widths in presence and absence of runaways,
+w, for ∆′ in the range [0.1, 2], where w is given by [5]:
+FIG. 2. Numerical and analytically derived saturation island widths
+for the pure resistive reconnecting mode driven by a runaway cur-
+rent (green points and green line) compared with the case without
+runaways (red points and red line) along with the numerical satu-
+rated island widths with (blue plus markers) and without (yellow plus
+markers) in presence of electron temperature effects.
+w = −1
+b
+∆′
+0.272
+with runaways
+(11)
+w = −1
+b
+∆′
+0.411
+without runaways.
+(12)
+
+4
+Having b = −2 for the type of equilibrium considered in
+this study, we get w = 1.85∆′ and w = 1.22∆′ respectively
+for the case with and without RE. As found in ref. [5], the
+presence of a runaway current leads to an increase of 50% in
+the saturated magnetic island width with respect to the case
+with no RE.
+The analytical expressions found for the saturated island
+widths in presence, represented by the green line, and
+absence, represented by the red line, of runaways are plotted
+in fig. 2 to compare them against the numerically obtained re-
+sults shown with the corresponding color points. In addition,
+fig.
+2 shows the numerically obtained saturated magnetic
+island widths in presence of ρs with and without runaways
+corresponding to blue and yellow plus markers respectively.
+As it can be observed, the presence of the electron tempera-
+ture does not lead to any change in the saturation width since
+the microphysics at the ion sound Larmor radius scale plays
+no role in the saturated island width, which should depend
+only on the free energy available for the reconnection process.
+A good agreement is found between the theory and simula-
+tion, however, a difference between the theoretical and the
+numerically observed widths in presence of runaways can be
+observed at values of ∆′ of order unity. This follows from the
+fact that at these ∆′ values, the simulation parameters do not
+fall into the range of validity of the analytical theory since
+they depart from the asymptotic limit of the small ∆′ regime.
+However, these simulations were necessary in order to verify
+the presence of a bifurcation in the sequence of saturated
+equilibria which was postulated in ref. [5]. In our study we
+did not find any bifurcation allowing the island to grow up to
+saturation even for values of ∆′ of order 1. In ref. [5] periodic
+boundary conditions in the inhomogeneity direction of the
+equilibrium magnetic field prevented the island to reach a
+saturated state.
+V.
+ASYMMETRIC CASE kz/ky ̸= 0
+Here we consider asymmetric modes, by shifting the in-
+plane component of the equilibrium magnetic field Byeq =
+tanh(x) −α.
+Hence the rational surface is now located at
+xs = settanh(α) while the runaway current profile is peaked
+at x = 0.
+A.
+LINEAR ANALYSIS
+When considering modes for which kz/ky ̸= 0 Liu et al. [7]
+demonstrate that the runaway electrons convection causes a
+mode rotation which explains the real frequency seen in their
+simulation campaign carried out with the code M3DC-1. In
+the same work, RE are shown to lead to the formation of a
+smaller layer within the resistive layer, which width depends
+on the ratio c/vA. In particular, the resistive layer half width,
+δ1 (referred as the layer width in the following), the sublayer
+half width, δ2 (referred as the sublayer width in the following),
+and the growth rate are given in slab geometry by
+δ1 = γ1/4η1/4k−1/2
+y
+(13)
+δ2 = γvA/kyc
+(14)
+γ5/4
+η3/4k1/2
+y
+2πΓ(3/4)
+Γ(1/4)
+= ∆′ −iπ kyJ′
+RE0
+|ky|
+(15)
+where J′
+RE0 is the derivative of the RE current at the rational
+surface. For J′
+RE0 ̸= 0 an imaginary part of the growth rate
+appears which gives a rotation of the magnetic island. The ∆′
+parameter taking into account corrections due to finite values
+of kz/ky has been evaluated according to [16],
+∆′ ≈2
+1
+k −k
+
+1+ tanh2xs
+2
+
+1+
+1
+1−k
+
+(16)
+where k ≡|k| with k = kyey +kzez.
+In fig. 3 the growth rates, given by the Eq. 15, are shown by
+the blue line and compared with the simulation results (blue
+points) for cases with ∆′ = 1.015, c/vA = 1 and resistivity val-
+ues in the [1e-3, 1e-6] range. As can be observed, the sim-
+ulation results agree well with the analytical derivation and
+the same is true for the rotation frequency represented by the
+rust points and compared with the results of the Eq. 15 (rust
+curve).
+FIG. 3. Comparison between the analytical growth rate (blue line)
+and rotation frequency (rust curve) given by Eq. 15 and the numeri-
+cal growth rate (blue points) and rotation frequency (rust points) for
+values of η in the [1e-3, 1e-6] range, ∆′ = 1.015 and c/vA = 1.
+To analyze the inner layer, we have chosen the value ∆′ =
+6.057, even though fig. 4 shows that the growth rates from the
+simulations (blue points) are less close to the analytical re-
+sults (blue curve), than the more asymptotic case ∆′ = 1.051.
+At the same time, the resistivity range considered for this case
+has been changed to [1e-4, 5e-7] with respect to the range
+adopted for the previous case in order to respect the small ∆′
+regime limit. On the other hand, the ∆′ = 1.051 case does not
+
+5
+allow a sufficient numerical resolution to determine the in-
+ner layer widths already with c/vA = 1, so that analysis with
+c/vA = 10 is computationally infeasible. An accurate mea-
+surement of the δ2 requires adopting an increasing number of
+grid points along the radial direction with decreasing resistiv-
+ity. This leads to reducing the radial extension of the simula-
+tion domain in order to have enough spatial resolution in the
+reconnection region. As a consequence, with a smaller do-
+main, the system is less asymptotic which partially explains
+also the differences in the observed growth rates in fig. 4 Fur-
+thermore, the numerically obtained rotation frequencies (rust
+points) for ∆′ = 6.057 agree with the theory (rust curve), as
+can be seen in fig. 4, since the rotation frequency does not
+depend on the value of ∆′, in accordance with the Eq. 15.
+FIG. 4. Comparison between the analytical growth rate (blue line)
+and rotation frequency (rust curve) given by Eq. 15 and the numeri-
+cal growth rate (blue points) and rotation frequency (rust points) for
+values of η in the [1e-4, 5e-7] range, ∆′ = 6.057 and c/vA = 1.
+Fig. 5 shows the linear eigenfunction for mode 1 of the
+total current (blue curve), runaway current (red curve), and
+thermal electrons (green curve) normalized to the maximum
+of the total current for a case with η = 1e −4,∆′ = 6.057,
+c/vA = 1. This figure highlights the presence of a resistive
+layer δ1 on the thermal current profile and an inner layer δ2 on
+the runaway current profile. In particular, it can be observed
+that the second layer is much narrower than the resistive one
+and the thermal current profile dominates the runaway current
+profile. However, as shown in fig. 6, which shows the same
+profiles as in fig. 5 but for c/vA = 10, the peak of the runaways
+is higher than that of the thermal current. This results from the
+conservation of runaways which in the case of a thinner layer
+are distributed over a smaller area and reach a maximum that
+is higher than the peak value of the thermal electrons.
+The dependence of the microlayer δ2 on the c/vA ratio is
+scanned in fig. 7 for different values of the resistivity, through
+the growth rates γ. In particular, the numerical (blue and red)
+curves are compared with the anaytical (green and magenta)
+lines. The blue and green curves correspond to the c/vA = 1
+case while the red and magenta ones to the c/vA = 10 case.
+By comparing the two numerical curves we observe that there
+FIG. 5.
+Eigenfunction of mode 1 for total current (blue curve),
+runaway current (red curve), and thermal electrons current (green
+curve) profiles showing the inner layer δ2 on the runaway current
+profile and the resistive layer δ1 on the thermal electrons profile for
+η = 1e−4, ∆′ = 6.057 and c/vA = 1.
+FIG. 6. Eigenfunction of mode 1 for total current (blue curve), run-
+away current (red curve) and thermal electrons current (green curve)
+profiles showing the inner layer δ2 on the runaway current profile and
+the resistive layer δ1 on the thermal electrons profile for η = 1e−4,
+∆′ = 6.057 and c/vA = 10.
+is about an order of magnitude difference between the re-
+sults as it should be according to the definition of δ2 given
+in Eq. 14. For both cases, c/vA = 1 and c/vA = 10 a good
+agreement is found between theory and simulations. For the
+higher ratio, the resistivity interval considered is limited to
+η = [1e −4,5e −5] since below this interval the problem re-
+quires a finer resolution which causes the simulations to be-
+come computationally unfeasible.
+Concerning the resistive layer, fig. 8 shows a comparison
+between the theory (green dashed line) and the numerical re-
+sults for c/vA = [1,10] (blue and red curve respectively) and a
+good agreement is found. Moreover, the curve for c/vA = 10
+shows a better agreement with the theory with respect to the
+other curve since a higher ratio makes the simulation more
+
+6
+FIG. 7.
+Numerically obtained sublayer widths compared with
+the analytical derivation given in Eq.
+14 for different values of
+γ corresponding to η in the [1e-4,5e-7] range, c/vA = [1,10] and
+∆′ = 6.057. The green dashed line corresponds to the analytical curve
+for c/vA = 1 and the magenta dashed line to the analytical curve for
+c/vA = 10, while the blue curve represents the numerical results for
+c/vA = 1 and the red curve for c/vA = 10
+FIG. 8. Numerically obtained resistive layer widths compared with
+the analytical derivation given in Eq. 13 for different values of γ
+corresponding to η in the [1e-4,5e-5] range, c/vA = [1,10] and ∆′ =
+6.057. The green dashed line corresponds to the analytical curve,
+while the blue curve represents the numerical results for c/vA = 1
+and the red curve for c/vA = 10.
+asymptotic.
+One question already raised in ref. [7] concerns the width
+of the microlayer, which can be comparable with the electron
+skin depth, de, and therefore could imply an effect of the elec-
+tron mass on the Ohm’s law. In order to investigate the effects
+of the electron inertia on the system evolution we performed
+a simulation campaign retaining the terms related to de in eq.
+1. In particular, a de = 0.1 value was taken into consideration
+which is close to de = 0.017 taking a post disruptive plasma
+density of ne = 1e17m−3. While we do not observe any differ-
+ence when c/vA = 1 the presence of de in Ohm’s law affects
+FIG. 9. Eigenfunction of mode 1 for total current (blue curve), run-
+away current (red curve) and thermal electrons current (green curve)
+profiles for η = 1e−4, ∆′ = 6.057 and c/vA = 10.
+the radial distribution of the thermal electrons for c/vA = 10
+where the runaway current is carrying almost all the plasma
+current. In this scenario, the thermal electrons are no more
+characterized by a Gaussian-like distribution as in a purely
+resistive case, but by a smaller layer as reported in fig. 9.
+Comparing fig. 9, which shows the eigenfunction of mode 1
+for the total current (blue curve), runaway current (red curve),
+and thermal current (green curve) normalized to the maximum
+of the total current, with fig. 6 the difference between the ther-
+mal electron distribution can be appreciated. The presence of
+the electron skip depth leads the thermal current to become
+important already during the linear evolution of the island.
+B.
+NONLINEAR ANALYSIS
+With respect to the linear regime, where a smaller integra-
+tion domain does not affect the evolution of the system, in the
+nonlinear regime the island width reaches dimensions of the
+order of the domain radial extension. As a consequence, in
+order to avoid border effects, an extension of Lx = 3π was
+chosen with η = 1e−4 and nx = 4800. This setup enables us
+to have enough spatial resolution in the reconnection region
+even with a larger domain.
+During the non-linear evolution of the magnetic reconnection
+process in the presence of a runaway current, the distribution
+of the RE population undergoes significant changes. Specifi-
+cally, when entering the nonlinear phase the single microlayer
+observed on the RE profile splits into multiple local peaks as
+shown in fig. 10 where the eigenfunction of mode 1 asso-
+ciated with RE radial profiles at t=1500 (red) and t = 1800
+(blue) are depicted. At t = 1500 the runaway electron evo-
+lution is at the end of the linear regime and at t = 1800 it is
+in the nonlinear regime as shown by the vertical lines in fig.
+11. Here we show the temporal evolution of ψ at the X-point
+(rust), which in the linear phase is directly linked to the is-
+land evolution, and the temporal evolution of the derivative of
+
+7
+the eigenfunction of mode 0 representing the equilibrium run-
+away current at the rational surface, J′
+RE0 (blue) for η = 1e−4,
+c/vA = 1 and ∆′ = 6.057. Moreover, it was observed that with
+a higher value of c/vA the runaways become nonlinear at an
+earlier stage. Indeed, with c/vA = 10, the runaways become
+nonlinear already during the linear evolution of the island. It
+was found that the transition from the linear to the nonlinear
+regime for runaways is governed by the widths of the inner
+layer δ2 and the island. In particular, when the island width
+becomes larger than the inner layer the runaways become non
+linear and as the inner layer gets smaller with increasing c/vA,
+the RE become non linear earlier in the case with c/vA = 10
+with respect to the case where c/vA = 1.
+FIG. 10. Radial profile of the runaway electrons distribution during
+the linear evolution (red) at t=1500 and during the non linear evolu-
+tion at t=1800 of runaways for η = 1e−4, c/vA = 1 and ∆′ = 6.057.
+FIG. 11.
+Temporal evolution of ψX (rust) and J′
+RE0 (blue) for η =
+1e−4, c/vA = 1 and ∆′ = 6.057.
+In contrast to the linear phase where the RE concentrates
+on the X-point of the island, during the nonlinear phase,
+the RE starts firstly to distribute over the separatrices of the
+island, and then, advancing more and more in the nonlinear
+phase, over multiple peaks. The RE’s redistribution during its
+nonlinear evolution is significantly impacted by the combi-
+nation of two phenomena which are the island growth and its
+rotation, resulting in the formation of a spiral-like structure
+as represented in fig. 12 where the left figure depicts the RE
+distribution over a magnetic island and the right figure shows
+the RE radial distribution along the spiral for the η = 1e−4,
+c/vA = 1 and ∆′ = 6.057 case across the island O point and
+t = 2500. As the island grows and the runaways distribute
+over the separatrices of the island, these are influenced by
+the island’s rotation along the poloidal direction to form a
+spiral-like structure. In the case where c/vA = 10 the island
+width becomes larger than δ2 already during the linear phase
+of the island evolution causing the runaways to become
+nonlinear which leads to the formation of the spiral at an
+earlier stage with respect to the c/vA = 1 case.
+The spiral-like structure ceases to exist once the island ro-
+tation tends toward zero. Indeed, as it can be observed in
+the left panel of fig.
+13 which compares the evolution of
+the island by the mean of ψ′
+x (blue curve) and its rotation
+frequency (rust curve) when the island enters the nonlinear
+regime after t = 2000 the island rotation tends towards zero.
+Once the island saturates, approximately around 4000τA, also
+the rotation frequency goes to zero. Moreover, the rotation
+frequency depends strictly on J′
+RE0, so it agrees with the eq.
+15, only during the linear phase of the runaway current evo-
+lution, as it can be observed in the right panel of fig. 13.
+Here, the analytical value, ωtheory (blue curve), computed us-
+ing eq. 15 with J′
+RE0 given by the simulation, is compared
+with the numerical rotation frequency, ωsimulation (rust curve),
+for η = 1e −4, c/vA = 10 and ∆′ = 6.057. We can clearly
+see that the agreement between the two curves stops when the
+equilibrium runaway current is perturbed. As a consequence,
+computing ωtheory through eq. 15 leads to a non-zero rotation
+frequency at saturation whereas in the simulation this goes to
+zero.
+Concerning the island width at saturation, it was found that
+with ∆′ = 6 the presence of a runaway current does not lead to
+a 50% higher width of the saturated island with respect to the
+width in the absence of runaways as demonstrated in [5] and
+shown in fig. 2. Indeed, by comparing the simulations with
+and without runaways it was observed that when ∆′ > 3 the
+saturated island width in the presence of RE was comparable
+to the dimension of the island in the absence of RE. This is
+caused by a different nonlinear evolution of the island as it
+can also be noticed by looking at the temporal evolution of
+ψ′
+x in fig. 11 which tends to increase in the nonlinear phase.
+Without RE, the growth of ψ′
+X, which approximates well the
+island growth even in the nonlinear phase, is more pronounced
+as can be noticed in the left panel in fig. 14, which depicts the
+temporal evolution of ψ′
+X w/o (blue curve) and with RE (rust
+curve). This burst in the island growth only takes place in the
+absence of RE, compensating for the 50% larger island seen
+in the presence of RE. Thus this behavior leads to a magnetic
+island at saturation similar in size, as can be seen in the right
+panel of fig. 14. For the sake of completeness, we also show
+the same plots for the case ∆′ = 3 in fig. 15. In this case,
+the nonlinear evolution of ψ′
+X is characteristic of the small
+
+8
+FIG. 12. Runaway electrons distribution over the magnetic island during the non linear evolution of the runways (left) and runaway electron
+profile at t=2500 (right) for η = 1e−4, c/vA = 1 and ∆′ = 6.057 at Y=-5.
+FIG. 13. Temporal evolution of ωsimulation (rust) and ψ′x (blu) at left and temporal evolution of ωtheory (blue) and ωsimualtion (rust) at right for
+η = 1e−4, c/vA = 1 and ∆′ = 6.057.
+∆′ regime and leads to a magnetic island width at saturation
+approximately 50% higher in presence of RE compared to the
+case without RE as predicted by the theory in [5].
+VI.
+CONCLUSIONS
+In this paper we have addressed the problem of the stabil-
+ity of a post-disruption plasma in a realistic asymmetric con-
+figuration, characterised by a mismatch between the current
+peak and the resonant surface. The runaway fluid equation is
+coupled with the MHD equations through a current coupling
+scheme and all the equilibrium plasma current is assumed to
+be carried by the runaways.
+We find that, while, as in the symmetric case [5], the run-
+aways do not alter the linear growth of the island, they lead to
+a rotation of the island in the poloidal direction consistently
+with the analytical results shown in [7]. An additional feature
+seen in the asymmetric simulations is the microlayer on the
+runaway current profile much smaller than the resistive layer.
+While the resistive layer controls the transition of the island
+from the linear to the nonlinear stage, the microlayer width
+causes the runaways to become nonlinear once the island size
+becomes larger than the microlayer width. This transition of
+the runaways to the nonlinear phase is accompanied by the
+generation of a spiral-like structure inside the island chang-
+ing drastically the distribution of runaways with respect to the
+symmetric case. In addition, since the microlayer widths are
+comparable in size with the electron skin depths measured in a
+
+9
+FIG. 14.
+Temporal evolution of ψ′
+X w/o (blue curve) and with RE (rust curve) at left panel and temporal evolution of island area w/o (blue
+curve) and with RE (rust curve) for at the right panel for η = 1e−4, c/vA = 1 and ∆′ = 6.057.
+FIG. 15.
+Temporal evolution of ψ′
+X w/o (blue curve) and with RE (rust curve) at left panel and temporal evolution of island area w/o (blue
+curve) and with RE (rust curve) at the right panel for η = 1e−4, c/vA = 1 and ∆′ = 3.
+post-disruptive scenario we studied the effect of the presence
+of de during the linear evolution of the island and find that the
+thermal electron distribution is no more characterized by the
+presence of a resistive layer, but a much narrower layer. As
+said earlier, the resistive layer governs the island transition to
+the nonlinear phase so it can be assumed that this change in
+the thermal electrons distribution might have an influence on
+the island growth as well. However, a nonlinear analysis of
+a RE-driven magnetic reconnection in the presence of de was
+not possible due to numerical noise rising when approaching
+the nonlinear stage of the island.
+The nonlinear analysis in the resistive regime shows that the
+frequency does not follow the evolution of the equilibrium
+runaway current once this becomes nonlinear and tends to
+zero when the island goes toward saturation. Finally, we find
+that as far as we are in the small ∆′ regime the island width at
+saturation is 50% bigger than the corresponding island with-
+out runaways, consistently with the theory [5]. While, increas-
+ing ∆′, the magnetic island saturation width in the presence of
+RE becomes more similar in size to the width in the absence of
+RE. In this case the rapid burst in the nonlinear island growth
+in the absence of RE compensates the 50% higher saturation
+width with RE.
+This study confirms the importance of investigating the stabil-
+ity of a post disruptive plasma in the presence of a RE cur-
+rent. Among other effects, the presence of more than one
+helicity in the initial perturbation can lead to plasma stochas-
+tization, connecting strictly this work with the study of the
+benign runaway termination in presence of stochastic mag-
+netic field [2]. On top of that, a 50% higher width at satura-
+
+10
+tion of the magnetic island may have a significant effect on
+the evolution of the magnetic stochasticity preventing the RE
+population growth. These aspects of the RE driven magnetic
+reconnection will be addressed in a future study.
+ACKNOWLEDGEMENT
+The numerical simulations were performed using the EU-
+ROfusion high performance computer Marconi Fusion hosted
+at CINECA (Project No. FUA36-FKMR2)
+DATA AVAILABILITY
+The data that support the findings of this study are available
+from the corresponding author upon reasonable request.
+[1] A. H. Boozer, Phys. Plasmas 22, 032504 (2015).
+[2] V. Bandaru, M. Hoelzl, C. Reux, O. Ficker, S. Silburn,
+M. Lehnen, N. Eidietis, J. Team, and J. Contributors, Plasma
+Phys. Control. Fusion 63, 035024 (2021).
+[3] C. Reux, C. Paz-Soldan, P. Aleynikov, V. Bandaru, O. Ficker,
+S. Silburn, M. Hoelzl, S. Jachmich, N. Eidietis, M. Lehnen,
+S. Sridhar, and J. contributors, PRL 126, 175001 (2021).
+[4] M. Hoelzl and J. team, NF 61, 065001 (2021).
+[5] P. Helander, D. Grasso, R. J. Hastie, and A. Perona, Phys. Plas-
+mas 14, 122102 (2007).
+[6] D. Grasso, D. Borgogno, L. Singh, and F. Subba, JPCS 2397,
+012004 (2022).
+[7] C. Liu, S. J. C. Zhao, A. Bhattacharjee, D. P. Brennan, and
+N. M. Ferrero, Phys. Plasmas 27, 092507 (2020).
+[8] D. Borgogno, E. Tassi, ,
+and A. Perona, Phys. Plasmas 27,
+012302 (2020).
+[9] D. Borgogno, D. Grasso, F. Porcelli, F. Califano, F. Pegoraro,
+and D. Farina, Phys. Plasmas 12, 032309 (2005).
+[10] S. K. Lele, J. Comput. Phys. 103, 16 (1992).
+[11] E. G. Harris, Nuovo Cimento 23, 115 (1962).
+[12] D. Biskamp, Magnetic Reconnection in Plasmas (Cambridge
+University Press, Cambridge, UK, 2000).
+[13] F. Militello, G. Huysmans, M. Ottaviani, and F. Porcelli, Phys.
+Plasmas 11, 125 (2004).
+[14] H. P. Furth, J. Killeen, and M. N. Rosenbluth, Phys. Fluids 6,
+459 (1963).
+[15] F. Porcelli, PRL 66 (1991).
+[16] W. Daughton, V. Roytershteyn, H. Karimabadi, L. Yin, B. J.
+Albright, B. Bergen, and K. Bowers, Nature Physics 7, 539
+(2011).

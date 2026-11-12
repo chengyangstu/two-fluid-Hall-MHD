@@ -1,0 +1,1167 @@
+Draft version August 14, 2025
+Typeset using LATEX preprint2 style in AASTeX7.0.1
+The Enhancement of Ion Heating in Kinetic, Anti-Parallel Reconnection in the
+Presence of a Flow Shear
+Colby C. Haggerty,1 Derek Sikorski,1 Michael A. Shay,2 Tai D. Phan,3 Paul A Cassak,4
+Giulia Murtas,1 and Prayash S. Pyakurel3
+1Institute for Astronomy, University of Hawai‘i, Honolulu, HI 96822, USA
+2Bartol Research Institute, Department of Physics & Astronomy, University of Delaware, Newark, DE, 19716, USA
+3Space Sciences Laboratory, University of California, Berkeley, CA 94720, USA
+4Department of Physics and Astronomy and the Center for KINETIC Plasma Physics, West Virginia University,
+Morgantown, West Virginia 26506, USA
+ABSTRACT
+We investigate the kinetic effects of upstream, magnetic field-aligned, flow shear on
+anti-parallel magnetic reconnection using 2.5D Particle-In-Cell simulations. Our results
+demonstrate that flow shear significantly alters the reconnection process, leading to en-
+hanced ion heating, reduced outflow speeds, and a modified reconnection geometry. In
+contrast to previous Hall Magnetohydrodynaic (MHD) studies, we find that reconnec-
+tion becomes a more efficient plasma heating mechanism in the presence of sub-Alfv´enic
+flow shear, with ion heating increasing by as much as 300%. This enhanced heating
+is achieved by efficiently converting the incoming flow shear energy into thermal en-
+ergy through istropization in the exhaust. The enhanced heating leads to a pressure
+gradient away form the x-line exerting a force that reduces the outflow jet speed and
+slows down the reconnection process. This conversion is due to beam selection effects,
+mixing and scattering in the exhaust. A theoretical model is developed which predicts
+well the exhaust heating and outflow speed reduction. These results offer a potential
+explanation for recent Parker Solar Probe observations of suppressed reconnection in
+the presence of flow shear and carry significant implications for energy dissipation in
+turbulent plasmas.
+1. INTRODUCTION
+Magnetic reconnection is a plasma process
+that efficiently converts magnetic energy into
+plasma heating and Alfv´enic outflows.
+This
+process is crucial in a variety of low-collisional
+plasma environments, spanning space physics
+and astrophysics. Initially proposed to explain
+solar flares, reconnection has since been repeat-
+edly observed by satellites in situ throughout
+the heliosphere, from the large-scale dynamics
+of the heliospheric current sheet and the Dungey
+cycle to the small-scale dissipation of energy in
+turbulence(J. W. Dungey 1961; G. Paschmann
+et al. 2013; J. L. Burch et al. 2016; J. T. Gosling
+et al. 2007; J. T. Gosling 2007; A. Chasapis et al.
+2018; T. D. Phan et al. 2020).
+Despite its importance and prevalence, our
+understanding
+of
+reconnection
+is
+primarily
+based on simplified models, which often assume
+constant and static inflowing plasma parame-
+ters. A critical complexity often ignored is the
+presence of a relative bulk flow across the re-
+connecting current sheet, i.e., flow shear. An
+issue with this simplification is that reconnec-
+arXiv:2508.09424v1  [physics.plasm-ph]  13 Aug 2025
+
+2
+tion inflow configurations with a flow shear are
+common in various systems, including current
+sheets in the solar wind of the inner helio-
+sphere(T. D. Phan et al. 2020), at the magne-
+topause flanks(S. A. Fuselier et al. 2005), and
+within turbulent plasmas where they form at
+the boundaries of swirling eddies (H. Hasegawa
+et al. 2016; T. D. Phan et al. 1996; W. H.
+Matthaeus & S. L. Lamkin 1986).
+Previous studies have examined flow shear
+reconnection with applications to the magne-
+topause; these studies used both Magnetohy-
+drodynamics (MHD) and kinetic Particle-in-
+Cell (PIC) simulations to study the modifica-
+tions to reconnection (A. L. La Belle-Hamer
+et al. 1995; J. Wang et al. 2008, 2012; L. Wang
+et al. 2015; C. E. Doss et al. 2016; H. Liang et al.
+2024). Many of these studies focused on asym-
+metric reconnection, and/or a flow shear per-
+pendicular to the reconnecting magnetic field.
+While applicable for parts of the magnetopause,
+none of these studies considered field-aligned
+flow shear for symmetric, kinetic systems, which
+is potentially more applicable to reconnection
+in collisionless plasma turbulence.
+However,
+one such work considered the field-aligned sym-
+metric case with Hall Magnetohydrodynamics
+(MHD) simulations which revealed several dis-
+tinct modifications to the reconnection process,
+such as tilting of the exhaust region and a re-
+duction in outflow jet speeds(P. A. Cassak &
+A. Otto 2011; P. A. Cassak 2011). These stud-
+ies presented Sweet-Parker-like scaling relations
+for the reduced outflow velocity; it was claimed
+that the kinetic energy associated with the flow
+shear would be responsible for decreasing the
+total available energy. However, these scaling
+predictions did not account for the fact that
+flow shear, in principle, should increase the to-
+tal energy available in the system, suggesting
+that these relationships were empirical.
+Consequently, our understanding of how field-
+aligned flow shear modifies magnetic reconnec-
+tion remains incomplete, particularly from a
+kinetic perspective. Recent observations from
+Parker Solar Probe (PSP) highlight this knowl-
+edge gap, where reconnection appeared sup-
+pressed at relatively low, sub-Alfv´enic flow
+shear values(T. D. Phan et al. 2020) - results
+at odds with the previous Hall-MHD and asym-
+metric PIC simulations(P. A. Cassak 2011; C. E.
+Doss et al. 2016).
+This manuscript investigates the effects of up-
+stream, field-aligned flow shear on anti-parallel
+reconnection from a kinetic (collisionless) per-
+spective. While our results share some similar-
+ities with previous studies, we also show that
+reconnection becomes a significantly more ef-
+ficient plasma heating mechanism in the pres-
+ence of a flow shear.
+This enhanced heating
+reduces the outflow jet speed and slows the re-
+connection process, which could explain recent
+PSP observations and significantly impact our
+understanding of reconnection as an energy dis-
+sipation mechanism in turbulent plasmas.
+The manuscript is structured as follows: Sec. 2
+details the code and simulations used in this
+study, and Sec. 3 presents the results. Sec. 4
+develops a physical argument for how flow shear
+modifies the reconnection process, leading to a
+prediction for the enhanced ion heating and the
+associated outflow reduction which is consistent
+with the simulation results.
+Finally, we dis-
+cuss the potential implications of these results
+in Sec. 5 and conclude in Sec. 6.
+2. SIMULATIONS
+To investigate the kinetic effects of velocity
+shear on magnetic reconnection, we perform a
+survey of simulations in 2.5D (2 dimensions in
+real space and 3 in velocity) using the Particle-
+In-Cell (PIC) code P3D (A. Zeiler et al. 2002).
+The simulation code is normalized to arbitrary
+density and magnetic field values of B0 and n0.
+From this, the rest of the units are determined;
+time to t0 = Ω−1
+ci
+= mic/eB0, velocity to the
+Alfv´en speed v0 = VA = B0/√4πmin0, lengths
+
+3
+to the ion inertial length l0 = t0v0 = di =
+vA/Ωci, electric fields to E0 = B0vA/c, where c
+is the speed of light and temperatures5 to T0 =
+miV 2
+A.
+Following standard PIC approaches,
+we use artificially reduced constants to reduce
+the computational cost of the simulations, in-
+cluding a reduced ion-to-electron mass ratio of
+mi = 25me and speed of light c/VA = 7. We do
+not expect these choices will adversely impact
+the present study. The ions are initialized with
+an ion plasma beta of βi = 2Ti/miV 2
+A = 0.1,
+and electrons with Te/Ti = 1.
+The simulations use a regular Cartesian grid
+with doubly periodic boundary conditions, with
+lengths Lx × Ly = 81.92di × 40.96di, with grid
+scale ∆x = di/50, time step ∆t = (200Ωci)−1
+and with 500 macro-particles per cell.
+We
+initialize the simulation with a double-tanh
+current sheet6, with the initial reconnecting
+magnetic field given by Bx/B0 = tanh((y −
+0.25Ly)/w0) −tanh[(y −0.75Ly)/w0] −1, where
+w0 = di/2 is the half current sheet thickness.
+The temperature is held constant across the
+sheet and the density is increased to insure pres-
+sure balance. The ions and electrons are initial-
+ized with drifting Maxwellian distributions with
+a bulk velocity shear parallel to the magnetic
+field, i.e., ux = VshearBx/B0, where Vshear is the
+amplitude of the flow and is the independent
+variable changed between simulations, and kept
+between 0−VA as to remain stable to the Kelvin-
+Helmholtz instability(S. Chandrasekhar 1961).
+We limit the scope of this paper only to consider
+antiparallel reconnection, i.e., where Bz = 0
+initially.
+We trigger reconnection by adding
+a small amplitude perturbation in By of the
+5 Note that in this work we take temperature in units
+of energy, i.e., T has absorbed Boltzmann’s constant
+kB
+6 This is not precisely a Harris current sheet because
+both the background and enhanced density popula-
+tion in the current sheet carry the current, rather
+than just the extra particles.
+form By/B0 = ψ0 sin10 (x/Lx) cos (x/Lx) where
+ψ0 ≪1, an approach adopted in several pre-
+vious studies on reconnection(C. C. Haggerty
+et al. 2018; R. Mbarek et al. 2022; C. A. Giai
+et al. 2024).
+In this work, six simulations have been per-
+formed with increasing values of flow shear Vs
+from Vs = 0 −1VA in increments of VA/5.
+The simulations are run until the islands gener-
+ated by the exhaust reach the simulation edges,
+allowing for steady-state reconnection to be
+reached and analyzed before this occurred.
+3. RESULTS
+3.1. Overview
+The simulations show that many of the hall-
+marks of reconnection remain, even with an
+increasing upstream velocity shear.
+Fig. 1
+shows 2D images from 3 different simulations
+(Vs/VA = 0, 2/5, 4/5 in columns from left to
+right) for three different variables (the out-of-
+plane magnetic field, Bz (Top Row), the bulk
+outflow velocity along the reconnection field di-
+rection, ux (Middle Row), and the xx-element
+of the ion pressure tensor Tixx (Bottom Row).
+Each row is plotted with the same color limits
+for direct comparison. Even as Vs increases, the
+out-of-plane magnetic field shows the quadrupo-
+lar structure associated with Hall physics (M. A.
+Shay et al. 2001). The outflow jets and associ-
+ated ion heating persist in the presence of a flow
+shear, as shown in the exhaust regions in the 2
+right-most rows.
+However,as Vs is increased, we also find dif-
+ferences from shear-free reconnection. Notably,
+the reconnection exhaust is rotated counter-
+clockwise (rotation vector along ˆz), with the
+degree of the tilt increasing with Vs, as is ev-
+ident from the second and third columns of
+Fig. 1. More precisely, the exhaust is tilted to-
+wards the side where the outflow jet is oppo-
+site the flow shear. This can be seen from the
+black flow lines plotted over the top of ux in the
+
+4
+Figure 1. 2D snapshots from different simulations: the out of plane magnetic field Bz (Top Row), the ion
+bulk flow in the outflow/x-direction ux (Middle Row), and the xx-element of the ion temperature tensor
+Tixx (Bottom Row). From left to right, the simulations were initialized with sear flows of 0 VA, (2/5) VA
+and (4/5) VA. This overview plot shows the key effects of increasing flow shear on reconnection including
+the tilting of the current sheet, the reduction of the outflow velocity and the significant enhancement in ion
+exhaust heating.
+middle row. This tilting was also identified in
+Hall-MHD simulations of shear-flow reconnec-
+tion(P. A. Cassak 2011). In this work, the tilt
+was attributed to a difference in the gradient
+of the dynamic pressure in the x-direction, con-
+tributing to a right-handed, out-of-plane torque.
+Additionally, we find that the bulk outflow
+velocity is reduced for increasing values of Vs,
+as demonstrated in the second row of Fig. 1;
+this result is consistent with previous Hall-MHD
+studies as well. However, the bulk outflow speed
+in all simulations is sub-Alfv´enic, which differs
+from the fluid results in which the outflow speed
+was equal to the Alfv´en speed for the shear-free
+fluid simulations (see Fig. 4 from P. A. Cassak
+(2011)). The reduced outflow speed in kinetic
+simulations was discussed in (C. C. Haggerty
+et al. 2017; X. Li & Y.-H. Liu 2021; C. A. Giai
+et al. 2024) and attributed to increased ion ther-
+mal pressure in the exhaust for the xx-element.
+Furthermore, because all outflow speeds are re-
+duced in the kinetic regime, the outflow speeds
+will become less than the flow shear velocity for
+relatively modest flow shear values (this is es-
+timated to occur around Vs ≳VA/2). Above
+this flow shear threshold, it may become dif-
+ficult to distinguish a reconnection outflow jet
+from the bulk motion of the upstream plasma.
+This threshold could be connected to the appar-
+ent suppression of reconnection in the presence
+of a modest flow shear as identified with PSP in
+the solar wind(T. D. Phan et al. 2020).
+Finally, the most dramatic effect of increas-
+ing flow shear speed is the increase in the ion
+exhaust temperature.
+This is shown for Tixx
+in the bottom row of Fig. 1. As Vs increases,
+the ion temperature increases dramatically by
+as much as 300% for the largest shear speed
+simulation. This effect was not identified in pre-
+vious studies and runs counter to current scal-
+ing predictions for ion heating in reconnection,
+with most studies predicting that the ion heat-
+ing will be proportional to the outflow speed
+squared, ∆Ti ∝miu2
+x (J. F. Drake & M. Swis-
+dak 2012; M. A. Shay et al. 2014; C. C. Hag-
+gerty et al. 2015; C. C. Haggerty 2016; C. C.
+
+5
+Haggerty et al. 2018; T. D. Phan et al. 2013,
+2014; J. Yoo et al. 2014). While it is true that
+increasing the upstream Alfv´en speed increases
+both the outflow speed and the ion heating, the
+figure shows that for a fixed upstream Alfv´en
+speed, |ux| is actually anti-correlated to ∆Ti, in
+the presence of a flow shear. Notably, each of
+these simulations has the same magnetic energy
+density per particle, which means that for the
+same magnetic field strength, reconnection with
+a flow shear results in more internal energy.
+The
+ion
+heating
+enhancement
+is
+further
+demonstrated in Fig. 2, which shows cuts across
+the exhaust for the six different simulations for
+the field-aligned, perpendicular, and the effec-
+tive ion temperature (trace of the ion temper-
+ature tensor divided by 3) (from top to bot-
+tom).
+The color of each line corresponds to
+the upstream flow shear speed in the simulation
+measured at the time when the cut is made,
+as denoted by the color bar (note that the up-
+stream flow shear speed for Vs = VA simulation
+decreases as the simulation evolves). The cuts
+are taken 15 di downstream of the x-line and
+centered about the midplane.
+Each measure
+of the ion temperature increases substantially;
+however this increase is not strictly isotropic,
+as both Ti∥and Ti⊥vary along the y-direction.
+Finally, we note that the electron heating (not
+shown) was not found to appreciably affected by
+increasing flow shear speed in the simulations.
+3.2. Empirical Scaling
+We further explore the effect of flow shear by
+determining empirical scaling relationships. We
+do this by determining various average values in
+each of the simulations. For a given cut along
+the y-direction through the exhaust, the shear
+speed is averaged several di upstream of the re-
+connection exhaust, and the outflow and ion
+heating are averaged in the exhaust. The aver-
+aging limits are chosen manually for each simu-
+lation and were selected based on where the ion
+temperature increases and the shear flow has
+Figure 2.
+Cuts along y of the ion temperature
+tensor rotated into the frame of the local magnetic
+field. The cuts are taken 15 di downstream of the
+x-line in each simulation after steady state recon-
+nection has been reached. Parallel Ti∥(Top Row),
+perpendicular Ti⊥(Middle Row) and average ion
+temperature (Ti∥+ 2Ti⊥)/3 (Bottom Row)for sim-
+ulations with different measured flow shear speeds.
+The color corresponds to the measured upstream
+flow speed as indicated by the colorbar. The ion
+temperature in the reconnection exhaust increases
+with the inflowing flow shear speed.
+a rapid spatial change, roughly corresponding
+to the separatrix layer. Examples of these cuts
+are shown for ux and Tixx in the first and sec-
+ond panels of Fig. 3, respectively, along with the
+averaging areas shown by lower opacity dashed
+lines7. The colors of each cut correspond to the
+average upstream flow shear speed, similar to
+7 We average Tixx, as it will ultimately be the only
+element of the ion temperature tensor which is used
+
+6
+Fig. 2. The top panel shows that the ion ex-
+haust temperature increases with the flow shear
+speed, even while the outflow speed decreases,
+as shown in the second panel.
+The average values are plotted as a func-
+tion of flow shear speed in the bottom panel
+of Fig. 3.
+The green squares show the out-
+flow speeds ⟨ux⟩averaged from the simulations,
+where the faces have been color-coded accord-
+ing to the upstream flow shear value. In con-
+trast, the brown triangles show the square root
+of the average ion temperature8 p
+⟨Tixx/mi⟩.
+The error bars are determined from the stan-
+dard deviation over the averaging area.
+The
+figure further demonstrates that the two quan-
+tities are directly anti-correlated, with the out-
+flow dropping from ∼0.62VA to 0.17VA, roughly
+a ∼70% reduction in the outflow speed and a
+∼90% reduction in the kinetic energy of the
+bulk flow; simultaneously, the increase in the
+xx-element of the temperature tensor goes from
+∆Tixx ∼0.11miV 2
+A
+9 to ∼0.35miV 2
+A, correspond-
+ing to over a 300% increase in the ion heating.
+Note that the term being subtracted off is the
+inflowing upstream temperature. Following the
+approach in M. A. Shay et al. (2014) and nor-
+malizing the change in ion enthalpy density to
+the inflowing Poynting flux, RH, we find that
+RH ≈
+γ
+γ−1∆Tixx/miV 2
+A ∼0.88, or about 90%
+of the available magnetic energy per particle.
+Note, this estimate estimate assumes the ex-
+haust temperature is isotropic, implying that
+γ = 5/3 would be the adiabatic index, which
+is roughly supported by Fig. 2 .
+While it is
+tempting to interpret this quantity as the frac-
+tion of magnetic energy that goes into heating,
+to determine a prediction for the outflow speed and
+heating.
+8 This was chosen for direct, dimensional comparison
+with the outflow velocity
+9 Note that this value is consistent with the heating
+values found in both simulations(C. C. Haggerty et al.
+2015) and observations (T. D. Phan et al. 2014)
+the analysis of M. A. Shay et al. (2014) did not
+include the inflowing energy associated with the
+flow shear; in fact, the inflowing flow shear en-
+ergy is being efficiently converted into thermal
+ion energy, as will be demonstrated later in the
+manuscript.
+However, for this simulation the
+relatively large flow shear speed of 4/5VA can
+only account for 1/2mi(4/5VA)2 ∼0.32miV 2
+A of
+the thermal enhancement, leaving ∼0.56miV 2
+A
+of the heating associated with the release of
+magnetic energy, which is still a factor of 2
+larger than the normalized change in the en-
+thalpy in the shear-flow-free case.
+4. THEORY
+The dramatic increase in ion exhaust tempera-
+ture is a kinetic effect of antiparallel (and nearly
+antiparallel) reconnection. For the inflow side
+with a flow shear directed towards the x-line
+(i.e., upper right and lower left quadrants of the
+rightmost column in Fig. 1), the plasma enters
+the exhaust and reaches the midplane, where
+the field line is sharply kinked. At this location,
+ions with even a modest velocity will demagne-
+tize and pitch angle scatter, directly transfer-
+ring their bulk flow energy into thermal energy.
+Demagnetization is expected to occur when the
+current sheet width becomes comparable to the
+ion gyroradius based on the bulk shear flow ve-
+locity at the midplane, rg,s = Vsmic/qBy ∼
+di →Vs ∼
+1
+10VA, where the field strength of
+the midplane is taken to be one-tenth of the
+upstream reconnecting field, corresponding to a
+reconnection rate of 0.1(T. W. Speiser 1965; J.
+Birn et al. 2001). The physics of ion scatter-
+ing are fairly complex and will be covered in
+detail in a forthcoming companion paper, along
+with the corresponding electron dynamics. In
+this manuscript, we focus on the effect of this
+enhanced ion heating on the reconnection pro-
+cess.
+The reduction in the ion outflow speed is con-
+nected to the enhanced ion heating by consid-
+ering force balance along the outflow direction
+
+7
+Figure 3. Cuts of the xx-element of the ion tem-
+perature tensor (top) and the x-element of the ion
+bulk flow vector (middle). The plots use the same
+conventions as Fig. 2 and are taken at the same
+locations and times. The light dashed color-coded
+lines show the locations that the averages were de-
+termined.
+The bottom shows the average values
+measured within the exhaust as a function of up-
+stream flow shear speed for the bulk outflow (green
+outlined squares) and the ion thermal speed based
+on the xx-element of the ion temperature tensor
+(brown outlined triangles).
+in the exhaust. This approach has been used
+previously to explain the reduction in the out-
+flow speed in reconnection in both antiparallel
+(C. C. Haggerty et al. 2017; X. Li & Y.-H. Liu
+2021) and guide field (C. A. Giai et al. 2024)
+configurations. As reconnection heats the out-
+flowing plasma, a pressure gradient develops be-
+tween the exhaust and the x-line.
+The pres-
+sure gradient exerts a force against the outflow
+direction, opposing the magnetic tension force
+and ultimately reducing the outflow speed to
+sub-Alfv´enic values. An equilibrium is reached
+as the heating depends on the magnitude of
+the outflow speed, as discussed/demonstrated in
+many previous studies in both simulations (e.g.,
+J. F. Drake & M. Swisdak (2012); M. A. Shay
+et al. (2014); C. C. Haggerty et al. (2015); C. C.
+Haggerty (2016); C. C. Haggerty et al. (2018))
+and observations (e.g., T. D. Phan et al. (2013,
+2014); J. Yoo et al. (2014); M. Øieroset et al.
+(2024)). Thus an expression for the scaling of
+the ion temperature will be a function of both
+the outflow speed Vo and the flow shear speed
+Vs.
+We derive a prediction for the ion heating by
+considering the fraction of inflowing ions that
+reach the exhaust and scatter. This calculation
+is most easily performed in the reference frame
+moving with the bulk outflow velocity. We take
+the outflow velocity vector to point in the +ˆx di-
+rection, where the magnetic field and flow shear
+direction are along +ˆx below the exhaust and
+−ˆx above the exhaust; with this configureation
+there is a positive (anti-clockwise) tilt around
+the +ˆz axis, similar to the exhaust on the right-
+hand side of the x-line in the 3rd column of
+Fig. 1. From the simulations we find the cur-
+rent sheet tilting by θ ∼10◦at most, which
+allows us to take the outflow as approximtly in
+the x-direction as cos(θ) ≳0.98.
+Transform-
+ing into the reference frame moving with the
+outflow velocity (Voˆx) decreases the flow shear
+speed below the exhaust while increasing the
+flow shear speed above the exhaust.
+In this
+frame, the lower population flows into the ex-
+haust antiparallel to the field line, while the up-
+per population flows away from the exhaust par-
+allel to the field line; because of this, the flow
+shear reduces the speed for the lower population
+while boosting the upper population. Note that
+for a sufficiency large flow shear, Vs > Vo, half
+of the inflow population may be unable to en-
+ter the exhaust. A diagram of this is shown in
+
+8
+Fig. 4, with the red and blue distribution func-
+tions corresponding to the the lower and upper
+sides of the exhaust, respectively. The particles
+from the two distribution functions isotropize in
+the outflow rest frame (purple distribution on
+the right side of the diagram) when they reach
+the current sheet’s center and produce a com-
+posite distribution function, shown in cyan. In
+this co-moving frame, there is no inductive elec-
+tric field and so a particle’s total energy is con-
+served; from this the total ion temperature of
+the isotropized distribution is the same as the
+average energy of the unscattered distribution
+function. The temperature of each diagonal el-
+ement of the temperature tensor is then taken
+to be Tixx = Tiyy = Tizz = Tr[Ti]/3.
+The calculation, however, is complicated as
+the entirety of both inflowing ion distributions
+do not reach the exhaust. Some fraction of the
+inflowing ions have a parallel velocity away from
+the exhaust large enough to ‘outrun’ the out-
+flow, i.e., the ions still have a velocity in the
+positive x-direction, even in the outflow frame.
+The ions which do not enter the exhaust is set
+by both the thermal speed of the upstream ions
+and the flow shear velocity relative to the speed
+of the outflow jet.
+Since the outflow speed
+is sub-Alfv´enic, even a sub-Alfv´enic flow shear
+will result in a potentially significant fraction
+of the ions outrunning the exhaust. Note that
+the effect of the flow shear is asymmetric, as
+ions on the lower half of the current sheet are
+moving away from the current sheet, while ions
+on the upper half are moving towards the cur-
+rent sheet. The portion of the ion population
+that outruns the exhaust is denoted by the red-
+shaded region in Fig. 4. An interesting side ef-
+fect of this is that for increasing flow shear, the
+exhaust is increasingly populated by ions from
+one-half of the exhaust; this effect is examined
+in more detail and demonstrated in PIC simu-
+lations in the forthcoming companion paper.
+Combining these two effects yields a rela-
+tionship between the total ion exhaust tem-
+perature and both the outflow and flow shear
+speeds. An analytical form can be determined
+which includes the error function erf() func-
+tion, however the expression is so long as to
+be impractical to use.
+Alternatively we elect
+to solve for the temperature directly by numer-
+ically integrating the analytical, composite dis-
+tribution functions. Fig. 5 shows the predicted
+total ion exhaust temperature as a function of
+both the upstream flow shear speed (horizon-
+tal axis) and the outflow speed (vertical axis)
+for four different upstream ion temperatures
+(Ti,up = 0.001, 0.05, 0.25, 0.5miV 2
+A for the top
+left, top right, bottom left and bottom right
+subplots, respectively).
+The increased heat-
+ing along the vertical direction corresponds to
+reconnection more efficiently heating inflowing
+plasma through the contraction of the magnetic
+field line, while the increased heating along the
+horizontal direction corresponds to more flow
+shear energy being channeled into heating.
+We determine an ion exhaust temperature for
+a given outflow and flow shear speed using an-
+other relationship to close the equation. This
+comes from balancing the forces along the x-
+direction in the reconnection exhaust, following
+the approach in T. Z. Liu et al. (2017), X. Li &
+Y.-H. Liu (2021) and C. A. Giai et al. (2024).
+Force balance yields
+1
+2minoV 2
+o + B2
+y
+8π + ∆Pxx = L
+δ
+εByBx
+8π
+,
+(1)
+where mi is the ion mass, no, Vo and By are the
+number density, outflow velocity and the nor-
+mal magnetic field measured in the exhaust, Bx
+is the reconnecting magnetic field measured up-
+stream of the ion diffusion region, ∆Pxx is the
+change in the xx-element of the pressure be-
+tween the x-line and the exhaust, L/δ is the
+aspect ratio of the ion diffusion region, and ε is
+the firehose parameter of the inflowing plasma
+ε ≡1 −4π(P∥−P⊥)/B2. This equation im-
+
+9
+Figure 4. Diagram of how the exhaust temperature is determined from the inflowing ion populations. The
+blue distribution function represents ions with a flow shear opposite that of the outflow velocity, while the
+red distribution function shows ions with a flow shear in the same direction, however both populations are
+parallel to the local magnetic field, as shown in the corresponding distribution functions on the left. The
+distributions are boosted into the outflow frame as shown on the right side of the diagram. The composite,
+counter-steaming distribution is shown in the upper box, with the shaded red region showing ions that
+never reach the exhaust because their parallel speed is greater than the outflow speed. The two distribution
+functions are taken to isotropize and produce a Maxwell-Boltzmann distribution at rest in this frame with
+the same kinetic energy as the combined inflowing distribution functions, as shown in the purple box in the
+bottom right.
+plies that the force due to magnetic tension
+(right hand side of the equation) is reduced
+by an increasing xx-pressure gradient along the
+outflow direction (∆Pxx); this pressure gradi-
+ent develops as the ions are heated in the ex-
+haust relative to those in the diffusion region,
+as shown in Fig. 1. This relationship is simpli-
+fied by assuming a fast reconnection rate (i.e.,
+By/Bx ≈δ/L ∼0.1) and assuming that the
+density is constant between the exhaust and dif-
+fusion region,
+no
+n0
+
+V 2
+o
++ 2∆Tixx
+mi
+
+≈εV 2
+A,
+(2)
+where n0 is the upstream number density. This
+equation serves as a constraint for the outflow-
+shear-heating relationship.
+Note we have ne-
+glected the contribution from electron heating
+as it is expected to be five times smaller than the
+change in ion heating(T. D. Phan et al. 2013;
+M. A. Shay et al. 2014; T. D. Phan et al. 2014;
+C. C. Haggerty et al. 2015). For the simulations
+in this study and for the rest of the paper we
+take the upstream temperature to be isotropic
+and ε →1 The contour defined by this con-
+straint is shown by the dashed white lines in
+Fig. 5, where we have used an exhaust density
+of no = 1.6n0 consistent with what is approxi-
+mately found in the simulations 10. The white
+dashed line shows for a given flow shear speed,
+Vs, what outflow speed, Vo, is needed to pro-
+10 An alternative approach to solve these equations is to
+use the density inferred from the distribution func-
+tions shown in Fig. 4, however in this approach we
+have found that the density is over predicted for low
+shear and under predicted for stronger shear.
+The
+exhaust density should be set by a combination of
+parallel inflow and perpendicular inward drifts that
+account for the tilting of the exhaust and pressure
+balance. This simplified analysis of selecting a sin-
+gle exhaust density still yields results consistent with
+simulations
+
+10
+duce the ion heating so that Eq. 1 is satisfied,
+which demonstrates the predicted relationship
+between Vs and Vo.
+Figure 5. 2D maps of the predicted ion exhaust
+temperature as a function of outflow speed (Vo,
+y-axis) and flow shear speed (VS, x-axis), for dif-
+ferent inflowing ion temperatures as labeled in the
+title of each subplot. The white dashed lines corre-
+spond to the pressure ballance/outflow constraint
+being satisfied (i.e., Eq. 1). The dashed white and
+black line provides the prediction for the outflow as
+a function of flow shear speed.
+Using this constraint, we can find a solution
+for both the outflow speed and the ion heat-
+ing as a function of upstream flow shear, which
+is shown in Fig. 6 for different values of up-
+stream Ti (or equivalently βi for fixed Alfv´en
+speed).
+The top panel shows the predicted
+outflow speed Vo as a function of flow shear.
+These predictions are the same as the contours
+in Fig. 5 and color-coded in the same manner
+(based on inflowing temperature). The contours
+show that as the flow shear speed increases the
+outflow speed decreases consistent with what
+was found in simulations. The orange triangles
+show the average values determined in the simu-
+lation initialized with an upstream ion tempera-
+ture of 0.05miV 2
+A. The prediction is in excellent
+agreement with the corresponding simulations,
+in both the magnitude of the values and the
+trend as a function of flow shear speed. Note
+that the sub-Alfv´enic outflow speeds are consis-
+tent with the thermal effects discussed in C. C.
+Haggerty et al. (2018), X. Li & Y.-H. Liu (2021)
+and C. A. Giai et al. (2024) and are required to
+predict both the outflow speed and ion exhaust
+heating accurately.
+The bottom panel of Fig. 6 shows the heat-
+ing as a function of flow shear using the same
+approach.
+The ion exhaust heating increases
+with increasing flow shear, as was found in the
+simulations. We find a factor of 3 increase for
+the heating in the strong shear limit relative to
+the shear-free case. Again, the average heating
+in the simulations agrees with the correspond-
+ing (orange) prediction; however, the heating
+is slightly overpredicted for small flow shear
+speeds and underpredicted for larger flow shear
+speeds. This slight discrepancy is likely linked
+to the simplifying assumptions about the ex-
+haust density. These two plots show that the
+larger flow shear speed increases the ion exhaust
+heating, but this heating increase comes at the
+expense of the bulk outflow speed. The outflow
+speed reduction directly results from the back
+pressure gradient opposing the magnetic tension
+force, and all three terms counterbalance.
+It
+is
+noteworthy
+that
+the
+very
+low-
+temperature limit has an “S” shaped feature
+in the yellow line for both the top and bottom
+of Fig. 6.
+The doubling-back of the contour
+near Vs ∼0.5VA corresponds to the point where
+Vs > Vo.
+In the low-temperature limit, this
+corresponds to one of the inflowing populations
+never reaching the exhaust.
+We suggest that
+the temperature would agree with either the
+upper or lower solution based on the history of
+the outflow speed; if the flow shear is constant
+and the exhaust starts from rest, one might
+expect the outflow speed to take the smaller
+value and the temperature to take the larger
+value. This feature likely results from the overly
+
+11
+simplified model and is unlikely to manifest in a
+physical system; further examination is beyond
+the scope of this manuscript.
+These predictions were determined by inte-
+grating different distribution functions and then
+numerically inverting the relationship, and as
+such we recognize that carrying out this ap-
+proach for comparison/prediction with future
+simulations and observations would prove ardu-
+ous. Because of this we provide a relatively sim-
+ple, normalized equation that reasonably well-
+approximates the predictions shown in Fig. 6,
+Vo
+VA
+≈C0−C1
+V 2
+s
+V 2
+A
+−C2
+
+βi + β2
+i
+2
+
+−C3
+Vs
+VA
+βi+C4
+Vs
+VA
+,
+(3)
+where C0 = 0.62, C1 = 0.75, C2 = 0.155,
+C3 = 0.06, C4 = 0.07. This approximation is
+determined with a 2D, quadratic regression, and
+as such it does not accurately represent the “S”
+shape for very low beta plasmas previously dis-
+cussed. Despite this, the equation agrees well
+for much of parameter space, providing a sim-
+ple approximation for the outflow speed in the
+shear-free case, as well as the maximum flow
+shear as a function of inflowing ion plasma beta.
+Furthermore, we present a prediction for the ion
+heating using this approximation and the pres-
+sure balance constraint from Eq. 1,
+∆Tixx
+miV 2
+A
+≈5
+16 −1
+2
+ Vo
+VA
+2
+,
+(4)
+where Vo/VA can be determined from upstream
+quantities using Eq. 3
+5. DISCUSSION
+The results presented in this manuscript are
+likely impactful for disparate,
+astrophysical
+plasma systems where reconnection occurs; per-
+haps most immediately for the dissipation in
+collisionless plasma turbulence. An outstand-
+ing problem in plasma turbulence is determin-
+ing the physical mechanisms responsible for dis-
+sipating energy in turbulence when collisions are
+infrequent(W. H. Matthaeus et al. 2020), and
+magnetic reconnection has been suggested as a
+potentially important candidate. Reconnection
+has consistently been shown to occur at current
+sheets formed by turbulence (e.g., (A. Retin`o
+et al. 2007; J. T. Gosling et al. 2007; S. Ser-
+vidio et al. 2009; M. Wan et al. 2013; C. C.
+Haggerty et al. 2017; M. A. Shay et al. 2018; A.
+Chasapis et al. 2018; M. Zhou et al. 2021; R. E.
+Ergun et al. 2022; J. E. Stawarz et al. 2022)).
+These current sheets form at the boundary of
+swirling eddies which are likely to have a rela-
+tive flow shear. Because of this, most reconnec-
+tion events in turbulence would likely include a
+flow shear component, and so the results of this
+manuscript suggest that reconnection may be
+even more of an effective dissipation turbulent
+dissipation mechanism than previously thought.
+However, in this work we have asserted that
+flow shear energy, rather than magnetic energy,
+is converted into heating.
+This implies that
+magnetic reconnection may more efficiently dis-
+sipate flow energy rather than magnetic energy
+depending on the boundary layer/current sheet
+conditions.
+This could represent a paradigm
+shift in the role of reconnection for energy
+dissipation in turbulence, where reconnection
+changes the magnetic topology, which allows
+flow energy to be efficiently dissipated. An ob-
+vious extension of this work is to identify recon-
+nection in kinetic turbulence simulations and
+determine if the shear-flow enhanced heating
+rate would account for a significant fraction of
+the energy dissipation at these scales.
+While
+this is an important question to explore, we
+leave it to future work.
+Beyond turbulence these results could impact
+our understanding of reconnection in the inner
+heliosphere. T. D. Phan et al. (2020) reported
+observations of current sheets encountered by
+Parker Solar Probe (PSP) during its first ap-
+proach to the Sun. They identified numerous
+current sheets in which reconnection was or
+
+12
+was not occurring based on qualitative deter-
+mination of the presence or absence of outflow
+jets. It was found that current sheets with out-
+flow signatures had velocity shear < 0.6∆VA,
+whereas current sheets without outflow signa-
+tures, deemed non-reconnection events, tended
+to occur in current sheets associated with mag-
+netic switchbacks, where the tangential velocity
+shears across the current sheets were between
+0.6∆VA and 1∆VA. T. D. Phan et al. (2020)
+suggested that even a modest (sub-Alfv´enic)
+velocity could already suppress reconnection.
+However, the results of the present manuscript
+suggest that the identification of reconnection
+outflows (described in T. D. Phan et al. (2020)
+and J. T. Gosling et al. (2005)) in the presence
+of flow shears may not be correct, since our sim-
+ulations show that, even with a modest velocity
+shear of 0.7∆VA, the velocity profile across the
+reconnecting current sheet does have the usually
+enhanced flow signature, even though reconnec-
+tion is active. We thus suggest a re-examination
+of solar wind current sheets with large velocity
+shears to re-assess the occurrence of reconnec-
+tion, which should not be based solely on the
+velocity profile. Strong ion heating might be a
+more reliable signature of reconnection events in
+large-shear-flow current sheets. The findings of
+such a study could have important implications
+for assessing the role of reconnection in the ac-
+celeration and heating of the near-Sun Alfv´enic
+solar wind.
+While the results in this manuscript are po-
+tentially impactful for a range of space and as-
+trophysical systems, more work must be carried
+out to determine the extent of this impact. In
+particular, this work is limited to 2D, antipar-
+allel reconnection with a low initial ion beta.
+Reconnection occurring in turbulence will likely
+include a guide field, which may affect the re-
+sults. Furthermore turbulence is an inherently
+three-dimensional process, and the reduced di-
+mensionality of these simulations could also im-
+Figure 6. Comparison between simulations (or-
+ange triangles) and predictions (multi-colored solid
+lines) for the outflow velocity (top panel) and ion
+heating (bottom panel) as a function of inflowing
+flow shear speed. The different colors correspond
+to the predictions for different initial ion temper-
+atures, as described in the legend, with the black
+dashed, darker orange having the same initial tem-
+perature as the simulations.
+pact the results. While we presented a theory
+to include increasing ion beta, we have not veri-
+fied these predictions with simulations. Finally,
+this work has only considered the heating and
+feedback of the ion population. However, elec-
+tron physics may also be important, and even
+if reconnection is suppressed on the ion scales,
+it is unlikely to affect electron-only reconnec-
+tion(T. D. Phan et al. 2018). These issues merit
+further study and discussion, and will be the fo-
+cus of a future manuscript.
+6. CONCLUSION
+In this work we show that the presence of a
+flow shear significantly alters the kinetic physics
+of magnetic reconnection in an anti-parallel con-
+figuration. We demonstrate that magnetic re-
+connection is significantly affected by increasing
+
+13
+the magnetic field aligned flow shear speed. We
+reaffirm the reconnection geometry is titled and
+the outflow jet speeds are reduced, we show that
+the ions are heated more and derive a prediction
+for the outflow speed from first-principles using
+this enhanced ion heating. The increased ion
+heating is the most surprising and potentially
+consequential of these effects. While previous
+theories predicted that the ion heating should
+decrease with the reduced outflow speed(J. F.
+Drake & M. Swisdak 2012; C. C. Haggerty et al.
+2015; C. C. Haggerty 2016), the simulations and
+theory presented in this work show the opposite
+effects. We find that for sub-Alf´enic flow shear
+speeds, ion heating can increase by as much as
+300% by converting flow shear energy directly
+into thermal energy. These results are poten-
+tially impactful for energy dissipation in plasma
+turbulence and for our understanding of helio-
+spheric in situ observations of reconnection.
+ACKNOWLEDGMENTS
+The
+work
+of
+CCH
+was
+supported
+by
+the NSF/DOE Grant PHY-2205991,
+NSF-
+FDSS
+Grant
+AGS-1936393,
+NSF-CAREER
+Grant AGS-2338131;
+MAS by NASA grant
+80NSSC20K1813 and 80NSSC24K0559 PAC by
+DoE grant DE-SC0020294 and NASA grant
+80NSSC24K0172 Simulations were performed
+on TACC’s Stampede 2 and Purdue’s ANVIL,
+with allocations through NSF-ACCESS (for-
+mally XSEDE) PHY220089 and AST180008.
+REFERENCES
+Birn, J., Drake, J. F., Shay, M. A., et al. 2001,
+J. Geophys. Res., 106, 3715,
+doi: 10.1029/1999JA900449
+Burch, J. L., Torbert, R. B., Phan, T. D., et al.
+2016, Science, 352, aaf2939,
+doi: 10.1126/science.aaf2939
+Cassak, P. A. 2011, Physics of Plasmas, 18,
+072106, doi: 10.1063/1.3602859
+Cassak, P. A., & Otto, A. 2011, Physics of
+Plasmas, 18, 074501, doi: 10.1063/1.3609771
+Chandrasekhar, S. 1961, Hydrodynamic and
+hydromagnetic stability
+Chasapis, A., Matthaeus, W. H., Parashar, T. N.,
+et al. 2018, Astrophysical Journal Letters, 856,
+L19, doi: 10.3847/2041-8213/aaadf8
+Doss, C. E., Cassak, P. A., & Swisdak, M. 2016,
+Physics of Plasmas, 23, 082107,
+doi: 10.1063/1.4960324
+Drake, J. F., & Swisdak, M. 2012, SSRv, 172, 227,
+doi: 10.1007/s11214-012-9903-3
+Dungey, J. W. 1961, Phys. Rev. Lett., 6, 47,
+doi: 10.1103/PhysRevLett.6.47
+Ergun, R. E., Pathak, N., Usanova, M. E., et al.
+2022, ApJL, 935, L8,
+doi: 10.3847/2041-8213/ac81d4
+Fuselier, S. A., Trattner, K. J., Petrinec, S. M.,
+Owen, C. J., & R`eme, H. 2005, Journal of
+Geophysical Research (Space Physics), 110,
+A06212, doi: 10.1029/2004JA010805
+Giai, C. A., Haggerty, C. C., Shay, M. A., Cassak,
+P. A., & Davis, Z. K. 2024, ApJ, 977, 218,
+doi: 10.3847/1538-4357/ad9274
+Gosling, J. T. 2007, ApJL, 671, L73,
+doi: 10.1086/524842
+Gosling, J. T., Eriksson, S., Phan, T. D., et al.
+2007, Geophys. Res. Lett., 34, L06102,
+doi: 10.1029/2006GL029033
+Gosling, J. T., Skoug, R. M., McComas, D. J., &
+Smith, C. W. 2005, Geophys. Res. Lett., 32,
+L05105, doi: 10.1029/2005GL022406
+Haggerty, C. C. 2016, PhD thesis, University of
+Delaware. http:
+//adsabs.harvard.edu/abs/2016PhDT.......198H
+Haggerty, C. C., Parashar, T. N., Matthaeus,
+W. H., et al. 2017, Physics of Plasmas, 24,
+102308, doi: 10.1063/1.5001722
+Haggerty, C. C., Shay, M. A., Chasapis, A., et al.
+2018, Physics of Plasmas, 25, 102120,
+doi: 10.1063/1.5050530
+
+14
+Haggerty, C. C., Shay, M. A., Drake, J. F., Phan,
+T. D., & McHugh, C. T. 2015, Geophysical
+Research Letters, 42, 9657,
+doi: 10.1002/2015GL065961
+Hasegawa, H., Kitamura, N., Saito, Y., et al. 2016,
+Geophys. Res. Lett., 43, 4755,
+doi: 10.1002/2016GL069225
+La Belle-Hamer, A. L., Otto, A., & Lee, L. C.
+1995, J. Geophys. Res., 100, 11875,
+doi: 10.1029/94JA00969
+Li, X., & Liu, Y.-H. 2021, ApJ, 912, 152,
+doi: 10.3847/1538-4357/abf48c
+Liang, H., Chen, L.-J., Bessho, N., & Ng, J. 2024,
+Journal of Geophysical Research (Space
+Physics), 129, e2024JA033154,
+doi: 10.1029/2024JA033154
+Liu, T. Z., Angelopoulos, V., Hietala, H., &
+Wilson, III, L. B. 2017, Journal of Geophysical
+Research (Space Physics), 122, 7197,
+doi: 10.1002/2017JA024043
+Matthaeus, W. H., & Lamkin, S. L. 1986, Physics
+of Fluids, 29, 2513, doi: 10.1063/1.866004
+Matthaeus, W. H., Yang, Y., Wan, M., et al. 2020,
+ApJ, 891, 101, doi: 10.3847/1538-4357/ab6d6a
+Mbarek, R., Haggerty, C., Sironi, L., Shay, M., &
+Caprioli, D. 2022, PhRvL, 128, 145101,
+doi: 10.1103/PhysRevLett.128.145101
+Øieroset, M., Phan, T. D., Drake, J. F., et al.
+2024, ApJ, 971, 144,
+doi: 10.3847/1538-4357/ad6151
+Paschmann, G., Øieroset, M., & Phan, T. 2013,
+SSRv, 178, 385, doi: 10.1007/s11214-012-9957-2
+Phan, T. D., Paschmann, G., & Sonnerup,
+B. U. ¨O. 1996, J. Geophys. Res., 101, 7817,
+doi: 10.1029/95JA03751
+Phan, T. D., Shay, M. A., Gosling, J. T., et al.
+2013, Geophys. Res. Lett., 40, 4475,
+doi: 10.1002/grl.50917
+Phan, T. D., Drake, J. F., Shay, M. A., et al.
+2014, Geophys. Res. Lett., 41, 7002,
+doi: 10.1002/2014GL061547
+Phan, T. D., Eastwood, J. P., Shay, M. A., et al.
+2018, Nature, 557, 202,
+doi: 10.1038/s41586-018-0091-5
+Phan, T. D., Bale, S. D., Eastwood, J. P., et al.
+2020, ApJS, 246, 34,
+doi: 10.3847/1538-4365/ab55ee
+Retin`o, A., Sundkvist, D., Vaivads, A., et al. 2007,
+Nature Physics, 3, 236, doi: 10.1038/nphys574
+Servidio, S., Matthaeus, W. H., Shay, M. A.,
+Cassak, P. A., & Dmitruk, P. 2009, PhRvL, 102,
+115003, doi: 10.1103/PhysRevLett.102.115003
+Shay, M. A., Drake, J. F., Rogers, B. N., &
+Denton, R. E. 2001, J. Geophys. Res., 106,
+3759, doi: 10.1029/1999JA001007
+Shay, M. A., Haggerty, C. C., Matthaeus, W. H.,
+et al. 2018, Physics of Plasmas, 25, 012304,
+doi: 10.1063/1.4993423
+Shay, M. A., Haggerty, C. C., Phan, T. D., et al.
+2014, Physics of Plasmas, 21, 122902,
+doi: 10.1063/1.4904203
+Speiser, T. W. 1965, J. Geophys. Res., 70, 4219,
+doi: 10.1029/JZ070i017p04219
+Stawarz, J. E., Eastwood, J. P., Phan, T. D.,
+et al. 2022, Physics of Plasmas, 29, 012302,
+doi: 10.1063/5.0071106
+Wan, M., Matthaeus, W. H., Servidio, S., &
+Oughton, S. 2013, Physics of Plasmas, 20,
+042307, doi: 10.1063/1.4802985
+Wang, J., Wang, X., & Xiao, C. 2008, Physics
+Letters A, 372, 4614,
+doi: 10.1016/j.physleta.2008.04.048
+Wang, J., Xiao, C., & Wang, X. 2012, Physics of
+Plasmas, 19, 032905, doi: 10.1063/1.3697561
+Wang, L., Wang, X.-G., Wang, X.-Q., & Liu, Y.
+2015, Physics of Plasmas, 22, 052110,
+doi: 10.1063/1.4919965
+Yoo, J., Yamada, M., Ji, H., Jara-Almonte, J., &
+Myers, C. E. 2014, Physics of Plasmas, 21,
+055706, doi: 10.1063/1.4874331
+Zeiler, A., Biskamp, D., Drake, J. F., et al. 2002,
+Journal of Geophysical Research (Space
+Physics), 107, 1230, doi: 10.1029/2001JA000287
+Zhou, M., Man, H. Y., Deng, X. H., et al. 2021,
+Geophys. Res. Lett., 48, e91215,
+doi: 10.1029/2020GL091215

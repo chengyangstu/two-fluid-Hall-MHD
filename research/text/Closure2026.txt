@@ -1,0 +1,1117 @@
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Capturing Secondary Kinetic Instabilities in
+Three-Dimensional Dayside Reconnection Using an
+Improved Gradient-Based Closure
+K. Bradshaw1, A. H. Hakim2, J. Juno2, J. Pawlak1,2, J. M. TenBarge1, and A.
+Bhattacharjee1
+1Department of Astrophysical Sciences, Princeton University, Princeton, NJ, USA
+2Princeton Plasma Physics Laboratory, Princeton, NJ, USA
+Key Points:
+• An improved gradient-based heat flux closure is applied to multifluid simulations
+of the MMS Burch event.
+• Better agreement with kinetic results is achieved, including capture of current sheet
+instabilities and subsequent turbulence not replicated with prior closures.
+• The study demonstrates the ability of the ten-moment system to accurately cap-
+ture kinetic instabilities driven by reconnection.
+Corresponding author: K. Bradshaw, kb8689@princeton.edu
+–1–
+arXiv:2602.16960v1  [physics.plasm-ph]  18 Feb 2026
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Abstract
+Magnetic reconnection is a highly dynamic process that excites a wide variety of kinetic
+waves and instabilities. Transverse current sheet instabilities such as the lower-hybrid
+drift and secondary drift-kink instabilities in particular have been shown by kinetic sim-
+ulations to modify the reconnection and introduce significant turbulence and mixing to
+the reconnection layer. Past studies using the ten-moment fluid model to capture im-
+portant kinetic physics such as the electron inertia and full representation of the pres-
+sure tensor proved advantageous to a two-fluid representation of reconnection, but the
+model struggled when using a local relaxation closure for the heat flux to replicate the
+current sheet instabilities and subsequent mixing seen in kinetic simulations. This work
+uses the Gkeyll software framework to perform simulations of asymmetric reconnection
+based on the 16 October 2015 MMS crossing of a diffusion region, the Burch event. An
+improved gradient-based heat flux closure is implemented, showing significant improve-
+ment in secondary kinetic instabilities that grow in the current sheet. These instabili-
+ties generate turbulence which leads to growth of secondary magnetic islands and flux
+ropes.
+1 Introduction
+The planetary magnetosphere plays a key role in the shielding of the Earth from
+the energetic solar wind. Improved modeling of the coupling between the Earth’s mag-
+netosphere and the solar wind is of great importance, particularly in understanding and
+predicting the space weather events which can impact technological infrastructure (Baker
+et al., 2004). One frequent phenomenon that occurs within the magnetosphere is mag-
+netic reconnection. The primary locations at which reconnection occur are dayside near
+the heliopause, and nightside in the magnetosphere tail. In dayside reconnection regions
+where the solar wind magnetic fields stream in the opposite direction of the dipole field,
+reconnection occurs frequently and results in energy transfer from the solar wind into
+the magnetosphere (Paschmann et al., 1979). The Magnetospheric Multiscale (MMS)
+mission has provided access to high-resolution in situ measurements of the of the dis-
+sipation region where this energy transfer occurs. The first such set of measurements was
+the 16 October 2015 crossing (Burch et al., 2016), referred to hereafter as the Burch event.
+This data is an invaluable resource to simulation frameworks as it provides an oppor-
+tunity to test the fidelity of the physics being captured by the underlying models.
+Traditional modeling of the magnetosphere has relied predominantly on a conflu-
+ence of magnetohydrodynamics (MHD), hybrid kinetic, and particle-in-cell methods, each
+with strengths and limitations. MHD, while reproducing global dynamics surprisingly
+well, fails near the dissipation region since magnetospheric plasmas are typically colli-
+sionless (Hesse et al., 2011). Resistive Hall MHD does better in the reconnection boundary-
+layers (Birn et al., 2001; Liu et al., 2025), but the assumption of scalar pressure is flawed
+since the pressure tensor and electron inertia have been found to be important, theoret-
+ically as well as observationally (Liu et al., 2025). Hybrid kinetic models typically evolve
+the Vlasov equation for ions but use fluid electrons due to how restrictive electron ki-
+netic scales are to resolve. This approach has similar issues to expanded MHD methods,
+failing to capture important electron dynamics contained within the full pressure ten-
+sor. More sophisticated electron models have been utilized on top of existing hybrid ki-
+netic frameworks (Omelchenko & Karimabadi, 2012; Omelchenko, Roytershteyn, et al.,
+2021; Omelchenko, Chen, & Ng, 2021), assuming the magnetic field evolution comes from
+the hybrid kinetic simulation (Battarbee et al., 2021; Ganse et al., 2023).
+MHD and more recently with improved algorithms and computational power, hy-
+brid kinetic, have been used extensively for global modeling of planetary magnetospheres
+(Lavraud & Borovsky, 2008; Pokhotelov et al., 2013; Palmroth et al., 2018; Burkholder
+et al., 2024). An alternative approach to global magnetosphere modeling which seeks to
+–2–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+add the missing electron physics is multi-moment multifluid models. This approach has
+been applied to a variety of systems, including Ganymede (Wang et al., 2018), Mercury
+(Dong et al., 2019), and Earth (Wang et al., 2020). The addition of the full pressure ten-
+sor evolution allows for improved physics fidelity of reconnection simulations, compar-
+ing favorably to kinetic simulations for key metrics such as the Ohm’s Law (Wang et al.,
+2015) and scaling of the reconnection rate with island size (Ng et al., 2015). Higher mo-
+ment multifluid models allow for great improvements in capturing kinetic physics over
+MHD models, especially in regions where electron inertia and pressure agyrotropy drive
+electron demagnetization. The focus of this work is the ten-moment model introduced
+by Wang et al. (2015), which retains finite mass and includes the evolution of the full
+pressure tensor.
+Simulations of magnetic reconnection which retain finite electron inertia have re-
+vealed a number of instabilities which grow in the reconnection region and influence the
+reconnection properties (Graham et al., 2025). Fluid and hybrid simulations often strug-
+gle to replicate all of these phenomena due to lacking the aforementioned electron dy-
+namics. Past multifluid simulations performed by TenBarge et al. (2019) using the Gkeyll
+software framework were capable of replicating many of the important features of the
+MMS data and kinetic simulations, but there were several prominent features which were
+not captured by the model. The most notable of these is the growth of the lower-hybrid
+drift instability (LHDI) in the transverse direction along the current sheet (Yoon et al.,
+2002; Roytershteyn et al., 2012). LHDI is predicted by kinetic simulations to grow rapidly
+during reconnection, and to lead to increased turbulence and mixing of electrons between
+the layers (Le et al., 2017). The limiting factor to the effectiveness of this previous work
+was the use of an overly simplistic heat flux closure for reconnection. The approxima-
+tion, based on the work of Hammett and Perkins (1990), took the form of a local relax-
+ation of the pressure tensor towards isotropy. There has been significant effort to improve
+closures for the full pressure tensor in the intervening years, with both nonlocal and gradient-
+based generalizations of this relaxation closure (Allmann-Rahn et al., 2018; Ng et al.,
+2020; Allmann-Rahn et al., 2021; Kuldinow et al., 2024). In particular, the gradient-based
+approaches that retain the form of a relaxation operator, but now acting on all k’s in-
+stead of just a single k0, have shown promise for capturing the very instabilities which
+the local closure struggles to model in these parameter regimes.
+This paper shows that limitations with the previous work can be addressed by uti-
+lizing a gradient-based closure previously developed by Ng et al. (2020) as a generaliza-
+tion of a diffusive heat-flux closure to the ten-moment system. This approach can be con-
+trasted with these relaxation operators in that it seeks to capture the actual thermal trans-
+port of the plasma, with the potential for the transport to be modified in each direction
+independently in this tensorial generalization of Fick’s Law, exactly as we expect in a
+plasma system in which the flow of heat will vary due to, e.g., the local magnetic field
+direction. The work presented here marks a notable improvement on past multifluid sim-
+ulations of magnetic reconnection in the magnetosphere. It demonstrates the ability of
+the ten-moment model to capture kinetic physics in regimes previously inaccessible to
+fluid solvers. Section 2 gives an overview of the Gkeyll software framework, the ten-moment
+model and closure, and numerical method including heat flux limiters. Section 3 pro-
+vides the simulation initial conditions and results. Section 4 gives discussion of these re-
+sults with an eye to physics fidelity. Finally, a summary of the paper and grounds for
+future work are provided in Section 5.
+–3–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+2 The Ten-Moment Two-Fluid Model
+2.1 System of Equations
+The ten-moment model (Wang et al., 2015) may be derived by taking moments up
+to second order of the Vlasov equation,
+∂n
+∂t + ∂nui
+∂xi
+= 0,
+(1)
+m∂nui
+∂t
++ ∂Pij
+∂xj
+= nq(Ei + ϵijkujBk),
+(2)
+∂Pij
+∂t
++ ∂Qijk
+∂xk
+= nqu[iEj] + q
+mϵ[iklPkj]Bl.
+(3)
+Square brackets indicate the sum over symmetric index permutations, i.e. u[iEj] = uiEj+
+ujEi. The electromagnetic fields are coupled to the system through Maxwell’s equations,
+∂Bi
+∂t = −ϵijk
+∂Ek
+∂xj
+,
+(4)
+1
+µ0ε0
+∂Ei
+∂t + µ0Ji = ϵijk
+∂Bk
+∂xj
+.
+(5)
+This system of equation makes use of the following high-order moments of the distribu-
+tion function,
+Pij = m
+Z
+vivjfdv,
+(6)
+Qijk = m
+Z
+vivjvkfdv,
+(7)
+where dv denotes an integration over all three velocity dimensions. The second moment
+may be rewritten in terms of the pressure tensor by the relation
+Pij = Pij + nmuiuj,
+(8)
+while the relationship between the third moment and the heat flux tensor may be writ-
+ten as
+Qijk = Qijk + u[iPjk] −2nmuiujuk.
+(9)
+The total ten-moment system is ten equations (1 continuity + 3 momentum + 6 unique
+components of the pressure tensor), with ten additional unknowns from the unique com-
+ponents of the heat flux tensor. A closure is thus required for the heat flux tensor to com-
+plete the system. Previous publications on magnetic reconnection with the Gkeyll mul-
+tifluid app have primarily used the local closure modified from Hammett and Perkins (1990),
+which is an approximation of the plasma response function based on a three-pole Pad´e
+series.
+∂Qijk
+∂xk
+= −vt|k0|(Pij −pδij),
+(10)
+where k0 is a constant diffusion parameter, and vt =
+p
+T/m is the thermal speed. This
+closure acts as a collision-like operator, relaxing the pressure temperature everywhere
+towards isotropy. This approach has the effect of damping out any developing anisotropic
+and agyrotropic features in the pressure tensor, which are expected in the dissipation
+region.
+To better capture anisotropy and agyrotropy in the pressure tensor, this work in-
+stead favors the gradient closure introduced by Ng et al. (2020), based on Sharma and
+Hammett (2007),
+Qijk = −vt
+|k0|∂[kTij].
+(11)
+–4–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+This closure ensures that heat flow is greatest in directions where there is a large tem-
+perature gradient, without isotropizing the pressure tensor. This approach differs from
+the gradient closure used by Allmann-Rahn et al. (2018) and Kuldinow et al. (2024) in
+that it acts on the temperature instead of the pressure, preserving a form similar to the
+standard Fick’s law.
+2.2 Numerical Method
+Gkeyll is a plasma physics software framework including continuum kinetic Vlasov
+and gyrokinetic solvers, as well as multifluid five and ten-moment finite volume solvers.
+For the fluid solvers, the code employs a finite volume high-resolution wave propagation
+method (LeVeque, 2002), following the algorithm detailed by Hakim et al. (2006), Hakim
+(2008), and Loverich et al. (2013). The update is split between the homogenous part of
+the equation and the source terms which couple the fluid and field equations, with a second-
+order Strang-splitting algorithm being used for the time integration (Strang, 1968). In
+the homogeneous update, Roe averaging (Roe, 1981) is used at the cell interfaces to solve
+the Riemann problem, unless positivity of the density or pressure is violated, which prompts
+a recomputation of the update using Lax fluxes. The source terms are updated using a
+locally implicit algorithm (Wang et al., 2020), which eliminates restrictions due to ki-
+netic scales and allows for a less constrained time step.
+The original implementation of the gradient closure by Ng et al. (2020) has been
+modified algorithmically to follow a symmetric heat diffusion scheme (G¨unter et al., 2005,
+2007) which evaluates temperature and heat fluxes at the vertices (see Appendix A). The
+closure being evaluated at the vertices can lead to unphysical directions of heat flow when
+adjacent cells have flow in different directions. To prevent flow from cold regions to hot
+regions (which can cause positivity issues), the symmetric limiter proposed by Sharma
+and Hammett (2007) is implemented.
+3 MMS Reconnection Simulations
+3.1 Initial Conditions
+The initial conditions are based on the conditions present during the 2016 Burch
+event (Burch et al., 2016) crossing of a reconnection dissipation region. To satisfy pe-
+riodic boundary conditions, a symmetric dual current sheet is initialized. Profiles for the
+initial temperature and magnetic field of the sheet are
+f(Qs, Qm) = 0.5[Qs + Qm + (Qm −Qs) tanh (y/w0)],
+(12)
+where w0 = dis is the current sheet width, and Qs and Qm are the values of the cor-
+responding quantities in their respective regions. dis is the asymptotic ion inertial length,
+defined in terms of the ion plasma frequency ωpis as dis = c/ωpis. The subscript s is
+used to denote quantities in the magnetosheath, and m to denote quantities in the mag-
+netosphere. Temperatures used are Tem/Tes = 12.3 and Tim/Tis = 5.63, while the den-
+sity ratio is nm/ns = 0.062. The initial magnetic field is Bxm/Bxs = −1.696. For ease
+of notation in the rest of this work, we will take di to be dis and the ion cyclotron fre-
+quency Ωci to be Ωcis
+The simulation resolution used is [Nx, Ny, Nz] = [1152, 576, 288], covering a do-
+main length of [Lx, Ly, Lz] = [40.96di, 20.48di, 10.24di] with fully periodic boundaries
+in each direction. The mass fraction is set to a reduced value of mi/me = 100, while
+the asymptotic Alfv´en speed is reduced to c/vA⊥s = 200, where vA⊥s = Bxs/√µ0mins.
+Previous studies of magnetic reconnection with Gkeyll performed by Ng et al. (2015)
+and Wang et al. (2015) demonstrated that a closure parameter k0,αdα ∼1, where α
+indicates species, gave the best results in comparison to PIC simulations, so that is the
+–5–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+choice used here for both the local and gradient closure. A uniform guide field Bz/Bsx =
+0.099 is used. The first twenty Fourier modes of Bx and By are initialized with noise at
+a root-mean-square amplitude Bnoise = 0.0005Bsx. A perturbation is added to the vec-
+tor potential
+Az = ψ0 cos
+2πx
+Lx
+
+1 −cos
+4πy
+Ly
+
+,
+(13)
+with ψ0 = 0.1. These modes are introduced to break the initial symmetry of the sim-
+ulation (TenBarge et al., 2014).
+The primary simulation of interest for this work uses the gradient closure. How-
+ever, a local closure simulation with equivalent initial conditions was also run and is used
+for comparison for several of the key results in the next section.
+3.2 Results
+The evolution of the electron density for the two different closures is plotted in the
+reconnection plane in Fig. 1 and the transverse plane in Fig. 2. The gradient closure gives
+densities which are more diffuse than the local closure, with a wider and more uniform
+layer. For the local closure, there is a steady density gradient across the layer declining
+from the magnetosheath side to the magnetosphere side (see the second plot in Fig. 3),
+while the gradient closure has a nearly flat profile across the layer, with a sharp tran-
+sition to low density at the magnetosphere separatrix. The gradient closure is a signif-
+icantly better match to PIC results for asymmetric reconnection (Yamada et al., 2018),
+which predict low rates of diffusion across field lines. Growth of some unstable modes
+is also visible along the low-density separatrix, likely driven by shear flow between the
+layers. In the transverse direction, the difference in physics captured by the two closures
+is even more pronounced. No instabilities grow for the local closure, but in the gradi-
+ent closure case, LHDI begins growing within five ion cyclotron periods, and the mode
+ultimately saturates, causing a kink instability to begin forming at around tΩci = 20,
+a phenomenon observed in many previous kinetic simulations of the LHDI (Yoon et al.,
+2002).
+Reconnection rates are plotted in Fig. 3. The rates are calculated by constructing
+a vector potential ⟨Az⟩at the X-point by averaging the in-plane magnetic fields over the
+z-direction, and using this average to construct the reconnection field by ∂⟨Az⟩
+∂t . Com-
+pared to the local closure, the gradient closure peaks earlier, and instead of plateauing
+begins to decrease steadily. This behavior is similar to that observed in the kinetic sim-
+ulations performed by Le et al. (2017), and the onset of the decline coincides approxi-
+mately with the nonlinear saturation of the LHDI and onset of the kink instability. The
+reconnection rate of the gradient closure simulation also peaks somewhat lower than the
+canonically observed value of cE/vA⊥sBxs ∼0.1.
+Slices of the current density along the z-axis are plotted in Fig. 4, along with stream-
+lines of the in-plane magnetic field. The layer is very nonuniform in z, with an island form-
+ing in one region. 3D visualization of the field line topology in Fig. 5 shows formation
+of flux ropes similar to behavior observed by Daughton et al. (2011). In particular, there
+is one major bundle of +Bz field lines passing through the main layer, and a smaller bun-
+dle of −Bz field lines passing through the island.
+Fig. 6 gives the breakdown of the components of the generalized Ohm’s law across
+the X-line, where only the component aligned with the guide field contributes,
+Ez = −(ui × B)z +
+1
+ne|e|(j × B)z −
+1
+ne|e|
+∂P e
+xz
+∂x
++ ∂P e
+yz
+∂y
++ ∂P e
+zz
+∂z
+
+−
+1
+ne|e|
+∂ρeue
+z
+∂t
++ ∇· (ρeue
+zue)
+
+.
+(14)
+–6–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 1.
+Electron density snapshots at z = Lz/2. The electrons are significantly more diffuse
+in the gradient closure case (right), and the reconnection layer itself has an island with a density
+plateau, while in the local closure simulation (left) the layer has a smooth density gradient across
+the island.
+–7–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 2.
+Slices of the electron density taken at the X-line across various times. No signifi-
+cant mode growth occurs for the simulation run using the local closure (left), while the gradient
+closure (right) allows LHDI growth at the edge of the current sheet. During nonlinear saturation,
+the LHDI triggers a shearing instability.
+–8–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 3.
+Magnetic reconnection rates (left), and density gradients (right) across the re-
+connection layer and separatrices at x
+=
+20di and averaged over the z-direction. The gradient
+closure experiences a steady decline in the reconnection rate around the saturation time of the
+LHDI. The decreasing density profile across the separatrices in the local closure results demon-
+strates significant diffusion perpendicular to the field lines, while the plateaus and sharper drops
+in the gradient closure suggest not much diffusion is occurring cross-field.
+This equation, while not directly represented in the underlying equation system,
+but inferred from it, gives the representation of the breaking of the frozen-in condition
+in the dissipation region. Directly at the X-point, only the pressure tensor terms are sig-
+nificant, with an additional spike of the Hall term across the reconnection layer. These
+features match well to kinetic results (Liu et al., 2014; Le et al., 2017). Fig. 6 also gives
+a breakdown of the contributions to the total energy over the volume V from the mag-
+netic field (EB =
+1
+2µ0
+R
+V B · BdV), drift (EU =
+1
+2
+R
+V ρu · udV), and pressure (UP =
+1
+2
+R
+V PiidV−EU) terms, with comparison to the local closure. A relatively high amount
+of energy is contained within the electron pressure tensor in the gradient closure case.
+Continuing the emphasis on the pressure tensor, comparisons of the electron agy-
+rotropy between the local and gradient closure are shown in Fig. 7, where the Swisdak
+(2016) measure of agyrotropy (here denoted AQ instead of √Q to distinguish it from heat
+flux) is used:
+AQ =
+s
+P 2
+12 + P 2
+13 + P 2
+23
+P 2
+⊥+ 2P⊥P∥
+.
+(15)
+Both closures produce strong agyrotropy near the X-point, as expected. With the gra-
+dient closure, this agyrotropy extends into the layer and even into the magnetosheath.
+Strong agyrotropy along the separatrices with the gradient closure matches well to ki-
+netic results and is an improvement on what is seen with the local closure, but the over-
+all agyrotropy region is significantly more expansive than is typically observed in recon-
+nection (Swisdak, 2016; Che et al., 2018) and likely occurs due to the lack of any closure-
+related isotropizing mechanism acting on the pressure tensor combined with the tendency
+of the gradient closure to exacerbate any existing anisotropies.
+Fig. 8 shows a high-temperature region along the separatrix and near the X-point
+for the gradient closure, similar to what is seen in the Le et al. (2017) kinetic results, though
+with a couple of distinct differences. Parallel temperature drops on the magnetosphere
+side of the X-point but is high on the magnetosheath side; however, the perpendicular
+temperature has the opposite behavior in both regions. The result is temperature anisotropy
+profiles from the gradient closure (Fig. 9) which differs from the expectation, as kinetic
+results and the MMS data both predict a temperature anisotropy that is high on the mag-
+–9–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 4.
+Transverse current Jz (color), and in-plane magnetic field lines (black lines) in the
+reconnection plane of the gradient closure simulation. Significant distortion of the flux tube in
+the transverse direction occurs as the kink instability develops.
+–10–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 5.
+3D visualization of the magnetic field topology with field lines traced through re-
+gions of high magnetic flux for the gradient closure. The primary bundle of field lines (red, +Bz)
+passes directly through the layer, veering to the side and ultimately reversing direction near the
+edge of the domain. A secondary tube of field lines (blue, −Bz) extends the opposite direction
+through the island that forms.
+Figure 6.
+Components of the generalized Ohm’s law (left) across the current layer at
+z
+=
+Lz/2 for the gradient closure. The vertical dashed line marks the location of the X-point.
+Near the X-point, only the pressure tensor terms are significant. Contributions to total energy
+(right) by different terms for the gradient (solid) and local (dashed) closure results. The gradient
+closure experiences less significant of a relative change in energy overall, with the ion pressure
+and flow energy exchange in particular being significantly smaller. The sole quantity which in-
+creases at a greater rate than with the local closure is the electron pressure.
+–11–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 7.
+Agyrotropy in the local (top) and gradient (bottom) closure simulations at tΩci
+=
+30 and z = Lz/2. With the gradient closure, agyrotropy is not confined to the X-point and sepa-
+ratrices and extends to a greater extent into the layer and magnetosheath.
+netosphere side. A similar discrepancy in the location of the temperature anisotropy was
+noted in the local closure results reported by TenBarge et al. (2019).
+Also notable in the gradient closure results is the strong anisotropy throughout both
+the magnetosheath and magnetosphere layers. This anisotropy is easily accounted for
+in the physics of the gradient closure. The strongest initial temperature gradients lie in
+the y-direction, which drives heat flow in that direction. As the gradient closure takes
+gradients in different directions into account, this means greater flow in y than in x, where
+the temperature is close to uniform. This extensive anisotropy is unlikely to be phys-
+ical, both because diffusion across field lines should be small physically, and because any
+collisional effects if present would likely be sufficient to isotropize the small gradients de-
+veloping in the magnetosheath and magnetosphere regions which cause this anisotropy.
+The result of the gradient closure, however, is heat flowing from the hot magnetosphere
+to the cold magnetosheath in the perpendicular direction, while the parallel direction
+remains high, leading to a high ratio of T∥/T⊥in the magnetosphere and low T∥/T⊥in
+the magnetosheath. Near the X-point, there is a reversal of this trend with T∥/T⊥drop-
+ping very low on the magnetosphere side while being flipped on the magnetosheath side.
+Fig. 10 shows the temperature gradients driving the heat flux evolution by the gra-
+dient closure. Setting aside the y-gradient source of the extensive temperature anisotropy,
+which we have demonstrated to be unphysical, there is clear demonstration that it is typ-
+ically gradients in the z-direction, driven by the transverse instabilities, that dominate
+temperature dynamics near the separatrices.
+4 Discussion
+Ten-moment models provide a far more complete system for simulating space plas-
+mas than MHD, capturing many of the kinetic effects which are lost when neglecting elec-
+tron inertial effects and the pressure tensor. The gradient closure gives a marked improve-
+ment on the previously employed local closure in its ability to properly capture trans-
+–12–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 8.
+Parallel (left) and perpendicular (right) temperature in the reconnection layer for
+the gradient closure.
+–13–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 9.
+Temperature anisotropy in the reconnection plane (left), and along the X-line
+(right) at z
+=
+Lz/2 for the gradient closure. Gradient closure dynamics driven by the tempera-
+ture gradient across the separatrices lead to anisotropies developing throughout both layers.
+–14–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 10.
+Temperature gradients across the reconnection layer for the gradient closure at
+tΩci
+=
+30. There is a gradient in the y-direction across the entire layer, which drives the exten-
+sion of temperature anisotropy throughout the domain (see Fig. 9). The strongest gradients are
+in the z-direction at the separatrices.
+–15–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+verse instabilities in the current sheet such as the initial LHDI and later kinking insta-
+bilities, and the model captures the anisotropic diffusion of the layer better than the lo-
+cal closure.
+Use of the gradient closure incurs a significantly increased computational cost over
+the local closure. This cost is due to a combination of the gradient closure requiring all
+neighboring gradients to be evaluated and compared (through the limiter) at each ver-
+tex (see Appendix A), exacerbated by a significantly more restrictive time step than the
+local closure. Overall computational cost of the gradient closure simulation is around three
+times that of the local closure simulation for this parameter space.
+Improvements on the current closure are still possible. The gradient closure, while
+capturing anisotropic diffusion due to varying directional temperature gradients, does
+not take into account the preferred direction along the magnetic field lines. The required
+modification to the closure to do this would be to solve an equation taking the form of
+the tensor equation
+Q + ωb × Q = S,
+(16)
+where the source term Sijk = −vt
+|k0|∂[iTjk] is the current formulation of the heat flux
+used by the gradient closure, and ω is a parameter proportional to the cyclotron frequency.
+This form would restrict the diffusion perpendicular to field lines with increasing ω. Re-
+cent developments in ML-based closures for multifluid models (Donaghy & Germaschewski,
+2023; Huang et al., 2025) may yield a more optimal closure, particularly when combined
+with this physics insight into the expected parallel versus perpendicular heat flux. How-
+ever, it will be important that these modifications to the gradient-based closure still re-
+spect the second law of thermodynamics and that heat flows down temperature gradi-
+ents. Thus, the combination of the magnetic field and any ML-based approach will need
+a precise generalization of the limiter deployed in this work to insure that each diago-
+nal component of the pressure tensor stays positive-definite.
+Two of the most notable divergences of the gradient closure from canonical results
+are the temperature anisotropy and agyrotropy of the pressure tensor, both of which ex-
+tend across significantly greater portions of the layers than kinetic results indicate, rather
+than being confined near the X-point and along separatrices. While part of the purpose
+of the gradient closure was to capture the full range of anisotropy and agyrotropy in the
+pressure tensor that was being suppressed by the local closure, the extent to which both
+of these are present throughout the domain suggests some collisional relaxation is prob-
+ably necessary. There is significant potential for improvement through the simple addi-
+tion of a small isotropizing term, of a lower magnitude than previous uses of the local
+closure, which could damp small deviations from isotropy and prevent them from per-
+petuating through the gradient closure without interfering with the better fidelity of the
+pressure tensor dynamics in the dissipation region. In other words, both closures together
+may provide further improved physics fidelity over the exclusive use of either.
+The linear growth of the LHDI is very well captured by the gradient closure, a no-
+ticeable improvement over the local closure, where the instability is not captured at all
+in this parameter regime for the chosen k0. LHDI modes are excited in a current sheet
+when a cross-field current acts across a density gradient in the sheet (Daughton, 1999).
+The LHDI is often observed to trigger additional drift-kink modes (Yoon et al., 2002;
+Daughton, 2003) as seen in the 3D reconnection simulations. Past analysis of the mul-
+tifluid model by Ng et al. (2019) using nonlocal closures demonstrated good capture of
+the LHDI and drift kink compared to kinetic results for reconnection regimes, while ad-
+ditional simulations in Ng et al. (2020) tested the gradient closure on simulations of LHDI
+with comparisons to kinetic results, but they did not examine the nonlinear saturation
+of the instability and subsequent drift-kink growth.
+Due to the prominence of the secondary drift-kink instability in these simulations
+and the importance of gauging how well our choice of parameter k0 succeeds in replicat-
+–16–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Figure 11.
+Comparison of LHDI in a simple 2D Harris sheet for ten-moment fluids (left) and
+Vlasov-Maxwell continuum-kinetics (right). The initial LHDI growth is similar for both fluid and
+kinetic results, while the drift-kink instability which grows during the nonlinear saturation grows
+earlier in the kinetic results and is accompanied by the growth of additional small-scale modes.
+ing the kinetic predictions, simple 2D Harris sheet cases with a comparable initializa-
+tion to the Burch simulations were run in Gkeyll to compare the fluid model’s ability
+to capture the kinking and equivalent continuum-kinetic Vlasov (Juno et al., 2018; Hakim
+& Juno, 2020) Gkeyll results. These results are shown in Fig. 11. Standard early growth
+of the LHDI occurs on comparable time scales in both, with a drift mode growing out
+of the nonlinear saturation later in time. Similar behavior is observed in both the kinetic
+and fluid results, though additional small-scale modes are captured by the kinetic sim-
+ulation. Most notably, the time scale for the kinetic kink instability growing is signif-
+icantly shorter in the Vlasov simulation, with it appearing within a few ion cyclotron pe-
+riods of the LHDI onset. The fluid results take some tens of cyclotron periods to develop
+to the same level, similar to what was observed in the 3D reconnection simulations. This
+result indicates a potential expectation of more rapid and turbulent onset of secondary
+instabilities in kinetic reconnection results, but that the major features of the instabil-
+ity are well-captured regardless for this choice of parameter.
+5 Summary and Conclusions
+We have presented results from a study of the Burch et al. (2016) 16 October 2015
+MMS diffusion region crossing event using Gkeyll’s two-fluid, ten-moment model. The
+ten-moment model self-consistently captures the electron inertia and full pressure ten-
+sor dynamics. The primary closure employed for the system was the gradient-based model
+for the heat flux propoesed by Ng et al. (2020), which was compared with a local relax-
+ation closure employed by a previous study performed by TenBarge et al. (2019). The
+gradient closure was improved from prior implementations to use a symmetric scheme
+with a limiter ensuring that direction of heat flow is physically correct at the vertices.
+The gradient closure was demonstrated to capture multiple features predicted by
+kinetic simulations which the local closure could not, most predominantly transverse LHDI
+and drift-kink instabilities that grow in the current sheet. However, temperature anisotropy
+and agyrotropy in the pressure tensor were found to be significantly more extensive than
+–17–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+T m−1,n+1
+ij
+T m,n+1
+ij
+T m+1,n+1
+ij
+T m−1,n
+ij
+T m,n
+ij
+T m+1,n
+ij
+T m−1,n−1
+ij
+T m,n−1
+ij
+T m+1,n−1
+ij
+Figure A1.
+2D 3x3 computational grid for demonstrating the implementation of the gradient
+closure.
+fully kinetic predictions, suggesting that an isotropizing term for the pressure tensor may
+be necessary.
+Additional improvements to the closure are possible. In the collisionless limit, it
+is expected that the bulk of the temperature diffusion of the plasma will be in the di-
+rection parallel to magnetic fields, as the perpendicular flow will be restricted by the gy-
+romotion of the particles. While the anisotropic diffusion with respect to magnetic field
+direction was captured better in the gradient closure than in the local closure, further
+improvement is possible through an additional term in the closure equation following Eq. 14
+to actively restrict cross-field flows. A synthesis of the local and gradient closure may
+also be necessary to damp out minor anistropy and agyrotropy in the pressure tensor,
+allowing upstream isotropization without preventing their development and propagation
+in the reconnection layer.
+Future work will explore further increasing the fidelity of the closure, as well as ap-
+plication to global simulations of planetary magnetospheres. Past multifluid simulations
+of magnetospheres with the local closure have already demonstrated significant strides
+in making global modeling with improved electron dynamics affordable (Wang et al., 2018;
+Dong et al., 2019; Jarmak et al., 2020). Application and improvement of the gradient
+closure to these global simulations has the potential to further increase the physics fi-
+delity of the multifluid model, maximizing their ability to capture kinetic physics with-
+out prohibitive computational cost.
+Appendix A Implementation of the Gradient Closure
+Using Fig. A1 for reference, we define a 3x3 2D computational grid with compo-
+nents of the temperature tensor Tij = Pij/n specified at the cell centers. The closure
+equation for the heat flux tensor (Eq. 11) expands to
+Qijk = −vt
+|k0|∂[kTij] = −1
+3
+vt
+k0
+∂Tij
+∂xk
++ ∂Tjk
+∂xi
++ ∂Tki
+∂xj
+
+.
+(A1)
+–18–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Taking the cell at indices m and n, we can calculate the four neighboring gradients around
+the cell corner at n + 1/2, m + 1/2 to be
+∆xT m+1/2,n
+ij
+=
+T m+1,n
+ij
+−T m,n
+ij
+∆x
+,
+(A2)
+∆xT m+1/2,n+1
+ij
+=
+T m+1,n+1
+ij
+−T m,n+1
+ij
+∆x
+,
+(A3)
+∆yT m,n+1/2
+ij
+=
+T m,n+1
+ij
+−T m,n
+ij
+∆y
+,
+(A4)
+∆yT m+1,n+1/2
+ij
+=
+T m+1,n+1
+ij
+−T m+1,n
+ij
+∆y
+.
+(A5)
+As detailed by Sharma and Hammett (2007), a direct average of the upper and lower gra-
+dients to approximate the cell corner gradient can cause heat flow in the wrong direc-
+tion in neighboring cells. To prevent this, we adopt the limiter employed by Sharma and
+Hammett (2007) for symmetric methods,
+L(a, b) =
+
+
+
+
+
+(a + b)/2
+if min (αa, a/α) < (a + b)/2 < max (αa, a/α),
+min (αa, a/α)
+if (a + b)/2 ≤min (αa, a/α),
+max (αa, a/α)
+if (a + b)/2 ≥max (αa, a/α),
+(A6)
+using the parameter α = 0.75. The upper and lower cell corner gradients may then be
+separated by the limiter, becoming
+∂Tij
+∂x
+
++
+m+1/2,n+1/2
+= L(∆xT m+1/2,n+1
+ij
+, ∆xT m+1/2,n
+ij
+),
+(A7)
+∂Tij
+∂x
+
+−
+m+1/2,n+1/2
+= L(∆xT m+1/2,n
+ij
+, ∆xT m+1/2,n+1
+ij
+),
+(A8)
+∂Tij
+∂y
+
++
+m+1/2,n+1/2
+= L(∆yT m+1,n+1/2
+ij
+, ∆yT m,n+1/2
+ij
+),
+(A9)
+∂Tij
+∂y
+
+−
+m+1/2,n+1/2
+= L(∆yT m+1,n+1/2
+ij
+, ∆yT m,n+1/2
+ij
+).
+(A10)
+Eq. A1 is then expanded into the computational domain to become
+Qm+1/2,n+1/2
+ijk
+= −1
+3
+˜vt
+k0
+∂Tij
+∂xk
+
+±
+m+1/2,n+1/2
++ ∂Tjk
+∂xi
+
+±
+m+1/2,n+1/2
++ ∂Tki
+∂xj
+
+±
+m+1/2,n+1/2
+
+,
+(A11)
+where ˜vt represents the harmonic average of the thermal speed at the corner, and the
+sign of ± depends on whether the cell being updated is the upper or lower cell in the gra-
+dient direction. The final contribution of the closure to the source term in the cell is then
+taken be
+∂Qm,n
+ijk
+∂xk
+=
+Qm+1/2,n+1/2
+ijk
+± Qm+1/2,n−1/2
+ijk
+∓Qm−1/2,n+1/2
+ijk
+−Qm−1/2,n−1/2
+ijk
+4∆xk
+,
+(A12)
+an averaging of the gradients across the cell. The 3D implementation follows directly from
+a generalization of these equations into an additional dimension, bringing the number
+of neighboring gradients at the vertex from four to eight.
+–19–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+Open Research Section
+All the simulation results presented in this paper were produced by and are repro-
+ducible using the open-source Gkeyll software. Information for obtaining, installing, and
+running Gkeyll may be found on the documentation site (https://gkeyll.readthedocs
+.io). The input files for the simulations used to produce the results in this paper may
+be acquired from the repository at https://github.com/ammarhakim/gkyl-paper-inp/
+tree/master/2025 JGR Burch.
+Acknowledgments
+The work presented here was supported by the NSF Collaborative Research: Frame-
+works: A Software Ecosystem for Plasma Science and Space Weather Applications project
+under Award Number 2209471.
+The simulations presented in this article were performed on computational resources
+managed and supported by Princeton Research Computing, a consortium of groups in-
+cluding the Princeton Institute for Computational Science and Engineering (PICSciE)
+and the Office of Information Technology’s High Performance Computing Center and
+Visualization Laboratory at Princeton University.
+References
+Allmann-Rahn, F., Lautenbach, S., Grauer, R., & Sydora, R. D.
+(2021).
+Fluid sim-
+ulations of three-dimensional reconnection that capture the lower-hybrid drift
+instability. , 87(1), 905870115. doi: 10.1017/S0022377820001683
+Allmann-Rahn, F., Trost, T., & Grauer, R.
+(2018).
+Temperature gradient driven
+heat flux closure in fluid simulations of collisionless reconnection. , 84(3),
+905840307. doi: 10.1017/S002237781800048X
+Baker, D. N., Daly, E., Daglis, I., Kappenman, J. G., & Panasyuk, M.
+(2004).
+Ef-
+fects of space weather on technology infrastructure. Space Weather, 2(2). doi:
+https://doi.org/10.1029/2003SW000044
+Battarbee, M., Brito, T., Alho, M., Pfau-Kempf, Y., Grandin, M., Ganse, U., . . .
+Palmroth, M.
+(2021).
+Vlasov simulation of electrons in the context of hybrid
+global models: an evlasiator approach.
+Annales Geophysicae, 39(1), 85–103.
+Retrieved from https://angeo.copernicus.org/articles/39/85/2021/
+doi: 10.5194/angeo-39-85-2021
+Birn, J., Drake, J., Shay, M., Rogers, B., Denton, R., Hesse, M., . . . others
+(2001).
+Geospace environmental modeling (gem) magnetic reconnection challenge.
+Journal of Geophysical Research: Space Physics, 106(A3), 3715–3719.
+Burch, J., Torbert, R., Phan, T., Chen, L.-J., Moore, T., Ergun, R., . . . others
+(2016).
+Electron-scale measurements of magnetic reconnection in space.
+Sci-
+ence, 352(6290), aaf2939.
+Burkholder, B., Chen, L.-J., Sarantos, M., Gershman, D., Argall, M., Chen, Y.,
+. . . Gurram, H.
+(2024).
+Global magnetic reconnection during sustained
+sub-alfv´enic solar wind driving.
+Geophysical Research Letters, 51(6),
+e2024GL108311.
+Che, H., Schiff, C., Le, G., Dorelli, J., Giles, B., & Moore, T.
+(2018).
+Quantifying
+the effect of non-larmor motion of electrons on the pressure tensor.
+Physics of
+plasmas, 25(3).
+Daughton, W. (1999). The unstable eigenmodes of a neutral sheet. Physics of Plas-
+mas, 6(4), 1329–1343.
+Daughton, W. (2003). Electromagnetic properties of the lower-hybrid drift instabil-
+ity in a thin current sheet. Physics of Plasmas, 10(8), 3103–3119.
+Daughton, W., Roytershteyn, V., Karimabadi, H., Yin, L., Albright, B. J., Bergen,
+–20–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+B., & Bowers, K.
+(2011).
+Role of electron physics in the development of tur-
+bulent magnetic reconnection in collisionless plasmas.
+Nature Physics, 7(7),
+539–542.
+Donaghy, J., & Germaschewski, K.
+(2023).
+In search of a data-driven symbolic
+multi-fluid ten-moment model closure.
+Journal of Plasma Physics, 89(1),
+895890105. doi: 10.1017/S0022377823000119
+Dong, C., Wang, L., Hakim, A. H., Bhattacharjee, A., Slavin, J. A., DiBraccio,
+G. A., & Germaschewski, K. (2019). Global ten-moment multifluid simulations
+of the solar wind interaction with mercury: From the planetary conducting
+core to the dynamic magnetosphere.
+Geophysical Research Letters, 46(21),
+11584–11596.
+Ganse, U., Koskela, T., Battarbee, M., Pfau-Kempf, Y., Papadakis, K., Alho, M., . . .
+Palmroth, M. (2023, 04). Enabling technology for global 3d + 3v hybrid-vlasov
+simulations of near-earth space. Physics of Plasmas, 30(4), 042902. Retrieved
+from https://doi.org/10.1063/5.0134387 doi: 10.1063/5.0134387
+Graham, D., Cozzani, G., Khotyaintsev, Y. V., Wilder, V., Holmes, J., Nakamura,
+T., . . . Eriksson, S.
+(2025).
+The role of kinetic instabilities and waves in
+collisionless magnetic reconnection. Space Science Reviews, 221(1), 20.
+G¨unter, S., Lackner, K., & Tichmann, C.
+(2007).
+Finite element and higher order
+difference formulations for modelling heat transport in magnetised plasmas.
+Journal of Computational Physics, 226(2), 2306–2316.
+G¨unter, S., Yu, Q., Kr¨uger, J., & Lackner, K. (2005). Modelling of heat transport in
+magnetised plasmas using non-aligned coordinates.
+Journal of Computational
+Physics, 209(1), 354–370.
+Hakim, A. H.
+(2008).
+Extended mhd modelling with the ten-moment equations.
+Journal of Fusion Energy, 27, 36–43.
+Hakim, A. H., & Juno, J.
+(2020).
+Alias-free, matrix-free, and quadrature-free
+discontinuous Galerkin algorithms for (plasma) kinetic equations.
+In Sc20:
+International conference for high performance computing, networking, storage
+and analysis (pp. 1–15).
+Hakim, A. H., Loverich, J., & Shumlak, U.
+(2006).
+A high resolution wave propa-
+gation scheme for ideal two-fluid plasma equations.
+Journal of Computational
+Physics, 219(1), 418–442.
+Hammett, G. W., & Perkins, F. W. (1990). Fluid moment models for landau damp-
+ing with application to the ion-temperature-gradient instability.
+Physical re-
+view letters, 64(25), 3019.
+Hesse, M., Neukirch, T., Schindler, K., Kuznetsova, M., & Zenitani, S.
+(2011).
+The
+diffusion region in collisionless magnetic reconnection.
+Space Science Reviews,
+160(1), 3–23.
+Huang, Z., Dong, C., & Wang, L.
+(2025).
+Machine-learning heat flux closure
+for multi-moment fluid modeling of nonlinear landau damping.
+Proceed-
+ings of the National Academy of Sciences, 122(11), e2419073122.
+Retrieved
+from https://www.pnas.org/doi/abs/10.1073/pnas.2419073122
+doi:
+10.1073/pnas.2419073122
+Jarmak, S., Leonard, E., Akins, A., Dahl, E., Cremons, D., Cofield, S., . . . others
+(2020).
+Quest: A new frontiers uranus orbiter mission concept study.
+Acta
+Astronautica, 170, 6–26.
+Juno, J., Hakim, A. H., TenBarge, J. M., Shi, E., & Dorland, W.
+(2018).
+Discon-
+tinuous galerkin algorithms for fully kinetic plasmas. Journal of Computational
+Physics, 353, 110–147.
+Kuldinow, D. A., Yamashita, Y., Mansour, A. R., & Hara, K.
+(2024).
+Ten-moment
+fluid model with heat flux closure for gasdynamic flows. , 508, 113030.
+Re-
+trieved from https://www.sciencedirect.com/science/article/pii/
+S0021999124002791 doi: https://doi.org/10.1016/j.jcp.2024.113030
+Lavraud, B., & Borovsky, J. E.
+(2008).
+Altered solar wind-magnetosphere interac-
+–21–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+tion at low mach numbers: Coronal mass ejections. Journal of Geophysical Re-
+search: Space Physics, 113(A9).
+Le, A., Daughton, W., Chen, L.-J., & Egedal, J.
+(2017).
+Enhanced electron mixing
+and heating in 3-d asymmetric reconnection at the earth’s magnetopause. Geo-
+physical Research Letters, 44(5), 2096–2104.
+LeVeque, R. J.
+(2002).
+Finite volume methods for hyperbolic problems (Vol. 31).
+Cambridge university press.
+Liu, Y.-H., Daughton, W., Karimabadi, H., Li, H., & Peter Gary, S.
+(2014).
+Do
+dispersive waves play a role in collisionless magnetic reconnection?
+Physics of
+Plasmas, 21(2).
+Liu, Y.-H., Hesse, M., Genestreti, K., Nakamura, R., Burch, J. L., Cassak, P. A.,
+. . . others (2025). Ohm’s law, the reconnection rate, and energy conversion in
+collisionless magnetic reconnection. Space Science Reviews, 221(1), 16.
+Loverich, J., Zhou, S. C. D., Beckwith, K., Kundrapu, M., Loh, M., Mahalingam,
+S., . . . Hakim, A. H.
+(2013).
+Nautilus: A tool for modeling fluid plasmas.
+In
+51st AIAA aerospace sciences meeting including the new horizons forum and
+aerospace exposition (p. 1185).
+Ng, J., Hakim, A. H., Juno, J., & Bhattacharjee, A. (2019). Drift instabilities in thin
+current sheets using a two-fluid model with pressure tensor effects.
+Journal of
+Geophysical Research: Space Physics, 124(5), 3331–3346.
+Ng, J., Hakim, A. H., Wang, L., & Bhattacharjee, A.
+(2020).
+An improved ten-
+moment closure for reconnection and instabilities. Physics of Plasmas, 27(8).
+Ng, J., Huang, Y.-M., Hakim, A. H., Bhattacharjee, A., Stanier, A., Daughton, W.,
+. . . Germaschewski, K.
+(2015).
+The island coalescence problem: Scaling of
+reconnection in extended fluid models including higher-order moments. Physics
+of Plasmas, 22(11).
+Omelchenko, Y. A., Chen, L.-J., & Ng, J.
+(2021).
+3d space-time adaptive hybrid
+simulations of magnetosheath high-speed jets.
+Journal of Geophysical Re-
+search: Space Physics, 126(7), e2020JA029035.
+Retrieved from https://
+agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2020JA029035
+(e2020JA029035 2020JA029035) doi: https://doi.org/10.1029/2020JA029035
+Omelchenko, Y. A., & Karimabadi, H.
+(2012).
+Hypers: A unidimensional
+asynchronous framework for multiscale hybrid simulations.
+Journal of
+Computational Physics, 231(4), 1766-1780.
+Retrieved from https://
+www.sciencedirect.com/science/article/pii/S0021999111006462
+doi:
+https://doi.org/10.1016/j.jcp.2011.11.004
+Omelchenko, Y. A., Roytershteyn, V., Chen, L.-J., Ng, J., & Hietala, H.
+(2021).
+Hypers simulations of solar wind interactions with the earth’s magnetosphere
+and the moon.
+Journal of Atmospheric and Solar-Terrestrial Physics, 215,
+105581. Retrieved from https://www.sciencedirect.com/science/article/
+pii/S1364682621000456 doi: https://doi.org/10.1016/j.jastp.2021.105581
+Palmroth, M., Ganse, U., Pfau-Kempf, Y., Battarbee, M., Turc, L., Brito, T., . . .
+von Alfthan, S.
+(2018).
+Vlasov methods in space physics and astrophysics.
+Living reviews in computational astrophysics, 4(1), 1.
+Paschmann, G., Sonnerup, B. ¨O., Papamastorakis, I., Sckopke, N., Haerendel, G.,
+Bame, S., . . . Elphic, R.
+(1979).
+Plasma acceleration at the earth’s magne-
+topause: Evidence for reconnection. Nature, 282(5736), 243–246.
+Pokhotelov, D., von Alfthan, S., Kempf, Y., Vainio, R., Koskinen, H. E. J., & Palm-
+roth, M.
+(2013).
+Ion distributions upstream and downstream of the earth’s
+bow shock: first results from vlasiator.
+Annales Geophysicae, 31(12), 2207–
+2212.
+Retrieved from https://angeo.copernicus.org/articles/31/2207/
+2013/ doi: 10.5194/angeo-31-2207-2013
+Roe, P. L.
+(1981).
+Approximate riemann solvers, parameter vectors, and difference
+schemes. Journal of computational physics, 43(2), 357–372.
+Roytershteyn, V., Daughton, W., Karimabadi, H., & Mozer, F.
+(2012).
+Influence
+–22–
+
+manuscript submitted to Journal of Geophysical Research: Space Physics
+of the lower-hybrid drift instability on magnetic reconnection¡? format?¿ in
+asymmetric configurations. Physical review letters, 108(18), 185001.
+Sharma, P., & Hammett, G. W. (2007). Preserving monotonicity in anisotropic dif-
+fusion. Journal of Computational Physics, 227(1), 123–142.
+Strang, G. (1968). On the construction and comparison of difference schemes. SIAM
+journal on numerical analysis, 5(3), 506–517.
+Swisdak, M.
+(2016).
+Quantifying gyrotropy in magnetic reconnection.
+Geophysical
+Research Letters, 43(1), 43–49.
+TenBarge, J. M., Daughton, W., Karimabadi, H., Howes, G., & Dorland, W. (2014).
+Collisionless reconnection in the large guide field regime: Gyrokinetic versus
+particle-in-cell simulations. Physics of plasmas, 21(2).
+TenBarge, J. M., Ng, J., Juno, J., Wang, L., Hakim, A. H., & Bhattacharjee, A.
+(2019).
+An extended mhd study of the 16 october 2015 mms diffusion region
+crossing.
+Journal of Geophysical Research: Space Physics, 124(11), 8474–
+8487.
+Wang, L., Germaschewski, K., Hakim, A. H., Dong, C., Raeder, J., & Bhattachar-
+jee, A.
+(2018).
+Electron physics in 3-d two-fluid 10-moment modeling of
+ganymede’s magnetosphere.
+Journal of Geophysical Research: Space Physics,
+123(4), 2815–2830.
+Wang, L., Hakim, A. H., Bhattacharjee, A., & Germaschewski, K. (2015). Compari-
+son of multi-fluid moment models with particle-in-cell simulations of collision-
+less magnetic reconnection. Physics of Plasmas, 22(1).
+Wang, L., Hakim, A. H., Ng, J., Dong, C., & Germaschewski, K. (2020). Exact and
+locally implicit source term solvers for multifluid-maxwell systems.
+Journal of
+Computational Physics, 415, 109510.
+Yamada, M., Chen, L.-J., Yoo, J., Wang, S., Fox, W., Jara-Almonte, J., . . . others
+(2018).
+The two-fluid dynamics and energetics of the asymmetric magnetic
+reconnection in laboratory and space plasmas.
+Nature communications, 9(1),
+5223.
+Yoon, P. H., Lui, A. T., & Sitnov, M. I. (2002). Generalized lower-hybrid drift insta-
+bilities in current-sheet equilibrium. Physics of Plasmas, 9(5), 1526–1538.
+–23–

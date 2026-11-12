@@ -1,0 +1,1137 @@
+Adhikari et al. 2019
+AIP/123-QED
+Reconnection from a Turbulence Perspective
+S. Adhikari,1, a) M. A. Shay,1, 2 T. N. Parashar,1 P. Sharma Pyakurel,1 W. H.
+Matthaeus,1, 2 D. Godzieba,1 J. E. Stawarz,3 J. P. Eastwood,3 and J. T. Dahlin4
+1)Department of Physics and Astronomy, University of Delaware, Newark,
+DE 19716, USA
+2)Bartol Research Institute, Department of Physics and Astronomy,
+University of Delaware, Newark, DE 19716, USA
+3)Department of Physics, Imperial College London, SW7 2AZ, UK
+4)NASA Goddard Space Flight Center, Greenbelt, MD 20771, USA
+(Dated: 18 March 2020)
+1
+arXiv:1911.06219v2  [physics.plasm-ph]  17 Mar 2020
+
+Adhikari et al. 2019
+The spectral properties associated with laminar, anti-parallel reconnection are exam-
+ined using a 2.5D kinetic particle in cell (PIC) simulation. Both the reconnection rate
+and the energy spectrum exhibit three distinct phases: an initiation phase where the
+reconnection rate grows, a quasi-steady phase, and a declining phase where both the
+reconnection rate and the energy spectrum decrease. During the steady phase, the
+energy spectrum exhibits approximately a double power law behavior, with a slope
+near -5/3 at wave numbers smaller than the inverse ion inertial length, and a slope
+steeper than -8/3 for larger wave numbers up to the inverse electron inertial length.
+This behavior is consistent with a Kolmogorov energy cascade and implies that lam-
+inar reconnection may fundamentally be an energy cascade process. Consistent with
+this idea is that the reconnection rate exhibits a rough correlation with the energy
+spectrum at wave numbers near the inverse ion inertial length. The 2D spectrum
+is strongly anisotropic with most energy associated with the wave vector direction
+normal to the current sheet. Reconnection acts to isotropize the energy spectrum,
+reducing the Shebalin angle from an initial value of 70 degrees to about 48 degrees
+(nearly isotropic) by the end of the simulation. The distribution of energy over scale
+is further analyzed by dividing the domain into spatial subregions and employing
+structure functions.
+PACS numbers: 52.33.Ra, 96.60.lv
+Keywords: reconnection, power laws, turbulence, cascade
+a)Electronic mail: subash@udel.edu.
+2
+
+Adhikari et al. 2019
+I.
+INTRODUCTION
+Magnetic reconnection releases magnetic energy explosively and plays an important role
+in a wide range of plasmas, from laboratory to Heliospheric to astrophysical plasmas (e.g.,58).
+In the last decade, its role as an element of turbulence and a dissipation mechanism for tur-
+bulent energy has come under increasing scrutiny. Spacecraft observations have found that
+reconnection occurs associated with turbulence in Earth’s magnetosheath41,44 and is associ-
+ated with coherent structures in the solar wind37. Two-dimensional MHD, Hall MHD, and
+kinetic PIC simulations of turbulence have been used to study the statistics of reconnection,
+ﬁnding a large variation of reconnection rates at X-lines19,46,47. This reconnection can heat
+the plasma and energize particles (e.g.,24,50). In some observations, the reconnection does
+not couple to the ions41,57 because the length scales associated with the turbulence are too
+small48,54, a fact born out by simulations of turbulence9,20. Finally, it has been suggested
+that reconnection in some cases modify the cascade of turbulent energy from large to small
+scales7,10,14,17,31,38.
+On the other hand, the role of turbulence associated with reconnection has received
+signiﬁcant attention.
+Reconnection is known to generate several secondary instabili-
+ties (e.g.,8,15,29,55 and references therein) which themselves have been shown to generate
+energy spectra with power laws consistent with a turbulent cascade30,36,43. Turbulent ﬂuc-
+tuations in the plasma ﬂowing into the reconnection region have been found to aﬀect the
+process of reconnection35, and even amplify the reconnection rate27,34.
+There remains a fundamental unanswered question, however, related to the interplay of
+turbulence and reconnection. Namely, what does magnetic reconnection look like from a
+turbulence perspective, even in a 2D conﬁguration ordinarily considered to be laminar? In
+addressing this, it is important to be clear that we include the individual components – the
+inﬂow region, the diﬀusion, exhaust, separatrix regions (which we will group together), and
+the reconnected magnetic islands– as elements of the reconnection process as a whole. We
+group the regions in this way because the inﬂow region supplies the energy for reconnection,
+the diﬀusion/separatrix/exhaust regions is where much of the dynamical activity occurs,
+and the island regions are a major consequence of the reconnection process. (Later we will
+call these regions III, II and I, respectively.) We will make some attempts at diagnosing their
+separate properties but ultimately we must treat these as strongly interacting components of
+3
+
+Adhikari et al. 2019
+a nonlinear system as we seek to understand the general relationship between reconnection
+and properties often associated with turbulence.
+As an example, what are the spectral
+properties of laminar reconnection and can they be related to various characteristics of
+reconnection (such as the reconnection rate)?
+A typical example of laminar reconnection is seen in the GEM Challenge studies5. Such
+an understanding of the spectral properties of laminar reconnection could act as a baseline,
+allowing more accurate determination of the role of reconnection in turbulence and vice
+versa. Additionally, it may also shed light on the fundamental properties of reconnection.
+Such a connection between turbulence and reconnection has been suggested previously based
+on modest 2D MHD simulations35.
+To address these questions we study the spectral properties of laminar, anti-parallel
+reconnection using 2.5D kinetic particle-in-cell (PIC) simulations. No turbulent ﬂuctuations
+are manually added to the system, although random noise associated with the ﬁnite number
+of particles-per-cell is present.
+Strikingly, the laminar reconnection process generates a
+magnetic spectral density with a power law near −5/3 for k di ≲1 and a steeper power
+law for larger k, where di ≡c/ωpi. We emphasize that this power-law behavior is occurring
+in a 2D simulation where the reconnection current layers and separatrices do not exhibit
+the ﬂuctuations often seen in 3D reconnection simulations (e.g.8). To better understand the
+distribution of ﬂuctuations in real space we will employ two-point structure functions6 to
+resolve contributions from distinct regions. This overall behavior reinforces the interesting
+possibility that even laminar reconnection in a kinetic plasma fundamentally involves an
+energy cascade process35.
+The paper is organized as follows. In section II we introduce the details of the simulation
+and list all the parameters assigned. Section III discusses the results and ﬁndings of the
+study. Finally, in section IV we present the conclusions and discussions of the research.
+II.
+SIMULATION
+Laminar reconnection is studied by performing kinetic simulations using the particle
+in cell (PIC) p3d code59. The simulation is of anti-parallel reconnection (no guide ﬁeld)
+carried out in 2.5 dimensions. In this simulation, magnetic ﬁeld is normalized to B0 and
+the number density is normalized to a reference density n0. All the lengths are normalized
+4
+
+Adhikari et al. 2019
+to ion inertial length di = c/wpi, where wpi =
+p
+4πn0e2/mi is the ion plasma freqency,
+time is normalized to the ion cyclotron time (w−1
+ci = (eB0/mic)−1), speed is normalized to
+the ion Alfv´en speed (vA0 =
+p
+B2
+0/4πmin0). Electric ﬁeld is normalized to E0 = vA0B0/c
+and temperature is normalized to T0 = miv2
+A0. The simulations have been performed in a
+periodic square box of various lengths Lx = Ly = [51.2di, 102.4di, 204.8di] all with a grid
+spacing of ∆= 0.05di, and a time step of ∆twci = 0.01. Among the other parameters,
+the speed of light c = 15, the electron and ion temperature are initially set as Te = 0.25,
+Ti = 1.25, the mass ratio is mi/me = 25, the background density is 0.2 and the half width
+of the current sheet w0 is varied from 1.5di-3di based on the size of the box. The plasma
+parameter for ions βi = 2niTi/B2 = 0.5 and that for electrons βe = 2neTe/B2 = 0.1. All
+of these simulations are performed in absence of a guide ﬁeld Bg = 0 and evolved until
+there is no more reconnection. This paper presents the results from the largest simulation
+204.8di × 204.8di, where the half width of the current sheet is 3di.
+The coordinate axes is chosen such that ˆx represents the outﬂow, ˆy represents the inﬂow
+and ˆz represents the out of plane direction. The system is initialized with a double Harris
+current sheet equilibrium whose magnetic ﬁeld is given by:
+B =
+
+tanh
+y −Ly/4
+w0
+
+−tanh
+y −3Ly/4
+w0
+
++ 1
+
+ˆx.
+(1)
+Ti and Te are initially spatially uniform and the density n is 0.2 outside the current sheets
+and varies to maintain total pressure balance. A perturbation of the form,
+eB = ψ0
+2π
+Lx
+cos
+2πx
+Lx
+
+ˆy
+(2)
+is applied to initiate reconnection, where ψ0 is the initial strength of the perturbation chosen
+as ψ0 = 0.12. This perturbation introduces two X-lines at (Lx/4,3Ly/4) and (3Lx/4,Ly/4).
+The strength of perturbation, ψ0 is chosen such that the initial width of the magnetic island
+is about the half width of the current sheet.
+III.
+RESULTS
+Fig. 1 shows the rate of magnetic reconnection in the upper X-line of the simulation
+(top panel), and the change in diﬀerent forms of energy in the system (bottom panel). The
+reconnection rate is calculated as the rate of change of magnetic ﬂux (Ψ) between the X-
+5
+
+Adhikari et al. 2019
+0.00
+0.03
+0.06
+0.09
+0.12
+d
+dt
+Initiation
+steady
+Quasi-
+Declining
+0
+200
+400
+600
+800
+twci
+0.15
+0.10
+0.05
+0.00
+0.05
+E
+EE
+EB
+Eef
+Eif
+Ethe
+Ethi
+Etot
+FIG. 1.
+Reconnection rate of the simulation (top), and change in various forms of energy over
+time (bottom). The evolution of reconnection in the system is divided into three phases, shown in
+green (top panel). The energy curves plotted are the change in electrical energy (∆EE), magnetic
+energy (∆EB), thermal energy of ions and electrons (∆Ethi,e), ﬂow energy of ions and electrons
+(∆Efi,e), and the total energy (∆Etot) which is the sum of all the above mentioned energies.
+and O- line. The simulation evolution can roughly be broken into three time periods as
+denoted in Fig. 1. During the initiation phase, the reconnection rate slowly increases and
+then suddenly accelerates around t ≈250. During the quasi-steady phase from t ≈350 to
+t ≈525, the reconnection rate is relatively steady with a value of 0.1. The magnetic energy
+steadily decreases during this phase with the released energy going primarily into electron
+and ion thermal energy. A minimal amount of energy transfers to ion bulk ﬂow energy, and
+total energy in the system is conserved quite well. The peak in the reconnection rate near
+t ≈500 is associated with the formation of a secondary magnetic island. During the declining
+6
+
+Adhikari et al. 2019
+phase, the reconnection rate drops, plateaus at a rate near 0.05, and ultimately drops nearly
+to zero. During this phase the rate of magnetic energy change in Fig. 1 gradually reduces.
+Fig. 2 shows an overview of the reconnection geometry during the steady phase at t =
+467.6: (a) out of plane electron velocity (vez) with contours of the z−component of the
+magnetic vector potential, (b) the out of plane magnetic ﬁeld (Bz), (c) the outﬂow velocity of
+ions (vix), and (d)the omni-directional magnetic energy spectrum33. The magnetic ﬁeld lines
+show the formation of a system size magnetic island as a result of breaking and reconnection
+of the ﬁeld lines. In the vicinity of the X-lines, there is a dynamically appearing quadrupolar
+perturbation to Bz associated with Hall physics32. Inside the magnetic island in a region
+known to become turbulent43, Bz has a complicated structure due to the complex electron
+ﬂows.
+The omni-directional magnetic spectrum in Fig. 2d is calculated from the total magnetic
+ﬁeld throughout the entire simulation domain. During this steady reconnection period, the
+omni-directional magnetic spectrum surprisingly acts roughly as a double power-law for
+k di < 5, with a break near k di ∼1. This double power-law is strikingly similar to both
+kinetic simulations22,39 and observations3,16,28 of turbulence.
+To better understand the relationship between laminar reconnection and its associated
+magnetic spectra, we now explore the evolution of the spectra as the system evolves. Fig.
+3 shows the proﬁle of out of plane electron velocity (vez) (left panel), the two-dimensional
+magnetic energy spectrum in the k-space (middle panel), and the omni-directional and
+reduced spectra of magnetic energy (right panel).
+Energy values smaller than 10−7 are
+omitted in the 2D spectrum. The wavenumbers corresponding to the ion inertial length
+(di), electron inertial length (de) and the Debye length (λD) are represented by the dotted
+vertical lines. The solid black and blue lines drawn for reference have the spectral index of
+−5/3 and −8/3.
+At t = 0, the initial double Harris current sheet condition is evident. The spectrum is
+strongly anisotropic, with almost all energy concentrated at kx = 0 in the 2D spectrum.
+The 1D spectra show sharp features associated with the initial condition. At t = 202, the
+reconnection rate is still quite small and there is a slight narrowing of vez in the vicinity of
+the X-lines and a slight broadening near the O-lines. In the 2D spectrum a slight broadening
+of the spectrum along kx has occurred near |k di| ∼1. In the 1D spectra, a large increase
+in the energy spectra for k di ≳1 is evident. Much of this increase is due to the impact of
+7
+
+Adhikari et al. 2019
+50
+100
+150
+200
+(a)
+2
+1
+0
+1
+2
+50
+100
+150
+200
+Y(di)
+(b)
+0.3
+0.0
+0.3
+0
+50
+100
+150
+200
+X(di)
+0
+50
+100
+150
+200
+(c)
+0.5
+0.0
+0.5
+10
+1
+100
+101
+102
+kdi
+10
+9
+10
+6
+10
+3
+100
+EB(k)
+(d)
+FIG. 2. General features of steady laminar reconnection at t = 467.6: (a) out of plane electron
+velocity (vez) with magnetic ﬁeld lines (lines of constant magnetic vector potential along ˆz), (b)
+out-of-plane magnetic ﬁeld (Bz), (c) ion outﬂow velocity (vix), and (d) omni-directional magnetic
+energy spectrum.
+8
+
+Adhikari et al. 2019
+100
+200
+twci = 0
+2
+1
+0
+1
+2
+1
+0
+1
+10
+5
+10
+3
+10
+1
+10
+7
+10
+9
+10
+6
+10
+3
+100
+-5/3
+-8/3
+EB(kx)
+EB(ky)
+EB
+100
+200
+twci = 202
+1
+0
+1
+10
+9
+10
+6
+10
+3
+100
+-5/3
+-8/3
+100
+200
+Y(di)
+twci = 467.6
+1
+0
+1
+kydi
+10
+9
+10
+6
+10
+3
+100
+EB(k)
+-5/3
+-8/3
+100
+200
+twci = 656.5
+1
+0
+1
+10
+9
+10
+6
+10
+3
+100
+-5/3
+-8/3
+0
+100
+200
+X(di)
+0
+100
+200
+twci = 808
+1
+0
+1
+kxdi
+1
+0
+1
+10
+1
+100
+101
+102
+kdi
+10
+9
+10
+6
+10
+3
+100
+d
+1
+i
+d
+1
+e
+1
+D
+-5/3
+-8/3
+FIG. 3. Behavior in time of reconnection magnetic spectra features with (left) vez, (middle) 2D
+energy spectrum, and (right) 1D reduce spectra with EB(kx) in red, EB(ky) in blue, and omnidi-
+rectional EB in green. Each row corresponds to the same time, given on the top left of vez plot.
+The dotted vertical lines in the 1D spectra on right represent k values corresponding to d−1
+i , d−1
+e
+and λ−1
+D . Solid lines with given slopes are drawn for reference; note that these slopes are denoted
+in the same location in the same plot, allowing estimation of change in magnitude of the spectra.
+9
+
+Adhikari et al. 2019
+noise due to ﬁnite particles per grid on the magnetic ﬁeld, especially at the highest values
+of k.
+At t = 467.6 in Fig. 3 the reconnection is quasi-steady, as observed in Fig. 1. The global
+magnetic islands have grown considerably, reaching an island width of about 20. Associated
+with this magnetic island growth is a signiﬁcant isotropization of the 2D magnetic spec-
+trum, which has broadened considerably in the kx direction. This isotropization is similar
+to what was seen in 2D MHD reconnection initialized with broadband background turbu-
+lence35. During the quasi-steady reconnection period, for k de < 1 the omnidirectional power
+spectrum is roughly a double powerlaw. The omni-directional spectrum exhibits a power
+law of spectral index −5/3 in the inertial range (k di < 1), characteristic of Kolmogorov
+spectrum25,26 before steepening above d−1
+i . In between the ion and electron inertial range,
+d−1
+i
+< k < d−1
+e
+the spectrum is reasonably well represented by a power index of −11/3. This
+range of spectral slopes is in agreement with the experimental results of solar wind turbu-
+lence 1,28,45,52. Note also that simulations with both smaller and larger simulation domains
+(not shown) display similar spectral features.
+At t = 656.5 in Fig. 3 the evolution has entered the declining phase, where the recon-
+nection rate decreases. The magnetic island widths have roughly doubled in size, and the
+2D spectrum has further evolved towards isotropy. A notable feature in the 2D spectrum
+are wings extending into all four quadrants, roughly making an angle of about 55◦with the
+horizontal. This angle is associated with the angle of the separatrices in the left column. In
+the 1D spectra, the slope in the inertial range (kdi < 1) has steepened considerably. It is
+noteworthy also that the steepening of the spectra to a slope greater than -8/3 now occurs
+at a larger k (kdi > 1).
+Generally speaking, from a plasma turbulence perspective the spectral steepening and
+movement of the breakpoint near kdi = 1 that we see here in Fig. 3 is quite interesting. In
+this regard it is noteworthy that the behavior of the breakpoint between MHD-like scales (for
+β < 1, kdi << 1) and subproton kinetic scales (kdi ≳1) is a widely studied topic in studies
+of strong plasma turbulence, including the solar wind2,11,28 and magnetosheath12, as well
+as simulations17,23,24. Given the documented complexity of this issue we will not attempt
+a full explanation of the kinetic scale evolution seen in spectra and other diagnostics here.
+However it seems certain that the processes observed at kdi > 1 are not fully determined by
+the MHD cascade but rather involve nonlinear kinetic plasma physics processes.
+10
+
+Adhikari et al. 2019
+0
+200
+400
+600
+800
+twci
+45
+50
+55
+60
+65
+70
+B
+B = 45
+tan2
+B =
+kx, ky
+k2
+y|EB(k, t)|
+kx, ky
+k2
+x|EB(k, t)|
+FIG. 4. Evolution of Shebalin angle, deﬁned on the upper right. EB(⃗k, t) is the two-dimensional
+magnetic energy. The dotted line at θB = 45◦represents perfect isotropy.
+Finally, at t = 808 in Fig. 3, the electron current sheet has reduced considerably at the
+X-line. The 2D spectrum is almost completely isotropic, and the 1D spectra have steepened
+considerably for k di < 2.
+The evolution of the spectral anisotropy is represented by the Shebalin angle51. The
+Shebalin angle corresponding to the magnetic spectrum is deﬁned as:
+tan2θB =
+P
+kx,ky
+k2
+y|EB(⃗k, t)|
+P
+kx,ky
+k2
+x|EB(⃗k, t)|
+,
+(3)
+where kx and ky correspond to the wavenumber along x and y axes respectively while EB
+is the 2D magnetic energy.
+Note that θB = 45◦for an isotropic 2D spectrum.
+Fig.
+4
+shows the evolution of Shebalin angle in time. Initially the Shebalin angle is about 70◦,
+which may seem counterintuitive since the initial magnetic ﬁeld has little variation along
+x. However, random particle ﬂuctuations associated with the ﬁnite particles per cell create
+isotropic magnetic ﬂuctuations which reduce the angle. The angle is nearly constant for
+the ﬁrst half of the simulation and then suddenly begins to decrease soon after the onset of
+quasi-steady reconnection.
+Interestingly, in Fig. 4, there is a time lag of about 50 between the onset of steady
+reconnection and this sharp decrease in the Shebalin angle. This time lag is comparable
+11
+
+Adhikari et al. 2019
+to the global nonlinear time, or eddy turnover time of the system.
+A scale-dependent
+nonlinear time is deﬁned as τnl = 1/(k uk) with uk a characteristic velocity for a given k
+value. For the global nonlinear time, we take k = 2π/L = 2π/(204.8) ≈0.03 and uk as the
+Alfv´en speed outside the current sheets, giving a global nonlinear time of 1/(0.03 · 1) ≈30.
+Therefore, one possible explanation for the time lag is that a cascade of energy to smaller
+scales begins during the fast, quasi-steady phase, and it takes roughly one nonlinear time
+for the energy to cascade to the smallest scales and isotropization to begin. For t ≳400,
+the Shebalin angle steadily decreases, reaching almost full isotropy (θB = 45◦) by the end of
+the simulation. In fact, as we shall presently see, the initiation of fast reconnection releases
+magnetic energy that quite rapidly (∼one nonlinear time) unleashes a chain of dynamical
+eﬀects that increasingly resemble turbulence.
+Given that the system we are studying is highly inhomogeneous and ansisotropic, ques-
+tions naturally arise concerning the contributions to the spectrum from diﬀerent spatial
+regions. Key spatial regions in the simulation are (I) the magnetic islands, (II) the dif-
+fusion region, exhaust, and the separatrix (collectively called DES), and (III) the inﬂow
+regions. The boundaries of those regions are illustrated in Fig. 5 at t = 467.6. The regions
+are bounded by appropriately chosen magnetic ﬁeld lines and are highlighted with diﬀerent
+colors in Fig. 5b. Practical diﬃculties arise in calculating spectra for such regions using
+standard methods. For example, familiar methods based on Fast Fourier Transforms are
+global in nature and are not easily adapted to complex regions.
+As an alternative to spectra, here we compute the second-order structure functions in each
+region following the methods of Pucci et al., (2018) 43. The structure function is deﬁned as
+S2
+B(l) =< |B(r + l) −B(r)|2 >, where B is the total magnetic ﬁeld, l is the lag in the real
+space, and the average (<>) is done over a given volume. We note that the value of the
+structure function at a given spatial lag may be interpreted as the contribution to the energy
+from ﬂuctuations at that scale. The upper and lower half of the box have almost identical
+structures, therefore the analysis of the upper box is not performed. The structure function
+is then computed in these three regions at t = 467.6 when the reconnection is quasi-steady.
+The smallest lag is equal to ∆x = 0.05 while the maximum lag is chosen to be half of the
+size of the region. For simplicity, we calculate the structure functions with one dimensional
+lags either along x (lx) or along y (ly).
+In Fig. 6 are shown the structure functions computed along lx and ly, in separate panels.
+12
+
+Adhikari et al. 2019
+0
+50
+100
+150
+200
+X(di)
+0
+50
+100
+Y(di)
+(a)
+Bz
+0.50
+0.25
+0.00
+0.25
+0.50
+0
+50
+100
+150
+200
+X(di)
+0
+50
+100
+III
+II
+I
+(b)
+Regions
+FIG. 5.
+Lower half of the simulation at t = 467.6.
+(a) Out-of-plane magnetic ﬁeld (Bz) and
+magnetic ﬁeld lines used to separate spatial regions for analysis. (b) Region I (red) is the magnetic
+island, Region II (green) is the diﬀusion, exhaust, and the separatrix (DES region), and Region III
+(blue) is the inﬂow region.
+First, one observes that the inﬂow region (III) has the smallest structure function in both
+directions, indicating that the turbulence energy is lower in region III than the other regions
+at all scales shown. Second, anisotropy is present in both the island (I) and the DES (II)
+regions with S2(ly) > S2(lx) for equal lags. However we note that the island region is closer
+to isotropic than is the DES region. To highlight this anisotropy, an identical reference line
+has been added for easy comparison of the two panels. It is clear that the structure function
+along ly makes the dominant contributions to the energy budget. The island (I) and the
+DES region (II) have nearly equal structure functions for ly ≲di and remain comparable
+in magnitude at all scales that can be compared. This implies that for these lags or length
+scales, both the island (I) and the DES region (II) play an important role in terms of
+contributions to the energy budget.
+Fig. 7 shows the omni-directional spectra of the three components of the magnetic ﬁeld
+and also the total magnetic ﬁeld when the reconnection is quasi-steady. For k di ≲1
+2, the
+total omni-directional spectrum is primarily due to the x-component of the magnetic ﬁeld Bx,
+which is the reconnecting ﬁeld. However, at smaller length scales (k di ≳1) the contribution
+is dominated by the out of plane magnetic ﬁeld (Bz). This transition is consistent with
+the onset of Hall physics for k di ∼1. Curiously, the approximate −5/3 slope extends to k
+values larger than the transition between Bx and Bz dominance; this behavior is consistent
+with the generation of Bz at k di > 1 and then the transfer of the Bz structure to longer
+13
+
+Adhikari et al. 2019
+10
+2
+10
+1
+100
+101
+102
+lx(di)
+10
+7
+10
+6
+10
+5
+10
+4
+10
+3
+10
+2
+10
+1
+100
+101
+S2
+B(lx)
+(a)
+Region I
+Region II
+Region III
+10
+2
+10
+1
+100
+101
+102
+ly(di)
+10
+7
+10
+6
+10
+5
+10
+4
+10
+3
+10
+2
+10
+1
+100
+101
+S2
+B(ly)
+(b)
+Region I
+Region II
+Region III
+FIG. 6. Second order structure functions S2
+B(li) computed across the regions I (red), II (green),
+and III (blue) at twci = 467.6 with (a) lag along x, and (b) lag along y. The color index is the
+same as in Fig. 5. Identical reference lines with arbitrary slope are added to facilitate comparison
+between the panels.
+10
+1
+100
+101
+102
+kdi
+10
+9
+10
+7
+10
+5
+10
+3
+10
+1
+101
+EB(k)
+d
+1
+i
+d
+1
+e
+1
+D
+-5/3
+-8/3
+EB
+EBX
+EBY
+EBZ
+FIG. 7. Contribution of each component of the magnetic ﬁeld to the omni-directional spectrum
+along with the total omni-directional spectrum at twci = 467.6.
+14
+
+Adhikari et al. 2019
+10
+1
+100
+101
+102
+kdi
+10
+10
+10
+8
+10
+6
+10
+4
+10
+2
+100
+|HM|
+-2
+-8/3
+d
+1
+i
+d
+1
+e
+1
+D
+HM(kx)
+HM(ky)
+HM(k)
+FIG. 8. Reduced (red, blue) and omni-directional (green) spectra of magnetic helicity at twci =
+467.6. A dash-dotted line with slope −2 (violet) and a solid line with slope −8/3 (black) is drawn
+for reference.
+wavelengths. An example of this is seen in Fig. 2c at x ≈180 for the lower x-line where the
+width along y of Bz is nearly 20, which corresponds to k ≈1/3. This type of large scale Bz
+in the reconnection exhaust has also been seen in observations of reconnection in the Earth’s
+magnetosheath40.
+In order to further explore the possibility of the cascade properties of this system, we
+examine the spectrum of the magnetic helicity. Magnetic helicity is deﬁned as HM =
+R
+A ·
+B dV , where B is the magnetic ﬁeld, A is the magnetic vector potential (B = ∇× A), and
+V represents the entire volume of the simulation. In the Fourier space, magnetic helicity
+is computed as HM = ℜ{ P
+k ak · b∗
+k }, where ak and bk are the fourier transform of the
+vector potential and the magnetic ﬁeld respectively and b∗
+k is the complex conjugate of bk6.
+Fig. 8 shows the magnitude of the reduced ( HM(kx) and HM(ky) ) and omni-directional (
+HM(k) ) magnetic helicity in k-space when the reconnection is quasi-steady, twci = 467.6.
+The helicity is dominated by the z−components of the vector potential and magnetic ﬁeld.
+Using dimensional arguments it can be shown that the omni-directional magnetic helicity
+spectrum has a power law slope of -2 for the inverse cascade scenario and -8/3 for a constant
+fractional helicity (σm = k HM/EB) and a Kolmogorov magnetic spectrum6,18. For k di ≲1,
+15
+
+Adhikari et al. 2019
+FIG. 9. Spectrogram of the omni-directional magnetic energy spectrum (top) and the time evo-
+lution of the magnetic energy at kdi ∼1 (blue) along with the reconnection rate (red) (bottom).
+The dotted white lines on the upper plot are drawn at kdi = 0.8 and kdi = 1.2. The black arrows
+show the migration of the change in the spectrogram (See text for details).
+the slope is roughly consistent with the constant fractional helicity case.
+Further insight into the spectral properties of the reconnection in this system can be
+gained by examining a spectrogram of the omnidirectional magnetic spectrum, shown in
+Fig. 9 (top panel). At early time, the spectrum of the initial tanh Harris equilibrium is
+clearly evident. When steady reconnection initiates near t ≈350, a sudden change in the
+spectrogram occurs at both the smallest k values and also at high k values. The sudden
+change in high k appears to migrate towards lower values of k, and have drawn black
+arrows into Fig. 9 to highlight this behavior. At the same time, the broadening of several
+bands at low k indicates transfer of energy towards the smaller scales. This is suggestive
+of bidirectional spectral transfer typical of turbulence with the net transfer being towards
+higher wavenumbers56.
+16
+
+Adhikari et al. 2019
+0.00
+0.04
+0.08
+0.12
+d
+dt
+0.0
+0.5
+1.0
+1.5
+EB
+×10
+2
+0
+200
+400
+600
+800
+FIG. 10.
+Scatter plot of the reconnection rate and the omni-directional magnetic energy at
+kdi ≈1. The colorbar represents the time and the arrow points in the direction of time.
+The length scale di plays an important role during antiparallel reconnection because
+it is roughly the width along the normal direction of the ion diﬀusion region, where MHD
+breaks down and the reconnection process begins. Intuitively, therefore, the magnetic energy
+spectra associated with k di ≈1 may be intrinsically linked to reconnection properties.
+Indeed, dynamical activities such as current sheet intensiﬁcation, formation of Hall ﬁelds,
+and even the formation of secondary islands would all be expected to inﬂuence the energy
+near k di ∼1. Therefore, in the spectrogram in Fig. 9, we integrate the energy between the
+two dashed horizontal lines (0.8 ≤k di ≤1.2) and plot the resultant energy as the blue curve
+in the bottom panel. For reference the reconnection rate is shown in red. The correlation
+between the two is quite strong. First, the energy is quite steady during the period of steady
+reconnection, but with a time lag. Note that this time lag is comparable to the time lag
+noted for the Shebalin angle in Fig. 4. The correlation with the drop in reconnection rate is
+quite striking.
+The connection between the reconnection rate and the magnetic energy at kdi ∼1 can
+also be visualized using a scatter plot as shown in Fig. 10. The behavior roughly resembles a
+hysteresis curve, indicating that the nature of the correlation changes during the evolution.
+Initially, the reconnection rate rises with little or no change in the energy. When the recon-
+17
+
+Adhikari et al. 2019
+nection rate stabilizes, there is a sharp rise in the energy. The ﬁgure also reveals the drop
+in the magnetic energy during the late reconnection when the reconnection rate is almost
+constant at about 0.045. The fall in the energy corresponds to a total time of twci ≈120
+ranging from twci = 600 −720, which is about four times the nonlinear time (τnl =
+1
+k uk )
+calculated at the largest scale of the simulation. The time corresponds to the drop in the
+out of plane magnetic ﬁeld inside the separatrix. The characteristic time for all of these
+processes appears to be comparable to the large scale τnl hinting at a connection with a
+turbulent energy cascade process.
+Finally, we call attention to the somewhat erratic behavior of the dψ/dt-EB relationship
+seen in Fig. 10 at approximate times 500 to 650 in the declining phase of reconnection
+dynamics. A similar epoch is observed in Fig. 9 and in subtle features of subproton spectral
+features in Fig. 3 in a similar time frame. We reiterate that these features are probably all
+related to complex plasma dynamics that emerge here when the MHD driving is less strong24.
+The basic physics of such behavior is actively discussed in space physics observations and in
+plasma simulation studies2,11,12,23.
+IV.
+CONCLUSIONS
+In this paper we have examined the magnetic spectral behavior of laminar antiparallel
+reconnection using 2.5D fully kinetic PIC simulations. The omnidirectional magnetic energy
+spectrum and the rate of reconnection exhibit three discrete phases in time: (1) An initiation
+phase ( t = 0 to t ≈350 ) during which the reconnection rate and the energy spectrum grow.
+(2) A steady phase ( t ≈350 to t ≈525) where the reconnection rate stabilizes around 0.1.
+During this time, the energy spectrum exhibits approximately a double power law, with
+a slope near −5/3 for k di ≲1 and a slope steeper than −8/3 for d−1
+i
+≲k ≲d−1
+e . (3) A
+declining phase ( t ≈525 to t = 900 ) during which the reconnection rate gradually decreases,
+almost going to zero by the end of the simulation. During this phase, the spectrum gradually
+decreases for all k values and for k di ≲1 the slope gradually becomes steeper than −5/3.
+We note that the double power law behavior during the steady phase is not simply an
+artifact of the initial spectrum: (1) The initial Tanh function itself actually generates a -2
+spectrum at wavelengths long compared to the reciprocal current sheet width versus the -5/3
+slope observed. (2) The Tanh generates only odd harmonics. However the spectrum that
+18
+
+Adhikari et al. 2019
+is generated dynamically ﬁlls in these gaps. (3) The approximate -5/3 spectrum extends to
+k di ∼1 while the initial Tanh spectrum steepens well before that. And (4) the dynamically
+generated spectrum becomes progressively more isotropic, as described in the manuscript,
+whereas the initial Tanh spectrum is extremely anisotropic.
+The power-law behavior of the magnetic energy spectrum during the steady phase is
+consistent with the existence of a Kolmogorov energy cascade, which raises the intriguing
+possibility that laminar reconnection fundamentally involves an energy cascade process,
+even though the reconnection diﬀusion region and the separatrices do not exhibit strong
+ﬂuctuations. However, proving that a cascade of energy is occurring will require analysis of
+higher order cascade laws4,21,42 which will be discussed in a future paper.
+Initially, the magnetic energy is concentrated near very small kx with a range of ky
+consistent with the double tanh initial condition, leading to a Shebalin angle initially far
+from the isotropic value of 45◦. Consistent with previous MHD simulations35, the process of
+reconnection acts to isotropize the energy spectrum. During the steady phase, the Shebalin
+angle exhibits a sharp drop from 70◦to about 55◦. During the declining phase, the angle
+reduces more slowly, ultimately reaching about 48◦at the end of the simulation.
+As a further analysis of the distribution of energy in scale, we employed second order
+structure functions in three disjoint spatial regions - the islands, the DES (diﬀusion, exhaust,
+and separatrix) region, and the inﬂow region. We found that the inﬂow regions are quiescent
+as expected, while comparable contributions to the energy budget are due to the reconnection
+and island regions.
+During the steady phase, the reconnecting magnetic ﬁeld Bx dominates the omnidirec-
+tional magnetic energy spectrum for k di ≲0.5. For larger k, Bz becomes the largest con-
+tributor. This behavior is consistent with Hall physics becoming important for k di ≳1. The
+ions are no longer frozen-in and the Hall term becomes important in Ohm’s law (e.g.,49). The
+reconnecting magnetic ﬁeld is dragged out of the plane (along z)32, creating the quadrupolar
+Hall Bz perturbation53. This Hall magnetic ﬁeld is responsible for the observed magnetic
+helicity, but spectral analysis reveals that the helicity is not strong enough to drive an in-
+verse cascade. Instead, the spectrum is closer to a constant fractional helicity spectrum that
+would be associated with a Kolmogorov direct energy cascade spectrum.
+We ﬁnd a correlation between the reconnection rate and the energy spectrum near k di ∼1
+(denoted as Edi), which makes sense as the ion diﬀusion region of reconnection has a width
+19
+
+Adhikari et al. 2019
+of a few di. Both the reconnection rate and Edi rise during the initiation, reaching roughly
+constant values during the steady phase. Note, however, that there is a time lag, with Edi
+plateauing about 50w−1
+ci
+after the reconnection rate. This time lag is roughly comparable
+to the global nonlinear time (global eddy turnover time). If a cascade of energy is indeed
+occurring, a plausible explanation for the lag would be that it represents the time for energy
+to cascade from the energy containing scale to k di ∼1. The declining phase is marked by
+a sharp drop in both Edi and the reconnection rate.
+In this manuscript we have found intriguing connections between laminar reconnection
+physics and turbulence phenomena expanding on previous suggestions based on MHD35.
+Future work will expand on this approach and may ultimately reveal the fundamental link
+between the two.
+ACKNOWLEDGMENTS
+This research was supported by NASA Grants NNX17AI25G (Heliophysics Supporting
+Research) and NNX14AC39G (MMS THeory and Modeling). We would like to acknowledge
+high-performance computing support from Cheyenne13 provided by NCAR’s Computational
+and Information Systems Laboratory, sponsored by the National Science Foundation. This
+research also used resources of the National Energy Research Scientiﬁc Computing Center
+(NERSC), a U.S. Department of Energy Oﬃce of Science User Facility operated under
+Contract No. DE-AC02-05CH11231.
+REFERENCES
+1O. Alexandrova, V. Carbone, P. Veltri, and L. Sorriso-Valvo. Small-scale energy cascade
+of the solar wind turbulence. The Astrophysical Journal, 674(2):1153, 2008.
+2O. Alexandrova, C. H. K. Chen, L. Sorriso-Valvo, T. S. Horbury, and S. D. Bale. Solar
+Wind Turbulence and the Role of Ion Instabilities. Space Sci. Rev., 178(2-4):101–139, Oct
+2013.
+3O. Alexandrova, J. Saur, C. Lacombe, A. Mangeney, J. Mitchell, S. J. Schwartz, and
+P. Robert. Universality of solar-wind turbulent spectrum from mhd to electron scales.
+Physical review letters, 103(16):165003, 2009.
+20
+
+Adhikari et al. 2019
+4R. Bandyopadhyay, A. Chasapis, R. Chhiber, T. Parashar, W. Matthaeus, M. Shay,
+B. Maruca, J. Burch, T. Moore, C. Pollock, et al. Incompressive energy transfer in the
+earths magnetosheath: Magnetospheric multiscale observations. The Astrophysical Jour-
+nal, 866(2):106, 2018.
+5J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton, M. Hesse, M. Kuznetsova,
+Z. W. Ma, A. Bhattacharjee, A. Otto, and P. L. Pritchett. GEM magnetic reconnection
+challenge. J. Geophys. Res., 106:3715, 2001.
+6D. Biskamp. Magnetohydrodynamic turbulence. Cambridge University Press, 2003.
+7S. Boldyrev and N. F. Loureiro. Magnetohydrodynamic Turbulence Mediated by Recon-
+nection. The Astrophysical Journal, 844:125, Aug. 2017.
+8J. Buechner and J. P. Kuska. Numerical simulation of three dimensional reconnection due
+to the instability of collisionless current sheets. Adv. Space Res., 19:1817, 1997.
+9F. Califano, S. S. Cerri, M. Faganello, D. Laveder, and M. W. Kunz.
+Electron-only
+magnetic reconnection in plasma turbulence. ArXiv e-prints, Oct. 2018.
+10S. S. Cerri and F. Califano. Reconnection and small-scale ﬁelds in 2D-3V hybrid-kinetic
+driven turbulence simulations. New Journal of Physics, 19(2):025007, Feb. 2017.
+11C. H. K. Chen, L. Leung, S. Boldyrev, B. A. Maruca, and S. D. Bale. Ion-scale spectral
+break of solar wind turbulence at high and low beta. Geophys. Res. Lett., 41:8081–8088,
+Nov. 2014.
+12R. Chhiber, A. Chasapis, R. Bandyopadhyay, T. N. Parashar, W. H. Matthaeus, B. A.
+Maruca, T. E. Moore, J. L. Burch, R. B. Torbert, C. T. Russell, O. Le Contel, M. R. Argall,
+D. Fischer, L. Mirioni, R. J. Strangeway, C. J. Pollock, B. L. Giles, and D. J. Gershman.
+Higher-Order Turbulence Statistics in the Earth’s Magnetosheath and the Solar Wind
+Using Magnetospheric Multiscale Observations. Journal of Geophysical Research (Space
+Physics), 123:9941–9954, Dec. 2018.
+13Computational and Information Systems Laboratory. Cheyenne: HPE/SGI ICE XA Sys-
+tem (University Community Computing), 2017.
+14C. Dong, L. Wang, Y.-M. Huang, L. Comisso, and A. Bhattacharjee. Role of the Plasmoid
+Instability in Magnetohydrodynamic Turbulence. Physical Review Letters, 121(16):165101,
+Oct. 2018.
+15J. F. Drake, D. Biskamp, and A. Zeiler. Breakup of the electron current layer during 3-d
+collisionless magnetic reconnection. Geophys. Res. Lett., 24:2921, 1997.
+21
+
+Adhikari et al. 2019
+16J. Eastwood, T. Phan, S. Bale, and A. Tjulin. Observations of turbulence generated by
+magnetic reconnection. Physical review letters, 102(3):035001, 2009.
+17L. Franci, S. S. Cerri, F. Califano, S. Landi, E. Papini, A. Verdini, L. Matteini, F. Jenko,
+and P. Hellinger. Magnetic reconnection as a driver for a sub-ion-scale cascade in plasma
+turbulence. The Astrophysical Journal Letters, 850(1):L16, 2017.
+18U. Frisch, A. Pouquet, J. L´eorat, and A. Mazure. Possibility of an inverse cascade of mag-
+netic helicity in magnetohydrodynamic turbulence. Journal of Fluid Mechanics, 68(4):769–
+778, 1975.
+19C. C. Haggerty, T. N. Parashar, W. H. Matthaeus, M. A. Shay, Y. Yang, M. Wan, P. Wu,
+and S. Servidio.
+Exploring the statistics of magnetic reconnection X-points in kinetic
+particle-in-cell turbulence. Physics of Plasmas, 24(10):102308, Oct. 2017.
+20C. T. Haynes, D. Burgess, and E. Camporeale. Reconnection and Electron Temperature
+Anisotropy in Sub-proton Scale Plasma Turbulence. The Astrophysical Journal, 783:38,
+Mar. 2014.
+21P. Hellinger, A. Verdini, S. Landi, L. Franci, and L. Matteini.
+von k´arm´an–howarth
+equation for hall magnetohydrodynamics: Hybrid simulations. The Astrophysical Journal
+Letters, 857(2):L19, 2018.
+22G. Howes, W. Dorland, S. Cowley, G. Hammett, E. Quataert, A. Schekochihin, and T. Tat-
+suno. Kinetic simulations of magnetized turbulence in astrophysical plasmas. Physical
+Review Letters, 100(6):065004, 2008.
+23G. G. Howes, S. C. Cowley, W. Dorland, G. W. Hammett, E. Quataert, and A. A.
+Schekochihin. A model of turbulence in magnetized plasmas: Implications for the dis-
+sipation range in the solar wind. J. Geophys. Res., 113, 2008.
+24H. Karimabadi, V. Roytershteyn, M. Wan, W. H. Matthaeus, W. Daughton, P. Wu,
+M. Shay, B. Loring, J. Borovsky, E. Leonardis, S. C. Chapman, and T. K. M. Naka-
+mura. Coherent structures, intermittent turbulence, and dissipation in high-temperature
+plasmas. Phys. Plasmas, 20(1):012303, Jan. 2013.
+25A. N. Kolmogorov. The local structure of turbulence in incompressible viscous ﬂuid for
+very large reynolds numbers. Proceedings of the Royal Society of London. Series A: Math-
+ematical and Physical Sciences, 434(1890):9–13, 1991.
+26R. H. Kraichnan. Inertial ranges in two-dimensional turbulence. The Physics of Fluids,
+10(7):1417–1423, 1967.
+22
+
+Adhikari et al. 2019
+27A. Lazarian and E. T. Vishniac. Reconnection in a weakly stochastic ﬁeld. The Astro-
+physical Journal, 517(2):700, 1999.
+28R. J. Leamon, C. W. Smith, N. F. Ness, W. H. Matthaeus, and H. K. Wong. Observational
+constraints on the dynamics of the interplanetary magnetic ﬁeld dissipation range. Journal
+of Geophysical Research: Space Physics, 103(A3):4775–4787, 1998.
+29N. F. Loureiro, A. A. Schekochihin, and S. C. Cowley. Instability of current sheets and
+formation of plasmoid chains. Physics of Plasmas, 14(10):100703–100703, Oct 2007.
+30S. Lu, V. Angelopoulos, A. Artemyev, P. Pritchett, J. Liu, A. Runov, A. Tenerani, C. Shi,
+and M. Velli. Turbulence and particle acceleration in collisionless magnetic reconnection:
+Eﬀects of temperature inhomogeneity across pre-reconnection current sheet. The Astro-
+physical Journal, 878(2):109, 2019.
+31A. Mallet, A. A. Schekochihin, and B. D. G. Chandran. Disruption of sheet-like structures
+in Alfv´enic turbulence by magnetic reconnection. Monthly Notices of the Royal Astronom-
+ical Society, 468:4862–4871, July 2017.
+32M. E. Mandt, R. E. Denton, and J. F. Drake. Transition to whistler mediated magnetic
+reconnection. Geophys. Res. Lett., 21:73, 1994.
+33W. Matthaeus, J. Bieber, D. Ruﬀolo, P. Chuychai, and J. Minnie. Spectral properties
+and length scales of two-dimensional magnetic ﬁeld models. The Astrophysical Journal,
+667(2):956, 2007.
+34W. Matthaeus and S. Lamkin. Rapid magnetic reconnection caused by ﬁnite amplitude
+ﬂuctuations. The Physics of ﬂuids, 28(1):303–307, 1985.
+35W. Matthaeus and S. L. Lamkin. Turbulent magnetic reconnection. The Physics of ﬂuids,
+29(8):2513–2534, 1986.
+36P. Mu˜noz and J. B¨uchner. Kinetic turbulence in fast three-dimensional collisionless guide-
+ﬁeld magnetic reconnection. Physical Review E, 98(4):043205, 2018.
+37K. T. Osman, W. H. Matthaeus, J. T. Gosling, A. Greco, S. Servidio, B. Hnat, S. C.
+Chapman, and T. D. Phan. Magnetic Reconnection and Intermittent Turbulence in the
+Solar Wind. Phys. Rev. Lett., 112(21):215002, May 2014.
+38E. Papini, L. Franci, S. Landi, A. Verdini, L. Matteini, and P. Hellinger. Can Hall Mag-
+netohydrodynamics explain plasma turbulence at sub-ion scales?
+arXiv e-prints, page
+arXiv:1810.02210, Oct. 2018.
+39T. Parashar, M. Shay, P. Cassak, and W. Matthaeus. Kinetic dissipation and anisotropic
+23
+
+Adhikari et al. 2019
+heating in a turbulent collisionless plasma. Physics of Plasmas, 16(3):032310, 2009.
+40T. D. Phan, J. F. Drake, M. A. Shay, F. S. Mozer, and J. P. Eastwood. Evidence for an
+elongated (> 60 ion skin depths) electron diﬀusion region during fast magnetic reconnec-
+tion. Phys. Rev. Lett., 99:255002, 2007.
+41T. D. Phan, J. P. Eastwood, M. A. Shay, J. F. Drake, B. U. ¨O. Sonnerup, M. Fujimoto,
+P. A. Cassak, M. Øieroset, J. L. Burch, R. B. Torbert, A. C. Rager, J. C. Dorelli, D. J.
+Gershman, C. Pollock, P. S. Pyakurel, C. C. Haggerty, Y. Khotyaintsev, B. Lavraud,
+Y. Saito, M. Oka, R. E. Ergun, A. Retino, O. Le Contel, M. R. Argall, B. L. Giles, T. E.
+Moore, F. D. Wilder, R. J. Strangeway, C. T. Russell, P. A. Lindqvist, and W. Magnes.
+Electron magnetic reconnection without ion coupling in Earth’s turbulent magnetosheath.
+Nature, 557:202–206, May 2018.
+42H. Politano and A. Pouquet. von k´arm´an–howarth equation for magnetohydrodynam-
+ics and its consequences on third-order longitudinal structure and correlation functions.
+Physical Review E, 57(1):R21, 1998.
+43F. Pucci, W. H. Matthaeus, A. Chasapis, S. Servidio, L. Sorriso-Valvo, V. Olshevsky,
+D. Newman, M. Goldman, and G. Lapenta. Generation of turbulence in colliding recon-
+nection jets. The Astrophysical Journal, 867(1):10, 2018.
+44A. Retin`o, D. Sundkvist, A. Vaivads, F. Mozer, M. Andr´e, and C. J. Owen. In situ evidence
+of magnetic reconnection in turbulent plasma. Nature Physics, 3:236–238, Apr. 2007.
+45F. Sahraoui, M. Goldstein, P. Robert, and Y. V. Khotyaintsev. Evidence of a cascade
+and dissipation of solar-wind turbulence at the electron gyroscale. Physical review letters,
+102(23):231102, 2009.
+46S. Servidio, W. Matthaeus, M. Shay, P. Cassak, and P. Dmitruk.
+Magnetic recon-
+nection in two-dimensional magnetohydrodynamic turbulence.
+Physical review letters,
+102(11):115003, 2009.
+47S. Servidio, W. Matthaeus, M. Shay, P. Dmitruk, P. Cassak, and M. Wan. Statistics of
+magnetic reconnection in two-dimensional magnetohydrodynamic turbulence. Physics of
+Plasmas, 17(3):032315, 2010.
+48P. Sharma Pyakurel, M. Shay, T. Phan, W. Matthaeus, J. Drake, J. TenBarge, C. Haggerty,
+K. Klein, P. Cassak, T. Parashar, et al.
+Transition from ion-coupled to electron-only
+reconnection: Basic physics and implications for plasma turbulence. Physics of Plasmas,
+26(8):082307, 2019.
+24
+
+Adhikari et al. 2019
+49M. A. Shay, J. F. Drake, R. E. Denton, and D. Biskamp. Structure of the dissipation
+region during collisionless magnetic reconnection. J. Geophys. Res., 103:9165, 1998.
+50M. A. Shay, C. C. Haggerty, W. H. Matthaeus, T. N. Parashar, M. Wan, and P. Wu.
+Turbulent heating due to magnetic reconnection. Physics of Plasmas, 25(1):012304, Jan.
+2018.
+51J. V. Shebalin, W. H. Matthaeus, and D. Montgomery. Anisotropy in mhd turbulence due
+to a mean magnetic ﬁeld. Journal of Plasma Physics, 29(3):525–547, 1983.
+52C. W. Smith, K. Hamilton, B. J. Vasquez, and R. J. Leamon. Dependence of the dissipation
+range spectrum of interplanetary magnetic ﬂuctuationson the rate of energy cascade. The
+Astrophysical Journal Letters, 645(1):L85, 2006.
+53B. U. ¨O.. Sonnerup. Magnetic ﬁeld reconnection. In L. J. Lanzerotti, C. F. Kennel, and
+E. N. Parker, editors, Solar System Plasma Physics, volume 3, page 46. North Halland
+Pub., Amsterdam, 1979.
+54J. Stawarz, J. Eastwood, T. Phan, I. Gingell, M. Shay, J. Burch, R. Ergun, B. Giles,
+D. Gershman, O. Le Contel, et al. Properties of the turbulence associated with electron-
+only magnetic reconnection in earths magnetosheath. The Astrophysical Journal Letters,
+877(2):L37, 2019.
+55H. Strauss. Turbulent reconnection. The Astrophysical Journal, 326:412–417, 1988.
+56M. K. Verma, A. Ayyer, and A. V. Chandra. Energy transfers and locality in magnetohy-
+drodynamic turbulence. Physics of plasmas, 12(8):082307, 2005.
+57F. Wilder, R. Ergun, S. Eriksson, T. Phan, J. Burch, N. Ahmadi, K. Goodrich, D. Newman,
+K. Trattner, R. Torbert, et al. Multipoint measurements of the electron jet of symmetric
+magnetic reconnection with a moderate guide ﬁeld. Physical review letters, 118(26):265101,
+2017.
+58M. Yamada, R. Kulsrud, and H. Ji. Magnetic reconnection. Rev. Modern Phys., 82:603,
+Jan. 2010.
+59A. Zeiler, D. Biskamp, J. Drake, B. Rogers, M. Shay, and M. Scholer. Three-dimensional
+particle simulations of collisionless magnetic reconnection.
+Journal of Geophysical Re-
+search: Space Physics, 107(A9):SMP–6, 2002.
+25

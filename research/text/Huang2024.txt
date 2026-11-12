@@ -1,0 +1,1001 @@
+Three-dimensional plasmoid-mediated reconnection and turbulence in Hall
+magnetohydrodynamics
+Yi-Min Huanga) and Amitava Bhattacharjee
+Department of Astrophysical Sciences, Princeton University, Princeton, New Jersey 08540,
+USA
+Plasmoid instability accelerates reconnection in collisional plasmas by transforming a laminar reconnection
+layer into numerous plasmoids connected by secondary current sheets in two dimensions (2D) and by fos-
+tering self-generated turbulent reconnection in three dimensions (3D). In large-scale astrophysical and space
+systems, plasmoid instability likely initiates in the collisional regime but may transition into the collisionless
+regime as the fragmentation of the current sheet progresses toward kinetic scales. Hall MHD models are
+widely regarded as a simplified yet effective representation of the transition from collisional to collisionless
+reconnection. However, plasmoid instability in 2D Hall MHD simulations often leads to a single-X-line re-
+connection configuration, which significantly differs from fully kinetic particle-in-cell simulation results. This
+study shows that single-X-line reconnection is less likely to occur in 3D compared to 2D. Moreover, depend-
+ing on the Lundquist number and the ratio between the system size and the kinetic scale, Hall MHD can
+also realize 3D self-generated turbulent reconnection. We analyze the features of the self-generated turbulent
+state, including the energy power spectra and the scale dependence of turbulent eddy anisotropy.
+I.
+INTRODUCTION
+Magnetic reconnection is a fundamental process that
+alters the connectivity of magnetic field lines, releasing
+stored magnetic energy. The magnetic energy released
+by reconnection is transformed into kinetic, thermal, and
+non-thermal energy of plasma in explosive events in na-
+ture and laboratories, such as geomagnetic substorms,
+solar flares, coronal mass ejections (CMEs), gamma-ray
+bursts, and sawtooth crashes in fusion plasmas.1–7
+Magnetic reconnection occurs at current sheets.
+In
+recent years, there has been growing evidence that
+large-scale reconnection current sheets will likely be-
+come fragmented due to the plasmoid instability.8,9 The
+plasmoid instability has been found in a wide range
+of plasma models, including resistive magnetohydrody-
+namics (MHD),8–23 Hall MHD,16,24,25 and fully kinetic
+particle-in-cell (PIC) simulations.26–31
+High-resolution two-dimensional (2D) resistive MHD
+simulations indicate that the plasmoid instability leads
+to a fast reconnection rate that is nearly independent of
+the resistivity.9,14,18 In three-dimensional (3D) reconnec-
+tion with a guide field, in addition to modes that are
+symmetric along the out-of-plane direction, oblique tear-
+ing modes can become unstable.32 Interaction of oblique
+tearing modes leads to self-generated turbulent reconnec-
+tion without the need for external forcing.28,33–35
+Taking into account two-fluid and kinetic physics, the
+plasmoid instability can trigger even faster collisionless
+reconnection if the fragmented current sheets reach a ki-
+netic scale δi that corresponds to the ion skin depth di
+or the ion sound Larmor radius ρs, the latter being for
+cases with a strong guide field.16,24,27 This effect leads
+to the consideration of reconnection “phase diagram” in
+a)Electronic mail: yiminh@princeton.edu
+the literature.16,21,36,37 The phase diagram organizes var-
+ious types of reconnection in the parameter space of
+two dimensionless parameters:
+the Lundquist number
+S ≡LVA/η and the system size to the kinetic scale ra-
+tio Λ ≡L/δi . Here, L is a characteristic length scale
+of the reconnection layer along the outflow direction, VA
+is the Alfv´en speed of the reconnecting magnetic field
+component, and η is the magnetic diffusivity.
+Within
+resistive MHD, the reconnection current sheet becomes
+unstable when the Lundquist number S exceeds a critical
+value Sc ∼104.9,38 Once the current sheet becomes un-
+stable, the fragmentation continues until the secondary
+current sheets become marginally stable. This condition
+yields the typical widths of the secondary current sheets
+to scale as δc ∼LS1/2
+c
+/S.14 Comparing the secondary
+current sheet width δc with the kinetic scale δi yields a
+heuristic criterion Λ < S/S1/2
+c
+for the plasmoid-mediated
+onset of collisionless reconnection.
+Based on simple estimates, we can see that this on-
+set criterion is satisfied for numerous types of recon-
+nection events in the solar atmosphere and astrophysi-
+cal systems.36 For example, consider post-CME current
+sheets in the corona39,40 and UV (ultraviolet) bursts in
+the transition region.41–43 Typical lengths of post-CME
+current sheets are on the order of ∼109m, Lundquist
+numbers S ∼1014, and di ∼1m; Hence, the ratio Λ =
+L/di ∼109, which is smaller than S/S1/2
+c
+∼1012. For
+UV bursts, the lengths are estimated to be on the order of
+105m, the Lundquist numbers S ∼1010, and di ∼0.1m.
+The ratio Λ ∼106 is smaller than S/S1/2
+c
+∼108. There-
+fore, plasmoid-mediated onset of collisionless reconnec-
+tion is potentially important for both types of reconnec-
+tion events.
+Evidence of plasmoids in both types of reconnec-
+tion events is abundant.
+In post-CME current sheets,
+plasmoid-like structures have been regularly observed as
+moving blobs.39,40,44 In UV bursts, although plasmoids
+are not directly visible, their existence may be inferred
+arXiv:2404.19285v2  [physics.plasm-ph]  5 Aug 2024
+
+2
+from the shapes of emission line profiles, which provide
+information on reconnection outflow through the Doppler
+shift. The emission line profiles of UV bursts typically
+have a triangle shape, which is consistent with a highly
+fluctuating reconnection outflow associated with plas-
+moids. In contrast, a single-X-line reconnection geometry
+will predict a double-peak line profile, which is inconsis-
+tent with observation.41,43
+To model the transition from collisional to collision-
+less reconnection mediated by the plasmoid instabil-
+ity, particle-in-cell (PIC) simulation provides a first-
+principles, fully kinetic description.27,31 However, PIC
+simulations, especially in 3D, are usually limited to rela-
+tively small system sizes due to the computational cost.
+To simulate systems of larger sizes, this study employs a
+Hall MHD model incorporating two-fluid effects through
+the Hall terms in the generalized Ohm’s law. Hall MHD
+is often regarded as a minimal model that captures im-
+portant aspects of collisonless or weakly collisional recon-
+nection beyond resistive MHD.45 Previous 2D Hall MHD
+studies have demonstrated the onset of Hall reconnection
+mediated by plasmoid instability.16,24
+From the perspective of plasmoid formation, 2D Hall
+MHD reconnection is somewhat anomalous:
+it tends
+to settle to a single-X-line geometry after expelling all
+the plasmoids from the reconnection layer.
+This fea-
+ture makes it qualitatively different from fully kinetic
+PIC simulations, where new plasmoids are constantly
+generated.27 The single-X-line geometry of Hall recon-
+nection also appears to be inconsistent with observations
+of post-CME current sheets and UV bursts, which in-
+dicate that plasmoids continue to form throughout the
+entire period of the events. Although non-single-X-line
+2D Hall reconnection has been demonstrated, it appears
+to require a fairly large system size (L/di ≳5000) and
+may only exist in a narrow parameter space of the phase
+diagram.16
+The
+observed
+persistence
+of
+plasmoid
+formation
+throughout solar reconnection events raises an important
+question regarding whether Hall MHD can adequately de-
+scribe these phenomena. However, it is important to note
+that the preference for single-X-line reconnection in Hall
+MHD may result from the assumed 2D symmetry. Will
+3D systems allow the formation of complex 3D structures
+and significantly change the picture?
+Moreover, if 3D
+Hall MHD reconnection geometry deviates from a single
+X-line, can it support self-generated turbulent reconnec-
+tion?
+To address these questions, we perform 3D Hall MHD
+simulations of reconnection and compare the results with
+the corresponding 2D simulations. We aim for large sys-
+tem sizes, up to L/di = 1000.
+To mimic natural re-
+connection events, we start from an initial current sheet
+that is significantly thicker than di and let it thin down
+self-consistently. After the plasmoid instability triggers
+the onset of Hall reconnection, we continue to follow the
+evolution until it reaches a saturated phase.
+This paper is organized as follows. Section II describes
+Figure 1. Initial magnetic field configuration. Black lines are
+stream lines of the in-plane magnetic field component, and
+colormap shows the out-of-plane component Bz.
+the governing equations and the simulation setup in de-
+tail. In Section III, we present simulation results of re-
+connection geometry and reconnection rate for various
+2D and 3D runs. Section IV looks more deeply into the
+characteristics of the fully developed reconnection state
+by examining the energy power spectra and two-point
+structure functions of kinetic and magnetic fluctuations.
+Finally, we discuss the implications of our findings for
+large-scale astrophysical reconnection and conclude in
+Section V.
+II.
+GOVERNING EQUATIONS AND MODEL SETUP
+We employ the visco-resistive Hall magnetohydrody-
+namics model with an adiabatic equation of state.
+In
+normalized units, the equations are:
+∂tρ + ∇· (ρv) = 0,
+(1)
+∂t (ρv) + ∇· (ρvv) = −∇
+
+p + B2
+2
+
++ ∇· (BB)
++ ∇·
+
+ρν ∇v + ∇vT
+2
+
+,
+(2)
+∂tp + ∇· (pv) = −(γ −1)p∇· v,
+(3)
+∂tB = −∇× E,
+(4)
+E = −v × B + di
+J × B −∇pe
+ρ
++ ηJ −ηH∇2J.
+(5)
+
+3
+Here, standard notations are used: ρ is the plasma den-
+sity; v is the ion velocity; p is the total plasma pressure;
+pe is the electron pressure; B is the magnetic field; E is
+the electric field; J = ∇× B is the electric current den-
+sity; η is the resistivity; ηH is the hyper-resistivity;46 ν is
+the viscosity; and di is the ion skin depth. For simplic-
+ity, we assume that the ions and electrons are locally in
+thermal equilibrium. Therefore, the ion pressure pi and
+the electron pressure pe are equal, and the total plasma
+pressure p = pi + pe = 2pe. Electron inertia terms are
+neglected in the generalized Ohm’s law, Eq. (5).
+The normalization of Eqs. (1) – (5) is based on con-
+stant reference values of the density n0, and the mag-
+netic field B0.
+Lengths are normalized to the system
+size L, and time is normalized to the global Alfv´en time
+tA = L/VA, where VA = B0/√4πn0mi and mi is the
+ion mass.
+The normalization of physical variables is
+given by (normalized variables →expressions in Gaus-
+sian units): ρ →ρ/n0mi, B →B/B0, E →cE/B0VA,
+v →v/VA, p →p/n0miV 2
+A, J →J/(B0c/4πL), and
+di →di/L ≡
+p
+mic2/4πn0e2/L.
+The simulation setup is similar to that employed in
+previous studies.14,16,20,33,47 In this setup, the coales-
+cence of two magnetic flux tubes drives magnetic recon-
+nection.
+The simulation box is a 3D cube in the do-
+main (x, y, z) ∈[−1/2, 1/2] × [−1/2, 1/2] × [−1/2, 1/2].
+In normalized units, the initial magnetic field is given
+by B = Bz ˆz + ˆz × ∇ψ, where ψ = tanh (y/h) ψ0 and
+ψ0 = cos (πx) sin (2πy) /2π. Here, the parameter h de-
+termines the initial thickness of the current layer between
+the flux tubes. The out-of-plane magnetic field compo-
+nent Bz is non-uniform such that the initial configuration
+is approximately force-balanced. Precisely, Bz satisfies
+B2
+z = B2
+z0 + 5π2ψ2
+0 + (∂yψ0)2 −(∂yψ)2 ,
+(6)
+where the parameter Bz0 sets the guide field strength.
+In this study, the guide field strength Bz0 is set to unity.
+The initial current sheet thickness h = 0.01. In the up-
+stream region of the current layer, the reconnecting com-
+ponent Bx and the guide field Bz are both approximately
+equal to unity. Figure 1 shows the initial magnetic field
+configuration.
+The initial plasma density and pressure are both uni-
+form, with ρ = 1 and pi = pe = 1 in normalized units.
+The heat capacity ratio γ = 5/3 is assumed. Perfectly
+conducting and free-slip boundary conditions are im-
+posed along both x and y directions.
+Specifically, we
+have v · ˆn = 0, ˆn · ∇(ˆn × v) = 0, and B · ˆn = 0 on
+the boundaries. Here, ˆn is the unit vector normal to the
+boundary. The z direction is assumed to be periodic.
+This model system is numerically solved with a mas-
+sively parallel HMHD code. The numerical algorithm48
+approximates spatial derivatives by finite differences with
+a five-point stencil in each direction, augmented with a
+fourth-order numerical dissipation for numerical stability.
+The time-stepping scheme can be chosen from several
+options, including a second-order accurate trapezoidal
+leapfrog method and various strong-stability-preserving
+Figure 2.
+Time sequence for the 2D simulation with di =
+0.002 in the reconnection layer. The colormap denotes the
+reconnection outflow velocity vx (multimedia view).
+Runge–Kutta methods.49,50 We employ the second-order
+accurate trapezoidal leapfrog method in this study.
+We perform two sets of simulations with the ion skin
+depth di = 0.002 and 0.001. The plasma resistivity and
+viscosity ν are both set to a fixed value 5 × 10−6. Using
+the box size as the length scale L, the system size to the
+ion skin depth ratio L/di is 500 and 1000, respectively.
+The Lundquist number S = VAL/η = 2 × 105 and the
+magnetic Prandtl number Prm ≡ν/η = 1. Because Hall
+MHD tends to develop fine structures at small scales,
+we add a small hyper-resistivity ηH = 10−13 to smooth
+fluctuations at grid scales. The initial velocity is seeded
+with a random noise of amplitude 10−3 to trigger the
+plasmoid instability. We perform 2D and 3D simulations
+with the same parameters and compare the results.
+The 3D simulation mesh size is Nx × Ny × Nz =
+2000 × 1000 × 2000 (2000 × 1000 for 2D), where the
+grid sizes are uniform along both x and z directions, and
+packed along the y direction around the midplane to re-
+solve the reconnection layer better. The grid size along
+the y direction is ∆y = 10−4 near the midplane (y = 0).
+Moving away from the midplane, the grid size gradually
+increases and reaches ∆y = 0.005 near the boundaries at
+y = ±1/2.
+III.
+RECONNECTION GEOMETRY AND
+RECONNECTION RATE IN TWO-DIMENSION AND
+THREE-DIMENSION SIMULATIONS
+Figure 2 and the associate animation show the time
+evolution of the 2D simulation with di = 0.002, corre-
+sponding to L/di = 500. Here, the colormap denotes the
+reconnection outflow velocity vx.
+The initial thinning
+of the current sheet is accompanied by the formation of
+reconnection outflow jets.
+At around t = 0.6, several
+plasmoids start to form in the reconnection layer. Sub-
+
+4
+sequently, the onset of Hall reconnection expels all the
+plasmoids, and the reconnection geometry settles to a
+single-X-line configuration at t = 1.5. The 2D simula-
+tion with di = 0.001 also exhibits qualitatively similar
+behavior, as shown in the animation in the supplemen-
+tary material. These two runs demonstrate the strong
+tendency of 2D Hall MHD to form a single-X-line re-
+connection geometry, similar to the results of previous
+studies.16,24
+Three-dimensional (3D) simulations of the same pa-
+rameters show different behaviors. In the time evolution
+of the first case with di = 0.002, shown in Figure 3,
+the thinning current sheet first becomes unstable, form-
+ing flux ropes. The interaction between flux ropes leads
+to complex dynamics and the formation of chaotic field
+lines. However, all the flux ropes are eventually ejected
+and the magnetic field self-organizes into a nearly single-
+X-line configuration. The final state is similar to its 2D
+counterpart, even though a translational symmetry is not
+imposed. However, for the second case with di = 0.001
+(L/di = 1000), shown in Figure 4, the magnetic configu-
+ration does not settle to a single X-line. Instead, it ap-
+pears to develop a self-generated turbulent state similar
+to previous resistive MHD and PIC simulations.
+To quantify the 3D reconnection rate, we first aver-
+age the magnetic field along the z direction to obtain the
+mean magnetic field ¯B, which now depends only on x
+and y. We then use the mean field to calculate the re-
+connection rate in the same manner as the calculation for
+the 2D reconnection rate. Specifically, because the mean
+magnetic field ¯B is divergence-free, we can construct a
+mean-field flux function ¯ψ, subject to the boundary con-
+dition ¯ψ = 0 on the conducting-wall boundaries, such
+that ¯B = ¯
+Bz ˆz + ˆz × ∇¯ψ. We then identify the domi-
+nant X-point of the mean-field flux function and its corre-
+sponding value of the flux function ¯ψX. The reconnection
+rate is determined by d ¯ψX/dt.
+Figure 5 shows the time histories of reconnection rates
+for these 2D and 3D runs. The first three cases, all of
+which end up in a single-X-line configuration, yield faster
+reconnection rates. In comparison, reconnection in the
+fourth case, which does not settle to a single-X-line con-
+figuration, is slower.
+For reference, we also add a 3D
+resistive MHD (i.e., di = 0) run, which gives a substan-
+tially slower reconnection rate.
+Note that properly measuring reconnection rates in
+complex 3D geometries remains a challenge, for which
+various methods have been proposed (see, e.g. Ref. [30]
+and references therein). For background configurations
+exhibiting translation symmetry, our approach of uti-
+lizing the mean magnetic field to calculate the recon-
+nection rate provides a straightforward and effective es-
+timate.
+The obtained reconnection rates qualitatively
+align with the trends observed in magnetic energy decay
+rates, −dEB/dt, which quantify the rate at which mag-
+netic energy is converted into other energy forms. Here,
+the magnetic energy EB =
+R
+B2/2d3x, integrated over
+the entire simulation box. Figure 6 presents the magnetic
+Figure 3.
+Time sequence for the 3D simulation with di =
+0.002. Here, the two end plates at z = ±0.5 and the isosur-
+faces of the flow speed at v = 0.4 are colored according to the
+magnitude of the current density J in the logarithmic scale.
+Samples of magnetic field lines are colored according to the
+flow speed v. The arrows attached to field lines denote the
+local velocity vector (multimedia view).
+
+5
+Figure 4.
+Time sequence for the 3D simulation with di =
+0.001 (multimedia view).
+energy decay rates for the same 2D and 3D simulations as
+in Figure 5. The results indicate that single-X-line Hall
+reconnection is more efficient at releasing magnetic en-
+ergy compared to 3D Hall MHD turbulent reconnection,
+while resistive MHD exhibits the slowest energy release.
+0
+1
+2
+3
+4
+t
+0.00
+0.01
+0.02
+0.03
+0.04
+0.05
+Reconnection Rate
+2D, di = 0.002
+3D, di = 0.002
+2D, di = 0.001
+3D, di = 0.001
+3D, di = 0
+Figure 5. Time histories of the reconnection rates for different
+cases. Solid lines correspond to 3D simulations, and dashed
+lines are 2D simulations.
+0
+1
+2
+3
+4
+t
+0.00
+0.01
+0.02
+0.03
+0.04
+−dEB/dt
+2D, di = 0.002
+3D, di = 0.002
+2D, di = 0.001
+3D, di = 0.001
+3D, di = 0
+Figure 6. Time histories of the total magnetic energy decaying
+rate for different cases. Solid lines correspond to 3D simula-
+tions, and dashed lines are 2D simulations.
+IV.
+CHARACTERISTICS OF THE SELF-GENERATED
+TURBULENT STATE
+We further investigate whether the reconnection layer
+evolves to a self-generated turbulent state in the two 3D
+Hall MHD simulations by examining the energy spectra
+and two-point structure functions of the kinetic and mag-
+netic fluctuations within the layer.
+Special treatments
+are necessary for calculating energy spectra and struc-
+ture functions due to the strong inhomogeneity and shear
+in both magnetic and velocity fields. We adopt the pro-
+cedure of Huang and Bhattacharjee (2016),33 which is
+summarized below.
+
+6
+Figure 7. Time sequences of the kinetic (upper panel) and
+the magnetic energy (lower panel) spectra integrated over the
+range from y = −0.05 to 0.05 for the case di = 0.002. The
+tick labels of the colorbar indicate the times corresponding to
+the curves.
+To calculate the kinetic energy spectrum, we first de-
+fine a weighted velocity field w ≡ρ1/2v such that the
+kinetic energy density is a quadratic form w2/2.
+We
+then decompose w into the sum of the mean field ¯w
+and the fluctuation ˜w, where the mean field is defined
+as the average along the z direction. The total kinetic
+energy is the sum of the mean-field kinetic energy ¯
+Ek ≡
+R
+¯w2/2 d3x and the fluctuation part of the kinetic energy
+˜
+Ek ≡
+R
+˜w2/2 d3x. Likewise, we decompose the magnetic
+field B into the mean field ¯B and the fluctuation ˜B.
+The total magnetic energy is the sum of the mean-field
+magnetic energy
+¯
+Em ≡
+R ¯B2/2 d3x and the fluctuation
+part of the magnetic energy
+˜
+Em ≡
+R ˜B2/2 d3x. We only
+Figure 8. Time sequences of the kinetic (upper panel) and
+the magnetic energy (lower panel) spectra integrated over the
+range from y = −0.05 to 0.05 for the case di = 0.001. The
+tick labels of the colorbar indicate the times corresponding to
+the curves.
+consider the fluctuation parts for the calculation of the
+kinetic and magnetic energy spectra.
+Before we calculate the turbulence energy spectra
+within the reconnection layer, we first multiply the fluc-
+tuating fields ˜B and ˜w by a C∞Planck-taper window
+function,51 which equals unity within the range −0.2 ≤
+x ≤0.2 and tapers off smoothly to zero over the ranges
+where 0.2 ≤|x| ≤0.4. This step reduces the influence of
+irrelevant fluctuations from downstream exhaust regions,
+allowing us to focus on turbulence within the reconnec-
+tion layer. Next, we compute the discrete Fourier energy
+spectra of
+˜
+Ek and
+˜
+Em using the “windowed” variables
+on each constant-y slice to obtain 2D energy spectra as
+
+7
+Figure 9. Two-point structure function analysis of the fully developed turbulent state for the case with di = 0.001 at t = 2.1.
+The first column shows the magnitude of the fluctuating part of the magnetic field ˜B, overlaid with streamlines of the in-plane
+magnetic field. The second column shows contours of the structure function F B
+2 (r∥, r⊥). The third column shows the relations
+between the semi-major axis r∥∼k−1
+∥
+and the semi-minor axis r⊥∼k−1
+⊥
+of contours of the structure functions F B
+2 (r∥, r⊥)
+and F w
+2 (r∥, r⊥). These relationships quantify the scale dependence of anisotropy in turbulent eddies. The two dashed lines
+represent the scalings of k∥∼k⊥(scale-independent) and k∥∼k2/3
+⊥
+(Goldreich–Sridhar theory), for reference. The first row
+shows the results at y = 0, the second row at y = 0.002, and the third row at y = 0.005, respectively.
+functions of the wave numbers kx and kz. Then, we inte-
+grate the 2D energy spectra over the reconnection inflow
+direction y, which is also the direction of the strongest
+inhomogeneity, within the range −0.05 ≤y ≤0.05. Fi-
+nally, we calculate one-dimensional (1D) spectra as func-
+tions of k ≡
+p
+k2x + k2z by integrating over the azimuthal
+direction on the kx −kz plane.
+Figure 7 shows the time evolution of the resulting 1D
+spectra of ˜
+Ek and
+˜
+Em for the case of di = 0.002. Both
+spectra exhibit qualitatively similar behaviors and re-
+main close to equipartition between the two. When the
+plasmoid instability occurs at about t = 0.6, the energy
+spectra peak at k ≃100. Subsequently, the energy cas-
+cades in both forward and inverse directions to smaller
+and larger scales and quickly fills a broad range of scales
+at around t = 1.0. However, because the reconnection
+
+8
+geometry eventually evolves to a single-X-line configura-
+tion, the energy spectra do not settle to a quasi-steady
+state. Instead, the fluctuation parts of the energies peak
+at around t = 1.0, then gradually decay as the reconnec-
+tion geometry becomes increasingly quasi-2D.
+In comparison, the time evolution of the energy spectra
+for the case with di = 0.001, shown in Fig. 8, is quali-
+tatively similar to the previous case at an early stage.
+However, because this case does not settle to a single-
+X-line configuration, the reconnection layer appears to
+realize a self-generated turbulent state, where the energy
+spectra become nearly time-independent after t = 1.7.
+During the quasi-steady phase, the kinetic and mag-
+netic energy spectra in Figure 7 approximately follow
+the k−5/3 power law in the MHD range when kdi < O(1).
+The spectra steepen in the sub-di range when kdi > O(1).
+As a reference, we plot the k−11/3 power law in the sub-di
+range, which is the prediction of Galtier and Buchlin.52
+However, because we do not have a sufficient separation
+between the ion skin depth di and the dissipation scale,
+the energy spectra do not exhibit a definitive power law
+in the sub-di range. The same two power laws are also
+shown in Figure 7 for reference, even though the energy
+spectra do not reach a quasi-steady phase. Notably, the
+energy spectra in this case also steepen in the sub-di
+range.
+Next, we further investigate the alignment of turbu-
+lence eddies with the local magnetic field by calculating
+two-point structure functions of the kinetic and magnetic
+fluctuations in terms of the parallel displacement r∥and
+the perpendicular displacement r⊥relative to the local
+magnetic field; i.e., F w
+2 (r∥, r⊥) ≡
+D
+|w (x + r) −w (x)|2E
+and F B
+2 (r∥, r⊥) ≡
+D
+|B (x + r) −B (x)|2E
+.
+Structure
+functions allow us to measure the scale dependence of
+the anisotropy of turbulence eddies. In MHD turbulence,
+Goldreich & Sridhar (GS) theory53,54 predicts that tur-
+bulence eddies become increasingly more elongated along
+the magnetic field at smaller scales. More precisely, GS
+theory predicts a scale-dependent relationship k∥∼k2/3
+⊥
+between the wavenumbers parallel (k∥) and perpendicu-
+lar (k⊥).
+The GS theory relies on the critical balance condition,
+which assumes that the time scale for the nonlinear en-
+ergy cascade of an eddy in directions perpendicular to
+the magnetic field balances the Alfv´en wave propagation
+time scale of the eddy along the field. However, in Hall
+MHD, the dispersive whistler waves at sub-di scales alter
+the parallel wave propagation time and may cause differ-
+ent anisotropic scaling relations.55 At MHD scales when
+k∥di ≪1, the whistler waves become the shear Alfv´en
+wave, and the GS theory may still be applicable.
+The GS scaling relation k∥∼k2/3
+⊥
+has been confirmed
+by Cho and Vishniac for homogeneous MHD turbulence
+using two-point structure function analysis.56 In self-
+generated turbulence within reconnection layers, how-
+ever, previous resistive MHD studies have shown devia-
+tions from the GS scaling relation.33,34 Here, we explore
+whether similar behavior is observed in MHD-scale ed-
+dies for Hall MHD turbulent reconnection. In particular,
+we investigate whether our simulations of inhomogeneous
+reconnection layers in Hall MHD also exhibit deviations
+from the GS scaling relation.
+Here we adopt the procedure of Huang and Bhat-
+tacharjee (2016),33 which is a modification of the pro-
+cedure of Cho and Vishniac (2000)56 to accommodate
+the inhomogeneous background of the reconnection layer.
+Due to the strong inhomogeneity along the y direction in
+our system, we calculate the structure functions for each
+x–z plane, restricting displacements to lie within these in-
+dividual planes, rather than using the full 3D space. For
+a pair of points, we define the local magnetic field as the
+average of the magnetic fields from the two points. To en-
+sure consistency with displacements limited to individual
+x–z planes, we measure the parallel and perpendicular
+components of the displacement relative to the in-plane
+component of the local magnetic field. We compute the
+structure functions by averaging over 109 random pairs
+of points; the x coordinates of these points are limited to
+the range −0.25 ≤x ≤0.25.
+We focus on the case with di = 0.001 because it ap-
+pears to realize a self-generated turbulent state in the re-
+connection layer. In the following discussion, we present
+the results from the snapshot at t = 2.1, but other snap-
+shots during the quasi-steady period show similar behav-
+iors. Figure 9 summarizes the outcome of this analysis.
+Here, the rows correspond to different x-z slices.
+The
+first row shows the results at y = 0, the second row at
+y = 0.002, and the third row at y = 0.005, respectively.
+The first column of the figure shows the magnitude of
+the magnetic field fluctuation ˜B, overlaid with stream-
+lines of the in-plane magnetic field. The magnetic field
+fluctuations form elongated eddies along the direction of
+the local magnetic field. The second column shows con-
+tours of the structure function F B
+2 (r∥, r⊥), which clearly
+show elongated eddies along the local magnetic field di-
+rection. We have also performed the same analysis for the
+weighted velocity field fluctuation ˜w and the correspond-
+ing structure function F w
+2 (r∥, r⊥). The results are quali-
+tatively similar to those of the magnetic field fluctuations;
+therefore, they are not shown. The third column shows
+the relations between the semi-major axes r∥∼k−1
+∥
+and
+the semi-minor axes r⊥∼k−1
+⊥
+of contours of the struc-
+ture functions F B
+2 (r∥, r⊥) and F w
+2 (r∥, r⊥). These rela-
+tions quantify the scale dependence of turbulent eddy
+anisotropy. The two dashed lines represent the scalings
+of k∥∼k⊥(scale-independent) and k∥∼k2/3
+⊥
+(GS the-
+ory), for reference. In the first two rows at y = 0 and
+y = 0.002, relatively close to the mid-plane, the relations
+between r∥and r⊥appear to be approximately scale-
+independent. This result is similar to previous resistive
+MHD results.33,34 Interestingly, as we move further away
+from the mid-plane to y = 0.005 (last row), the GS scal-
+ing relation k∥∼k2/3
+⊥
+is partially recovered and appears
+to be consistent with eddies much larger than the di scale.
+
+9
+V.
+DISCUSSION AND CONCLUSION
+In conclusion, our simulations show that the occur-
+rence of single-X-line Hall reconnection in 3D is less prob-
+able compared to 2D. A case that evolves to a single-X-
+line geometry can become turbulent with multiple recon-
+nection sites in 3D. Notably, the single-X-line geometry
+consistently yielded the highest reconnection rate among
+all studied cases.
+Whether 3D Hall MHD reconnection realizes a self-
+generated turbulent state or a single-X-line configuration
+depends on the interplay of plasma parameters, including
+the Lundquist number S and the system size to kinetic
+scale ratio Λ = L/di. This study shows that at a fixed
+Lundquist number S = 2 × 105, a system of Λ = 500
+evolves to a single-X-line geometry, whereas a system of
+a larger system size Λ = 1000 evolves to a turbulent
+reconnection state. However, whether the system with
+Λ = 1000 can lead to a single-X-line configuration in even
+higher Lundquist numbers remains an open question. To
+comprehensively understand the diverse dynamic behav-
+iors of reconnection across parameter space, a systematic
+investigation is imperative. Such research will be crucial
+in advancing our knowledge of reconnection processes in
+complex plasma systems.
+The self-generated turbulent reconnection in 3D Hall
+MHD exhibits significant qualitative differences com-
+pared to resistive MHD. The turbulent reconnection layer
+in Hall MHD is significantly broader, and the recon-
+nection rate is much faster. Regardless of whether the
+reconnection geometry settles to a single X-line or be-
+comes turbulent, the hallmarks of Hall reconnection re-
+main visible. Notably, the reconnection exhaust regions
+open up and form a Petschek-like configuration (see Fig-
+ures 3 and 4). We emphasize that the resemblance with
+the Petschek-like configuration is just geometrical and
+nothing more because the underlying Hall MHD dynam-
+ics is qualitatively different from the resistive MHD dy-
+namics. Nonetheless, our simulation results and future
+research for even larger system sizes may shed light on
+recent Parker Solar Probe in situ measurements of recon-
+nection exhausts associated with interplanetary coronal
+mass ejections and heliospheric current sheets, where bi-
+furcated current sheets resembling Petschek’s reconnec-
+tion model with a pair of slow-shocks or rotational dis-
+continuities have been reported.57
+Many questions remain open, particularly for applica-
+tions to natural reconnection events where the system
+sizes are much larger than those considered in this study
+(i.e., Λ = L/di ≫1). Will a larger system size make
+self-generated turbulent reconnection easier to realize?
+Do global reconnection rate and geometry depend on the
+microscopic description of reconnection physics (e.g., Hall
+MHD or fully kinetic PIC) when the scale separation be-
+tween L and di is large? In the future, the Hall MHD de-
+scription of self-generated turbulent reconnection should
+be further compared with fully-kinetic PIC simulations
+or more elaborated fluid models such as high-moment
+multi-fluid models,58,59 in particular in the regime when
+the system size is much larger than kinetic scales.
+The self-generated turbulence in the reconnection layer
+also poses new challenges to turbulence theories and fu-
+ture numerical simulations. Our Hall simulation shows
+that the turbulent state in the vicinity of the reconnection
+mid-plane does not satisfy the Goldreich-Sridhar (GS)
+scaling relation of turbulence eddy anisotropy. This re-
+sult is similar to previous findings in resistive MHD simu-
+lations. However, away from the mid-plane, the GS scal-
+ing relation is partially recovered for large eddies. This
+phenomenon has not been observed in resistive MHD sim-
+ulations, and is not predicted by any theory.
+Why the GS scaling relation is not satisfied in resis-
+tive MHD self-generated turbulent reconnection but is
+partially recovered in Hall MHD remains an open ques-
+tion. Previously, Huang and Bhattacharjee argued that
+the discrepancy may be because the reconnection layer
+is highly inhomogeneous, with the reconnection outflow
+and the magnetic field being strongly sheared.33 In Hall
+MHD turbulent reconnection, the turbulent region is sig-
+nificantly thicker than the resistive MHD counterpart.
+Because the magnetic field is not as strongly sheared at
+planes away from the mid-plane, this observation could
+explain why the GS scaling relation is partially recovered
+in places away from the mid-plane.
+Even within the MHD regime, whether self-generated
+turbulent reconnection deviates from the GS theory has
+been unsettled. In a previous study, Kowal et al. showed
+that the scaling relation for large-scale eddies in tur-
+bulent reconnection simulations satisfies the GS scaling,
+while small-scale eddies are “contaminated” by reconnec-
+tion and exhibit different scaling behaviors.60 However,
+the initial and boundary conditions in their study differ
+from those in the present study: their initial condition
+contains a tangential discontinuity rather than a smooth
+magnetic field; the strength of the guide field is consid-
+erably lower than that of the reconnecting component of
+the magnetic field; the boundary conditions are periodic
+in the outflow direction and open in the inflow direction.
+It is unclear how much of their findings can be ascribed
+to these distinctions.
+Furthermore, Kowal et al. employed full 3D fields and
+displacements in their calculation of two-point structure
+functions, while our analysis is restricted to displace-
+ments within each x-z slice, utilizing in-plane magnetic
+field components for determining parallel and perpendic-
+ular displacements. The implications of this significant
+difference warrants further investigation. Our decision to
+use 2D slices stems from the pronounced inhomogeneity
+along the inflow (y) direction, which renders displace-
+ments in this direction qualitatively distinct from in-
+plane displacements. Preliminary attempts to calculate
+two-point structure functions using full 3D fields and dis-
+placements yielded results that were challenging to inter-
+pret. Future simulations with higher resolution, allowing
+for sufficient scale separation between the turbulent re-
+gion thickness and the smallest turbulence eddies, should
+
+10
+revisit this analysis to comprehensively assess the conse-
+quences of employing 2D versus 3D displacements.
+It is worth mentioning that the present study uses a
+compressible code. The relatively high plasma β (≈4
+relative to the reconnecting component of the magnetic
+field) and the presence of a guide field keep the plasma
+close to, but not perfectly, incompressible.
+Through-
+out the simulations, the root-mean-square density fluc-
+tuation is approximately 3%, although the density can
+differ from the mean value by up to 10% at some loca-
+tions. Even though the compressibility of the plasma is
+relatively low, the compressible waves within the system
+may introduce subtle effects on the energy cascade and
+eddy anisotropy.61
+In order to assess the effects of compressibility, tur-
+bulent reconnection should be investigated with incom-
+pressible MHD and Hall MHD, as well as compressible
+systems with varying plasma β.
+Furthermore, simula-
+tions with varying guide field strengths will clarify mag-
+netic shear effects.
+In a broader context, it is also of
+great interest to further investigate how Hall and kinetic
+effects affect plasmoid-mediated energy cascade in ho-
+mogeneous turbulence, which is an important topic of
+current research.62–67
+VI.
+SUPPLEMENTARY MATERIAL
+See the supplementary material for an animation for
+the 2D simulation with di = 0.001 in the reconnection
+layer, similar to that shown in Figure 2.
+ACKNOWLEDGMENTS
+This research was supported by the U.S. Department
+of Energy, grant number DE-SC0021205, the National
+Science Foundation, grant numbers AGS-2301337 and
+2209471, and the National Aeronautics and Space Ad-
+ministration, grant number 80NSSC18K1285. Computa-
+tions were performed on facilities at the National Energy
+Research Scientific Computing Center and the National
+Center for Atmospheric Research.
+REFERENCES
+1D. Biskamp, Magnetic Reconnection in Plasmas (Cambridge
+University Press, 2000).
+2E. R. Priest and T. Forbes, Magnetic reconnection : MHD theory
+and applications (Cambridge University Press, 2000).
+3E. G. Zweibel and M. Yamada, Annu. Rev. Astron. Astrophys.
+47, 291 (2009).
+4M. Yamada, R. Kulsrud, and H. Ji, Rev. Mod. Phys. 82, 603
+(2010).
+5E. G. Zweibel and M. Yamada, Proc. R Soc. A 472, 20160479
+(2016).
+6D. I. Pontin and E. R. Priest, Living Reviews in Solar Physics
+19, 1 (2022).
+7H. Ji, W. Daughton, J. Jara-Almonte, A. Le, A. Stanier, and
+J. Yoo, Nature Reviews Physics 4, 263 (2022).
+8N. F. Loureiro, A. A. Schekochihin, and S. C. Cowley, Phys.
+Plasmas 14, 100703 (2007).
+9A. Bhattacharjee, Y.-M. Huang, H. Yang, and B. Rogers, Phys.
+Plasmas 16, 112102 (2009).
+10D. Biskamp, Phys. Fluids 29, 1520 (1986).
+11K. Shibata and S. Tanuma, Earth Planets Space 53, 473 (2001).
+12G. Lapenta, Phys. Rev. Lett. 100, 235001 (2008).
+13P. A. Cassak, M. A. Shay, and J. F. Drake, Phys. Plasmas 16,
+120702 (2009).
+14Y.-M. Huang and A. Bhattacharjee, Phys. Plasmas 17, 062104
+(2010).
+15M. B´arta, J. B¨uchner, M. Karlick´y, and J. Sk´ala, Astrophys. J.
+737, 24 (2011).
+16Y.-M. Huang, A. Bhattacharjee, and B. P. Sullivan, Phys. Plas-
+mas 18, 072109 (2011).
+17C. Shen, J. Lin, and N. A. Murphy, Astrophys. J. 737, 14 (2011).
+18N. F. Loureiro, R. Samtaney, A. A. Schekochihin, and D. A.
+Uzdensky, Phys. Plasmas 19, 042303 (2012).
+19L. Ni, U. Ziegler, Y.-M. Huang, J. Lin, and Z. Mei, Phys. Plasmas
+19, 072902 (2012).
+20Y.-M. Huang and A. Bhattacharjee, Phys. Rev. Lett. 109, 265002
+(2012), arXiv:1211.6708.
+21Y.-M. Huang and A. Bhattacharjee, Phys. Plasmas 20, 055702
+(2013).
+22M. Takamoto, Astrophys. J. 775, 50 (2013).
+23P. F. Wyper and D. I. Pontin, Phys. Plasmas 21, 082114 (2014).
+24L. S. Shepherd and P. A. Cassak, Phys. Rev. Lett. 105, 015004
+(2010).
+25S. D. Baalrud, A. Bhattacharjee, Y.-M. Huang, and K. Ger-
+maschewski, Phys. Plasmas 18, 092108 (2011).
+26W. Daughton, J. Scudder, and H. Karimabadi, Phys. Plasmas
+13, 072101 (2006).
+27W. Daughton, V. Roytershteyn, B. J. Albright, H. Karimabadi,
+L. Yin, and K. J. Bowers, Phys. Rev. Lett. 103, 065004 (2009).
+28W. Daughton, V. Roytershteyn, H. Karimabadi, L. Yin, B. J.
+Albright, B. Bergen, and K. J. Bower, Nature Physics 7, 539
+(2011).
+29R. L. Fermo, J. F. Drake, and M. Swisdak, Phys. Rev. Lett. 108,
+255005 (2012).
+30W. Daughton, T. K. M. Nakamura, H. Karimabadi, V. Royter-
+shteyn, and B. Loring, Phys. Plasmas 21, 052307 (2014).
+31A. Stanier, W. Daughton, A. Le, X. Li, and R. Bird, Physics of
+Plasmas 26, 072121 (2019).
+32S. D. Baalrud, A. Bhattacharjee, and Y.-M. Huang, Phys. Plas-
+mas 19, 022101 (2012).
+33Y.-M. Huang and A. Bhattacharjee, Astrophys. J. 818, 20 (2016).
+34L. Yang, H. Li, F. Guo, X. Li, S. Li, J. He, L. Zhang, and X. Feng,
+The Astrophysical Journal 901, L22 (2020).
+35R. Beg, A. J. B. Russell, and G. Hornig, The Astrophysical Jour-
+nal 940, 94 (2022).
+36H. Ji and W. Daughton, Phys. Plasmas 18, 111207 (2011).
+37P. A. Cassak and J. F. Drake, Phys. Plasmas 20, 061207 (2013).
+38Y.-M. Huang, L. Comisso, and A. Bhattacharjee, Physics of Plas-
+mas 26, 092112 (2019).
+39L.-J. Guo, A. Bhattacharjee, and Y.-M. Huang, Astrophys. J.
+Lett. 771, L14 (2013).
+40J. Lin, N. A. Murphy, C. Shen, J. C. Raymond, K. K. Reeves,
+J. Zhong, N. Wu, and Y. Li, Space Sci. Rev. 194, 237 (2015).
+41D. E. Innes, L.-J. Guo, Y.-M. Huang, and A. Bhattacharjee, As-
+trophys. J. 813, 86 (2015).
+42P. R. Young, H. Tian, H. Peter, R. J. Rutten, C. J. Nel-
+son, Z. Huang, B. Schmieder, G. J. M. Vissers, S. Toriumi,
+L. H. M. R. van der Voort, M. S. Madjarska, S. Danilovic,
+A. Berlicki, L. P. Chitta, M. C. M. Cheung, C. Madsen, K. P.
+Reardon, Y. Katsukawa, and P. Heinzel, Space Science Reviews
+214, 10.1007/s11214-018-0551-0 (2018).
+43L.-J. Guo, B. D. Pontieu, Y.-M. Huang, H. Peter, and A. Bhat-
+tacharjee, The Astrophysical Journal 901, 148 (2020).
+
+11
+44J. Lin, S. R. Cranmer, and C. J. Farrugia, J. Geophys. Res. 113,
+A11107 (2008).
+45J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton,
+M. Hesse, M. Kuznetsova, Z. W. Ma, A. Bhattacharjee, A. Otto,
+and P. L. Pritchett, J. Geophys. Res. 106, 3715 (2001).
+46Y.-M. Huang, A. Bhattacharjee, and T. G. Forbes, Phys. Plasmas
+20, 082131 (2013), arXiv:1308.1871.
+47Y.-M. Huang, L. Comisso, and A. Bhattacharjee, Astrophys. J.
+849, 75 (2017), arXiv:1707.01863.
+48P. N. Guzdar, J. F. Drake, D. McCarthy, A. B. Hassam, and
+C. S. Liu, Phys. Fluids B 5, 3712 (1993).
+49S. Gottlieb, C.-W. Shu, and E. Tadmor, SIAM Review 43, 89
+(2001).
+50R. J. Spiteri and S. J. Ruuth, SIAM J. Numer. Anal. 40, 469
+(2002).
+51D. J. A. McKechan, C. Robinson, and B. S. Sathyaprakash, Class.
+Quantum Grav. 27, 084020 (2010).
+52S. Galtier and E. Buchlin, The Astrophysical Journal 656, 560
+(2007).
+53P. Goldreich and S. Sridhar, Astrophys. J. 438, 763 (1995).
+54P. Goldreich and S. Sridhar, Astrophys. J. 485, 680 (1997).
+55J. Cho and A. Lazarian, The Astrophysical Journal 615, L41
+(2004).
+56J. Cho and E. T. Vishniac, Astrophys. J. 539, 273 (2000).
+57T. D. Phan, S. D. Bale, J. P. Eastwood, B. Lavraud, J. F. Drake,
+M. Oieroset, M. A. Shay, M. Pulupa, M. Stevens, R. J. Mac-
+Dowall, A. W. Case, D. Larson, J. Kasper, P. Whittlesey, A. Sz-
+abo, K. E. Korreck, J. W. Bonnell, T. D. de Wit, K. Goetz, P. R.
+Harvey, T. S. Horbury, R. Livi, D. Malaspina, K. Paulson, N. E.
+Raouafi, and M. Velli, The Astrophysical Journal Supplement
+Series 246, 34 (2020).
+58L. Wang, A. H. Hakim, A. Bhattacharjee, and K. Germaschewski,
+Phys. Plasmas , 012108 (2015).
+59J. Ng, Y.-M. Huang, A. Hakim, A. Bhattacharjee, A. Stanier,
+W. Daughton, L. Wang, and K. Germaschewski, Phys. Plasmas
+22, 112104 (2015).
+60G. Kowal, D. A. Falceta-Gon˜A§alves, A. Lazarian, and E. T.
+Vishniac, Astrophys. J. 10.3847/1538-4357/aa6001 (2017).
+61S.
+Galtier,
+Journal
+of
+Plasma
+Physics
+89,
+10.1017/s0022377823000259 (2023).
+62S. Boldyrev and N. F. Loureiro, Astrophys. J. 844, 125 (2017).
+63A. Mallet, A. A. Schekochihin, and B. D. G. Chandran, Mon.
+Not. R. Astr. Soc. 468, 4862 (2017).
+64L. Comisso, Y.-M. Huang, M. Lingam, E. Hirvijoki, and A. Bhat-
+tacharjee, Astrophys. J. 854, 103 (2018).
+65C. Dong, L. Wang, Y.-M. Huang, L. Comisso, and A. Bhattachar-
+jee, Phys. Rev. Lett. 121, 165101 (2018).
+66C. Dong, L. Wang, Y.-M. Huang, L. Comisso, T. A. Sand-
+strom, and A. Bhattacharjee, Science Advances 8, 10.1126/sci-
+adv.abn7627 (2022).
+67S. S. Cerri, T. Passot, D. Laveder, P.-L. Sulem, and M. W. Kunz,
+The Astrophysical Journal 939, 36 (2022).

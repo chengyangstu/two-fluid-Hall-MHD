@@ -1,0 +1,837 @@
+Mon. Not. R. Astron. Soc. 000, 000–000 (0000)
+Printed 28 September 2018
+(MN LATEX style ﬁle v2.2)
+Relativistic Tearing and Drift-kink Instabilities in
+Two-ﬂuid Simulations
+Maxim V. Barkov1⋆and Serguei S. Komissarov2†
+1 Astrophysical Big Bang Laboratory, RIKEN, 351-0198 Saitama, Japan
+2 Department of Applied Mathematics, The University of Leeds, Leeds, LS2 9JT
+Received/Accepted
+ABSTRACT
+The stability of current sheets in collisionless relativistic pair plasma was studied
+via two-dimensional two-ﬂuid relativistic magnetohydrodynamic simulations with van-
+ishing internal friction between ﬂuids. In particular, we investigated the linear growth
+of the tearing and drift-kink modes in the current sheets both with and without the
+guide ﬁeld and obtained the growth rates which are very similar to what has been
+found in the corresponding PIC simulations. This suggests that the two-ﬂuid simula-
+tions can be useful in studying the large-scale dynamics of astrophysical relativistic
+plasmas in problems involving magnetic reconnection.
+Key words: magnetic ﬁelds –plasmas– relativistic processes – MHD – waves – meth-
+ods: numerical
+1
+INTRODUCTION
+It is now well recognised that magnetic ﬁeld is a “major player” in the dynamics of astrophysical plasma – the Lorentz force
+shapes a wide variety of ﬂows in the Universe. The dissipative eﬀects are also important, leading to magnetic reconnection
+and explosive release of stored magnetic energy. This could be of particular relevance in the astrophysics of neutron stars and
+black holes, which are expected to produce relativistic magnetically-dominated plasma. Magnetic reconnection accompanied
+by dissipation of magnetic energy may be the main processes leading to the observed non-thermal emission from winds and
+jets produced by these compact relativistic objects (e.g. Romanova & Lovelace 1992; Drenkhahn & Spruit 2002; Lyutikov &
+Blandford 2003; Zhang & Yan 2011; McKinney & Uzdensky 2012; Komissarov 2013; Porth et al. 2013, 2014).
+The magnetic dissipation associated with the magnetic reconnection is not captured in the framework of ideal relativistic
+MHD, which is currently the most common tool of modelling astrophysical phenomena. The approximation of resistive MHD
+does introduce Ohmic dissipation of magnetic ﬁeld but the astrophysical plasmas are often collisionless, whereas the resistivity
+has strong physical justiﬁcation only for collisional plasmas.
+Kinetic models of plasma are better routed in fundamental physics and more suitable for collisionless plasma but they
+are also much more complex and computationally expensive. PIC-simulations, based on dynamics of individual particles (or
+rather “super-particles”), are also quite expensive. Studies based on these methods shows that fast magnetic reconnection
+involves development of current sheets whose thickness is comparable to the electron skin depth, the kinetic scale absent in
+single ﬂuid MHD (Zenitani & Hoshino 2001, 2007; Bessho & Bhattacharjee 2012; Cerutti et al. 2014; Sironi & Spitkovsky
+2014; Liu et al. 2015).
+Half-way between these frameworks and the single ﬂuid MHD are the multi-ﬂuid models, where plasma is considered
+as a collection of several inter-penetrating charged and neutral ﬂuids, coupled via macroscopic electromagnetic ﬁeld. Like
+a single ﬂuid MHD, this approach is well suited for studying the large-scale dynamics of plasma ﬂows. Moreover, it also
+captures some elements of plasma microphysics in the form of collective interaction between its positively and negatively
+charged components, which leads to the emergence of the plasma frequency and electron skin depth. Its generalised Ohm’s
+law has several terms which introduce non-ideal properties even in the absence of explicit internal friction between ﬂuids.
+For this reason, the multi-ﬂuid approximation is considered as a potential alternative to more expensive kinetic and PIC
+approaches when it comes to problems of macroscopic plasma dynamics where the magnetic reconnection plays an important
+dynamic role via restructuring of magnetic ﬁeld and magnetic dissipation. For relativistic plasma, created in magnetospheres
+⋆E-mail: maxim.barkov@riken.jp (MVB)
+† E-mail: S.S.Komissarov@leeds.ac.uk (SSK)
+arXiv:1602.02848v1  [astro-ph.HE]  9 Feb 2016
+
+2
+Barkov & Komissarov
+of neutron stars and black holes via various pair production processes, a simple two-ﬂuid approximation involving electron
+and positron ﬂuids may be suﬃcient. Obviously, the lack of spectral information means that the ﬂuid framework has rather
+limited potential for addressing such important issues as radiation and non-thermal particle acceleration.
+So far, there has been only a rather limited eﬀort to explore the potential of the two-ﬂuid approximation in numerical
+modelling of relativistic plasma. Zenitani et al. (2009a,b) used this approach for studying the relativistic magnetic reconnection,
+Amano & Kirk (2013) to study the termination shocks of pulsar winds, and Kojima & Oogi (2009) tried to construct two-
+ﬂuid models of steady-state pulsar magnetospheres. In the same way as this is done in resistive MHD simulations, Zenitani
+et al. (2009b,a) used anomalous resistivity to trigger fast magnetic reconnection of Petschek-type. However, they noticed that
+the inertial terms of the generalised Ohm’s law also make a signiﬁcant contribution to the reconnection electric ﬁeld, even
+exceeding that of the friction term, which represents the resistivity. Based on this observation, they suggested that the inertial
+terms alone may be suﬃcient to sustain magnetic reconnection. The robustness of this conclusion is not clear as they have
+also found that the simulations outcome strongly depends on the model of resistivity. Moreover, they used the Lax-Wendroﬀ
+numerical scheme which also introduces numerical resistivity, whose contribution to the reconnecting electric ﬁeld exceeds
+the other terms Zenitani et al. (2009b,a). However, if the two-ﬂuid model can reproduce the reconnection rate suﬃciently
+accurately then this approach becomes very useful for studying large-scale phenomena where magnetic restructuring and
+dissipation are important dynamical factors.
+Until recently, the fast magnetic reconnection was viewed in the context of the Petschek model with its compact diﬀusion
+zone, as opposed to the slow Sweet-Parker type reconnection of long and thin current sheets. However, long current sheets
+are unstable to tearing mode instability (TI), which splits it into much shorter current sheets separated by plasmoids. 2D
+simulations discovered that at the non-linear stage the current sheet becomes highly dynamic, with mergers of original
+plasmoids and creation of new ones. This leads to a much higher overall reconnection rate (e.g. Biskamp 1986; Shibata &
+Tanuma 2001; Loureiro et al. 2007; Bhattacharjee et al. 2009; Uzdensky et al. 2010). In addition to TI, currents sheets are
+also subject to the so-called drift-kink instability (DKI) which grows faster (Zenitani & Hoshino 2007; Cerutti et al. 2014).
+This discovery suggested that DKI may hinder the development of TI. However, recent 3D PIC simulations, where both types
+of modes are allowed, show that TI is not suppressed and becomes dominant at the non-linear phase. The reconnection rates
+in 3D and 2D simulations are found to be similar (Sironi & Spitkovsky 2014; Liu et al. 2015).
+Given the importance of TI and DK instabilities in the fast magnetic reconnection, the potential of the two-ﬂuid model
+depends on how well it can describe their development. In this paper, we focus on the linear development of these instabilities
+numerically. To this aim, we used our recently developed two-ﬂuid code for pair plasma (JANUS, Barkov et al. 2014). This
+code is based on a Godunov-type numerical scheme which is much less dissipative compared to the Lax-Wendroﬀone. It is
+third-order accurate in smooth regions, which makes it powerful tool for studying the instabilities. By setting the internal
+friction between the ﬂuids (the resistivity) to zero we focus on the role of the inertial terms in the generalised Ohm’s law.
+The results are compared with the growth rates obtained via PIC simulations by other groups. In the follow-up paper, we
+will discuss the nonlinear phases of magnetic reconnection in the plasmoid-dominated regime.
+2
+TWO-FLUID MODEL OF PAIR PLASMA
+Following Zenitani et al. (2009a) we adopt the 3+1 (−+ ++) Special Relativistic equations originated from the covariant
+formulation by Gurovich & Solov’ev (1986). The corresponding dimensionless equations are (for details see
+Barkov et al.
+2014)
+• the continuity equations
+∂t(n±γ±) + ∇i(n±ui
+±) = 0 ;
+(1)
+• the total energy equation
+∂t
+ X
+±
+(w±γ2
+± −p±) + Kq
+2Km (B2 + E2)
+!
++ ∇i
+ X
+±
+w±γ±ui
+± + Kq
+Km eijkEjBk
+!
+= 0 ;
+(2)
+• the total momentum equation
+∂t
+ X
+±
+w±γ±us
+± + Kq
+Km esjkEjBk
+!
++ ∇i
+ X
+±
+(w±ui
+±us
+± + p±gis) + Kq
+Km
+
+−EiEs −BiBs + 1
+2(B2 + E2)gis
+!
+= 0 ;
+(3)
+• the Maxwell equations
+∇iBi = 0 ,
+(4)
+
+Tearing mode in two-ﬂuid RMHD
+3
+∂tBs + esik∂iEk = 0 ,
+(5)
+∇iEi = 1
+Kq (n+γ+ −n−γ−) ,
+(6)
+∂tEs −esik∂iBk = −1
+Kq (n+us
++ −n−us
+−) .
+(7)
+• and the generalised Ohm’s law
+∂t
+ X
+±
+±w±γ±us
+±
+!
++ ∇i
+ X
+±
+±(w±ui
+±us + p±gis)
+!
+=
+1
+Km ˜n(Es + esikviBk) + 2
+Kf n+n−(us
+−−us
++) .
+(8)
+In these equations E and B are the electric and magnetic ﬁeld, n±, p±, w±, γ± and u± = γ±v± are the density, pressure,
+relativistic enthalpy, Lorentz factor and 4-velocity of electron and positron ﬂuids respectively, gik is the spatial metric tensor
+of Minkowski space time and, eijk is the Levi-Civita tensor, indexes s, i and k correspond to three spatial direction.
+In the Ohm’s law, ˜n = n+γ+ +n−γ−is the total number density of charged particles as measured in the laboratory frame
+and vi = (n+γ+vi
++ + n−γ−vi
+−)/˜n is their average velocity in this frame. The last term of the Ohm’s law describes the internal
+friction between the ﬂuids, which is related to resistivity.
+The three dimensionless parameters in these equations are
+Kq =
+B0
+4πeL0n0 ,
+Km = mec2
+eB0L0 ,
+Kf =
+mec
+κfn0L0 ,
+(9)
+where L0 is the characteristic length scale, the speed of light, c, is the characteristic speed, B0 the characteristic value of
+magnetic (and electric) ﬁeld, n0 the characteristic number density of particles and e is the electron charge. The corresponding
+scales for the time is T0 = L0/c, for the mass density men0 and for the pressure and enthalpy mec2n0, κf is the dynamic
+coeﬃcient of friction between these ﬂuids.
+The dimensionless polytropic EOS is
+w± = n± + Γp±/(Γ −1) .
+(10)
+where Γ is the ratio of speciﬁc heats.
+In this paper we solve these equations numerically, using the code JANUS (Barkov et al. 2014). The code is based on a
+conservative ﬁnite-diﬀerence scheme which utilises a third order WENO interpolation (Liu et al. 1994; Yamaleev & Carpenter
+2009) and a third order TVD time integration of the Runge-Kutta type (Shu & Osher 1988), thus ensuring overall third order
+accuracy on smooth solutions. Hyperbolic ﬂuxes are computed using the Lax-Friedrich prescription. The magnetic ﬁeld is
+kept near divergence-free by means of the method of generalised Lagrange multiplier (Munz et al. 2000; Dedner et al. 2002;
+Komissarov 2007).
+3
+HARRIS CURRENT SHEET
+In the paper we study stability of the Harris current sheet using Cartesian coordinates aligned with the sheet. In these
+coordinates, the initial magnetic ﬁeld B = (Bx(y), 0, Bz), where Bz is a uniform guide ﬁeld and
+Bx = B∞tanh
+y
+δ
+
+,
+(11)
+where δ is the half-thickness of the current sheet and B∞is the magnetic ﬁeld strength far away from the sheet. The force
+equilibrium of the current sheet implies the total gas pressure distribution
+pt = p∞+ B2
+∞
+8π
+
+1 −tanh2 y
+δ
+
+.
+(12)
+The gas pressure in the centre of the current sheet p0 = p∞+ B2
+∞/8π. Introducing the pressure ratio fp = p0/p∞, we ﬁnd
+that
+fp = 1 + β−1
+m ,
+(13)
+where βm = 8πp∞/B2
+∞is the traditional (non-relativistic) magnetisation parameter of plasma. Following previous studies, we
+assume that the plasma temperature is uniform and hence the particle density distribution follows that of the gas pressure.
+
+4
+Barkov & Komissarov
+Table 1. TI models. The case without guide ﬁeld. Here λ and ωi are initial perturbation wavelength and perturbation grow rate
+respectively.
+Name
+Resolution
+domain X
+domain Y
+λ
+ωi
+TW06
+128x128
+[-3,3]
+[-5,5]
+6
+0.0
+TW07
+128x128
+[-3.5,3.5]
+[-5,5]
+7
+0.0
+TW08
+128x128
+[-4,4]
+[-5,5]
+8
+0.011
+TW09
+128x128
+[-4.5,4.5]
+[-5,5]
+9
+0.041
+TW10
+128x128
+[-5,5]
+[-5,5]
+10
+0.0603
+TW11
+128x128
+[-5.5,5.5]
+[-5,5]
+11
+0.077
+TW12
+160x128
+[-6,6]
+[-5,5]
+12
+0.085
+TW14
+160x160
+[-7,7]
+[-7,7]
+14
+0.095
+TW20
+256x256
+[-10,10]
+[-10,10]
+20
+0.100
+TW30
+384x256
+[-15,15]
+[-10,10]
+30
+0.089
+TW40
+512x256
+[-20,20]
+[-10,10]
+40
+0.079
+TW80
+1024x512
+[-40,40]
+[-20,20]
+80
+0.047
+TW160
+2048x1024
+[-80,80]
+[-40,40]
+160
+0.030
+TW10h
+192x192
+[-5,5]
+[-5,5]
+10
+0.0657
+TW10H
+256x256
+[-5,5]
+[-5,5]
+10
+0.0669
+The half-thickness δ determines the drift speed of ﬂuids in the current sheet. From the Faraday equation we ﬁnd four
+velocity as
+uz
+−=
+cB∞
+8πδen−sech2 y
+δ
+
+,
+(14)
+where we used the charge neutrality condition n−= n+, and hence u+ = −u−.
+Using B∞, δ and n±
+∞as the characteristic scales B0, L0 and n0 of the problem, we ﬁnd
+Kq = 2u0fp
+and
+Km =
+1
+4θ(fp −1) ,
+(15)
+where u0 is the magnitude of uz
+−at the centre of the current sheet and θ = kbT/mec2 is the dimensionless temperature, here
+kb is Boltzmann constant. Following Cerutti et al. (2014), we use fp = 10 and u0 = 0.75 but set θ = 10 instead of 108. The
+latter should not have a strong eﬀect as in both cases the thermal energy dominates in the plasma inertia and this is indeed
+what has been found in the previous theoretical and numerical studies (Zelenyi & Krasnoselskikh 1979; Zenitani & Hoshino
+2007). Given these values, we have Kq = 15 and Km = 0.042. The corresponding relativistic magnetisation parameter
+σ∞=
+B2
+∞
+4πw∞≈4.4 ,
+where w∞= w−,∞+ w+,∞. Using the deﬁnitions of the plasma Larmor radius, ρ0 = θmec2/eB∞, and the skin depth,
+d2
+e = θmec2/(4πn∞e2), as in (Cerutti et al. 2014), we ﬁnd δ = 2.4ρ0 and δ = 1.26de, which is similar to what they have in
+the setup of their PIC simulations (δ = 2.7ρ0 and δ = 1.61de)1.
+4
+SIMULATIONS
+All simulations presented in this paper are two-dimensional (2D). We split them in four groups. In Sections 4.1 and 4.2, we
+present our studies of the tearing and drift-kink instabilities of the Harris current sheet described in Sec.3, without the guide
+ﬁeld. The main goal is to obtain dispersion curves and compare them against the results of PIC simulations. In Sec.4.3 we
+investigate the role of the guide ﬁeld, by studying the response of modes with highest growth rates. In all models, the ratio
+of speciﬁc heats, Γ = 4/3 and Courant number C = 0.5. All physical parameters are dimensionalised using the characteristic
+scales c, L0 = δ, B0 = B∞and n0 = n∞.
+In order to focus on the role of inertial terms in Ohm’s law, we eﬀectively remove the resistive term by setting Kf = 1015.
+1 The diﬀerence is probably because they used v0 =
+√
+0.6 and not v0 = 0.6 as stated in their paper. We realised this issue a bit too late.
+
+Tearing mode in two-ﬂuid RMHD
+5
+Figure 1. Left panel: Evolution of the perturbation amplitude for the models TW08 (blue solid line), TW30 (magenta dot-dashed line),
+TW80 (cyan dashed line) and TW160 (green doted line). Right panel: Evolution of the perturbation amplitude for the models TW10
+(solid line), TW10h (dashed line) and TW10H (dot-dashed line) which diﬀer only by resolution.
+Figure 2. The distribution of By for the model TW20 at the times t = 23 (top panel) and t = 88 (bottom panel).
+4.1
+Tearing instability without guide ﬁeld
+For the study of the tearing instability, we consider a two-dimensional problem with ∂z = 0. The current sheet is pushed out
+of equilibrium by perturbing the magnetic ﬁeld, B →B + b, where the divergence-free perturbation
+b = b0e−(y/l)2 
+−2y
+(kl2) cos(kx)ix + sin(kx)iy
+
+,
+(16)
+where k = 2π/λ is the wavenumber and b0 = 10−3 is the amplitude of the perturbation. In the x direction, the size of the
+computational domain is set to be exactly one wavelength of the perturbation and we employ the periodic boundary conditions
+at the x boundaries. In the y-direction, we have a comparable size of the computational domain and use the free-ﬂow boundary
+conditions. The basic parameters of the simulations are given in the Table 1.
+To quantify the perturbation amplitude we use the maximum value of By in the computational domain. Figure 1 shows
+examples of the amplitude evolution for a number of models. As the initial perturbation is not a normal mode of the instability,
+it leads to excitement not only of the normal mode with the wavelength equal to the x size of the computational box, the
+fundamental mode, but also its overtones as well as and propagating waves. The latter are partially transmitted through the
+y boundaries of the computational box and do not grow in amplitude. Soon they become dominated by the unstable normal
+modes. When the wavelength of the fundamental mode is below the maximum of the dispersion curve, it completely dominates
+the evolution as the parasitic overtones grow slower. This is illustrated in Figure 2.
+When the wavelength of the fundamental mode is above the maximum, the evolution is more complicated. Initially, it
+dominates overtones simply because its initial amplitudes is higher. However, some parasitic overtones may now grow faster
+and eventually overtake it while still at the linear phase. In the amplitude plots, this is manifested by an increase of the curve
+gradient, as exhibited by the curve of the TW160 model in Figure 1. In the 2D plots of the solution, this is manifest by the
+appearance of dominant small scale structures (see Figure 3). This has to be taken into account when measuring the growth
+rate of the fundamental mode.
+We have checked the convergence of our numerical results by comparing the data obtained with diﬀerent numerical
+resolutions. The right panel of Figure 1 shows the results for the model TW10 obtained with 128×128 cells, 192×192 cells
+(TW10h) and 256×256 (TW10H), which clearly indicate their convergence. Base on the study we conclude the numerical
+error of our growth rates does not exceed 10%.
+The growth rates, ωi, of the fundamental modes are collected in Table 1 and Figure 4. The results agree with the
+
+6
+Barkov & Komissarov
+Figure 3. The distribution of By for the model TW160 at the times t = 60 (top panel) and t = 180 (bottom panel). One can see that
+initially it is the original perturbation of the wavelength equal to the domain length in the x direction which dominates. However, at
+later times shorter wavelengths begin to dominate.
+Figure 4. Growth rates of TI (thick red solid line) and DKI (green thick dot-dashed line) modes in the current sheet without guide
+ﬁeld. The magenta circle shows the result obtained with doubled numerical resolution.
+theoretical models which predict instability for 0 < k < 1 with a peak at k ≈0.5 (Zelenyi & Krasnoselskikh 1979; P´etri &
+Kirk 2007). The PIC simulations show a broader dispersion curve, with unstable modes existing beyond k = 1 and the peak
+growth rate ωi/ω0 ≈0.045, where ω0 = θmec/eB, at k ≈0.58 (Cerutti et al. 2014). In our simulations, the peak is more
+pronounced and located at k ≈0.3. In order to compare our results, we note that with our scaling ω−1
+0
+= θKm = 0.42 and
+thus ωi/ω0 ≈0.04. Overall, we conclude that our results agree quite well with the PIC data.
+4.2
+Drift-kink instability without guide ﬁeld
+For the study of the drift-kink instability, we consider a two-dimensional problem with ∂x = 0. The current sheet is pushed
+out of equilibrium by perturbing the velocity ﬁeld of both the electron and positron ﬂuids, U →U + u, where
+u = u0 cos(kz)iy ,
+(17)
+with u0 = 10−3. Like in the tearing simulations, the size of the computational domain in the z direction is set to be exactly one
+wavelength of the perturbation and we employ relevant periodic boundary conditions at the z boundaries. In the y-direction,
+we have a comparable size and use the free-ﬂow boundary conditions. The basic parameters of the simulations are given in
+the Table 2.
+The left panel of Figure 5 illustrates the structure of the unstable modes across the current sheet in our simulations.
+These results are in a good agreement with the structure of normal modes found in the linear theory of DK instability Zenitani
+& Hoshino (2007). We quantify the perturbation amplitude using the maximum value of |uy
++| in the computational box. The
+right panel of Figure 5 shows typical examples of its evolution in the simulations.
+Figure 4 shows the dispersion curve. Like in the tearing instability, the dispersion curve of DKI has a clear maximum and
+in the simulations with longer wavelengths, faster growing parasitic overtone modes can outperform the fundamental mode. In
+such cases, we compute ωi only for the initial part of the amplitude curve, where the fundamental mode is still dominant. In
+order to verify that the numerical resolution is suﬃcient and the growth rates are trustworthy, we have carried out a separate
+convergence study. For example, we repeated the simulations KW10 with higher resolution: 1922 (model KW10h) and 2562
+(model KW10H). The results indicate that the growth rate error for the model KW10 is below 1% (see Table 2).
+
+Tearing mode in two-ﬂuid RMHD
+7
+Table 2. DKI models. The case without guide ﬁeld.
+Name
+Resolution
+Domain Z
+Domain Y
+λ
+ωi
+KW06
+128x128
+[-3,3]
+[-5,5]
+6
+0.0
+KW065
+128x128
+[-3.25,3.25]
+[-5,5]
+6.5
+0.0
+KW07
+128x128
+[-3.5,3.5]
+[-5,5]
+7
+0.058
+KW08
+128x128
+[-4,4]
+[-5,5]
+8
+0.135
+KW09
+128x128
+[-4.5,4.5]
+[-5,5]
+9
+0.159
+KW10
+128x128
+[-5,5]
+[-5,5]
+10
+0.165
+KW11
+128x128
+[-5.5,5.5]
+[-5,5]
+11
+0.1646
+KW12
+192x128
+[-6,6]
+[-5,5]
+12
+0.160
+KW15
+192x128
+[-7.5,7.5]
+[-5,5]
+15
+0.137
+KW20
+256x128
+[-10,10]
+[-5,5]
+20
+0.110
+KW30
+384x256
+[-15,15]
+[-10,10]
+30
+0.061
+KW40
+512x256
+[-20,20]
+[-10,10]
+40
+0.0
+KW80
+1024x512
+[-40,40]
+[-20,20]
+80
+0.0
+KW10h
+192x192
+[-5,5]
+[-5,5]
+10
+0.16553
+KW10H
+256x256
+[-5,5]
+[-5,5]
+10
+0.16581
+Figure 5. Left panel: Structure of DK-modes without guide ﬁeld. The lines show the perturbation of electron density (solid red line),
+Ey × 30 (dashed green line) and Ez × 30 (dash-dotted black line) as found in the model KW09. The measurements are taken at t = 66
+along the line z = 2. Right panel: Growth of DK modes without guide ﬁeld. The curves represent models KW065 (magenta dashed line
+with diamonds), KW07 (red doted line), KW10 (green dot-dashed line) and KW20 (blue solid line). The shown quantity is the maximum
+value of uy
++ in the computational box.
+Like in the tearing instability, the unstable modes occupy the range 0 < k < 1, though the long wavelength modes with
+k < 0.2 appear to be suppressed (see Figure 4). In the PIC simulations the instability occurs even for k > 1 but at a lower
+growth rate (Zenitani & Hoshino 2007; Cerutti et al. 2014). In our simulations, the growth rate peaks at kmax ≈0.6, where it
+reaches the value ωmax ≈0.16. Both Zenitani & Hoshino (2007) whereas in the PIC simulations kmax ≈0.7 and ωmax ≈0.13
+(Zenitani & Hoshino 2007; Cerutti et al. 2014). Thus the results of two-ﬂuid and PIC simulations agree with each other quite
+well again. The linear analysis of Zenitani & Hoshino (2007) shows that the instability domain extends beyond k = 1. However
+this theoretical results is not trustworthy as it is obtained using the long-wavelength approximation, k ≪1.
+Interestingly, the short-wavelength modes appear to be non-decaying periodic or quasi-periodic oscillations. The model
+KW065 is one such example. Its amplitude remains on the level of initial perturbation. The model KW07 seems to be a
+transitional case, where the initial phase of exponential growth terminates at a relatively low amplitude and is followed by
+oscillations.
+In the PIC simulations, the non-linear phase of DKI is characterised by magnetic dissipation, plasma heating, and widening
+of the current sheet. All these properties are observed in our simulations as well. Moreover, we ﬁnd that shock waves develop
+in electron and positron ﬂuids ( see Figure 6) and they play an important role in plasma heating.
+
+8
+Barkov & Komissarov
+Figure 6. Development of the drift-kink instability in the model KW10. In the left panels, the coloured image shows the distribution
+of the out-of-the-plane component of magnetic ﬁeld Bx and in the right panels, the distribution of electric charge. The arrows show the
+velocity ﬁeld of positrons. The simulation time is t = 20, 50 and 58 (from top to bottom). By the time t = 58, a signiﬁcant fraction of
+magnetic energy has been dissipated and shock waves developed in the electron and positron ﬂuids.
+
+Tearing mode in two-ﬂuid RMHD
+9
+Table 3. The full set of models with guide ﬁeld in the study of DKI.
+Name
+Resolution
+Domain Z
+Domain Y
+λ
+αgf
+ωi
+Ka09W05
+192x192
+[-2.5,2.5]
+[-5,5]
+5
+0.9
+0.0
+Ka09W055
+192x192
+[-2.75,2.75]
+[-5,5]
+5.5
+0.9
+0.064
+Ka09W06
+192x192
+[-3.0,3.0]
+[-5,5]
+6
+0.9
+0.107
+Ka09W07
+192x192
+[-3.5,3.5]
+[-5,5]
+7
+0.9
+0.128
+Ka09W08
+192x192
+[-4.0,4.0]
+[-5,5]
+8
+0.9
+0.113
+Ka09W09
+192x192
+[-4.5,4.5]
+[-5,5]
+9
+0.9
+0.092
+Ka09W10
+192x192
+[-5.0,5.0]
+[-5,5]
+10
+0.9
+0.054
+Ka09W12
+192x192
+[-6.0,6.0]
+[-5,5]
+12
+0.9
+0.0
+Ka12W04
+192x192
+[-2.0,2.0]
+[-5,5]
+4
+1.2
+0.0
+Ka12W045
+192x192
+[-2.25,2.25]
+[-5,5]
+4.5
+1.2
+0.0
+Ka12W05
+192x192
+[-2.5,2.5]
+[-5,5]
+5
+1.2
+0.079
+Ka12W055
+192x192
+[-2.75,2.75]
+[-5,5]
+5.5
+1.2
+0.106
+Ka12W06
+192x192
+[-3.0,3.0]
+[-5,5]
+6
+1.2
+0.104
+Ka12W065
+192x192
+[-3.25,3.25]
+[-5,5]
+6.5
+1.2
+0.086
+Ka12W07
+192x192
+[-3.5,3.5]
+[-5,5]
+7
+1.2
+0.0
+Ka16W038
+192x192
+[-1.9,1.9]
+[-5,5]
+3.8
+1.6
+0.0
+Ka16W04
+192x192
+[-2.0,2.0]
+[-5,5]
+4
+1.6
+0.037
+Ka16W045
+192x192
+[-2.25,2.25]
+[-5,5]
+4.5
+1.6
+0.068
+Ka16W05
+192x192
+[-2.5,2.5]
+[-5,5]
+5
+1.6
+0.050
+Ka16W055
+192x192
+[-2.75,2.75]
+[-5,5]
+5.5
+1.6
+0.017
+Ka16W06
+192x192
+[-3.0,3.0]
+[-5,5]
+6
+1.6
+0.0
+4.3
+Current sheets with guide ﬁeld
+Following Zenitani & Hoshino (2008) and Cerutti et al. (2014) we ﬁrst study the eﬀect of guide ﬁeld on the fastest growing
+modes in the case without the the guide ﬁeld. In our study, these are k ≈0.31 (λ = 20) for TI and k ≈0.63 (λ = 10) for
+DKI. The computational domain is [−5, 5] × [−5, 5] with 128 × 128 cells for the TI simulations and [−10, 10] × [−5, 5] with
+256 × 128 cells for the DKI simulations. The strength of the guide ﬁeld is described by the parameter αgf = Bz/B∞. The
+perturbations are introduced in exactly the same way as in the models without the guide ﬁeld.
+The results are shown in Figure 7. As in the previous studies, the guide ﬁeld makes a stronger impact on the DKI mode
+than on the TI mode. For the TI mode, we ﬁnd that the growth rate is reduced by 50% only at αgf = 5, which is in agreement
+with the two-ﬂuid linear analysis by Zenitani & Hoshino (2008) and their PIC simulations. The PIC simulations by Cerutti
+et al. (2014) show a somewhat stronger eﬀect, with a 45% reduction already at αgf = 1. However, their curve is not monotonic,
+which may indicate higher numerical errors. As to the DKI mode, we ﬁnd that it is totally suppressed when αgf > 1. This is
+in a good agreement with the linear stability analysis of Zenitani & Hoshino (2008), who ﬁnd that for the DKI mode with
+k = 0.7 the critical guide ﬁeld is αgf,c ≈0.5, which also agrees with the results of their PIC simulations. Based on their PIC
+simulations, Cerutti et al. (2014) ﬁnd αgf,c ≈0.8 for k = 0.67, which is even closer to our results.
+Given the strong eﬀect of the guide ﬁeld on the drift-kink instability, we have carried out additional simulations with the
+aim to clarify the dependence of the DKI dispersion curve on the guide ﬁeld strength. The parameters of these simulations
+are given in Table 3 and their results are illustrated in Figure 7. The surprising result is that the growth rate is not uniformly
+reduced for all wavelengths. As the guide ﬁeld increases, the peak of the curve does get lower but in addition the unstable
+range shifts towards shorter wave lengths. As a result, some modes which grow at αgf = 0 become completely stabilised for
+αgf ̸= 0 and the other way around (see the right panel of Figure 7). The blue line in the left panel of Figure 7 shows the
+dependence of the maximal growth rate on αgf.
+5
+CONCLUSION
+In this work we studied the tearing and drift-kink instabilities of current sheets in collisionless electron-positron plasma by
+means of 2D two-ﬂuid computer simulations. We set the internal friction (resistivity) to zero and considered current sheets of
+thickness comparable to the electron skin depth, so that the inertial terms of the generalised Ohm’s law become signiﬁcant.
+Our results are compared with those of the PIC simulations carried out by other researches for current sheets with similar
+parameters. We ﬁnd that there is a good overall agreement between the two-ﬂuid and PIC simulations. In both cases, the
+fastest growing modes have very similar wavelengths and growth rates when the guide ﬁeld is small. In both cases, the guide
+ﬁeld reduces the growth rates of unstable modes. There are some diﬀerences too. For example, the unstable range of both
+TI and DKI appears to be somewhat narrower and the guide ﬁeld has a weaker stabilising eﬀect on the TI mode in the
+two-ﬂuid simulations. We also ﬁnd that, in addition to getting lower, the dispersion curve of DKI also shifts towards higher
+
+10
+Barkov & Komissarov
+Figure 7.
+Left panel: Dependence of the growth rates of the tearing and drift-kink instabilities on the strength of guide ﬁeld, αgf =
+Bz/B∞. The red line shows the TI mode with k ≈0.3 (λ = 20) and the green line the DKI mode with k ≈0.6 (λ = 10). The blue line
+shows the growth rate for the fastest growing DKI mode (its wavelength depends on αgf). Right panel: Growth rates of the drift-kink
+instability in the presence of the guide ﬁeld. The lines are the dispersion curves for αgf = 0 (green triangles), 0.9 (black crosses), 1.2
+(magenta squares) and 1.6 (magenta stars).
+wavenumbers when the guide ﬁelds gets stronger. We cannot say if this is in agreement with the PIC simulations due to the
+lack of relevant PIC data.
+It would be naive to hope that the two-ﬂuid simulations could exactly reproduce the results of PIC simulations, and they
+do not. However, the diﬀerences appear to be rather minor. This suggests that the two-ﬂuid model can adequately describe
+the macroscopic dynamics of plasma with collisionless currents sheets, yielding suﬃciently accurate magnetic reconnection
+rates. In order to conﬁrm this we have started a study of 2D magnetic reconnection in the plasmoid dominated regime. The
+preliminary results are encouraging.
+6
+ACKNOWLEDGMENTS
+The simulations have been carried out either on a work station with multi-core processors or/and on the CFCA cluster (XC30)
+of National Astronomical Observatory of Japan. We make 2D visualisation and analysis using package VisIt (Childs et al.
+2012) and Octave. SSK acknowledges support by STFC under the standard grant EP/N023986/1. BMV acknowledge partial
+support by JSPS (Japan Society for the Promotion of Science): No.2503786, 25610056, 26287056, 26800159. BMV also MEXT
+(Ministry of Education, Culture, Sports, Science and Technology): No.26105521 and RFBR grant 12-02-01336-a.
+REFERENCES
+Amano T., Kirk J. G., 2013, ApJ, 770, 18
+Barkov M., Komissarov S. S., Korolev V., Zankovich A., 2014, MNRAS, 438, 704
+Bessho N., Bhattacharjee A., 2012, ApJ, 750, 129
+Bhattacharjee A., Huang Y.-M., Yang H., Rogers B., 2009, Physics of Plasmas, 16, 112102
+Biskamp D., 1986, Physics of Fluids, 29, 1520
+Cerutti B., Werner G. R., Uzdensky D. A., Begelman M. C., 2014, ApJ, 782, 104
+Childs H., Brugger E., Whitlock B., Meredith J., Ahern S., Pugmire D., Biagas K., Miller M., Harrison C., Weber G. H.,
+Krishnan H., Fogal T., Sanderson A., Garth C., Bethel E. W., Camp D., R¨ubel O., Durant M., Favre J. M., Navr´atil P.,
+2012, in , High Performance Visualization–Enabling Extreme-Scale Scientiﬁc Insight. pp 357–372
+Dedner A., Kemm F., Kr¨oner D., Munz C.-D., Schnitzer T., Wesenberg M., 2002, J. Chem. Phys., 175, 645
+Drenkhahn G., Spruit H. C., 2002, A&A, 391, 1141
+Gurovich V. T., Solov’ev L. S., 1986, JETP, 91, 1144
+Kojima Y., Oogi J., 2009, MNRAS, 398, 271
+Komissarov S. S., 2007, MNRAS, 382, 995
+Komissarov S. S., 2013, MNRAS, 428, 2459
+Liu X.-D., Osher S., Chan T., 1994, J. Chem. Phys., 115, 200
+Liu Y.-H., Guo F., Daughton W., Li H., Hesse M., 2015, Physical Review Letters, 114, 095002
+Loureiro N. F., Schekochihin A. A., Cowley S. C., 2007, Physics of Plasmas, 14, 100703
+Lyutikov M., Blandford R., 2003, arXiv:astro-ph/0312347
+McKinney J. C., Uzdensky D. A., 2012, MNRAS, 419, 573
+
+Tearing mode in two-ﬂuid RMHD
+11
+Munz C.-D., Omnes P., Schneider R., Sonnendr¨ucker E., Voß U., 2000, J. Chem. Phys., 161, 484
+P´etri J., Kirk J. G., 2007, Plasma Physics and Controlled Fusion, 49, 1885
+Porth O., Komissarov S. S., Keppens R., 2013, MNRAS, 431, L48
+Porth O., Komissarov S. S., Keppens R., 2014, MNRAS, 438, 278
+Romanova M. M., Lovelace R. V. E., 1992, A&A, 262, 26
+Shibata K., Tanuma S., 2001, Earth, Planets, and Space, 53, 473
+Shu C.-W., Osher S., 1988, J. Chem. Phys., 77, 439
+Sironi L., Spitkovsky A., 2014, ApJ, 783, L21
+Uzdensky D. A., Loureiro N. F., Schekochihin A. A., 2010, Physical Review Letters, 105, 235002
+Yamaleev N. K., Carpenter M. H., 2009, J. Chem. Phys., 228, 3025
+Zelenyi L. M., Krasnoselskikh V. V., 1979, Soviet Ast., 23, 460
+Zenitani S., Hesse M., Klimas A., 2009a, ApJ, 705, 907
+Zenitani S., Hesse M., Klimas A., 2009b, ApJ, 696, 1385
+Zenitani S., Hoshino M., 2001, ApJ, 562, L63
+Zenitani S., Hoshino M., 2007, ApJ, 670, 702
+Zenitani S., Hoshino M., 2008, ApJ, 677, 530
+Zhang B., Yan H., 2011, ApJ, 726, 90

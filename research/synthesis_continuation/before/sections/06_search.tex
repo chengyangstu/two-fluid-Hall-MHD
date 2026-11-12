@@ -1,0 +1,86 @@
+\chapter{检索方法、覆盖范围与阅读证据等级}
+\section{范围与不能作出的保证}
+主范围是电子--离子Hall MHD、准中性／完整双流体、电子惯性扩展MHD，以及与重联直接相关的五矩／十矩闭合、EMHD和强导引场约化模型。实验与动理学论文作为检验或对照单列。离子--中性、部分电离、相对论和电子--正电子“双流体”需要特别标识；这些名称相似，但不等于主范围中电子--离子Hall模型。
+
+目前是持续核读工作稿，尚未完成全部候选的全文资格筛选。检索不可能证明世界上所有文章均已收录；尤其是数据库覆盖、非英文文献、早期会议记录、题名未含模型名、订阅全文与出版版本差异均可能造成遗漏。本项目不把“检索命中”“拿到PDF”“完整阅读”和“结论可靠”合并成一个数量。
+
+\section{已经实际执行的检索}
+\paragraph{宽检索。}OpenAlex中先使用Hall magnetic reconnection、two fluid magnetic reconnection、electron inertia reconnection、ten moment reconnection、Hall plasmoid reconnection、Hall reconnection guide field、Hall reconnection experiment、Hall reconnection numerical method、two fluid tearing mode、Hall reconnection three dimensional、Hall reconnection sawtooth、electron magnetohydrodynamic reconnection等12组检索。初轮每组取200条，因此这一轮\textbf{不是穷尽式分页}，检索日志保留了总命中数与截断量。
+
+\paragraph{题名分页。}随后对Hall、two-fluid、electron inertia、electron magnetohydrodynamics、ten-moment、five-moment、gyrofluid这7组模型词，分别配reconnection和tearing，共14组题名检索。该轮全部翻页至耗尽，去重后得到484条源记录。Hall＋reconnection为279条，two-fluid＋reconnection为72条；这些只是数据库当次返回量，不等于最后纳入篇数。
+
+\paragraph{arXiv。}实际检索式为：
+\begin{quote}\small
+all:reconnection AND (all:Hall OR all:"two-fluid" OR all:"two fluid" OR all:"ten-moment" OR all:"electron inertia" OR all:"electron magnetohydrodynamics")
+\end{quote}
+该轮返回262条，已完成分页。另通过引用追踪补充模型基础论文、作者主页、机构预印本库及实验机构公开文献。
+
+\paragraph{失败与恢复。}带引号全文检索的一次扩展遇到游标鉴权与响应解析失败；这不是零命中。失败检索式、已返回部分与错误记录保留在expanded\_search\_log.json。后续题名检索改用普通页码，避免把失败游标误记为全部检索完成。
+
+\paragraph{进一步补做的完整分页。}随后执行以下全文字段查询，前五组均翻页到当次返回末页；数字为原始命中数，可跨查询重复：
+\begin{center}\small
+\begin{tabular}{lr}\toprule 查询组合 & 返回条数\\\midrule
+Hall MHD AND (reconnection OR tearing)&1585\\
+Hall magnetohydrodynamic AND (reconnection OR tearing)&865\\
+two-fluid AND magnetic reconnection&2425\\
+electron magnetohydrodynamics AND reconnection&365\\
+electron inertia AND reconnection&1170\\
+gyrofluid AND reconnection&200 / 234\\\bottomrule
+\end{tabular}\end{center}
+最后一组尚缺34条：接口返回429，重试仍受限；这不是没有更多文献。实际带引号的完整查询、日期过滤（截至2026-11-10）、每页50条及原始响应见full\_search\_log.json与raw/full\_search。合并后原始唯一记录4484条。对题名含reconnection／tearing、题名或摘要含模型词的记录再作候选过滤，补充247条；该步骤是广泛召回，不是人工全文纳入。检索中出现的动理学对照、离子--中性双流体、会议资料与学位论文仍需逐篇分流。
+
+\section{身份核对与版本合并}
+首先按DOI、arXiv标识和题名合并，随后用PDF首页题名、作者、期刊信息和文件散列复核。自动相似题名比对只用于发现候选，不能作为最终身份确认。例如两篇题名仅相差“任意导引场”的Taylor问题文章，一度匹配到同一个PDF；首页DOI复核后已改正。另有学位论文被误配到同题论文预印本，已撤销其“获得正确全文”状态。
+
+一些种子书目也经全文检查改正：非线性无碰撞重联的Ottaviani--Porcelli论文DOI为10.1103/PhysRevLett.71.3802，70.3259实际是另一篇锯齿研究；半隐式Hall求解器的作者是Arnold、Dreher和Grauer；2020年的改进十矩闭合作者是Ng等。预印本的自动排版日期有时晚于arXiv提交日期，机构库封面也可能误写年份，均在核读档案中说明。
+
+已确认的版本重复保留指向主记录的映射，不再次计算为独立研究。新闻稿、会议海报、幻灯片和学位论文单列；下载文件保留供核查，但不把其页数当成论文数量。
+
+本轮续读进一步核对了2005／2008年同题受迫重联、2004年两篇Taylor问题，以及2015年强导引场短文与长文。这些是相关但不同的出版物；数据部分重叠时，在证据判断中说明，不以篇数制造独立验证的印象。MRX的2013年长文已从作者所在机构的公开目录取得6页期刊全文，来源为\href{https://w3.pppl.gov/~hji/paper/Tharp13.pdf}{PPPL作者公开版本}，与2012年短文分别登记。
+
+对若干尚缺核心文章的出版社公开接口及其他公开入口也进行了补查；HTTP 401／403和未匹配到全文的记录保留在\path{research/raw/core_retrieval_continuation.json}。访问失败不等于论文不存在，也不等于已读。尚未取得的2008年Simakov短文不能由已经核读的2009年长文顶替。
+
+\section{全文阅读标准}
+2026年11月11日上一批根据重要性从已有全文中选择39篇，逐篇完成正文、方法、结果、讨论及适用附录阅读，使总核读数由62增至101。选择依据是补齐核心机制争议、数值算法、闭合及实验对照，不以短文、重复版本或仅摘要满足数量。该批包含Hall／双流体、EMHD与回旋流体的模型研究，也包含明确标识的动理学对照、流体--动理学模型、算法及实验；篇数不是独立Hall模拟次数。
+
+上述39篇批次没有新增PDF下载，主要消化已取得全文。其队列、全文提取和逐篇人工笔记在\path{research/read_to_101/}，合并后证据集中在\path{research/reading_notes/verified.json}。
+
+同时修正平台日期与正式卷期年份混淆：L204、F766为2001年卷期，E459为2005年卷期（2004在线）；L156、L210、L243的预印本年份分别为2010、2015、2018，正式期刊年份为2011、2016、2019。各笔记明确实际所读版本；修正年份没有增加独立篇数。
+
+每篇被本报告用于研究结论的文章，均须阅读模型方程、闭合、初边值、数值／实验方法、结果、讨论和结论；有附录时一并核对。扫描件先OCR，再直接看关键公式和图像，不能只信OCR。每篇档案记录：实际阅读版本和全部页码、核对的图表、参数与诊断定义、主要发现、作者承认的限制，以及本报告额外的推导或一致性检查。
+
+完整阅读不意味着逐行重现作者代码。无公开输入、缺少网格收敛、未展示的私人通信或仅文字提及的PIC对照，均降低相应结论的证据强度。对于公式印刷疑点，本报告从原始方程重建；没有核对实现代码时，不进一步声称作者代码也有相同错误。
+
+\section{本次余量筛查：698条逐项初筛，新增15篇全文核读}
+以上一版剩余698条为固定基线，逐条检查题名与书目信息，并对重点候选进一步检查摘要及公开版本入口。\textbf{698条全部完成的是题名和元数据初筛，不是698篇全文阅读。}筛查台账记录每条的分流理由；没有仅凭题名把记录永久排除。初筛时的分流数量如下，它们是工作队列，不是独立的学术质量评级。
+\begin{center}\small
+\begin{tabular}{lr}\toprule 初筛去向 & 条数\\\midrule
+保留待全文核读 &430\\
+优先获取或核读 &122\\
+会议记录追溯正式论文 &82\\
+模型边界待全文确认 &30\\
+长文或学位资料单列 &25\\
+综述与章节单列 &9\\\bottomrule
+\end{tabular}
+\end{center}
+本次完成15篇的全部正文、方法、结果、讨论、适用附录与关键图表核读，总数由101增至116；所读主版本共185个PDF物理页，包含参考文献和机构库封面。页数仅说明阅读范围。文献键为E473、F589、F600、F606、F625、F655、F703、F741、F788、F798、L190、L227、L241、L283、L314。选择覆盖全局尺度效应、Hall能流理论、电子独有重联、导引场下模型分歧、网格与磁岛、Full-F算法、三维Hall发电机及多组分和实验边界。
+
+新增取得并核读F788的10页JFM正式版本，保留旧8页预印本以供版本对照。GREENY的F802期刊登记和F803 SSRN登记与E473指向同一研究，已合并；E473实际所读为arXiv v1，不能据此声称核读过正式修订版。因此原始登记仍为807条，非重复且非排除候选从799变为797条；目前仍有681条未完成全文核读。308条非重复候选关联PDF，物理PDF文件总数与文章数不同。
+
+初筛表、逐篇笔记、原文提取、关键页图像、版本校正和本轮统计见\path{research/remaining_screen/}。\path{screening.json}与\path{screening.csv}保留初筛时快照，当前已读／未读状态以总索引和\path{progress.json}为准。自动提取全文、获得PDF、检查题名都不计入完整阅读。部分重点候选仍缺全文或待核读，故本报告仍为持续更新工作稿。
+
+\Needspace{10\baselineskip}
+\section{本地目录与继续更新}
+\begin{longtable}{P{58mm}P{94mm}}
+\toprule 文件／目录 & 用途\\\midrule
+main.tex、preamble.tex & 主文档、字体与简洁排版\\
+sections & 第一章模型推导及其余专题章节\\
+references.bib & 全部登记条目的文献数据；正文参考文献打印实际引用条目\\
+papers & 已取得PDF；旧键名可能与改正后的文献键不同，以索引路径为准\\
+paper\_index.html & 本地可搜索索引，核读档案可展开，直达本地PDF\\
+paper\_index.csv & 可导入文献／表格工具的状态清单\\
+research/catalog.json & 原始元数据、下载来源、身份核对与重复映射\\
+\path{research/reading_notes/verified.json} & 人工全文核读笔记；不是摘要自动生成的内容判断\\
+research/raw、research/text、research/qa & 检索原响应、全文提取／OCR、关键页图像\\
+scripts & 检索、下载、身份修正和索引生成脚本\\\bottomrule
+\end{longtable}

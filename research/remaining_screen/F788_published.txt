@@ -1,0 +1,798 @@
+
+PAGE 1
+J. Fluid Mech. (2025), vol. 1007, R3, doi:10.1017/jfm.2025.109
+Magnetic reconnection, plasmoids and
+numerical resolution
+José María García Morillo
+1 and Alexandros Alexakis
+1
+1Laboratoire de Physique de l’Ecole Normale Supérieure, ENS, Université PSL, CNRS, Université
+Paris-Diderot, Sorbonne Paris Cité, Sorbonne Université, Paris, France
+Corresponding author: Alexandros Alexakis, alexakis@phys.ens.fr
+(Received 11 November 2024; revised 14 January 2025; accepted 17 January 2025)
+Explaining fast magnetic reconnection in electrically conducting plasmas has been a
+theoretical challenge in plasma physics since its ﬁrst description by Eugene N. Parker.
+In recent years, the observed reconnection rate has been shown by numerical simulations
+to be explained by the plasmoid instability that appears in highly conductive plasmas. In
+this work, by studying numerically the Orszag–Tang vortex, we show that the plasmoid
+instability is very sensitive to the numerical resolution used. It is shown that well-
+resolved runs display no plasmoid instability even at Lundquist numbers as large as
+5 × 105 achieved at resolutions of 32 7682 grid points. On the contrary, in simulations that
+are under-resolved below a threshold, the plasmoid instability manifests itself with the
+formation of larger plasmoids the larger the under-resolving is. The present results thus
+emphasize the importance of performing convergence tests in numerical simulations and
+suggest that further investigations on the nonlinear evolution of the plasmoid instability
+are required.
+Key words: MHD and electrohydrodynamics
+1. Introduction
+Magnetic reconnection refers to the sudden change in magnetic topology due to Ohmic
+dissipation or other microscale plasma processes (Priest & Forbes 2007). Similar processes
+are found in classical and quantum turbulence for vortex reconnection (Yao & Hussain
+2022; Barenghi et al. 2023). In astrophysics, magnetic reconnection is met in solar ﬂares,
+coronal mass ejections, the solar wind and the Earth’s magnetosphere to mention a few
+examples. In laboratory scales, it is observed in tokamak discharges, and in reversed
+ﬁeld pinch devices. It is responsible for the fast acceleration of charged particles and
+© The Author(s), 2025. Published by Cambridge University Press. This is an Open Access article,
+distributed under the terms of the Creative Commons Attribution licence (https://creativecommons.org/
+licenses/by/4.0/), which permits unrestricted re-use, distribution and reproduction, provided the original
+article is properly cited.
+1007 R3-1
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 2
+J.M.G. Morillo and A. Alexakis
+plasma heating Yamada et al. (2010). It was noted early on (Giovanelli 1946) that the
+rate of reconnection observed in astrophysical plasmas was much faster than the relevant
+Ohmic time scale. The model of Sweet and Parker (Parker 1957; Sweet 1958) improved
+on this estimate by introducing what is now known as the Sweet–Parker model where
+the reconnection time scale is accelerated by a factor of √SL where SL stands for
+the Lundquist number deﬁned as SL = VAL/η where VA is the Alfven speed, L the
+typical structure size and η the magnetic diffusivity. Although the Lundquist number
+in astrophysical plasmas is large, the improvement of the Sweet–Parker model still
+lacks orders of magnitude compared with observations. Different explanations have
+been put forward to produce faster reconnection rates than the Sweet–Parker model,
+including different geometry of the layer (Petschek 1964), Hall effect (Wang et al.
+2000; Morales et al. 2005), electron pressure (Wang et al. 2000; Egedal et al. 2013),
+electron inertia (Andrés et al. 2014) and turbulence (Lazarian et al. 2015, 2020). However,
+even without adding additional physics, it has been argued that a two-dimensional
+magnetohydrodynamic (2-D-MHD) model as that proposed by Sweet–Parker can result in
+a fast (i.e. magnetic diffusivity independent) reconnection rate if the Lundquist number
+is large enough so that the plasmoid instability develops (Shibata & Tanuma 2001).
+Based on linear theory, the plasmoid instability appears for SL ≳104 (Loureiro et al.
+2007; Samtaney et al. 2009; Loureiro et al. 2013a). These results, however, are based on
+simpliﬁed spatially inﬁnite and static magnetic shear layers. Although such assumptions
+are fruitful because they allow for the analytical treatment of the instability problem,
+their implications do not necessarily carry over to dynamically evolving magnetic ﬁelds
+of ﬁnite extent as those met in most physical situations. It is known for example that in
+hydrodynamic shear layers linear unstable modes of the static problem are advected out
+of the domain before they have a chance to manifest themselves Huerre & Monkewitz
+(1985, 1990). Furthermore, even if an instability is present, it does not guarantee that it will
+evolve to structures of signiﬁcant amplitude such that it will affect the system dynamics.
+Therefore, a nonlinear calculation is needed to verify this. Such nonlinear calculations of
+the plasmoid instability have been explored and have been shown to lead to the formation
+of magnetic islands along the current sheet that enhance the reconnection rate (Lapenta
+2008; Bhattacharjee et al. 2009; Cassak et al. 2009; Daughton et al. 2009; Samtaney et al.
+2009; Huang & Bhattacharjee 2010; Uzdensky et al. 2010; Baty 2012; Loureiro et al.
+2012; Huang & Bhattacharjee 2013; Loureiro et al. 2013b). These results were based
+on extended numerical simulations using a variety of codes including particle-in-cell
+methods, ﬁnite-volume, ﬁnite-element and pseudospectral methods.
+However, the magnetohydrodynamic equations show an increased sensitivity in the
+resolution used in numerical simulations. In particular, it has been shown in Wan et al.
+(2009, 2010) that turbulence statistics and topological changes can be strongly affected by
+a lack of sufﬁcient resolution. Their work studied the effect of under-resolving in decaying
+2-D-MHD turbulence and demonstrated that under-resolved simulations show strong noise
+at large wavenumbers that suppressed deviations from Gaussianity. This behaviour was
+linked to magnetic island generation near strong magnetic shear regions. In a follow-up
+work (Wan et al. 2013), the magnetic island generation was quantiﬁed as a function of the
+resolution measuring the number of magnetic islands measured by the number of local
+maxima/minima (O-points) and the number of saddle node points (X-points) of the vector
+potential. It was shown that this number rapidly increases with a decrease of the resolution,
+affecting the reconnection rates observed. Furthermore, in Ng & Ragunathan (2011) where
+reconnection layers were studied, plasmoids were found only when additional noise was
+introduced.
+1007 R3-2
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 3
+Journal of Fluid Mechanics
+These last results indicate that particular care needs to be taken with the resolution when
+examining strong magnetic shear layers. The work in Wan et al. (2009, 2010, 2013) was
+limited to reconnection layers appearing randomly by decaying turbulence that were of
+size much smaller than the domain size and as a result had a much smaller SL. In this work
+we will focus on a single reconnection layer that will allow us to (i) reach much larger SL in
+a much simpler set-up so that we cross the critical SL and (ii) compare with the predictions
+of linear theory. We examine the well-studied Orszag–Tang vortex (Orszag & Tang 1979)
+and perform resolutions studies. We show that plasmoids appear in under-resolved runs
+while in well-resolved runs no plasmoids form up to the examined Lundquist numbers.
+2. Numerical model
+In this work we revisit the reconnection problem in 2-D-MHD paying particular emphasis
+on numerical convergence. We consider the 2-D-MHD equations in a double periodic
+square box of size L = 2π. In terms of vorticity and the magnetic vector potential, they
+read
+∂tω + u · ∇ω = b · ∇j + ν∇2ω,
+(2.1)
+∂ta + u · ∇a = η∇2a,
+(2.2)
+where ω = ez · ∇× u is the vorticity with ez the direction perpendicular to the examined
+plane and u the velocity ﬁeld. The magnetic ﬁeld is given by b = ∇× ( eza) where eza is
+the magnetic vector potential. The current along ez is given by j = ez · ∇× b = −∇2a.
+The viscosity ν is set equal to the magnetic diffusivity η for all our simulations. As
+initial conditions, we consider the Orszag–Tang vortex (Orszag & Tang 1979) plus a small
+perturbation:
+a(t = 0, x) = A0[−cos(x) + cos(2y)/2] + ap,
+(2.3)
+while the velocity ﬁeld is deﬁned by its stream function ψ (such that ux = ∂yΨ and uy =
+−∂xΨ ) by
+Ψ (t = 0, x) = Ψ0 sin(x) sin(y) + ψp.
+(2.4)
+The amplitudes A0 and Ψ0 are such that the initial magnetic energy density is
+(1/2)⟨| b|2⟩= (1/2) and the kinetic energy is (1/2)⟨| u|2⟩= (1/8). The perturbations
+ap, ψp are chosen to include Fourier modes with wavenumber | k| < 16 with random
+phases and their amplitude is such that their energy corresponds to 0.25 % of the total
+energy. These perturbations break the Orszag–Tang symmetries and provide a seed for
+linear instabilities to develop that otherwise would depend on the round-off error. A
+visualization of the initial conditions in terms of the current square is shown in ﬁgure 1(a).
+Note that the perturbation ap amplitude is sufﬁciently big for the perturbations to be
+observed in the visualization.
+The equations were solved using the ghost pseudospectral code (Mininni et al. 2011)
+with a 4th-order Runge–Kutta scheme for the time advancement, the 2/3 rule for dealiasing
+and using a uniform grid of N grid points in each direction. Many different numerical
+simulations were carried out varying the resolution and the value of η = ν. The parameters
+of all our runs are given in table 1.
+The evolution of the system leads to the formation of a current sheet aligned along the
+x-axis centred at x = 0. The intensity of the current sheet measured by the mean current
+density squared ⟨j2⟩increases rapidly and peaks at a time around t ≃1.9 after which it
+decays. In what follows, all the studies are performed at the peak of ⟨j2⟩. At this time we
+1007 R3-3
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 4
+J.M.G. Morillo and A. Alexakis
+1.0
+0.5
+0
+−0.5
+−1.0−1
+0
+1
+y/π
+y/π
+x/π
+1.0
+0.5
+0
+−0.5
+−1.0−1
+0
+1
+x/π
+(a)
+(b)
+Figure 1. Visualisation of the current density of the initial conditions (a) and the resulting current layer in the
+entire domain (b). Red lines indicate the magnetic ﬁeld lines while blue lines indicate the velocity ﬁeld. The
+blue box marks the zoomed-in region that is shown in the subsequent ﬁgures.
+deﬁne the Lundquist number as SL ≡Bmax/(ηk1) where k1 = 1 is the smallest non-zero
+wavenumber. To calculate Bmax for each y we calculate the mean magnetic ﬁeld bx(y)
+along the x direction in the range x ∈[−π/8, π/8] (shown by the horizontal green line
+in ﬁgure 1); Bmax is then deﬁned as the ﬁrst local maximum of bx(y) as one moves away
+from the current sheet at y = 0. The non-dimensional reconnection rate is deﬁned here
+as RR = uin/Bmax where uin is again calculated by ﬁnding the mean inwards velocity
+−uy(y) over the same segment as for bx(y) and then uin is deﬁned as the ﬁrst maximum
+of −uy(y) as one moves away from the current layer. Note that this average is crucial in
+the presence of plasmoids that make local vales of uy and bx ﬂuctuate strongly.
+3. Results
+Exact solutions of reconnection layers describing the formation of the reconnection
+are not feasible and one needs to rely on numerical solutions. For the validity of a
+numerical method to be veriﬁed, one needs to demonstrate that for a given set of physical
+parameters there exists a resolution Nc such that all larger resolutions N > Nc give the
+same result, up to a small error that can be bounded by a decreasing function of N.
+Such a procedure proves that the numerical solution does not depend on the resolution
+and approaches the exact solution of the problem. Different numerical methods have
+different convergence rates. Finite-difference and ﬁnite-volume codes lead to a power-
+law convergence, implying that the error made decreases as a negative power law as N >
+Nc is increased, while pseudospectral and ﬁnite-element codes result in an exponential
+convergence. This exponential convergence can be realized by considering the energy
+spectrum of the involved ﬁelds here deﬁned as Eb(k) = (1/2) 
+k<| q|⩽k+1 | ˜b q|2 where
+˜b q is the Fourier transform of the magnetic ﬁeld b. Similarly, the squared current
+spectrum is deﬁned as EJ(k) = k2Eb(k). For a smooth ﬁeld, the energy and current
+spectrum display an exponential decrease at large k. Further increase of resolution thus
+adds exponentially small corrections. In the present study we have considered that a
+simulation is well-resolved, N > Nc, if the peak of the squared current spectrum deﬁned
+as EJ(k) = k2Eb(k) is at least 10 times larger than its value at k = kmax = N/3 the
+maximum allowed wavenumber, i.e. maxk{EJ(k)} ⩾10EJ(kmax). This implies that most
+of the Ohmic dissipation is correctly captured. We note that such a criterion is just an
+empirical estimate that works for the current set-up. It is conﬁrmed by observing that if the
+resolution is further increased the changes in the ﬂow are minimal. We stress here that the
+1007 R3-4
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 5
+Journal of Fluid Mechanics
+N
+η
+SL
+N
+η
+SL
+N
+η
+SL
+1024
+0.50E – 01
+0.19E + 02
+2048
+0.20E – 02
+0.12E + 04
+4096
+0.15E – 04
+0.14E + 06
+1024
+0.20E – 01
+0.70E + 02
+2048
+0.10E – 02
+0.26E + 04
+4096
+0.70E – 05
+0.35E + 06
+1024
+0.10E – 01
+0.18E + 03
+2048
+0.50E – 03
+0.54E + 04
+4096
+0.50E – 05
+0.46E + 06
+1024
+0.50E – 02
+0.41E + 03
+2048
+0.20E – 03
+0.15E + 05
+4096
+0.20E – 05
+0.91E + 06
+1024
+0.20E – 02
+0.12E + 04
+2048
+0.10E – 03
+0.30E + 05
+4096
+0.10E – 05
+0.18E + 07
+1024
+0.10E – 02
+0.26E + 04
+2048
+0.50E – 04
+0.61E + 05
+8192
+0.50E – 04
+0.62E + 05
+1024
+0.50E – 03
+0.54E + 04
+2048
+0.20E – 04
+0.13E + 06
+8192
+0.15E – 04
+0.18E + 06
+1024
+0.20E – 03
+0.15E + 05
+2048
+0.15E – 04
+0.17E + 06
+8192
+0.10E – 04
+0.28E + 06
+1024
+0.10E – 03
+0.30E + 05
+2048
+0.50E – 05
+0.24E + 06
+8192
+0.50E – 05
+0.51E + 06
+1024
+0.50E – 04
+0.47E + 05
+2048
+0.30E – 05
+0.39E + 06
+8192
+0.25E – 05
+0.95E + 06
+1024
+0.30E – 04
+0.59E + 05
+2048
+0.20E – 05
+0.58E + 06
+8192
+0.20E – 05
+0.12E + 07
+1024
+0.20E – 04
+0.87E + 05
+2048
+0.15E – 05
+0.75E + 06
+8192
+0.10E – 05
+0.23E + 07
+1024
+0.15E – 04
+0.10E + 06
+2048
+0.10E – 05
+0.14E + 07
+16 384
+0.10E – 04
+0.28E + 06
+1024
+0.10E – 04
+0.14E + 06
+4096
+0.20E – 03
+0.15E + 05
+16 384
+0.50E – 05
+0.39E + 06
+1024
+0.70E – 05
+0.16E + 06
+4096
+0.10E – 03
+0.30E + 05
+16 384
+0.25E – 05
+0.86E + 06
+1024
+0.50E – 05
+0.23E + 06
+4096
+0.50E – 04
+0.62E + 05
+32 768
+0.50E – 05
+0.54E + 06
+1024
+0.15E – 05
+0.61E + 06
+4096
+0.30E – 04
+0.11E + 06
+Table 1. Simulation parameters N, η, SL. Boldface N is used for well-resolved and marginally well-resolved
+runs.
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+−2.0
+−1.5
+−1.0
+−0.5
+0
+0.5
+1.0
+1.5
+2.0
+η = 0.000200, N = 1024
+η = 0.000100, N = 2048
+η = 0.000020, N = 8192
+η = 0.000050, N = 4096
+η = 0.000010, N = 16 384
+η = 0.000005, N = 32 768
+y
+y
+y
+y
+y
+y
+x
+Figure 2. Squared current density for well-resolved runs (zoomed in on the current layer) for different values
+of η taken from the marginally well-resolved runs. The visualized domain corresponds to the blue box shown
+in ﬁgure 1.
+question of whether or not a simulation is well-resolved is not a simple one (see discussion
+in Wan et al. (2010)). Local measurements of gradient amplitudes would probably lead
+to a more general and strict criterion. However, ﬁnding such a criterion goes beyond the
+purpose of this work and here we use only simple estimates based on the spectrum.
+The consequences of not using sufﬁcient resolution are severe. In ﬁgure 2 we show
+visualizations of the squared current density (zoomed in on the current layer) obtained
+from well-resolved runs for different values of η. None of these runs displayed visible
+plasmoids even though values of SL = 5.4 × 105 are reached. We note that in the
+1007 R3-5
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 6
+J.M.G. Morillo and A. Alexakis
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+0.1
+0
+−0.1
+y
+y
+y
+y
+y
+y
+η = 0.000005, N = 1024
+η = 0.000005, N = 2048
+η = 0.000005, N = 8192
+η = 0.000005, N = 4096
+η = 0.000005, N = 16 384
+η = 0.000005, N = 32 768
+−2.0
+−1.5
+−1.0
+−0.5
+0
+0.5
+1.0
+1.5
+2.0
+x
+Figure 3. Squared current density for the smallest value of η examined (zoomed in on the current layer) for
+different resolutions N.
+bottom two plots, the current layer is visibly not straight. Instabilities have developed
+that have given a bent shape to the current layer. These structures could be related to
+Kelvin–Helmholtz instabilities developed due to the strong outﬂow. However, although
+instabilities are present, they have not led to plasmoid formation.
+In ﬁgure 3 we plot the squared current density again for the smallest value of η examined
+for different resolutions N. From these runs, only the last one for N = 32 768 is well-
+resolved based on the dissipation spectrum as discussed before. It is striking that all under-
+resolved runs displayed plasmoids. In fact, the worse the under-resolving is, the larger the
+plasmoids appear. This phenomenon is also present at smaller values of η examined: when
+the ﬂow is not well-resolved plasmoids are present. Table 1 shows the parameters used
+for all runs (not just those shown in ﬁgures 2 and 3) indicating the value of resolution
+N required for each value of η so that the simulation is well-resolved. All resolutions
+smaller than the marked value displayed plasmoids. Similar features due to under-resolving
+have also been observed in Burger’s and Navier–Stokes turbulence where they have been
+studied extensively (Ray et al. 2011; Murugan & Ray 2023).
+Further insight can be gained by looking at the energy spectra. Figure 4(a) shows the
+current density spectra for the runs corresponding to ﬁgure 2, while the ﬁgure 4(b) shows
+the spectra for the runs corresponding to ﬁgure 3. In ﬁgure 4(a) all runs are marginally
+well-resolved. As the resolution is increased and η is decreased, EJ(k) progresses to larger
+wavenumbers forming a k0 power-law range that reﬂects the approximate discontinuity of
+the magnetic ﬁeld in the current sheet. This power-law range is followed by an increase
+that could be attributed to either a bottleneck (Falkovich 1994; Donzis & Sreenivasan 2010;
+Agrawal et al. 2020) or a transition to 2-D-MHD turbulence as a result of the instabilities
+that have developed with E(k) ∝k−5/3. At larger wavenumbers, the spectrum shows a
+steep exponential decrease. Finally, at the highest wavenumbers near kmax there is a sharp
+increase. This is a numerical artefact due to the sharp spectral truncation that leads to a
+partial thermalisation of high wavenumbers (Cichowlas et al. 2005; Alexakis & Brachet
+2020). This peak is observed in all moderately resolved pseudospectral simulations. The
+Fourier modes at these high wavenumbers have random phases and act as random noise.
+If not controlled, they can provide a seed for numerical instabilities. Further increasing
+1007 R3-6
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 7
+Journal of Fluid Mechanics
+101
+100
+100
+101
+102
+103
+104
+10−1
+10−2
+10−3
+k
+k
+N = 1024
+N = 2048
+N = 4096
+N = 8192
+N = 16 384
+N = 32 768
+EJ (k)
+EJ (k)
+102
+101
+100
+10−1
+10−2
+10−3
+N = 32 768
+N = 16 384
+N = 8192
+N = 4096
+N = 2048
+N = 1024
+100 101 102 103
+101
+10−1
+10−3
+10−5
+⁓ k1/3
+⁓ k0
+100
+101
+102
+103
+104
+(a)
+(b)
+Figure 4. Squared current density spectra corresponding to the runs shown in ﬁgures 2 (a) and 3 (b).
+N = 1024
+N = 2048
+N = 4096
+N = 8192
+N = 16 384
+N = 32 768
+N = 1024
+N = 2048
+N = 4096
+N = 8192
+N = 16 384
+N = 32 768
+SL
+SL
+RR
+δ/△x
+100
+102
+101
+100
+10−1
+10−2
+10−3
+10−4
+101
+102
+103
+104
+105
+106
+101
+102
+103
+104
+105
+106
+⁓ SL
+−1/2
+⁓ SL
+−1/2
+(a)
+(b)
+Figure 5. (a) Reconnection rate as a function of SL for all runs well-resolved (ﬁlled symbols) and under-
+resolved (open symbols). (b) Width of the reconnection layer normalized by the grid size as function of SL.
+the resolution for a given value of η has little effect as is demonstrated in the inset of the
+ﬁgure 4(b) where the well-resolved run for N = 1024 (plotted in ﬁgure 4(a) is repeated
+at larger resolutions N = 2048 and N = 4096. No additional features were observed in
+any of the runs when the resolution was increased further, indicating that the simulations
+correctly capture the solution of (2.2).
+The behaviour described above changes when the resolution is small. In ﬁgure 4(b),
+where only the simulation with the largest N is well-resolved, clear under-resolving
+features can be testiﬁed. As the resolution is decreased the amount of energy at the largest
+wavenumbers increases changing the shape of the spectrum. It is worth noting that the
+integral of EJ(k) is proportional to the Ohmic dissipation and even at the second to
+largest resolution N = 16 384 the Ohmic dissipation due to the wavenumbers at kmax is
+comparable to the dissipation due to the peak of EJ(k) around k = 500. It is thus not
+surprising that not being well-resolved leads to erroneous estimates of the reconnection
+rate and appearance of plasmoids.
+This is clearly demonstrated in ﬁgure 5 where the reconnection rate RR is plotted as
+a function of SL for all our simulations. Different colours represent different resolutions
+used. Filled symbols correspond to well-resolved runs while open symbols correspond to
+under-resolved runs. All well-resolved runs display the Sweet–Parker scaling RR ∝S−1/2
+L
+even up to SL = 5 × 105 that corresponds to the run at N = 32 768. When the runs are
+under-resolved, however, deviations from this scaling appear, leading to a SL−independent
+scaling. This, however, is a numerical artefact. The reason can be linked to the thickness
+1007 R3-7
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 8
+J.M.G. Morillo and A. Alexakis
+of the current sheet. In ﬁgure 5(b), we plot the thickness of the current layer deﬁned as
+δ ≡Bmax/jmax normalized by the grid size △x = 2π/N for all runs as well. Well-resolved
+runs follow again the Sweet–Parker prediction δ ∝S−1/2
+L
+but this scaling obviously ceases
+to be true when the width of the current sheet is comparable to the grid size.
+4. Conclusions
+The present work investigated the formation of a magnetic reconnection layer in
+the Orszag–Tang conﬁguration paying particular attention to the effects of numerical
+resolution. The main result is that in the present set-up no plasmoid instability was seen
+for the examined range of Lundquist numbers for well-resolved runs, while on the contrary
+under-resolved runs displayed plasmoids whose size and population depended on the level
+of under-resolution. The reasons why insufﬁcient resolution can lead to the formation of
+plasmoids are obvious: reconnection is a topological change of ﬁeld lines that can only
+be broken by some microscale process. Under-resolving can be such a process although
+not a physical one. It is hard to imagine that continuity of ﬁeld lines can be preserved
+when the ﬁniteness of the grid size is apparent. Thus in under-resolved cases the ﬂow
+can reach states that otherwise would be absent. The present work therefore rings a bell
+on the artiﬁcial effects ﬁnite grid resolution can have on the evolution of magnetic and
+velocity ﬁelds in numerical simulations, when not properly resolved. Our results add to
+those of Wan et al. (2009, 2010, 2013) and Ng & Ragunathan (2011) by focusing on a
+single reconnection layer, allowing more precise statements to be made.
+The results bring out the question of why the plasmoid instability is still not present
+even though such high Lundquist numbers are reached when the analytical results of
+idealized reconnection layers (Loureiro et al. 2007; Samtaney et al. 2009; Loureiro et al.
+2013a) predict instabilities at lower SL than those achieved here. There could be various
+reasons why this apparent mismatch is present. First, we need to note that the Orszag–
+Tang conﬁguration used here is different in many respects from the idealized models used
+in linear theory works. The ﬂow here is time evolving and of ﬁnite extent and with an
+order one initial velocity amplitude. All these factors could play a role in delaying the
+onset of the plasmoid instability. In Loureiro et al. (2007), the role of the ﬁnite extent
+was estimated by assuming that the predicted growth rate has to be such that a plasmoid
+has time to grow before it is ejected from the layer. The same argument can also be
+made for the ﬁnite time duration of the layer examined here. This kind of arguments,
+however, although very reasonable assume that the perturbations existing in the layer are
+not too small so that the exponential increase of the instability has the time to bring them
+to the nonlinear regime. Clearly if the perturbation amplitude is several times smaller
+than Ae−γ T (where γ is the perturbation growth rate, T the typical time duration of
+the reconnection layer and A the amplitude that makes the perturbation nonlinear), no
+plasmoids would be formed. In the present set-up, the initial perturbations are large enough
+to be visible in ﬁgure 1. These perturbations, however, decrease at the early stages of the
+evolution. Thus, even if the linear instability threshold is crossed at later times, they never
+have the time to grow back up. Perhaps if larger perturbations were introduced in the
+initial conditions, plasmoid would appear in the well -resolved runs. In some studies (Ng
+& Ragunathan 2011), additional noise is introduced in the ﬂow at the time the current layer
+is formed that triggers the plasmoid instability. Such additional noise could model some
+other mechanisms (as the microscale process mentioned in the introduction) that take place
+at small scales and lead to a change of ﬁeld line topology. Under-resolvement could also
+play artiﬁcially that role. Such microscale process can provide the seed that could lead
+to the formation of plasmoids. Such practice, however, deviates from the solutions of the
+1007 R3-8
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 9
+Journal of Fluid Mechanics
+2-D-MHD equations and it is not followed here. Another possibility would be to study a
+different velocity–magnetic ﬁeld conﬁguration that could possibly lead to more tractable
+values of the Lundquist number where the plasmoid instability could be observed. Whether
+plasmoids are present or absent under general conﬁgurations is an important issue with
+major implications for astrophysical plasmas. We hope that this work will motivate further
+studies in this direction.
+Whatever may be the reasons for which plasmoids do not appear in the present set-
+up, it remains indisputable that if the resolution is small they do artiﬁcially appear. This
+is a result that can be tested even at small resolutions as indicated in table 1. Thus, the
+numerical error due to the ﬁnite computational grid can lead to structure formation that
+is not present in the solution of the partial differential equation and has possibly led to
+erroneous conclusions. This emphasizes the need for convergence studies in numerical
+simulations and indicates that some of the conclusions for magnetic reconnection due to
+plasmoids in 2-D-MHD based on numerical simulations need to be re-evaluated.
+Acknowledgments. This work was granted access to the HPC resources of GENCI-TGCC & GENCI-CINES
+(project no. A0130506421, A0150506421 ). This work has also been supported by the Agence Nationale de la
+Recherche (ANR project DYSTURB no. ANR-17-CE 30–0004 and LASCATURB no. ANR-23-CE30). The
+authors also thank Hubert Baty for useful discussions.
+Declaration of interests. The authors report no conﬂict of interest.
+REFERENCES
+AGRAWAL, R., ALEXAKIS, A., BRACHET, M.E. & TUCKERMAN, L.S. 2020 Turbulent cascade, bottleneck,
+and thermalized spectrum in hyperviscous ﬂows. Phys. Rev. Fluids 5 (2), 024601.
+ALEXAKIS, A. & BRACHET, M.-E. 2020 Energy ﬂuxes in quasi-equilibrium ﬂows. J. Fluid Mech. 884, A33.
+ANDRÉS, N., MARTIN, L., DMITRUK, P. & GÓMEZ, D. 2014 Effects of electron inertia in collisionless
+magnetic reconnection. Phys. Plasmas 21 (7), 072904.
+BARENGHI, C.F., SKRBEK, L. & SREENIVASAN, K.R. 2023 Quantum Turbulence. Cambridge University
+Press.
+BATY, H. 2012 On the onset of the plasmoid instability. Phys. Plasmas 19 (9), 092110.
+BHATTACHARJEE, A., HUANG, Y.-M., YANG, H. & ROGERS, B. 2009 Fast reconnection in high-lundquist-
+number plasmas due to the plasmoid instability. Phys. Plasmas 16 (11), 112102.
+CASSAK, P.A., SHAY, M.A. & DRAKE, J.F. 2009 Scaling of Sweet–Parker reconnection with secondary
+islands. Phys. Plasmas 16 (12), 120702.
+CICHOWLAS, C., BONAÏTI, P., DEBBASCH, F. & BRACHET, M. 2005 Effective dissipation and turbulence in
+spectrally truncated Euler ﬂows. Phys. Rev. Lett. 95 (26), 264502.
+DAUGHTON, W., ROYTERSHTEYN, V., ALBRIGHT, B.J., KARIMABADI, H., YIN, L. & BOWERS, K.J. 2009
+Transition from collisional to kinetic regimes in large-scale reconnection layers. Phys. Rev. Lett. 103 (6),
+065004.
+DONZIS, D.A. & SREENIVASAN, K.R. 2010 The bottleneck effect and the Kolmogorov constant in isotropic
+turbulence. J. Fluid Mech. 657, 171–188.
+EGEDAL, J., LE, A. & DAUGHTON, W. 2013 A review of pressure anisotropy caused by electron trapping in
+collisionless plasma, and its implications for magnetic reconnection. Phys. Plasmas 20 (6), 061201.
+FALKOVICH, G. 1994 Bottleneck phenomenon in developed turbulence. Phys. Fluids 6 (4), 1411–1414.
+GIOVANELLI, R.G. 1946 A theory of chromospheric ﬂares. Nature 158 (4003), 81–82.
+HUANG, Y.-M. & BHATTACHARJEE, A. 2010 Scaling laws of resistive magnetohydrodynamic reconnection
+in the high-Lundquist-number, plasmoid-unstable regime. Phys. Plasmas 17 (6), 062104.
+HUANG, Y.-M. & BHATTACHARJEE, A. 2012 Distribution of plasmoids in high-Lundquist-number magnetic
+reconnection. Phys. Rev. Lett. 109 (26), 265002.
+HUANG, Y.-M. & BHATTACHARJEE, A. 2013 Plasmoid instability in high-Lundquist-number magnetic
+reconnection. Phys. Plasmas 20 (5), 055702.
+HUERRE, P. & MONKEWITZ, P.A. 1985 Absolute and convective instabilities in free shear layers. J. Fluid
+Mech. 159, 151–168.
+HUERRE, P. & MONKEWITZ, P.A. 1990 Local and global instabilities in spatially developing ﬂows. Annu.
+Rev. Fluid Mech. 22 (1), 473–537.
+1007 R3-9
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press
+
+
+PAGE 10
+J.M.G. Morillo and A. Alexakis
+LAPENTA, G. 2008 Self-feeding turbulent magnetic reconnection on macroscopic scales. Phys. Rev. Lett. 100
+(23), 235001.
+LAZARIAN, A., EYINK, G., VISHNIAC, E. & KOWAL, G. 2015 Turbulent reconnection and its implications.
+Phil. Trans. R. Soc. Lond. A: Math. Phys. Engng Sci. 373 (2041), 20140144.
+LAZARIAN, A., EYINK, G.L., JAFARI, A., KOWAL, G., LI, H., XU, S. & VISHNIAC, E.T. 2020 3D turbulent
+reconnection: Theory, tests, and astrophysical implications. Phys. Plasmas 27 (1), 012305.
+LOUREIRO, N.F., SAMTANEY, R., SCHEKOCHIHIN, A.A. & UZDENSKY, D.A. 2012 Magnetic reconnection
+and stochastic plasmoid chains in high-Lundquist-number plasmas. Phys. Plasmas 19 (4), 042303.
+LOUREIRO, N.F., SCHEKOCHIHIN, A.A. & COWLEY, S.C. 2007 Instability of current sheets and formation
+of plasmoid chains. Phys. Plasmas 14 (10), 100703.
+LOUREIRO, N.F., SCHEKOCHIHIN, A.A. & UZDENSKY, D.A. 2013a Plasmoid and Kelvin-Helmholtz
+instabilities in sweet-parker current sheets. Phys. Rev. E: Stat. Nonlinear Soft Matt. Phys. 87 (1), 013102.
+LOUREIRO, N.F., SCHEKOCHIHIN, A.A. & ZOCCO, A. 2013b Fast collisionless reconnection and electron
+heating in strongly magnetized plasmas. Phys. Rev. Lett. 111 (2), 025002.
+MININNI, P.D., ROSENBERG, D., REDDY, R. & POUQUET, A. 2011 A hybrid mpi–openmp scheme for
+scalable parallel pseudospectral computations for ﬂuid turbulence. Parallel Comput. 37 (6-7), 316–326.
+MORALES, L.F., DASSO, S. & GÓMEZ, D.O. 2005 Hall effect in incompressible magnetic reconnection. J.
+Geophys. Res.: Space Phys. 110, A04204.
+MURUGAN, S.D. & RAY, S.S. 2023 Genesis of thermalization in the three-dimensional, incompressible,
+Galerkin-truncated Euler equation. Phys. Rev. Fluids 8 (8), 084605.
+NG, C.S. & RAGUNATHAN, S. 2011 High lundquist number resistive mhd simulations of magnetic
+reconnection: searching for secondary island formation. arXiv: 1106.0521.
+ORSZAG, S.A. & TANG, C.-M. 1979 Small-scale structure of two-dimensional magnetohydrodynamic
+turbulence. J. Fluid Mech. 90 (1), 129–143.
+PARKER, E.N. 1957 Sweet’s mechanism for merging magnetic ﬁelds in conducting ﬂuids. J. Geophys. Res. 62
+(4), 509–520.
+PETSCHEK, H.E. 1964 Magnetic ﬁeld annihilation. In Proceedings of a Symposium Held at the Goddard Space
+Flight Center, Greenbelt, Maryland, October 28-30, 1963, vol. 50, pp. 425. National Aeronautics and Space
+Administration.
+PRIEST, E. & FORBES, T. 2007 Magnetic Reconnection. Magnetic Reconnection.
+RAY, S.S., FRISCH, U., NAZARENKO, S. & MATSUMOTO, T. 2011 Resonance phenomenon for the Galerkin-
+truncated Burgers and Euler equations. Phys. Rev. E 84 (1), 016301.
+SAMTANEY, R., LOUREIRO, N.F., UZDENSKY, D.A., SCHEKOCHIHIN, A.A. & COWLEY, S.C. 2009
+Formation of plasmoid chains in magnetic reconnection. Phys. Rev. Lett. 103 (10), 105004.
+SHIBATA, K., TANUMA, S. 2001 Plasmoid-induced-reconnection and fractal reconnection. Earth Planets
+Space 53 (6), 473–482.
+SWEET, P.A. 1958 Electromagnetic phenomena in cosmical physics. In IAU Symp. 6, Electromagnetic
+Phenomena in Cosmical Physics (ed. B. Lehnert), 123. Cambridge University Press.
+UZDENSKY, D.A., LOUREIRO, N.F. & SCHEKOCHIHIN, A.A. 2010 Fast magnetic reconnection in the
+plasmoid-dominated regime. Phys. Rev. Lett. 105 (23), 235002.
+WAN, M., MATTHAEUS, W.H., SERVIDIO, S. & OUGHTON, S. 2013 Generation of X-points and secondary
+islands in 2D magnetohydrodynamic turbulence. Phys. Plasmas 20 (4).
+WAN, M., OUGHTON, S., SERVIDIO, S. & MATTHAEUS, W.H. 2010 On the accuracy of simulations of
+turbulence. Phys. Plasmas 17 (8), 082308.
+WAN, M., OUGHTON, S., SERVIDIO, S. & MATTHAEUS, W.H. 2009 Generation of non-gaussian statistics
+and coherent structures in ideal magnetohydrodynamics. Phys. Plasmas 16 (8), 080703.
+WANG, X., BHATTACHARJEE, A. & MA, Z.W. 2000 Collisionless reconnection: Effects of Hall current and
+electron pressure gradient. J. Geophys. Res.: Space Phys. 105 (A12), 27633–27648.
+YAMADA, M., KULSRUD, R. & JI, H. 2010 Magnetic reconnection. Rev. Mod. Phys. 82 (1), 603–664.
+YAO, J. & HUSSAIN, F. 2022 Vortex reconnection and turbulence cascade. Annu. Rev. Fluid Mech. 54 (1),
+317–347.
+1007 R3-10
+https://doi.org/10.1017/jfm.2025.109 Published online by Cambridge University Press

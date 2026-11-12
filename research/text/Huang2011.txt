@@ -1,0 +1,938 @@
+arXiv:1010.5284v2  [physics.plasm-ph]  18 Jul 2011
+Onset of Fast Reconnection in Hall Magnetohydrodynamics
+Mediated by the Plasmoid Instability
+Yi-Min Huang,∗A. Bhattacharjee, and Brian P. Sullivan
+Center for Integrated Computation and Analysis of Reconnection and Turbulence and
+Center for Magnetic Self-Organization in Laboratory and Astrophysical Plasmas,
+University of New Hampshire, Durham, NH 03824
+Abstract
+The role of a super-Alfvénic plasmoid instability in the onset of fast reconnection is studied by
+means of the largest Hall magnetohydrodynamics simulations to date, with system sizes up to 104
+ion skin depths (di). It is demonstrated that the plasmoid instability can facilitate the onset of rapid
+Hall reconnection, in a regime where the onset would otherwise be inaccessible because the Sweet-
+Parker width is signiﬁcantly above di. However, the topology of Hall reconnection is not inevitably
+a single stable X-point. There exists an intermediate regime where the single X-point topology
+itself exhibits instability, causing the system to alternate between a single X-point geometry and
+an extended current sheet with multiple X-points produced by the plasmoid instability. Through
+a series of simulations with various system sizes relative to di, it is shown that system size aﬀects
+the accessibility of the intermediate regime. The larger the system size is, the easier it is to realize
+the intermediate regime. Although our Hall MHD model lacks many important physical eﬀects
+included in fully kinetic models, the fact that a single X-point geometry is not inevitable raises
+the interesting possibility for the ﬁrst time that Hall MHD simulations may have the potential
+to realize reconnection with geometrical features similar to those seen in fully kinetic simulations,
+namely, extended current sheets and plasmoid formation.
+∗Electronic address: yimin.huang@unh.edu
+1
+
+I.
+INTRODUCTION
+Magnetic reconnection is thought to be the underlying mechanism that powers explosive
+events such as ﬂares, substorms, and sawtooth crashes in fusion plasmas[1]. Such events
+commonly feature impulsive onset, whereby the system exhibits a sudden increase in the
+reconnection rate[2]. In classic Sweet-Parker theory[3, 4], based on resistive magnetohydro-
+dynamics (MHD), the reconnection site has the structure of a thin current sheet of length
+L, which is of the order of the system size, and a width δSP ≃L/
+√
+S, where the Lundquist
+number S is related to the length L, the Alfvén speed VA, and the resistivity η by the re-
+lation S ≡LVA/η. The plasma outﬂow speed from the reconnection site is approximately
+VA, and the inﬂow speed, which is a measure of the reconnection rate, is approximately
+VA/S1/2 under quasi-steady conditions. In most plasmas of interest, the Lundquist numbers
+are very high. Consequently, the Sweet-Parker reconnection rates are usually several orders
+of magnitude too slow to account for the observed rate of energy release after onset. The
+strong dependence of the reconnection rate on S in the Sweet-Parker theory has led to a
+broad consensus that the solution to the onset problem for high-S plasmas lies outside the
+domain of resistive MHD, and requires the inclusion of collisionless eﬀects. In particular,
+for two-dimensional (2D) conﬁgurations without a guide ﬁeld, a precise criterion has been
+proposed that accounts for a slow growth phase (identiﬁed as a Sweet-Parker phase in many
+cases of interest), followed by rapid onset caused by the Hall current, which is a signature
+of the decoupling of electron and ion motion at scales below the ion skin depth di [5–8].
+(Here di = c/ωpi, where c is the speed of light and ωpi is the ion plasma frequency.) The
+criterion predicts that when δSP < di, the system will spontaneously make a transition to a
+rapid reconnection phase, with an inﬂow velocity ∼0.1VA. This criterion has been tested
+extensively by numerical simulations[5–8] as well as controlled laboratory experiments[9].
+The recent discovery of a linear, super-Alfvénic plasmoid instability[10] in high-S plasmas
+raises qualitatively new questions for the criterion stated above. It has long been known that
+the Sweet-Parker reconnection layer can become unstable to a secondary tearing instability.
+However, only recently has a precise linear study shown that the linear growth rate γ of the
+instability scales as γ ∼S1/4(VA/L). The positive exponent of S yields high growth rates for
+high S plasmas, whereas most resistive instabilities scale with S to some negative fractional
+power. This seemingly counterintuitive result can actually be deduced from the dispersion
+2
+
+relation for classical tearing modes[11] with one crucial new insight: the Sweet-Parker layer
+supports an increasingly singular current sheet as S →∞.[12] Furthermore, even within the
+framework of resistive MHD, this linear instability leads to a nonlinear regime where the
+reconnection rate becomes nearly independent of S, with an inﬂow velocity ∼10−2VA.[12, 13]
+The original Sweet-Parker current sheet breaks up into a chain of plasmoids and a sequence
+of shorter but thinner current sheets, with widths much smaller than δSP.[12, 14, 15]
+The presence of the plasmoid instability in high-S systems uncovers a deep ﬂaw in the
+Sweet-Parker model, and raises questions about the conventional scenario of the onset of Hall
+reconnection. Because secondary current sheets are thinner than the primary Sweet-Parker
+current sheet, potentially they may trigger onset of Hall MHD (or kinetic) reconnection when
+the widths reach the di scale, even in systems where the original onset criterion δSP < di is
+not met. Shibata and Tanuma [16] proposed just this scenario in an insightful paper, years
+before the recent spate of interest in this topic. Recently, numerical studies have been carried
+out with fully kinetic particle-in-cell (PIC) simulations including a collision operator by
+Daughton et al. [14] and Hall MHD simulations by Shepherd and Cassak [17] conﬁrming the
+role of the plamoid instability in triggering onset of Hall (or kinetic) reconnection. However,
+the PIC and Hall MHD simulations, discussed in Refs. [14] and [17], show qualitatively
+very diﬀerent behaviors after onset. Whereas PIC simulations continue to exhibit copious
+generation of plasmoids, the Hall MHD solutions appear to settle down to a single stable
+X-point state with all plasmoids expelled. This apparent qualitative diﬀerence between the
+two types of simulations raises the following important questions of principle: Does the
+onset of Hall reconnection in Hall MHD models inevitably lead to a Hall current dominated
+regime in which all plasmoids are expelled? Can Hall MHD realize current sheet geometries
+qualitatively similar to those seen in fully kinetic simulations, where new plasmoids are
+constantly generated?
+In this paper, we address these questions by means of the largest two-dimensional resistive
+Hall MHD reconnection simulations ever carried out, with the ratio L/di ranging from
+2.5 × 103 to 1.0 × 104, in a conﬁguration of two coalescing magnetic islands. We conﬁrm the
+previous results that the plasmoid instability can trigger the onset of Hall MHD reconnection
+in systems that do not meet the criterion δSP < di for onset. In addition, we demonstrate
+that the topology of Hall MHD reconnection is not inevitably a single stable X-point. There
+exists an intermediate regime where the single X-point topology itself exhibits instability,
+3
+
+causing the system to alternate between a single X-point and an extended current sheet with
+multiple X-points produced by the plasmoid instability. Furthermore, through a series of
+simulations with various system sizes relative to di, we show numerical evidence supporting
+the idea that system size aﬀects the accessibility of the intermediate regime. The larger the
+system size is, the easier it is to realize the intermediate regime.
+The present study employs a simple Hall MHD model, which clearly lacks many important
+physical eﬀects that are included in fully kinetic models. A constant resistivity instead of
+the Spitzer resistivity[18] is employed; an isothermal equation of state is employed and
+Ohmic heating is neglected; plasma pressure is assumed to be a scalar rather than a tensor;
+and electrons are assumed to be massless. Furthermore, it has been argued that in many
+collisionless or weakly collisional systems of interest the reconnection electric ﬁeld typically
+exceeds the Dreicer runaway ﬁeld,[19] therefore classical resistivity cannot play a signiﬁcant
+role. While these limitations merit further investigations, the fact that a single X-point
+geometry is not inevitable in Hall MHD simulations raises the interesting possibility for the
+ﬁrst time that Hall MHD simulations may have the potential to realize reconnection with
+geometrical features similar to those seen in fully kinetic simulations, namely, extended
+current sheets and plasmoid formation.
+II.
+NUMERICAL MODEL
+Our simulations are based on resistive Hall MHD equations. These equations in normal-
+ized form are:
+∂tρ + ∇· (ρu) = 0,
+(1)
+∂t(ρu) + ∇· (ρuu) = −∇p + J × B + ǫf(x, t),
+(2)
+∂tB = −∇× E,
+(3)
+ue = u −di
+J
+ρ,
+(4)
+E = −ue × B −di
+∇pe
+ρ
++ ηJ,
+(5)
+where ρ is the plasma density, u is the ion velocity, ue is the electron velocity, p is the
+total pressure, pe is the electron pressure, B is the magnetic ﬁeld, E is the electric ﬁeld,
+J = ∇× B is the electric current density, η is the resistivity, and di is the ion skin depth.
+4
+
+Isothermal equations of state are assumed, i.e. pe = pi = ρT, where pi is ion pressure, and
+T is a constant temperature. The total pressure is p = pe + pi = 2ρT. Electron inertia
+terms are neglected in the generalized Ohm’s law, Eq. (5). The electron pressure term
+−di∇pe/ρ has been omitted in this study, because it does not contribute to the dynamics
+after taking the curl of E in Eq. (3), due to the isothermal equation of state. A weak random
+forcing term ǫf is added to the ion momentum equation, as was done in a previous study.[13]
+The normalizations of Eqs. (1) – (5) are based on constant reference values of the density
+n0, and the magnetic ﬁeld B0. Lengths are normalized to the system size L, and time is
+normalized to the global Alfvén time tA = L/VA, where VA = B0/√4πn0mi and mi is the ion
+mass. The normalizations of physical variables are given by (normalized →physical units):
+ρ →ρ/n0mi, B →B/B0, E →cE/B0VA, u →u/VA, p →p/n0miV 2
+A, J →J/(B0c/4πL),
+and di →di/L ≡
+q
+mic2/4πn0e2/L. In 2D simulations, the magnetic ﬁeld is expressed in
+terms of the ﬂux function ψ and the out-of-plane component By as B = ∇ψ × ˆy+Byˆy. The
+variables ψ and By are stepped in the code. The governing equations are numerically solved
+with a massively parallel code HMHD, which is a two-ﬂuid extension of the resistive MHD
+code used in previous studies.[12, 13] The numerical algorithm [20] approximates spatial
+derivatives by ﬁnite diﬀerences with a ﬁve-point stencil in each direction. The time-stepping
+scheme can be chosen from several options including a second-order accurate trapezoidal
+leapfrog method and various strong stability preserving Runge–Kutta methods.[21, 22] We
+employ the second-order accurate trapezoidal leapfrog method in this study. HMHD has
+the capability of nonuniform meshes that allows better resolution of the reconnection layer.
+We employ the same simulation setup of two coalescing magnetic islands as in a pre-
+vious study[13]. The 2D simulation box is the domain (x, z) ∈[−1/2, 1/2] × [−1/2, 1/2].
+In normalized units, the initial magnetic ﬁeld is given by B0 = ∇ψ0 × ˆy, where ψ0 =
+tanh (z/h) cos (πx) sin (2πz) /2π. The parameter h, which is set to 0.01 for all simulations,
+determines the initial current layer width. The initial plasma density ρ is approximately 1,
+and the plasma temperature T is 3. The density proﬁle has a weak nonuniformity such that
+the initial condition is approximately force-balanced. The initial peak magnetic ﬁeld and
+Alfvén speed are both approximately unity. The plasma beta β ≡p/B2 = 2ρT/B2 is greater
+than 6 everywhere. Perfectly conducting and free slipping boundary conditions are imposed
+along both x and z directions. Speciﬁcally, we have ψ = 0, u · ˆn = 0, ˆn · ∇(ˆn × u) = 0,
+ˆn · ∇ρ = 0, and By = 0 on the boundaries (here ˆn is the unit normal vector to the bound-
+5
+
+10
+2
+10
+4
+10
+6
+10
+8
+10
+1
+10
+2
+10
+3
+10
+4
+10
+5
+10
+6
+S
+L/di
+(1)Hall Reconnection
+(2)Sweet−Parker
+Reconnection
+(4)Plasmoid−Dominated
+Reconnection
+(3)Hall Reconnection
+Triggered by Plasmoids
+C
+B
+A
+Figure 1: (Color online) The parameter space in the phase diagram is divided into four regions.
+(1) Hall reconnection: di > δSP.
+(2) Sweet-Parker reconnection: di < δSP and S < Sc.
+(3)
+Hall reconnection triggered by plasmoids: δSP (Sc/S)1/2 < di < δSP .
+(4) Plasmoid-dominated
+reconnection: S > Sc and δSP (Sc/S)1/2 > di. The dots denote the parameters for three diﬀerent
+runs. All three runs have S = 5 × 105. The parameter L/di is 2.5 × 103 for Run A, 5 × 103 for Run
+B, and 104 for Run C, respectively. A fourth run, Run D, from a previous resistive MHD study[13],
+corresponds to L/di →∞, therefore is not shown.
+ary). Only the upper half of the domain (z ≥0) is simulated, and solutions in the lower half
+are inferred by symmetries. The computational mesh consists of 6400 × 1024 grid points.
+The grid points along z are strongly concentrated around z = 0, with the smallest grid size
+∆z = 1.4×10−5. The grid points along x are weakly nonuniform, with the smallest grid size
+∆x = 1.2 × 10−4 at x = 0. For this system, the critical Lundquist number Sc for onset of
+the plasmoid instability is approximately 4 × 104 in resistive MHD (di = 0).[13]
+III.
+A PHASE DIAGRAM
+It is useful to map the numerical solutions discussed below into a phase diagram, shown
+in Figure 1. When the Hall eﬀect is included, the system is characterized by two important
+dimensionless parameters: S and L/di. The parameter space of S and L/di may be divided
+qualitatively into four regions. The Hall reconnection regime is realized when the conven-
+6
+
+tional criterion di > δSP for onset of Hall reconnection is satisﬁed. Under this condition,
+we recover the standard results for the onset of Hall reconnection.[5–8] The Sweet-Parker
+reconnection regime is realized when neither the criterion for onset of Hall reconnection
+di > δSP nor that for the plasmoid instability S > Sc are satisﬁed. In this regime, a stable,
+elongated Sweet-Parker current layer is formed. When the Lundquist number S exceeds the
+critical value Sc for onset of the plasmoid instability, two new possibilities emerge. If the
+secondary current sheets cascade down to widths at the di scale, we may expect onset of Hall
+reconnection. On the other hand, if the secondary current sheets never reach the di scale,
+the reconnection may proceed in a manner similar to that in resistive MHD. To delineate the
+border between these two regimes, an estimate for the widths of secondary current sheets is
+needed. In a previous resistive MHD study, we found that a good estimate for the average
+width of the secondary current sheets is obtained by requiring that they obey Sweet-Parker
+scaling, with a length that keeps them marginally stable.
+That gives an average width
+δ ∼δSP(Sc/S)1/2 ∼LS1/2
+c
+/S.[13] We denote the regime where δ < di as “Hall reconnection
+triggered by plasmoids”, and the regime where δ > di as “plasmoid-dominated reconnec-
+tion” to characterize their diﬀerent possible behaviors. Note that statistical deviations from
+the average width can and do occur.[13] As individual secondary current sheets can be sig-
+niﬁcantly thinner than the average width, we expect the “Hall reconnection triggered by
+plasmoids” region to be larger than depicted in Figure 1. We caution that since high-S,
+large-scale Hall MHD reconnection is largely unexplored, Figure 1 cannot be regarded as a
+complete picture because it includes ranges of parameter space where no simulations exist.
+Even the critical Lundquist number Sc and the secondary current sheet width δ could be
+modiﬁed by the presence of the Hall eﬀect. Furthermore, the criterion for onset δ < di is
+only accurate up to a numerical factor of order unity. For these reasons, the delineation of
+diﬀerent regimes in Figure 1 may not be very precise. Nonetheless, Figure 1 serves well in
+guiding the choice of simulation parameters where interesting physics may arise.
+The primary interest of this work is to explore the two new regimes where the plasmoid
+instability may play an important role.
+This study includes three new runs (Run A to
+C), with corresponding parameters marked on Figure 1.
+A fourth run, Run D, from a
+previous resistive MHD study[13], is included for comparison. We ﬁx S = 5 × 105 for all
+runs. The parameter L/di is 2.5 × 103 for Run A, 5 × 103 for Run B, and 104 for Run
+C, respectively. We have chosen parameters for the new runs such that after the onset of
+7
+
+0
+0.5
+1
+1.5
+2
+2.5
+3
+0
+0.005
+0.01
+0.015
+0.02
+0.025
+0.03
+0.035
+0.04
+t
+d ψ/dt
+ 
+ 
+Run A
+Run B
+Run C
+Run D
+Figure 2: (Color online) The reconnection rate as a function of time, for four diﬀerent runs.
+the plasmoid instability the current sheets would have widths (estimated from the scaling
+law δ ∼δSP(Sc/S)1/2) ranging from di (Run A) to 4di (Run C). This is the parameter
+regime where we may expect to observe a transition from the “Hall reconnection triggered
+by plasmoids” regime to the “plasmoid-dominated reconnection” regime, depending on the
+ratio δ/di.
+The initial condition and governing parameters for these runs allow a clear
+separation of length scales: the drivers of reconnection (the two merging islands) are on the
+largest scale ∼1; the initial current layer width ∼0.01; the Sweet-Parker width ∼10−3;
+and the ion skin depth di ∼1−4×10−4. Therefore, the simulations cover all distinct stages
+of reconnection from the initial current sheet thinning to the onset of plasmoid instability,
+which subsequently may or may not lead to onset of Hall reconnection.
+IV.
+SIMULATION RESULTS
+Our primary diagnostics are the reconnection rate and the length and width of the main
+reconnection current sheet. The reconnection rate is measured as the time derivative of the
+reconnected magnetic ﬂux. In the presence of the plasmoid instability, the reconnection layer
+generally contains multiple current sheets at a given time. We deﬁne the main reconnection
+current sheet as the one located where the two primary coalescing islands touch each other.
+This is the (generally unique) point where the separatrix ﬂux surface bounding the two
+8
+
+0
+0.5
+1
+1.5
+2
+2.5
+3
+10
+−5
+10
+−4
+10
+−3
+10
+−2
+10
+−1
+10
+0
+t
+Length, Width
+ 
+ 
+Run A
+Run B
+Run C
+Run D
+Figure 3: (Color online) The length (upper curve) and width (lower curve) of the main reconnection
+current sheet as a function of time, for four diﬀerent runs.
+merging islands intersects itself. For example, in the second panel of Figure 5, the main
+reconnection current sheet is the one at the center, between x = 0 and x = 0.1. The length
+and width are measured as the full width at quarter maximum.
+Figure 2 and 3 show, respectively, the time-histories of the reconnection rate, and the
+length and width of the main reconnection current sheet for four diﬀerent runs.
+Initial
+current sheet thinning occurs from t = 0 to t = 0.7. During this period, the four runs are
+very similar because the Hall current has yet to play an important role. The current sheet
+width thins from the initial δ ∼10−2 down to δ ∼δSP ∼10−3. Meanwhile, the reconnection
+rate gradually rises to 3 × 10−3. The plasmoid instability sets in at approximately t = 0.7.
+Thereafter, the three new runs exhibit qualitatively diﬀerent behaviors.
+In Run A, the
+plasmoid instability immediately triggers a strong onset of Hall reconnection, which expels
+all the plasmoids, and the system is left with a single X-point. After that, the system reaches
+a quasi-steady state with the reconnection rate and current sheet geometry approximately
+time-independent. This run gives the highest reconnection rate (up to 0.04) of the four runs,
+and the current sheet is also the shortest and narrowest. The aspect ratio (width/length)
+of the current sheet in the quasi-steady state is approximately 1/20. Figure 4 shows the
+out-of-plane electric current density, overlaid with magnetic ﬁeld lines, in the whole domain
+at t = 1.5. Dashed lines denote the separatrices which are the ﬁeld lines that separate the
+9
+
+Figure 4: (Color online) Out-of-plane electric current density at t = 1.5 for Run A, overlaid with
+magnetic ﬁeld lines, in the whole simulation box. Dashed lines indicate separatrices, which are the
+ﬁeld lines that separate the two merging islands.
+two merging islands. The reconnection site clearly shows a Petschek-like geometry with the
+separatrices opening up in the downstream region.
+In Run B (see Figure 5 for a few snapshots of the key stages), the plasmoid instability
+does not immediately lead to onset of Hall reconnection. An onset occurs at approximately
+t = 1.3, triggered by a new plasmoid formed in the main reconnection current sheet. Sub-
+sequently all plasmoids are wiped out. However, it appears that Hall reconnection with a
+single X-point is unstable for this set of parameters, and the system makes a transition back
+to an extended current sheet. The current sheet length reaches a maximum (≃0.1 = 500di)
+at t = 2, whereupon it becomes unstable again and breaks up into plasmoids. This second
+onset of plasmoid instability leads to another onset of Hall reconnection, resulting in a single
+X-point again. Conceivably, this cycle will continue repeatedly until the system runs out of
+ﬂux. Indeed, towards the end of this run, we observe that the length and width of the main
+current sheet start to rise again (Figure 3). In this regime, which we have called the inter-
+mediate regime, the system is caught in between Hall reconnection with a single X-point,
+and plasmoid-dominated reconnection with multiple X-points. The resulting reconnection
+rate ﬂuctuates strongly between 0.005 to 0.03. For Run C, because di is well below the
+smallest scale caused by the plasmoid instability, the system never makes a transition to
+10
+
+Figure 5: (Color online) Time sequence of the out-of-plane electric current density for Run B,
+overlaid with magnetic ﬁeld lines. Dashed lines indicate separatrices. From top to bottom: (1)
+The Sweet-Parker current sheet breaks up into a chain of plasmoids. (2) The plasmoids grow in
+size; some of them are expelled to the downstream region; some of them coalesce to form larger
+plasmoids. (3) A new plasmoid forms at the main current sheet. (4) The formation of the new
+plasmoid leads to an onset of Hall reconnection that eventually expels all plasmoids.
+(5) The
+current sheet becomes extended again. (6) Subsequently, the extended current sheet breaks up
+into plasmoids, which lead to another onset of Hall reconnection. The bottom panel shows an
+expanded view of the extended current sheet at t = 1.95 (enhanced online).
+11
+
+0
+0.5
+1
+1.5
+2
+2.5
+3
+10
+−1
+10
+0
+10
+1
+10
+2
+10
+3
+10
+4
+t
+Length, Width (di)
+ 
+ 
+Run A
+Run B
+Run C
+Figure 6: (Color online) The length (upper curve) and width (lower curve) of the main reconnection
+current sheet, normalized to the ion skin depth di, as a function of time for Run A to Run C.
+−0.05
+0
+0.05
+t=1.55
+ 
+ 
+uz
+uez
+−3
+0
+3
+−0.01
+0
+0.01
+z/di
+t=1.95
+ 
+ 
+uz
+uez
+Figure 7: (Color online) The electron and ion ﬂows along the inﬂow (z) direction through the
+X-point for Run B at t = 1.55 and t = 1.95.
+12
+
+Hall reconnection. The reconnection rate from Run C, ranging from 0.005 to 0.013, is similar
+to that from Run D, which is a resistive MHD simulation (di = 0).
+In Figure 6 we replot the time histories of the length and width of the main current sheet
+as shown in Figure 3, but this time in units of di. Hall reconnection is characterized by
+the decoupling of ions and electrons at scales smaller than di, and the dissipation region
+where the frozen-in condition is broken is signiﬁcantly smaller than the di scale. Run A
+clearly exhibits these features, as the current sheet width during the quasi-steady phase
+is approximately 0.15di.
+On the other hand, the main current sheet in Run B is never
+signiﬁcantly thinner than di. The minimum current sheet width is approximately 0.7di in
+this run.
+(However, note that we measure the current sheet width by its full width at
+quarter maximum. Instead, if we measure by its half width at half maximum, as employed
+by Cassak et al.[8], the minimum width in Run B is 0.17di. This value is on par with the
+typical current sheet width of Hall solutions reported by Cassak et al.[8]) This suggests that
+the Hall reconnection after onset is not as robust as it is in Run A. Nonetheless, Run B
+clearly shows the characteristic of Hall reconnection, i.e. the decoupling of electron and ion
+ﬂow at scales below di, when the current sheet width reaches the minimum. Figure 7 shows
+one-dimensional (1D) proﬁles of the electron and ion ﬂows along the z direction through the
+X-point, at t = 1.55 and 1.95. At t = 1.55, the electron and ion ﬂows are clearly decoupled,
+indicating that the reconnection is in the Hall regime. On the other hand, when the current
+sheet becomes elongated again at t = 1.95, the electron and ion ﬂows closely follow each
+other, indicating that Hall current does not play an important role at this time. The current
+sheet width in Run C only reaches a minimum of approximately 3di, which is why Run C
+never shows any onset of Hall reconnection.
+V.
+DISCUSSION
+An important question is, why does Run B revert to an extended current sheet after
+the onset of Hall reconnection? To answer this question, it is important to appreciate that
+although the global Lundquist number S is high (S = 5 × 105) for these runs, the resistivity
+is not negligible on the length scale of di. This is because L/di is also a large number,
+which is often the case in many plasmas of interest. A relevant dimensionless parameter
+that quantiﬁes how resistive the plasma is on the di scale is the Lundquist number based on
+13
+
+Figure 8: (Color online) Time sequence of the out-of-plane electric current density for the artiﬁcial
+test, overlaid with magnetic ﬁeld lines. The initial condition is taken from Run A at t = 1.3, with
+the ion skin depth di artiﬁcially lowered from 4 × 10−4 to 2 × 10−4, which is the same as Run B.
+The opening angle between the separatrices quickly closes up, ﬁrst starting from the center, then
+gradually propagating outward. As the current sheet becomes extended, it becomes unstable to
+the plasmoid instability (enhanced online).
+di, deﬁned as Sdi ≡VAdi/η. For Run A, B, and C, the Lundquist numbers based on di are
+200, 100, and 50, respectively.
+Recently, it has been demonstrated by Cassak et al. that over a certain range of Sdi,
+resistive Hall reconnection exhibits bistability, i.e. both Sweet-Parker and Hall reconnection
+are physically realizable.[8, 23](Cassak et al.
+use the notation η′, which is 1/Sdi.)
+The
+condition for bistability may be expressed as[8]
+L
+di
+> Sdi > Sc
+di,
+(6)
+where Sc
+di is a critical Lundquist number based on the di scale. Here the condition L/di > Sdi
+is equivalent to the condition δSP > di for the existence of the Sweet-Parker solution, and
+14
+
+the condition Sdi > Sc
+di simply means that the plasma cannot be too resistive on the di
+scale, otherwise the Hall solution will cease to exist. If Sdi > L/di, only the Hall solution is
+available; and if Sdi < Sc
+di, only the Sweet-Parker solution is realizable. The critical value
+Sc
+di was found to be approximately 50 in Ref. [8] for a double tearing mode conﬁguration
+with two Harris current sheets in a system of dimensions 409.6di × 204.8di. That study also
+included electron inertia, with a mass ratio of me/mi = 1/25.
+In the present study, it appears that Run B, with Sdi = 100, is already below the critical
+value Sc
+di for transition, therefore the Hall solution is unstable. This implies that the critical
+value Sc
+di is greater than 100, higher than approximately 50 found by Cassak et al. To verify
+that the Hall solution is unstable for the set of parameters of Run B, we carry out the
+following test. We take the solution of Run A at t = 1.3 and restart with the ion skin depth
+di artiﬁcially lowered to 2×10−4, the same value as Run B. Figure 8 shows the time sequence
+of this test. As a result of lowering di, the opening angle between the separatrices quickly
+closes up, ﬁrst starting from the center, then gradually propagating outward. The current
+sheet becomes extended at the same time and eventually breaks up into plasmoids. This
+test conﬁrms that the Hall solution is indeed unsustainable for the set of parameters of Run
+B. On the other hand, the other solution that the system will tend to make a transition to
+— the Sweet-Parker solution — is also unstable due to the plasmoid instability. Therefore,
+Run B is in a “bi-unstable” regime, and shows a continuous generation of new plasmoids.
+From the above discussion, it is now clear that to realize the intermediate regime, we
+need the following two conditions: First, secondary current sheets must be able to reach the
+di scale to trigger Hall reconnection. Second, the Hall solution has to be unstable, i.e. the
+condition Sdi < Sc
+di must be satisﬁed. Therefore, to delineate the region of the intermediate
+regime in the parameter space, it is important to know how the critical value Sc
+di depends
+other dimensionless parameters. Cassak et al. [8] give an estimate of Sc
+di by equating the
+resistive diﬀusion across the current sheet η/δ2 with the inward convection uin/δ, where δ is
+the current sheet width and uin is the electron inﬂow speed. They assume that the current
+sheet width δ scales like the electron skin depth de = c/ωpe, where ωpe is the electron plasma
+frequency, and uin scales like 0.1VAe, where VAe = B/√4πnme is the electron Alfvén speed
+based on the magnetic ﬁeld immediately upstream of the electron current layer. By using
+the observed upstream magnetic ﬁeld B ∼0.3B0, where B0 is the asymptotic ﬁeld, they
+obtain an estimate Sc
+di ∼30, which is reasonably close to the observed value Sc
+di ≃50.
+15
+
+The above argument might suggest that Sc
+di is a constant independent of system param-
+eters, but this is open to question. For example, Sc
+di may depend on the ratios L/di and
+me/mi. This issue cannot be settled by appealing to the numerical data presented in Ref.
+[8], which presents results for only one set of ratios (L/di = 409.6 and me/mi = 1/25). In
+the present study, electron inertia is neglected. Therefore, we focus on the possible depen-
+dency of Sc
+di on L/di. To determine Sc
+di for each system size requires many runs and large
+computational resources, which are not practical at the present time. Instead, we perform
+a series of simulations with Sdi = 100, same as Run B, but with smaller system sizes. Our
+results suggest that Sc
+di increases with increasing system size L/di.
+We perform two simulations with L/di = 500, 1000 and S = 5 × 104, 105, respectively.
+Also, we restart Run A at t = 1.3, but lower the Lundquist number S to 2.5 × 105. As such,
+we have three additional runs with L/di = 500, 1000, and 2500, all with the same Sdi = 100.
+For the ﬁrst two runs, the Sweet-Parker layer becomes unstable to the plasmoid instability,
+which quickly triggers onset of Hall reconnection. The onset of Hall reconnection expels all
+the plasmoids, and the reconnection precedes in the same manner as Run A. For the third
+run, the diﬀusion region broadens quickly after the Lundquist number is lowered, with the
+current sheet width increasing from 0.15di to 0.65di. After that, the system remains in a
+quasi-steady X-point geometry. These results indicate that for these smaller system sizes,
+the critical value Sc
+di is smaller than 100; whereas for Run B, with L/di = 5000, the critical
+value Sc
+di is greater than 100.
+A closer comparison of the dissipation regions for these runs reveals some interesting
+features. We observe a consistent trend that in the quasi-steady phase, the larger the system
+size is, the smaller is the opening angle in the downstream region. Furthermore, the current
+sheet is found to be longer and wider, when normalized to di, for a larger system. Figure
+9 shows the separatrices of the three runs when the reconnected ﬂuxes are approximately
+the same (≃0.027). The upper panel shows the entire simulation domain. The proximity
+of the three curves indicates that the global conditions are similar. However, a close-up
+view around the X-point, shown in the lower panel, reveals that the opening angle in the
+downstream region is smaller for a larger system. Likewise, in Figure 10 we plot current
+density proﬁles along the inﬂow and the outﬂow directions. Here we normalize lengths to
+di and the current density to the peak value. Clearly, the current sheet length and width
+increase with increasing the system size L/di. Finally, these runs are all well resolved with
+16
+
+x/di
+z/di
+-100
+0
+100
+0
+5
+L=500di
+L=1000di
+L=2500di
+x
+z
+-0.5
+0
+0.5
+0
+0.5
+L=500di
+L=1000di
+L=2500di
+Figure 9: (Color online) The separatrices of the three runs when the reconnected ﬂuxes are approx-
+imately the same (≃0.027). Only the region z > 0 is shown. Upper panel: the whole simulation
+domain.
+Lower panel: a close-up view around the X-point.
+Note that in the lower panel the
+coordinates are normalized to di and shifted horizontally to account for the slight misalignment of
+the X-point for each run. Also the z direction is stretched for better visualization.
+more than 30 grid points per di along the inﬂow direction at the current sheet.
+Figure
+11 shows the electron and ion inﬂows and the balance of Ey = −(ue × B)y + ηJy in the
+generalized Ohm’s law, for the case L/di = 1000. The −(ue×B)y term and ηJy term add up
+to a nearly uniform out-of-plane electric ﬁeld Ey, as required for quasi-steady reconnection in
+two dimensions. This indicates that the current sheet is well resolved and the reconnection
+is supported by resistivity, rather than numerical dissipation.
+The fact that the current sheet width δ increases monotonically with increasing L/di for
+the same Sdi suggests that the critical value Sc
+di also increases monotonically with L/di. This
+is evident from the following thought experiment. Suppose we start from a Hall solution,
+and gradually lower Sdi by increasing η, the current sheet width δ will gradually increase.
+Because the current sheet in Hall reconnection has to be thinner than di, the Hall solution
+will cease to exist when the current sheet width is approaching O(di).
+(More precisely,
+the Hall solution will cease to exist when its width is equal to the width of the unstable
+solution[26], i.e. when the stable ﬁxed point and the unstable ﬁxed point annihilate each
+17
+
+other; see the discussion in Ref. [23].) Since the current sheet width increases in a larger
+system for the same Sdi, the width will approach O(di) at a higher Sdi in a larger system.
+Consequently, a larger system has a higher critical value Sc
+di. This conclusion is consistent
+with our ﬁnding that Sc
+di > 100 for L/di = 5000 while Sc
+di < 100 for the three smaller
+systems.
+Intuitively, the dependence of the dissipation region on the system size may be understood
+as a competition between the attraction of the two coalescing islands on the global scale,
+which tends to close up the downstream region and make the current sheet extended, and
+the Hall physics at the local di scale, which opens up the downstream region. Our results
+indicate that to have a complete understanding of what determines Sc
+di, we need a theory
+that couples local reconnection physics with the global conﬁguration. Although the precise
+scaling is unknown at this time, the fact that Sc
+di increases with increasing L/di has profound
+implications on the accessibility of the intermediate regime in large systems. Note that the
+line that separates region (3) and region (4) in Figure 1 has a constant Sdi. Therefore, if Sc
+di
+is independent of L/di, conceivably the intermediate regime will be a narrow region between
+region (3) and region (4). Now we have shown that Sc
+di increases with increasing L/di. That
+implies that it will be easier to access the intermediate regime for larger systems. Therefore,
+it is important to determine the precise scaling of Sc
+di with respect to L/di. Such a study
+requires the investment of signiﬁcant computational resources, and is left to the future work.
+Finally, when more sophisticated models are employed, the condition for transition may also
+depend on some other dimensionless parameters as well.
+The existence of the intermediate regime and the dependence of Sc
+di on L/di in other global
+conﬁgurations remain to be studied. The present island coalescence conﬁguration diﬀers
+from the more commonly studied tearing mode conﬁguration in one important aspect. The
+island coalescence conﬁguration has the attractive force between the two merging islands as
+an “ideal” drive of reconnection, which is absent in the tearing mode conﬁguration. Could
+this be the reason that the intermediate regime has not been found yet in the standard
+tearing mode conﬁguration? We do not know the answer. However, it should be noted that
+previous Hall MHD simulations all have substantially smaller system sizes, which, according
+to our ﬁndings, may make the intermediate regime less likely to occur. Only future studies
+with much larger system sizes could possibly answer this question.
+In light of the present study, we would like to comment on the recent controversy regarding
+18
+
+−2
+−1
+0
+1
+2
+−1
+0
+z/di
+J y/J y,max
+L=500di
+L=1000di
+L=2500di
+−40
+−20
+0
+20
+40
+−1
+0
+x/di
+J y/J y,max
+L=500di
+L=1000di
+L=2500di
+Figure 10: (Color online) Current density proﬁles alone the inﬂow (upper panel) and the outﬂow
+(lower panel) directions. Here we normalize the coordinates to di and the current density to the
+peak value.
+−0.06
+−0.04
+−0.02
+0
+0.02
+0.04
+0.06
+ 
+ 
+uz
+uez
+−3
+0
+3
+−0.035
+−0.03
+−0.025
+−0.02
+−0.015
+−0.01
+−0.005
+0
+z/di
+ 
+ 
+−(ue × B)y
+η Jy
+Ey
+Figure 11: (Color online) The electron and ion inﬂows (upper panel) and the balance of Ey =
+−(ue × B)y + ηJy (lower panel) in the generalized Ohm’s law, for the case L/di = 1000
+19
+
+the role of electron inertia eﬀects on bistability.[23–25] Whereas Zocco et al. [24] claim that
+electron inertia is essential, Cassak et al. [23] argue that it is Hall physics rather than electron
+inertia that is responsible for bistability. The conclusion of Cassak et al. is supported by an
+independent study by Sullivan et al. [25] Run A in the present study may be interpreted as
+an independent veriﬁcation of the claim made by Cassak et al. [23] and Sullivan et al. [25]
+that bistability survives even in the absence of electron inertia. In Run A, the Hall solution
+is realized and remains stable after onset of the plasmoid instability. However, the Sweet-
+Parker solution clearly exists, because the Sweet-Parker width δSP ≃10−3 is signiﬁcantly
+above the ion skin depth di = 4×10−4. Had it not been for the intervention of the plasmoid
+instability, Run A would have realized the Sweet-Parker solution. Therefore, within the
+framework of the original bistability theory, when the plasmoid instability is not taken into
+account, both Sweet-Parker and Hall solutions are realizable for the set of parameters of
+Run A, and the system is bistable. When the plasmoid instability is included, the Sweet-
+Parker solution in Run A becomes physically unrealizable, and the Hall solution is the only
+possibility.
+The present study is valuable as an independent test of the phenomenon of
+bistability because it is done with a diﬀerent code and a diﬀerent initial condition. (Both
+Cassak et al. and Sullivan et al. use the code F3D.[27])
+However, Cassak et al. [23] further claim that balancing the Hall term and the resistive
+term in the out-of-plane component of the generalized Ohm’s law (as was done in Refs.
+[24, 28–31]) corresponds to an unstable, and thus physically unrealizable, solution. As such,
+compressing the current layer leads to a runaway toward smaller scales. They argue that the
+runaway process “stops only when additional physics, such as oﬀ-diagonal elements of the
+pressure tensor, become important at electron scales,” and “in two-ﬂuid simulations of Hall
+reconnection, the runaway process is often stopped using an explicit high order dissipation
+term such as hyperviscosity or through numerical dissipation because oﬀ-diagonal pressure
+tensor terms are absent from the model.” (See the discussion in Sec. II of Ref. [23].) This
+claim is inconsistent with our own study, where we have found that the ηJy term by itself
+can balance the reconnection out-of-plane electric ﬁeld around the X-point in robust Hall
+reconnection without the assistance of higher order dissipation terms, as shown in Figure
+11. Supporting the reconnection electric ﬁeld solely by resistivity has been shown before
+by Wang et al. [32] and recently by Sullivan et al. [25]. Along with this study, we have
+carefully veriﬁed this result via convergence tests on smaller systems.
+20
+
+Because resistivity by itself can stop the current sheet from collapsing in a Hall solution
+without the need for other physics on electron scales, the assumption made in the argument
+by Cassak et al. [8] that the current sheet width in Hall solution scales as de is debatable
+in a resistive plasma. For example, the current sheet in Figure 11 is signiﬁcantly wider
+than de ≃di/43, when the real mass ratio of a hydrogen plasma is employed. An estimate
+of the contribution from the neglected electron inertia terms in the generalized Ohm’s law
+indicates that those terms are much smaller, therefore the assumption of neglecting them is
+justiﬁed.
+We emphasize that although resistivity can in principle balance the reconnection electric
+ﬁeld in a Hall solution, such a balance need not necessarily be the case in Nature. It is clear
+that if the current sheet width approaches the de scale, electron physics will come into play.
+However, in the thought experiment discussed above, the current sheet width increases as
+we increase η. There exists a certain range of η where the current sheet width is above de
+but the solution remains in the Hall branch. In this range of η the reconnection electric
+ﬁeld should mostly be balanced by the ηJ term. This thought experiment has been carried
+out numerically by Cassak et al. [8] Contrary to what we have suggested, the simulations
+show that the current sheet widths in the Hall branch remain close to the de scale when η
+increases, before a sudden transition to a much broader current sheet in the Sweet-Parker
+branch (see Figure 3 of Ref. [8]). This may be due to the high electron mass (me = mi/25)
+employed, and consequently the de and di scales are not suﬃciently well separated.
+In summary, we ﬁnd that the bistability theory of Cassak et al. remains a very useful
+concept even in the presence of the plasmoid instability, and it greatly helps in interpreting
+our simulation results.
+However, our results also indicate the present understanding of
+what governs the extension of the current sheet and the stability of a Hall solution is still
+incomplete. In particular, much needs to be done regarding how global conditions may aﬀect
+the local reconnection site.[33]
+VI.
+CONCLUSION
+Our results show that the transition to fast reconnection in large, high-Lundquist-number
+plasmas can be realized by a complex interplay between the plasmoid instability and Hall
+reconnection. We have clearly demonstrated that the plasmoid instability can facilitate the
+21
+
+onset of Hall reconnection, in a regime where Hall reconnection would otherwise remain
+inaccessible because the criterion di > δSP is not met (Runs A and B). However, the onset
+of Hall reconnection does not always lead to a single X-point topology, with all plasmoids
+expelled. Run B demonstrates the possibility that a single X-point geometry is itself un-
+stable, and after the onset of Hall reconnection, reverts to an extended current sheet of the
+type that led to an X-point in the ﬁrst place. In this case, the reconnection is characterized
+by sporadic, bursty behavior with new plasmoids constantly being generated. Because of
+the intermittent onset of Hall reconnection, on average the reconnection rate is higher than
+it is when the plasmoid instability does not trigger Hall reconnection (Run C), but lower
+than it is when a robust Hall reconnection site forms (Run A).
+The results presented here may provide a possible starting point to resolve a dichotomy
+in the existing literature — the X-point geometry in Hall reconnection[5, 6, 8, 17], versus the
+extended current sheet geometry embedded with plasmoids in fully kinetic simulations[14,
+34–37]. Our results demonstrate that the dichotomy is false. We have shown that for some
+range of parameters (Run B) resistive Hall MHD allows the current sheet to become extended
+again after the onset, and subsequently new plasmoids are generated. That is not to say
+that the physical mechanisms that cause the extension of the current sheet is the same in the
+present Hall MHD simulations and fully kinetic simulations. Full kinetic simulations show
+extended current sheet and plasmoid formation even in the absence collisions, [34, 35, 37]
+which is not possible in the present simple ﬂuid model, as lack of collisions means η →0 in
+the present model. Even when Run B is compared with collisional PIC simulations [14, 36]
+there are discernible diﬀerences. For example, PIC simulations show a continuous generation
+of new plasmoids. That is quite diﬀerent from Run B, where the reconnection geometry goes
+to a singe X-point conﬁguration ﬁrst then becomes extended again, which triggers plasmoid
+formation.
+The results of this work may be tested in the next generation of Magnetic Reconnection
+Experiment (MRX), which is planned to systematically explore diﬀerent regimes in the
+reconnection “phase diagram”. [38] It may also be applicable to magnetic reconnection in
+laser produced high energy density plasmas, which have been the subject of great interest
+recently.[39–44] For applications in space and astrophysical systems, it is clear that if Spitzer
+resistivity is assumed, the intermediate regime in the present study is unlikely to be relevant
+in systems such as solar corona and Earth’s magnetosphere, where a simple estimate gives
+22
+
+Sdi ∼107 for solar corona (assuming n ∼109cm−3, B ∼100G, T ∼100eV ) and Sdi ∼1010
+for Earth’s magnetotail (assuming n ∼1cm−3, B ∼10−4G, T ∼100eV ). It should be
+borne in mind, however, that the applicability of Spitzer resistivity in those systems is also
+open to debate, as the relevant resistivity may be due to wave particle interaction or other
+mechanisms. On the other hand, in solar chromosphere, due to variation in the plasma
+density of about seven orders of magnitude, Sdi based on Spitzer resistivity varies from 10−3
+to 104 (assuming n ∼1010 −1017cm−3, B ∼100G, T ∼1eV ).
+Therefore, it is likely
+that there is some region in the chromosphere where the intermediate regime is directly
+applicable.
+In conclusion, although the resistive Hall MHD model has limitations, the fact that the
+single X-point geometry is not inevitable in the Hall MHD model opens the possibility
+of realizing extended current sheets in global Hall MHD simulations of large systems. In
+future work, through the implementation of more sophisticated closures, e.g. for the electron
+pressure tensor term in the generalized Ohm’s law, one may be able to parameterize some
+key kinetic eﬀects in reconnection simulations. Progress along this direction may be essential
+in order to extend global modeling codes to include two-ﬂuid and kinetic eﬀects, as fully
+kinetic simulations of large systems, with realistic physical parameters are likely to remain
+computationally too expensive even in the near-future era of exascale computing.
+Acknowledgments
+This work is supported by the Department of Energy, Grant No. DE-FG02-07ER46372,
+under the auspice of the Center for Integrated Computation and Analysis of Reconnection
+and Turbulence (CICART), the National Science Foundation, Grant No.
+PHY-0215581
+(PFC: Center for Magnetic Self-Organization in Laboratory and Astrophysical Plasmas),
+NASA Grant Nos.
+NNX09AJ86G and NNX10AC04G, and NSF Grant Nos.
+ATM-
+0802727, ATM-090315 and AGS-0962698. YMH is partially supported by a NASA sub-
+contract to the Smithsonian Astrophysical Observatory’s Center of Astrophysics, Grant No.
+NNM07AA02C. Computations were performed on facilities at National Energy Research
+Scientiﬁc Computing Center. YMH would like to thank Dr. Naoki Bessho for commenting
+on an earlier version of the paper, and Prof. Paul Cassak for beneﬁcial communications
+when the paper was under revision. We are grateful for the comments of the anonymous
+23
+
+reviewers, which have helped improve this work.
+[1] E. G. Zweibel and M. Yamada, Annu. Rev. Astron. Astrophys. 47, 291 (2009).
+[2] A. Bhattacharjee, Z. W. Ma, and X. Wang, Phys. Plasmas 8, 1829–1839 (2001).
+[3] P. A. Sweet, Nuovo Cimento Suppl. Ser. X 8, 188 (1958).
+[4] E. N. Parker, Astrophys. J. Suppl. 8, 177–211 (1963).
+[5] Z. W. Ma and A. Bhattacharjee, Geophys. Res. Lett. 23, 1673–1676 (1996).
+[6] J. C. Dorelli and J. Birn, Geophys. Res. 108, 1133 (2003).
+[7] A. Bhattacharjee, Annu. Rev. Astron. Astrophys. 42 365-384 (2004).
+[8] P. A. Cassak, M. A. Shay, and J. F. Drake, PRL 95, 235002 (2005).
+[9] M. Yamada, Y. Ren, H. Ji, J. Breslau, S. Gerhardt, R. Kulsrud, and A. Kuritsyn, Phys.
+Plasmas 13, 052119 (2006).
+[10] N. F. Loureiro, A. A. Schekochihin, and S. C. Cowley, Phys. Plasmas 14, 100703 (2007).
+[11] B. Coppi, E. Galvao, R. Pellat, M. N. Rosenbluth, and P. H. Rutherford, Sov. J. Plasma Phys.
+2, 533 (1976).
+[12] A. Bhattacharjee, Y.-M. Huang, H. Yang, and B. Rogers, Phys. Plasmas 16, 112102 (2009).
+[13] Y.-M. Huang and A. Bhattacharjee, Phys. Plasmas 17, 062104 (2010).
+[14] W. Daughton, V. Roytershteyn, B. J. Albright, H. Karimabadi, L. Yin, and K. J. Bowers,
+PRL 103, 065004 (2009).
+[15] P. A. Cassak, M. A. Shay, and J. F. Drake, Phys. Plasmas 16, 120702 (2009).
+[16] K. Shibata and S. Tanuma, Earth Planets Space 53, 473 (2001).
+[17] L. S. Shepherd and P. A. Cassak, PRL 105, 015004 (2010).
+[18] S. I. Braginskii, Rev. Plasma Physics 1, 205 (1965).
+[19] H. Dreicer, Phys. Rev. 115, 238 (1959).
+[20] P. N. Guzdar, J. F. Drake, D. McCarthy, A. B. Hassam, and C. S. Liu, Phys. Fluids B 5, 3712
+(1993).
+[21] S. Gottlieb, C.-W. Shu, and E. Tadmor, SIAM Rev. 43, 89 (2001).
+[22] R. J. Spiteri and S. J. Ruuth, SIAM J. Numer. Anal. 40, 469 (2002).
+[23] P. A. Cassak, M. A. Shay, and J. F. Drake, Phys. Plasmas 17, 062105 (2010).
+[24] A. Zocco, L. Chacón, and A. N. Simakov, Phys. Plasmas 16, 110703 (2009).
+24
+
+[25] B. P. Sullivan, A. Bhattacharjee, and Y.-M. Huang, Phys. Plasmas 17, 114507 (2010).
+[26] P. A. Cassak. J. F. Drake, M. A. Shay, and B. Eckhardt, PRL 98, 215001 (2007).
+[27] M. A. Shay, J. F. Drake, M. Swisdak, and B. N. Rogers, Phys. Plasmas, 11, 2199 (2004).
+[28] L. Chacón, A. N. Simakov, and A. Zocco, PRL 99, 235001 (2007).
+[29] A. N. Simakov and L. Chacón, PRL 101, 105003 (2008).
+[30] L. M. Malyshkin, PRL 101, 225001 (2008).
+[31] L. M. Malyshkin, PRL 103, 235004 (2009).
+[32] X. Wang, A. Bhattacharjee, and Z. W. Ma, PRL 87, 265003 (2001).
+[33] A. Kuritsyn, H. Ji, S. P. Gerhardt, and M. Yamada, Geophys. Res. Lett., 34, L16106 (2007).
+[34] J. F. Drake, M. Swisdak, H. Che, and M. A. Shay, Nature 443, 553 (2006).
+[35] W. Daughton, J. Scudder, and H. Karimabadi, Phys. Plasmas 13, 072101 (2006).
+[36] W. Daughton, V. Roytershteyn, B. J. Albright, H. Karimabadi, L. Yin, and K. J. Bowers,
+Phys. Plasmas 16, 072117 (2009).
+[37] A. Klimas, M. Hesse, S. Zenitani, and M. Kuznetsova, Phys. Plasmas 17, 112904 (2010).
+[38] H. Ji, M. Yamada, S. Prager, W. Daughton, and V. Roytershteyn, “A Next Generation Mag-
+netic Reconnection Experiment: Accessing “Reconnection Phase Diagrams” for Space and
+Astrophysical Relevances”, Bull. Am. Phys. Soc., 55, 15, NP9 82 (2010).
+[39] P. M. Nilson, et al., PRL 97, 255001 (2006).
+[40] C. K. Li, et al., PRL 99, 055001 (2007).
+[41] P. M. Nilson, et al., Phys. Plasmas 15, 092701 (2008).
+[42] L. Willingale, et al., Phys. Plasmas 17, 043104 (2010).
+[43] J. Zhong, et al., Nature Physics 6, 984 (2010).
+[44] W. Fox, A. Bhattacharjee, and K. Germaschewski, PRL 106, 215003 (2011).
+25

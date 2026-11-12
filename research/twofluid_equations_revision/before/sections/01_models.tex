@@ -1,0 +1,883 @@
+\chapter{不同模型的基本原理与详细推导}\label{ch:models}
+\input{sections/tutorial/00_start}
+\input{sections/tutorial/01_moments}
+
+\section{完整双流体--Maxwell系统与准中性极限}
+\subsection{完整系统及约束传播}
+两套式\eqref{eq:continuity}、\eqref{eq:momentum}和能量／压力方程与Maxwell方程耦合：
+\begin{align}
+\partial_t\B&=-\grad\times\E,&\partial_t\E&=c^2\grad\times\B-\J/\epsilon_0,\\
+\grad\cdot\B&=0,&\grad\cdot\E&=\rho_q/\epsilon_0,\\
+\J&=e(n_i\vel_i-n_e\vel_e),&\rho_q&=e(n_i-n_e),\quad c^2=(\mu_0\epsilon_0)^{-1}.
+\end{align}
+对电场演化方程取散度，用电荷连续性 $\partial_t\rho_q+\grad\cdot\J=0$，可证明Gauss约束若初始满足便在连续系统中保持。离散系统也必须满足相容的电荷守恒，否则会产生伪电场。
+
+\subsection{为什么大尺度常用准中性}
+在Poisson方程中估计 $E\sim T_e/(eL)$，得
+\begin{equation}{|n_i-n_e|\over n}\sim{\epsilon_0T_e\over ne^2L^2}
+={\lambda_{De}^2\over L^2},\quad\lambda_{De}=\sqrt{\epsilon_0T_e/(ne^2)}.
+\end{equation}
+故 $L\gg\lambda_{De}$ 时可以在低频序列中取 $n_i=n_e=n$。Ampère方程中位移电流与传导电流之比在Alfvén序列约为 $\VA^2/c^2$，因此低速低频时用
+\begin{equation}\J=\mu_0^{-1}\grad\times\B,\qquad\grad\cdot\J=0.\label{eq:ampere}\end{equation}
+准中性不是“电场等于零”；电场由电子力平衡、两物种约束和边界共同决定。也不能在删去位移电流后，又随意保留本应由全Maxwell系统支持的光波。
+
+\subsection{单流体变量转换：哪些电子质量项被忽略}
+在准中性下定义质心速度
+\begin{equation}\vel={m_i\vel_i+m_e\vel_e\over M},\quad M=m_i+m_e,\quad
+\vel_i=\vel+{m_e\over M}{\J\over en},\quad
+\vel_e=\vel-{m_i\over M}{\J\over en}.\label{eq:veltransform}\end{equation}
+将两物种动量相加，碰撞动量交换满足 $\vct R_i+\vct R_e=0$，得到精确的准中性动量守恒式
+\begin{equation}
+\partial_t(\rho\vel)+\grad\cdot\left[\rho\vel\vel+\mathsf P_i+\mathsf P_e+
+{m_im_e\over M e^2n}\J\J\right]=\J\times\B.\label{eq:singlemom}
+\end{equation}
+最后一项来自两种粒子相对漂移的动量通量，逐项展开式\eqref{eq:veltransform}即可验证交叉项抵消。普通Hall MHD取 $m_e/m_i\to0$，舍弃这一项，并有 $\vel\simeq\vel_i$。若在电子尺度保留欧姆定律中的电子惯性，能量守恒版本也要一致处理漂移动能，不能只往已有MHD代码中随便添加一个惯性项。
+
+\input{sections/tutorial/02_maxwell}
+
+\section{广义欧姆定律：一行一行从电子方程得到}
+电子方程为
+\begin{equation}m_enD_e\vel_e=-en(\E+\vel_e\times\B)-\grad\cdot\mathsf P_e+\vct R_e.
+\end{equation}
+移项并除以 $en$：
+\begin{equation}\E+\vel_e\times\B=-{\grad\cdot\mathsf P_e\over en}-{m_e\over e}D_e\vel_e+{\vct R_e\over en}.\label{eq:electronohm}\end{equation}
+取碰撞阻力 $\vct R_e=m_en\nu_{ei}(\vel_i-\vel_e)$，因 $\vel_i-\vel_e=\J/(en)$，故
+\begin{equation}{\vct R_e\over en}=\eta\J,\qquad \eta={m_e\nu_{ei}\over ne^2}.
+\end{equation}
+左边加上 $(\vel_i-\vel_e)\times\B$，得到以离子速度表示的精确准中性形式
+\begin{equation}
+\boxed{\E+\vel_i\times\B={\J\times\B\over en}-{\grad\cdot\mathsf P_e\over en}
+-{m_e\over e}(\partial_t+\vel_e\cdot\grad)\vel_e+\eta\J.}\label{eq:gohm}
+\end{equation}
+若左边换成质心速度，Hall项系数须由1换成 $m_i/M$。只有忽略 $m_e/m_i$ 时二者才相同。四个右端项依次为Hall、压力、电子惯性、碰撞电阻。
+
+\subsection{把电子惯性写成电流演化形式}
+令 $\vct w=\J/(en)$、$\vel_e=\vel_i-\vct w$，直接展开
+\begin{equation}
+D_e\vel_e=D_i\vel_i-\partial_t\vct w-\vel_i\cdot\grad\vct w-\vct w\cdot\grad\vel_i+\vct w\cdot\grad\vct w.\label{eq:inertiaexpanded}
+\end{equation}
+这比随手写成 $-(en)^{-1}\partial_t\J$ 更完整：密度变化、对流和剪切都在里面。只保留 $\partial_t\J$ 是数值正则化或特定序列近似，不能声称等同于完整双流体。
+
+\subsection{在二维X点，谁支撑重联电场}
+对反平行二维重联的X点，面内磁场 $B_x=B_y=0$，故 $(\vel_e\times\B)_z=0$，即使存在 $B_z$ 也一样。于是
+\begin{equation}
+E_z=-{\partial_xP_{exz}+\partial_yP_{eyz}\over en}
+-{m_e\over e}(\partial_tu_{ez}+u_{ex}\partial_xu_{ez}+u_{ey}\partial_yu_{ez})+\eta J_z.\label{eq:xpoint}
+\end{equation}
+Hall项的 $z$ 分量也在面内零点为零。标量 $p_e$ 在二维中无 $z$ 梯度，不能独自支撑这个 $E_z$。所以“Hall项很大”与“Hall项在X点直接打破冻结”不能等同。十矩模型的 $P_{exz},P_{eyz}$ 提供了五矩所没有的通道。\citep{Wang2015}
+
+还可得到一个有用的严格检查：若对称X点同时是电子面内停滞点，$u_{ex}=u_{ey}=0$，且压力标量、电阻为零，则
+\begin{equation}E_z(X)=-{m_e\over e}\partial_tu_{ez}(X).
+\end{equation}
+因此严格稳态时 $E_z(X)=0$。非稳态惯性重联完全可能，但不能先删去时间惯性，再在这个严格停滞点用不存在的面内对流支撑有限重联电场。“某几个诊断量变化慢”也不是全部方程已稳态的证明。
+
+\input{sections/tutorial/03_ohm}
+
+\section{磁冻结、能量和非耗散拓扑变化}
+\subsection{移动回路的磁通定理}
+随速度 $\vct v_f$ 移动的曲面 $S(t)$，边界为 $C(t)$，由Reynolds输运定理及Faraday定律，
+\begin{equation}{\dd\over\dd t}\int_{S(t)}\B\cdot\dd\vct S=-\oint_{C(t)}(\E+\vct v_f\times\B)\cdot\dd\vct l.\label{eq:flux}\end{equation}
+若 $\E+\vct v_f\times\B=-\grad\Phi$ 且势函数单值，闭合积分为零，磁通冻结。令 $\vct v_f=\vel_e$，若无电阻、无惯性且 $p_e=p_e(n)$，则
+\begin{equation}{\grad p_e\over en}=\grad H_e(n),\qquad H_e(n)={1\over e}\int^n{1\over n'}{\dd p_e\over\dd n'}\dd n'.
+\end{equation}
+此时Hall MHD仍保持电子磁冻结。在非正压情形，
+\begin{equation}\grad\times\left({\grad p_e\over en}\right)=-{\grad n\times\grad p_e\over en^2},
+\end{equation}
+出现Biermann源；但二维标量压强源对 $B_z$ 的作用不应误说成直接支撑 $E_z$ 的机制。
+
+\subsection{Hall项为何不是焦耳热}
+将式\eqref{eq:gohm}点乘 $\J$，有 $\J\cdot(\J\times\B)=0$。电阻产生 $\eta J^2\ge0$；Hall项本身不产生正定热源。全Maxwell系统的Poynting定理为
+\begin{equation}\partial_t\left({\epsilon_0E^2\over2}+{B^2\over2\mu_0}\right)+\grad\cdot{\E\times\B\over\mu_0}=-\J\cdot\E.
+\end{equation}
+与两种粒子的式\eqref{eq:energy}相加，右端电磁功抵消。压力应变 $-\mathsf P_s:\grad\vel_s$ 把有序流能转成内能，但它在无碰撞连续模型中不必是不可逆熵增。电磁能转移率 $\J\cdot\E$、电子框架功率 $\J\cdot(\E+\vel_e\times\B)$、熵产生率应分别诊断。
+
+\subsection{电子广义磁场：磁通改变但另一个量仍冻结}
+为看清电子惯性，考虑固定均匀离子、常密度、无电阻、正压电子的EMHD。写 $\vct\omega_e=\grad\times\vel_e$，用
+$\vel_e\cdot\grad\vel_e=\grad(u_e^2/2)-\vel_e\times\vct\omega_e$，对电子动量取旋度并用Faraday定律得
+\begin{equation}\partial_t\B_e=\grad\times(\vel_e\times\B_e),\qquad
+\B_e=\B-{m_e\over e}\vct\omega_e.\label{eq:be}
+\end{equation}
+由 $\vel_e=-\J/(en)=-\grad\times\B/(\mu_0en)$，以及 $\grad\cdot\B=0$，得
+\begin{equation}\vct\omega_e={\nabla^2\B\over\mu_0en},\qquad
+\B_e=\B-d_e^2\nabla^2\B,\qquad d_e^2={m_e\over\mu_0ne^2}.\label{eq:emhd}
+\end{equation}
+被冻结的是 $\B_e$，而不必是 $\B$；这解释非耗散电子惯性如何允许磁场拓扑变化，同时保持广义拓扑约束。变密度或移动离子时，不能原样使用常系数式\eqref{eq:emhd}。
+
+\input{sections/tutorial/04_freezing_energy}
+
+\section{Hall MHD、扩展MHD和尺度归一化}
+\subsection{一个可闭合的最小Hall MHD系统}
+忽略电子惯性、取标量压强，以 $\vel\simeq\vel_i$ 得
+\begin{align}
+\partial_t\rho+\grad\cdot(\rho\vel)&=0,\\
+\rho D\vel&=-\grad(p_i+p_e)+\J\times\B+\grad\cdot\bm{\Pi},\\
+\partial_t\B&=\grad\times\left(\vel\times\B-{\J\times\B\over en}+{\grad p_e\over en}-\eta\J\right),\quad\J={\grad\times\B\over\mu_0}.\label{eq:hallinduction}
+\end{align}
+还必须指定两温度能量方程或状态方程，例如 $D_sp_s+\gamma_sp_s\grad\cdot\vel_s=0$。写下上述三式并未完成闭合。若采用等温 $p_e=nT_{e0}$，电子热库隐含吸收／放出能量；应说明总能量并非孤立绝热守恒。
+
+\subsection{惯性扩展MHD：保持完整两物种漂移能}
+为了得到可直接实现的无耗散惯性模型，进一步限制为常密度、不可压和标量压力。以总质量 $M=m_i+m_e$ 定义速度单位，并记 $\delta_m=m_e/M$、$h=\sqrt{M/(\mu_0n_0e^2)}/L_0$。以下本小节量均无量纲，$\J=\grad\times\B$，$\vel_e=\vel-(1-\delta_m)h\J$。
+式\eqref{eq:singlemom}中漂移应力的散度化为
+$\alpha(\J\cdot\grad)\J$，其中 $\alpha=\delta_m(1-\delta_m)h^2$。
+用 $\grad\times\J=-\nabla^2\B$，有
+\begin{equation}
+(\J\cdot\grad)\J=\grad(J^2/2)+\J\times\nabla^2\B.
+\end{equation}
+故总动量和电子广义磁场方程为
+\begin{align}
+D\vel&=\J\times(\B-\alpha\nabla^2\B)-\grad\Pi,
+\quad\Pi=p_i+p_e+\alpha J^2/2,\\
+\B_e&=\B-\alpha\nabla^2\B-\delta_mh\grad\times\vel,\\
+\partial_t\B_e&=\grad\times\{[\vel-(1-\delta_m)h\J]\times\B_e\}.
+\end{align}
+其中 $\Pi$ 是不可压约束中的有效压力。不可把包含漂移动压的 $\Pi$ 无说明地解释成可观测热压强。电子广义磁场中还含质心涡量，因此只有固定离子等进一步极限下才能退化成单独的 $\B-d_e^2\nabla^2\B$。
+
+周期或适当闭合边界下，其能量为
+\begin{equation}
+\mathcal H_{\rm inc}={1\over2}\int(u^2+B^2+\alpha J^2)\dd^3x.
+\end{equation}
+最后一项来自两物种动能之和，而非额外人为加入的“磁能”。由原始两动量方程点乘各自速度再相加，即可检查其守恒。恢复SI单位后，各物种正压、无耗散时还具有广义涡量
+$\B_s=\B+(m_s/q_s)\grad\times\vel_s$ 的输运规律，适当边界下对应广义螺度守恒。若压力张量非标量、密度非均匀或存在边界通量，必须重新保留对应源项。此处是Andr\'es等所用模型类别的统一推导，不是完整Maxwell双流体。\citep{Andres2014,Andres2016}
+
+\subsection{归一化为什么自然出现 $d_i/L_0$}
+取 $B_0,n_0,L_0$，定义
+\begin{equation}\VA={B_0\over\sqrt{\mu_0m_in_0}},\quad t_0={L_0\over\VA},\quad
+J_0={B_0\over\mu_0L_0},\quad E_0=\VA B_0,\quad p_0={B_0^2\over\mu_0}.
+\end{equation}
+以这些量除式\eqref{eq:gohm}，Hall项的系数为
+\begin{equation}{J_0B_0/(en_0)\over E_0}={1\over L_0}\sqrt{m_i\over\mu_0n_0e^2}={d_i\over L_0},\quad d_i={c\over\omega_{pi}}.
+\end{equation}
+电阻项系数 $\eta/(\mu_0L_0\VA)=S^{-1}$；电子惯性原始系数为 $(m_e/m_i)d_i/L_0$。所以
+\begin{equation}\tilde\E+\tilde\vel_i\times\tilde\B={d_i\over L_0}{\tilde\J\times\tilde\B-\tilde\grad\cdot\tilde{\mathsf P}_e\over\tilde n}
+-{m_e\over m_i}{d_i\over L_0}\tilde D_e\tilde\vel_e+S^{-1}\tilde\J.
+\end{equation}
+小系数不保证小贡献：电子层中 $u_e$ 和空间导数会大。将惯性转成磁场二阶导数后，控制参数是 $d_e^2/\delta^2$。
+
+\subsection{离子惯性长度、回旋半径与强导引场}
+定义 $\Omega_{ci}=eB/m_i$，有 $d_i=\VA/\Omega_{ci}$。本文 $v_{ts}=\sqrt{T_s/m_s}$，故 $r_{Li}=v_{ti}/\Omega_{ci}$、$\rho_{\rm sound}=\sqrt{T_e/m_i}/\Omega_{ci}$。若 $\beta_e=2\mu_0nT_e/B^2$，
+\begin{equation}{\rho_{\rm sound}\over d_i}=\sqrt{\beta_e/2},\qquad {d_e\over d_i}=\sqrt{m_e/m_i}.
+\end{equation}
+强导引场问题中的 $B$ 通常取导引场或总场，归一化重联率的 $B_{\rm up}$ 则通常取反向面内场；混用会引入很大的“重联率差异”。反平行电流片常以 $\delta\sim d_i$ 作为离子解耦估计，强导引场下需检查 $\rho_{\rm sound}$、$r_{Li}$ 及电子尺度，不能普遍套用 $d_i$。
+
+\input{sections/tutorial/05_hierarchy}
+
+\section{五矩、十矩与各种闭合的推导和代价}
+\subsection{五矩：标量压力从十矩的迹获得}
+令 $\mathsf P_s=p_s\mathsf I$，忽略热流且无加热，式\eqref{eq:internal}化为
+\begin{equation}\tfrac32D_sp_s+\tfrac52p_s\grad\cdot\vel_s=0
+\quad\Rightarrow\quad D_sp_s+\tfrac53p_s\grad\cdot\vel_s=0.
+\end{equation}
+与 $D_sn_s=-n_s\grad\cdot\vel_s$ 联立，得 $D_s(p_sn_s^{-5/3})=0$。因此三维平动自由度的绝热指数是 $5/3$，即使几何为二维也不应自动改成2。五个守恒量为密度1个、动量3个、总能量1个。它保留电子惯性和Hall相对漂移，但施加了强烈的压力各向同性约束。
+
+\subsection{十矩：六个对称压力分量如何演化}
+对每个粒子种类，$n_s$、三分量动量和六分量对称压力组成十矩。也可演化原始二阶矩 $\mathcal P_{ij}=P_{ij}+\rho u_iu_j$，其通量为
+\begin{equation}\mathcal Q_{ijk}=\rho u_iu_ju_k+u_iP_{jk}+u_jP_{ik}+u_kP_{ij}+Q_{ijk}.
+\end{equation}
+从守恒变量恢复 $\mathsf P$ 时，减去大动能容易造成消减误差，必须监测所有特征值为正。$P_{xz},P_{yz}$ 可在式\eqref{eq:xpoint}中产生重联电场，但其数值大小由热流闭合控制，因此“有十矩”并不是“已解决电子扩散区”。\citep{Wang2015}
+
+\subsection{局地松弛闭合：它改变什么}
+常见近似用
+\begin{equation}\partial_kQ_{s,ijk}\approx\nu_{s,\rm eff}(P_{s,ij}-p_s\delta_{ij}),\qquad
+\nu_{s,\rm eff}=v_{ts}|k_{0s}|.\label{eq:localclosure}
+\end{equation}
+代回式\eqref{eq:pressure}时右边出现负的偏压力松弛。它的迹为零，所以不直接改变总内能，却改变各向异性、应力和不稳定性。$k_{0s}$ 是闭合尺度参数，不是自动等于网格Nyquist波数。改变网格时若让 $k_0$ 跟随 $1/\Delta x$，就同时改变了物理模型。
+
+由均匀无流无磁场极限可验证 $P_{ij}-p\delta_{ij}\propto\exp(-\nu_{\rm eff}t)$。$k_0\to\infty$ 使压力趋向标量，$k_0\to0$ 则失去热流松弛；这两个极限都不等于完整无碰撞动理学。
+
+\subsection{梯度与非局地闭合}
+一种示意性的梯度闭合为
+\begin{equation}Q_{ijk}=-\chi_s\left(\partial_i\Theta_{jk}+\partial_j\Theta_{ik}+\partial_k\Theta_{ij}\right),
+\end{equation}
+其中 $\Theta$ 可取温度张量或适当的压力组合，$\chi_s$ 的单位和密度因子由定义确定，不能在不同代码之间直接复制。它能传递空间信息，而局地松弛只在同一点抹去偏压力。Landau流体型闭合在Fourier空间具有 $|k_\parallel|$ 或Hilbert变换结构，反映沿磁场的自由流和相混合。非均匀磁场、磁零点及三维场线缠绕会使“平行方向”和非局地算子更难定义。2026年的改进梯度闭合研究正是检验这类模型能否恢复三维次级不稳定性与混合。\citep{Closure2026}
+
+\subsection{为什么把热流直接设零可能更糟}
+用一个局地反例理解闭合。考虑二维稳态、对称停滞点附近，沿流入轴 $x=0$ 有 $u_x=0$、$u_y=C y^{2m+1}$、$n\simeq n_0$。连续性给出
+$\partial_xu_x\simeq-(2m+1)Cy^{2m}$。若该轴上 $P_{xy}=0$，并忽略相应磁旋转耦合与热流，压力方程的 $xx$ 分量为
+\begin{equation}
+u_y\partial_yP_{xx}+P_{xx}\grad\cdot\vel+2P_{xx}\partial_xu_x=0.
+\end{equation}
+最低阶 $\grad\cdot\vel\simeq0$，于是
+$y\partial_yP_{xx}=2(2m+1)P_{xx}$，即
+\begin{equation}P_{xx}\propto |y|^{4m+2}\longrightarrow0\quad(y\to0).
+\end{equation}
+这里忽略项的对称性与稳态假定必须同时成立；它不是每个十矩算例都会出现的定理。但它清楚说明：删去热流后，压力沿停滞流线可以出现不合理行为，不能靠“十矩比五矩多”保证正确。Ng等附录讨论了这个问题；上式直接从连续性与中心压力方程重建，避免照抄印刷符号。\citep{Ng2020}
+
+\subsection{CGL双绝热：保留各向异性但丢失非旋转对称性}
+若强磁化且陀螺平均，压力写为
+\begin{equation}\mathsf P=p_\perp\mathsf I+(p_\parallel-p_\perp)\vct b\vct b,\qquad\vct b=\B/B.
+\end{equation}
+忽略热流、碰撞和有限回旋半径修正。记 $\theta=\grad\cdot\vel_s$、$A=b_ib_j\partial_ju_{s,i}$，将压力方程分别与 $b_ib_j$ 和 $(\delta_{ij}-b_ib_j)/2$ 缩并。由于 $\vct b\cdot D_s\vct b=0$，导数作用于投影方向的额外项在旋转对称压力下抵消，磁旋转项也为零，得到
+\begin{align}
+D_sp_\parallel+p_\parallel(\theta+2A)&=0,\\
+D_sp_\perp+p_\perp(2\theta-A)&=0.
+\end{align}
+若所用流体满足相应阶次的磁冻结，感应方程给出
+$D_s\B=(\B\cdot\grad)\vel_s-\B\theta$，点乘 $\vct b/B$ 后有
+$D_s\ln B=A-\theta$。再用 $D_s\ln n_s=-\theta$，逐项相减：
+\begin{align}
+D_s\ln(p_\perp/n_sB)&=(-2\theta+A)+\theta-(A-\theta)=0,\\
+D_s\ln(p_\parallel B^2/n_s^3)&=(-\theta-2A)+2(A-\theta)+3\theta=0.
+\end{align}
+于是得到双绝热不变量
+\begin{equation}D_s\left({p_{\perp s}\over n_sB}\right)=0,\qquad
+D_s\left({p_{\parallel s}B^2\over n_s^3}\right)=0.\label{eq:cgl}
+\end{equation}
+例如第一式来自每粒子垂直能量 $T_\perp\propto B$，故 $p_\perp=nT_\perp\propto nB$。第二式可由一段冻结磁通管的长度 $\ell\propto B/n$ 和平行动量绝热标度 $T_\parallel\propto\ell^{-2}$ 得到。这里隐含磁化和慢变条件；磁零点附近 $\vct b$ 不定义，不能无条件延拓。
+
+CGL可改变磁张力：有效张力系数为 $B^2/\mu_0+p_\perp-p_\parallel$。因此压力各向异性能够影响开口、流出和重联速率。已有工作在导引场下发现电子各向异性主导的快速重联，但这是特定闭合下的结果，不是所有无碰撞电子压力的精确描述。\citep{Cassak2015}
+
+\input{sections/tutorial/06_closure}
+
+\section{EMHD的色散关系：也推导显式时间步限制}
+在固定离子、常密度的无惯性EMHD中，$\vel_e=-\grad\times\B/(\mu_0en)$。令 $\B=B_0\hat z+\vct b_\perp\exp[i(kz-\omega t)]$，由感应方程
+\begin{equation}-i\omega\vct b=-{1\over\mu_0en}\grad\times[(\grad\times\vct b)\times B_0\hat z]
+={k^2B_0\over\mu_0en}\hat z\times\vct b.
+\end{equation}
+圆偏振的 $\hat z\times\vct b=\pm i\vct b$，故正频分支大小为
+\begin{equation}|\omega|={B_0\over\mu_0en}k^2=\VA d_i k^2.\label{eq:whistler}\end{equation}
+加入电子惯性，左边变为 $-i\omega(1+d_e^2k^2)\vct b$，从而
+\begin{equation}|\omega|={\VA d_i k^2\over1+d_e^2k^2}.
+\end{equation}
+在这一平行、固定离子近似中高 $k$ 频率趋向 $\Omega_{ce}$。无惯性Hall模型最高可解析 $k\sim\pi/\Delta x$，显式积分需 $\Delta t=O(\Delta x^2/(\VA d_i))$；网格减半时间步约缩小四倍。这是Hall刚性来源，不是数值代码偶然变慢。
+
+\input{sections/tutorial/07_emhd}
+
+\section{强导引场约化双流体：两场模型逐步建立}
+\assume{本节采用强而近似均匀导引场、低频、冷离子、等温电子和小密度扰动序列，忽略电阻与离子平行运动。垂直最低阶流不可压；小密度扰动仍参与平行电子压强，不能把它处处置零。电子惯性存在时，还须保留与电子抗磁漂移惯性同阶的陀螺黏性压力修正。并非从“完全各向同性且恒密度的双流体”直接得到本节暖电子模型。\citep{Schep1994,L049}}
+令 $\B=B_g\hat z+\hat z\times\grad\psi$，$\vel_\perp=\hat z\times\grad\phi$，定义Poisson括号
+$[f,g]=\partial_xf\partial_yg-\partial_yf\partial_xg$。于是 $\vel_\perp\cdot\grad g=[\phi,g]$，$\omega_z=\nabla_\perp^2\phi$，$J_z=\nabla_\perp^2\psi/\mu_0$。这里 $A_z=-\psi$，因此 $E_z=\partial_t\psi$（取 $\partial_z\Phi=0$），符号与另一些文献相反，但可观测速率绝对值一致。
+
+\subsection{先保留密度扰动，再消去它}
+先用有量纲量推导。定义 $\Psi=\psi/B_g$、$\Phi=eV/T_e$、$N=\ln(n/n_0)\simeq n_1/n_0$、$a=T_e/(eB_g)$，其中 $V$ 是静电势，$\phi=a\Phi$。$a$ 的单位为 $\mathrm{m^2/s}$，不要把它与电流片半厚度混用。最低阶电子垂直速度包括
+\begin{equation}
+\vel_{e\perp}=a\hat z\times\grad\Phi-a\hat z\times\grad N+u_{ez}\hat z\times\grad\Psi.
+\end{equation}
+第二项是电子抗磁漂移，第三项是沿倾斜磁场的平行流。电子平行动量中的抗磁漂移对流惯性，与同阶压力张量修正抵消后，电子惯性由 $D_E=\partial_t+a[\Phi,\,\cdot\,]$ 输运。这个抵消见Schep等正文第2844页；若直接令电子压力张量严格为 $p_e\mathsf I$，就丢失了它。
+
+将电子平行动量与电子连续性写成约化形式，令 $b_e=\mu_0n_0T_e/B_g^2$（它等于本章通常 $\beta_e$ 的一半），得
+\begin{align}
+D_E(\Psi-d_e^2\nabla_\perp^2\Psi)&=-a[\Psi,N],\label{eq:reducedelectron}\\
+D_EN&={a\over b_e}[\Psi,\nabla_\perp^2\Psi].\label{eq:reduceddensity}
+\end{align}
+第一式的惯性来自 $u_{ez}=-B_g\nabla_\perp^2\Psi/(\mu_0en_0)$；右端来自沿弯曲磁场的电子压强。第二式来自沿磁场的电流散度，虽 $\partial_z=0$，仍有 $\B\cdot\grad=B_g[\Psi,\,\cdot\,]$。
+
+冷离子极化漂移满足
+\begin{equation}
+\vel_{i,\rm pol}=-{1\over B_g\Omega_{ci}}D_E\grad_\perp V,
+\qquad\Omega_{ci}=eB_g/m_i.
+\end{equation}
+在保留的约化阶次内，把它代入离子连续性，得
+$D_E(N-\rho_{\rm sound}^2\nabla_\perp^2\Phi)=0$。
+若初始这个被输运的密度模为零，则
+\begin{equation}
+N=\rho_{\rm sound}^2\nabla_\perp^2\Phi={\omega\over\Omega_{ci}},
+\quad\omega=\nabla_\perp^2\phi,\quad
+\rho_{\rm sound}^2={a\over\Omega_{ci}}={m_iT_e\over e^2B_g^2}.
+\end{equation}
+若初始密度模不为零，必须另行演化，不能继续用纯两场系统。
+把这个关系代回式\eqref{eq:reduceddensity}，系数化简为
+$\Omega_{ci}a/(b_eB_g^2)=1/(\mu_0n_0m_i)$，即
+$D_E\omega=[\psi,\nabla_\perp^2\psi]/(\mu_0n_0m_i)$。
+把磁通再按Alfvén量纲归一化，得到
+\begin{equation}\partial_t\omega+[\phi,\omega]=[\psi,\nabla_\perp^2\psi],\qquad\omega=\nabla_\perp^2\phi,\label{eq:reducedvort}\end{equation}
+此处采用Alfvén归一化，省去 $\mu_0\rho$ 系数。电子惯性把磁通变为 $F=\psi-d_e^2\nabla_\perp^2\psi$；离子极化响应结合电子平行压强，产生声回旋半径修正，最终的两场系统为
+\begin{equation}\partial_tF+[\phi,F]=\rho_{\rm sound}^2[\omega,\psi].\label{eq:reducedflux}\end{equation}
+现在声回旋半径项不是凭空加入：式\eqref{eq:reducedelectron}乘 $B_g$ 后，右端正好是 $a[N,\psi]=(a/\Omega_{ci})[\omega,\psi]$。有限 $T_i$ 时还需陀螺平均与FLR修正，不能简单令 $T_e\to T_e+T_i$ 解决所有项。
+
+\subsection{两个被输运的广义磁通}
+定义 $G_\pm=F\pm d_e\rho_{\rm sound}\omega$ 及
+$\phi_\pm=\phi\pm(\rho_{\rm sound}/d_e)\psi$。由
+$[\psi,\nabla^2\psi]=-[\psi,F]/d_e^2$，将式\eqref{eq:reducedvort}、\eqref{eq:reducedflux}按 $\pm d_e\rho_{\rm sound}$ 组合，得到
+\begin{equation}\partial_tG_\pm+[\phi_\pm,G_\pm]=0.
+\end{equation}
+所以磁通 $\psi$ 可以重联，而 $G_\pm$ 的理想输运仍保留细丝化的不变量结构。这是约化无碰撞重联中的相空间式混合和细尺度形成的重要数学来源。冷电子极限两族合并为 $F$，需单独讨论其退化。\citep{Ottaviani1993,Schep1994,L049}
+
+\subsection{能量积分检验符号是否一致}
+周期或无通量边界下，定义
+\begin{equation}\mathcal H={1\over2}\int\left(|\grad\psi|^2+d_e^2(\nabla^2\psi)^2+|\grad\phi|^2+\rho_{\rm sound}^2\omega^2\right)\dd^2x.
+\end{equation}
+分部积分和括号恒等式 $\int f[g,h]=\int g[h,f]$ 使各耦合项两两抵消，故 $\dd\mathcal H/\dd t=0$。实际计算中这也是检验泊松括号实现、符号和边界条件的有效办法；正定能量不允许把电流细丝化的能量任意删去。
+
+\input{sections/tutorial/08_reduced}
+
+\section{从Sweet--Parker到Hall触发：可手算的尺度推导}
+\subsection{电阻长薄层的三个平衡}
+取半长 $L$、半厚 $\delta$，常密度不可压稳态：
+\begin{align}
+v_{\rm in}L&\simeq v_{\rm out}\delta &&\text{质量守恒},\\
+v_{\rm out}&\sim\VA &&\text{磁张力加速},\\
+E_z\sim v_{\rm in}B_{\rm up}&\sim\eta J_z\sim{\eta B_{\rm up}\over\mu_0\delta} &&\text{电场匹配}.
+\end{align}
+消去 $v_{\rm in}$ 得
+\begin{equation}\delta_{\rm SP}/L\sim S^{-1/2},\quad
+\R={E_z\over B_{\rm up}\VA}\sim S^{-1/2},\quad S={\mu_0L\VA\over\eta}.
+\end{equation}
+因此低电阻使层更薄、更长宽比悬殊，质量排出成为瓶颈。这个推导已假定单一稳态层；层若撕裂成许多磁岛，不能继续用全系统 $L$ 描述每个局地片。
+
+\subsection{Hall进入条件与磁岛改变的阈值}
+Hall相对理想项之比 $J/(en\VA)\sim d_i/\delta$，故反平行情形估计
+\begin{equation}\delta_{\rm SP}\lesssim d_i\quad\Rightarrow\quad S\gtrsim(L/d_i)^2.
+\end{equation}
+若磁岛链中的短片各自接近临界局地Lundquist数 $S_c$，设局地长度 $\ell/L\sim S_c/S$，则
+\begin{equation}\delta_{\rm local}\sim{\ell\over\sqrt{S_c}}\sim{L\sqrt{S_c}\over S},\quad
+\delta_{\rm local}\lesssim d_i\Rightarrow S\gtrsim(L/d_i)\sqrt{S_c}.
+\end{equation}
+这是可能先经磁岛再进入Hall阶段的尺度解释；$S_c$ 依赖噪声、边界、黏性和时间演化，不应固定为自然常数 $10^4$。\citep{Huang2011,Baalrud2011}
+
+\subsection{为何不能仅靠量纲推出普适0.1}
+从连续性可得 $\R\sim(\delta/L_{\rm out})(v_{\rm out}/\VA)$。Hall物理能改变耗散区开口、局地上游场和流出，因而不必沿用Sweet--Parker几何；但这个关系没有决定 $\delta/L_{\rm out}=0.1$。电子闭合、全局驱动、上游耗尽、磁岛合并和三维结构仍能改变速率。对模拟应分别报告峰值、准稳态平均、全局磁通处理率及其归一化。
+
+\input{sections/tutorial/09_sp}
+
+\section{撕裂线性问题：如何把模型变成增长率计算}
+以反向平衡 $B_x(y)=B_0\tanh(y/a)$ 为例，令扰动 $\tilde\psi(y)e^{ikx+\gamma t}$。远离共振面 $B_x=0$ 的理想外区满足
+\begin{equation}\tilde\psi''-\left[k^2+{B_x''\over B_x}\right]\tilde\psi=0,\qquad
+\Delta'=\left[{\tilde\psi'\over\tilde\psi}\right]_{0^-}^{0^+}.
+\end{equation}
+令 $s=y/a$、$K=ka$，在 $s>0$ 的衰减解可取 $e^{-Ks}(K+\tanh s)$。在 $s=0$，其对数导数为 $(1/K-K)/a$，对称匹配给出
+\begin{equation}\Delta'a=2(1/K-K).
+\end{equation}
+故 $ka<1$ 有正 $\Delta'$ 的撕裂驱动。外区只告诉我们有多少可释放磁能；增长率必须由内层的欧姆定律决定。电阻、Hall、惯性和压力闭合对应不同内层边界值问题。
+
+用本章两场模型线性化、记 $D=\dd^2/\dd y^2-k^2$、$F_0=\psi_0-d_e^2\psi_0''$，得
+\begin{align}
+\gamma D\tilde\phi&=ik(\psi_0'''\tilde\psi-\psi_0'D\tilde\psi),\\
+\gamma(1-d_e^2D)\tilde\psi+ikF_0'\tilde\phi&=ik\rho_{\rm sound}^2\psi_0'D\tilde\phi.
+\end{align}
+这是可以直接离散求广义特征值的具体问题。初学者可以先固定 $ka=0.5$，扫描 $d_e/a$ 与 $\rho_{\rm sound}/a$，检查边界远离内层后增长率是否稳定。不要把某个常 $\psi$、小 $\Delta'$ 的解析标度套到大 $\Delta'$ 或强Hall所有参数区。
+
+\input{sections/tutorial/09_tearing}
+
+\section{从局地层平衡推导Hall速率：每个输入量都要交代}
+这一节把常见的 $\R\sim d_i/L$ 拆开推导，以理解为什么同样的Hall方程会得到不同的系统尺寸依赖。以下为反平行、二维、常密度、准稳态的数量级分析，忽略系数为一量级的常数。电阻仍记为SI电阻率 $\eta$，磁扩散率 $D_\eta=\eta/\mu_0$；电子层半厚、半长分别为 $\delta_e,L_e$，局地上游重联场为 $B_u$。这不是任意三维电流片的定理。\citep{Malyshkin2008,Simakov2009}
+
+\subsection{先用Ampère与电子连续性消去速度}
+设Hall面外场量级为 $B_H\sim B_u$，其法向变化长度为 $\delta_e$。面内流出电流由Ampère定律给出
+\begin{equation}
+|J_{\rm out}|\sim{B_H\over\mu_0\delta_e}.
+\end{equation}
+在电子层内，若电子流出远大于离子流出，由 $\J=en(\vel_i-\vel_e)$ 得
+\begin{equation}
+|u_{e,\rm out}|\sim{B_H\over\mu_0en\delta_e}
+\sim {\VA d_i\over\delta_e},\qquad
+\VA={B_u\over\sqrt{\mu_0nm_i}},\quad
+\VA d_i={B_u\over\mu_0ne}.
+\end{equation}
+第二个等号必须使用同一局地密度和磁场，不能把一个取中心、另一个取远上游。常密度电子连续性给
+\begin{equation}
+u_{e,\rm in}L_e\sim u_{e,\rm out}\delta_e
+\quad\Longrightarrow\quad
+u_{e,\rm in}\sim\VA{d_i\over L_e}.
+\end{equation}
+电子层外仍近似电子磁冻结，所以
+\begin{equation}
+|E_z|\sim u_{e,\rm in}B_u
+\sim B_u\VA{d_i\over L_e},\qquad
+\R_{\rm local}\equiv{|E_z|\over B_u\VA}\sim {d_i\over L_e}.
+\label{eq:halllocalrate}
+\end{equation}
+注意该结果还用了 $B_H\sim B_u$；若此条件不成立，右端另有 $B_H/B_u$。这个图像在强Hall层可以由更完整的局地平衡支持，却不能单从存在Hall项就无条件假设。
+
+\subsection{电阻没有消失：它决定层厚及近似的失效点}
+在对称X点，标量压力和稳态电子惯性都不能独自支撑 $E_z$；若保留均匀电阻，
+\begin{equation}
+|E_z|=\eta|J_z(X)|\sim {D_\eta B_u\over\delta_e}.
+\end{equation}
+与式\eqref{eq:halllocalrate}相等，得到
+\begin{equation}
+\delta_e\sim{D_\eta L_e\over\VA d_i},\qquad
+|u_{e,\rm out}|\sim{\VA^2d_i^2\over D_\eta L_e}.
+\label{eq:hallthickness}
+\end{equation}
+因此，取 $D_\eta\to0$ 时，厚度趋零而电流、电子喷流趋于无穷。\emph{在删除电子惯性的方程内，速率不显含电阻；在真实等离子体中，不能一直沿着这个奇异极限走。}当 $\delta_e$ 接近 $d_e$，或压力非陀螺项不可忽略，必须更换模型或保留相应项。Hall项本身仍不在X点提供电阻热。
+
+若用超电阻替代电阻，感应方程中写 $-D_H\nabla^4\B$，$D_H$ 的单位为 $\mathrm{m^4/s}$；相应欧姆定律项是 $-\mu_0D_H\nabla^2\J$。于是
+\begin{equation}
+|E_z|\sim {D_HB_u\over\delta_e^3},\qquad
+\delta_e\sim\left({D_HL_e\over\VA d_i}\right)^{1/3}.
+\end{equation}
+厚度的电阻指数由1变成超电阻指数 $1/3$，而在给定 $L_e,B_u$ 的条件下，式\eqref{eq:halllocalrate}仍不显含耗散系数。但是 $L_e$ 可能随耗散变化；\citet{Sullivan2009}的数值研究正说明不能把“不显含”直接当成“全过程不依赖”。
+
+\subsection{有限电子惯性的稳态支为何又出现电阻依赖}
+\citet{Malyshkin2009}在保持标量压力和稳态对称性的同时恢复电子漂移惯性。在其快支，电子层半厚约 $d_e$。代回X点电阻平衡，再与Hall输运率匹配，得到
+\begin{align}
+|E_z|&\sim {D_\eta B_u\over d_e},\\
+{D_\eta B_u\over d_e}&\sim{B_u\VA d_i\over L_e}
+\quad\Longrightarrow\quad
+L_e\sim {\VA d_ed_i\over D_\eta}.
+\end{align}
+此时电子喷流约 $\VA d_i/d_e=B_u/\sqrt{\mu_0nm_e}$，不再无限增大；代价是速率显式依赖有效电阻，层长也受它选择。当层长超过可用系统长度，假设就失效，不能继续用该支。该文把有效电阻的微观来源留给动理学；它没有用这些标量方程推导真正的碰撞算子。
+
+\subsection{局地率与全局率的换算，以及启动时间}
+设远上游参考量为 $B_0,n_0$，局地量为 $B_u,n_u$。同一个 $E_z$ 有两种不同归一化：
+\begin{equation}
+\R_0={|E_z|\over B_0V_{\!A0}}
+=\R_u\left({B_u\over B_0}\right)^2
+\sqrt{n_0\over n_u}.
+\end{equation}
+所以 $\R_u$ 恒定并不意味着 $\R_0$ 恒定。宽电流片中 $B_u$ 随磁通输入增长，是 \citet{Shay2004} 的关键诊断。
+
+为了进一步看出启动问题，假设已进入快速阶段，$u_{\rm in}=a\VA(B_u)$、$a$ 为常数，并假设上游磁场随输入位移 $\xi$ 线性增加：
+\begin{equation}
+B_u(\xi)=B_{u0}+{B_0-B_{u0}\over\xi_0}\xi.
+\end{equation}
+令密度不变，对 $\dd\xi/\dd t=aB_u/\sqrt{\mu_0nm_i}$ 分离变量，
+\begin{align}
+t_{\rm fast}&={\sqrt{\mu_0nm_i}\over a}
+\int_0^{\xi_0}{\dd\xi\over B_{u0}+(B_0-B_{u0})\xi/\xi_0}\\
+&={\xi_0\over aV_{\!A0}}{B_0\over B_0-B_{u0}}
+\ln{B_0\over B_{u0}}.
+\end{align}
+当 $B_{u0}\ll B_0$，对小初始局地场的依赖只是对数。\textbf{但这个积分从“已经进入快速阶段”开始，启动前漫长的电流片形成、撕裂和离子加速时间完全没有包含。}把它作为整个事件的总时长公式，会删掉论文尚未解决的问题。
+
+\section{局地热流闭合为何不是动理学的唯一替代}
+令 $\mathsf A=\mathsf P-p\mathsf I$，$p=\operatorname{tr}\mathsf P/3$。几种名称相近的十矩闭合在方程上实际不同。固定 $v_t,k_0$，只保留闭合源，局地松弛为
+\begin{equation}
+\partial_t\mathsf A=-\nu\mathsf A,\quad \nu=v_t|k_0|,
+\quad\Longrightarrow\quad\mathsf A(t)=e^{-\nu t}\mathsf A(0).
+\end{equation}
+所有空间波数以同一频率衰减。压力梯度型则取
+\begin{equation}
+(\grad\cdot\mathsf Q)_{ij}=-D\nabla^2 A_{ij},\quad
+D={\chi v_t\over |k_0|}>0,
+\quad\Longrightarrow\quad
+\partial_t\widehat A_{ij}=-Dk^2\widehat A_{ij}.
+\end{equation}
+它使短波衰减更快，而均匀各向异性 $k=0$ 不衰减。非局地Landau型近似的衰减算子则与 $v_t|k|$ 成正比，通常需要Hilbert或Fourier算子。这三个谱符号分别为常数、$k^2$、$|k|$，不可能仅靠一个 $k_0$ 在任意宽谱内完全相等。\citep{Wang2015,Ng2017,L256,E552}
+
+\subsection{取迹是最简单的物理检查}
+因为 $\operatorname{tr}\mathsf A=0$，上述局地松弛和偏离各向同性的Laplacian都满足
+\begin{equation}\sum_i(\grad\cdot\mathsf Q)_{ii}=0.
+\end{equation}
+因此它们在该近似中不通过热流散度直接改变压力迹，只改变分量分配和空间结构；温度仍可经压缩、压力应变等项变化。尤其是 $\mathsf P=p(\vct x)\mathsf I$ 时，即使标量温度不均匀，此偏离张量为零，闭合源也为零。这与普通Fourier热传导不同。故不能仅凭“温度梯度驱动”这个标题就把它当作对所有温度梯度的完整热传导。
+
+\citet{Ng2020}讨论的温度梯度型进一步改变了驱动量，不能把它与 \citet{L256,E552} 的压力偏离量原样互换。变密度时，$\nabla^2\mathsf P$ 与 $n\nabla^2(\mathsf P/n)$ 不相同；后者展开会出现密度梯度交叉项。忽略这一区别会在不对称电流片中引入系统差异。
+
+\subsection{参数与质量比怎样相互补偿}
+若 $v_{ts}=\sqrt{T_s/m_s}$、$k_{0s}=C/d_s$，则
+\begin{equation}
+{v_{ts}\over k_{0s}}={1\over C}\sqrt{T_s\over\mu_0n_0q_s^2}.
+\end{equation}
+在固定 $T_s,n_0,C$ 下，梯度扩散系数中的显式质量依赖抵消。这说明为何提高质量比并不必然增强该闭合的热流作用；但实际温度、流动和不稳定性仍会随质量比改变，不能由这一个消去式推出整个重联过程质量比无关。
+
+\subsection{哪些动理学信息已经丢失}
+取前十个矩后，不同的速度分布可以具有完全相同的密度、流速和压力张量，却有不同热流、高能尾部和共振粒子数。闭合为这些不同分布指定同一个高阶响应，因此是信息上的近似，而不只是数值精度问题。磁岛反弹或某个LHDI增长率吻合是有价值的检验，但不能据此推断俘获粒子、非热谱或所有波数的Landau阻尼都已恢复。对这些量应比较分布函数，或把关键区域与动理学模型耦合。
+
+\section{三维重联为何沿电流片传播：从Faraday定律推导}
+二维重联率和三维重联区沿$z$方向的扩展速度是不同诊断。这里研究本来只在有限$z$区间发生的重联，怎样在相邻切面产生新的X型拓扑。假定前沿的$z$梯度主导，Faraday定律给
+\begin{equation}
+\partial_tB_y=\partial_xE_z-\partial_zE_x\simeq-\partial_zE_x.
+\end{equation}
+对于$J_z>0$、离子近静止、电子携带电流的反平行情形，
+\begin{equation}
+ u_{ez}=-\frac{J_z}{en},\qquad E_x^{\rm Hall}=-\frac{J_zB_y}{en}.
+\end{equation}
+若前沿附近$J_z/n$近似不变，则
+\begin{equation}
+ \partial_tB_y-\frac{J_z}{en}\partial_zB_y=0,
+ \quad B_y(z,t)=F\left(z+\frac{J_z}{en}t\right).
+\end{equation}
+因此图样向$-z$传播，速度是电子速度，而不是正电流方向。由前方尚未重联电流片的半厚$a_0$估算$J_z\sim B_u/(\mu_0a_0)$，得
+\begin{equation}
+ |v_{\rm spread}|\sim \frac{B_u}{\mu_0ena_0}
+ =V_{\!A,u}\frac{d_{i,u}}{a_0}.
+\end{equation}
+这里$a_0$不能未经论证就换成已经形成的电子扩散层厚度。若离子也承担电流，两种粒子的速度及参考系都必须重新指定。
+
+强导引场$B_g$下，另一条机制只需MHD磁张力。忽略其他项，写
+\begin{equation}
+ \partial_tu_y\simeq\frac{B_g}{\mu_0\rho}\partial_zB_y,
+ \qquad E_x\simeq-u_yB_g,\qquad
+ \partial_tB_y\simeq B_g\partial_zu_y.
+\end{equation}
+消去$u_y$得到波动方程
+\begin{equation}
+ \partial_t^2B_y=\frac{B_g^2}{\mu_0\rho}\partial_z^2B_y,
+ \qquad v_{\rm spread}\simeq\pm\frac{|B_g|}{\sqrt{\mu_0\rho}}.
+\end{equation}
+双向Alfvén传播的来源因而与无导引场的电子单向平流不同。对无导引场、无整体$z$流的电阻MHD，仍有$E_x=\eta J_x\simeq- D_\eta\partial_zB_y$，所以
+\begin{equation}
+ \partial_tB_y\simeq D_\eta\partial_z^2B_y.
+\end{equation}
+这给出扩散长度$\ell\sim\sqrt{D_\eta t}$；在给定前沿宽$L_{z0}$上可估$|v|\sim D_\eta/L_{z0}$，不能说严格不存在传播。
+
+\note{产生微弱$B_y$只是播下拓扑扰动；之后撕裂不稳定性增长到明显重联需要时间。当前方片厚不均匀时，局地增长延迟也不均匀，图样传播速度不能直接充当快重联启动前沿速度。以上推导重建了SI符号；Arencibia等的v1预印本式(1)、(2)、(7)有与其正文传播方向不一致的符号，本报告不照抄。\citep{Shepherd2012,L275}}
+
+\section{有限离子回旋半径：从环平均到三场陀螺流体}
+\subsection{为何导心密度不等于粒子密度}
+强导引场、低频$\omega\ll\Omega_i$下，把粒子位置分成导心$\vct R$与回旋位移$\vct\rho(\theta)$。对一个Fourier势$\phi_{\vct k}e^{\mathrm i\vct k\cdot\vct x}$，沿回旋环平均得到
+\begin{equation}
+ \langle\phi(\vct R+\vct\rho)\rangle_\theta
+ =\phi_{\vct k}e^{\mathrm i\vct k\cdot\vct R}
+ \frac1{2\pi}\int_0^{2\pi}e^{\mathrm i k_\perp\rho\cos\theta}\dd\theta
+ =J_0(k_\perp\rho)\phi_{\vct k}e^{\mathrm i\vct k\cdot\vct R}.
+\end{equation}
+不同回旋半径的离子因而感受到不同的势。再取速度矩时，会出现热平均的$J_0$及$J_0^2$。例如Maxwell垂直分布的$J_0^2$平均为
+$\Gamma_0(b)=I_0(b)e^{-b}$，其中$b=k_\perp^2r_i^2$、$r_i=\sqrt{T_i/m_i}/\Omega_i$。有限数量的矩不能保留全部回旋半径依赖；陀螺流体还必须选择闭合。
+
+下面重建Grasso等实际使用的等温三场模型。这里$r_i$表示离子热回旋半径，避免与本章前面质量密度$\rho_i$混淆。常用的能量相容算子选择及其Pad\'e近似为
+\begin{equation}
+ \Gamma_0\simeq(1-r_i^2\nabla_\perp^2)^{-1},\qquad
+ \Gamma_1\simeq(1-r_i^2\nabla_\perp^2/2)^{-1}.
+\end{equation}
+$\Gamma_1$在该闭合中近似$\Gamma_0^{1/2}$；这是一种模型选择，不是任意分布下精确的速度积分。它们给出正确的低$b$展开，而对任意大$b$的精确动力学并无保证。
+
+\subsection{极化关系及冷离子极限}
+采用Alfvén归一化，以下$a$是平行矢势$A_z$，与前节$\psi$的符号相反；$N_i$为离子导心密度扰动，$N_e$为电子密度扰动。除去常数背景，准中性条件包含离子极化密度：
+\begin{equation}
+ N_e=\Gamma_1N_i+\frac{\Gamma_0-1}{r_i^2}\phi
+ =\Gamma_1N_i+\frac{\nabla_\perp^2}{1-r_i^2\nabla_\perp^2}\phi.
+ \label{eq:gyro_pol}
+\end{equation}
+第二个等号由$(1-r_i^2\nabla^2)^{-1}-1=
+ r_i^2\nabla^2(1-r_i^2\nabla^2)^{-1}$得到。于是$r_i\to0$时
+$N_e=N_i+\nabla^2\phi$，回到冷离子极化关系。此处准中性不是删掉极化电荷的动力学作用，而是把导心到粒子密度的变换纳入约束。
+
+导心随陀螺平均势$\Phi=\Gamma_1\phi$平流；电子连续性保留平行电流散度；电子平行动量保留惯性和等温压强。二维时三式为
+\begin{align}
+ \partial_tN_i+[\Phi,N_i]&=0,\\
+ \partial_tN_e+[\phi,N_e]&=[a,\nabla_\perp^2a],\\
+ \partial_tF+[\phi,F]&=-\rho_{\rm sound}^2[a,N_e],
+ \qquad F=a-d_e^2\nabla_\perp^2a.
+\end{align}
+例如电子连续性的右端来自场线弯曲产生的平行导数，与Ampère关系$J_z=-\nabla^2a$组合；电子惯性则把$a$的随体导数改成$F$。最后与式\eqref{eq:gyro_pol}联立，才是闭合系统。离子平行流在此三场截断中忽略；包含它、温度与热流时将得到更多场的模型，不能仅修改一个系数来代替。
+
+\subsection{相似的磁岛为何有不同的电场细结构}
+若$N_i$非均匀部分很小，式\eqref{eq:gyro_pol}可反解为
+\begin{equation}
+ \phi=\nabla^{-2}N_e-r_i^2N_e,
+ \qquad \phi_{\vct k}=-\left(k_\perp^{-2}+r_i^2\right)N_{e,\vct k}.
+\end{equation}
+冷离子时，每个高波数密度模都被$k^{-2}$抑制；热离子时新增$-r_i^2N_e$，不再抑制高波数。另一方面
+$\Phi_{\vct k}=\phi_{\vct k}/(1+r_i^2k_\perp^2/2)$仍受平滑。因此静电势、电子流和电场可以形成细丝，而离子导心看到的势仍光滑。将上述$\phi$代入电子方程还得到
+\begin{align}
+ \partial_tN_e+[\nabla^{-2}N_e,N_e]&=[a,\nabla^2a],\\
+ \partial_tF+[\nabla^{-2}N_e,F]
+ +(\rho_{\rm sound}^2+r_i^2)[a,N_e]
+ +r_i^2d_e^2[N_e,\nabla^2a]&=0.
+\end{align}
+只有最后一项可忽略时，把$\rho_{\rm sound}^2$换成
+$\rho_{\rm sound}^2+r_i^2$才近似描述部分热离子效应；它不能复制全部非线性结构。
+
+该模型同样有
+$G_\pm=F\pm d_e\rho_{\rm sound}N_e$，随
+$\phi_\pm=\phi\pm(\rho_{\rm sound}/d_e)a$输运，另有$N_i$随$\Phi$输运。其守恒能量为
+\begin{equation}
+ H=\frac12\int\left[|\nabla a|^2+d_e^2(\nabla^2a)^2
+ +\rho_{\rm sound}^2N_e^2+\Phi N_i-\phi N_e\right]\dd^2x.
+\end{equation}
+利用算子的自伴性及周期边界分部积分可检验守恒。这里密度平方及极化能的增长是约化模型的可逆能量转移，不自动等于真实粒子的不可逆加热。\citep{E469}
+
+\input{sections/tutorial/10_flr}
+
+\section{两个电子群如何重建热流：从中心矩的平移逐项推导}
+本节说明一种新近提出的多流体闭合思路。它把\emph{同一种电子}分为两群，而不是把离子和电子各看作一个流体。下面的矩恒等式是精确的；进一步忽略每群自己的三阶矩才是模型近似。2026年的验证限于固定离子背景，不能直接当成通常电子—离子双流体的成熟替代。\citep{F635}
+
+\subsection{先求每群相对于总平均速度的偏移}
+设$f=f_1+f_2$，$n=n_1+n_2$，各群质量均为$m_e$。定义
+\begin{equation}
+ \vel=\frac{n_1\vel_1+n_2\vel_2}{n},\qquad
+ \Delta\vel=\vel_1-\vel_2,\qquad \Delta n=n_1-n_2.
+\end{equation}
+由此直接相减得到
+\begin{equation}
+ \vct w_1=\vel_1-\vel=\frac{n_2}{n}\Delta\vel,
+ \qquad \vct w_2=-\frac{n_1}{n}\Delta\vel,
+ \qquad n_1\vct w_1+n_2\vct w_2=0.
+\end{equation}
+对第$\alpha$群，粒子相对于总平均的随机速度为
+$\vct c=\vct v-\vel=\vct c_\alpha+\vct w_\alpha$，且
+$\int\vct c_\alpha f_\alpha\dd^3v=0$。这一步是所有交叉项化简的关键。
+
+\subsection{二阶中心矩：总压力还包括两束的相对动能}
+展开$m_e\sum_\alpha\int(c_{\alpha i}+w_{\alpha i})
+(c_{\alpha j}+w_{\alpha j})f_\alpha\dd^3v$，一次随机速度项积分为零，得到
+\begin{equation}
+ P_{ij}=P_{1ij}+P_{2ij}
+ +m_e\frac{n_1n_2}{n}\Delta u_i\Delta u_j.
+ \label{eq:mixture_pressure}
+\end{equation}
+最后一项的迹除以二，是相对于总平均流的束间动能。若直接将$P_1+P_2$称作总电子压力，就会遗漏这部分各向异性。
+
+\subsection{三阶中心矩：闭合缺失的信息可以转为群间运动}
+继续展开三个因子。三个随机速度给出$Q_\alpha$；两个随机速度和一个$w$给出三项$w_iP_{jk}$；一个随机速度项为零；三个$w$给出$m_en_\alpha w_iw_jw_k$。因此
+\begin{align}
+ Q_{ijk}={}&Q_{1ijk}+Q_{2ijk}
+ +\sum_{\alpha=1}^2
+ \left(w_{\alpha i}P_{\alpha jk}+w_{\alpha j}P_{\alpha ik}
+       +w_{\alpha k}P_{\alpha ij}\right)\nonumber\\
+ &+m_e\sum_{\alpha=1}^2n_\alpha w_{\alpha i}w_{\alpha j}w_{\alpha k}.
+\end{align}
+再定义温度张量$T_{\alpha ij}=P_{\alpha ij}/n_\alpha$（能量单位），
+$\Delta T_{ij}=T_{1ij}-T_{2ij}$，代入上节的$w_1,w_2$：
+\begin{align}
+ Q_{ijk}={}&Q_{1ijk}+Q_{2ijk}
+ +\frac{n_1n_2}{n}
+ \left(\Delta u_i\Delta T_{jk}+\Delta u_j\Delta T_{ik}
+                       +\Delta u_k\Delta T_{ij}\right)\nonumber\\
+ &-m_e\frac{n_1n_2\Delta n}{n^2}
+       \Delta u_i\Delta u_j\Delta u_k.
+ \label{eq:mixture_heat}
+\end{align}
+例如立方项系数来自
+$n_1(n_2/n)^3-n_2(n_1/n)^3
+=-n_1n_2\Delta n/n^2$。热流向量仍是$q_i=Q_{ijj}/2$，不要把三阶张量与向量混用。
+
+即使每群$Q_\alpha$很小，总$Q$也可以很大，因为流入两群在扩散区交会后具有不同的速度与温度。额外演化一组十矩可以储存这些信息，部分取代单群中困难的热流闭合。但这并没有终结矩层级：若每一群内部再次分成多个束，$Q_\alpha$又变大；若人为标签产生强密度梯度，各群近似还可能产生错误膨胀。群标签如何选择、分裂和合并本身成为新模型的一部分。
+
+\section{Hall怎样改变撕裂临界片厚：把局地增长率换算到全局}
+这里区分三件事：线性本征增长率、形成中的片何时破裂、以及非线性重联磁通率。下列推导只直接回答第一件事，并给第二件事一个候选临界尺度。\citep{L236,L262}
+
+设$a$是片半厚、$L$是宏观长度，$A=a/L$。用各自长度定义
+\begin{equation}
+ S_a=\frac{a\VA}{D_\eta}=AS,\quad
+ S=\frac{L\VA}{D_\eta},\quad h_a=\frac{d_i}{a}=\frac{h}{A},\quad
+ h=\frac{d_i}{L},\quad \tau_a=A\tau_A.
+\end{equation}
+经典Harris撕裂最快模的内层为
+$\delta_\eta/a\sim S_a^{-1/4}$，故Hall进入\emph{内层}的参数是
+\begin{equation}
+ P_{ha}=\frac{d_i}{\delta_\eta}\sim h_a S_a^{1/4}
+        =hS^{1/4}A^{-3/4}.
+\end{equation}
+即使$d_i<a$，仍可有$d_i>\delta_\eta$。这解释了为什么判断Hall作用不能只看初始片宽。
+
+\subsection{先看无Hall情形，再引入有证据支持的修正}
+经典最快增长满足$\gamma\tau_a\sim S_a^{-1/2}$，故
+\begin{equation}
+ \gamma\tau_A=A^{-1}(AS)^{-1/2}=S^{-1/2}A^{-3/2}.
+\end{equation}
+令$A=S^{-\alpha}$，要使$\gamma\tau_A$不随$S$趋于零或无穷，需要
+$-1/2+3\alpha/2=0$，即$\alpha=1/3$。这就是该平衡的“理想撕裂”临界长宽比。这里“理想”指阿尔芬量级的增长时间；内层电阻仍非零。
+
+Hall情形中，简单内层量纲匹配若忽略Hall对匹配参数$\Delta'$的改变，会给出增长对$P_{ha}$的$2/3$幂。完整数值本征求解得到的拟合则为
+\begin{equation}
+ \gamma\tau_a\simeq C S_a^{-1/2}P_{ha}^{\zeta},
+ \qquad C\simeq0.41,\quad\zeta\simeq0.564,
+ \qquad P_{ha}\gg1,\quad h_a<1.
+\end{equation}
+所以这里的$\zeta$是\emph{有限参数范围的数值拟合输入}，不能伪装为从基本方程严格推出的有理数指数。
+
+逐项换算到宏观时间，得到
+\begin{equation}
+ \gamma\tau_A=C S^{-1/2+\zeta/4}h^{\zeta}
+ A^{-3/2-3\zeta/4}.
+\end{equation}
+定义以经典临界片内层为参照的$P_H=hS^{1/2}$。代入
+$h=P_HS^{-1/2}$后变成
+\begin{equation}
+ \gamma\tau_A=C S^{-1/2-\zeta/4}P_H^\zeta
+ A^{-(3/2)(1+\zeta/2)}.
+\end{equation}
+取$A=S^{-\alpha}P_H^\beta$，分别令$S$与$P_H$的指数为零，可得
+\begin{equation}
+ \alpha=\frac13,\qquad
+ \beta=\frac{2\zeta}{3(1+\zeta/2)}\simeq0.29,
+ \qquad
+ \boxed{\frac{a}{L}\sim S^{-1/3}(h\sqrt S)^{0.29}}.
+\end{equation}
+等价地，$a/L\sim h^{0.29}S^{-0.19}$。Hall增强增长，使这组理想化静态片可以在较厚时具有宏观阿尔芬增长率。要满足推导中的$h_a<1$，还须$a/L>h$；约要求
+$S^{-1/2}\lesssim h\lesssim S^{-0.27}$。跨入$a<d_i$后，不能原封不动延长这个标度。
+
+\subsection{次级片的时钟为什么更快}
+次级片有自身的$L_*,B_*,\rho_*$，因而
+$\tau_{A*}=L_*\sqrt{\mu_0\rho_*}/B_*$。即使每一级都满足
+$\gamma_*\tau_{A*}\sim1$，用初级时间表示仍有
+\begin{equation}
+ \gamma_*\tau_A=(\gamma_*\tau_{A*})\frac{\tau_A}{\tau_{A*}}\gg1.
+\end{equation}
+这是时空尺度缩小带来的增长加速，不单独证明喷流超过局地$\VA$。类似地，若定义
+$\gamma_\Phi=\dot\Phi/\Phi$，它与通常的无量纲通量率
+$R=\dot\Phi/(B_{\rm up}\VA)$之比还包含随时间变化的磁通$\Phi$。
+真实动态片的破裂还要比较增长积分、种子幅度、变薄速度及喷流带走扰动的时间；只求静态本征值不足以确定触发时刻。
+
+\section{不对称上游：由通量守恒推导混合速度与偏移}
+取二维、准稳态、反平行的层，半长$L$、总厚$2\delta$。两侧反转场的\emph{大小}为$B_1,B_2>0$，密度$\rho_1,\rho_2$，流入速度大小$v_1,v_2$。下游量记为$\rho_o,v_o$。这一层面的约束可用于MHD或Hall层外侧，但必须选在所用流体近似冻结的边界；不能跨进电子非理想层后仍机械使用离子冻结速度。\citep{Cassak2007,Cassak2008}
+
+\subsection{三条守恒关系及其近似}
+准稳态Faraday定律使面外电场近似均匀，因此
+\begin{equation}
+ E_z=v_1B_1=v_2B_2.
+ \label{eq:asym_flux}
+\end{equation}
+每单位面外长度的质量守恒为
+\begin{equation}
+ L(\rho_1v_1+\rho_2v_2)\sim2\delta\rho_o v_o.
+ \label{eq:asym_mass}
+\end{equation}
+在磁张力主导流出、忽略上下游压力功差与流入动能的\emph{标度估计}中，磁能释放与下游动能给出
+\begin{equation}
+ L\left(\frac{B_1^2}{2\mu_0}v_1+\frac{B_2^2}{2\mu_0}v_2\right)
+ \sim2\delta\left(\frac{\rho_o v_o^2}{2}\right)v_o.
+\end{equation}
+这里保留传统标度的约定系数，并不声称把完整Poynting通量与焓通量严格逐项等同。压缩、加热、各向异性和下游背压强时应回到完整能量与动量方程。除以式\eqref{eq:asym_mass}再代入式\eqref{eq:asym_flux}，得到
+\begin{align}
+ v_o^2&\sim\frac{B_1^2v_1+B_2^2v_2}
+ {\mu_0(\rho_1v_1+\rho_2v_2)}\nonumber\\
+ &=\boxed{\frac{B_1B_2(B_1+B_2)}{\mu_0(\rho_1B_2+\rho_2B_1)}}.
+\end{align}
+两个检查很有用：$B_1=B_2$时取两侧密度的算术平均；$\rho_1=\rho_2$时场强取几何平均$\sqrt{B_1B_2}$。只选某一侧的阿尔芬速度通常不正确。
+
+\subsection{流出密度需要额外假设}
+将两条等磁通$\Phi$、等长度的上游磁管并合。其横截面积$A_1=\Phi/B_1$、$A_2=\Phi/B_2$。若混合过程总容积近似不变，则
+\begin{equation}
+ \rho_o\sim\frac{\rho_1A_1+\rho_2A_2}{A_1+A_2}
+ =\frac{\rho_1B_2+\rho_2B_1}{B_1+B_2}.
+\end{equation}
+这不是仅由质量守恒唯一决定的结果，而是加入了容积近不变的闭合。由质量守恒可进一步得
+\begin{equation}
+ E_z\sim\frac{2\delta}{L}
+ \frac{\rho_o v_o}{\rho_1/B_1+\rho_2/B_2}
+ \sim\frac{2\delta}{L}\frac{B_1B_2}{B_1+B_2}v_o.
+\end{equation}
+到此仍有未知的$\delta/L$。若用均匀电阻闭合，可导出
+$E_z\sim\sqrt{D_\eta v_o B_1B_2/L}$；若研究Hall重联，必须另求离子层和电子层几何，不能把$\delta/L=0.1$当作上述守恒式的数学结论。
+
+\subsection{磁X点和停滞点为何分开}
+把上游边界到X点的距离记为$\delta_{X1},\delta_{X2}$，到流停滞点的距离为$\delta_{S1},\delta_{S2}$，两组之和都为$2\delta$。分别对X点两边做能量通量标度、对停滞点两边做质量通量标度，在下游通量密度近均匀的假设下得到
+\begin{equation}
+ \frac{\delta_{X2}}{\delta_{X1}}
+ \sim\frac{B_2^2v_2}{B_1^2v_1}=\frac{B_2}{B_1},\qquad
+ \frac{\delta_{S2}}{\delta_{S1}}
+ \sim\frac{\rho_2v_2}{\rho_1v_1}=\frac{\rho_2B_1}{\rho_1B_2}.
+\end{equation}
+除非两侧$B^2/\rho$相等，这两比值一般不同，故两个点分开。在这个近似中，停滞点相对X点偏向阿尔芬速度较大的一侧，较小一侧的等离子体穿越X点。Hall系统中离子、电子的速度又不同，因而两个物种停滞点也可能分开。
+
+\section{黏性与超电阻：为什么计算系数会改变态的选择}
+\subsection{大磁Prandtl数的Sweet--Parker标度}
+定义运动黏度$\nu$、磁扩散率$D_\eta$与$P_m=\nu/D_\eta$。不可压层的连续性和电阻平衡仍给
+$v_{\rm in}L\sim v_o\delta$、$v_{\rm in}\sim D_\eta/\delta$，即
+$\delta^2\sim D_\eta L/v_o$。流出方向的惯性、磁张力、横向黏性量级为
+\begin{equation}
+ \frac{v_o^2}{L}\sim\frac{\VA^2}{L}-\frac{\nu v_o}{\delta^2}.
+\end{equation}
+代入$\delta^2$，可得
+\begin{equation}
+ v_o\sim\frac{\VA}{\sqrt{1+P_m}},\qquad
+ \frac{\delta}{L}\sim S^{-1/2}(1+P_m)^{1/4},\qquad
+ \frac{v_{\rm in}}{\VA}\sim S^{-1/2}(1+P_m)^{-1/4}.
+\end{equation}
+所以$P_m\gg1$且$L,B,\rho$不变时，$v_{\rm in}\propto D_\eta^{3/4}\nu^{-1/4}$，并非总是$D_\eta^{1/2}$。实际岛合并还会改变层长、上游场及驱动，拟合指数可有偏离。\citep{Stanier2013}
+
+\subsection{四阶磁扩散的热项不能漏掉}
+若欧姆定律加$-\eta_H\nabla^2\J$，常系数且$\nabla\cdot\B=0$时，感应方程对应
+$-(\eta_H/\mu_0)\nabla^4\B$。其电磁能转换满足
+\begin{equation}
+ -\eta_H\J\cdot\nabla^2\J
+ =\eta_H\sum_{i,j}(\partial_iJ_j)^2
+ -\eta_H\nabla\cdot\left(\sum_jJ_j\nabla J_j\right).
+\end{equation}
+周期边界或边界通量为零时，积分后的磁能损失非负；若要求封闭系统总能守恒，必须把这部分转移到内能，并妥善处理表面通量。局部$-\J\cdot\nabla^2\J$不是每一点都非负，不能与体积积分混用。MAST算例保留了相应加热，因而减小$\eta_H$却增强电流梯度时，局地温度和$\rho_s$仍可能增大；参数变化并非仅仅缩小一个数值截断尺度。\citep{Stanier2013}
+
+\section{固定温比Hall模型：输运速度与能量一致的惯性近似}
+这一节说明一个容易忽略的模型差异：只写“保留电子惯性”并不足以确定方程。以下采用\citet{L296}接收稿的无量纲量：$\rho$以参考离子质量密度归一，$\vct v\simeq\vel_i$，$\vct j=\nabla\times\B$，$d_i,d_e$已除以参考长度。这里的$\rho$不是前面精确质心转换中的两物种总密度。
+
+\subsection{总压强并不总随离子速度输运}
+令固定温比$\alpha_T=T_i/T_e$，则
+$p_i=\alpha_Tp_e$、$p=(1+\alpha_T)p_e$。若两个物种采用相同$\gamma$，各自标量压力方程为
+\begin{equation}
+ \partial_tp_s+\nabla\cdot(p_s\vel_s)
+ +(\gamma-1)p_s\nabla\cdot\vel_s
+ =(\gamma-1)(Q_s-\nabla\cdot\vct q_s).
+\end{equation}
+固定比值可理解为加了维持温比的能量交换约束；它不等价于自由演化两个温度。把两式相加，因$\alpha_T$为空间和时间常数，有
+\begin{align}
+ p_i\vel_i+p_e\vel_e&=p\vct v_*,\\
+ p_i\nabla\cdot\vel_i+p_e\nabla\cdot\vel_e&=p\nabla\cdot\vct v_*,\\
+ \vct v_*&=\frac{\alpha_T\vct v+\vel_e}{1+\alpha_T}
+ =\vct v-\frac{d_i\vct j}{(1+\alpha_T)\rho}.
+\end{align}
+于是总压强的闭合方程为
+\begin{equation}
+ \partial_tp+\nabla\cdot(p\vct v_*)
+ +(\gamma-1)p\nabla\cdot\vct v_*
+ =(\gamma-1)(Q-\nabla\cdot\vct q).
+\end{equation}
+把$\vct v_*$随意换成$\vct v$会改变内能输运。若电子焓输运重要，这一差别不能用“总压强方程”五个字略过。
+
+\subsection{为什么接收稿改写了电子惯性}
+在此前推导的精确两物种方程中，电子惯性来自
+$-(m_e/e)D_e\vel_e$。若同时把质心速度近似为离子速度、删掉相应动量漂移项，又原样保留该惯性项，原来的精确能量抵消未必成立。Chacón接收稿使用另一种\emph{有明确能量目标的近似系统}：
+\begin{equation}
+ \E=-\vel_e\times\B+\eta\vct j
+ -\frac{d_i}{\rho}(\nabla p_e+\nabla\cdot\bm{\Pi}_e)
+ +d_e^2D_e\left(\frac{\vct j}{\rho}\right),
+ \qquad \vel_e=\vct v-d_i\vct j/\rho.
+ \label{eq:chacon_ohm}
+\end{equation}
+它不是精确双流体广义欧姆定律的另一种无条件恒等写法。验证其设计目的，先令$\vct w=\vct j/\rho$。由$\nabla\cdot\vct j=0$和离子连续性，可得电子连续性
+$\partial_t\rho+\nabla\cdot(\rho\vel_e)=0$。于是
+\begin{align}
+ \vct j\cdot D_e\vct w
+ &=\rho\vct w\cdot D_e\vct w=\rho D_e(w^2/2)\nonumber\\
+ &=\partial_t(\rho w^2/2)+\nabla\cdot(\rho\vel_e w^2/2).
+ \label{eq:current_energy}
+\end{align}
+故式\eqref{eq:chacon_ohm}的惯性功恰好可记为
+$\partial_t(d_e^2j^2/2\rho)+\nabla\cdot(\vel_e d_e^2j^2/2\rho)$。
+加上动量方程点乘$\vct v$、Poynting定理和上述内能方程，并把电阻／黏性损失回收到热项，可得形式上的守恒密度
+\begin{equation}
+ \mathcal E=\frac{\rho v^2}{2}+\frac{B^2}{2}
+ +\frac{p}{\gamma-1}+\frac{d_e^2j^2}{2\rho}.
+\end{equation}
+其能流包括$\E\times\B$、离子体动能通量、热流、应力功、
+$\gamma p\vct v_*/(\gamma-1)$和电子漂移动能通量。
+这解释了为什么压力输运速度和惯性写法必须作为同一个模型整体检验。
+
+\subsection{连续方程的定理与实际算法还差两步}
+该论文形式动量方程保留两物种应力，实际实现却忽略较小的电子应力；GEM比较另把压力输运速度换成$\vct v$以匹配HiFi设置。所以形式能量定理不等于代码逐步精确保能。论文实际检验的是有限但很小的能量误差，而且全部测试设$d_e=0$，并未由GEM验证有限电子惯性版本。
+
+矢势实现取$\B=\nabla\times\vct A$、Weyl规范$\Phi=0$。由电子连续性，有
+\begin{equation}
+ \rho D_e(\vct j/\rho)=\partial_t\vct j
+ +\nabla\cdot(\vel_e\vct j),
+\end{equation}
+其中散度按输运指标作用，分量为$\partial_k(v_{ek}j_i)$。因此$\vct A$的演化含一个电流时间导数，隐式算法须把它耦合处理。
+2024年v1使用的广义矢势$\vct A-(d_e^2/d_i)\vel_e$在接收稿附录中被明确列为另一种近似；不能把两版公式不加说明地拼接。
+
+\section{分离线电势井：从电子动量平衡得到可观测标度}
+2026年的跨实验／空间对照提出沿分离线延伸的双峰电流层，简称EBCS。其数值证据来自PIC；以下重建适于Hall／双流体比较的局地分析，所有分量采用\emph{右手}$(x,y,z)$坐标，$x$为法向、$z$为排气方向。\citep{L312}
+
+在电子已磁化、惯性和非对角压力较小的窄边界，取标量$p_e$，电子动量平衡给
+\begin{equation}
+ E_x=-u_{ey}B_z+u_{ez}B_y-\frac{1}{en}\partial_xp_e.
+\end{equation}
+进一步假设局地电子电流占优、$\partial_zB_x$远小于$\partial_xB_z$，并在离子局地参考系忽略其相应速度，则Ampère定律给
+\begin{equation}
+ J_y\simeq-\frac{\partial_xB_z}{\mu_0},\quad
+ J_z\simeq\frac{\partial_xB_y}{\mu_0},\quad
+ u_{ey}\simeq\frac{\partial_xB_z}{\mu_0en},\quad
+ u_{ez}\simeq-\frac{\partial_xB_y}{\mu_0en}.
+\end{equation}
+代回，令$B_t^2=B_y^2+B_z^2$，得到
+\begin{equation}
+ E_x\simeq-\frac{1}{en}\frac{\partial}{\partial x}
+ \left(\frac{B_t^2}{2\mu_0}+p_e\right).
+\end{equation}
+若局地近静电，$E_x=-\partial_x\Phi$，从排气内侧$b$积分到上游$u$可得
+\begin{equation}
+ e(\Phi_u-\Phi_b)
+ \simeq\int_b^u\frac{1}{n(x)}\frac{\dd}{\dd x}
+ \left(\frac{B_t^2}{2\mu_0}+p_e\right)\dd x.
+\end{equation}
+密度近常数且电子压强差较小，才可简化为
+\begin{equation}
+ e\Delta\Phi\simeq\frac{B_{t,u}^2-B_{t,b}^2}{2\mu_0n_{\rm av}}.
+ \label{eq:separatrix_potential}
+\end{equation}
+这里是\textbf{场强平方之差}，一般不等于$(B_{t,u}-B_{t,b})^2$。
+只有下游切向场很小、$n_{\rm av}\simeq n_u$时，才进一步得到
+\begin{equation}
+ e\Delta\Phi\sim\frac{m_i\VA^2}{2},\qquad
+ \frac{e\Delta\Phi}{T_i+T_e}\sim\frac1\beta.
+\end{equation}
+这给出跨边界能量增益的量级，没有单独决定其中多少变为整体喷流、反向束流或不可逆热化。后者需要压力张量、粒子轨道或分布信息。
+
+阅读原文式(1)--(4)时应同时检查坐标手性和$\Delta B^2$记号；不能将一个坐标系的分量符号原样搬到另一个坐标系。电势井也不意味着准中性近似完全失效：极小的相对电荷不平衡仍可支持有限的宏观电场。普通Hall模型能计算某些势井和漂移电流，但不能由此自动预测下游低杂波、粒子束及热化效率。
+
+\input{sections/01_continuation_models}
+\input{sections/01_selected_models}
+\input{sections/01_remaining_models}
+
+\input{sections/01_synthesis_models}
+\input{sections/tutorial/13_exercises}

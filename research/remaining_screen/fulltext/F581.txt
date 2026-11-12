@@ -1,0 +1,529 @@
+
+===== PDF PAGE 1 =====
+                 Kinetic Vlasov Simulations of collisionless magnetic Reconnection
+
+                                              H. Schmitz and R. Grauer
+                                      Theoretische Physik I, Ruhr-Universit¨at, 44780 Bochum, Germany2006
+                A fully kinetic Vlasov simulation of the Geospace Environment Modeling (GEM) Magnetic Re-
+                       connection Challenge is presented. Good agreement is found with previous kinetic simulations using
+                          particle in cell (PIC) codes, conﬁrming both the PIC and the Vlasov code. In the latter the completeAug                         distribution functions fk (k = i, e) are discretised on a numerical grid in phase space. In contrast to
+17                  investigationPIC simulations,of thethedistributionVlasov codefunctions.does not Thesuﬀerrolefromof thenumericaldiﬀerentnoisecontributionsand allowsofa Ohm’smore detailedlaw are
+                    compared by calculating each of the terms from the moments of the fk. The important role of the
+                      oﬀ–diagonal elements of the electron pressure tensor could be conﬁrmed. The inductive electric
+                       ﬁeld at the X–Line is found to be dominated by the non–gyrotropic electron pressure, while the
+                      bulk electron inertia is of minor importance. Detailed analysis of the electron distribution function
+                       within the diﬀusion region reveals the kinetic origin of the non–gyrotropic terms.
+
+
+                  PACS numbers:  02.70.-c 52.25.Dg 52.65.Ff 52.25.Xz
+
+
+                                 I. INTRODUCTION                 was concluded that the large scale ion dynamics control
+                                                                   the rate of reconnection and that the dispersive charac-
+                                                                           ter of Whistler modes is essential in the understanding           Magnetic reconnection  is the fundamental  process
+                                                                            of the results.         which allows magnetized plasmas to convert the energy
+          stored in the ﬁeld lines into kinetic energy of the plasma.     These results emphasize the importance of the Hall[physics.plasm-ph]    It plays an important role in the dynamics of space and   term for the reconnection. At the neutral X–line, the
+         laboratory plasmas. In the magnetopause it allows par-    magnetic ﬁeld strength  is exactly zero and the Hall
+            ticles from the solar wind to enter the magnetosphere.   term vanishes. Only the electron bulk inertia and the
+         Also it is believed to be the main source of energy for    non–gyrotropic part of the electron pressure tensor can
+          solar ﬂares and coronal mass ejections.                       yield a contribution at the X–line. Kuznetsova et al.15
+            In ideal magnetohydrodynamics (MHD) the frozen–in    pointed out, that the bulk inertia of the electrons can
+        ﬂux condition prohibits the magnetic ﬁeld topology to    only contribute  if the current sheet develops on elec-
+         change. Thus reconnection depends on a mechanism that    tron timescales. Vasyliunas16 was the ﬁrst to emphasize
+         breaks the frozen–in condition.  This non–ideal mech-    the important role of the oﬀ–diagonal components of the
+        anism is responsible for the dynamics of the diﬀusion    pressure tensor in the diﬀusion region. Later their role
+          region, where the topology change takes place.  In re-   was investigated by a number of authors (see e.g Refs.
+           sistive MHD with low values of resistivity an elongated    11,15,17,18).  The non–gyrotropic pressure can be un-
+         Sweet–Parker current sheet develops, which limits the re-    derstood as originating from the meandering motion of
+         connection rate.1,2,3 Higher values for the resistivity, on    the electrons, which bounce in the magnetic ﬁeld reversal
+         the other hand, are extremely unrealistic for the astro-    region, also known as Speiser motion.19
+          physical reconnection processes.                             In this study, we use a Vlasov code to investigate the
+            In the last years  it has become apparent that the  GEM reconnection. In contrast to Particle–In–Cell (PIC)
+         minimal model to adequately describe collisionless re-    codes, Vlasov codes discretise the complete distribution
+         connection is Hall–MHD.4,5,6,7 In Hall–MHD the ion in-    functions of electrons and ions on a grid in phase space.arXiv:physics/0608175v1    ertial length λi  is introduced as a characteristic scale    This has the advantage of allowing more detailed inves-
+          length such that for distances smaller than λi the ion    tigations of the distribution functions, since numerical
+        dynamics can decouple from the magnetic ﬁeld. Within    noise  is completely absent from the Vlasov–approach.
+         the framework of the Geospace Environmental Modeling   The main focus of our investigation is the electron dy-
+       (GEM) Magnetic Reconnection Challenge a two dimen-    namics. These can be understood in two ways. On one
+          sional magnetic reconnection setup based on the Harris    hand, one can take a microscopic point of view by looking
+          equilibrium was studied.  Simulations were done using    at the detailed structure of the distribution function. On
+     MHD models with constant or localized resistivity8,9,    the other hand one can look at the moments of the dis-
+       Hall–MHD models8,9,10, hybrid models where electrons    tribution function and their importance for Ohm’s law.
+          are treated as ﬂuid and ions are treated kinetically4,11   The Vlasov–approach allows us to do both with very high
+        and with fully kinetic particle codes.4,12,13 The models    accuracy.
+         which included the Hall eﬀect, either directly or implic-      In the next section we brieﬂy present the methods used
+            itly in the kinetic treatment, showed very similar results    in our investigation. The GEM reconnection setup in-
+          in terms of the global reconnection rate. The small scale    cluding the initial conditions and the boundary condi-
+          structures of the dissipation region, on the other hand,    tions is described in section III. In section IV we discuss
+          varied substantially between the models.  In Ref. 14 it    the results. Separate subsections are dedicated to the dis-
+
+===== PDF PAGE 2 =====
+                                                                                                     2
+
+
+cussion of the contributions of the terms in Ohm’s law,   we restrict the simulations to 2 dimensions in space but
+especially the oﬀ–diagonal components of the pressure    include all three velocity dimensions. In contrast to PIC–
+tensor, and to the detailed discussion of the electron dis-    codes, the distribution function is integrated in time di-
+tribution function. Section V will give a summary and    rectly on a numerical grid in phase space. The integra-
+present conclusions.                                         tion scheme is based on a ﬂux conservative and positive
+                                                      scheme22 which obeys the maximum principle and suﬀers
+                                                    from relatively little numerical diﬀusion. The main idea
+                       II. METHODS                         of the scheme is to calculate the ﬂuxes into and out of a
+                                                             grid cell by interpolating the primitive of the distribution
+  The basis of the kinetic description of magnetic recon-    function. The one dimensional scheme has been general-
+nection are the distribution functions fk(x, v, t) of species    ized to two spatial and three velocity dimensions using
+k, where k = i, e denotes ions or electrons. The tempo-    the backsubstitution method described in Ref. 23. The
+ral behavior of the distribution function is given by the    backsubstitution method has been shown to be slightly
+Vlasov equation                                            superior and, more importantly, much faster than the
+                                                           straightforward time–splitting scheme.
+     ∂fk              qk                             The Maxwell equations in the Darwin approximation      + v · ∇fk +   (E + v × B) · ∇vfk = 0.
+      ∂t         mk                              can be recast into a form which does not include any
+                                                       time derivatives (see, for example, Refs. 20,21).  This
+Here qk and mk are the charge and the mass of the par-                                                 makes it possible to express the electromagnetic ﬁelds
+ticles of species k. The Vlasov equation describes the                                                             E(t0), B(t0) at any time t0 by the density ρ(t0) and the
+incompressible ﬂow of the species phase space densities
+                                                           current density j(t0) at the time t0. No time integration
+under the inﬂuence of the electromagnetic ﬁelds.                                                                 of the ﬁelds is necessary and the conditions ∇· B = 0
+  The ﬁelds are solved using the Darwin approximation                                                 and ∇· E = ρ are always met by construction.
+(see, for example Refs. 20,21)
+
+        ∇× ET = −∂B  ,                  (1)             III. GEM RECONNECTION SETUP
+                            ∂t
+              1         ∂EL
+         ∇× B = ε0   + j  ,             (2)     The reconnection setup  is  identical to the param-              µ0            ∂t
+                                                                eters of the GEM magnetic reconnection challenge.14                         1
+            ∇· EL =   ρ  ,                    (3)   The  initial conditions are based on the Harris sheet
+                             ε0                                                           equilibrium24 in the x,y–plane
+             ∇· B = 0  ,                       (4)
+                                                                                     y
+                                                               B(y) = B0 tanh        ˆx.              (7)where B is the magnetic and EL and ET are the lon-                             λ
+gitudinal and the transverse part of the electric ﬁeld,
+∇× EL = 0, ∇· ET = 0, E = EL + ET . The Dar-   The particles have a shifted Maxwellian distribution
+win approximation eliminates the fast electromagnetic
+vacuum modes while all other plasma modes are still de-                            mi,e                                                                      f0i,e(y, v) = n0(y) exp        v2x + (vy −V0i,e)2 + v2z     .
+scribed. Instead of neglecting the displacement current                               2Ti,e
+completely, only its transverse part is dropped while its                                                           (8)
+longitudinal part is kept. The elimination of the vac-    Here Ti,e are the constant electron and ion temperatures
+uum modes allows larger time-steps in the simulation   and V0i,e are the constant electron and ion drift velocities.
+since only the slower non–relativistic waves have to be   The density distribution is then given by
+resolved.
+                                                                                      y
+  The charge density ρ and the current density j are                   n0(y) = n0 sech2         .              (9)
+                                                                        λgiven by the moments of the distribution function,
+                   Z      X                             The Harris equilibrium demands that
+            ρ =    qk   fk(x, v)d3v  ,             (5)
+                    k                                             B20
+                   Z                                  = n0(Ti + Te)            (10)      X                                                                        2µ0
+                  j =    qk   vfk(x, v)d3v  .            (6)
+                                                                               2   Ti + Te
+                    k                                                λ =                        (11)
+                                                                        eB0 V0i −V0e
+These moments couple the electromagnetic ﬁelds back to                         V0ethe distribution function. In this way the Vlasov-Darwin              and     = −Te .                  (12)                                                                                      V0i      Ti
+system constitutes a non–linear system of partial integro–
+diﬀerential equations.                                     In addition a uniform background density nb = 0.2n0
+  For the simulations we use a 2 2–dimensional1             Vlasov–    with the same temperature Ti,e but without a directed
+code described in Ref. 21. Here 2 12–dimensional means,    velocity component is included.
+
+===== PDF PAGE 3 =====
+                                                                                                     3
+
+  The total GEM system size  is Lx = 25.6λi in x–                3.5
+direction and Ly = 12.8λi in y–direction, where λi  is
+the ion inertial length λi = c/ωpi with the ion plasma fre-               3
+quency is deﬁned using the given by ωpi = (ne2/ε0mi)1/2.                2.5
+Because of the symmetry constraints we simulate only
+one quarter of the total system size: 0 ≤x ≤Lx/2 and               2
+0 ≤y ≤Ly/2. The sheet half thickness is chosen to be  Ψ
+                                                                                                  1.5
+λ = 0.5λi. The temperature ratio is Te/Ti = 0.2 and
+a reduced mass ratio of mi/me = 25 is used. This re-               1
+duced mass ratio is consistent with the GEM setup and
+was chosen as a compromise between a good separation                0.5
+of scales (both in space and time) and the computational
+                                                                                   0
+eﬀort.  The numerical expense was especially high for                 0     5     10    15    20    25    30    35    40
+the kinetic codes.4,12,13 The reduced mass ratio was also                                                          t Ωi
+used in the hybrid codes4,11 for the sake of comparison.
+A higher mass ratio (i.e.  a smaller electron mass) re-
+sults in a smaller electron skin depth which has to be    FIG. 1: Time evolution of the reconnected magnetic ﬂux Ψ
+resolved by the grid. At the same time the numerical    throughout the simulation run.
+time step has to be reduced to resolve the electron Lar-
+mor frequency.  Both eﬀects together imply that, in a
+spatially two–dimensional simulation, the computational    time. The evolution of ∆Ψ agrees very well with the re-
+cost increases with the square of the mass ratio for all ki-    sults of other simulations of the GEM challenge.14 After
+netic simulations independent whether thay use PIC or   an initial small increase, the ﬂux starts to rapidly in-
+Vlasov–methods. Simulations with substantially higher    crease at tΩi ≈15. A value of ∆Ψ = B0/λi is reached
+mass ratios using the generally more demanding Vlasov    at tΩi ≈17.7.  This  is slightly later to what  is ob-
+approach, therefore, currently seem out of reach. The    served in the PIC simulations. Pritchett12 reports a time
+simulation is performed on 256×128 grid points in space    tΩi ≈15.7 where the same ﬂux level is reached. While
+for the quarter simulation box.  This corresponds to a    the level of saturation is comparable to the other GEM
+resolution of 512 × 256. This implies a grid spacing of     results, it is again reached slightly later than in Ref. 12
+∆x = ∆y = 0.05λi. The resolution in the velocity space    at time tΩi ≈30.
+was chosen to be 20 × 20 × 40 grid points. In vz direc-     The upper panel of Figure 2 shows the out of plane
+tion the grid was extended to account for the electron                                                     magnetic ﬁeld Bz at Ωit = 17.7. One can clearly iden-
+acceleration in the diﬀusion region. The simulation was                                                                       tify the quadrupolar structure generated by the Hall
+performed on a 32 processor Opteron cluster and took    currents.25,26 The peak value of the magnetic ﬁeld |Bz|
+approximately 150 hours to complete.                                                               in the island structure is ≈0.17B0 and  is located at
+  An initial perturbation                                                                       |x| ≈1.7λi.  This is a somewhat lower magnetic ﬁeld
+                                                     than in Ref. 12 and is also located slightly closer to the
+         ψ(x, y) = ψ0 cos(2πx/Lx) cos(πy/Ly)     (13)    X–line. In the course of the simulation both the size of
+                                                         the magnetic island and the magnitude of the peak mag-
+is added to the magnetic vector potential component                                                               netic ﬁeld increase.  For this reason, the diﬀerences to
+Az. The magnitude of the perturbation is chosen to be    the PIC simulations can be attributed to the small dif-
+ψ0 = 0.1B0/λi. The rather high values of the initial per-                                                              ferences in the temporal behavior. This also explains the
+turbation generates a single large magnetic island. The                                                     magnetic ﬁeld towards the top and bottom boundaries
+initial linear growth of the tearing mode is bypassed and                                                                 of the simulation box. These ﬁelds, which can be seen
+the system is placed directly in the nonlinear regime. The                                                               in Figure 2, have essentially disappeared at Ωit = 20,
+reason for this relatively strong perturbation is that the                                                       approximately the same time that the peak magnetic re-
+initial growth of the instabilities depends strongly on the                                                        connection rate is seen.
+electron model. In contrast to this, the GEM challenge
+                                                The middle and lower panel of Figure 2 show the elec-
+demonstrated convincingly, that the later nonlinear stage
+                                                         tron and ion out of plane current densities je,z and ji,z at
+is not sensitive to the details of the underlying model.
+                                                        Ωit = 17.7. While the ion current density almost exactly
+                                                              follows the ion number density ni, the electron current
+                                                           density is strongly enhanced near the X–line where the
+          IV.  SIMULATION RESULTS            number densities are depleted. The thickness of the elec-
+                                                         tron current layer is smaller than the ion skin depth but
+  As a measure of the reconnected magnetic ﬁeld we use    larger than the electron skin depth. The size is deter-
+the diﬀerence ∆Ψ of the magnetic vector potential com-   mined by the meandering motion of the electrons around
+ponent Az between the X–point and the O–point. Figure    the neutral line. In addition to this current sheet, we can
+1 shows the reconnected magnetic ﬂux as a function of    observe thin current layers emanating from the X–line
+
+===== PDF PAGE 4 =====
+                                                                                                     4
+
+                                  Out of plane magnetic ﬁeld Bz
+
+
+
+
+
+                                          Electron out of plane current je,z
+
+
+
+
+
+                                           Ion out of plane current ji,z
+
+
+
+
+
+FIG. 2: The out of plane magnetic ﬁeld Bz (upper panel), the electron out of plane current je,z (middle panel) and the ion out
+of plane current ji,z (lower panel) at time Ωit = 17.7
+
+
+which run along the separatrix. These structures have    the X–line at super–Alfv´enic speeds. These velocity pro-
+not been reported in previous PIC simulations but can    ﬁles are almost identical to those reported in Ref. 12. In
+be seen in Hall–MHD simulations.4 We point out again    contrast to those results, no averaging over a ﬁnite time
+that the mass ratio in the GEM simulations was ﬁxed    period had to be carried out here because the Vlasov
+at mi/me = 25 for both PIC4,12,13 and hybrid4,11 sim-    simulations do not suﬀer from artiﬁcial numerical noise.
+ulations. The diﬀerence between the Vlasov code and
+the PIC code, therefore, can only be explained by the
+diﬀerences in the numerical approach.                                 A.  Ohm’s Law
+  The electron and ion bulk velocity proﬁles vx(x) along
+the direction of the current sheet are shown in Figure     Within the GEM reconnection challenge  it has be-
+3. One can see that the electrons are ejected away from   come clear that the Hall–MHD model is a minimal model
+
+===== PDF PAGE 5 =====
+                                                                                                     5
+
+
+          1.5                                                             line, we also observe sheets of negative valued Hall–term
+                Electrons                                    along the separatrix. We attribute this to the current
+          1          Ions                                    loop that generates the quadrupolar magnetic ﬁeld Bz.
+                                           Away from the X–line, the electrons responsible for the
+          0.5                                                  current have to cross the separatrix back into the up-
+                                                     stream region in order to close the loop. Therefore, the
+ vx     0                                              Hall–term will have negative values along the separatrix.
+                                              The magnitude of the Hall–term here is almost half the
+          -0.5                                            peak magnitude in the X–line region.
+                                                The bottom panel of Figure 4 shows the distribution of
+           -1
+                                                −(vi × B)z. This term becomes non–zero when ions can
+                                               move across the magnetic ﬁeld lines in a region of a few
+          -1.5
+                  -10          -5         0         5         10           ion inertial lengths around the X–line. Again two peaks
+                            x / λi                        can be observed in the outﬂow region. The peak values
+                                                                 are, however, less than half of the inductive electric ﬁeld.
+                                   A striking feature in this picture is the almost circular
+FIG. 3: Velocity proﬁle at Ωit = 18.1 as a function of x at    ring around the X–line, where the ions become demagne-
+the location of the current sheet z = 0 for electrons and ions.     tized. The sheets of enhanced value along the separatrix
+                                                           are narrower than those observed from the Hall–term.
+                                               They have the same sign as the peaks near the X–line
+                                                 and therefore partially cancel the Hall–term.to understand collisionless reconnection.4 In Hall–MHD
+                                                           Figures 5 and 6 display the components of the electronOhm’s law has the form
+                                                           pressure tensor. Although only the two mixed elements
+   m dj                          1                                                      Pxz and Pyz play a role in the z–component of Ohm’s       = E + vi × B −1 × B +      Pe,     ne2 dt               nej     ne∇·              law, the other elements are shown for completeness. The
+                                                    upper panel of Figure 5 shows the diagonal terms of thewhere the resistivity has been neglected. This is the ex-
+                                                           pressure tensor. Here we see the diﬀerences in the heatingact electron momentum equation which can be derived
+                                                                 of the electrons in the three directions. In all three casesfrom kinetic theory of a collisionless plasma without any
+                                                         the maximum is reached in the outﬂow region, where theapproximations. At large scale lengths only the MHD
+                                                             electron velocities are super Alfv´enic.  The heating interms play a role, while the Hall term and the electron
+                                                         the x–direction, which is mainly parallel to the magneticpressure gradient can be neglected. To investigate the
+                                                          ﬁeld lines, is strongest. Pxx is increased mostly in theregions in which the terms of the generalized Ohm’s law
+                                                 outﬂow region, with only a slight increase in the diﬀusionbecome important, we calculated the diﬀerent contribu-
+                                                              region. In the outﬂow region Pyy and Pzz are comparable,tions in the whole reconnection region.
+                                                       because these two directions are roughly perpendicular to  The top panel of Figure 4 shows the inductive electric
+                                                         the magnetic ﬁeld lines. Within the diﬀusion region Pyyﬁeld Ez. This inductive ﬁeld is necessary for reconnection
+                                                 and Pzz are, however, diﬀerent. While Pyy is enhanced into take place. The region of enhanced Ez is situated in a
+                                                     a narrowing X type region, Pzz shows a bar like structure.relatively large region around the X–line. The peak elec-
+                                              The reason for this structure of Pzz may be seen in thetric ﬁeld is located in an elongated area extending about
+                                                             acceleration of a part of the electron population in thetwo ion inertial lengths in the y–direction and about 4
+                                                              z–direction. This will become more apparent in the nextion inertial lengths in the x–direction. In contrast, the
+                                                                section, where the electron distributions are investigatedregion where the ﬁeld exceeds half its peak value is almost
+                                                               in detail.circular with a diameter of about 5 ion inertial lengths.
+The middle panel of Figure 4 shows the z–component of     The oﬀ–diagonal elements of the pressure tensor are
+the Hall term (j × B)z. In contrast to the inductive elec-   shown in Figure 6. The magnitude of these is roughly
+tric ﬁeld, this quantity shows a more detailed structure.    one order of magnitude smaller than the diagonal el-
+Two strong peaks are found left and right of the X–line.    ements which agrees remarkably well with the results
+The peak values slightly exceed the maximum value of    of Kuznetsova et al.11 The Pxy component (top panel)
+Ez. These peaks coincide with the maxima of the elec-    shows a quadrupolar structure similar to the out out
+tron outﬂow velocity (see Figure 3).  This shows that    plane magnetic ﬁeld Bz. The Pxz component has two
+the Hall term is most important in the outﬂow regions    extrema left and right of the X–line at the edges of the
+where the electrons are accelerated to super Alfv´enic ve-    diﬀusion region in agreement with Ref. 11. In addition,
+locities. In addition, two weaker peaks are located above   we ﬁnd two more extrema along the y = 0 line in the elec-
+and below the X–line, where the electrons are acceler-    tron acceleration region and also enhanced values around
+ated towards the X–line and the electron velocity starts    the separatrix. Finally, Pyz shows a double bar structure
+to diverge from the E × B–velocity. Due to the sym-    in the diﬀusion region and also extrema are found in the
+metry conditions, the Hall–term is exactly zero at the    electron acceleration region.
+X–line itself. In addition to the structure around the X–     The terms of the pressure tensor that contribute at the
+
+===== PDF PAGE 6 =====
+                                                                                                     6
+
+                                               Ez
+
+
+
+
+
+                                                                   (j × B)z
+
+
+
+
+
+                                           −(vi × B)z
+
+
+
+
+
+FIG. 4: z–component of the inductive electric ﬁeld Ez (upper panel), Hall Term j × B (middle panel) and the negative
+z–component of vi × B (lower panel) at time Ωit = 17.7
+
+
+X–line x = y = 0 are given by ∂Pxz/∂x and ∂Pyz/∂y. In    scale length. Around the zero line of the magnetic ﬁeld,
+Figure 7 we have plotted the inductive electric ﬁeld Ez at    the scale lengths of the electron dynamics are given not
+the X–line over time together with the two gradients of   by the electron inertial lengths, but by the larger scale of
+the oﬀ–diagonal elements of the pressure tensor. We can    the meandering electron motion.15,19,27 For this reason,
+clearly observe that the two contributions ∂Pxz/∂x and    the contribution of the non–gyrotropic pressure exceeds
+∂Pyz/∂y are roughly equal. The sum of the two shows    the bulk electron inertia. For more realistic mass ratios
+are remarkable agreement with the electric ﬁeld over the   we expect the electron bulk inertia to be completely neg-
+whole time of the simulation. This indicates that, at the     ligible. The pressure terms should, on the other hand,
+X–line, the bulk inertia plays only a minor role. The    remain important also for higher mass ratios. Note that
+bulk inertia scales like λe/L (see Ref. 16), where λe is    the importance of the non–gyrotropic pressure has been
+the electron inertial length and L is a typical gradient   shown only close to the X–line. Away from the X–line,
+
+===== PDF PAGE 7 =====
+                                                                                                     7
+
+                          Pxx                                                                                                    0.3
+                                                                                    Ez
+                                                                                              0.25                                                                                       ∂x Pxz
+                                                                                       ∂y Pyz
+                                                                                                    0.2    ∂x Pxz + ∂y Pyz
+
+                                                                                              0.15
+                                               Ez
+                           Pyy                                                         0.1
+
+                                                                                              0.05
+
+
+                                                                                     0
+
+
+                                                                                                  -0.05
+                                                                                       0       5       10      15      20      25      30
+                                                                                                                                                           t Ωi
+                            Pzz
+
+                                                       FIG. 7: Inductive electric ﬁeld Ez at the X–line over time
+                                                               together with the contributions ∂Pxz/∂x and ∂Pyz/∂y from
+                                                             the pressure tensor.
+
+
+
+                                                          B.  Electron distribution function
+
+FIG. 5: The diagonal components of the pressure tensor at
+time Ωit = 17.7                                     To analyze the kinetic mechanism that is responsible
+                                                                  for the generation of the non–gyrotropic electron pres-
+                                                                sure, we have to look at the structure of the electron
+                                                              distribution functions in the vicinity of the X–line. Fig-
+                          Pxy                             ure 8 shows isosurface plots of fe(x, v) in velocity space
+                                                                  for various ﬁxed positions (x, y) in the simulation box.
+                                              The sequence of sample points are chosen to follow a
+                                                     path from inﬂow region, just outside the diﬀusion region,
+                                                     through the diﬀusion region and to a point in the outﬂow
+                                                              region. The ﬁrst panel shows the distribution function
+                                                           at (x, y) = (0.025, 0.675). This is close to the symme-
+                                                            try axis x = 0 and in the inﬂow region, just outside the
+                           Pxz                                                         diﬀusion region. Note that the points could not be cho-
+                                                         sen to lie on the lines of symmetry (x = 0 or y = 0)
+                                                              since these were between the grid points in conﬁguration
+                                                            space. Here the distribution function is slightly elongated
+                                                               in the x–direction indicating a slightly larger pressure
+                                                   Pxx > Pyy, Pzz at this point. This moderate increase in
+                                                   Pxx can also be observed in Figure 5.  While Pyy and
+                            Pyz                            Pzz exhibit a sharp increase at the inﬂow edge of the
+                                                         diﬀusion region, Pxx rises more gradually. The distribu-
+                                                             tion at this point is totally made up of the background
+                                                             electron population.  The point (x, y) = (0.075, 0.275)
+                                                                            lies just inside the diﬀusion region.  In addition to the
+                                                                original background population, here two new electron
+                                                         populations suddenly appear. Both of these have a neg-
+                                                              ative vz–velocity. The ﬁrst population is elongated in
+FIG. 6: The oﬀ–diagonal components of the pressure tensor    vx and vy direction.  It is slightly bent which indicates
+at time Ωit = 17.7                                      a gyro motion. We interpret this population as being
+                                                         the background electrons originating from the other side
+                                                                 of the current sheet. These electrons move through the
+                                                     magnetic zero line and show a bunched gyro motion when
+                                                       they enter the region on the other side with the oppositely
+but still inside the diﬀusion region, we ﬁnd the Hall–term    directed magnetic ﬁeld. Finally the second new electron
+j × B to play a dominant role.                            population shows a sharp distribution with a strong nega-
+
+===== PDF PAGE 8 =====
+                                                                                                     8
+
+                         (x = 0.025, y = 0.675)             (x = 0.075, y = 0.275)
+
+
+
+
+
+                         (x = 0.125, y = 0.175)             (x = 0.475, y = 0.025)
+
+
+
+
+
+                         (x = 1.125, y = 0.025)             (x = 2.425, y = 0.025)
+
+
+
+
+
+FIG. 8: Isosurface of the electron distribution function in velocity space for diﬀerent positions in the simulation box. The red
+plane is vz =const, the blue plane is vx =const and the green plane is vy =const. The isosurface is drawn at fe(vx, vy, vz) =
+fmax/2 where fmax = fmax(x, y) if the maximum value of the distribution function at the position (x,y). The velocity box
+ranges from vk =-3.67 to 3.67 for all three velocity components.
+
+
+tive vz–velocity. These are the electrons which have been    the electrons from the opposite side of the current is now
+accelerated in the diﬀusion region.                     more apparent. This population has a distribution which
+                                                              exhibits a banana like shape, bent around the vx–axis.
+  In the left panel on the middle row of Figure 8 the    This indicates a bunched gyro–motion. In addition, the
+sample point (x, y) = (0.125, 0.175) has moved closer to    distribution has been stretched to even higher negative
+the y = 0 line of symmetry but away from the x = 0    vz–velocities. An slight asymmetry can be seen in the
+line of symmetry. Here the populations already seen in    vx–direction due to the onsetting acceleration towards
+the last panel become more pronounced. The gyration of
+
+===== PDF PAGE 9 =====
+                                                                                                     9
+
+
+the outﬂow region. As one moves away from the x = 0    terms in Ohm’s law, especially the contributions from the
+line of symmetry towards larger values of x, one must    electron pressure tensor. This shows that, although com-
+distinguish between those electrons ﬂowing into the dif-    putationally more expensive, Vlasov–codes are a valu-
+fusion region from the ±y–directions and those electrons    able tool for investigating collisionless reconnection. The
+that have entered the diﬀusion region closer to the X–    large scale structure of the magnetic ﬁeld and the elec-
+line. The latter population already has a strong directed    tron and ion current densities agreed well with parti-
+velocity in the outﬂow direction. This can be seen in the     cle simulations.12 In addition we were able to identify
+right panel on the middle row which displays the distri-   some small scale structures of the electron current den-
+bution at (x, y) = (0.475, 0.025). This position is almost     sity which showed enhanced values along the separatrix.
+on the y = 0 line of symmetry. Again the points could   While these structures were probably smeared out in PIC
+not be chosen to exactly lie on the line of symmetry be-    simulations due to the numerical noise, they resemble
+cause of the choice of the numerical grid. In this panel,   more the results seen in hybrid models.4,11
+the two populations from the ±y–directions can be iden-     The analysis of the contributions to the inductive elec-
+tiﬁed as two elongated blobs lying parallel to each other.     tric ﬁeld in Ohm’s law show that, due to the evolution of
+The fact that these two blobs are well separated indicates    the reconnection on ion timescales rather than electron
+that their relative velocity is larger than the thermal ve-    timescales, the bulk inertia of the electron plays a mi-
+locity of the electrons. For realistic mass ratios the theral    nor role. The eﬀect of the bulk inertia will be decreased
+velocity of the electrons will increase and the structure of    even more,  if more realistic mass ratios are used. We
+the distribution function will be smeared out. Neverthe-    could show that the Hall–term dominates at the inﬂow
+less, we expect the underlying mechanisms of meandering   and the outﬂow edges of the diﬀusion region. Symmetry
+motion and acceleration in the z–direction to remain un-    constraints, however, cause the Hall term and the vi×B–
+changed. The other population, which has already spent    term to vanish at the X–line.  Here we could conﬁrm
+more time in the diﬀusion region, has been accelerated    the importance of the non–gyrotropic pressure, which
+toward the outﬂow region. Both, the blobs and the ac-   was previously investigated by Kuznetsova et al.11,15 The
+celerated population appear slightly tilted around the    evaluation of the gradients of the oﬀ–diagonal pressure
+vy axis. This could indicate a gyro–motion around the   components throughout the whole time showed, that
+newly reconnected magnetic ﬁeld in the y–direction. In    both ∂Pxz/∂x and ∂Pyz/∂y contribute roughly the same
+the bottom–left panel, (x, y) = (1.125, 0.025), this rota-    towards the electric ﬁeld. The sum of the two contribu-
+tion is even more pronounced. Here the diﬀerent popu-    tions could explain almost the complete inductive electric
+lations start to merge and lose their individual identity.    ﬁeld at the X–line.
+Finally at (x, y) = (2.425, 0.025) (bottom–right panel)     The  kinetic mechanisms  responsible  for  the non–
+most of the structure has been lost. The temperature    gyrotropic electron pressure were uncovered by investi-
+has risen considerably and a directed velocity in the vx–    gating the electron distribution function.  The mean-
+direction is observed.                                      dering motion of the electrons in the region of the zero
+  The strongly structured electron distribution function    magnetic ﬁeld is believed to be associated with the non–
+is responsible for the oﬀ-diagonal terms of the electron    gyrotropic pressure.19,27,28 The complex structure of the
+pressure tensor. The structuring is due to the meander-    electron distribution function showed that the meander-
+ing motion of the electrons in the region where the mag-    ing motion is responsible. For the GEM parameters it
+netic ﬁeld approaches zero and changes sign.27,28 The dis-      is, however, not caused by the thermal electron motion
+tribution function is made up of a number of distinguish-    but by the directed velocity gained in the inﬂow. This
+able populations, which have a relative velocity, which is    may, of course, be the result of the relatively high elec-
+higher than the thermal velocity.                          tron mass. In simulations with more realistic mass ratios
+                                              we expect the inﬂow velocity to be considerably smaller
+                                                     than the thermal velocity of the electrons.
+     V. SUMMARY AND CONCLUSIONS
+
+  Two and a half dimensional Vlasov simulations were                 Acknowledgements
+carried out on the GEM magnetic reconnection setup.
+Vlasov codes have the advantage, with respect to PIC    We acknowledge the enlightening discussions with J.
+codes, that they do not suﬀer from numerical noise and    Dreher. This work was supported by the SFB 591 of the
+that the distribution function can be analyzed with high    Deutsche Forschungsgesellschaft.  Access to the JUMP
+accuracy. This advantage is gained at the cost of a sub-    multiprocessor computer at Forschungszentrum J¨ulich
+stantially higher computational eﬀort. We could repro-   was made available through project HBO20. Part of the
+duce the results of other kinetic simulations carried out    computations were performed on an Linux-Opteron clus-
+of the GEM setup12 but were also able to calculate the    ter supported by HBFG-108-291.
+
+===== PDF PAGE 10 =====
+                                                                                                   10
+
+
+
+
+ 1 E. N. Parker, J. Geophys. Res. 62, 509 (1957).                  in Space Plasmas, edited by T. D. Guyenne and J. J. Hunt
+ 2 P. A. Sweet, The neutral point theory of solar ﬂares,  in       (Eur. Space Agency Spec. ESA, 1988) vol 15, page SP-285.
+   Electromagnetic Phenomena in Cosmical Physics, edited     18 M. Hesse and D. Winske, J. Geophys. Res. 20, 1207 (1993).
+  by B. Lehnert, (Cambridge Univ. Press, 1958) page 123       19 T. W. Speiser, P. B. Dusenbery, R. F. M. Jr, and D. J.
+ 3 D. Biskamp, Phys. Fluids 29, 1520 (1986).                     Williams, Particle orbits in magnetospheric current sheets:
+ 4 M. A. Shay, J. F. Drake, B. N. Rogers, and R. E. Denton,       Accelerated ﬂows, neutral line signature and transitions
+   J. Geophys. Res. 106, 3759 (2001).                              to chaos,  in Modeling Magnetospheric Plasma Processes,
+ 5 R. F. Lottermoser and M. Scholer, J. Geophys. Res. 102,       edited by G. R. Wilson (AGU, Washington D.C., 1991),
+   4875 (1997).                                                      vol 62 of Geophys. Monogr. Ser., page 71.
+ 6 X. Wang, A. Bhattacharjee, and Z. W. Ma,  Phys. Rev.     20 C. K. Birdsall and A. B. Langdon,  Plasma Physics via
+   Lett. 87, 265003 (2001).                                 Computer Simulation, (McGraw-Hill, New York, 1985).
+ 7 J. D. Huba and L. I. Rudakov, Phys. Rev. Lett. 93, 175003     21 H. Schmitz and R. Grauer,   J. Comp. Phys. 214, 738
+   (2004).                                                           (2006).
+ 8 J. Birn and M. Hesse, J. Geophys. Res. 106, 3737 (2001).     22 F. Filbet, E. Sonnendr¨ucker, and P. Bertrand, JCP 172,
+ 9 A. Otto, J. Geophys. Res. 106, 3751 (2001).                  166 (2001).
+10 Z. W. Ma and A. Bhattacharjee,  J. Geophys. Res. 106,     23 H. Schmitz and R. Grauer, Comput. Phys. Commun. 175,
+   3773 (2001).                                               86 (2006),
+11 M. M. Kuznetsova and M. Hesse,  J. Geophys. Res. 106,     24 E. G. Harris, Il Nuovo Cimento 23, 115 (1962).
+   3799 (2001).                                                        25 B. U. ¨O. Sonnerup, Magnetic ﬁeld reconnection, in Solar
+12 P. L. Pritchett, J. Geophys. Res. 106, 3783 (2001).            System Plasma Physics, edited by L. T. Lanzerotti, C. F.
+13 M. Hesse, J. Birn, and M. Kuznetsova,  J. Geophys. Res.       Kennel, and E. N. Parker (North–Holland Pub., New York,
+   106, 3721 (2001).                                               1979), volume III, page 45.
+14 J. Birn et al., J. Geophys. Res. 106, 3715 (2001).              26 T. Terasawa, Geophys. Res. Lett. 10, 475 (1983).
+15 M. M. Kuznetsova, M. Hesse, and D. Winske, J. Geophys.     27 R. Horiuchi and T. Sato, Phys. Plasmas 4, 277 (1997).
+   Res. 103, 199 (1998).                                             28 R. Horiuchi and T. Sato, Phys. Plasmas 1, 3587 (1994).
+16 V. M. Vasyliunas, Rev. Geophys. 13, 303 (1975).
+17 J. W. Dungey, Noise–free neutral sheets, in Reconnection

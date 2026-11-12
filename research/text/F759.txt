@@ -1,0 +1,727 @@
+ 
+ 
+New Insights on the High Reconnection Rate and the Diminishment of Ion 
+Outflow 
+Cheng-Yu Fan1, Shan Wang1*, Xu-Zhi Zhou1, San Lu2, Quanming Lu2, Prayash Sharma 
+Pyakurel3, Qiugang Zong1, 4, Zhi-Yang Liu5 
+ 
+1Institute of Space Physics and Applied Technology, Peking University, Beijing 100871, China 
+2School of Earth and Space Sciences, University of Science and Technology of China, Hefei 
+230026, China 
+3Space Sciences Laboratory, University of California, Berkeley, CA 94720, USA 
+4 State Key Laboratory of Lunar and Planetary Sciences, Macau University of Science and 
+Technology, Macau 999078, China 
+5 Institut de Recherche en Astrophysique et Planétologie, CNES-CNRS, Universite Toulouse III, 
+Paul Sabatier, Toulouse 31028, France 
+ 
+*Corresponding author: Shan Wang (coralwang90@gmail.com) 
+ 
+Key Points: 
+• The reconnection rate normalized by ion parameters (𝑅𝑖) can reach high values, 
+attributed to insufficient field line bending outside of EDR 
+• When 𝜌𝑖 exceeds the system size, the bulk velocity represents the average acceleration 
+across the system, thus ion outflow diminishes 
+• 𝑅𝑒 at ~0.1 indicates a well-developed EDR; high Ri indicates high absolute reconnection 
+efficiency and weak ion coupling 
+ 
+ 
+
+ 
+ 
+Abstract 
+The recently discovered electron-only reconnection has abnormal features like lack of ion 
+outflows and high reconnection rates. Using particle-in-cell simulations, we investigate their 
+physical mechanisms. The reconnection rate, when normalized by ion parameters (𝑅𝑖), may 
+appear anomalously high, whereas that normalized by electron parameters (𝑅𝑒) remains ~0.1. 
+We propose that the essence of high 𝑅𝑖 is insufficient field line bending outside the electron 
+diffusion region, indicating an incomplete development of the ion diffusion region. It may result 
+from bursty reconnection in thin current sheets, or small system sizes. The ion outflow 
+diminishes at high 𝛽𝑖 when the gyroradius (𝜌𝑖) exceeds the system size. Low-velocity ions still 
+experience notable acceleration from Hall fields. However, a local distribution includes many 
+high-velocity ions that experience random accelerations from different electric fields across 𝜌𝑖, 
+resulting in near-zero bulk velocities. Our study helps understand reconnection structures and the 
+underlying physics for transitions between different regimes.  
+Plain Language Summary 
+Magnetic reconnection is a fundamental energy release process in plasmas. In 
+reconnection, both ions and electrons couple to the process, receiving energizations. The 
+reconnection rate measures the efficiency of particle acceleration and magnetic flux transfer. 
+However, a new type of electron-only reconnection has been observed recently, where ions do 
+not exhibit accelerations of bulk flows, yet a higher reconnection rate compared to ion-coupled 
+reconnections is detected. We use particle-in-cell simulations to examine the controlling factors 
+and physical meanings of the high reconnection rate and explore the reasons for the minimal ion 
+acceleration. We find that the high reconnection rate indicates an incomplete development of ion 
+diffusion regions with insufficient magnetic field bending, and the minimal ion bulk acceleration 
+is due to the average over large-scale ion gyromotion covering different fields. 
+ 
+ 
+
+ 
+ 
+1 Introduction 
+Magnetic reconnection is a fundamental process in plasma physics that rearranges the 
+topology of magnetic field lines and drives many explosive energy transferring processes in 
+space (Birn & Priest, 2007; Yamada et al., 2010). The standard model of reconnection (Figure 
+1a) describes a small electron scale electron diffusion region (EDR) embedded in a large ion 
+scale ion diffusion region (IDR). On larger scales, both ions and electrons are frozen-in with the 
+magnetic field, but they decouple from the magnetic field within the IDR and EDR, respectively. 
+Recently, Phan et al. (2018) reported the electron-only reconnection in Earth’s turbulent 
+magnetosheath, where no ion-scale current sheet or ion outflow is observed throughout the 
+reconnection process. Simulation studies provided explanations of generating electron-only 
+reconnection by either small system sizes (e.g., smaller than 10 𝑑𝑖, where 𝑑𝑖 is the ion inertia 
+length) as in a turbulent environment (e.g., Pyakurel et al., 2019) or a transient early phase of 
+standard reconnection as in studies of magnetotail current sheets (Lu et al., 2020, 2022).   
+The reconnection rate measures how fast the magnetic flux is reconnected, with the 
+reconnection electric field at the X-line representing the reconnection rate per unit length of the 
+X-line (Wang et al., 2015).  It can be normalized by ion parameters (𝑅𝑖) or electron parameters 
+(𝑅𝑒), both exhibiting a typical value of about 0.1 (Liu et al., 2022). However, observations show 
+the parallel electric field 𝐸∥ much larger than the expected value if normalized to ion parameters 
+(on the order of 50) in electron-only reconnection (e.g., Phan et al., 2018; Bessho et al., 2022), 
+which suggests a potentially large reconnection rate. Similarly, kinetic simulations have found 
+high 𝑅𝑖 in electron-only reconnections. One of the currently accepted controlling factors is the 
+small system size, which gives high 𝑅𝑖 and suppresses the ion outflow at the same time 
+(Pyakurel et al., 2019). However, in simulation practices, the reconnection rate may be 
+influenced by multiple parameters. Could any other factors also contribute to a high 𝑅𝑖? For 
+example, the initial current sheet thickness may be a promising candidate, as demonstrated in a 
+contemporary study by Guan et al. (2023). Furthermore, what is the essential mechanism for 
+high 𝑅𝑖? In this study, we further examine the effects of system size and initial current sheet 
+thickness on the reconnection rate, and try to further figure out the underlying physical 
+meanings. 
+The ion dynamics in electron-only reconnection is also an intriguing problem. Phan et al. 
+(2018) suggested that the limited space and/or time in the turbulent environments prevents ions 
+from coupling to the magnetic structures. Simulations by Pyakurel et al. (2019) supported these 
+findings, and they identified a system size of 10𝑑𝑖 as a critical transition point. Further research 
+by Guan et al. (2023) revealed the transition threshold as 𝜌𝑖 (ion thermal gyro-radius). Despite 
+these advances, there has yet to be a detailed investigation into the exact mechanisms to explain 
+why ions fail to experience acceleration. 
+In this paper, we use particle-in-cell (PIC) simulations to explore the controlling factors 
+and physical meanings of high reconnection rates. Additionally, we investigate the behaviour of 
+ions in simulations with and without bulk outflows to understand why ion outflows may be failed 
+to form. 
+2 Simulation Setup 
+We conducted twelve 2.5-dimensional PIC simulations described in Table 1 using the 
+VPIC code (Bowers et al., 2008). The x boundaries are periodic, while the z boundaries are 
+
+ 
+ 
+reflecting for particles and conducting for the fields. The simulations are initialized with force-
+free current sheets, where all initial currents are carried only by electrons. The guide field 𝐵𝑔 is 
+equal to the upstream asymptotic field 𝐵𝑥0, and 𝐵0 = √𝐵𝑥0
+2 + 𝐵𝑔2. The initial magnetic field is 
+given by 𝐵𝑥= 𝐵𝑥0[𝑡𝑎𝑛ℎ⁡(𝑧/𝐿)] and 𝐵𝑦= √𝐵0
+2 −𝐵𝑥2, where 𝐿 is the half thickness of the 
+current sheet. Reconnection occurs spontaneously from numerical noises.  
+In Table 1, 
+𝑚𝑖
+𝑚𝑒 is the ion-to-electron mass ratio, 𝛽𝑖 (𝛽𝑒) is the ion (electron) beta based on 
+the uniform initial number density 𝑛0, temperature 𝑇𝑖0 (𝑇𝑒0) and magnetic field 𝐵0. 𝜔𝑝𝑒 is the 
+electron plasma frequency based on 𝑛0, and 𝜔𝑐𝑒 is the electron cyclotron frequency based on 𝐵0. 
+The number of particles per cell per species (nppc) is 500 in all simulations. Unless otherwise 
+noted, the length is normalized to the ion initial length 𝑑𝑖 (based on n0), the magnetic field is in 
+𝐵𝑥0, the velocity is in 𝑉𝐴=
+𝐵𝑥0
+√𝜇0𝑚𝑖, and the electric field is in 𝐵𝑥0𝑉𝐴. 
+The simulations are categorized into three groups. In the A and B groups, we observed 
+the reconnection rate influenced by 𝐿 and 𝐿𝑧, respectively, where 𝐿𝑧 is the system size along 𝑧. 
+In the C group, we altered 𝑇𝑖, and hence 𝜌𝑖 and 𝛽𝑖, to study its effect on the ion outflow. 
+To simulate the realistic boundary conditions, we performed three different simulation 
+models. “1CS” refers to one initial current sheet. “3CS” represents three initial current sheets 
+along z of the equal thickness, with the initial currents oriented in opposite 𝑦 directions for the 
+adjacent current sheets. 𝐿𝑧 represents the system size along 𝑧 for each current sheet, so the 
+simulation size along 𝑧 in the 3CS model is 3𝐿𝑧. “1+2CS” means one thin initial current sheet in 
+the middle, with two thick initial current sheets (𝐿= 0.5𝑑𝑖) positioned above and below. In the 
+1+2CS model, 𝐿𝑧⁡is defined by the distance between the extreme points of 𝐵𝑥 on both sides of 
+the thin current sheet. The thick current sheets, which do not reconnect during the time of 
+interest, act as realistic boundaries. Thus, particles can be constrained in the z direction through 
+the electromagnetic force instead of by artificial reflections at the boundaries. Therefore, in 
+group C when focusing on the ion dynamics in a small system size, the 1+2CS model is applied 
+to completely avoid the effect of artificial boundary conditions.  
+3 High reconnection rate (𝑹𝒊) caused by insufficient magnetic field line bending 
+We first study the reconnection rate. Based on the diagram in Figure 1a, the normalized 
+reconnection rates can be written as 
+𝑅𝑖=
+𝑑𝐴𝑦
+𝑑𝑡
+𝐵𝑥0𝑉𝐴𝑖
+,
+𝑅𝑒=
+𝑑𝐴𝑦
+𝑑𝑡
+𝐵𝑥𝑒𝑉𝐴𝑒
+(1) 
+Where 𝐴𝑦 is the 𝑦 component of the magnetic vector potential, and 𝑉𝐴𝑖= √
+𝑚𝑒
+𝑚𝑖𝑉𝐴𝑒 are the 
+ion and electron Alfven speed, respectively. The simulations do not develop or have not yet 
+developed well-defined IDRs for the intervals of interest, so we calculate 𝑅𝑖 using 𝐵𝑥0 at the 
+system boundaries. 𝐵𝑥𝑒 marks 𝐵𝑥 at the EDR boundaries, defined by the edge of the central 𝐽𝑒𝑦 
+current layer. An additional 𝐽𝑒𝑦 layer may develop outside the central EDR with an opposite 
+sign, partly due to the Hall effect. Thus, we take a 1D cut of 𝐽𝑒𝑦 along z at the x location of the 
+
+ 
+ 
+X-line, and define the EDR boundary by considering both the maximum (𝐽𝑒𝑦,𝑚𝑎𝑥)⁡and minimum 
+(𝐽𝑒𝑦,𝑚𝑖𝑛) value of this 𝐽𝑒𝑦 cut. A practical 𝐽𝑒𝑦 criterion for the EDR boundary is 𝐽𝑒𝑦=
+1
+10 (𝐽𝑒𝑦,𝑚𝑎𝑥+ 9𝐽𝑒𝑦,𝑚𝑖𝑛), which gives reasonable and consistent results throughout the 
+reconnection development in all runs. 
+ With simulations in group A, we examine the effect of the initial current sheet half 
+thickness (𝐿). The reconnection rates at the time of peak 𝑅𝑖 are presented in Figure 1b. As 𝐿 
+decreases, 𝑅𝑖 increases and becomes abnormally high (approximately 0.9). Such an increasing 
+trend of 𝑅𝑖 with decreasing L is consistent with the contemporary study (Guan et al., 2023). In 
+contrast, 𝑅𝑒 remains around 0.1. Let us compare the time history of reconnection rates in runs A1 
+(𝐿= 0.03⁡𝑑𝑖, Figure 1c) and A5 (𝐿= 0.3⁡𝑑𝑖, Figure 1d). In Figure 1c, 𝑅𝑖 (black line) rapidly 
+reaches a high peak during the initial phase (𝑡𝜔𝑐𝑖= 0.2⁡𝑡𝑜⁡0.8) before dropping to a steady 
+phase, while 𝑅𝑒 remains consistently around 0.1 throughout the entire process. In Figure 1d, 𝑅𝑖 
+and 𝑅𝑒 both slowly rise to a steady value around 0.1, in accordance with the standard 
+reconnection model.  
+In all of our simulations, 𝑅𝑒 remains perfectly around 0.1, so we examine the abnormally 
+high 𝑅𝑖 by comparing it to 𝑅𝑒. The ratio between the two is  
+𝑅𝑖
+𝑅𝑒
+= 𝑉𝐴𝑒𝐵𝑥𝑒
+𝑉𝐴𝑖𝐵𝑥0
+= √
+𝑚𝑖
+𝑚𝑒
+(𝐵𝑥𝑒
+𝐵𝑥0
+)
+2
+(2) 
+This relationship shows that the high 𝑅𝑖 comes from a high 
+𝐵𝑥𝑒
+𝐵𝑥0 ratio. Since 𝐵𝑥𝑒 can 
+normalize 𝑅𝑒 effectively, the high 
+𝐵𝑥𝑒
+𝐵𝑥0 ratio results from a small 𝐵𝑥 reduction ∆𝐵𝑥= 𝐵𝑥𝑒−𝐵𝑥0. 
+The magnetic field depletion outside of the EDR as illustrated in Figure 1a. 
+By applying Ampère’s Law in the 𝑥−𝑧 plane, 
+(∇× 𝐵)𝑦= 𝜇0𝐽𝑦
+(3) 
+We take a cut at the x location of the X-line and integrate along z to obtain 
+∆𝐵𝑥= ∫
+(𝜇0𝐽𝑦+ 𝜕𝐵𝑧
+𝜕𝑥)𝑑𝑧
+𝐸𝐷𝑅
+∞
+(4) 
+The integrals ∫
+𝜇0𝐽𝑦𝑑𝑧
+𝐸𝐷𝑅
+∞
+ (black) and ∫
+𝜕𝐵𝑧
+𝜕𝑥𝑑𝑧
+𝐸𝐷𝑅
+∞
+ (green) are presented in Figures 1e 
+and 1f, respectively. In all of our simulations, the contribution from ∫
+𝜇0𝐽𝑦𝑑𝑧
+𝐸𝐷𝑅
+∞
+ is much smaller 
+than that from ∫
+𝜕𝐵𝑧
+𝜕𝑥𝑑𝑧
+𝐸𝐷𝑅
+∞
+ outside of the EDR. This phenomenon can be attributed to the fact 
+that the 𝐽𝑒𝑦 (blue) with an opposite sign from that in the central EDR, partly resulting from the 
+Hall effect, always offsets 𝐽𝑖𝑦 (red) that arises from the ion acceleration by the reconnection 
+electric field 𝐸𝑦. Consequently, it can be approximated that 
+𝛥𝐵𝑥≈∫
+𝜕𝐵𝑧
+𝜕𝑥𝑑𝑧
+𝐸𝐷𝑅
+∞
+(5) 
+
+ 
+ 
+The term 
+𝜕𝐵𝑧
+𝜕𝑥 physically represents the magnetic tension, and geometrically reflects the 
+bending of magnetic field lines in the z-direction. Thus, the low 𝛥𝐵𝑥 results from a low 
+𝜕𝐵𝑧
+𝜕𝑥, 
+indicating insufficient field line bending, which further leads to high 𝑅𝑖. 
+To observe how a low 𝐿 contributes to insufficient field line bending, we examine the 
+ratio 
+𝐵𝑥𝑒
+𝐵𝑥0 (blue) in Figures 1c and 1d, which is the mean value of both sides of the current sheet. 
+Initially, 
+𝐵𝑥𝑒
+𝐵𝑥0 remains approximately 1, and then enters a rapid declining phase when the 
+reconnection starts, followed by a transition to a steady phase which represents the quasi-steady 
+reconnection. A key distinction between runs A1 and A5 is the evolution speed: in run A1, 𝑅𝑖 
+peaks within a short interval (𝑡𝜔𝑐𝑖= 0.5), during the declining phase of 
+𝐵𝑥𝑒
+𝐵𝑥0; in run A5, 𝑅𝑖 
+gradually rises to its peak (𝑡𝜔𝑐𝑖= 24) during the steady phase of 
+𝐵𝑥𝑒
+𝐵𝑥0. Therefore, in thin current 
+sheets, reconnection rapidly progresses with a high reconnection rate 
+𝑑𝐴𝑦
+𝑑𝑡, before magnetic field 
+lines achieve sufficient bending and hence, significant 𝛥𝐵𝑥, resulting in high 𝑅𝑖. However, 𝐿 
+does not influence the quasi-steady reconnection rate, and 𝑅𝑖 is similar in group A during the 
+steady phase of 
+𝐵𝑥𝑒
+𝐵𝑥0. 
+Another important factor influencing 𝑅𝑖 is 𝐿𝑧. When the field line structure extends to the 
+system boundaries, a small 𝐿𝑧 can restrict the space available for the field lines to fully bent, 
+resulting in higher quasi-steady 𝑅𝑖. As shown in Figure 1g for group B (𝐿= 0.1𝑑𝑖), both 𝑅𝑖 
+(black) and 
+𝐵𝑥𝑒
+𝐵𝑥0 (blue) decrease as 𝐿𝑧⁡increases.  It applies to the mean quasi-steady 𝑅𝑖 during 
+𝑡𝜔𝑐𝑖= 1.6 −3.0. The time histories of the reconnection rate and 
+𝐵𝑥𝑒
+𝐵𝑥0 for group B are provided in 
+Figure S1, Supporting Information. After the initial declining phase, 
+𝐵𝑥𝑒
+𝐵𝑥0 becomes steady, and the 
+reconnection rate enters a quasi-steady phase. In run B3 (𝐿𝑧= 5𝑑𝑖), the restricting effect of 𝐿𝑧 is 
+negligible, and the quasi-steady 𝑅𝑖 is similar to that in group A. Conversely, in run B1 (𝐿𝑧=
+1.5𝑑𝑖), the quasi-steady 𝑅𝑖 is higher (approximately 0.4). The field line structures of runs B1  
+and B3 at 𝑡𝜔𝑐𝑖= 2.5 are presented in Figures 1i and 1j, respectively. It is evident that run B1 
+exhibits less field line bending compared to run B3. 
+To study the application and limitation of our models, we have conducted run B4 with 
+3CS Model to mimic turbulence environments where multiple current sheets interact. Initially, 
+reconnection develops similarly to the 1CS model (not shown), while the later reconnection 
+structure and timespan are significantly influenced by current sheet interactions. Figure 1h shows 
+the 𝑅𝑖 and the movement directions of the islands in run B4 at 𝑡𝜔𝑐𝑖= 3.  The left X-line exhibits 
+strong 𝑅𝑖 due to the extra inflow provided by the island merging of the upper and lower current 
+sheets. The outflow of the left X-line pushes the islands and leads to the negative 𝑅𝑖 at the right 
+X-line. These results demonstrate the applicability of key conclusions from our simple models to 
+turbulent conditions. However, interactions between current sheets and islands distort the sheets, 
+potentially enhancing or reducing the lifetime and reconnection rates in later reconnection stages. 
+
+ 
+ 
+4 The absence of ion outflow caused by high 𝜷𝒊 
+While it is generally accepted that electron-only reconnections have high reconnection 
+rates, it is important to note that a high reconnection rate is not necessarily associated with the 
+absence of ion outflow. As illustrated in Figures 2a and 2c, run C1 exhibits both a high 𝑅𝑖 and a 
+strong ion outflow.  
+Figures 2e-2f depict the 𝐸𝑥 and ion outflow structures in runs C1 (𝛽𝑖= 0.1) and C2 
+(𝛽𝑖= 9). 𝐸𝑥 as part of the Hall field arises from the decoupling between ions and electrons and 
+is an important factor on accelerating ions towards the outflow (e.g., Aunai et al., 2011; Yamada 
+et al., 2018). It is noteworthy that although the 𝐸𝑥 structures in C1 and C2 are similar, and even 
+stronger in C2, run C1 demonstrates a strong ion outflow, while run C2 is an electron-only 
+reconnection. A contemporary study by Guan et al. (2024) also suggests that the stronger 𝐸𝑥 
+structure in electron-only reconnection arises from greater charge separation due to the absence 
+of ion outflow. 
+To investigate why ions in run C2 are not fully accelerated, we collected the ion velocity 
+data from a specified area in the outflow region, indicated by the black circles in Figures 2c and 
+2d. We present the reduced ion velocity distribution functions (VDFs) in the 𝑣𝑥−𝑣𝑧 plane of 
+runs C1 and C2 in Figures 2g and 2h. A key difference is the ion velocity range: most ions in run 
+C1 have a velocity not exceeding 1𝑉𝐴, whereas ions in run C2 can reach velocities of up to 10𝑉𝐴. 
+We examine low-velocity and high-velocity ions separately at the outflow region as 
+marked by the circles in Figures 2c and 2d. In run C1, the low-velocity ions include all ions; in 
+run C2, the low-velocity ions include those with velocities less than 3𝑣𝑡ℎ𝑖,𝐶1 = 0.9𝑉𝐴, as 
+indicated by the white circle in Figure 2h, where 𝑣𝑡ℎ𝑖,𝐶1 is the initial ion thermal speed in C1. 
+The one-dimensional reduced VDF along 𝑣𝑥 for only low-velocity ions is shown in Figure 2i, 
+where both simulations exhibit a similar bulk velocity drift in the −𝑥 direction. To gain further 
+insights, we observe the typical trajectories of the low-velocity ions from both simulations in 
+Figures 2j and 2k. These ions travel over a small scale near the X-line. Using the same color 
+scale to represent the speed along track, they exhibit nearly identical behaviors. In conclusion, 
+the low-velocity ions in both simulations experience accelerations and show little distinction.  
+For the high-velocity ions, which comprise the majority in run C2, we picture the typical 
+trajectories in Figure 2l. One trajectory is colored in rainbow that represents the speed along 
+track, while the other two are depicted in black and purple, respectively. These ions travel at high 
+velocities across the system scale, as was also shown in Guan et al. (2023). The ions pass 
+through the X-line region in a short time, which limits their acceleration from the electric fields 
+that belong to the same X-line. Additionally, they experience counter-acceleration from the 
+opposing electric and magnetic field throughout the system, which offsets their velocity. 
+Consequently, it is highly possible that a single high-velocity ion cannot accumulate significant 
+acceleration during the entire gyromotion process. 
+On the other hand, when considering the bulk ion outflow, we are not observing the 
+behavior of a single particle, but rather the average velocity of all the ions within a local area. 
+Since these local ions come from random trajectories across the 𝜌𝑖 scale, their average velocity 
+will therefore represent the average acceleration across the 𝜌𝑖 scale. Therefore, when 𝜌𝑖⁡exceeds 
+the system size, the bulk ion velocity reflects the average acceleration across the entire system, 
+which is zero due to the symmetric nature of the reconnection structures. 
+
+ 
+ 
+5 Discussion 
+Our results have linked the high 𝑅𝑖 to insufficient field line bending, and it suggests that 
+𝑅𝑖 in such cases cannot appropriately represents the normalized reconnection rate.  Comparing 
+our study with the standard model in Figure 1a, 𝑅𝑒~0.1, indicating that the reconnection 
+structure within the EDR is already well-developed. The standard model proposes that 𝐵𝑥𝑖 can 
+properly normalize 𝑅𝑖, and in Figure 1a, we expect 𝐵𝑥0 ≈𝐵𝑥𝑖. When insufficient field line 
+bending (low 𝛥𝐵𝑥) exists between 𝐵𝑥𝑒 and 𝐵𝑥0, 𝐵𝑥0 = 𝐵𝑥𝑒+ 𝛥𝐵𝑥< 𝐵𝑥𝑖 (the expected value of 
+𝐵𝑥𝑖). Consequently, 𝐵𝑥0 cannot effectively normalize 𝑅𝑖, and 𝑅𝑖 loses its meaning as a 
+normalized reconnection rate. The reduction of⁡𝛥𝐵𝑥 in small-scale reconnection was discussed 
+in Pyakurel et al. (2019) and Bessho et al. (2022), but here we demonstrate that 𝛥𝐵𝑥 is 
+contributed by field line bending with little contribution from the current density (e.g., 
+discussed in Pyakurel et al., 2019). The importance of field line bending in constraining 𝑅𝑖~0.1 
+in standard reconnection was pointed out in Liu et al. (2017). We note that the field line 
+bending outside of the IDR would lead to 𝐵𝑥0 > 𝐵𝑥𝑖, but using either 𝐵𝑥0 ≈𝐵𝑥𝑖 or 𝐵𝑥0 > 𝐵𝑥𝑖 
+would not alter the above analysis. Thus, our study extends the picture of field line bending to 
+inside the IDR, concluding that insufficient bending outside of the EDR still allows for a normal 
+reconnection efficiency within the EDR (𝑅𝑒~0.1) but fails to constrain 𝑅𝑖. 
+However, 𝑅𝑖 can still be meaningful as a description of the absolute value of the 
+reconnection rate. Given a fixed boundary condition of 𝐵𝑥0, a higher 𝑅𝑖 means higher 
+𝑑𝐴𝑦
+𝑑𝑡=
+𝑅𝑖𝑉𝐴𝑖𝐵𝑥0, i.e., more magnetic fluxes are reconnected per unit time. It serves as a useful 
+quantity to compare the absolute reconnection rate in observation events, as long as the 
+upstream boundary conditions can be identified. 
+ Additionally, the high 𝑅𝑖 can be an indicator of the extent to which the ion acceleration 
+deviates from the standard model. Since ions decouple from the field lines inside the IDR, the 
+motion of field lines between the EDR and IDR boundaries is primarily due to the electron 
+motion 𝑢𝑒𝑧, mainly guided by the 𝐸𝑦× 𝐵𝑥 drift. Therefore, insufficient field line bending can be 
+attributed to an incompletely developed 𝐸𝑦 structure, which is a crucial factor influencing the 
+ion acceleration within the IDR. Our simulations also show an expanding 𝐸𝑦 structure 
+originating from the EDR, which corresponds with a similar 𝐽𝑖𝑦 structure, and 𝑢𝑖𝑥 grows 
+together with 𝐽𝑖𝑦 (shown in Figure S2, Supporting Information). Thus, the insufficient field line 
+bending and the high 𝑅𝑖 are related with weak ion acceleration and incomplete IDR 
+development. The decreasing phase of 
+𝐵𝑥𝑒
+𝐵𝑥0 can represent the evolution process of IDR. 
+The electron-only phase can be either temporary or throughout the entire reconnection 
+process. In all our simulations, the declining phase of 
+𝐵𝑥𝑒
+𝐵𝑥0 can be defined as the temporary 
+electron-only phase. The time development of electron and ion outflow together with 
+𝐵𝑥𝑒
+𝐵𝑥0 in run 
+A5 are exhibited in Figure S3, Supporting Information. Electron outflow starts to develop as 
+𝐵𝑥𝑒
+𝐵𝑥0  
+starts to decline, and peaks around the end of the declining phase. Ion outflow starts to 
+develop in the middle of the declining phase, and peaks during the steady phase of 
+𝐵𝑥𝑒
+𝐵𝑥0.⁡When 
+the initial current sheet is thin, the reconnection rate peaks during the declining phase, 
+producing a transient, abnormally high peak 𝑅𝑖 as in our run A1. When the initial current sheet 
+
+ 
+ 
+is thick, reconnection grows slowly and the reconnection rate peaks after the declining phase, 
+so that 𝑅𝑖 is low in the electron-only phase, such as in our run A5 and in Lu et al. (2020, 2022).In 
+our simulation group A, with a large system size (𝐿𝑥× 𝐿𝑧= 10𝑑𝑖× 5𝑑𝑖), eventually ions are 
+coupled and 𝑅𝑖 reaches around 0.1. Thus, the incomplete ion coupling only occurs in the early 
+time (Lu et al., 2020, 2022; Hubbert et al., 2021). In contrast, with a small system size as in our 
+run B1 and those in Pyakurel et al. (2019, 2021), the field line bending is constrained by the 
+system size and can never fully develop. Thus, 𝑅𝑖 remains high and ion coupling remains weak 
+as long as reconnection proceeds with a fast 𝑅𝑒~0.1. 
+The lack of the ion outflow is linked to high 𝛽𝑖. It is consistent with the decreasing trend 
+of the ion outflow with increasing 𝛽𝑖 in large-scale standard reconnection (Li and Liu, 2021). 
+Their study also found that 𝑅𝑖 decreases with higher 𝛽𝑖. The reconnection rates in our two 
+simulations in group C only exhibit a small difference, so we cannot draw a conclusion on their 
+relation. However, Guan et al. (2023) showed with multiple simulations that in small-scale 
+reconnection, 𝑅𝑖 increases with higher 𝛽𝑖, opposite to the trend in large-scale reconnection. 
+Our conjecture is that when the system size is smaller than IDR, as 𝛽𝑖 rises, the expected IDR 
+size also increases. Therefore, it amplifies the weakening effect on ion acceleration due to the 
+small system size, leading to a higher 𝑅𝑖, while 𝑅𝑒 may remain around 0.1. In large-scale 
+reconnection, ions are magnetized once outside of the IDR, so a lower outflow at higher 𝛽𝑖 can 
+be associated with a lower reconnection rate 
+𝑑𝐴𝑦
+𝑑𝑡= 𝐸𝑦= 𝑉𝑜𝑢𝑡𝐵𝑜𝑢𝑡, where  𝑉𝑜𝑢𝑡 and 𝐵𝑜𝑢𝑡 
+represent the velocity and magnetic field around the outflow boundary of the IDR, respectively. 
+Then both 𝑅𝑖 and 𝑅𝑒 would be lower. In summary, a higher 𝛽𝑖 leads to a weaker bulk ion 
+outflow; it reduces the normalized reconnection rate (𝑅𝑖 and 𝑅𝑒) in standard reconnection by 
+really reducing the reconnection efficiency, while it can increase 𝑅𝑖 (but not 𝑅𝑒) in small-scale 
+reconnection by introducing insufficient field line bending and incomplete IDR structures. 
+6 Conclusion 
+In conclusion, we have examined the normalized reconnection rates and the impact of 
+𝛽𝑖 on the ion outflow using 2.5 dimensional PIC simulations. Our findings indicate that while 𝑅𝑖 
+may be abnormally high, 𝑅𝑒 remains consistently around 0.1. The high 𝑅𝑖 is attributed to 
+insufficient field line bending outside of the EDR, which corresponds to an incompletely 
+developed IDR. A thin initial current sheet may produce temporarily high 𝑅𝑖 by fast 
+reconnection development before field lines have been fully bent, while a small system size 
+may limit the field line bending throughout the reconnection process. A high 𝑅𝑖 is an indicator 
+of the extent to which ion acceleration deviates from the standard model. 
+Previous studies associated the small system size, high 𝑅𝑖, and lack of ion outflow 
+together. However, we show that while high 𝑅𝑖 does represent weak ion coupling, it does not 
+indicate a complete absence of the ion outflow. The ion outflow is suppressed by the combined 
+effects of the small system size and high 𝛽𝑖 (i.e., large IDR size), rather than by the small system 
+size alone.  Hall electric fields develop in both cases in simulation group C, and low-velocity ions 
+exhibit similar acceleration patterns. High-velocity ions in the high-𝛽𝑖 run travel rapidly through 
+the acceleration region, receiving minimal acceleration. Statistically, the local ion bulk velocity 
+represents the average acceleration across the 𝜌𝑖 scale; thus, when 𝜌𝑖 exceeds the system 
+scale, the ion outflow diminishes. 
+
+ 
+ 
+Our analysis advances the understanding of field structures of reconnection diffusion 
+regions and the associated particle acceleration. As we identify the essence of 𝑅𝑖 and the ion 
+bulk outflow, our study clarifies the relationship between normalized reconnection rates, 
+system sizes, current sheet thicknesses, and the lack of ion outflows. The transition between 
+different regimes related to these factors is thus understandable.  
+Acknowledgements 
+The study is supported by National Natural Science Foundation of China Grants 42374188. The 
+simulation work was carried out at National Supercomputer Center in Tianjin, China, and the 
+calculations were performed on TianHe-HPC. 
+Open Research 
+The simulation data presented in this paper are available (Fan et al., 2024).  
+References 
+Aunai, N., Belmont, G., & Smets, R. (2011). Proton acceleration in antiparallel 
+collisionless magnetic reconnection: Kinetic mechanisms behind the fluid dynamics. Journal of 
+Geophysical Research Atmospheres, 116(A9), n/a. https://doi.org/10.1029/2011ja016688 
+Bessho, N., Chen, L., Stawarz, J. E., Wang, S., Hesse, M., Wilson, L. B., & Ng, J. (2022). 
+Strong reconnection electric fields in shock-driven turbulence. Physics of Plasmas, 29(4). 
+https://doi.org/10.1063/5.0077529 
+Birn, J., & Priest, E. R. (2007). Reconnection of magnetic fields : Magnetohydrodynamics 
+and collisionless theory and observations. Cambridge University Press. 
+Bowers, K. J., Albright, B. J., Bergen, B., Yin, L., Barker, K. J., & Kerbyson, D. J. 
+(2008). 0.374 pflop/s trillion-particle kinetic modeling of laser plasma interaction on roadrunner. 
+In Proceedings of the 2008 ACM/IEEE Conference on Supercomputing (pp. 63:1–63:11). SC 
+'08. Piscataway, NJ, USA: IEEE Press. 
+Fan, C.-Y., Wang, S. et al. (2024). Dataset for New Insights on the High Reconnection 
+Rate and the Diminishment of Ion Outflow. [Dataset]. Zenodo. 10.5281/zenodo.14175270 
+Guan, Y., Lu, Q., Lu, S., Huang, K., & Wang, R. (2023). Reconnection Rate and 
+Transition from Ion-coupled to Electron-only Reconnection. The Astrophysical Journal, 958(2), 
+172. https://doi.org/10.3847/1538-4357/ad05b8 
+Guan, Y., Lu, Q., Lu, S., Shu, Y., & Wang, R. (2024). Role of ion Dynamics in Electron‐
+Only Magnetic Reconnection. Geophysical Research Letters, 51(19). 
+https://doi.org/10.1029/2024gl110787 
+Hubbert, M., Qi, Y., Russell, C. T., Burch, J. L., Giles, B. L., & Moore, T. E. (2021). 
+Electron‐Only Tail current sheets and their temporal evolution. Geophysical Research Letters, 
+48(5). https://doi.org/10.1029/2020gl091364 
+Li, X., & Liu, Y. (2021). The effect of thermal pressure on collisionless magnetic 
+reconnection rate. The Astrophysical Journal, 912(2), 152. https://doi.org/10.3847/1538-
+4357/abf48c 
+
+ 
+ 
+Liu, Y., Cassak, P., Li, X., Hesse, M., Lin, S., & Genestreti, K. (2022). First-principles 
+theory of the rate of magnetic reconnection in magnetospheric and solar plasmas. 
+Communications Physics, 5(1). https://doi.org/10.1038/s42005-022-00854-x 
+Liu, Y., Hesse, M., Guo, F., Daughton, W., Li, H., Cassak, P. A., & Shay, M. A. (2017). 
+Why does Steady-State Magnetic Reconnection have a Maximum Local Rate of Order 0.1? 
+Physical Review Letters, 118(8). https://doi.org/10.1103/physrevlett.118.085101 
+Lu, S., Lu, Q., Wang, R., Pritchett, P. L., Hubbert, M., Qi, Y., Huang, K., Li, X., & 
+Russell, C. T. (2022). Electron‐Only reconnection as a transition from quiet current sheet to 
+standard reconnection in Earth’s magnetotail: Particle‐In‐Cell simulation and application to 
+MMS data. Geophysical Research Letters, 49(11). https://doi.org/10.1029/2022gl098547 
+Lu, S., Wang, R., Lu, Q., Angelopoulos, V., Nakamura, R., Artemyev, A. V., Pritchett, P. 
+L., Liu, T. Z., Zhang, X., Baumjohann, W., Gonzalez, W., Rager, A. C., Torbert, R. B., Giles, B. 
+L., Gershman, D. J., Russell, C. T., Strangeway, R. J., Qi, Y., Ergun, R. E., . . . Wang, S. (2020). 
+Magnetotail reconnection onset caused by electron kinetics with a strong external driver. Nature 
+Communications, 11(1). https://doi.org/10.1038/s41467-020-18787-w 
+Phan, T. D., Eastwood, J. P., Shay, M. A., Drake, J. F., Sonnerup, B. U. Ö., Fujimoto, M., 
+Cassak, P. A., Øieroset, M., Burch, J. L., Torbert, R. B., Rager, A. C., Dorelli, J. C., Gershman, 
+D. J., Pollock, C., Pyakurel, P. S., Haggerty, C. C., Khotyaintsev, Y., Lavraud, B., Saito, Y., . . . 
+Magnes, W. (2018). Electron magnetic reconnection without ion coupling in Earth’s turbulent 
+magnetosheath. Nature, 557(7704), 202–206. https://doi.org/10.1038/s41586-018-0091-5 
+Pyakurel, P. S., Shay, M. A., Phan, T. D., Matthaeus, W. H., Drake, J. F., TenBarge, J. 
+M., Haggerty, C. C., Klein, K. G., Cassak, P. A., Parashar, T. N., Swisdak, M., & Chasapis, A. 
+(2019). Transition from ion-coupled to electron-only reconnection: Basic physics and 
+implications for plasma turbulence. Physics of Plasmas, 26(8). https://doi.org/10.1063/1.5090403 
+Wang, S., Kistler, L. M., Mouikis, C. G., & Petrinec, S. M. (2015). Dependence of the 
+dayside magnetopause reconnection rate on local conditions. Journal of Geophysical Research 
+Space Physics, 120(8), 6386–6408. https://doi.org/10.1002/2015ja021524 
+Yamada, M., Chen, L., Yoo, J., Wang, S., Fox, W., Jara-Almonte, J., Ji, H., Daughton, 
+W., Le, A., Burch, J., Giles, B., Hesse, M., Moore, T., & Torbert, R. (2018). The two-fluid 
+dynamics and energetics of the asymmetric magnetic reconnection in laboratory and space 
+plasmas. Nature Communications, 9(1). https://doi.org/10.1038/s41467-018-07680-2 
+Yamada, M., Kulsrud, R., & Ji, H. T. (2010). Magnetic reconnection. Reviews of Modern 
+Physics, 82(1), 603–664. https://doi.org/10.1103/RevModPhys.82.603 
+ 
+ 
+
+ 
+ 
+Table 1. Plasma parameters of twelve simulation runs 
+Run 
+𝑚𝑖
+𝑚𝑒
+ 
+𝜌𝑖/𝑑𝑖 
+𝛽𝑖= √𝜌𝑖/𝑑𝑖 
+𝛽𝑒 
+𝜔𝑝𝑒
+𝜔𝑐𝑒
+ 
+𝐿𝑥/𝑑𝑖 
+𝐿𝑧/𝑑𝑖 
+𝐿/𝑑𝑖 
+𝛥/𝑑𝑖 
+Model 
+A1 
+100 
+1.58 
+2.5 
+0.5 
+5 
+10 
+5 
+0.03 
+0.01 
+1CS 
+A2 
+0.05 
+A3 
+0.1 
+A4 
+0.2 
+A5 
+0.3 
+B1 
+1.5 
+0.1 
+B2 
+2 
+B3 
+5 
+B4 
+5 
+1 
+0.03 
+3CS 
+C1 
+900 
+0.32 
+0.1 
+0.2 
+2 
+1 
+1 
+0.05 
+0.001 
+1+2CS 
+C2 
+3 
+9 
+ 
+Note: 
+𝑚𝑖
+𝑚𝑒: ion-to-electron mass ratio. 𝜌𝑖: ion gyroradius. 𝛽𝑖⁡(𝛽𝑒): ion (electron) beta . 
+𝜔𝑝𝑒
+𝜔𝑐𝑒: ratio between the 
+electron plasma frequency and electron cyclotron frequency. 𝐿𝑥: system size along x. 𝐿: initial current sheet 
+half thickness. 𝛥: size of one cell. Model: simulation model. See text for details. 
+ 
+ 
+
+ 
+ 
+  
+ 
+
+ 
+ 
+Figure 1. (a) The structure of diffusion regions. (b) to (f): Reconnection rates affected by 
+the initial current sheet half thicknesses (𝑳). (b) Simulation Group A: Peak 𝑹𝒊, 𝑹𝒆 and 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 
+at the time when 𝑹𝒊 reaches the peak. As 𝑳 increases, 𝑹𝒊 and 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 both decrease, while 𝑹𝒆 
+always remains around 0.1. (c) and (d), runs A1 (𝑳= 𝟎. 𝟎𝟑⁡𝒅𝒊) and A5 (𝑳= 𝟎. 𝟑⁡𝒅𝒊): the 
+evolution of 𝑹𝒊 (black), 𝑹𝒆 (red) and 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 (blue) over time. In both cases, as reconnection 
+develops, 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 first decreases and then becomes stable as 𝑹𝒆 reaches around 0.1. In run A1, 
+reconnection develops rapidly, associated with 𝑹𝒊⁡reaching a high peak; in run A5, 𝑹𝒊 
+gradually increases to around 0.1. (e) and (f), runs A1 and A5: 𝑩𝒙 (orange), the integral of 
+𝒋𝒚 (black) and 
+𝒅𝑩𝒛
+𝒅𝒙 (green) from the upper system boundary to the upper EDR boundary 
+along the x location of the X-line at the time when 𝑹𝒊 peaks. 𝜟𝑩𝒙 is mainly contributed by 
+𝒅𝑩𝒛
+𝒅𝒙. Despite 𝒋𝒊𝒚 (red) is larger in A5, 𝒋𝒚⁡remains small as 𝒋𝒊𝒚 offsets 𝒋𝒆𝒚 (blue). (g) Simulation 
+group B: mean quasi-steady 𝑹𝒊 (black) and 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 (blue) at 𝒕𝝎𝒄𝒊= 𝟏. 𝟔−𝟑. 𝟎. As 𝑳𝒛⁡decreases, 
+𝑹𝒊 and 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 both decrease. (h) run B4: 𝑹𝒊 at 𝒕𝝎𝒄𝒊= 𝟑. 𝟎. The reconnection structure and 
+timespan are influenced by the current sheet interaction. The arrows represent the 
+movement direction of the islands.(i) and (j), runs B1 (𝑳𝒛= 𝟏. 𝟓𝒅𝒊) and B3 (𝑳𝒛= 𝟓𝒅𝒊): the 
+reconnection rate 𝑹𝒊 at the second 𝑹𝒊 peak. Less field line bending is observed in B1 than in 
+B4. 
+ 
+ 
+
+ 
+ 
+ 
+
+ 
+ 
+Figure 2. (a) to (f): Reconnection ion outflows affected by 𝜷𝒊, run C1 (left) with 𝜷𝒊= 𝟎. 𝟏 
+and run C2 (right) with 𝜷𝒊= 𝟗. (a) and (b), the evolution of 𝑹𝒊, 𝑹𝒆 and 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 over time. Both 
+runs exhibit large peak 𝑹𝒊. (c) and (d), significant ion outflow 𝑼𝒊𝒙 observed in run C1, while 
+no ion exhaust is present in C2. White circle in (c) and black circle in (d) represent the 
+outflow region where the ion velocity data were collected for the analysis. (e) and (f), 
+similar 𝑬𝒙 structures observed near X-line in both runs, stronger⁡in C2. (g) to (l): Ion 
+particle data from the outflow region of runs C1 and C2. (g) and (h), reduced ion VDF in 
+the 𝒗𝒙−𝒗𝒛 plane. (i) One-dimensional reduced ion VDF along 𝒗𝒙. For C2 (red), only low-
+velocity ions with |𝒗| < 𝑽𝑨 (within the white circle in (h)) are collected. Distributions in 
+both runs exhibit a bulk velocity drift in the −𝒙 direction. (j) and (k), typical trajectories of 
+ions in run C1 and low-velocity ions in Run C2 overplotted on 𝑬𝒙 at 𝒕𝝎𝒄𝒊= 𝟎. 𝟔. Colors 
+along the trajectories represent their speeds, showing similar accelerations. (l) Typical 
+trajectories of high-velocity ions in Run C2 overplotted on 𝑬𝒙 at 𝒕𝝎𝒄𝒊= 𝟎. 𝟒. One of the 
+trajectories is colored in rainbow, showing little and reversing accelerations over one 
+cyclotron period. Two additional trajectories are shown in black and purple. Since the 
+gyroradius exceeds the system scale, ions in the local distribution experience the 
+acceleration across the whole system, leading to a negligible bulk velocity. 
+ 
+ 
+
+ 
+ 
+Geophysical Research Letters 
+Supporting Information for 
+New Insights on the High Reconnection Rate and the Diminishment of Ion Outflow 
+Cheng-Yu Fan1, Shan Wang1*, Xu-Zhi Zhou1, San Lu2, Quanming Lu2, Prayash Sharma Pyakurel3, 
+Qiugang Zong1, 4, Zhi-Yang Liu5  
+1Institute of Space Physics and Applied Technology, Peking University, Beijing 100871, China 
+2School of Earth and Space Sciences, University of Science and Technology of China, Hefei 230026, China 
+3Space Sciences Laboratory, University of California, Berkeley, CA 94720, USA 
+4State Key Laboratory of Lunar and Planetary Sciences, Macau University of Science and Technology, Macau 999078, 
+China 
+5Institut de Recherche en Astrophysique et Planétologie, CNES-CNRS, Universite Toulouse III, Paul Sabatier, Toulouse 
+31028, France 
+ 
+ 
+Contents of this file  
+ 
+Figure S1, S2 and S3 
+ 
+Introduction  
+Figure S1 includes the reconnection rates and 
+𝐵𝑥𝑒
+𝐵𝑥0 in the 1CS runs in simulation group B. Figure 
+S2 includes 𝑅𝑖, 
+𝐵𝑥𝑒
+𝐵𝑥0, electron and ion outflow in runs A1 and A5. Figure S3 exhibits the 
+development of 𝐸𝑦 and 𝑈𝑖𝑦 structure in run A1. 
+
+ 
+ 
+ 
+Figure S1. Reconnection rates affected by the system size along z (𝑳𝒛). (a) to (c), Runs B1 to B3: 
+the evolution of 𝑹𝒊 (black), 𝑹𝒆 (red) and 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 (blue) over time. The data of these time slices are 
+collected in figure 1g. 
+ 
+
+ 
+ 
+ 
+Figure S2. 𝑬𝒚 and 𝑼𝒊𝒚 structure at 𝒕𝝎𝒄𝒊= 𝟎. 𝟕𝟓 and 𝒕𝝎𝒄𝒊= 𝟐. 𝟎 in run A1. Both structures expand 
+from the EDR and develops into the IDR, representing the strengthening process of ion 
+coupling. 
+ 
+ 
+Figure S3. (a) and (b): Time development of 𝑹𝒊(black), 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 (blue), electron (blue dashed) and 
+ion (red dashed) outflow. Electron outflow starts to develop as 
+𝑩𝒙𝒆
+𝑩𝒙𝟎 starts to decline, and peaks 
+around the end of the declining phase. Ion outflow starts to develop in the middle of the 
+declining phase, and peaks during the steady phase of 
+𝑩𝒙𝒆
+𝑩𝒙𝟎. 
+ 

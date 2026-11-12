@@ -1,0 +1,73 @@
+\section{综合练习与逐步答案}
+\label{sec:tutorial-exercises}
+下面的题目不要求复现论文的大规模模拟。建议先遮住答案计算，再检查单位、符号和假设；若答案不同，优先回查这三项。
+
+\subsection{练习1：有正对角元的压力矩阵一定物理可行吗}
+给定
+$\mathsf P=P_0\begin{pmatrix}1&2&0\\2&1&0\\0&0&1\end{pmatrix}$，
+$P_0>0$。判断它能否由非负分布函数产生。
+\paragraph{答案。}
+对$\vct a=(1,-1,0)^T/\sqrt2$，有$\vct a^T\mathsf P\vct a=-P_0$。
+但从定义$\vct a^T\mathsf P\vct a=m\int(\vct a\cdot\vct c)^2f\dd^3v\ge0$。
+因此不可能。三个特征值为$3P_0,-P_0,P_0$。十矩求解器仅检查对角温度为正是不够的。
+
+\subsection{练习2：由Harris磁场求电流与电子漂移方向}
+取$B_x(y)=B_0\tanh(y/a)$、$B_y=0$，$B_0,a>0$，并假设局地离子静止、准中性。求$J_z$与$u_{ez}$。
+\paragraph{答案。}
+\begin{equation}
+ J_z={1\over\mu_0}(\partial_xB_y-\partial_yB_x)
+ =-{B_0\over\mu_0a}\operatorname{sech}^2(y/a),\qquad
+ u_{ez}=-{J_z\over en}
+ ={B_0\over\mu_0ena}\operatorname{sech}^2(y/a).
+\end{equation}
+负电荷向$+z$流动产生$-z$电流。电流与电子速度方向相反，并不是电子动力学的异常。若$n$随$y$变化，应保留它，不能把峰值位置和宽度都从$\operatorname{sech}^2$直接照搬。
+
+\subsection{练习3：准中性情况下算出所需的微小电荷差}
+采用前面的学习参数，令$e\Phi_0/T_e=1$、$L=1000\,{\rm km}$，估计相对电荷不平衡。
+\paragraph{答案。}
+\begin{equation}
+ {|n_i-n_e|\over n_0}\sim
+ \left({74.3\,{\rm m}\over10^6\,{\rm m}}\right)^2
+ \simeq5.52\times10^{-9}.
+\end{equation}
+比例极小仍可产生尺度为$T_e/(eL)$的电场。若$L$降到$100\,{\rm m}$，同一估计已不小，原先的准中性展开不能继续照用。
+
+\subsection{练习4：Hall项为零功，为什么离子仍能获得能量}
+把$\E_H=\J\times\B/(en)$分别与$\J$、$en\vel_i$点乘。
+\paragraph{答案。}
+$\J\cdot\E_H=0$由叉积正交性保证。单种离子的贡献则为
+$en\vel_i\cdot\E_H=\vel_i\cdot(\J\times\B)$，一般非零。
+电子对这一电场的贡献为$-en\vel_e\cdot\E_H$；两者相加为零。
+这只讨论Hall电场本身的分物种功，不代表完整$\E$的分物种功也相加为零。
+
+\subsection{练习5：whistler频率在什么尺度偏离无惯性结果}
+用$q=kd_e$，把惯性EMHD频率除以$|\Omega_{ce}|$，分别计算$q=0.1,1,10$。
+\paragraph{答案。}
+\begin{equation}
+ {\omega\over|\Omega_{ce}|}={q^2\over1+q^2}
+ =0.009901,\ 0.5,\ 0.990099.
+\end{equation}
+无惯性结果则是$q^2$，在$q\ll1$近似很好，在$q\gtrsim1$不再适用。频率趋近常数不意味着该模型已包含高频完整Maxwell物理。
+
+\subsection{练习6：检验常磁通撕裂内层是否自洽}
+取$S_a=10^6$、$ka=0.5$、Harris平衡。用本章量级公式估计$\epsilon$与$\hat\gamma$。
+\paragraph{答案。}
+先由$\Delta=2(K^{-1}-K)=3$，再算
+\begin{equation}
+ \epsilon\sim10^{-12/5}3^{1/5}(0.5)^{-2/5}
+ \simeq6.54\times10^{-3},\qquad
+ \hat\gamma\sim10^{-18/5}3^{4/5}(0.5)^{2/5}
+ \simeq4.58\times10^{-4}.
+\end{equation}
+$\Delta\epsilon\simeq0.0196\ll1$，常$\psi$假设自洽。这些数未含匹配常数，不应与数值本征值逐位比较。若$d_i/a$或$d_e/a$已达到内层宽度量级，还要重新检查电阻单流体内层的适用性。
+
+\subsection{练习7：一个闭合频率能否代表真实热流}
+在均匀、无流、无磁场系统中，初始压力为$\operatorname{diag}(3,1,2)P_0$，闭合频率为$\nu$。求一个弛豫时间$t=\nu^{-1}$后的对角元。
+\paragraph{答案。}
+平均压力为$2P_0$，偏压力初始为$(1,-1,0)P_0$，所以结果是
+$ (2+e^{-1},2-e^{-1},2)P_0$。总内能不变，没有空间能量输运；不能仅凭各向异性衰减便宣称已经恢复真实非局地热流。
+
+\subsection{练习8：重建一篇论文的模型，而不是只抄方程}
+从第七章挑一篇已有全文核读档案的文章，在纸上依次写：未知量；全部演化方程和约束；闭合；归一化；初边值；被忽略项的尺度条件；磁通率和能量诊断的定义。
+\paragraph{参考完成方式。}
+若选无质量等温电子的混合模型，应明确离子是动理学而非流体，电子标量温度给定，电子惯性被删去，断线由哪一个显式或数值项承担。若选十矩，应列出热流散度实际采用的公式及尺度参数，不能只写“保留完整压力张量”。如果原文没给出必要条件，就记为缺失信息；不要把另一篇文章的输入补进去冒充复现条件。

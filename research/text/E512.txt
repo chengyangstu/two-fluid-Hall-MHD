@@ -1,0 +1,4677 @@
+arXiv:1104.4622v2  [physics.plasm-ph]  21 Oct 2011
+Reduced ﬂuid-kinetic equations for low-frequency dynamics, magnetic
+reconnection and electron heating in low-beta plasmas
+Alessandro Zocco1, 2, ∗and Alexander A. Schekochihin2, †
+1Euratom/CCFE Fusion Association, Culham Science Centre, Abingdon OX14 3DB, UK
+2R. Peierls Centre for Theoretical Physics, University of Oxford, Oxford OX1 3NP, UK
+(Dated: 19 October 2011 published in Physics of Plasmas 18, 102309 (2011))
+A minimal model for magnetic reconnection and, generally, low-frequency dynamics in low-beta
+plasmas is proposed. The model combines analytical and computational simplicity with physical
+realizability: it is a rigorous limit of gyrokinetics for plasma beta of order the electron-ion mass ratio.
+The model contains collisions and can be used both in the collisional and collisionless reconnection
+regimes. It includes gyrokinetic ions (not assumed cold) and allows for the topological rearrangement
+of the magnetic ﬁeld lines by either resistivity or electron inertia, whichever predominates. The
+two-ﬂuid dynamics are coupled to electron kinetics — electrons are not assumed isothermal and
+are described by a reduced drift-kinetic equation.
+The model therefore allows for irreversibility
+and conversion of magnetic energy into electron heat via parallel phase mixing in velocity space.
+An analysis of the exchanges between various forms of free energy and its conversion into electron
+heat is provided. It is shown how all relevant linear waves and regimes of the tearing instability
+(collisionless, semicollisional and fully resistive) are recovered in various limits of our model. An
+eﬃcient way to simulate our equations numerically is proposed, via the Hermite representation of
+the velocity space. It is shown that small scales in velocity space will form, giving rise to a shallow
+Hermite-space spectrum, whence it is inferred that, for steady-state or suﬃciently slow dynamics,
+the electron heating rate will remain ﬁnite in the limit of vanishing collisionality.
+I.
+INTRODUCTION
+Multiscale nonlinear plasma phenomena pose
+some of the most tantalizing and intellectually chal-
+lenging theoretical problems in the ﬁeld. Roughly
+speaking, this is because they tend to involve cou-
+pling between ﬂuid (large) and kinetic (small) scales
+and so strain both our physical intuition (which in
+most cases is anchored in the ﬂuid description) and
+analytical stamina (which tends to break down when
+full Vlasov-Maxwell kinetic theory appears to be the
+only rigorous recourse). A particularly clear exam-
+ple of this situation is the development of the (non-
+linear) kinetic theory of magnetic reconnection.
+Magnetic reconnection, the unfreezing of magnetic
+ﬂux in nonideal conducting plasmas,1,2 is one of
+those fundamental plasma physical processes under-
+standing which turns out to be an essential theoreti-
+cal building block in a vast range of laboratory, space
+and astrophysical applications: the sawtooth crash
+in tokamaks,3 solar ﬂares,4,5 the magnetosheath
+and magnetotail of the Earth,6–8 various types of
+magnetohydrodynamic and plasma turbulence,9,10
+particle acceleration mechanisms,11,12 as well as a
+plethora of more exotic reconnection-related phe-
+nomena believed to occur in extreme astrophysical
+environments13 — solutions to these problems turn
+out to depend crucially on whether one thinks mag-
+netic reconnection is fast or slow, steady or bursty
+and impulsive,14 collisional or collisionless,15,16 es-
+sentially two- or three-dimensional, mediated by
+resistivity,17,18 dispersive waves,19 instabilities of the
+current sheets,20–25 turbulence,26–29 or various com-
+binations of these.
+There appears to be a broad theoretical consen-
+sus that in many natural plasmas, reconnection can-
+not be fully understood in a purely magnetohydro-
+dynamic (MHD) setting (the same is true for most
+other nonlinear multiscale plasma phenomena). In
+recent years, a dramatic increase in the raw comput-
+ing power that could be brought to bear on these
+problems has fuelled an intense eﬀort — and some
+spectacular empirical progress — in understand-
+ing kinetic reconnection using PIC simulations,30–35
+both in two and, more recently, three dimensions.
+One limitation of this approach is the lack of a sim-
+ple analytical framework that can help in the inter-
+pretation of numerical results. Ever since the pure
+MHD approach was recognized as insuﬃcient, and
+even before that, attempts have continued to de-
+velop various minimal models, usually of the two-
+ﬂuid kind,36–41 with the aim of capturing the “es-
+sential physical ingredients,” reﬂecting at any given
+time the evolving understanding of what those were.
+Finding such minimal models has been and is likely
+to remain necessary also because, despite the rapid
+expansion of brute-force simulations, the resolu-
+tion available, however impressive, is, in fact, never
+enough: the problem has at least three well sep-
+arated spatial scales (global ﬂuid, ion kinetic and
+electron kinetic), as well as possibly a similar level
+of complexity in the kinetic phase (velocity) space,
+and is likely to require three dimensions in an essen-
+tial way. Furthermore, the current fully kinetic PIC
+
+2
+simulations31 have as yet to produce a clear picture
+of reconnection in low-beta plasmas embedded in a
+strong guide ﬁeld, while gyrokinetic simulations of
+magnetic reconnection42–46 are in their infancy and
+are aﬄicted both by high numerical resolution re-
+quirements and lack of clarity on the theoretically
+expected outcomes (the gyrokinetic theory47 in its
+general form is not much less analytically diﬃcult
+that the full Vlasov-Maxwell kinetics, although nu-
+merically it is, of course, a radical simpliﬁcation).
+There is a good reason to believe that a physically
+realizable model set of equations for weakly colli-
+sional reconnection, or nonlinear plasma dynamics
+generally, however simpliﬁed, cannot in general be
+ﬂuid. Like most nonlinear phenomena, magnetic re-
+connection can and, indeed, should be thought about
+in terms of energy conversion, namely, conversion
+of magnetic energy associated with the reconnecting
+large-scale conﬁguration into other forms of plasma
+energy and, ultimately, particle heat. It is when the
+energy is dissipated into heat that this conversion
+becomes irreversible. However, when collisions are
+weak, Ohmic (resistive) heating is not an important
+process, so most purely ﬂuid models of collisionless
+reconnection turn out to be Hamiltonian:36,37,40,41
+reconnection converts magnetic energy into other
+forms of “ﬂuid” energy (e.g., kinetic energy of the
+mean electron ﬂows), the entropy of the system does
+not increase, everything is in principle reversible,
+and there is no heating. This is somewhat similar
+to inviscid dynamics in a neutral ﬂuid. In fact, just
+like in neutral ﬂuids, nonlinear dynamics in plasmas
+generically trigger formation of small scales, so even
+small dissipation coeﬃcients become non-negligible
+because they multiply large gradients (which is why
+dynamics in ﬂuids with small viscosity are not ev-
+erywhere inviscid, boundary layers form). In weakly
+collisional plasmas, the small-scale structure arises
+in phase space (i.e., both in position and particle ve-
+locities) via linear and nonlinear phase mixing pro-
+cesses (see Sec. V D). Once large velocity-space gra-
+dients are present, even weak collisions are suﬃcient
+to dissipate energy and cause heating.
+Formally,
+this can be understood by tracing the evolution and
+ﬂows of free energy — the quadratic invariant whose
+transfer to small scales and eventual thermalization
+is the central process in the non-equilibrium ther-
+modynamics of kinetic plasmas (in the context of
+kinetic and gyrokinetic turbulence, this is explained
+in Refs. 48,49, where further references are provided;
+in application to magnetic reconnection, we expand
+on this topic in some detail in Sec. IV). Thus, we be-
+lieve there is a need for a minimal model of weakly
+collisional reconnection that is not fully conserva-
+tive, because exact conservation properties impose
+constraints on the phase space of the system50,51
+the breaking of which is not just non-negligible but
+is in fact likely to be physically essential in real
+plasmas.108 While numerical evidence is perhaps not
+fully conclusive on this subject, a few recent studies
+have, explicitly or implicitly, stressed the importance
+of electron heating in the nonlinear regime of kinetic
+reconnection.35,45,52
+In this paper, we take the view that a minimal
+model that is as ﬂuid-like as possible is clearly desir-
+able, but ad hoc closure approximations are danger-
+ous even if they appear to be physically motivated.
+We would like therefore to have a model that com-
+bines analytical and computational simplicity with
+physical realizability, i.e., constitutes a rigorously
+correct approximation of the kinetic system in some
+well deﬁned physical limit. It turns out such a model
+can indeed be constructed and is a simple general-
+ization of an existing two-ﬂuid model,37 although
+it is not a ﬂuid model in that it does retain kinetic
+electrons: the equations are the continuity equation,
+the “gyrokinetic Poisson equation” for the ions, the
+generalized Ohm’s law and a version of the drift-
+kinetic equation for electrons; the latter is coupled
+to the ﬂuid variables via the gradient of parallel elec-
+tron temperature (energetically, via work done by
+the parallel electron pressure gradient). The formal
+limit in which this model is derived is a combina-
+tion of the gyrokinetic regime (strong guide ﬁeld,
+frequencies below ion cyclotron, strong anisotropy
+k∥≪k⊥, small-amplitude ﬂuctuations) with a low-
+beta expansion (plasma beta of order electron-ion
+mass ratio) — this is explained in detail in Sec. II B.
+A very close precursor of our approach in the existing
+literature is the ﬂuid-kinetic model proposed by de
+Blank,53,54 which couples a two-ﬂuid model to a sim-
+pliﬁed electron kinetic equation, although he does
+not give a rigorous asymptotic ordering under which
+his model holds and also restricts his attention to the
+exactly 2D, exactly collisionless case, which means
+that his model is Hamiltonian and has an inﬁnite
+number of Lagrangian conserved quantities55,56 (see
+Appendix A).
+Let us discuss the basic physical ingredients that
+are retained in our approach. Despite the simplicity
+of our equations (summarized in Sec. III E), we be-
+lieve that very little is lost of what we consider the
+sine qua non of kinetic reconnection.
+Three scales.
+The problem is fundamentally
+three-scale: the model has to allow for a reconnect-
+ing conﬁguration on ﬂuid scales, dispersive eﬀects
+at the ion scales and the ﬂux unfreezing by a colli-
+sionless mechanism associated with electron micro-
+physics and so residing at electron scales.
+In our
+case, the ion scales are the ion sound and Larmor
+radii (the ions are gyrokinetic and not assumed cold;
+see Sec. III C).
+The ﬂux unfreezing is eﬀected by
+
+3
+electron inertia — see Sec. III B; we will sacriﬁce
+the electron-Larmor-radius eﬀects.
+Collisions.
+It is desirable for a good model to
+contain a smooth transition from collisionless to
+semicollisional to fully collisional (resistive MHD)
+regime — both because this provides a way to
+benchmark against situations that are better under-
+stood and because theoretically it is possible that
+many natural systems teeter at the boundary be-
+tween the collisionless and collisional regimes.15,16
+The transition between the two has been the focus
+of several recent studies, both experimental57 and
+theoretical,34,35,46,58 but remains poorly understood.
+In our model, electron-ion collisions are retained (see
+Sec. III D) and so both Ohmic resistivity and (paral-
+lel) electron heat conduction (in the semicollisional
+limit; see Sec. V C) are recoverable (but not ion or
+electron viscosity, a limitation that will be discussed
+further in Sec. VI).
+Free-energy ﬂows, Landau damping and electron
+heating.
+Finally, as we explained above, the model
+provides an electron heating channel, operative
+even with very weak collisions, in the form of
+the coupling of the generalized Ohm’s law to the
+electron kinetic equation with a collision operator
+retained.
+This means that the electron Landau
+damping (whose essential byproduct is parallel
+phase mixing) is included and free energy can be
+converted from various ﬂuid forms into the electron
+entropy and thence to heat (see Sec. IV B). Note
+that neither ion Landau damping nor the nonlinear
+perpendicular phase mixing of either species48,49,59
+survive in our model.
+The rest of the paper is organized as follows. In
+Sec. II, we review the gyrokinetic system, which
+is our starting point (Sec. II A), and introduce the
+set of ordering assumptions that encode the phys-
+ical limit in which our equations hold rigorously
+(Sec. II B).
+In Sec. III, we derive the equations
+themselves (they are summarized in Sec. III E).
+In Sec. IV, we work out the energetics of these
+equations: the various forms the free energy takes
+(Sec. IV A), how it is exchanged between ﬁelds
+(Sec. IV B) and what that implies about irreversibil-
+ity, thermalization (dissipation), and electron heat-
+ing (Sec. IV C).
+In Sec. V, we introduce a spec-
+tral representation of the electron kinetics in terms
+of Hermite polynomials (using a modiﬁed Lenard-
+Bernstein operator for electron collisions, introduced
+in Sec. III D).
+This provides what appears to be
+both a remarkably simple computational approach
+and an intuitively appealing physical interpreta-
+tion of velocity-space dynamics and electron heat-
+ing as a cascade in Hermite space (Sec. V D). We
+are led to the conclusion that the electron heat-
+ing rate should remain ﬁnite in the limit of pos-
+itive but vanishing electron collision frequency —
+except for fast-growing solutions like the tearing
+mode (Sec. V E).
+We also derive the semicolli-
+sional limit of our equations60 in Sec. V C.
+Sec-
+tion VI contains the concluding discussion.
+The
+paper is supplemented with two technical appen-
+dices:
+on two-dimensional invariants of our sys-
+tem (Sec. A) and on the linear theory (gyroki-
+netic electron-Landau-damped Alfvén waves,61 colli-
+sional (resistive MHD),62–65 semicollisional66–70 and
+collisionless65–67,71–76 tearing modes).
+We have adopted a rather gradual, step-by-step
+approach to the derivation of all results. An impa-
+tient reader, or one already familiar with most of
+the (standard) analytical machinery deployed here,
+can gain a basic idea of the main results and con-
+clusions by looking at Sec. III E, Sec. IV C, Sec. V E
+and Sec. VI.
+II.
+PRELIMINARIES
+A.
+Gyrokinetics in a slab
+The starting point for our derivation is the gyroki-
+netic description of magnetized plasma,47 which is
+appropriate for low-frequency (ω ≪Ωs) anisotropic
+(k∥≪k⊥) ﬂuctuations in the presence of a mean
+magnetic ﬁeld. The simplest case, which is all we
+will require here, is that of a static uniform equilib-
+rium with zero electric ﬁeld and a constant straight
+magnetic ﬁeld B0 = B0ˆz, whose direction deﬁnes the
+z axis. The subscripts ⊥and ∥will always refer to
+directions with respect to this equilibrium (“guide”)
+magnetic ﬁeld.
+The gyrokinetic equations are de-
+rived by performing an expansion of the Vlasov-
+Landau equation in the small parameter ǫ = k∥/k⊥,
+and averaging out the particle Larmor motion, i.e.,
+all frequencies greater than the cyclotron frequency
+Ωs = qsB0/msc, where s = i, e is the species index,
+qs is particle charge, ms particle mass, and c the
+speed of light. For a detailed derivation of homoge-
+neous gyrokinetics in a slab, the reader may consult
+Ref. 61.
+Let us summarize the resulting equations.
+The
+distribution function up to ﬁrst order in ǫ is
+fs (r, v, t) = F0s −qsϕ(r, t)
+T0s
+F0s + hs(Rs, v⊥, v∥, t),
+(1)
+where the zeroth-order distribution
+F0s(v) =
+n0s
+(πv2
+ths)3/2 exp
+"
+−
+v2
+∥+ v2
+⊥
+v2
+ths
+#
+(2)
+
+4
+is a Maxwellian with uniform density n0s and tem-
+perature T0s, vths = (2T0s/ms)1/2 is the thermal
+speed, qsϕ/T0s = O(ǫ) is the Boltzmann response
+containing the electrostatic potential ϕ, and hs is
+the gyrocenter distribution function, also O(ǫ). Spa-
+tially, hs is deﬁned as a function of the the gyrocen-
+ter, or guiding-center, coordinate
+Rs = r + v⊥× ˆz
+Ωs
+(3)
+and satisﬁes the gyrokinetic equation
+∂hs
+∂t + v∥
+∂hs
+∂z + c
+B0
+
+⟨χ⟩Rs , hs
+	
+=
+qsF0s
+T0s
+∂⟨χ⟩Rs
+∂t
++
+∂hs
+∂t
+
+c
+,
+(4)
+where χ(r, v, t) = ϕ −v · A/c is the gyrokinetic po-
+tential (containing the information about the elec-
+tromagnetic ﬁeld in the form of the scalar potential
+ϕ and vector potential A of the perturbed magnetic
+ﬁeld, δB = ∇× A),
+
+⟨χ⟩Rs , hs
+	
+= ˆz ·
+∂⟨χ⟩Rs
+∂Rs
+× ∂hs
+∂Rs
+
+(5)
+is the Poisson brackets, (∂hs/∂t)c is the (gyroaver-
+aged) collision operator, and
+⟨χ(r, v, t)⟩Rs = 1
+2π
+Z 2π
+0
+dϑ χ
+
+t, Rs −v⊥× ˆz
+Ωs
+, v
+
+(6)
+is the average of χ at constant Rs over the gyroan-
+gles ϑ. In Fourier space, this gyroaveraging opera-
+tion takes a simple mathematical form in terms of
+Bessel functions J0 and J1, so the Fourier transform
+of ⟨χ(r, v, t)⟩Rs with respect to Rs can be written
+as follows
+⟨χ⟩Rs,k = J0(as)
+
+ϕk −v∥A∥k
+c
+
++ T0s
+qs
+2v2
+⊥
+v2
+ths
+J1(as)
+as
+δB∥k
+B0
+,
+(7)
+where as = k⊥v⊥/Ωs, and ϕk, A∥k and δB∥k are
+Fourier transforms (with respect to r) of the scalar
+potential, parallel component of the vector poten-
+tial and parallel component of the perturbed mag-
+netic ﬁeld, respectively. These ﬁelds are determined
+via Maxwell’s equations, namely, the quasineutrality
+and Ampère’s law, where particle densities and cur-
+rents are calculated from the gyrocenter distribution
+hs. These equations will be introduced in Sections
+III A and III C, where we will need them to compute
+electron ﬂow velocity and density perturbation.
+B.
+Low-beta ordering
+We would like to derive a minimal model suitable
+for an analytical description of magnetic reconnec-
+tion in the presence of a mean ﬁeld, i.e., reconnec-
+tion of antiparallel perturbations δB⊥= −ˆz × ∇A∥.
+Since we wish to have a model that describes a real
+physical situation, we cannot resort to writing ad
+hoc ﬂuid equations. Instead, our model will take the
+form of an asymptotic expansion of the gyrokinetic
+equations under an appropriate physically motivated
+ordering of all spatial and time scales and of the per-
+turbation amplitudes. In devising our ordering, we
+are guided by what is known or expected about the
+physical eﬀects that are essential in any description
+of a kinetic reconnection process.
+1.
+Spatial scales
+Firstly, in the presence of a strong guide ﬁeld, elec-
+tron inertia is expected to be a key mechanism for
+breaking the magnetic ﬁeld lines (ﬂux unfreezing)
+in collisionless or weakly collisional plasma.62,77–80
+Thus, we order
+k⊥de ∼1,
+(8)
+where de = c/ωpe = ρe/√βe is the electron in-
+ertial scale and, to ﬁx standard notation, ωpe =
+(4πn0ee2/me)1/2 is the electron plasma frequency,
+e = |qe| the elementary charge, ρe = vthe/Ωe the
+electron Larmor radius, and βe = 8πn0eT0e/B2
+0 the
+electron beta.
+Secondly, a key feature of kinetic reconnection is
+a double layer resulting from the decoupling of the
+electrons from the ions at the ion sound scale.1 To
+retain this eﬀect, we order
+k⊥ρs ∼1,
+(9)
+where ρs = ρi
+p
+Z/2τ is the ion sound radius (sub-
+script s for “sound” not to be confused with the
+species index!), ρi = vthi/Ωi is the ion Larmor ra-
+dius, Z = qi/e and τ = T0i/T0e. We will consider
+the temperature ratio to be order unity, so Eq. (9)
+immediately implies
+τ ∼1,
+k⊥ρi ∼
+ τ
+Z
+1/2
+∼1.
+(10)
+Thus, we retain the ion FLR along with the ion
+sound scale. However, a further simplifying option
+remains open: assuming cold ions, τ ≪1, we can
+eliminate the ion FLR eﬀects. It is with a view to
+this possibility that we will carry the τ dependence
+in all our orderings discussed below.
+
+5
+In order for Eqs. (8) and (9) to be consistent, we
+must have, within our ordering, de ∼ρs (this does
+not mean that these scales must be similar, just that
+we are not hard-wiring into our model a disparity
+between them). This implies
+de
+ρs
+=
+√
+2Z
+me
+mi
+1/2
+1
+√βe
+∼1.
+(11)
+To achieve this, we order
+βe ∼Zme
+mi
+≪1.
+(12)
+Thus, we are restricting our consideration to low-
+beta plasmas and allowing both species to have ﬁ-
+nite temperature.
+The ordering (12) is appropri-
+ate, for example, for the solar corona16 and low-beta
+laboratory experiments such as the LArge Plasma
+Device at UCLA.81 In modern tokamaks, values of
+βe ∼10−3 can occur in the edge pedestal region in
+the H-mode regime.82
+Note that in the gyrokinetic approximation, βe is
+considered order unity with respect to the ordering
+of all quantities in powers of ǫ = k∥/k⊥; we will
+treat our low-beta expansion as subsidiary to the
+gyrokinetic ǫ expansion.
+Now, using Eq. (8), we conclude
+k⊥ρe ∼
+p
+βe ≪1,
+(13)
+which will allow us to neglect the electron FLR ef-
+fects and derive an “almost ﬂuid” set of equations for
+the electrons.
+2.
+Time scales and perturbation amplitudes
+Far from the reconnecting region, the plasma mass
+ﬂow is ordered with the E × B drift velocity. Thus,
+we order the fundamental time scale on which we
+allow our ﬁelds to vary in such a way that the char-
+acteristic frequency is that associated with the E×B
+velocity u⊥:
+ω ∼k⊥u⊥∼k2
+⊥
+cϕ
+B0
+.
+(14)
+Note that the gyrokinetic approximation requires
+ω ≪Ωi,e.
+Since it is an essential feature of our model to
+take into account electron kinetics, we must allow
+the parallel streaming frequency of the electrons to
+be the same order as the rate at which our ﬁelds
+vary, namely
+ω ∼k∥vthe.
+(15)
+The requirement that Eqs. (14) and (15) should
+be consistent with each other imposes an ordering
+on the size of the scalar potential:
+eϕ
+T0e
+∼k∥
+k⊥
+1
+k⊥ρe
+∼
+ǫ
+√βe
+,
+(16)
+where we used Eq. (13). Note that the appearance of
+the gyrokinetic expansion parameter ǫ in the order-
+ing of the perturbation amplitudes conﬁrms that the
+use of the gyrokinetic approximation is appropriate
+in the physical circumstances we are considering.
+We further require that the density perturbations
+are of the same order as the electrostatic perturba-
+tions given by Eq. (16):
+δne
+n0e
+∼Z
+τ
+eϕ
+T0e
+∼Z
+τ
+ǫ
+√βe
+(17)
+(the factor of Z/τ will emerge in Sec. III C and is
+kept for book-keeping purposes). Physically this fol-
+lows from the requirement that the physics associ-
+ated with the ion sound scale is retained [Eq. (9)].
+3.
+Alfvénic perturbations
+We will now order the magnetic perturbations.
+Let us observe that the ordering (12) implies that the
+electron thermal speed is comparable to the Alfvén
+speed vA = B0/√4πmin0i:
+since n0i = n0e/Z
+(quasineutrality), we have
+vthe
+vA
+=
+βe
+Z
+mi
+me
+1/2
+∼1.
+(18)
+Therefore,
+ω ∼k∥vA,
+(19)
+i.e., Alfvén waves can propagate along the guide ﬁeld
+with the same characteristic frequency as the elec-
+trons stream and plasma ﬂows. Note that in view of
+Eqs. (9) and (10), this ordering holds both for the
+magnetohydrodynamic Alfvén waves (ω = k∥vA),
+and for the kinetic Alfvén waves (ω ∼k∥vAk⊥ρs).
+Stipulating that Alfvénic perturbations should be
+accommodated by our ordering (which is equivalent
+to demanding that the Lorentz force is nonnegligible
+— an essential ingredient in a reconnecting system),
+we deduce the ordering for the perpendicular per-
+turbed magnetic ﬁeld δB⊥= −ˆz × ∇⊥A∥:
+δB⊥
+B0
+∼u⊥
+vA
+∼ǫ k⊥ρi
+Z
+τ
+1/2
+∼ǫ,
+(20)
+where we have used Eqs. (16) and (10).
+
+6
+Note that, since ǫ ∼k∥/k⊥, this implies k⊥δB⊥∼
+k∥B0, i.e., the spatial variation of all quantities along
+the exact magnetic ﬁeld contains comparable con-
+tributions from their variation along both the mean
+and perturbed ﬁelds — a general property of gy-
+rokinetic perturbations. This is just what is needed
+for reconnection problems with a guide ﬁeld because
+Alfvénic dynamics with respect to the perturbed
+ﬁeld must be allowed.
+Finally, from the perpendicular component of Am-
+père’s law (see, e.g., Eq. 120 of Ref. 49),
+δB∥
+B0
+∼βe
+eϕ
+T0e
+∼ǫ
+p
+βe,
+(21)
+where Eq. (16) has been used. This will cause the
+parallel perturbations of the magnetic ﬁeld (i.e., per-
+turbations of the ﬁeld strength) to fall out of our
+ﬁnal set of equations.
+Indeed, it is a well known
+fact that in the low-beta ordering such perturbations
+tend to be negligible.
+This completes the ordering of the perturbation
+amplitudes.
+4.
+Resistivity and collisions
+While our main focus is on collisionless reconnec-
+tion, we would like to make contact with the col-
+lisional limit, in which the magnetic ﬂux unfreez-
+ing and magnetic energy release is accomplished by
+Ohmic resistivity.83 We can retain resistivity by or-
+dering the electron-ion (and consequently electron-
+electron) collision frequency as comparable to the
+characteristic frequency of all the other processes
+that we are taking into account:
+νei = Zνee ∼ω.
+(22)
+Since the Ohmic magnetic diﬀusivity (often colloqui-
+ally called resistivity) is η ∼νeid2
+e, the above order-
+ing means that the diﬀusive eﬀects are retained in
+our ordering: indeed, using Eqs. (8) and (22),
+ηk2
+⊥∼νeik2
+⊥d2
+e ∼νei ∼ω.
+(23)
+The resistivity can later be neglected in a sub-
+sidiary collisionless expansion, but we consider it
+useful to have a model in which a smooth transi-
+tion from collisional to collisionless regime is possi-
+ble (cf. Refs. 34,35,46,57 and ideas on the marginal
+collisional-collisionless reconnection regime15,16,58).
+Our ordering of the electron collision immediately
+implies an ordering of the ion collisions:84
+νii =
+Z2
+τ 3/2
+me
+mi
+1/2
+νei ∼
+Z
+τ
+3/2p
+βe ω, (24)
+νie = Zme
+mi
+νei ∼βe ω,
+(25)
+where we have used Eqs. (12) and (22). Thus, we
+are eﬀectively assuming ions to be collisionless (no
+ion viscosity).
+Finally, it is perhaps useful to note the ordering
+of the particle mean free path: using Eqs. (15) and
+(22), we have
+k∥λmfpe =
+Z
+τ
+2
+k∥λmfpi = k∥vthe
+νei
+∼1.
+(26)
+III.
+DERIVATION OF THE EQUATIONS
+We are now ready to apply our ordering and de-
+rive from the gyrokinetic system (Sec. II A) a re-
+duced system of equations describing gyrokinetic
+ions and drift-kinetic electrons in a low-beta weakly
+collisional plasma. An impatient reader can skip to
+Sec. III E.
+A.
+Electrons
+In Eq. (4) for electrons (s = e), we retain only
+the lowest order in the expansion with respect to
+βe. In order to do this, we note ﬁrst that the Bessel
+functions in the expression for ⟨χ⟩Re [Eq. (7)] can be
+expanded in small argument because ae ∼k⊥ρe ∼
+√βe ≪1 [Eq. (13)]:
+J0(ae) ≃2J1(ae)
+ae
+= 1 + O(a2
+e).
+(27)
+Using Eqs. (16) and (20), we ﬁnd that the ϕ and A∥
+terms in Eq. (7) are the same order,
+v∥A∥
+c
+∼vtheB0
+ck⊥
+δB⊥
+B0
+∼T0e
+e
+ǫ
+k⊥ρe
+∼ϕ,
+(28)
+while, according to Eq. (21), the δB∥term is one
+order of βe smaller. Thus,
+⟨χ⟩Re =
+
+ϕ −v∥A∥
+c
+
+[1 + O(βe)] .
+(29)
+This allows us to write Eq. (4) as follows, up to
+corrections of order O(βe),
+dhe
+dt +v∥ˆb·∇he = −eF0e
+T0e
+∂
+∂t
+
+ϕ −v∥A∥
+c
+
++
+∂he
+∂t
+
+c
+,
+(30)
+where we have introduced a “convective” time deriva-
+tive incorporating the E×B motion and the parallel
+spatial derivative along the perturbed ﬁeld line:
+dhe
+dt
+= ∂he
+∂t + c
+B0
+
+ϕ, he
+	
+,
+(31)
+ˆb · ∇he = ∂he
+∂z −1
+B0
+
+A∥, he
+	
+.
+(32)
+
+7
+Note that all terms in Eq. (30) are comparable under
+ordering because of the assumptions we made about
+the time scales for the E × B ﬂows [Eq. (14)], elec-
+tron streaming [Eq. (15)], collisions [Eq. (22)] and
+perturbation amplitudes [Eqs. (16) and (20)].
+It is now convenient formally to split the electron
+distribution function in such a way as to separate the
+inhomogeneous solution arising from the ﬁrst term
+on the right-hand side of Eq. (30) as well as the
+density and parallel velocity moments:
+he =
+
+−eϕ
+T0e
++ δne
+n0e
++ 2v∥u∥e
+v2
+the
+
+F0e + ge,
+(33)
+where by deﬁnition
+δne
+n0e
+=
+1
+n0e
+Z
+d3v δfe,
+(34)
+u∥e =
+1
+n0e
+Z
+d3v v∥δfe,
+(35)
+and δfe = he+eϕF0e/T0e is the total perturbed elec-
+tron distribution function [see Eq. (1)]. Since the
+ﬁrst term in Eq. (33) cancels the Boltzmann part in
+δfe, the above deﬁnitions of the density and paral-
+lel electron ﬂow velocity are consistent provided we
+demand that
+Z
+d3v
+
+1
+v∥
+
+ge = 0,
+(36)
+i.e., the “reduced” electron distribution function ge
+contains all higher moments of the electron distribu-
+tion function, but not density or parallel ﬂow.
+The perturbed density will be calculated in
+Sec. III C from the quasineutrality condition. The
+parallel electron velocity u∥e is related to A∥and to
+the parallel ion velocity u∥i via the parallel compo-
+nent of Ampère’s law:
+ˆz · (∇⊥× δB⊥) = −∇2
+⊥A∥= 4π
+c j∥
+= 4πen0e
+c
+ u∥i −u∥e
+
+.
+(37)
+This can be easily manipulated into
+u∥e =
+e
+cme
+d2
+e∇2
+⊥A∥+ u∥i.
+(38)
+We now substitute Eq. (33) into Eq. (30) and take
+moments of the resulting equation. The zeroth mo-
+ment is, after using Eq. (38),
+d
+dt
+δne
+n0e
++ ˆb · ∇u∥i = −ˆb · ∇e
+cme
+d2
+e∇2
+⊥A∥.
+(39)
+The ﬁrst v∥moment of Eq. (30) is, again using
+Eq. (38) and dividing through by en0e/cme,
+d
+dt
+ A∥−d2
+e∇2
+⊥A∥
+
+=
+−c ∂ϕ
+∂z + cT0e
+e
+ˆb · ∇
+δne
+n0e
++ δT∥e
+T0e
+
+−cme
+en0e
+Z
+d3v v∥
+∂he
+∂t
+
+c
++ cme
+e
+du∥i
+dt ,
+(40)
+where the parallel electron temperature perturba-
+tion has been introduced as a shorthand for the v2
+∥
+moment of ge:
+δT∥e
+T0e
+=
+1
+n0e
+Z
+d3v
+2v2
+∥
+v2
+the
+ge.
+(41)
+Finally, an equation for ge is obtained from
+Eq. (30) by subtracting from it Eq. (39) multiplied
+by F0e and substituting ∂A∥/∂t calculated using
+Eq. (40).
+After a few lines of straightforward al-
+gebra, this gives
+dge
+dt + v∥ˆb · ∇
+
+ge −δT∥e
+T0e
+F0e
+
+−C[ge] =
+ 
+1 −
+2v2
+∥
+v2
+the
+!
+F0eˆb · ∇
+ e
+cme
+d2
+e∇2
+⊥A∥+ u∥i
+
+. (42)
+where the collisional terms have been assembled to-
+gether: by deﬁnition,
+C[ge] =
+∂he
+∂t
+
+c
+−2v∥F0e
+v2
+then0e
+Z
+d3v′ v′
+∥
+∂he
+∂t
+
+c
+.
+(43)
+It is easy to verify that Eq. (42) respects the con-
+straint on ge given by Eq. (36).
+We stress that
+Eq. (42) is not homogeneous in ge, so ge cannot be
+consistently neglected (cf. Ref. 37).
+B.
+Flux conservation
+Equation (40) can easily be rearranged into the
+following form
+∂A∥
+∂t
+= −cˆb · ∇˜ϕ + η∇2
+⊥A∥+ d
+dt d2
+e∇2
+⊥A∥,
+(44)
+where
+˜ϕ ≡ϕ −T0e
+e
+δne
+n0e
++ δT∥e
+T0e
+
+.
+(45)
+Recalling that δB⊥= −ˆz × ∇⊥A∥and B = B0ˆz +
+δB⊥, we immediately infer from Eq. (44) that
+∂B
+∂t = ∇× (ueﬀ× B)+ η∇2
+⊥B−ˆz× ∇⊥
+d
+dt d2
+e∇2
+⊥A∥,
+(46)
+
+8
+where ueﬀ= ˆz × ∇⊥c ˜ϕ/B0 is the eﬀective veloc-
+ity, into which, as the above equation demonstrates,
+the ﬁeld lines are frozen except for the resistive and
+electron-inertia eﬀects. This is an application to our
+equations of the more general ﬂux-conservation ar-
+gument due to Cowley.85
+An important conclusion is that the kinetic elec-
+tron eﬀects, which enter via δT∥e determined from
+Eqs. (41) and (42), do not unfreeze ﬂux.
+C.
+Ions
+Equations (39–42) are four equations that involve
+six quantities δne, ϕ, A∥, u∥i, δT∥e and ge. In or-
+der to have a closed system, we need ﬁnd additional
+equations for two of these quantities. The ion gy-
+rokinetics will give us this additional information:
+namely, we will determine the ion parallel ﬂow ve-
+locity u∥i, which turns out to vanish to lowest order,
+and δne/n0e, which, because of the quasineutrality,
+is the same as the ion density perturbation δni/n0i.
+As we explained in Sec. II B, the ions remain fully
+gyrokinetic under our ordering, i.e., the Bessel func-
+tions in the expression for ⟨χ⟩Ri [Eq. (7)] cannot be
+expanded in small argument because ai ∼k⊥ρi is
+ﬁnite [Eq. (10)]. However, a signiﬁcant simpliﬁca-
+tion of Eq. (7) for ions is possible because, as in the
+case of the electrons, the δB∥term is an order of
+βe smaller than the ϕ term [Eq. (21)] and also be-
+cause, unlike for the electrons, the A∥is also small:
+indeed, noticing that vthi/vthe = (τme/mi)1/2 and
+comparing with Eq. (28), we ﬁnd
+v∥A∥
+c
+∼vthiB0
+ck⊥
+δB⊥
+B0
+∼
+
+τ me
+mi
+1/2
+ϕ ∼τ
+Z
+p
+βe ϕ.
+(47)
+Thus, we have for the ions χ = ϕ, or
+⟨χ⟩Ri,k = J0(ai)ϕk.
+(48)
+Because of the way we ordered the electron
+streaming frequency [Eq. (15)] and the electron col-
+lisions [Eq. (22)], the ion streaming frequency
+k∥vthi =
+
+τ me
+mi
+1/2
+k∥vthe ∼τ
+Z
+p
+βe ω
+(49)
+and the ion collisions [Eqs. (24) and (25)] are small
+and so the corresponding terms in Eq. (4) for ions
+(s = i) are negligible to lowest order. What remains
+is the following rather simple equation for the ions,
+devoid of kinetic eﬀects except for the ion FLR:
+∂gi
+∂t + c
+B0
+
+⟨ϕ⟩Ri , gi
+	
+= 0,
+(50)
+where we have introduced a new function
+gi = hi −ZeF0i
+T0i
+⟨ϕ⟩Ri .
+(51)
+Equation (50) is homogeneous and has one very
+straightforward solution:
+gi = 0.
+(52)
+Thus, the ion response under our ordering is essen-
+tially electrostatic and the perturbed ion distribu-
+tion function is [see Eq. (1)]
+δfi = ZeF0i
+T0i
+ ⟨ϕ⟩Ri −ϕ
+
+.
+(53)
+Note that the ﬁrst term here is a function of the
+gyrocenter variable Ri while the second is a func-
+tion of the position variable r.
+When computing
+the ion density and ﬂow velocity, we must integrate
+δfi over velocities while keeping r constant, which
+means that terms dependent on Ri must be gyroav-
+eraged at constant r. Just like the gyroaveraging at
+constant Ri, this can be expressed in Fourier space
+as a multiplication by the Bessel function J0(ai).
+Thus, we calculate
+δni
+n0i
+=
+1
+n0i
+Z
+d3v ⟨δfi⟩r
+= Ze
+T0i
+ 1
+n0i
+Z
+d3v
+
+⟨ϕ⟩Ri
+
+r F0i −ϕ
+
+= −(1 −ˆΓ0) Zeϕ
+T0i
+,
+(54)
+where ˆΓ0 is the operator that is the inverse Fourier
+transform of
+Γ0(αi) =
+1
+n0i
+Z
+d3v [J0(ai)]2 F0i = I0(αi)e−αi,
+(55)
+where αi = k2
+⊥ρ2
+i /2 and I0 is the modiﬁed Bessel
+function. By quasineutrality, Eq. (54) also gives us
+the electron density perturbation:
+δne
+n0e
+= −Z
+τ (1 −ˆΓ0) eϕ
+T0e
+.
+(56)
+We have recovered a rather popular standard treat-
+ment of the ion FLR.86 Equation (56) is often re-
+ferred to as the gyrokinetic Poisson equation. Note
+that Eq. (56) is consistent with the ordering for
+the density perturbation assumed in Sec. II B [see
+Eq. (17)].
+It will be useful to remember that for k⊥ρi ≪1,
+Γ0(αi) ≃1 −αi and so
+Z
+τ (1 −Γ0) ≃k2
+⊥ρ2
+s
+(57)
+
+9
+in the long-wavelength limit — this leads to a signiﬁ-
+cant simpliﬁcation of Eq. (56). The long-wavelength
+form of the gyrokinetic Poisson equation is useful
+when one wishes to neglect the ion FLR eﬀects. For-
+mally, this can be done by means of the cold-ion
+approximation, τ ≪1. In view of Eq. (10), it imme-
+diately implies k⊥ρi ∼√τ ≪1. Note that taking
+this limit does not require us to order τ within the
+βe expansion as τ and βe do not interfere with each
+other in most of the ordering arguments of Sec. II B.
+The only exception to this is Eq. (24), which im-
+plies that if τ is excessively small, ion collisions (and,
+therefore, ion viscosity) might become important.
+The condition for this not to happen is βe ≪τ 3,
+or τ ≫(me/mi)1/3.
+Clearly, it is safest to keep
+τ only moderately small and to treat any possible
+expansion in τ as subsidiary to the βe expansion.
+Finally, since δfi given by Eq. (53) is even in v∥
+and gyroaveraging only involves v⊥, we have
+u∥i =
+1
+n0i
+Z
+d3v v∥⟨δfi⟩r = 0.
+(58)
+This means that under the ordering we have adopted
+the parallel current is carried predominantly by the
+electrons [see Eq. (37)].
+Equations (56) and (58) together with Eqs. (39–
+42) constitute a complete set. We will assemble and
+summarize them momentarily, but ﬁrst let us work
+out the collisional terms in our equations.
+D.
+Collisions
+In order to make our equations useable, we must
+calculate the collision terms. We would like to do
+this by employing a maximally simpliﬁed collision
+operator rather than the quantitatively correct but
+cumbersome Landau one.
+In order to choose the
+most appropriate model, we notice ﬁrst that the elec-
+tron kinetic equation does not involve any nontriv-
+ial evolution of the v⊥structure in the distribution
+function.
+We therefore believe it is acceptable to
+treat the kinetic equation as one-dimensional in ve-
+locity space — formally, this can be thought of as
+integrating out the v⊥dependence in ge and F0e.
+The simplest one-dimensional collision operator is
+the Lenard–Bernstein one,87 which we write in the
+following form:
+∂he
+∂t
+
+c
+=
+νei
+1
+2
+∂
+∂ˆv∥
+ ∂
+∂ˆv∥
++ 2ˆv∥
+
+he + 2ˆv∥u∥i
+vthe
+F0e
++
+
+1 −2ˆv2
+∥
+
+F0e
+1
+n0e
+Z
+dv′
+∥
+
+1 −2ˆv′2
+∥
+
+he
+
+,
+(59)
+where ˆv∥
+=
+v∥/vthe and the additional,
+non-
+diﬀerential terms in the operator have been con-
+structed in such a way that electron momentum
+evolution is captured correctly, particle number and
+parallel kinetic energy are conserved and the H the-
+orem is satisﬁed (cf. Ref. 88; the H theorem will
+be proved explicitly in Sec. V B). The collision fre-
+quency νei is taken to be velocity-independent — a
+gross simpliﬁcation compared to the uncensored re-
+ality, in which it is in fact a strong function of veloc-
+ity. We do not believe this to be an important short-
+coming of our model, however, because our focus will
+be on the role of the collision operator as small-scale
+regularization in velocity space rather than on quan-
+titatively precise calculations of the eﬀects of ﬁnite
+collisionality.
+Let us now calculate the collisional terms in
+Eqs. (40) and (42).
+Using Eq. (33) for he and
+Eq. (37) for u∥e, we get
+1
+n0e
+Z
+d3v v∥
+∂he
+∂t
+
+c
+= νei
+ u∥i −u∥e
+
+= −eνei
+cme
+d2
+e∇2
+⊥A∥, (60)
+which simply gives rise to a resistive diﬀusion term
+in Eq. (40) with Ohmic diﬀusivity η = νeid2
+e. The
+collision operator deﬁned by Eq. (43) becomes
+C[ge] = νei
+1
+2
+∂
+∂ˆv∥
+ ∂
+∂ˆv∥
++ 2ˆv∥
+
+ge
+−
+
+1 −2ˆv2
+∥
+ δT∥e
+T0e
+F0e
+
+,
+(61)
+where we have used Eqs. (33) and (60), the proper-
+ties of ge [Eq. (36)] and the deﬁnition of the parallel
+electron temperature perturbation [Eq. (41)].
+E.
+Summary of the equations
+Assembling now Eqs. (39–42), (56), (58) and (60),
+we arrive at the following closed set
+d
+dt
+Z
+τ (1 −ˆΓ0) eϕ
+T0e
+= ˆb · ∇e
+cme
+d2
+e∇2
+⊥A∥,
+(62)
+d
+dt
+ A∥−d2
+e∇2
+⊥A∥
+
+= η∇2
+⊥A∥−c ∂ϕ
+∂z
+−cT0e
+e
+ˆb · ∇
+Z
+τ (1 −ˆΓ0) eϕ
+T0e
+−δT∥e
+T0e
+
+,
+(63)
+dge
+dt + v∥ˆb · ∇
+
+ge −δT∥e
+T0e
+F0e
+
+= C[ge]
++
+ 
+1 −
+2v2
+∥
+v2
+the
+!
+F0eˆb · ∇e
+cme
+d2
+e∇2
+⊥A∥,
+(64)
+
+10
+where the following short-hand notation is used
+δT∥e
+T0e
+=
+1
+n0e
+Z
+d3v
+2v2
+∥
+v2
+the
+ge,
+(65)
+d
+dt = ∂
+∂t + c
+B0
+
+ϕ, . . .
+	
+,
+(66)
+ˆb · ∇= ∂
+∂z −1
+B0
+
+A∥, . . .
+	
+,
+(67)
+η = νeid2
+e is the Ohmic diﬀusivity and C[ge] is
+the collision operator — a simple model for which,
+based on the Lenard–Bernstein operator, is given by
+Eq. (61). These equations evolve three ﬁelds: ϕ, A∥
+and ge, which are all functions of time and three
+spatial coordinates; ge is also a function of v∥and
+v⊥, although the v⊥dependence can be ignored (or
+integrated out) if the Lenard–Bernstein collision op-
+erator is used.
+Equations (62–64) constitute a minimal physically
+realizable paradigm for magnetic reconnection and,
+more generally, low-frequency nonlinear plasma dy-
+namics with a strong guide ﬁeld, including all eﬀects
+we expect to be important: ion sound scale physics,
+ion FLR, electron inertia, electron collisions, Ohmic
+resistivity, and electron temperature perturbation
+determined by a kinetic equation. We will refer to
+these equations as Kinetic Reduced Electron Heating
+Model (KREHM). Its hybrid ﬂuid-kinetic nature and
+the presence of the kinetic electron heating channel
+(further discussed below), constitutes the main dif-
+ference with previously considered models: in the
+2D, collisionless case, our equations can be manip-
+ulated into a form similar to that proposed by de
+Blank53,54; by setting ge = 0 (isothermal-electrons
+closure), we recover the equations of Schep et al.37
+While the use of a ﬂuid model (ge = 0) might be a
+useful simpliﬁcation, we stress that setting ge = 0
+cannot be rigorously justiﬁed (at least in the ana-
+lytical framework we have chosen): indeed, ge = 0
+is not a solution of Eq. (64) unless ˆb · ∇∇2
+⊥A∥= 0
+(i.e., ˆb · ∇j∥= 0), which cannot be the case in a
+reconnection-relevant solution.
+We will show in Sec. IV that in the collisionless
+(or, more precisely, weakly collisional) limit, the
+coupling of the ﬂuid system to the kinetic equa-
+tion (64) via parallel electron temperature ﬂuctu-
+ations provides the electron heating channel and so
+makes collisionless reconnection thermodynamically
+irreversible. We believe this to be fundamentally im-
+portant and physically the most interesting outcome
+of our calculation. In the remainder of the paper we
+will concentrate on this aspect.
+We stress that although the kinetic coupling leads
+to irreversibility and heating, it does not constitute
+a ﬂux-unfreezing mechanism by itself; magnetic ﬁeld
+lines can only be broken by resistivity and electron
+inertia (a simple proof of this statement was pro-
+vided in Sec. III B).
+To conclude this brief summary of our equations,
+let us note that a number of well-known limiting
+cases are easily derivable from them.
+As already
+discussed, in the collisionless limit, for ge = 0, they
+reduce to the two-ﬂuid model for strong-guide-ﬁeld
+collisionless reconnection.37 In the collisionally dom-
+inated limit, Eq. (64) reduces to the standard equa-
+tion for the evolution of the parallel electron tem-
+perature via parallel heat conduction (see Sec. V C).
+If collisions are so large that the resistive scale is
+larger than both ρs and de, Eqs. (62) and (63) reduce
+straightforwardly to the standard Reduced MHD
+equations.89 In the intermediate limit k⊥ρi ≫1,
+k⊥de ≪1, they reduce to the low-beta limit of
+the Electron Reduced MHD equations,49 and so can
+support kinetic Alfvén waves.
+More generally, we
+show in Appendix B how the full collisionless gy-
+rokinetic dispersion relation in the asymptotic limit
+of k⊥ρe ≪1 and low beta61 is recovered from
+Eqs. (62–64). Finally, for the linear tearing mode,
+the paradigmatic linear problem of magnetic recon-
+nection theory, Eqs. (62–64) recover the correct ki-
+netic formulation both for the collisionless and the
+semicollisional regimes,67 — this topic is also treated
+in detail in Appendix B.
+IV.
+ENERGETICS
+A.
+Free energy
+A broad class of δf kinetic systems, including
+gyrokinetics, conserve (in the absence of collisions)
+a positive-deﬁnite quadratic quantity that has the
+physical meaning of the free energy of the com-
+bined system of particles and perturbed ﬁelds and
+plays the role of the generalized energy invariant (see
+Refs. 48,49 and references therein):
+W =
+X
+s
+Z d3r
+V
+Z
+d3v T0sδf 2
+s
+2F0s
++
+Z d3r
+V
+|δB|2
+8π
+= −
+X
+s
+T0sδSs + U,
+(68)
+where δSs is the perturbed entropy of species s and
+U is the energy of the perturbed magnetic ﬁeld.
+Since energy ﬂows play a fundamental role in all
+nonlinear phenomena, it will be instructive to under-
+stand the energetics of our equations. As KREHM
+is a partucular limit of gyrokinetics, this is done by
+specializing from the more general gyrokinetic case.
+We saw in Sec. III A that
+δfe =
+δne
+n0e
++ 2v∥u∥e
+v2
+the
+
+F0e + ge
+(69)
+
+11
+[see Eq. (33)]. Hence we ﬁnd immediately that the
+electron perturbed entropy is
+−T0eδSe =
+Z d3r
+V
+ 
+n0eT0e
+2
+δn2
+e
+n2
+0e
++
+men0eu2
+∥e
+2
++
+Z
+d3v T0eg2
+e
+2F0e
+
+.
+(70)
+The three terms here are the electron density vari-
+ance (denoted Y and, as we shall see, interpretable
+as generalized enstrophy), the kinetic energy of the
+parallel electron ﬂow (denoted Ke) and the free en-
+ergy associated with the reduced electron distribu-
+tion function ge, which we will refer to as electron
+free energy and denote He.
+Using Eqs. (37), (56)
+and (58), we rewrite the above expression as follows
+−T0eδSe = Y + Ke + He
+= n0eT0e
+2
+X
+k
+Z2
+τ 2 [1 −Γ0(αi)]2 e2|ϕk|2
+T 2
+0e
++
+Z d3r
+V
+d2
+e|∇2
+⊥A∥|2
+8π
++
+Z d3r
+V
+Z
+d3v T0eg2
+e
+2F0e
+,
+(71)
+where Γ0 was deﬁned in Eq. (55).
+Using Eq. (53) for δfi, we ﬁnd the ion perturbed
+entropy:
+−T0iδSi = n0eT0e
+2
+X
+k
+Z
+τ [1 −Γ0(αi)] e2|ϕk|2
+T 2
+0e
+≡Ki.
+(72)
+Note that, were this quantity restricted to k⊥ρi ≪1,
+it would simply be the kinetic energy of the E × B
+ﬂows: indeed, using Eq. (57) and assuming an ex-
+pansion in τ (as explained just after the latter for-
+mula), the quantity given by Eq. (72) becomes
+Ki =
+Z d3r
+V
+e2n0e
+2T0e
+ρ2
+s|∇⊥ϕ|2 =
+Z d3r
+V
+min0iu2
+⊥
+2
+,
+(73)
+where u⊥= c|∇⊥ϕ|/B0 is the E × B ﬂow velocity.
+Under the same approximation, the ﬁrst term on
+the right-hand side of Eq. (71) (which arose from
+the electron density variance) is recognizable as the
+enstrophy of the E × B ﬂow:
+Y =
+Z d3r
+V
+e2n0e
+2T0e
+ρ4
+s|∇2
+⊥ϕ|2.
+(74)
+Finally, the magnetic energy is
+U =
+Z d3r
+V
+δB2
+⊥
+8π
+=
+Z d3r
+V
+|∇⊥A∥|2
+8π
+(75)
+because δB∥is subdominant under our ordering
+[Eq. (21)]. Combining Eqs. (71), (72) and (75) to
+reassemble the total free energy [Eq. (68)], we get
+W = Ki + Y + U + Ke + He
+=
+X
+k
+
+1 + Z
+τ (1 −Γ0)
+ Z
+τ (1 −Γ0) e2n0e|ϕk|2
+2T0e
++
+Z d3r
+V
+|∇⊥A∥|2 + d2
+e|∇2
+⊥A∥|2
+8π
++
+Z d3r
+V
+Z
+d3v T0eg2
+e
+2F0e
+.
+(76)
+In three dimensions (3D), W is the only quadratic
+invariant of our equations.
+In two dimensions
+(2D), there is an additional family of invariants
+(inherited from the more general 2D invariants of
+gyrokinetics49) — they are worked out in Appendix
+A.
+Their existence, while opening interesting av-
+enues of investigation of an academic kind, suggests
+that one should be very cautious in generalizing 2D
+analytical and numerical results to 3D reality (sim-
+ilarly to the situation in ﬂuid turbulence theory,
+where nonlinear interactions and energy ﬂows are
+dramatically diﬀerent in 2D and in 3D).
+B.
+Energy exchange between ﬁelds
+It is illuminating to consider separately the time
+evolution of the ﬁve constituent parts of W. Multi-
+plying Eq. (62) by eϕ/T0e or by (Z/τ)(1−ˆΓ0)eϕ/T0e
+and integrating over space, we obtain the evolution
+of the ion kinetic energy and enstrophy, respectively:
+dKi
+dt
+=
+c
+4π
+Z d3r
+V
+ϕ ˆb · ∇∇2
+⊥A∥
+= −
+Z d3r
+V
+Est
+∥j∥,
+(77)
+dY
+dt
+=
+Z d3r
+V
+j∥ˆb · ∇
+Z
+τ (1 −ˆΓ0)ϕ
+
+,
+(78)
+where Est
+∥= −ˆb · ∇ϕ is the electrostatic part of the
+parallel electric ﬁeld and j∥= −(c/4π)∇2
+⊥A∥is the
+parallel current. Multiplying Eq. (63) by ∇2
+⊥A∥/4π
+and integrating over space, we obtain the evolution
+of the combined magnetic and electron kinetic ener-
+gies:
+d
+dt (U + Ke) =
+Z d3r
+V
+
+−4π
+c2 ηj2
+∥+ Est
+∥j∥
+−j∥ˆb · ∇
+Z
+τ (1 −ˆΓ0)ϕ
+
++ 1
+e j∥ˆb · ∇δT∥e
+
+.
+(79)
+With the help of Eqs. (77–79), we now exam-
+ine the evolution of the combined “ﬂuid” (electro-
+magnetic) part of the free energy, Wﬂuid = Ki +
+
+12
+Y + U + Ke, which is the quantity that is normally
+considered to be conserved in two-ﬂuid models of
+Hamiltonian collisionless reconnection37.
+The en-
+ergy exchange terms containing ϕ cancel and we
+ﬁnd that Wﬂuid can only change due to two eﬀects:
+the resistive Ohmic dissipation [the ﬁrst term on
+the right-hand side of Eq. (79)], and an exchange
+with the electron free energy He controlled by the
+last term on the right-hand side of Eq. (79). Since
+j∥= −en0eu∥e [see Eqs. (37) and (58)], we can inter-
+pret this term as work done by the parallel electron
+pressure δp∥e = n0eδT∥e:
+Z d3r
+V
+1
+e j∥ˆb · ∇δT∥e = −
+Z d3r
+V
+u∥eˆb · ∇δp∥e ≡−Q.
+(80)
+Thus, the ﬂuid part of the free energy evolves ac-
+cording to
+d
+dt Wﬂuid = −Q −4π
+c2 η
+Z d3r
+V
+j2
+∥.
+(81)
+Note that Q is not sign-deﬁnite and can correspond
+both to loss and gain of energy.
+In particular, it
+clearly represents a loss (Q > 0) if the electron ﬂuid
+is compressed.
+The ﬂuid energy lost or gained this way is re-
+covered in the evolution of the electron free en-
+ergy, which we obtain by multiplying Eq. (64) by
+T0ege/F0e and integrating over the entire phase-
+space (positions and velocities):
+dHe
+dt
+= Q −Dcoll,
+(82)
+where Dcoll is the dissipation term due to collisions,
+which must be positive deﬁnite for any collision op-
+erator that satisﬁes Boltzmann’s H theorem (see dis-
+cussion in Ref. 88 and references therein):
+Dcoll = −
+Z d3r
+V
+Z
+d3v T0egeC[ge]
+F0e
+≥0.
+(83)
+Adding Eqs. (81) and (82), we ﬁnd that the total free
+energy W is conserved in the absence of collisions,
+as stated at the beginning of this Section.
+C.
+Dissipation, electron heating and
+irreversibility of collisionless reconnection
+Consider some initial conﬁguration prone to re-
+connection. Such a conﬁguration will possess a cer-
+tain amount of magnetic energy U, which in the
+process of reconnection will be converted into some
+other form. There can be two fundamentally diﬀer-
+ent types of such energy conversion.
+First, since the conserved quantity is not U but
+the total free energy W = U + Ke + Ki + Y + He,
+the magnetic energy can be transferred dynamically
+into Ke, Ki, Y or He without loss of W, or increase
+of entropy — therefore, in principle, reversibly.
+Second, the magnetic energy can be dissipated via
+the resistive term in Eq. (81) and/or via the colli-
+sional dissipation term Dcoll in Eq. (82) — in the
+latter case, it ﬁrst has to be converted into the elec-
+tron free energy via the energy exchange term Q in
+Eqs. (81) and (82). These processes are irreversible
+because they involve conversion of the ﬂuctuation
+energy into the thermal energy of the bulk electron
+distribution, or electron heating. Indeed, it is not
+hard to show48,61 that
+3
+2 n0e
+dT0e
+dt
+= −
+Z d3r
+V
+Z
+d3vT0eδfe
+F0e
+∂δfe
+∂t
+
+c
+= Dcoll + 4π
+c2 η
+Z d3r
+V
+j2
+∥,
+(84)
+where Eq. (69) was used to express δfe and over-
+bar means averaging over dynamical timescales (in
+gyrokinetics, the rate of change of the mean equilib-
+rium quantities is ∼ǫ2ω, so the transport equations
+are obtained via intermediate time averaging61,90).
+If we formally forbade any collisions at all and
+set νei = 0 exactly, the exchanges between diﬀerent
+constituent parts of W would be the only possible
+energy conversion mechanism. Indeed, Hamiltonian
+theories of collisionless reconnection based on con-
+servative ﬂuid models (ge = 0, Wﬂuid = const) ﬁnd
+that the nonlinear stage of a reconnecting mode cor-
+responds to a transfer of magnetic energy U into
+ordered parallel electron kinetic energy Ke, perpen-
+dicular ion kinetic energy Ki, and enstrophy of the
+E×B ﬂow Y . In this situation, the only way energy
+can be lost is via ejection of material — although the
+reconnection process remains technically reversible.
+Is this, however, a good approximation of what
+will in fact occur?
+We believe that a priori it is
+not because, even if the collisionality of the plasma
+is small, the dissipation terms cannot be neglected
+as large spatial gradients will imply ﬁnite currents
+and large velocity-space gradients will imply ﬁnite
+values of C[ge]. The latter eﬀect is especially impor-
+tant. Indeed, if resistivity (Joule heating) is ignored,
+magnetic energy can still be converted into electron
+heat via transfer into He, formation of small-scale
+structure in v∥by means of linear phase-mixing (the
+second term on the left-hand side in Eq. (64); see
+further discussion in Sec. V) and the consequent
+collisional dissipation of the resulting ﬁne-scale elec-
+tron distribution: since the collision operator is a
+diﬀusion operator in v∥[see Eq. (61)], Dcoll will
+have a ﬁnite value provided structure develops in
+
+13
+the velocity-space that satisﬁes
+νei
+∂2
+∂ˆv2
+∥
+≳ω
+⇒
+δv∥
+vthe
+≲
+νei
+ω
+1/2
+.
+(85)
+This phase-mixing channel of electron heating is
+open even in very weakly collisional plasmas.
+It
+seems a priori clear that its presence should be qual-
+itatively important as it breaks the Hamiltonian na-
+ture of the problem and renders the process of “col-
+lisionless” reconnection irreversible.
+The question of course remains whether the phase
+mixing will be important in any given physical situ-
+ation of interest. Since most such situations are non-
+linear, it is diﬃcult to provide a universal answer to
+this question beyond the general argument that na-
+ture rarely ignores an energy dissipation channel if
+one is available. Here it is opportune to remind the
+reader that there have been several recent numeri-
+cal studies of nonlinear kinetic reconnection that re-
+ported the non-negligibility of the parallel electron
+temperature gradient term in the generalized Ohm’s
+law35,45,46,52 [see Eq. (63)] — and, therefore, the
+non-negligibility of the energy exchange term Q in
+Eq. (81), which ultimately transfers free energy into
+electron heat [Eq. (82)]. It is a testable prediction
+that in all such cases, small-scale structure should
+be generated in the velocity space (see Sec. V D), so
+as to enable the electron heating channel.
+In Sec. V, we discuss the electron kinetics a little
+further, in particular quantifying the notion of the
+free-energy transfer to small parallel scales in ve-
+locity space. We will conclude (in Sec. V E) that for
+conﬁgurations that evolve suﬃciently slowly in time,
+the electron heating rate is ﬁnite and independent of
+the collision frequency as νei →+0.
+V.
+VELOCITY-SPACE DYNAMICS
+A.
+Hermite expansion
+The velocity-space dynamics and the emergence
+of small-scale structure in v∥are best understood in
+terms of the expansion of the electron distribution
+function ge in Hermite polynomials.91–95 Let
+ge(v∥) =
+∞
+X
+m=0
+Hm(ˆv∥)
+√
+2mm!
+ˆgmF0e(v∥),
+(86)
+where ˆv∥= v∥/vthe, perpendicular velocity depen-
+dence is understood to have been integrated out, the
+Hermite polynomials are
+Hm(ˆv∥) = (−1)meˆv2
+∥dm
+dˆvm
+∥
+e−ˆv2
+∥
+(87)
+(so H0 = 1, H1 = 2ˆv∥, H2 = 4ˆv2
+∥−2, etc.) and ˆgm are
+the Hermite expansion coeﬃcients (dimensionless),
+which can be calculated according to
+ˆgm =
+1
+n0e
+Z +∞
+−∞
+dv∥
+Hm(ˆv∥)
+√
+2mm!
+ge(v∥).
+(88)
+In view of Eq. (36), we must have ˆg0 = ˆg1 = 0.
+Equation (41) implies, by deﬁnition, that
+ˆg2 =
+1
+√
+2
+δT∥e
+T0e
+.
+(89)
+Using the orthogonality of Hermite polynomials,
+1
+n0e
+Z +∞
+−∞
+dv∥
+Hm(ˆv∥)Hn(ˆv∥)
+2mm!
+F0e = δmn,
+(90)
+we note that the electron free energy in terms of the
+Hermite coeﬃcients is
+He =
+Z d3r
+V
+Z +∞
+−∞
+dv∥
+T0eg2
+e
+2F0e
+=
+Z d3r
+V
+n0eT0e
+2
+∞
+X
+m=2
+ˆg2
+m.
+(91)
+Taking the Hermite
+transform [Eq. (88)] of
+Eq. (64) and using the recursive property of the Her-
+mite polynomials,
+ˆv∥Hm(ˆv∥) = 1
+2 Hm+1(ˆv∥) + mHm−1(ˆv∥),
+(92)
+we arrive at
+dˆgm
+dt
++ vtheˆb · ∇
+ r
+m + 1
+2
+ˆgm+1 +
+rm
+2 ˆgm−1 −δm,1 ˆg2
+!
+= −
+√
+2 δm,2ˆb · ∇e
+cme
+d2
+e∇2
+⊥A∥
+−νei (mˆgm −2δm,2 ˆg2) .
+(93)
+Note that Hermite polynomials are eigenfunctions of
+the Lenard–Bernstein operator (61).
+It is not hard to see that Eq. (93) is consistent
+with ˆg0 = ˆg1 = 0.
+We would like to recast the
+equation for ˆg2 in terms of the electron temperature
+perturbation with the aid of Eq. (89):
+d
+dt
+δT∥e
+T0e
++ vtheˆb · ∇
+√
+3 ˆg3 = −2ˆb · ∇e
+cme
+d2
+e∇2
+⊥A∥.
+(94)
+This equation is coupled to the rest of the kinetics
+via the heat ﬂux proportional to ˆg3 (the second term
+on the left-hand side). For m ≥3, we have
+dˆgm
+dt + vtheˆb · ∇
+ r
+m + 1
+2
+ˆgm+1 +
+rm
+2 ˆgm−1
+!
+= −νeimˆgm.
+(95)
+
+14
+Equation (95) shows that Hermite modes of order m
+are coupled both to lower (m −1) and higher (m +
+1) modes. Collisions provide a cutoﬀat suﬃciently
+large m regardless of the magnitude of the collision
+frequency. We will discuss this further in Sec. V D.
+Together with Eqs. (62) and (63), Eqs. (94) and
+(95) can be solved as a system of partial diﬀeren-
+tial equations in the three- or two-dimensional posi-
+tion space.
+This appears to be an attractive way
+to carry out numerical simulations of collisionless
+(in fact, weakly collisional) reconnection or, indeed,
+of other kinetic phenomena in strongly magnetized
+plasmas. This system is substantially simpler than
+the full kinetic31–35 or gyrokinetic42–46 descriptions
+that have been used to study reconnection or plasma
+turbulence52,96 so far (see Sec. V D for estimates of
+how many Hermite modes must be kept for any given
+collisionality). The ﬁrst numerical study using our
+equations is reported in Ref. 97.
+The Hermite formalism allows us to provide very
+concise derivations of three important results: the
+H theorem for our collision operator (Sec. V B), the
+so-called semicollisional limit of our equations, in
+which collisionality dominates and the parallel elec-
+tron temperature is determined by a ﬂuid equation
+(Sec. V C), the Hermite “spectrum,” which quanti-
+ﬁes the ﬁne structure in the velocity space caused
+by the parallel phase mixing (Sec. V D), and ﬁnally
+the electron heating rate (Sec. V E).
+B.
+H theorem
+As we mentioned in Sec. III D, a key requirement
+for choosing a model collision operator is that it sat-
+isﬁes Boltzmann’s H theorem, i.e., that collisional
+dissipation leads to increase of entropy. This means
+that we must have Dcoll ≥0 [see Eq. (83)]. Substi-
+tuting Eq. (86), using the collision operator given by
+Eq. (61) and the orthogonality of Hermite polyno-
+mials [Eq. (90)], we get
+1
+n0e
+Z +∞
+−∞
+dv∥
+geC[ge]
+F0e
+= −νei
+∞
+X
+m=0
+mˆg2
+m + 2νeiˆg2
+= −νei
+∞
+X
+m=3
+mˆg2
+m ≤0,
+(96)
+so Dcoll ≥0, q.e.d.
+C.
+Semicollisional limit
+Consider the semicollisional limit, νei ≫ω and
+k∥λmfpe ≪1 (“semicollisional” because the perpen-
+dicular microscale eﬀects associated with ρs and ρi
+are retained, although the electron inertia term in
+Eq. (63) must be neglected compared with the re-
+sistive term). From Eq. (95), it is clear that in this
+limit, the Hermite coeﬃcients get smaller with m:
+ˆgm
+ˆgm−1
+∼k∥vthe
+√m νei
+= k∥λmfpe
+√m
+≪1.
+(97)
+Therefore, Eq. (95) allows us to express higher-order
+coeﬃcients in terms of the gradients of the lower-
+order ones and, in particular, ˆg3 in terms of ˆg2, i.e.,
+the heat ﬂux in term the temperature gradient:
+ˆg3 ≃−1
+2
+√
+3
+vthe
+νei
+ˆb · ∇δT∥e
+T0e
+.
+(98)
+Substituting this into Eq. (94), we obtain the stan-
+dard equation for the electron temperature:
+d
+dt
+δT∥e
+T0e
+= κ∥eˆb·∇
+
+ˆb · ∇δT∥e
+T0e
+
+−2ˆb·∇e
+cme
+d2
+e∇2
+⊥A∥.
+(99)
+where κ∥e = v2
+the/2νei is the parallel (Spitzer) ther-
+mal diﬀusivity. In the semicollisional limit, Eq. (99)
+replaces Eq. (64) and completes what has become a
+purely ﬂuid system.
+The energetics of this ﬂuid system are a simple
+particular case of the general situation discussed in
+Sec. IV. The electron free energy is [see Eq. (91)]
+He =
+Z d3r
+V
+n0eT0e
+2
+ˆg2
+2 =
+Z d3r
+V
+n0eT0e
+4
+δT 2
+∥e
+T 2
+0e
+.
+(100)
+From Eq. (99), we get an evolution equation for He
+equivalent to the general Eq. (82):
+dHe
+dt
+= Q −κ∥e
+Z d3r
+V
+n0eT0e
+2
+
+ˆb · ∇δT∥e
+T0e
+2
+,
+(101)
+where Q is the energy exchange given by Eq. (80)
+and the dissipation term is the same as Dcoll deﬁned
+by Eq. (83) — this is checked by using Eq. (96) and
+restricting the sum just to ˆg3, as given by Eq. (98).
+D.
+Hermite spectrum
+We now return to Eq. (95), linearize it and Fourier
+transform in the parallel direction.
+If we denote
+˜gm(k∥) = (i sgnk∥)mˆgm(k∥), we can write the result-
+ing equation in the following form
+∂˜gm
+∂t + |k∥|vthe
+ r
+m + 1
+2
+˜gm+1 −
+rm
+2 ˜gm−1
+!
+= −νeim˜gm,
+(102)
+
+15
+which has the convenient property of supporting real
+solutions.109 If we now deﬁne the Hermite spectrum
+as Em = |ˆgm|2/2 = ˜g2
+m/2, we ﬁnd that it evolves
+according to
+∂Em
+∂t
+= −
+ Γm+1/2 −Γm−1/2
+
+−2νeimEm, (103)
+where Γm−1/2
+=
+|k∥|vthe
+p
+m/2 ˜gm˜gm−1 can be
+thought of as the ﬂux of the electron free energy
+through the Hermite space. When m ≫1, we may
+approximate Γm ≈|k∥|vthe
+√
+2m Em and
+∂Em
+∂t
+= −|k∥|vthe
+∂
+∂m
+√
+2m Em −2νeimEm. (104)
+1.
+Hermite spectrum in steady state
+Equation (104) has a steady-state solution110
+Em = C(k∥)
+√m
+exp
+"
+−
+ m
+mc
+3/2#
+,
+(105)
+where C(k∥) is some function of k∥(determined by
+the dynamics of ϕ, A∥and δT∥e) and the collisional
+cutoﬀis
+mc =
+ 3
+2
+√
+2
+|k∥|vthe
+νei
+2/3
+.
+(106)
+When m ≪mc, we have the spectrum scaling as
+Em ∼m−1/2 in Hermite space.
+This scaling im-
+plies that the electron free energy He ∝P∞
+m=2 Em
+is dominated by the Hermite modes m ∼mc, which
+are transferring their energy into electron heat via
+collisions (see Sec. V E).
+2.
+Hermite spectrum for growing modes
+Consider now a slightly more general situation,
+in which the entire Hermite spectrum is growing
+at some rate 2γ (this would be the case, for exam-
+ple, for the tearing mode; see Appendix B 3). Then
+∂Em/∂t = 2γEm and the solution of Eq. (104) is
+Em = C(k∥)
+√m
+exp
+"
+−
+ m
+mγ
+1/2
+−
+ m
+mc
+3/2#
+,
+(107)
+where another cutoﬀhas appeared, associated with
+the growth rate γ:
+mγ =
+|k∥|vthe
+2
+√
+2 γ
+2
+.
+(108)
+This cutoﬀsupercedes the collisional cutoﬀ(106) if
+mγ ≪mc, i.e., if the mode is growing so fast that
+γ ≫(|k∥|vthe)2/3ν1/3
+ei .
+(109)
+Otherwise the steady-state spectrum (105) is recov-
+ered.
+E.
+Electron heating rate
+The results of Sec. V D allow us to make an esti-
+mate of the electron collisionless heating rate. Using
+Eqs. (83) and (96), we may write
+Dcoll = −n0eT0e
+X
+k∥
+2νei
+X
+m=3
+mEm.
+(110)
+Approximating P
+m=3 mEm ≈
+R ∞
+0
+dm mEm and us-
+ing Eq. (105), we ﬁnd for the steady-state or slowly
+evolving modes,
+Dcoll ≈−n0eT0e
+X
+k∥
+√
+2 |k∥|vtheC(k∥)
+(111)
+independently of the collision frequency νei as long
+as mc ≫1, i.e., νei ≪|k∥|vthe.
+Thus, the elec-
+tron heating rate is ﬁnite in the limit νei →+0.
+This is analogous, e.g., to the situation in standard
+hydrodynamic turbulence where the rate of viscous
+dissipation has a ﬁnite limit at small viscosities be-
+cause larger spatial gradients emerge98 — or in sub-
+Larmor gyrokinetic turbulence, where a similar pro-
+cess involves large gradients both in space and in
+v⊥.48,49,59 The diﬀerence is that here the mechanism
+for the generation of small scales in v∥is linear (par-
+allel particle streaming) rather than nonlinear (tur-
+bulent cascade).
+In contrast, for modes growing fast enough to sat-
+isfy Eq. (109), a similar calculation using Eq. (107)
+gives
+Dcoll ≈−n0eT0e
+X
+k∥
+νei
+2
+√
+2
+|k∥|vthe
+γ
+3
+C(k∥).
+(112)
+In the limit νei →+0, Dcoll →0. Thus, linearly
+growing modes do not produce any electron heating
+in the collisionless limit, provided the growth rate
+continues to satisfy Eq. (109) in this limit.
+VI.
+DISCUSSION
+In the above, we have already provided the
+motivation behind this work as well as a non-
+mathematical preview (Sec. I), a summary of our
+
+16
+equations (Sec. III E) and the general arguments
+leading to the conclusion that electron heating must
+be an important dissipation channel (Sec. IV C). We
+developed this last topic somewhat further in Sec. V
+by setting forth what we believe to be a rather use-
+ful practical prescription for further numerical in-
+vestigations, a conceptual view of the phase-space
+dynamics as a cascade in Hermite space, and a sim-
+ple argument implying that the electron heating rate
+remains ﬁnite in the limit of vanishing collisionality
+(except for fast-growing linear modes).
+We do not of course claim that our equations con-
+stitute a general theoretical framework for all types
+of magnetic reconnection.
+The assumption of low
+beta restricts their applicability only to very strongly
+magnetized plasmas (in Sec. II B 1, we indicated that
+typical real-world plasmas where beta is suitably low
+include the solar corona,16 the LArge Plasma Device
+at UCLA81 and edge regions in some tokamaks82).
+We do, however, believe that at least qualitatively,
+our equations might go beyond their formal domain
+of validity and capture much of the essential physics
+of gyrokinetic reconnection. We do not know how to
+derive a similarly simple and yet physically realizable
+model for high-beta and low-guide-ﬁeld situations,
+which occur frequently in astrophysical contexts.
+An unresolved limitation of our model concerns
+the problem of ultrasmall perpendicular scales. It
+has been found in several (2D) theoretical and nu-
+merical studies of various two-ﬂuid models of colli-
+sionless reconnection that sub-de structures can form
+in the reconnection region, giving rise to unbounded
+gradients.58,80,99,100 The only known way of tam-
+ing these singularities is via hyperdiﬀusive terms in
+the generalized Ohm’s law, provided, e.g., by elec-
+tron viscosity.
+Since we do not have these terms
+in our equations, it is not guaranteed that the sin-
+gularities can be dissipated via the electron heat-
+ing channel.111 If they are present, any practical
+numerical study of our equations will require addi-
+tional hyperdiﬀusive regularization — a somewhat
+embarassing solution, since we would ideally like to
+be able to attribute all ﬁeld-line breaking and elec-
+tron heating to physical mechanisms that are legit-
+imate under our ordering assumptions. We should
+like to note, however, that the evidence of singular-
+ities stems from 2D analyses of Hamiltonian recon-
+nection models. This means that the phase space
+of the system is constrained both by the Hamilto-
+nian structure and by the presence of multitudinous
+additional 2D invariants (see Appendix A), so it is
+not, in fact, inevitable that these singularities will
+still present in a 3D kinetic situation.
+It seems clear that the next logical step is a nu-
+merical investigation of the solutions of our model.
+The key physical questions are whether reconnection
+is indeed made irreversible by the electron heating
+channel, how much energy is converted into heat,
+whether the reconnection is fast and what the struc-
+ture of the reconnecting region is (X point?
+sta-
+ble current sheet?
+unstable current sheet?).
+It
+would also be important to ﬁnd out whether the
+equations are well posed without additional perpen-
+dicular regularization — i.e., if singularities form.
+All of these issues are likely to be tied up with
+the question of whether the 3D case behaves dif-
+ferently from 2D and is, therefore, the right case to
+investigate. Finally, from a technical point of view,
+our model requires fairly modest computational re-
+sources, so it may prove to be a nimble tool for scout-
+ing out the parameter space in preparation for the
+more computationally demanding gyrokinetic recon-
+nection studies.46,97
+Acknowledgments
+We are very grateful to N. Loureiro, who read
+the paper in manuscript and oﬀered numerous com-
+ments and suggestions. It is a pleasure to thank also
+I. Abel, M. Barnes, T. Carter, J. Connor, S. Cow-
+ley, P. Dellar, W. Dorland, R. J. Hastie, R. Nu-
+mata, J. Parker, F. Parra, B. Rogers and D. Uz-
+densky for useful discussions.
+Some of these dis-
+cussions took place during the programme “Gyroki-
+netics in Laboratory and Astrophysical Plasmas”
+at the Isaac Newton Institute, Cambridge, whose
+hospitality we gratefully acknowledge.
+This work
+started when AZ was a visitor at Oxford supported
+in part by the Leverhulme Trust Network for Mag-
+netized Plasma Turbulence.
+AZ was subsequently
+supported by a Culham Fusion Research Fellowship
+and an EFDA Fellowship. The views and opinions
+expressed herein do not necessarily reﬂect those of
+the European Commissioners. AAS was supported
+in part by an STFC Advanced Fellowship and the
+STFC Astronomy Grant ST/F002505/2.
+Appendix A: Two-dimensional invariants
+1.
+Lagrangian conservation properties in 2D
+Whereas the free energy [Eq. (68)] is the only
+known invariant of gyrokinetics in three dimensions
+(3D), formally restricting consideration to two di-
+mensions (2D) introduces a host of new conservation
+properties. Indeed, consider the gyrokinetic equa-
+tion Eq. (4) and with ∂/∂z = 0 and no collisions. It
+can then be written as an advection equation of a
+
+17
+single scalar quantity:
+∂˜hs
+∂t + c
+B0
+{⟨χ⟩Rs , ˜hs} = 0,
+(A1)
+˜hs = hs −qs ⟨χ⟩Rs
+T0s
+F0s.
+(A2)
+This means that the volume integral of any function
+of ˜hs is conserved:
+∂
+∂t
+Z d3Rs
+V
+f(˜hs) = 0.
+(A3)
+Note that ˜hs is a function of v∥and v⊥, so the above
+equation deﬁnes an inﬁnite set of invariants both in
+the sense of the arbitrariness of the function f and
+in the sense that the invariants are parametrized by
+the velocity variables.
+Recalling our solution for the ion distribution
+function (Sec. III C), we ﬁnd immediately that ˜hi =
+gi = 0, the conservation law Eq. (A3) is satisﬁed
+trivially.
+For the electrons, using Eqs. (29), (33),
+(38), (56), and (58), we ﬁnd
+˜he = −e
+cme
+ A∥−d2
+e∇2
+⊥A∥
+ 2v∥
+v2
+the
+F0e
+−Z
+τ (1 −ˆΓ0) eϕ
+T0e
+F0e + ge.
+(A4)
+This quantity obeys the advection equation (A1),
+which becomes
+∂˜he
+∂t + c
+B0
+{χ, ˜he} = 0,
+(A5)
+where χ = ϕ −(v∥/c)A∥[see Eq. (29)]. Thus, ˜he,
+parametrized by v∥, is an inﬁnite family of “La-
+grangian invariants,” each with its own stream func-
+tion (c/B0)χ(v∥). This is the “foliation” of the elec-
+tron distribution function discussed in Refs. 55,56.
+While (as argued in Refs. 55,56) this may be remi-
+niscent of the Lagrangian properties of the two-ﬂuid
+model,37 setting ge = 0 in Eq. (A4) does not return
+the Lagrangian invariants enjoyed by that model —
+those have to be derived separately and are particu-
+lar to the isothermal-electrons closure (which is not
+a surprise because ge = 0 is not a solution of our
+equations).
+For the record, in our notation, they
+are37
+A± = A∥−d2
+e∇2
+⊥A∥± c
+√
+2
+vthe
+Z
+τ (1 −ˆΓ0)ϕ,
+(A6)
+advected by the eﬀective potentials
+ϕ∓= ϕ ∓vthe
+c
+√
+2 A∥
+(A7)
+(this is equivalent to picking v∥= ±vthe/
+√
+2 and
+ge
+=
+0 in Eqs. (A4) and (A5)).
+Note that
+c
+√
+2/vthe
+= cde/vAρs.
+It is perhaps useful to
+give the evolution equations for A± with three-
+dimensionality, Ohmic resistivity and nonisothermal
+electrons retained, to show how the Lagrangian in-
+variants are broken by all of these eﬀects:
+ ∂
+∂t ± vthe
+√
+2
+∂
+∂z
+
+A± + c
+B0
+{ϕ∓, A±} =
+−c ∂ϕ∓
+∂z + η∇2
+⊥A∥+ ˆb · ∇c
+e δT∥e.
+(A8)
+For a model with no collisions, isothermal electrons
+and cold ions, these equations reduce to those of
+Ref. 101. In the latter reference, its authors point
+out that, while the Lagrangian invariance of A± is
+lost in their 3D system, there is a cross-helicity in-
+variant that continues to be conserved. We see, how-
+ever, that this conservation law does not survive the
+inclusion of nonisothermal electrons:
+d
+dt
+Z d3r
+V
+A2
++ −A2
+−
+2
+=
+2
+√
+2 c
+vthe
+Z d3r
+V
+
+η∇2
+⊥A∥+ ˆb · ∇c
+e δT∥e
+ Z
+τ (1 −ˆΓ0)ϕ,
+(A9)
+another constraint on the evolution of the system
+that disappears in our treatment.
+2.
+Quadratic 2D invariants
+It is usually the quadratic invariants that are of
+most practical interest in nonlinear dynamics (or at
+least they are the ones that have the most physi-
+cally transparent consequences, e.g., the inverse cas-
+cades in 2D gyrokinetic turbulence102). In gyroki-
+netics, specializing to the quadratic function f in
+Eq. (A3), gives one the following family of 2D gy-
+rokinetic invariants:49
+Is =
+Z
+d3v
+Z d3Rs
+V
+T0s
+2F0s
+
+hs −qs ⟨χ⟩Rs
+T0s
+F0s
+2
+.
+(A10)
+We have also now integrated over the velocity space
+to produce a conservation law that globally con-
+strains the system in the phase space.
+Using
+Eq. (A4) to work out the electron invariant, we get
+Ie = Y + 1
+d2e
+X + 2U + Ke + He
+= W + 1
+d2e
+X + U −Ki,
+(A11)
+
+18
+where the deﬁnitions of, and evolution equations for
+the total free energy W, enstrophy Y , magnetic en-
+ergy U, electron kinetic energy Ke, electron free en-
+ergy He and ion kinetic energy Ki can be found in
+Sec. IV A and the quantity
+X =
+Z d3r
+V
+A2
+∥
+8π ,
+(A12)
+does not have a commonly agreed name, but is some-
+times referred to as “A2
+∥-stuﬀ”.
+It is conserved in
+standard 2D magnetohydrodynamics (MHD). The
+2D conservation law we are about to derive is a gen-
+eralization of this MHD result.
+Equation (A11) tells us that the electron 2D in-
+variant Ie contains the total free energy W, which is
+itself conserved both in 2D and in 3D. The remain-
+der of Ie is, therefore, a 2D invariant on its own.
+After straightforward algebra analogous to the cal-
+culations in Sec. IV B, we ﬁnd the evolution equation
+for this quantity:
+d
+dt
+
+X + d2
+e(U −Ki)
+
+= −ηU
++ c
+4π
+Z d3r
+V
+∂A∥
+∂z
+
+1 + Z
+τ (1 −ˆΓ0)
+
+ϕ
+−d2
+e∇2
+⊥ϕ −1
+e δT∥e
+
+.
+(A13)
+This is a 2D collisionless invariant because the
+last term on the right-hand side vanishes if (and,
+generally speaking, only if) ∂/∂z = 0.
+We will not delve any further into the mathemati-
+cal consequences of the 2D conservation laws and in-
+stead limit ourselves to remarking that the presence
+of so many constraints on the dynamics particular
+to the exactly 2D case ought to make one beware of
+too much optimism about the relevance of 2D results
+and intuitions to 3D dynamics.
+Appendix B: Linear theory
+1.
+Linearized equations
+Since we will want to use the linearized equations
+that are about to be derived for treating the tearing
+mode problem, we would like to do the linearization
+around an equilibrium containing both the guide
+ﬁeld B0 = B0ˆz and some in-plane ﬁeld — gyroki-
+netically speaking, this in-plane ﬁeld is part of the
+small perturbation of the guide ﬁeld. Thus, we let
+B = B0ˆz + δB(0)
+y (x)ˆy + δB(1)
+⊥,
+(B1)
+where δB(1)
+⊥
+≪δB(0)
+y
+≪B0.
+Therefore, A∥=
+A(0)
+∥(x) + A(1)
+∥, where δB(0)
+y
+= −dA(0)
+∥/dx ≡B0f(x)
+and δB(1)
+⊥
+= −ˆz × ∇A(1)
+∥. The function f(x) will
+contain all the information about the in-plane equi-
+librium. Examining Eqs. (62–64), it is not hard to
+see that an equilibrium of this form can be main-
+tained by letting ϕ(0) = 0, g(0)
+e
+= 0 and adding
+an equilibrium parallel electric ﬁeld to Eq. (63) to
+maintain the equilibrium magnetic ﬁeld against the
+Ohmic resistivity: cE(0)
+∥
+= ηB0f ′(x).
+Inserting all this into Eqs. (62–64), dropping the
+superscripts on the perturbed quantities and Fourier
+transforming with respect to y, z and time, we get
+−ω Z
+τ (1 −ˆΓ0) eϕ
+T0e
+=
+e
+cme
+d2
+e
+
+k∥(x)∇2
+⊥A∥
+−kyf ′′(x)A∥
+
+,
+(B2)
+−ω
+
+A∥−d2
+e∇2
+⊥A∥
+
+= −iη∇2
+⊥A∥+ kycd2
+ef ′′(x)ϕ
+−k∥(x)c
+
+1 + Z
+τ (1 −ˆΓ0)
+
+ϕ −1
+e δT∥e
+
+,
+(B3)
+−ωge + k∥(x)v∥
+
+ge −δT∥e
+T0e
+F0e
+
+= −iC[ge]
++
+ 
+1 −
+2v2
+∥
+v2
+the
+!
+F0e
+e
+cme
+d2
+e
+
+k∥(x)∇2
+⊥A∥
+−kyf ′′(x)A∥
+
+,
+(B4)
+where k∥(x) = kz + f(x)ky and ∇2
+⊥= ∂2
+x −k2
+y.
+a.
+Collisionless limit
+The simplest approach to linear theory in a kinetic
+plasma is to consider the purely collisionless case.
+Although, as we explained above, this is not really a
+good limit, even in a weakly collisional plasma, the
+linear results obtained in this limit are useful in that
+they will allow us to make contact with the exist-
+ing theories. The collisionless limit is also a useful
+route to certain linear results (like Landau damp-
+ing) that do in fact depend on inﬁnitesimal amount
+of velocity-space dissipation.
+Thus, let us set η = 0 and C[ge] = 0 in Eqs. (B3)
+and (B4), respectively. If we now solve Eq. (B4) for
+ge explicitly and then integrate over velocity space
+according to Eq. (65) to obtain the parallel elec-
+tron temperature perturbation, we get, after stan-
+dard alegebra,
+δT∥e
+T0e
+=
+2
+|k∥(x)|vthe
+Z(ζ(x)) + ζ(x)Z′(ζ(x))
+Z′(ζ(x))
+×
+e
+cme
+d2
+e
+
+k∥(x)∇2
+⊥A∥−kyf ′′(x)A∥
+
+,
+(B5)
+
+19
+where ζ(x) = ω/|k∥(x)|vthe, Z(ζ) is the plasma dis-
+persion function103 (not to be confused with Z in
+the ion charge Ze) and Z′(ζ) = −2[1 + ζZ(ζ)]. All
+kinetic eﬀects are wrapped up in the above expres-
+sion for the parallel elecron temperature perturba-
+tion. Using Eq. (B2), we can simplify it somewhat:
+1
+e δT∥e = −2ζ Z(ζ) + ζZ′(ζ)
+Z′(ζ)
+Z
+τ (1 −ˆΓ0)ϕ
+=
+
+1 −2ζ2 +
+2
+Z′(ζ)
+ Z
+τ (1 −ˆΓ0)ϕ.
+(B6)
+This can now be substituted into Eq. (B3), where-
+upon Eqs. (B2) and (B3) form a closed set.
+Recalling the gyrokinetic Poisson equation (56),
+Eq. (B6) can be interpreted as an equation of state
+with ζ-dependent eﬀective adiabatic exponent:
+δT∥e
+T0e
+= (G −1)δne
+n0e
+,
+(B7)
+G = 2
+
+ζ2 −
+1
+Z′(ζ)
+
+.
+(B8)
+This notation will be useful in our treatment of the
+tearing mode.
+b.
+Semicollisional limit
+In the semicollisional limit, we abandon Eq. (B4)
+and instead use the linearized Eq. (99) to determine
+the parallel electron temperature perturbation:
+h
+ω + iκ∥ek2
+∥(x)
+i δT∥e
+T0e
+=
+2e
+cme
+d2
+e
+
+k∥(x)∇2
+⊥A∥−kyf ′′(x)A∥
+
+.
+(B9)
+Using Eq. (B2), we rewrite this as
+1
+e δT∥e = −
+2ω
+ω + iκ∥ek2
+∥(x)
+Z
+τ (1 −ˆΓ0)ϕ.
+(B10)
+This can be substituted into Eq. (B3), where also
+the resistive term is now retained, while the electron
+inertia must be neglected in comparison (because
+νei ≫ω).
+Recasting Eq. (B10) in the form (B7), we ﬁnd the
+eﬀective adiabatic exponent in the semicollisional
+case:
+G = 1 +
+2ω
+ω + iκ∥ek2
+∥(x).
+(B11)
+2.
+Kinetic Alfvén waves
+a.
+Collisionless limit
+Let us make a digression and ascertain that the
+equations we have derived contain the wave dynam-
+ics that they are expected to contain.
+Formally,
+if we assume kz ≫kyf(x), kz ≫kyd2
+ef ′′(x) and
+kz∂2/∂x2 ≫kyf ′′(x), we ﬁnd ourselves in a homo-
+geneous plasma (all terms containing f(x) can be
+neglected and k∥= kz). This means that we can
+now also Fourier transform in x and, after a few
+lines of standard algebra, we obtain from Eqs. (B2),
+(B3) and (B6) the following dispersion relation:
+
+ζ2 −τ
+Z
+k2
+⊥d2
+e/2
+1 −Γ0(k2
+⊥ρ2
+i /2)
+
+[1 + ζZ(ζ)] = 1
+2 k2
+⊥d2
+e,
+(B12)
+where k2
+⊥= k2
+x + k2
+y. It is not hard to check that
+this agrees with the gyrokinetic dispersion relation
+at low beta derived in Ref. 61 [their Eq. (D17)].
+Looking for solutions with ζ = ω/|k∥|vthe ≪1
+and using Z(ζ) ≈i√π −2ζ, we ﬁnd the well known
+dispersion relation for Alfvén waves (both MHD and
+kinetic):
+ω = ±k∥vAk⊥ρi
+s
+1
+2
+Z
+τ +
+1
+1 −Γ0(k2
+⊥ρ2
+i /2)
+
+.
+(B13)
+The MHD Alfvén waves,
+ω = ±k∥vA,
+(B14)
+are recovered for k⊥ρi ≪1 (in which case Γ0 ≈
+1 −k2
+⊥ρ2
+i /2), the kinetic Alfvén waves,
+ω = ±
+s
+1
+2
+
+1 + Z
+τ
+
+k∥vAk⊥ρi,
+(B15)
+for k⊥ρi ≫1 (Γ0 ≈0). Finally, the damping rate is
+found from Eq. (B12) as a small perturbation of ω:
+γ = −|k∥|vA
+k2
+⊥ρ2
+i
+4
+s
+π me
+mi
+Z3
+τ 2βe
+.
+(B16)
+(note that this is valid for any k⊥ρi). This again is a
+well known formula for the electron Landau damping
+of Alfvén waves at low beta [cf. Eq. (63) of Ref. 61
+noting that βe = (Z/τ)βi].
+Another familiar and useful limit is the long-
+wavelength, cold-ion approximation, k⊥ρi ∼√τ ≪
+1 (already discussed in Sec. III C). Using Eq. (57)
+in Eq. (B12), we get
+
+ζ2 −d2
+e
+2ρ2s
+
+[1 + ζZ(ζ)] = 1
+2 k2
+⊥d2
+e.
+(B17)
+
+20
+Assuming again ζ ≪1, we get for the Alfvén waves
+in this limit:
+ω = ±k∥vA
+q
+1 + k2
+⊥ρ2s,
+(B18)
+γ = −|k∥|vA
+k2
+⊥ρ2
+s
+2
+s
+π me
+mi
+Z
+βe
+.
+(B19)
+The dispersive kinetic Alfvén waves are be-
+lieved to play a key role in enabling fast kinetic
+reconnection,19,104 so it is important that they are
+fully retained in our equations.
+Note that assuming ζ ≪1 in the above calcula-
+tion meant that we eﬀectively adopted an isothermal
+limit [see Eq. (B6)]. Enforcing this requirement on
+the frequency [Eq. (B13)] also eliminates the elec-
+tron scales: k⊥de ≪1 (in the cold-ion limit, this is
+modiﬁed to de ≪ρs). The non-isothermal eﬀects
+will come in at the electron inertial scale together
+with the breaking of the ﬂux conservation.
+b.
+Semicollisional limit
+Finally,
+in
+the
+semicollisional
+limit,
+using
+Eq. (B10) instead of Eq. (B6), we get the following
+dispersion relation:
+ω(ω + iηk2
+⊥) = k2
+∥v2
+Ak2
+⊥ρ2
+i
+× 1
+2
+"
+Z
+τ
+3ω + iκ∥ek2
+∥
+ω + iκ∥ek2
+∥
++
+1
+1 −Γ0(k2
+⊥ρ2
+i /2)
+#
+.
+(B20)
+The isothermal limit, Eq. (B13), this time with resis-
+tive damping, is recovered for κ∥ek2
+∥≫ω, or, equiv-
+alently, k⊥de ≪k∥λmfpe.
+3.
+Collisionless tearing mode
+Let us now consider the limit opposite to that
+which produced a homogeneous situation, namely,
+kz ≪kyf(x), so the problem becomes eﬀectively
+2D and k∥(x) ≈kyf(x). This is the tearing mode
+problem. Since we are expecting a (purely) grow-
+ing mode, let ω = iγ.
+In the collisionless limit,
+Eqs. (B2), (B3) and (B6) can now be rearranged
+to read
+iγ
+kyf(x)vthe
+Z
+τ (1 −ˆΓ0)ϕ =
+−1
+2 d2
+e
+
+∂2
+x −k2
+y −f ′′(x)
+f(x)
+ vthe
+c
+A∥,
+(B21)
+iγ
+kyf(x)vthe
+ 1 −d2
+e∂2
+x
+ vthe
+c
+A∥=
+
+1 + G Z
+τ (1 −ˆΓ0)
+
+ϕ,
+(B22)
+where G(ζ) is the eﬀective adiabatic exponent given
+by Eq. (B8), ζ(x) = iγ/|kyf(x)|vthe, and we have
+neglected d2
+ek2
+y and d2
+ef ′′(x)/f(x) compared to unity
+in Eq. (B22).
+As in all tearing-mode calculations, these equa-
+tions will turn out to have a boundary layer around
+x = 0. The reconnection of the magnetic ﬂux will
+happen inside this layer, while outside the dynamics
+will be essentially MHD. The diﬀerence between the
+standard MHD situation62 and what we have here
+is that there are two microscales in the problem: ρs
+(or ρi) and de, so the boundary layer will in fact be
+made of two nested boundary layers. We will ﬁrst
+deal with the outer solution, then give a set of a pri-
+ori estimates of the relevant scales and of the growth
+rate of the mode that follow from the structure of
+the problem in the inner region.
+a.
+Outer (MHD) region
+Here we seek the solution at the equilibrium scales
+l, assuming l ∼[f ′(x)/f(x)]−1 ∼k−1
+y
+≫ρs ≫de.
+Accordingly, we can neglect d2
+e∂2
+x ≪1 and (Z/τ)(1−
+ˆΓ0) ≈−ρ2
+s(∂2
+x−k2
+y) ≪1. We are not assuming that ζ
+is either small or large. Under these approximations,
+Eq. (B22) becomes simply
+iγ
+kyf(x)vthe
+vthe
+c
+A∥= ϕ.
+(B23)
+Substituting this into Eq. (B21), we get
+
+∂2
+x −k2
+y −f ′′(x)
+f(x)
+
+A∥= 2ρ2
+s
+d2e
+ζ(x)(∂2
+x −k2
+y)ζ(x)A∥.
+(B24)
+Now note that, since
+√
+2ρs/de = vthe/vA, we have
+√
+2ρs
+de
+ζ(x) =
+iγ
+|kyf(x)|vA
+= iγ
+ωAy
+,
+(B25)
+where ωAy = |kyf(x)vA| = |kyvAy| is the in-plane
+Alfvén frequency. Assuming γ ≪ωAy (tearing mode
+is sub-Alfvénically slow), we may then neglect the
+
+21
+right-hand side of Eq. (B24) and so end up with
+∂2
+xA∥=
+
+k2
+y + f ′′(x)
+f(x)
+
+A∥.
+(B26)
+This is the standard MHD tearing mode outer-region
+equation.
+Its solution depends on the particular
+choice of f(x), but we will not need its detailed form.
+Since δBy = −∂xA∥must reverse direction at x = 0,
+the sign of ∂xA∥will be diﬀerent on either side of
+x = 0, so the derivative will have a discontinuity.
+This is quantiﬁed by
+∆′ =
+1
+A∥(0)
+
+∂xA∥
++0
+−0 ,
+(B27)
+the tearing-mode instability parameter. It is a mea-
+sure of the singularity developed in the current by
+the ideal-MHD outer solution as it approaches the
+reconnection layer.
+The singularity is resolved by
+corrections to the ideal Ohm’s law (electron iner-
+tia in the case we are considering). The solution in
+the boundary layer around x = 0 will have to be
+matched to the value of ∆′.
+b.
+Inner region: equations
+At scales of order ρs or smaller, we may expand
+the in-plane equilibrium proﬁle: f(x) ≈xf ′(0) ≡
+x/Ls. Then ζ(x) ≈iδ/|x|, where
+δ =
+γ
+kyvthe
+Ls =
+γ
+kyvA
+de
+√
+2 ρs
+Ls.
+(B28)
+Since
+∂2
+x
+≫
+k2
+y, f ′′(x)/f(x)
+at
+these
+scales,
+Eqs. (B21) and (B22) become
+δ
+x
+Z
+τ (1 −ˆΓ0) ˜ϕ = 1
+2 d2
+e∂2
+xA∥,
+(B29)
+δ
+x
+ 1 −d2
+e∂2
+x
+
+A∥=
+
+1 + G Z
+τ (1 −ˆΓ0)
+
+˜ϕ,
+(B30)
+where ˆΓ0 = ˆΓ0(ρ2
+i ∂2
+x/2), ˜ϕ = −(c/vthe)iϕ, and the
+eﬀective adiabatic exponent G is given by Eq. (B8),
+which we now rewrite as
+G
+x
+δ
+
+= −2
+ δ2
+x2 +
+1
+Z′(iδ/|x|)
+
+.
+(B31)
+This function has limiting values G(0) = 3, G(∞) =
+1 (electrons are isothermal for x ≫δ) and a smooth
+monotonic transition in between.
+In order to benchmark our theory against existing
+treatments, let us remark that Eqs. (B29) and (B30)
+can easily be manipulated into a form that coincides
+with the collisionless tearing mode equations derived
+by Cowley, Kulsrud and Hahm67 directly from the
+Vlasov-Maxwell kinetics:
+x
+δ
+
+A∥−x
+δ ˜ϕ
+
+σ
+x
+δ
+
+= Z
+τ (1 −ˆΓ0) ˜ϕ,
+(B32)
+1
+2
+x
+δ d2
+e∂2
+xA∥= Z
+τ (1 −ˆΓ0) ˜ϕ,
+(B33)
+where the “scaled eﬀective conductivity” is
+σ
+x
+δ
+
+=
+
+2 + x2
+δ2 G
+x
+δ
+−1
+= −1
+2
+δ2
+x2 Z′
+ iδ
+|x|
+
+.
+(B34)
+Equations (B32) and (B33) are Eqs. (26) and (25),
+respectively, of Ref. 67, specialized to the case of no
+equilibrium density gradient112 [note that in Ref. 67,
+δ is deﬁned in terms of ω, not γ, so to get exactly
+their equations, one must replace δ →−iδ, σ →−σ
+and restore ˜ϕ = −(c/vthe)iϕ]. These equations de-
+termine the parallel electric ﬁeld [Eq. (B32)] and the
+parallel current [Eq. (B33)] in terms of the ion re-
+sponse. This response is, in general, nonlocal, which
+leads to considerable technical diﬃculties.66,67,73,105
+c.
+Mathematical structure of the problem
+Let us introduce a rescaling of the spatial vari-
+able ξ = x/δin, where δin reﬂects the width of the
+inner solution and will be determined later. Equa-
+tions (B30) and (B29) can be rewritten as follows
+A∥
+ξ −δin
+δ
+˜ϕ = d2
+e
+δ2
+in
+
+1 + δ2
+in
+2δ2 Gξ2
+ A′′
+∥
+ξ ,
+(B35)
+2δδin
+d2e
+Z
+τ (1 −ˆΓ0) ˜ϕ = ξA′′
+∥,
+(B36)
+where primes denote derivatives with respect to ξ
+and we have used Eq. (B36) to express the (Z/τ)(1−
+ˆΓ0) ˜ϕ term in Eq. (B30) in terms of A′′
+∥.
+Let χ(ξ) = ξA′
+∥−A∥= ξ2(A∥/ξ)′. Then A′′
+∥=
+χ′/ξ. Diﬀerentiating once Eq. (B35) and expressing
+A∥in terms of χ, we get
+d
+dξ
+ 1
+ξ2 + δ2
+in
+2δ2 G
+
+χ′ = δ2
+in
+d2e
+χ
+ξ2 −δ3
+in
+d2eδ ˜ϕ′.
+(B37)
+We now need a closed expression for ˜ϕ in terms
+of A∥, which is where the nonlocality of the ion
+response — the operator on the left-hand side of
+Eq. (B36) — presents a technical challenge.
+The
+simplest choice is to avoid it by considering the limit
+of cold ions. It turns out, however, that with no ad-
+ditional trouble, it is possible to accommodate (non-
+rigorously) the hot-ion limit by using the Padé ap-
+proximant for the ion response:68
+Z
+τ (1 −ˆΓ0) ≈−
+ρ2
+s∂2
+x
+1 −(1/2)ρ2
+i ∂2x
+.
+(B38)
+
+22
+Then Eq. (B36) becomes
+−2δρ2
+s
+d2eδin
+˜ϕ′′ = χ′ −ρ2
+i
+2δ2
+in
+χ′′′.
+(B39)
+By integrating this equation once, we work out the
+˜ϕ′ term in Eq. (B37):
+−δ3
+in
+d2eδ ˜ϕ′ = χ −χ0 −τ
+Z
+ρ2
+s
+δ2
+in
+χ′′,
+(B40)
+where χ0 is a constant of integration, we have used
+ρ2
+i /2ρ2
+s = τ/Z, and arranged for the overall coeﬃ-
+cient in the left-hand side to be unity by choosing
+the inner rescaling width
+δin =
+√
+2 ρsδ
+1/2
+.
+(B41)
+It remains to substitute Eq. (B40) into Eq. (B37)
+and arrange terms neatly. The result is
+ξ2 d
+dξ
+ 1
+ξ2 + α2 
+G + τ
+Z
+
+˜χ′ −
+ ξ2 + λ2
+˜χ = λ2,
+(B42)
+where ˜χ = −1 + χ/χ0,
+λ2 = δ2
+in
+d2e
+=
+√
+2 ρsδ
+d2e
+=
+γ
+kyvA
+Ls
+de
+,
+(B43)
+α =
+δin
+√
+2 δ =
+ ρs
+√
+2 δ
+1/2
+= ρs
+deλ,
+(B44)
+and G(x/δ) is given by Eq. (B31), with x/δ =
+√
+2 αξ.
+The above equation is subject to matching with
+the outer solution. First, using the deﬁnition of χ
+and the property A′′
+∥= χ′/ξ, we can write
+A∥= −χ0
+"
+1 + ˜χ −ξ
+Z ξ
+0
+dz ˜χ′(z)
+z
+#
+.
+(B45)
+This is matched to the outer (MHD) solution (see
+Appendix B 3 a) by identifying the limit ξ →∞for
+the inner solution with x →0 for the outer solution:
+this gives ˜χ(ξ →∞) = 0, χ0 = −A∥(ξ →∞) =
+−A∥(x →0) and, from the condition (B27),
+Z ∞
+0
+dξ ˜χ′(ξ)
+ξ
+= −1
+2 ∆′δin.
+(B46)
+Equations (B42) and (B46) constitute an eigen-
+value problem, where λ2 is the rescaled eigenvalue
+and α is the parameter that measures the width of
+the ion layer. Due to the double-layered structure
+of the inner region, the exact solution requires some
+work63,69,73,106 (see Appendix B 4), but all the rel-
+evant scalings can be derived in a simple heuristic
+way. While these scalings are known, it is useful to
+summarize them in a uniﬁed exposition.
+d.
+Ultralow-beta (one-ﬂuid) limit
+If α ≪1 (ρs ≪δ), the ion eﬀects are negligi-
+ble and our equations turn into the standard tearing
+mode equations62 extended to arbitrary ∆′63,64 and
+with resistivity replaced by electron inertia.71,72
+It is easy to derive the scaling of the growth rate
+without an exact solution of the equations. From
+Eq. (B42), λ2 ∼˜χ′/ξ. The width of the ˜χ(ξ) func-
+tion is order unity (i.e., x ∼δin in dimensional
+terms), so the integral in Eq. (B46) is over an in-
+terval of order unity. Therefore
+λ2 ∼∆′δin.
+(B47)
+Using the deﬁnitions (B41) and (B43), one gets the
+scalings66,71
+δ ∼d4
+e∆′2
+ρs
+,
+δin ∼d2
+e∆′,
+γ ∼kyvA
+d3
+e∆′2
+Ls
+.
+(B48)
+This result breaks down when ∆′ is so large that
+∆′δin ∼1 or larger, in which case the magnitude of
+the current is limited by the width of the reconnect-
+ing region, δin. The correct scalings are obtained by
+replacing ∆′ by 1/δin in Eq. (B47):
+λ2 ∼1
+(B49)
+(in other words, instead of estimating the current
+as ∂2
+xA∥∼(∆′/δin)A∥, one takes ∂2
+xA∥∼A∥/δ2
+in).
+Hence one gets the scalings65,72
+δ ∼d2
+e
+ρs
+,
+δin ∼de,
+γ ∼kyvA
+de
+Ls
+.
+(B50)
+As we explained above, all of this is valid provided
+ρs ≪δ, which amounts to
+ρ2
+s
+d2e
+∼βe
+mi
+me
+≪(de∆′)2
+(B51)
+for the ﬁnite-∆′ scalings (B48) and
+ρ2
+s
+d2e
+∼βe
+mi
+me
+≪1
+(B52)
+for the inﬁnite-∆′ limit (B50). Either condition can
+only be satisﬁed if βe is very low indeed — not just
+of order, but much smaller than me/mi [obviously,
+this is treated as a subsidiary limit within our formal
+low-beta ordering (12)].
+e.
+Two-ﬂuid case
+If α ≫1, or ρs ≫δ, the problem contains both ion
+and electron scales and is no longer mathematically
+
+23
+equivalent to the resistive tearing mode [the terms
+involving α in Eq. (B42) cannot be dropped]. The
+width of the integration region in Eq. (B46) is now
+ξ ∼1/α (or, dimensionally, x ∼δ). Therefore,
+λ2 ∼∆′δinα.
+(B53)
+This gives immediately the following scalings73–76
+δ ∼d2
+e∆′,
+δin ∼deρ1/2
+s
+∆′1/2,
+γ ∼kyvA
+deρs∆′
+Ls
+.
+(B54)
+These scalings are correct provided ∆′δin ≪1, or
+∆′ρ1/3
+s
+d2/3
+e
+≪1.
+At larger ∆′, again, like in Ap-
+pendix B 3 d, δin limits the magnitude of the current
+and we replace ∆′ by 1/δin in Eq. (B53):
+λ2 ∼α,
+(B55)
+whence follow the scalings73,74,76
+δ ∼d4/3
+e
+ρ1/3
+s
+,
+δin ∼d2/3
+e
+ρ1/3
+s
+,
+γ ∼kyvA
+d1/3
+e
+ρ2/3
+s
+Ls
+.
+(B56)
+Checking now the condition α ≫1, we ﬁnd that
+the ﬁnite-∆′ scalings (B54) are valid provided
+ρ2
+s
+d2e
+∼βe
+mi
+me
+≫(de∆′)2
+(B57)
+and the “inﬁnite-∆′” ones (B56) hold for
+ρ2
+s
+d2e
+∼βe
+mi
+me
+≫1.
+(B58)
+4.
+Asymptotic solution for the two-ﬂuid
+tearing mode
+In Refs. 69,73, the scalings (B56) were derived
+in a more mathematical way via a rather involved
+double-layer matching procedure in wavenumber
+space under the assumption of isothermal electrons
+(G = 1). There are several other derivations (no-
+tably Refs. 74,106), also analytically quite cumber-
+some. Here we give a calculation that recovers the
+essential result without assuming isothermal elec-
+trons and at the minimal analytical cost.
+We start by noting that, using Eqs. (B45) and
+(B46), we may write A∥in a form that is automati-
+cally matched to the outer solution:
+A∥= −χ0
+
+1 + ˜χ + 1
+2 ∆′δinξ + ξ
+Z ∞
+ξ
+dz ˜χ′(z)
+z
+
+.
+(B59)
+Our strategy will be ﬁrst to solve Eq. (B42) in the ion
+region and use the solution ˜χi in the above formula
+for A∥; then to solve in the electron region and use
+the solution ˜χe in Eq. (B45); ﬁnally to take the large-
+argument asymptotic of the electron solution A∥e
+and match it with the small-argument asymptotic
+of the ion solution A∥i.
+a.
+Ion region
+The ion region is x ∼ρs, or ξ ∼α ≫1.
+In
+this limit, the 1/ξ2 and λ2 ˜χ terms in Eq. (B42) are
+negligible (the latter because we are anticipating the
+ordering λ2 ∼α) and G ≈1. Introducing the new
+variable z = ξ/α
+p
+1 + τ/Z = x/ρτ, where ρτ =
+ρs
+p
+1 + τ/Z, we can now write the rest of Eq. (B42)
+as follows
+˜χ′′
+i −˜χi =
+˜λ2
+z2 ,
+(B60)
+where we have denoted
+˜λ2 =
+λ2
+α2(1 + τ/Z) ≪1.
+(B61)
+Equation (B60) can be solved exactly, subject to the
+boundary condition ˜χi(z →∞) →0:
+˜χi = e−z
+
+Ci −˜λ2
+Z z
+z0
+dr e2r
+Z ∞
+r
+ds e−s
+s2
+
+,
+(B62)
+where Ci is a constant of integration and the pa-
+rameter z0 in the particular integral can be chosen
+at will, with the diﬀerence absorbed into the homo-
+geneous part of the solution (the constant Ci).
+Substituting the solution (B62) into Eq. (B59),
+taking the limit z →0 and keeping only the leading-
+order contributions (in 1/α) in all terms of the ex-
+pansion, we get
+A∥i ≈−χ0
+
+1 + Ci + 1
+2 ∆′δinξ
+−˜λ2 ln ξ +
+Ci
+α
+p
+1 + τ/Z
+ξ ln ξ
+
+, (B63)
+where we formally ordered ∆′δin ∼1 and anticipated
+Ci ∼1 (all of this will be checked a posteriori).
+b.
+Electron region
+The electron region is x ∼δ, or ξ ∼1/α ≪1.
+In this limit, the ξ2 ˜χ term in Eq. (B42) is negligible
+and we are left with a homogeneous equation for
+˜χ + 1 = χ/χ0. Introducing the new variable y =
+√
+2 αξ = x/δ, we get
+y2 d
+dy
+ 1
+y2 + 1
+2
+
+G(y) + τ
+Z
+
+χ′
+e = λ2
+2α2 χe.
+(B64)
+
+24
+The right-hand side is, in fact, small, and so we
+can solve this equation perturbatively, in powers of
+λ2/α2 ∼1/α (cf. Ref. 74). We will see that we need
+to do this to second order: χe = χ(0)
+e
++ χ(1)
+e
++ χ(2)
+e .
+Our boundary condition will be that the current,
+proportional to χ′/y, must be even as y →0. We
+can also let χ(1)
+e (0) = χ(2)
+e (0) = 0 without loss of
+generality, so χe(0) = χ(0)
+e (0).
+Integrating Eq. (B64) to zeroth order (right-hand
+side = 0), we get
+χ(0)
+e
+χ0
+= Ce,
+(B65)
+where Ce is a constant of integration. To ﬁrst order,
+we obtain, again by direct integration,
+χ(1)
+e
+χ0
+= −λ2
+2α2 Ce
+Z y
+0
+du u
+1 + (u2/2) [G(u) + τ/Z].
+(B66)
+Finally, to second order,
+χ(2)
+e
+χ0
+= −λ4
+4α4 Ce
+Z y
+0
+du u2
+1 + (u2/2) [G(u) + τ/Z]
+×
+Z u
+0
+dv
+v2
+Z v
+0
+dw w
+1 + (w2/2) [G(w) + τ/Z].
+(B67)
+Substituting the solution worked out above into
+Eq. (B45), taking the limit y →∞and again throw-
+ing out all terms subdominant in 1/α, we ﬁnd
+A∥e ≈−χ0Ce
+
+1 + IGΛξ −˜λ2 ln ξ + IGΛ˜λ2ξ ln ξ
+
+,
+(B68)
+where Λ = λ2/α
+p
+1 + τ/Z and
+IG =
+Z ∞
+0
+dy
+p
+1 + τ/Z/
+√
+2
+1 + (y2/2) [G(y) + τ/Z]
+(B69)
+is a number of order unity.
+Had electrons been
+isothermal (G = 1), it would have been IG = π/2.
+c.
+The dispersion relation
+We now match the asymptotics (B68) and (B63)
+term by term. The ln ξ term can be ignored as long
+as we carry out the matching for ξ ≫1 — we can
+do this because the electron solution is in fact valid
+beyond the electron region (ξ ∼1/α) all the way
+through the intermediate region ξ ∼1, or x ∼δin
+(because we have solved to second order in 1/α).
+Matching the remaining three terms allows us to
+determine the two constants of integration and ﬁnd
+the dispersion relation:69,73
+1
+2 ∆′δin =
+IGΛ
+1 −IGΛ2 .
+(B70)
+This indeed has the two limits that we intuited in
+Appendix B 3 e:
+∆′δin ≪1 ⇒Λ ≡
+λ2
+α
+p
+1 + τ/Z
+=
+1
+2IG
+∆′δin,
+(B71)
+∆′δin ≫1 ⇒Λ ≡
+λ2
+α
+p
+1 + τ/Z
+=
+1
+√IG
+,
+(B72)
+so we now know not just the scalings but also the nu-
+merical prefactors (which depend on the functional
+form of the eﬀective adiabatic exponent G of the
+electrons via the constant IG). Equation (B70) gives
+a smooth connection between the two limits.
+5.
+Semicollisional tearing mode
+a.
+Equations
+To treat the tearing mode in the semicollisional
+limit,66 we must use Eqs. (B2), (B3) and (B10),
+again taking k∥(x) ≈kyf(x). The outer region is
+still MHD as described in Appendix B 3 a. In the
+inner region, instead of Eqs. (B29) and (B30), we
+get (the ﬁrst equation is unchanged)
+δ
+x
+Z
+τ (1 −ˆΓ0) ˜ϕ = 1
+2 d2
+e∂2
+xA∥,
+(B73)
+δ
+x
+
+1 −η
+γ ∂2
+x
+
+A∥=
+
+1 + G Z
+τ (1 −ˆΓ0)
+
+˜ϕ,
+(B74)
+G
+x
+δ
+
+= 3 + (κ∥eγ/v2
+the)(x/δ)2
+1 + (κ∥eγ/v2
+the)(x/δ)2 .
+(B75)
+These equations turn out to have a mathemati-
+cal structure that can be exactly mapped onto the
+collisionless case.67 Let us introduce a new scale
+δη = δ
+de
+η
+γ
+1/2
+=
+L2
+s
+√
+2 ρs
+
+γ
+kyvA
+1/2
+(kyLsS)−1/2,
+(B76)
+where S = vALs/η is the Lundquist number. Then,
+denoting Φ = (δη/δ) ˜ϕ, we can recast Eqs. (B73–B75)
+in the following form
+δη
+x
+Z
+τ (1 −ˆΓ0)Φ = 1
+2
+η
+γ ∂2
+xA∥,
+(B77)
+δη
+x
+
+1 −η
+γ ∂2
+x
+
+A∥=
+
+1 + G Z
+τ (1 −ˆΓ0)
+
+Φ, (B78)
+G
+ x
+δη
+
+= 3 + (a/2)(x/δη)2
+1 + (a/2)(x/δη)2 ,
+(B79)
+
+25
+where a = 2ηκ∥e/d2
+ev2
+the. For the collision operator
+we chose in Sec. III D, η = νeid2
+e, κ∥e = v2
+the/2νei,
+and so a = 1; the isothermal closure would formally
+correspond to a = ∞. Comparing Eqs. (B77–B79)
+with Eqs. (B29–B31), we see that all results obtained
+for the collisionless case can be converted into analo-
+gous results for the semiciollisional case by mapping
+δ →δη,
+d2
+e →η
+γ
+(B80)
+and using Eq. (B79) instead of Eq. (B31) for the
+eﬀective adiabatic exponent of the electrons.
+Again, these equations can be manipulated into a
+form derived in Ref. 67. Proceeding analogously to
+the way we did in Appendix B 3 b, we get
+x
+δη
+
+A∥−x
+δη
+Φ
+
+σ
+ x
+δη
+
+= Z
+τ (1 −ˆΓ0)Φ,
+(B81)
+1
+2
+x
+δη
+ 
+δ2
+η
+δ2 d2
+e
+!
+∂2
+xA∥= Z
+τ (1 −ˆΓ0)Φ,
+(B82)
+where the “scaled eﬀective conductivity” is
+σ
+ x
+δη
+
+=
+1 + (a/2)(x/δη)2
+2 + (3 + a)(x/δη)2 + (a/2)(x/δη)4 .
+(B83)
+Equations (B81) and (B82) are Eqs. (76) and (78),
+respectively, of Ref. 67, again in the special case of no
+equilibrium density gradient (to recover their equa-
+tions exactly, replace δ →−iδ, δη →δη/
+√
+2 and
+σ →σ/2).
+Using the mapping (B80), we conclude that the
+general tearing mode equations (B42) and (B46), de-
+rived in Appendix B 3 c, now hold with
+δin =
+√
+2 ρsδη
+1/2
+= Ls
+
+γ
+kyvA
+1/4
+(kyLsS)−1/4,
+(B84)
+λ2 =
+√
+2 ρsδη
+η/γ
+=
+
+γ
+kyvA
+3/2
+(kyLsS)1/2,
+(B85)
+α =
+δin
+√
+2 δη
+=
+ρs
+√
+2 δη
+= ρs
+Ls
+
+γ
+kyvA
+−1/4
+(kyLsS)1/4,
+(B86)
+and G(
+√
+2 αξ) given by Eq. (B79).
+All the same
+mathematical considerations apply, with the (qual-
+itatively inconsequential) exception that the func-
+tional form of the eﬀective adiabatic exponent is dif-
+ferent.
+We conclude by summarizing the heuristically ob-
+tainable scalings for the semicollisional case — these
+can be read oﬀfrom the results of Appendices B 3
+and B 4 with the aid of the deﬁnitions (B84–B86).
+From this point on, all lengths are normalized by Ls.
+b.
+Resistive MHD (one-ﬂuid) limit
+Proceeding analogously to the case considered in
+Appendix B 3 d, we assume α ≪1, or ρs ≪δη, and
+recover the classic resistive-MHD tearing mode.62–64
+First, at ﬁnite ∆′, Eq. (B47) with the deﬁnitions
+(B84) and (B85) gives the scalings62
+δη ∼∆′2/5ρ−1
+s (kyS)−4/5,
+(B87)
+δin ∼∆′1/5(kyS)−2/5,
+(B88)
+γ
+kyvA
+∼∆′4/5(kyS)−3/5.
+(B89)
+The reconnection layer’s width is δin ≪δη (because
+α ≪1) and the condition for the above scalings to
+apply is ∆′δin ≪1, which translates into
+∆′ ≪(kyS)1/3.
+(B90)
+When this is broken, one gets the "inﬁnite-∆′" scal-
+ing (B49), whence follow the scalings63,65
+δη ∼ρ−1
+s (kyS)−2/3,
+(B91)
+δin ∼(kyS)−1/3,
+(B92)
+γ
+kyvA
+∼(kyS)−1/3.
+(B93)
+The resistive MHD results are valid provided α ≪
+1, which imposes an upper bound on the ion scale:
+ρs ≪∆′1/5(kyS)−2/5
+(B94)
+for the ﬁnite-∆′ scalings and
+ρs ≪(kyS)−1/3
+(B95)
+in the “inﬁnite-∆′” limit.
+c.
+Two-ﬂuid case
+When the ion scale is suﬃciently large (α ≫
+1), two-ﬂuid eﬀects become important, similarly
+to the case considered in Appendix B 3 e.
+Using
+Eq. (B53) and the deﬁnitions (B84–B86), one gets
+the scalings66,68
+δη ∼∆′1/3ρ−2/3
+s
+(kyS)−2/3,
+(B96)
+δin ∼(∆′ρs)1/6(kyS)−1/3,
+(B97)
+γ
+kyvA
+∼(∆′ρs)2/3(kyS)−1/3.
+(B98)
+These scalings hold provided ∆′δin ≪1, or
+∆′ ≪ρ−1/7
+s
+(kyS)2/7.
+(B99)
+
+26
+At larger ∆′, Eq. (B55) must be used, whence follow
+the scalings65,69,70
+δη ∼ρ−5/7
+s
+(kyS)−4/7,
+(B100)
+δin ∼ρ1/7
+s
+(kyS)−2/7,
+(B101)
+γ
+kyvA
+∼ρ4/7
+s
+(kyS)−1/7.
+(B102)
+In both cases, the width of the reconnection layer
+is δη ≪δin (because α ≫1), which holds if
+ρs ≫∆′1/5(kyS)−2/5
+(B103)
+for the ﬁnite-∆′ scalings and
+ρs ≫(kyS)−1/3,
+(B104)
+in the “inﬁnite-∆′” limit.
+∗Electronic address: a.zocco1@physics.ox.ac.uk
+† Electronic address: a.schekochihin1@physics.ox.ac.uk
+1 D. Biskamp,
+Magnetic Reconnection in Plasmas
+(Cambridge Univ Press, Cambridge, 2000).
+2 M. Yamada, R. Kulsrud, and H. Ji, Rev. Mod. Phys.
+82, 603 (2010).
+3 R. J. Hastie, Astrophys. Space Sci. 256, 177 (1998).
+4 R. Giovannelli, Mon. Not. R. Astron. Soc. 107, 2163
+(1947).
+5 P. A. Sweet, Annu. Rev. Astron. Astrophys. 7, 149
+(1969).
+6 J. Dungey, Phys. Rev. Lett. 6, 47 (1961).
+7 C. J. Xiao, X. G. Wang, Z. Y. Pu, H. Zhao, J. X.
+Wang, Z. W. Ma, S. Y. Fu, M. G. Kivelson, Z. X.
+Liu, Q. G. Zong, et al., Nature Phys. 2, 478 (2006).
+8 J. P. Eastwood, T. Phan, F. S. Mozer, M. A. Shay,
+M. Fujimoto, A. Retinò, M. Hesse, A. Balogh, E. A.
+Lucek, and I. Dandouras, J. Geophys. Res. 112, 6235
+(2007).
+9 A. Retinò, D. Sundkvist, A. Vaivads, F. Mozer,
+M. André, and C. J. Owen, Nature Phys. 3, 236
+(2007).
+10 S. Servidio, W. H. Matthaeus, M. A. Shay, P. A. Cas-
+sak, and P. Dmitruk, Phys. Rev. Lett. 102, 115003
+(2009).
+11 J. F. Drake, M. Swisdak, H. Che, and M. A. Shay,
+Nature 443, 553 (2006).
+12 J. F. Drake, M. Opher, M. Swisdak, and J. N.
+Chamoun, Astrophys. J. 709, 963 (2010), 0911.3098.
+13 D. A. Uzdensky, Space Sci. Rev., in press, e-print
+arXiv:1101.2472.
+14 A. Bhattacharjee, Annu. Rev. Astron. Astrophys.
+42, 365 (2004).
+15 P. A. Cassak, M. A. Shay, and J. F. Drake, Phys.
+Rev. Lett. 95, 235002 (2005).
+16 D. A. Uzdensky, Astrophys. J. 671, 2139 (2007).
+17 P. A. Sweet, in Electromagnetic Phenomena in Cos-
+mical Physics, edited by B. Lehnert, IAU Symposium
+(Cambridge University Press, 1958), Vol. 6, p. 123.
+18 E. N. Parker, J. Geophys. Res. 62, 509 (1957).
+19 B. N. Rogers, R. E. Denton, J. F. Drake, and M. A.
+Shay, Phys. Rev. Lett. 87, 195004 (2001).
+20 N. F. Loureiro, A. A. Schekochihin, and S. C. Cowley,
+Phys. Plasmas 14, 100703 (2007).
+21 R. Samtaney, N. F. Loureiro, D. A. Uzdensky, A. A.
+Schekochihin, and S. C. Cowley, Phys. Rev. Lett.
+103, 105004 (2009).
+22 A.
+Bhattacharjee,
+Y.
+Huang,
+H.
+Yang,
+and
+B. Rogers, Phys. Plasmas 16, 112102 (2009).
+23 P. A. Cassak, M. A. Shay, and J. F. Drake, Phys.
+Plasmas 16, 120702 (2009).
+24 Y. Huang and A. Bhattacharjee, Phys. Plasmas 17,
+062104 (2010).
+25 D. A. Uzdensky, N. F. Loureiro, and A. A. Schekochi-
+hin, Phys. Rev. Lett. 105, 235002 (2010).
+26 W. H. Matthaeus and S. L. Lamkin, Phys. Fluids 29,
+2513 (1986).
+27 G.
+Kowal,
+A.
+Lazarian,
+E.
+T.
+Vishniac,
+and
+K. Otmianowska-Mazur,
+Astrophys. J. 700,
+63
+(2009).
+28 G. Lapenta, Phys. Rev. Lett. 100, 235001 (2008).
+29 N. F. Loureiro, D. A. Uzdensky, A. A. Schekochihin,
+S. C. Cowley, and T. A. Yousef, Mon. Not. R. Astron.
+Soc. 399, L146 (2009).
+30 J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers,
+R. E. Denton, M. Hesse, M. Kuznetsova, Z. W. Ma,
+A. Bhattacharjee, A. Otto, et al., J. Geophys. Res.
+106, 3715 (2001).
+31 P.
+Ricci,
+J.
+U.
+Brackbill,
+W.
+Daughton,
+and
+G. Lapenta, Phys. Plasmas 11, 4102 (2004).
+32 W. Daughton, J. Scudder, and H. Karimabadi, Phys.
+Plasmas 13, 072101 (2006).
+33 J. F. Drake, M. A. Shay, and M. Swisdak, Phys.
+Plasmas 15, 042306 (2008).
+34 W. Daughton, V. Roytershteyn, B. J. Albright,
+H. Karimabadi, L. Yin, and K. J. Bowers, Phys. Rev.
+Lett. 103, 065004 (2009).
+35 W. Daughton, V. Roytershteyn, B. J. Albright,
+H. Karimabadi, L. Yin, and K. J. Bowers, Phys. Plas-
+mas 16, 072117 (2009).
+36 R. D. Hazeltine, C. T. Hsu, and P. J. Morrison, Phys.
+Fluids 30, 3204 (1987).
+37 T. J. Schep, F. Pegoraro, and B. N. Kuvshinov, Phys.
+Plasmas 1, 2843 (1994).
+38 R. Fitzpatrick and F. Porcelli, Phys. Plasmas 11,
+4713 (2004).
+39 R. Fitzpatrick and F. Porcelli, Phys. Plasmas 14,
+049902 (2007).
+40 F. L. Waelbroeck, R. D. Hazeltine, and P. J. Morri-
+son, Phys. Plasmas 16, 032109 (2009).
+41 E. Tassi, P. J. Morrison, D. Grasso, and F. Pegoraro,
+Nucl. Fusion 50, 034007 (2010).
+42 W. Wan, Y. Chen, and S. E. Parker, Phys. Plasmas
+12, 012311 (2005).
+
+27
+43 B. N. Rogers, S. Kobayashi, P. Ricci, W. Dorland,
+J. Drake, and T. Tatsuno, Phys. Plasmas 14, 092110
+(2007).
+44 X. Y. Wang, Y. Lin, L. Chen, and Z. Lin, Phys.
+Plasmas 15, 072103 (2008).
+45 A. Perona, L.-G. Eriksson, and D. Grasso, Phys.
+Plasmas 17, 042104 (2010).
+46 R.
+Numata,
+W.
+Dorland,
+G.
+G.
+Howes,
+N. F. Loureiro, B. N. Rogers, and T. Tatsuno,
+e-print arXiv:1107.5842.
+47 E. A. Frieman and L. Chen, Phys. Fluids 25, 502
+(1982).
+48 A. A. Schekochihin, S. C. Cowley, W. Dorland, G. W.
+Hammett, G. G. Howes, G. G. Plunk, E. Quataert,
+and T. Tatsuno, Plasma Phys. Control. Fusion 50,
+124024 (2008).
+49 A. A. Schekochihin, S. C. Cowley, W. Dorland, G. W.
+Hammett, G. G. Howes, E. Quataert, and T. Tat-
+suno, Astrophys. J. Suppl. 182, 310 (2009).
+50 E. Cafaro, D. Grasso, F. Pegoraro, F. Porcelli, and
+A. Saluzzi, Phys. Rev. Lett. 80, 4430 (1998).
+51 D. Grasso, F. Califano, F. Pegoraro, and F. Porcelli,
+Phys. Rev. Lett. 86, 5051 (2001).
+52 K. Bowers and H. Li, Phys. Rev. Lett. 98, 035002
+(2007).
+53 H. J. de Blank, Phys. Plasmas 8, 3927 (2001).
+54 H. J. de Blank and G. Valori, Plasma Phys. Control.
+Fusion 45, A309 (2003).
+55 T. V. Liseikina, F. Pegoraro, and E. Y. Echkina,
+Phys. Plasmas 11, 3535 (2004).
+56 F. Pegoraro,
+T. Liseikina, and E. Yu Echkina,
+Transp. Th. Stat. Phys. 34, 243 (2005).
+57 M. Yamada, Y. Ren, H. Ji, J. Breslau, S. Gerhardt,
+R. Kulsrud, and A. Kuritsyn, Phys. Plasmas 13,
+052119 (2006).
+58 A. Zocco, L. Chacón, and A. N. Simakov, Phys. Plas-
+mas 16, 110703 (2009).
+59 T. Tatsuno, W. Dorland, A. A. Schekochihin, G. G.
+Plunk, M. Barnes, S. C. Cowley, and G. G. Howes,
+Phys. Rev. Lett. 103, 015003 (2009).
+60 S. I. Braginskii, in Reviews of Plasma Physics, edited
+by M. A. Leontovich (Consultants Bureau, New
+York, 1965), vol. 1, pp. 205–311.
+61 G. G. Howes, S. C. Cowley, W. Dorland, G. W. Ham-
+mett, E. Quataert, and A. A. Schekochihin, Astro-
+phys. J. 651, 590 (2006).
+62 H. P. Furth, J. Killeen, and M. N. Rosenbluth, Phys.
+Fluids 6, 459 (1963).
+63 B. Coppi, R. Galvão, R. Pellat, and M. N. Rosen-
+bluth, Sov. J. Plasma Phys. 11, 226 (1975).
+64 G. Ara, B. Basu, B. Coppi, G. Laval, M. N. Rosen-
+bluth, and B. V. Wadell, Ann. Phys. 112, 443 (1978).
+65 J. F. Drake, Phys. Fluids 21, 1777 (1978).
+66 J. F. Drake and Y. C. Lee, Phys. Fluids 20, 1341
+(1977).
+67 S. C. Cowley, R. M. Kulsrud, and T. S. Hahm, Phys.
+Fluids 29, 3230 (1986).
+68 F. Pegoraro and T. J. Schep, Plasma Phys. Control.
+Fusion 28, 647 (1986).
+69 F. Pegoraro, F. Porcelli, and T. J. Schep, Phys. Flu-
+ids B 1, 364 (1989).
+70 A. Y. Aydemir, Phys. Fluids B 3, 3025 (1991).
+71 G. Laval, R. Pellat, and M. Vuillemin, Plasma Phys.
+Control. Nucl. Fusion Res. 2, 259 (1965).
+72 B. Basu and B. Coppi, Phys. Fluids 24, 465 (1981).
+73 F. Porcelli, Phys. Rev. Lett. 66, 425 (1991).
+74 L. Zakharov and B. Rogers, Phys. Fluids B 4, 3285
+(1992).
+75 B. N. Kuvshinov, Plasma Phys. Control. Fusion 36,
+867 (1994).
+76 V. V. Mirnov, C. C. Hegna, and S. C. Prager, Phys.
+Plasmas 11, 4468 (2004).
+77 V. M. Vasyliunas, Rev. Geophys. 13, 303 (1975).
+78 J. A. Wesson, Nucl. Fusion 30, 2545 (1990).
+79 S. V. Bulanov, F. Pegoraro, and A. S. Sakharov,
+Phys. Fluids B 4, 2499 (1992).
+80 M. Ottaviani and F. Porcelli, Phys. Rev. Lett. 71,
+3802 (1993).
+81 W. Gekelman, H. Pﬁster, Z. Lucky, J. Bamber,
+D. Leneman, and J. Maggs, Rev. Sci. Instr. 62, 2875
+(1991).
+82 G. Saibene, N. Oyama, J. Lönnroth, Y. Andrew,
+E. de la Luna, C. Giroud, G. T. A. Huysmans, Y. Ka-
+mada, M. A. H. Kempenaars, A. Loarte, et al., Nucl.
+Fusion 47, 969 (2007).
+83 L. Spitzer and R. Härm, Phys. Rev. 89, 977 (1953).
+84 P. Helander and D. J. Sigmar, Collisional Trans-
+port in Magnetized Plasmas (Cambridge University
+Press, Cambridge, 2002).
+85 S. C. Cowley, PhD Thesis, Princeton University,
+1985.
+86 J. A. Krommes, Phys. Rep. 360, 1 (2002).
+87 A. Lenard and I. B. Bernstein, Phys. Rev. 112, 1456
+(1958).
+88 I. G. Abel, M. Barnes, S. C. Cowley, W. Dorland,
+and A. A. Schekochihin, Phys. Plasmas 15, 122509
+(2008).
+89 H. R. Strauss, Phys. Fluids 19, 134 (1976).
+90 I. G. Abel, G. G. Plunk, E. Wang, M. Barnes,
+S. C. Cowley, W. Dorland, and A. A. Schekochihin,
+Plasma Phys. Control. Fusion, submitted (2011).
+91 F. C. Grant and M. R. Feix, Phys. Fluids 10, 696
+(1967).
+92 T. P. Armstrong, Phys. Fluids 10, 1269 (1967).
+93 G. W. Hammett, M. A. Beer, W. Dorland, S. C.
+Cowley, and S. A. Smith, Plasma Phys. Control. Fu-
+sion 35, 973 (1993).
+94 S. E. Parker and D. Carati, Phys. Rev. Lett. 75, 441
+(1995).
+95 H. Sugama, T.-H. Watanabe, and W. Horton, Phys.
+Plasmas 8, 2617 (2001).
+96 G. G. Howes, W. Dorland, S. C. Cowley, G. W. Ham-
+mett, E. Quataert, A. A. Schekochihin, and T. Tat-
+suno, Phys. Rev. Lett. 100, 065004 (2008).
+97 N. F. Loureiro, A. Zocco, and A. A. Schekochihin, in
+preparation (2011).
+98 A. Kolmogorov, Dokl. Akad. Nauk SSSR 30, 301
+(1941).
+99 J. F. Drake and R. G. Kleva, Phys. Rev. Lett. 66,
+1458 (1991).
+100 G. Valori, D. Grasso, and H. J. de Blank, Phys. Plas-
+mas 7, 178 (2000).
+
+28
+101 D. Borgogno, D. Grasso, F. Porcelli, F. Califano,
+F. Pegoraro, and D. Farina, Phys. Plasmas 12,
+032309 (2005).
+102 G. G. Plunk, S. C. Cowley, A. A. Schekochihin, and
+T. Tatsuno, J. Fluid Mech. 664, 407 (2010).
+103 B. D. Fried and S. D. Conte, The Plasma Dispersion
+Function (Academic Press, New York, 1961).
+104 L. Chacón,
+A. N. Simakov,
+V. S. Lukin,
+and
+A. Zocco, Phys. Rev. Lett. 101, 025003 (2008).
+105 T. M. Antonsen and B. Coppi, Phys. Lett. A 81, 335
+(1981).
+106 J. F. Drake, J. T. M. Antonsen, A. B. Hassam, and
+N. T. Gladd, Phys. Fluids 26, 2509 (1983).
+107 T.-H. Watanabe and H. Sugama, Phys. Plasmas 11,
+1476 (2004).
+108 It is probably also essential, for a similar reason, that
+the model be three-dimensional; restriction to exact
+two-dimensionality imposes many additional conser-
+vation laws (see Appendix A).
+109 It can also be thought to describe the nonlinear sit-
+uation, rather than the linearized one, if Eq. (95) is
+ﬁrst transformed into the Lagragian frame moving
+with the plasma and the parallel coordinate mea-
+sured along the exact ﬁeld line. This, however, is not
+an essential point as the phase mixing mechanism we
+are considering is fundamentally linear.
+110 The spectrum with the same m dependence as (105)
+was ﬁrst derived in Ref. 107 for electrostatic ITG
+turbulence in tokamaks, although, unlike those au-
+thors, we have not invoked any nonlinear dynamics
+in its derivation.
+111 Note, however, the claim in Ref. 54 that the inclusion
+of electron kinetics alleviates somewhat the problem
+of formation of singularities in their 2D Hamiltonian
+ﬂuid-kinetic model.
+112 This reduction is accomplished by setting the elec-
+tron density gradient (1/a) and, therefore, ω∗=
+kycT0e/eB0a to zero in all of their equations ex-
+cept Eq. (25), where (ω∗/ω)2/βp = d2
+e/2δ2, because
+the density gradient in ω∗cancels with the one in
+βp = (4πn0eT0e/B2
+0)L2
+s/a2.

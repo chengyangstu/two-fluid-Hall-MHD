@@ -1,0 +1,1167 @@
+
+===== PDF PAGE 1 =====
+          DRAFT VERSION AUGUST 11, 2026
+             Typeset using LATEX preprint2 style in AASTeX631
+
+
+
+
+                           Plasmoid-Mediated 2D Magnetic Reconnection in Partially Ionized Plasmas
+
+             YUE HU*     ,1, 2 SIYAO XU    ,3 GRZEGORZ KOWAL    ,4 JAMES M. STONE,5 ALEX LAZARIAN    ,6 AND HUI LI    7
+
+                                                         1Institute for Advanced Study, 1 Einstein Drive, Princeton, NJ 08540, USA
+                                     2Cahill Center for Astronomy and Astrophysics, California Institute of Technology, Pasadena, CA, USA
+                                    3Department of Physics, University of Florida, 2001 Museum Rd., Gainesville, FL 32611, USA
+                        4Escola de Artes, Ciˆencias e Humanidades, Universidade de S˜ao Paulo, Rua Arlindo Bettio 1000, 03828-000, S˜ao Paulo, Brazil
+                                                         5Institute for Advanced Study, 1 Einstein Drive, Princeton, NJ 08540, USA
+                                       6Department of Astronomy, University of Wisconsin-Madison, Madison, WI, 53706, USA
+                                                         7Theoretical Division, Los Alamos National Laboratory, USA
+
+                                         ABSTRACT
+                 Magnetic reconnection in partially ionized plasmas is an important channel for energy release. While the
+               plasmoid instability is well characterized in 2D fully ionized plasmas, its behavior in the presence of neutral-
+               dominated plasma remains poorly understood in the nonlinear, high-Lundquist-number (S = 105) regime. We
+                 present high-resolution (16384 × 4096 cells) two-dimensional two-fluid (ion + neutral) simulations of Harris-2026                 sheet reconnection with upstream plasma beta β = 2, comparing fully ionized and partially ionized (ionization
+                  fraction ξ = 10−1 and 10−2) regimes. Neutral-ion decoupling accelerates the linear tearing stage and alters
+                 the plasmoid hierarchy: the large-scale “monster” plasmoid that dominates the fully ionized case is suppressed,Aug         and the sheet instead fragments into a dense chain of sub-scale plasmoids. Below the neutral-ion decoupling
+                 scale ℓdec, ions concentrate into the plasmoids, reaching peak overdensities ρi/ρi,0 ≈10 (ξ = 10−1) and9
+           3−5×103 (ξ = 10−2), while the neutrals remain comparatively smooth. This local pile-up raises the ionization
+                  fraction and recouples the two fluids within the plasmoids. Measured from the out-of-plane electric field at the
+                reconnection sites, the reconnection rate in the ξ = 10−2 case achieves Rrec ≈0.01, whereas the ξ = 10−1
+                case rises to a rate ≈0.02 and further 0.035 when apparent coalescence occurs. In the ξ = 10−2 case, the
+                ambipolar drift drives a rapid ion inflow ∼0.5 vA,0 into the layer at the same reconnection sites, far above the
+                  neutral inflow velocity ∼0.1 vA,0. Here vA,0 is the upstream total Alfv´en speed.
+
+
+
+               Keywords: Magnetic fields (994) — Astrophysical magnetism (102) — Plasma astrophysics (1261) — Magne-
+                         tohydrodynamics (1964)[astro-ph.HE]
+
+                                  1. INTRODUCTION                     by reconnection in astrophysical environments is that: the
+                                                                                 classical Sweet–Parker model (Sweet 1958; Parker 1957)          Magnetic reconnection is a fundamental plasma process
+                                                                              predicts a reconnection speed which is smaller than Alfven          that converts stored magnetic energy into kinetic and ther-
+                                                                             velocity VA by a factor ∼S−1/2 that, at the astrophysically       mal energy through the topological rearrangement of mag-
+                                                                             relevant conditions (Lundquist number S ≳1010), is orders         netic field lines (see reviews by Biskamp 2000; Zweibel &
+                                                                          of magnitude too slow to account for the observed dynamical       Yamada 2009; Yamada et al. 2010; Lazarian et al. 2020;
+                                                                            timescales.         Sironi et al. 2025). It powers magnetic energy release across
+                                                                            In fully ionized plasmas, two distinct mechanisms have         the universe—solar flares and coronal mass ejections (Ma-
+                                                                 been proposed to resolve the slow Sweet–Parker problem:        suda et al. 1994; Shibata & Magara 2011), gamma-ray burst
+                                                                           the plasmoid instability and turbulent reconnection.  In the          jets (Drenkhahn & Spruit 2002; Lyubarsky 2005; Zhang
+                                                                   plasmoid picture, Sweet–Parker current sheets become un-     & Yan 2011; Lazarian et al. 2019), pulsar magnetospheres
+                                                                               stable to tearing above a critical Sc ∼104, fragmenting        (Lyubarsky 2001; Cerutti et al. 2012), and the turbulent re-
+                                                                               into a hierarchy of magnetic plasmoids and producing a re-        connection diffusion of magnetic fields in the interstellar
+                                                                      connection rate Vrec/vA,0 ∼0.01 that is essentially in-       medium and accretion disks (Lazarian & Vishniac 1999; Bal-arXiv:2608.08448v1                                                             dependent of S (Loureiro et al. 2007; Bhattacharjee et al.        bus & Hawley 1998). The central theoretical challenge faced
+                                                                   2009; Samtaney et al. 2009; Uzdensky et al. 2010; Loureiro
+                                                                                     et al. 2012; Comisso et al. 2016).  2D simulations show
+         yuehu@ias.edu; *NASA Hubble Fellow                                      that the nonlinear state is dominated by plasmoid coales-
+                                                                   cence and ejection across a wide range of scales, punctu-
+
+===== PDF PAGE 2 =====
+2
+
+ated by occasional macroscopic “monster” plasmoids that        These studies have characterized the linear onset of tearing
+briefly dominate the energy budget (Huang & Bhattachar-      (Tolman et al. 2024) and the onset of Hall-mediated fast re-
+jee 2010, 2013).  In the 3D turbulent picture (Lazarian &       connection at the ion inertial scale (Wang et al. 2026), but the
+Vishniac 1999), pre-existing or self-generated MHD tur-        fully developed, nonlinear plasmoid stage in partially ionized
+bulence broadens the effective reconnection layer through      media remains largely unexplored. In 2D fully ionized plas-
+stochastic field-line wandering, yielding a fast, resistivity-      mas, this nonlinear stage exhibits a set of properties widely
+independent rate (Kowal et al. 2009).  Nevertheless, recent       regarded as universal: a reconnection rate Vrec/vA,0 ∼0.01
+ultra-high-resolution (65,5362 cells) MHD simulations by        that  is nearly independent of S and the recurrent emer-
+Vicentin et al. (2026) found that the plasmoid-dominated      gence of “monster” plasmoids that dominate the instanta-
+regime is associated with both high Lundquist number and      neous energy release (Uzdensky et al. 2010; Loureiro et al.
+high Reynolds number (Re ≳2000). Consequently, the re-       2012). Whether these universal properties survive in neutral-
+connection outflows and the fluctuations they drive within      dominated plasma—which decouples from the ion–magnetic
+and between plasmoids are turbulent (Kowal et al. 2017),        field system below the scale ℓdec and damps the flows that
+even in the collisionless regime (Hu et al. 2026). The effects       drive plasmoid coalescence—is not known, particularly at
+of turbulence are essential in 3D reconnection, while we deal       the high β and high Lundquist number. We address this ques-
+in this paper with 2D reconnection.                                 tion through 2D high-resolution two-fluid MHD simulations
+  Most studies of magnetic reconnection deal with fully ion-        that reach the fully developed plasmoid regime while resolv-
+ized plasmas, while many astrophysical environments are not       ing the neutral-ion decoupling scales. Different from the ki-
+fully ionized. The solar chromosphere (Leake & Arber 2006;        netic, Hall-mediated framework of Wang et al. (2026), our
+Arber et al. 2007; Ni et al. 2015), dense molecular clouds      model contains neither the Hall term nor a kinetic inertial
+(Shu 1992; Li & Houde 2008; McKee et al. 2010; Lazarian        scale, so the relevant current-sheet thickness is set instead by
+et al. 2012), the warm and cold neutral phases of the ISM      ambipolar diffusion and, ultimately, by Ohmic resistivity.
+(Draine & McKee 1993; Ferri`ere 2001), and protoplanetary        This paper is organized as follows. In Section 2, we de-
+disk atmospheres (Ballester et al. 2018) have ionization frac-       scribe the numerical methods, the two-fluid MHD equations,
+tions ξ ranging from 10−7 to 10−1. The presence of neutral-      and the initial setup of the Harris current sheet. In Section 3,
+dominated fluid introduces new behaviors: momentum cou-     we discuss the theoretical expectation of reconnection in a
+pling via collisional drag produces ambipolar diffusion of        partially ionized medium. In Section 4, we present our sim-
+magnetic field and damping of turbulent magnetic fluctua-       ulation results, highlighting the differences in plasmoid hier-
+tions below the neutral–ion decoupling (i.e., neutral decou-      archy and reconnection rate between the fully and partially
+ples from ion) length ℓdec, while above ℓdec the two fluids       ionized cases. We discuss the astrophysical implications and
+behave as a single coupled medium (Kulsrud & Pearce 1969;      summarize our main findings in Section 5 and Section 6, re-
+Mouschovias 1996; Shu 1992; Burkhart et al. 2015; Xu et al.       spectively.
+2015, 2016; Hu et al. 2024). Whether and how the plasmoid-
+                                                                                                  2. NUMERICAL METHODS
+mediated reconnection in 2D is affected by the decoupling
+effect is not well understood.                                                         2.1. Numerical Implementation
+  Earlier studies suggest ambipolar diffusion (AD) modifies      We model the partially ionized plasma as two interpene-
+the tearing instability through the relative ion–neutral drift.        trating fluids—an ionized component (subscript “i”) and a
+Neutral escape via ambipolar drift relaxes the Sweet–Parker       neutral component (subscript “n”)—coupled through colli-
+mass-conservation constraint, with the asymptotic reconnec-       sional momentum exchange. The magnetic field evolves via
+tion rate ultimately set by recombination (Vishniac & Lazar-       the induction equation with explicit Ohmic resistivity. Under
+ian 1999). In this paper, we do not discuss the effects of re-       the isothermal approximation, the governing two-fluid MHD
+combination, which, similar to turbulence (Lazarian & Vish-       equations are:
+niac 1999; Lazarian et al. 2004), increases the reconnection
+                                                           ∂ρirate in partially ionized gas.                       + ∇· (ρivi) = 0,
+  Numerical investigation in 2D has collectively established       ∂t
+that ion-neutral collisions reshape plasmoid structure (Leake      ∂ρn                                      + ∇· (ρnvn) = 0,
+et al. 2012; Ni et al. 2015), the ambipolar drift causes steep-       ∂t
+ening of the field reversal and thinning of the current sheet       ∂(ρivi)                  B2                                                                                                   I −BB                                                                 −Πi                                       + ∇· ρivivi +  c2sρi +that enhance plasmoid generation (Ni et al. 2015; Murphy         ∂t                                                                             8π                                                                                     4π
+& Lukin 2015), and that ionization-temperature feedback in-
+                                   = γdρnρi(vn −vi),
+fluences the nonlinear evolution (Ni et al. 2018; Hillier et al.
+2016). Tolman et al. (2024) developed an analytical theory of      ∂(ρnvn)                                        + ∇· ρnvnvn + c2sρnI −Πn = γdρnρi(vi −vn),
+tearing onset for a current sheet in partially ionized plasma.         ∂t
+More recently, Wang et al. (2026) performed a systematic    ∂B
+                               −∇× (vi × B) = −∇× (η∇× B),
+parameter study of ion–neutral collisionality and ionization       ∂t
+fraction using a three-fluid five-moment model.            ∇· B = 0,
+                                                                                                                                 (1)
+
+===== PDF PAGE 3 =====
+                                                                                                      3
+
+where ρ and v denote the mass density and velocity of each     β ≡8π(ρi + ρn)c2s/B20 = 2, adopting a constant isothermal
+fluid species, B is the magnetic field, cs is the isothermal      sound speed of cs = 1. We consider three cases with uniform
+sound speed, and I is the identity tensor. γd is the drag coef-       ionization fraction ξ = ρi/(ρi + ρn) = 1, 10−1, and 10−2.
+ficient that parameterizes the rate of momentum exchange be-       To initiate reconnection, we apply a divergence-free mag-
+tween the two species by collisional drag force (Draine 1986;       netic perturbation δB with amplitude ϵb = 10−4B0 and
+Draine & McKee 1993). The drag terms are equal and oppo-      wavenumber kx ≈20π. In addition, a Gaussian perturba-
+site, ensuring total momentum conservation. We adopt an       tion with amplitude 10−6B0 is seeded in the magnetic field to
+explicit Ohmic resistivity η = 1.0 × 10−5 and an isotropic      break symmetry and facilitate the growth of secondary tear-
+kinematic viscosity ν = 1.0 × 10−5, applied symmetrically       ing instabilities.
+to both fluids through their respective viscous stress tensors      We adopt periodic boundary conditions along the x-
+Πi and Πn. This choice yields a magnetic Prandtl number       direction and damped-flow boundary conditions along the y-
+Pm ≡ν/η = 1. We note that ionization and recombination        direction. In the damped-flow boundaries, all variables are
+processes are not included in this study; the ionization frac-      smoothly relaxed toward their initial asymptotic upstream
+tion is thus set by initial conditions and evolves only through       values, except for the velocity component vy, which is al-
+dynamics.                                                lowed to pass through freely.
+  All simulations are performed using AthenaK (Stone
+et al. 2024), a performance-portable MHD code. The two-
+fluid equations are evolved using a third-order implicit–
+explicit (IMEX3) time integration scheme (Pareschi & Russo                    3. THEORETICAL CONSIDERATION
+2005), which treats the stiff collisional drag terms implicitly         Several key lengths and times govern the physics of recon-
+while advancing the hyperbolic fluxes explicitly.  This ap-       nection in a partially ionized medium. Taking the half-length
+proach is essential for efficiently handling the wide range of       of the current sheet L = Lx/2 = 1.0 as the macroscopic
+coupling timescales encountered across the simulation do-       scale and the total Alfv´en speed vA ≡B0/ p 4π(ρi + ρn) as
+main. The Courant–Friedrichs–Lewy (CFL) number is set to       the characteristic velocity, the system is parameterized by the
+0.3.                                                         Lundquist number (Sweet 1958; Parker 1957):
+  Spatial reconstruction employs the fifth-order WENOZ
+method (Borges et al. 2008), providing high-order accuracy                                                          S ≡L vA ∼105,                   (3)
+in smooth regions while capturing shocks and current sheet                             η
+discontinuities without spurious oscillations. The numerical
+                                                       which places our simulations close to the critical thresholdfluxes are computed using the Local Lax–Friedrichs (LLF)
+                                                                      for the plasmoid instability (Sc ∼104; Bhattacharjee et al.Riemann solver. To ensure numerical stability in the pres-
+                                                               2009), ensuring that the current sheet fragments into a fullyence of sharp gradients—particularly at the interfaces of plas-
+                                                            developed plasmoid chain.moids and within thin current layers—a first-order flux cor-
+rection is applied locally where needed. The divergence-free
+                                                                            3.1. Ion–Neutral Coupling and Characteristic Scales
+constraint on the magnetic field is maintained to machine pre-
+cision using the constrained transport (CT) algorithm (Evans       The collisional coupling between the ion and neutral flu-
+& Hawley 1988; Stone & Gardiner 2009).  This is criti-       ids is characterized by two momentum-exchange frequencies
+cal for the reconnection problem, where spurious magnetic      (Shu 1983). The ion-neutral collision frequency (the rate at
+monopoles can artificially affect the topology of field lines      which an ion transfers its momentum to neutrals) is:
+and corrupt the plasmoid dynamics.
+                                                                                       νin = γdρn,                      (4)
+             2.1.1.  Initial and Boundary Conditions
+                                                        and the neutral–ion collision frequency (the rate at which a
+ We perform two-dimensional simulations of a single Har-       neutral is dragged by ions) is:
+ris current sheet (Harris 1962) in a rectangular domain of
+size Lx × Ly = [−1.0, 1.0] × [−0.25, 0.25], resolved by                              νni = γdρi.                      (5)
+16384 × 4096 computational cells without any refinement.
+                                              By momentum conservation, the two frequencies satisfyThe reconnecting magnetic field profile is given by:
+                                                                ρiνin = ρnνni.  For a weakly ionized medium (ξ ≪1),
+                               y                            the relation νni ≪νin holds: ions are frequently deflected
+             Bx(y) = B0 tanh          ,               (2)                                a0                      by the dominant neutral population, while any given neu-
+                                                                                 tral atom rarely encounters an ion. Physically, γd is set by     √
+where B0/  4π = 1.0 is the upstream field strength and       the momentum-transfer rate coefficient for ion–neutral elas-
+a0 = 0.01 is the initial current sheet half-width, correspond-         tic scattering (Draine 1986).
+ing to approximately 80 grid cells. No guide field is applied
+                                                                                          3.1.1. Two Decoupling Scales(Bz = 0). The density is initialized with a localized enhance-
+ment at the current sheet center with a peak amplitude of 0.5,       The neutral decoupling scale, ℓdec, marks the onset of sig-
+such that the plasma beta in the upstream inflow region is        nificant two-fluid effect, below which neutrals can no longer
+
+===== PDF PAGE 4 =====
+4
+
+                               Table 1. Summary of simulation parameters and characteristic scales.
+
+
+              Run      ξ   S       Si    SAD   δSP,i   ℓdec,i  δAD   ℓdec  a0  RAD      Regime
+
+               ξ = 1       1.0   105     105   —    26  —  —  —   82    0    Ohmic-dominated
+               ξ = 10−1   0.1   105   3.2 × 105   47    15     1.8    12    5   82   55       Transitional
+               ξ = 10−2   0.01  105     106      16     8     5     21    50   82   610    AD-dominated
+
+          NOTE—All length scales are given in units of computational cells. Si = LvA,i/η is the ion Lundquist number
+               governing the decoupled current sheet, and vA,i is the ion Alfv´en speed. SAD = a0vA,i,0/ηAD is the ambipolar
+               Lundquist number. δSP,i = L/√Si is the ion-only Sweet–Parker thickness. ℓdec,i and ℓdec are the ion and
+                 neutral decoupling scales (Eqs. 8 and 7). δAD = a0/√SAD is the ambipolar current sheet thickness. Note that
+           SAD and S are defined for different physical processes, and the two are therefore not directly comparable.
+
+
+
+remain dynamically coupled to the ion–magnetic-field sys-       neutrals acting as a passive, non-participating background.
+tem. In general, ℓdec is determined by equating the character-      Based on the decoupling scales, we have three distinct dy-
+istic dynamical frequency of the physical process of interest      namic regimes:
+at scale ℓto the neutral–ion collision frequency,
+                                     ℓ> ℓdec  −→    ℓdec,i < ℓ< ℓdec  −→  ℓ< ℓdec,i  .
+                       νni = γdρi.                      (6)
+                                                                                          coupled:|  {z vA}          | damped {z(AD zone) }              decoupled:|  {z vA,i}
+  For 2D magnetic reconnection, the relevant dynamical fre-                                                                                                                                 (9)
+quency depends on the physical process controlling each evo-                                                    The intermediate “damped zone” between ℓdec,i and ℓdec is
+lutionary stage. During the pre-tearing onset stage, the ques-                                                                  the range of scales where ambipolar drift dominates the mod-
+tion is whether neutrals can follow the magnetically driven                                                                          ification of the magnetic field configuration, and its width
+thinning of the current sheet, so the relevant frequency is the                                                                      in logarithmic scale space is log(ℓdec/ℓdec,i) = log[(1 −
+Alfv´en-crossing frequency of the coupled fluid. During lin-                                                           ξ)/√ξ].
+ear tearing, coupling is instead determined by whether neu-                                                                   In our numerical setup (see Table 1), the drag coefficient
+trals can respond over an instability growth time, requiring                                                        γd is chosen such that ℓdec ≈50 cells and ℓdec,i ≈5 cells for
+comparison of νni with the tearing growth rate. In the non-       ξ = 10−2. This ensures that the reconnection starts with fully
+linear stage, the relevant processes are the transport of ions                                                            coupled regimes, as the current sheet width is ≈80 cells, and
+and neutrals into and out of the reconnection layer, so νni       gradually transits to the damped and decoupled regimes. For
+should be compared with the local inflow and outflow rates.                                                              ξ = 10−1, we have ℓdec ≈5 cells and ℓdec,i ≈1.8 cells such
+Here, we focus on the onset-stage criterion.                                                                        that ion and neutral are dynamically coupled.
+  Approximating the relevant dynamical frequency by the
+Alfv´en-crossing rate, the neutral-ion decoupling scale in the                                                                                           3.1.2. Ambipolar Diffusion
+pre-tearing stage is
+                                                                   In the coupling regime, the two-fluid drag induces a rela-                     vA    vA
+                    ℓdec =   =         .                  (7)        tive drift between ions and neutrals whose Alfv´en kinematic
+                          νni    γdρi                                                                        effect on the magnetic field is conventionally characterized
+At scales ℓ>  ℓdec, the collision frequency exceeds the      by an ambipolar flux-transport coefficient (Mestel & Spitzer
+Alfv´en-crossing frequency, and ions and neutrals behave ap-      1956; Shu 1983; Zweibel 2002):
+proximately as a single fluid.  At ℓ<  ℓdec, neutrals can
+no longer follow the magnetically driven ion motions. The                   B2       v2A,i
+                                                       ηAD =       =    = vA,i ℓdec,i.     (10)Alfv´enic fluctuations then enter a strongly damped regime in                  4π γd ρiρn   γdρn
+which ion motions are impeded by frictional drag against the
+neutral background (Xu et al. 2016; Hu et al. 2024).          We emphasize that ηAD, despite its units of magnetic dif-
+  The ion decoupling scale ℓdec,i marks the lower boundary        fusivity, does not dissipate magnetic energy or alter field
+of this damped zone, where the Alfv´en-crossing frequency       topology:  ambipolar  drift can only transport, compress,
+equals the ion–neutral collision frequency νin = γdρn:            or redistribute magnetic flux relative to the neutral back-
+                            vA,i     vA,i                         ground. True dissipation and topology change require finite
+                     ℓdec,i =   =         .                (8)                                                  Ohmic resistivity η. The relative strength of ambipolar trans-                           νin    γdρn
+                                                                   port to Ohmic dissipation is parametrized by the ambipolar
+At scales ℓ< ℓdec,i, the ions collisions with neutrals can-                                                          Reynolds number
+not appreciably affect their dynamics:  the ions are effec-
+tively decoupled from the neutrals and Alfv´en waves prop-                                      v2A,iagate at the fast ion Alfv´en speed vA,i = B/√4πρi, with the               RAD ≡ηAD =            ,             (11)
+                                                                             η    γdρn η
+
+===== PDF PAGE 5 =====
+                                                                                                      5
+
+with RAD ≫1 corresponding to the regime where ambipo-            magnetic field dynamics, they indirectly control the
+lar drift controls the macroscopic flux transport while Ohmic           geometry of the reconnection layer through frictional
+dissipation, confined to substantially thinner inner layers,             drag.
+mediates the topological reconnection.
+ A characteristic transverse length scale associated with this             • ξ = 10−1 (transitional regime):
+transport can be defined as the distance over which ambipolar
+                                                                              ℓdec,i(1.8) < ℓdec(5) < δAD(12) < a0(82)   [cells].diffusion acts during an Alfv´en crossing time across the ini-
+                                                                                                                       (14)tial sheet width, tA,a = a0/vA,i. Because this scale charac-
+                                                             Here δAD lies above both decoupling scales. The re-terizes the local modification of the transverse current-sheet
+                                                                   connection inner layer extends beyond the ambipolarprofile, the appropriate reference length is a0:
+                                                           damping zone into the coupled regime, placing the sys-
+                       vA,i              a0        SAD ≡a0       ,    δAD =            .       (12)           tem in a transitional state between AD-dominated and               ηAD          √SAD                         purely resistive reconnection. The narrower damping
+We stress that δAD is not a dissipation-set sheet width in the           zone means that the range of scales where AD oper-
+Sweet–Parker sense, but a geometric scale characterizing the              ates is relatively limited. Nevertheless, ηAD/η ≈68
+ambipolar drift-mediated configuration of the current sheet.            remains large, so AD-mediated flux transport remains
+The actual resistive inner layer where Ohmic dissipation op-            a significant contribution to the overall reconnection
+erates lies within δAD and is set by η. The position of δAD            dynamics.  The weaker AD means the transition to
+relative to the two decoupling scales determines whether the             the plasmoid-dominated phase is delayed relative to
+                                                                    ξ = 10−2. This intermediate regime bridges the fullyambipolar drift zone overlaps with, contains, or lies outside
+the resistive layer.                                                     ionized limit—where monster plasmoids freely form
+  Throughout this paper, we adopt the convention that “am-           and merge—and the strongly decoupled ξ = 10−2
+bipolar diffusion” refers to the kinematic drift mechanism,              limit where the plasmoid hierarchy is truncated at ℓdec.
+distinct from any magnetic energy dissipation channel. All
+                                                     Once the current sheet thins below ℓdec,i, the ions dynam-
+references to “AD-mediated” effects on the current sheet
+                                                                         ically decouple from the neutrals and reconnection proceeds
+should be understood as configurational rather than dissi-
+                                                                      in the ion fluid alone.
+pative; true magnetic dissipation is mediated exclusively by
+Ohmic resistivity η.                                                Nonlinear stage: —In the nonlinear stage, neutral-ion decou-
+                                                                  pling is determined by the local advective rate. For inflow       3.2. Scale Hierarchy and Regime Identification
+                                                                 across the reconnection layer, the corresponding decoupling
+  The relative ordering of the characteristic scales deter-       scale is
+mines the reconnection regime. We now compute each scale                                                                                        ℓdec,nl(x, t) ∼|vin(x, t)|             (15)explicitly for our simulations.                                                              γdρi(x, t).
+ Ohmic Sweet–Parker thickness. —For the fully ionized refer-      Using the upstream density, a site-averaged maximum inflow
+ence case, the Sweet–Parker current sheet thickness based on      speed of ∼0.1vA gives a characteristic decoupling scale ap-
+the Ohmic resistivity is: δSP = √L                     ≈26 cells. The ini-       proximately one order of magnitude smaller than the onset-                             S
+tial current sheet half-width satisfies a0 > δSP, guaranteeing       stage estimate. This is only an order-of-magnitude estimate
+that the sheet must thin before steady-state reconnection can      because both the inflow speed and ion density vary spatially
+proceed. Since S = 105 > Sc, the plasmoid instability is      and temporally. Once decoupled, the neutrals no longer fol-
+expected during this thinning process (Bhattacharjee et al.      low the ion inflow and instead develop their own dynamics.
+2009; Uzdensky et al. 2010).                                 However, the different dynamics can produce strong ion pile-
+                                                      up in the reconnection layer (Vishniac & Lazarian 1999), in-
+Ambipolar diffusion thickness. —For the partially ionized cases,
+                                                                 creasing the local collision frequency and reducing the de-
+the position of δAD relative to the two decoupling scales                                                              coupling scale.
+ℓdec,i and ℓdec is the key diagnostic for the reconnection
+regime:                                                                                                            4. RESULTS
+     • ξ = 10−2 (AD-dominated regime):                             4.1. Plasmoid Morphology and Neutral-Ion Decoupling
+       ℓdec,i(5) < δAD(21) < ℓdec(50) < a0(82)   [cells].        Fig. 1 shows the time evolution of the normalized out-of-
+                                                      (13)       plane current density Jz/Jz,0 for the two partially ionized
+     The ambipolar thickness δAD falls between the two de-       runs, and Fig. 2 shows the corresponding normalized ion
+      coupling scales, placing the reconnection inner layer      and neutral mass densities.  Figs. 3 and 4 present the spa-
+      squarely within the ambipolar damping zone. In this         tial distributions of the local ionization fraction ξ(x, y, t) ≡
+      regime, the neutrals have already decoupled at the cur-       ρi/(ρi + ρn) and of the normalized ion–neutral drift velocity
+      rent sheet scale (ℓdec < a0), so even the global struc-       |vi −vn|/vA,0, respectively, where vA,0 is the initial up-
+      ture of the sheet is influenced by two-fluid effects. Al-      stream total Alfv´en speed. The fully ionized reference run is
+     though the neutrals do not directly participate in the      shown in Appendix Fig. 11.
+
+===== PDF PAGE 6 =====
+6
+
+
+
+
+
+Figure 1. Time evolution of the normalized out-of-plane current density (Jz/Jz,0) during the magnetic reconnection process. The left and right
+columns correspond to simulations with initial ionization fractions of ξ = 10−1 and ξ = 10−2, respectively. Snapshots are taken at consecutive
+times t = 1, 2, 3, 4, and 5tA,i (from top to bottom). Consistent with Fig. 2, only the central 1/4 of the computational domain is shown to
+highlight the detailed dynamics within the reconnecting current sheet. Here, Jz,0 denotes the initial peak current density.
+
+ AD-dominated regime (ξ = 10−2): —The most weakly ionized       to or below the plasmoid size. The neutrals are therefore
+run, in which the ambipolar inner layer lies between the two       re-coupled to the ions in and around plasmoid cores, even
+decoupling scales, develops a morphology qualitatively dis-       as they remain effectively decoupled in the dilute plasmoid
+tinct from the fully ionized baseline (Appendix Fig. 11). Al-       peripheries. The observed neutral morphology in Fig. 2 is
+ready at t = tA,i (Fig. 1, right column), the current sheet       consequently a composite of two regimes: wake-like struc-
+is populated by a dense array of small-amplitude plasmoids,       tures appear in the neutral distribution around the contract-
+indicating that the linear instability saturates within a single       ing, moving, and merging plasmoid and ion-coupled dense
+ion Alfv´en crossing time. In the subsequent non-linear phase       features at the plasmoid cores themselves.
+(tA,i ≤t ≤5 tA,i), the relative ion–neutral drift efficiently       The drift velocity field (Fig. 4, right column) provides the
+dissipates the ion motions that drive coalescence, causing the      most direct diagnostic of where decoupling is dynamically
+chain to undergo small-scale mergers.  Still, it is difficult to        significant. Peak values of |vi −vn|/vA,0 ≈0.4 are reached
+develop the hierarchical plasmoid cascade, i.e., smaller plas-      along the peripheries of contracting plasmoids, where the
+moids formed in secondary current sheets, and no significant      Lorentz force on the ions is strongest while neutrals lag.
+macroscopic plasmoid emerges over the duration of the run      Within plasmoid cores, by contrast, |vd| drops to near zero,
+(see Appendix Fig. 12 for the details of plasmoid statistics).        consistent with the local re-coupling driven by the elevated
+  Different from ions that are concentrated into narrow cur-       ξ in those regions (Fig. 3). We also see that the steep gradi-
+rent sheets, neutrals are spatially more extended.  Within       ents in the drift velocity distribution trace the expanding wave
+plasmoids, an enhanced ion thermal pressure compensates       front and trailing wakes in neutrals associated with contract-
+for the local magnetic pressure, producing a local ion en-       ing and moving plasmoids, respectively.
+hancement that raises the ionization fraction and decreases        This spatial heterogeneity of the coupling produces a dy-
+the decoupling length ℓdec ∝ρ−1i   . This local re-coupling      namical signature: concentric, ring-like fluctuations emanate
+is directly visualized in Fig. 3 (right column): although the      from individual plasmoids and propagate outward into the
+upstream value is ξ = 10−2, plasmoid cores reach ξ ≈1      upstream (Fig. 2, right column, t = 2–5 tA,i). The rings
+by t = 3 tA,i, a two-orders of magnitude enhancement that      appear only in the neutral density — they are not seen in the
+proportionally shortens the local ℓdec to a scale comparable       co-spatial ion fluid, nor in the ξ = 10−1 neutral panels — and
+
+===== PDF PAGE 7 =====
+                                                                                                      7
+
+
+
+
+
+Figure 2. Time evolution of the spatial distributions of the normalized ion density (ρi/ρi,0) and neutral density (ρn/ρn,0) during the magnetic
+reconnection process. The left column presents the simulation case with an initial ionization fraction of ξ = 10−1, while the right column
+displays the case with ξ = 10−2. From top to bottom, the panels show snapshots at consecutive times: t = 1, 2, 3, 4, and 5tA,i, where tA,i
+is the ion Alfv´en crossing time. To clearly visualize the dynamics within the current sheet, including the formation and merging of plasmoids,
+only the central 1/4 of the computational domain is shown. The subscript ”0” denotes the initial upstream values.
+
+===== PDF PAGE 8 =====
+8
+
+
+
+
+
+                                     Figure 3. Same as Fig. 1, but for the ionization fraction.
+
+
+
+
+
+              Figure 4. Same as Fig. 1, but for the normalized drift velocity. vA,0 is the initial upstream total Alfv´en speed.
+
+===== PDF PAGE 9 =====
+                                                                                                      9
+
+we identify them as fluctuations driven by plasmoid contrac-     damped by Ohmic and numerical dissipation faster than the
+tions and mergers. Because the neutrals are locally locked        linear plasmoid mode can amplify them. Plasmoid formation
+to the dense plasmoid cores, they are advected with the plas-       then sets in explosively at t ≈30 tA,i, and by t = 37 tA,i
+moids and impulsively distributed when two plasmoids coa-       (Fig. 11) the sheet has reorganized into a hierarchical chain
+lesce. The resulting neutral response propagates outward into      dominated by a single macroscopic “monster” plasmoid near
+the low-ion-density region, where the neutral-ion coupling is     x = Lx/2, flanked by two intermediate secondary plas-
+weak. As successive mergers occur, the wavefronts broaden      moids.  The monster plasmoid exhibits the characteristic
+and overlap, and by t = 5 tA,i the upstream neutral medium      wound-up, spiral substructure produced by successive coa-
+has reorganized into a diffuse, structured background of in-       lescence events, with localized field amplification |B|/B0 ≈
+terfering weaves.                                            1.5–2 inside the trapped flux bundles and thin secondary cur-
+                                                                      rent sheets bracketing each plasmoid.
+ Transitional regime (ξ = 10−1): —Increasing the ionization
+fraction by an order of magnitude to ξ = 10−1 places the        4.2. Internal Structure of the Primary Plasmoid: ξ = 10−2
+system in the transitional regime, in which the ambipolar                                                      The internal structure of the primary plasmoid in the ξ =
+inner-layer width exceeds the neutral decoupling scale. We      10−2 run (Fig. 5) is qualitatively different from the transi-
+see a broader primary current sheet compared to the case with                                                                       tional ξ = 10−1 case. The plasmoid at t = 5 tA,i is ∼16
+ξ = 10−2. By t = 2 tA,i the sheet has fragmented into a plas-                                                                              cells, smaller than the upstream decoupling length ℓdec = 50
+moid chain of comparable size, separated by thin secondary                                                                          cells and well below the ξ = 10−1 plasmoid scale of ∼160
+current sheets clearly visible in Fig. 1 (left column). In con-                                                                              cells.
+trast to the ξ = 10−2 case, coalescence now proceeds vigor-
+ously: between t = 3 tA,i and t = 5 tA,i the chain relaxes                                                                                             4.2.1. Plasmoid density
+through successive mergers into several well-separated plas-
+moids of growing size, with a precursor “monster” plasmoid       The density panels show the same two-stage evolution seen
+emerging in the rightmost portion of the domain at t = 5 tA,i.       in the transitional ξ = 10−1 case, but at much greater ampli-
+The peak neutral enhancements saturate at ρn/ρn,0 ≈1.4–       tude. By t = tA,i, the current sheet has thinned substan-
+1.7, while the corresponding ion peaks reach ρi/ρi,0 ≈5–12.        tially under the dominant ambipolar-driven flux compres-
+This ∼10-fold differential is the expected signature of the       sion. The ion fluid within the nascent sheet is sharply com-
+transitional regime — the neutrals are coupled to the global       pressed into a narrow peak by the local magnetic-pressure
+flow through the drag term but cannot follow the fine-scale       gradient, while the neutrals — feeling no direct magnetic
+(i.e., smaller than ℓdec) density fluctuations.                       force — diffuse outward into a broad, low-amplitude pro-
+  The ionization fraction within plasmoid cores rises to ξ ≈         file. Beyond t = tA,i, both densities continue to rise as re-
+0.4–0.5 (Fig. 3, left column), a four-to-five-times enhance-      connected flux accumulates in the plasmoid. The ion peak
+ment. With this strong local re-coupling, the drift velocity       reaches ρi/ρi,0 ∼3–5 × 103 by t = 4–5 tA,i, two to three
+(Fig. 4, left column) remains modest throughout the domain,       orders of magnitude above the ξ = 10−1 values. The neutral
+with peak |vd|/vA,0 ≈0.05 — nearly an order of magni-      peak rises only to ρn/ρn,0 ≈2–2.5, over a much broader
+tude smaller than in the ξ = 10−2 run.  This reflects the       width, because the neutrals are dynamically coupled to the
+underlying scaling νni = γdρi:  with ρi ten times larger       ions only at scales ≳ℓdec — well above the plasmoid scale
+than in the ξ = 10−2 case, the drag-mediated coupling be-   — so the entire ion pile-up is filtered out of the neutral re-
+tween species is correspondingly tighter throughout the vol-       sponse. The resulting normalized ion-to-neutral density con-
+ume, and only modest velocity differences develop even at        trast within the plasmoid exceeds two orders of magnitude.
+reconnection sites and around vigorously coalescing plas-      This extreme pile-up is sustained by two effects: the ions
+moids. The combination of Figs. 3 and 4 therefore confirms       are continuously delivered into the plasmoid by reconnec-
+that the ξ = 10−1 run operates predominantly in the coupling        tion, while at sub-ℓdec scales they cannot relax against the
+regime, with ion-neutral decoupling effects manifesting pri-       surrounding plasma through ion–neutral drag. Resistive re-
+marily through the modified inner-layer structure rather than       connection across the surrounding separatrix is too slow on
+through bulk dynamical decoupling.                               the linear plasmoid-growth timescale to open an efficient es-
+                                                           cape channel for the trapped ions.
+ Fully ionized baseline (ξ =  1): —For reference, the fully
+ionized run reproduces the canonical single-fluid plasmoid-               4.2.2. Current density and magnetic field strength
+reconnection scenario (Bhattacharjee et al. 2009; Huang &       The current density and field strength scale up correspond-
+Bhattacharjee 2010).   In the absence of a neutral  fluid,        ingly. Peak |Jz|/|Jz,0| reaches a few ×102, more than an
+the current sheet undergoes a prolonged quasi-Sweet–Parker       order of magnitude above the ξ = 10−1 values, and the re-
+thinning phase lasting until  t ≈  20 tA,i, during which       connecting field is locally amplified to |Bx|/B0 ∼5–7 at the
+the global root mean square velocity vrms remains below      plasmoid boundaries (reaching ∼10 in maximum). The re-
+10−3 vA,0 (Fig. 9, top row).  Throughout this phase, the      connected component By/B0 reaches local extrema in the
+current-sheet aspect ratio remains below the critical value      range ±3 to ±7, again more than an order of magnitude
+L/δ ∼S1/2c    for fast tearing, and seed perturbations are       larger than in the transitional case, reflecting the strong mag-
+
+===== PDF PAGE 10 =====
+10
+
+
+
+
+
+Figure 5. Temporal evolution of the one-dimensional transverse profiles across the primary central plasmoid for initial ionization fractions of
+ξ = 10−1. The cross-sectional slices are extracted by continuously tracking the real-time position of the plasmoid centroid. The horizontal
+axis (∆y) represents the relative distance across the plasmoid centroid in the inflow direction. The 3 × 3 panels display the following physical
+quantities: normalized ion density (ρi/ρi,0, top left), neutral density (ρn/ρn,0, top middle), and the magnitude of the out-of-plane current
+density (|Jz|/|Jz,0| on a logarithmic scale, top right); ion and neutral velocity components along the outflow direction (vx,i/vA,0 and vx,n/vA,0,
+middle left and center) alongside the reconnecting magnetic field (Bx/B0, middle right); and the velocity components in the inflow direction
+(vy,i/vA,0 and vy,n/vA,0, bottom left and center) alongside the reconnected magnetic field component (By/B0, bottom right). The different
+colored lines denote progressive snapshots from t = 0 to t = 5tA,i.
+
+netic compression of the decoupled ion fluid against the iner-                            4.2.3. Plasmoid kinetics
+tial barrier of the quasi-stationary neutral background. As in
+                                                      The middle row of Fig. 5 shows that the outflow veloci-
+the ξ = 10−1 case, the sign of the By peaks varies between
+                                                                              ties vx,i and vx,n are similar, both exhibiting antisymmetricsnapshots because the centroid tracker re-identifies the deep-
+                                                                        profiles peaking at ∼0.5–0.75 vA,0 near the plasmoid edges,
+est local minimum of Az at each output time: small-scale co-
+                                                             with vx,n only slightly lower in amplitude. This near-equalityalescence events — which proceed continuously even though
+                                                                                 is not in conflict with the plasmoid scale lying below the up-
+the global hierarchy is truncated — shift the tracked struc-
+                                                             stream decoupling length ℓdec, because the relevant scale in-ture to a physically distinct flux rope whose reconnected flux
+                                                                   side the plasmoid is the local decoupling length, not the up-
+is wound in the opposite sense, producing an apparent sign
+                                                             stream value. The ion pile-up at the plasmoid core raises the
+change with no underlying topological reversal.
+                                                                      local ionization fraction, contracting ℓdec ∝ρ−1i   to far be-
+                                                       low any resolvable scale. The two fluids are therefore tightly
+
+===== PDF PAGE 11 =====
+                                                                                                     11
+
+
+
+
+
+Figure 6. Temporal evolution of the one-dimensional transverse profiles across the primary central plasmoid for initial ionization fractions
+of ξ = 10−1. The cross-sectional slices are extracted by continuously tracking the plasmoid centroid’s position in real time. The horizontal
+axis (∆y) represents the relative distance across the plasmoid centroid in the inflow direction. The 3 × 3 panels display the following physical
+quantities: neutral thermal pressure (Pth,n, top left), neutral raw pressure (ρnv2n, top middle), and the magnetic tension (B2y, top right); ion
+thermal pressure (Pth,i, bottom left), ion raw pressure (ρiv2i , bottom middle), and the magnetic pressure (B2, bottom right); The different
+colored lines denote progressive snapshots from t = 0 to t = 5tA,i.
+
+coupled inside the plasmoid despite being decoupled in the       of the internal features, so the two fluids re-couple within the
+dilute plasmoid peripheries.                                   dense core while remaining decoupled in the dilute plasmoid
+  The kinematic decoupling between the two species is vis-       peripheries.
+ible instead in the inflow direction (bottom row), and  it       The early snapshots  (t ≲  tA,i) again reproduce the
+evolves with the maturity of the plasmoid. At early times       Harris  state, with  flat ion and neutral thermal pressures
+(t ≲2 tA,i), vy,i develops sharp central spikes localized      (Pth/PB,0 ∼10−2 for the ions), negligible ram pressures,
+within a few cells of the centroid that are absent from the     B2y ≈0, and a deep magnetic notch (B2/(2PB,0) ∼10−4.5).
+much smoother vy,n profile. At this stage ρi has not yet risen      The plasmoid structure emerges between t = 2 tA,i and
+sufficiently to contract ℓdec below the feature scale, and the        t = 4 tA,i, consistent with the shorter linear stage of this
+sharp ion structures are filtered out of the neutral response       run, and the locally re-established coupling develops over the
+by the same mechanism that produces the density contrast:      same interval.
+at sub-ℓdec scales the drag is too weak to entrain the neutrals       The ion thermal pressure (bottom left) is flat through t =
+into the localized ion motions. As the plasmoid grows and the        tA,i, develops a thin central spike at t = 2 tA,i (∼101 PB,0),
+central ion density approaches its peak value by t ≳3 tA,i,      and peaks at t = 3–4 tA,i at ∼102 PB,0 within a core a
+the local coupling progressively strengthens and vy,n begins      few cells across, following the ρi/ρi,0 ∼3–5 × 103 pile-
+to track vy,i more closely; by t = 5 tA,i the two inflow pro-       up; by t = 5 tA,i the tip saturates and the shoulders broaden.
+files are visibly closer than at t = tA,i.                       The ion ram pressure (bottom middle) grows on the same
+                                                                 timescale to a comparable peak, ρiv2i /PB,0 ∼101 at t =                    4.2.4. Pressure structure
+                                                      4 tA,i, and both profiles retain the fine-scale structure of an
+  Fig. 6 shows the transverse force budget of the ξ = 0.01       unrelaxed driven layer rather than a smooth core. As in the
+run. The upstream decoupling length is large, ℓdec ≈50 cells       intermediate case, the support is not static: outflow through
+(ℓdec,i ≈5 cells), when the plasmoid core is still dilute, its       the wrapping current layers is too slow to drain the accumu-
+internal structure lies below ℓdec and the fluids are decou-        lating mass on the linear plasmoid timescale, and the neutrals
+pled. As the core fills, however, the local ionization fraction       provide little inertial back-reaction.
+rises and contracts the local ℓdec ∝ρ−1i   to below the scale
+
+===== PDF PAGE 12 =====
+12
+
+
+
+
+
+                             Figure 7. Same as Fig. 5, but for initial ionization fractions of ξ = 10−1.
+
+  The magnetic terms confirm the non-static character of the       central enhancement that grows with the plasmoid between
+balance. The reconnected B2y (top right) builds a central peak        t = 2 and 5 tA,i, tracking but never matching the ion terms.
+rising monotonically to ∼102 PB,0 by t = 5 tA,i. The total      The ξ = 0.01 plasmoid thus forms decoupled, because it is
+magnetic pressure (bottom right) does not retain the Harris      born smaller than the upstream ℓdec, and re-couples its neu-
+deficit at the core: the central minimum is progressively filled        trals from the core outward as the pile-up contracts the lo-
+and inverted, so that by t = 4–5 tA,i the centroid carries a       cal decoupling length, while remaining supported against the
+magnetic-pressure maximum of ∼101–102 PB,0, above the      magnetic stresses by a dynamic, reconnection-fed balance.
+upstream value of order unity. The decoupled ions drag the
+                                                                         4.3. Internal Structure of the Primary Plasmoid: ξ = 10−1
+reconnecting field into the contracting core faster than it can
+slip outward, leaving the core as the site of the highest ion          Figs. 7 and 5 show the internal kinematic and magnetic
+thermal pressure, ram pressure, and magnetic pressure simul-        profiles of the principal plasmoid, emerging at an early time
+taneously.                                                       but isolated, in each partially ionized run. The transverse
+  In the dilute upstream, where the local ℓdec remains ∼50       cuts are extracted at the instantaneous centroid of the central
+cells, the neutral thermal pressure (top left) stays at its Har-      plasmoid (identified as the deepest local minimum of Az) and
+ris value, and the neutral ram pressure (top middle) is sup-      span a window ∆y ∈[−0.1, 0.1] for ξ = 10−1 and the much
+pressed by two to three orders of magnitude relative to the      narrower window ∆y ∈[−0.01, 0.01] for ξ = 10−2.
+ions.  Within the core, where the contracted local ℓdec re-
+                                                                                             4.3.1. Plasmoid densitystores the drag coupling, the neutral ram pressure develops a
+
+===== PDF PAGE 13 =====
+                                                                                                     13
+
+     102                                            104                                            103
+                                t = 0                t = 3tA, i                                     t = 0                t = 3tA, i                                     t = 0                t = 3tA, i
+                                                                                                                                                                          t = tA, i              t = 4tA, i                                t = tA, i              t = 4tA, i        102                     t = tA, i              t = 4tA, i        102
+                                t = 2tA, i            t = 5tA, i                                     t = 2tA, i            t = 5tA, i        101                     t = 2tA, i            t = 5tA, i
+     101                                            100
+ 0                      0                      0 100
+ n/PB,                                                                        n/PB, 10                                                                     2                                                                 y/PB, 10 1                                                 nv2                               B2 Pth,                                                                                                                                  2                                                                     4                                       10     100                                       10
+                                                                                        10 3
+                                              10 6                                                           4                                                                                        10
+   10 1                                       10 8                                       10 5        -0.1      -0.05      0       0.05      0.1        -0.1      -0.05      0       0.05      0.1        -0.1      -0.05      0       0.05      0.1
+                        y [Ly]                                         y [Ly]                                         y [Ly]
+     102                                            104                                            103
+                                t = 0                t = 3tA, i                                     t = 0                t = 3tA, i                                     t = 0                t = 3tA, i
+                                                                                                                                                                          t = tA, i              t = 4tA, i                                t = tA, i              t = 4tA, i        102                     t = tA, i              t = 4tA, i        102
+                                t = 2tA, i            t = 5tA, i                                     t = 2tA, i            t = 5tA, i        101                     t = 2tA, i            t = 5tA, i
+     101                                            100 0                      0                             0) 100
+                                                                     2                                       10 1 i/PB,                                                          /PB,i 10 Pth,                                             iv2                                                                                                                     B2/(2PB,    2                                                                     4                                       10     100                                       10
+                                                                                        10 3
+                                              10 6                                                           4                                                                                        10
+   10 1                                       10 8                                       10 5        -0.1      -0.05      0       0.05      0.1        -0.1      -0.05      0       0.05      0.1        -0.1      -0.05      0       0.05      0.1
+                        y [Ly]                                         y [Ly]                                         y [Ly]
+
+                             Figure 8. Same as Fig. 6, but for initial ionization fractions of ξ = 10−1.
+  For ξ = 10−1 (Fig. 7), the density panels reveal a two-       Beyond t ≈tA,i, reconnected flux continues to accumu-
+stage evolution. At t = tA,i, the current sheet has thinned un-        late and successive coalescence events feed the plasmoid, but
+der the combined action of Ohmic resistivity and ambipolar-      with different amplitudes for the two species. The neutral
+driven flux compression, with the latter dominating the con-      peak reaches only ρn/ρn,0 ≈1.6, marginally above the ini-
+figuration of the inner layer (ηAD/η ≈68). The resulting         tial Harris value of 1.5 and comparable to the fully ionized
+inner-layer width δAD ≈12 cells is established more than an       case. The ions, by contrast, climb to ρi/ρi,0 ≈12, fully an
+order of magnitude faster — in ∼tA,i here, against ∼20tA,i       order of magnitude beyond the Harris baseline. This ∼8×
+for purely Ohmic thinning in the fully ionized case.                ion-side dynamical excess, against the ∼1.07× neutral-side
+  The density  at the plasmoid centroid follows a non-       excess in the same plasmoid, is the diagnostic signature of
+monotonic trajectory in time. The initial Harris equilibrium,       sub-ℓdec pile-up: at scales below the decoupling length, the
+by construction, gives a density profile rising from ρ/ρ0 = 1       ions respond to the local magnetic-pressure of the plasmoid
+at the upstream asymptote to 1.5 at the sheet center (for      on its own, while the neutrals can be advected only on scales
+β =  2); this profile is the baseline against which subse-      above ℓdec and therefore remain locked to the upstream equi-
+quent dynamical enhancement must be measured.  During       librium response. The neutral density profile is correspond-
+the linear thinning phase, t ≲tA,i, no reconnection outflows       ingly broad and weakly perturbed compared to the sharply
+have yet developed: the vx,i and vx,n profiles (Fig. 7, middle      peaked ion distribution.
+row) remain essentially flat through t = tA,i, and the cen-
+troid evolution in this interval is driven by sheet thinning and
+ambipolar drift rather than by advective transport. Even so,               4.3.2. Current density and magnetic field strength
+the two species already respond in opposite senses. The ion
+density at the tracked centroid rises above the Harris peak as       The reconnecting field Bx/B0 does not execute a simple
+the ion fluid narrows under magnetic-pressure compression      monotonic reversal; instead, it exhibits a flat plateau outside
+accompanying sheet thinning. The neutrals, which cannot be       the plasmoid (|Bx|/B0 ≈1 for |∆y| > 0.04), steep transi-
+compressed by the magnetic pressure on sub-ℓdec scales, slip       tions across the wrapping current sheets at ∆y ≈±0.04, and
+outward through the ions via ambipolar drift; the neutral pro-      a smoother variation through the plasmoid interior. This is
+file broadens and the centroid value drops below the Harris       the spatial signature of a magnetic plasmoid in 2D reconnec-
+peak of 1.5. This early opposite-sign response is itself a sig-        tion: the gradient of Bx — and hence the contribution to Jz
+nature of decoupling — the ions follow the contracting mag-   — is sharply concentrated at the wrapping layers, where the
+netic structure on its own intrinsic scale, while the neutrals        field topology transitions from open upstream loops to closed
+see only their own pressure gradient.                           plasmoid flux surfaces, while the interior carries a smoothly
+                                                                      distributed current of much lower amplitude. Ohmic dissipa-
+
+===== PDF PAGE 14 =====
+14
+
+tion ηJ2z is therefore localized at the boundary current sheets       term. The thermal and ram contributions are thus of the same
+rather than in the plasmoid core.                                  order and neither traces the magnetic-pressure deficit, indi-
+  The reconnected field component By/B0 displays the ex-       cating that the plasmoid is not in static pressure balance: the
+pected bipolar (“quadrupolar”) pattern, with peaks of mag-       ion overdensity (ρi/ρi,0 ≈12) is supplied by reconnection
+nitude ≈0.3 on either side of the centroid and a near-zero      on the linear plasmoid timescale faster than it can relax to-
+crossing at ∆y = 0 where the field lines close to form the      ward a static thermal–magnetic equilibrium.
+magnetic plasmoid. The growth of |By| from t = tA,i to       The neutral fluid follows the plasmoid rather than being
+t = 5 tA,i traces the accumulation of reconnected flux within        fully excluded from it. The neutral ram pressure (top middle)
+the plasmoid. The sign of the By peaks can flip between        rises by three to four orders of magnitudes, from ∼10−5 to
+snapshots because the centroid tracker re-identifies the deep-     ∼10−1 PB,0, as the neutrals are entrained into the develop-
+est local minimum of Az at every output time: following a       ing outflows; it remains roughly an order of magnitude below
+coalescence event, the new “central” plasmoid is in general a       the ion ram pressure, a difference set by the sub-ℓdec slip that
+physically distinct flux rope whose reconnected flux is wound      drag cannot suppress. The neutral thermal pressure (top left)
+in the opposite sense, so the apparent sign change reflects a       stays near its upstream value Pth,n/PB,0 = (1 −ξ)β ≈1.8
+relabeling of the tracked structure rather than a reversal of the       throughout, developing only a slight central enhancement,
+underlying flux topology.                                         since the neutrals share the bulk motion through drag but
+                                                                        feel no direct magnetic compression.  The ξ = 0.1 plas-
+                    4.3.3. Plasmoid kinetics                    moid is therefore a predominantly single-fluid plasmoid in
+                                                             a dynamic, reconnection-fed balance, with a modest sub-ℓdec
+  The middle row of Fig. 7 shows that the outflow compo-
+                                                                 ion–neutral offset superimposed.
+nents vx,i and vx,n are nearly identical antisymmetric pro-
+files, peaking at ±0.3 vA,0 near the plasmoid edges. On the                                                                             4.4. Linear Growth and Two-Fluid Energy Partition
+plasmoid scale, the two fluids are tightly coupled by colli-
+                                                                       Fig.  9  traces  the  global  root-mean-square  velocitysional drag and advect essentially as a single fluid. The order-
+of-magnitude density contrast between them is, therefore, not       vrms/vA,0, the kinetic energy Ekin(t)/Emag(0), and the
+                                                           magnetic energy components Emag(t)/Emag(0) for the threea kinematic effect — the bulk flows are coherent — but re-
+                                                                     runs. In the right column, we decompose the magnetic en-flects how the two species respond to the magnetic pressure
+on scales below ℓdec. The bottom row shows the correspond-      ergy into the reconnecting component EBx (dashed) and the
+ing inflow signature. The inflow velocities vy,i and vy,n track       reconnected plasmoid component EBy (solid). Throughout
+each other closely, with bulk values ≈−0.1 vA,0 represent-       the partially ionized runs, the ion (solid) and neutral (dashed)
+                                                                         fluids are tracked separately in the left and middle columns.ing the global downward motion of the centroid in the simu-
+lation frame, modulated by a sharp central dip at ∆y = 0.      A resolution convergence study is given in Appendix Fig. 16.
+
+                                                                                       4.4.1. Linear plasmoid growth rate                    4.3.4. Pressure structure
+                                                      The reconnected magnetic energy EBy exhibits a clear ex-  Fig. 8 shows the transverse force budget of the ξ = 0.1
+                                                                 ponential growth phase before saturating into the nonlinearplasmoid, decomposed into the thermal (Pth), ram (ρv2), and
+                                                           plasmoid-dominated stage (light-green shading). Fitting the
+magnetic (B2, with the reconnected component B2y shown                                                                       linear phase to
+separately) pressures of each fluid over the t = 0 →5 tA,i
+                                                                        EBy(t) ∝exp(γ t)sequence.
+  At t = 0 the panels reproduce the Harris equilibrium: the       gives
+ion thermal pressure (bottom left) is flat at Pth,i/PB,0 ≈
+0.15, the ram pressures (middle column) are negligible, and            γξ=10−1 ≈2.61 t−1A,i,     γξ=10−2 ≈7.12 t−1A,i.
+the magnetic pressure (bottom right) carries the single re-
+versal notch at ∆y = 0 with B2y ≈0 (top right).  The      Because EBy ∝|By|2, the corresponding magnetic-field am-
+reconnected field grows: from t = tA,i the B2y profile de-       plitude growth rates are γB = γ/2:
+velops the double-humped tension structure, its peaks ris-
+ing from ∼10−4 to ∼10−1 PB,0 near ∆y ≈±0.01 by          γB, ξ=10−1 ≈1.31 t−1A,i,     γB, ξ=10−2 ≈3.56 t−1A,i,
+t = 5 tA,i, and the magnetic-pressure core deepens in step
+to B2/(2PB,0) ∼10−4 before refilling slightly as the plas-      which in terms of physical units correspond to γB ≈
+                                                                4.1 vA/L and γB ≈35.6 vA/L, respectively.  Both ratesmoid broadens.
+  The ion thermal pressure does not evolve toward a peaked       are substantially larger than the corresponding fully ionized
+profile that offsets this growing core deficit. A narrow central        rate, in which apparent EBy growth does not commence until
+maximum forms early (t ∼tA,i, ∼2 PB,0) and then broadens        t ≳25 tA,i. Applying the Coppi tearing scaling (Coppi et al.
+into a flat-topped plateau of ∼2–3 PB,0 across |∆y| ≲0.03      1976) γB ∼S−1/3δ   vA/δAD to the ξ = 10−2 case predicts
+by t = 3–5 tA,i. The ion ram pressure rises on the same     γB ≈35 vA/L, in close quantitative agreement with our
+timescale into a fragmented, multi-peaked profile reaching      measurement.  It suggests that ambipolar drift compresses
+ρiv2i /PB,0 ∼100 in the wings, comparable to the thermal      magnetic flux into a sheet configuration of effective width
+
+===== PDF PAGE 15 =====
+                                                                                                     15
+
+                = 1                         = 1                         = 1     100
+                                      10 2                                                 1                                                                         10
+   10 1
+
+ 0
+                                      10 4                               10 3         2   10 vrms/vA,
+                                                           6                                                                                                             5                                                                                                                                                                                                    Ekin(t)/Emag(0) 10                                                                                                                                                                                                                                                                                                                                                                                                       Emag(t)/Emag(0) 10   10 3
+
+   10 4                               10 8                               10 7      10        20        30             10        20        30             10        20        30
+                               t [tA, i]                                                 t [tA, i]                                                 t [tA, i]
+               = 0.1                         2          = 0.1                        = 0.1     100                               10
+                                                                         10 1                                      10 3                                       slope   2.61
+ 0 10 1
+                                                           4                               10 3                                      10 vrms/vA,
+   10 2                                                                                                             5                                                                                                                                                                                                    Ekin(t)/Emag(0)                                                                                                                                                                                                                                                                                                                                                                                                       Emag(t)/Emag(0) 10                                      10 5                                                                                                        By (islands)                                   ion                                                                               ion
+                                   neutral                                     neutral                         Bx (reconnecting)
+   10 3                               10 6                               10 7       0          2          4             0          2          4             0          2          4
+                               t [tA, i]                                                 t [tA, i]                                                 t [tA, i]
+               = 0.01                        2         = 0.01                       = 0.01     100                               10
+                                                                         10 1                                      10 3                                       slope   7.12
+ 0 10 1
+                                                           4                               10 3                                      10 vrms/vA,
+                                                                                                             5   10 2                                                                                                                                                              Ekin(t)/Emag(0)                                                                                                                                                                                                                                                                                                                                                                                                       Emag(t)/Emag(0) 10                                      10 5
+
+   10 3                               10 6                               10 7       0          2          4             0          2          4             0          2          4
+                               t [tA, i]                                                 t [tA, i]                                                 t [tA, i]
+
+Figure 9. The three columns display, from left to right: the root-mean-square velocity (vrms) normalized by the upstream total Alfv´en speed
+(vA,0); the kinetic energy (Ekin = 2ρv2)1     normalized by the initial total magnetic energy Emag(0); and the magnetic energy components
+(Emag = B2/8π) normalized by Emag(0). In the partially ionized cases (ξ < 1), solid and dashed lines in the left and middle columns
+denote the ion and neutral fluids, respectively. In the right column, the solid green lines represent the energy of the reconnected magnetic
+field component (By, corresponding to magnetic plasmoids), while the dashed green lines track the reconnecting field component (Bx). The
+background shading delineates the linear growth stage (light green) and the subsequent non-linear stage (pale yellow). The black dotted lines
+in the right panels indicate the exponential fits for the linear growth phase. Note the different temporal scales on the horizontal axes.
+δAD < δSP, which is more unstable to tearing than the corre-      For ξ = 10−2, by contrast, Ekin,n/Ekin,i ∼102: the neutrals
+sponding purely Ohmic layer and effectively lowers the onset      overwhelmingly dominate the kinetic energy budget despite
+threshold for the plasmoid instability.                        moving at lower velocities than the ions. The correspond-
+  The dashed green curves in the right column show that       ing vrms panel shows that the ion velocity saturates quickly
+the upstream reconnecting field Bx remains essentially un-        at vrms,i/vA,0 ≈0.1 from t ≳tA,i onward, while the neu-
+changed over the duration of all three simulations. This con-         tral vrms,n/vA,0 ≈0.03 rises more gradually. The decoupled
+firms that the domain is large enough to avoid global flux ex-       ion velocity is therefore ∼3 times larger than the neutral ve-
+haustion and that all dynamical features reported here arise        locity in the most weakly ionized run. For ξ = 10−1, the
+within a quasi-stationary upstream environment.                    neutral kinetic energy slightly exceeds the ion kinetic energy
+                                                                   (Ekin,n/Ekin,i ∼2) by t = 5 tA,i.
+                 4.4.2. Ion–neutral decoupling
+
+  The middle column reveals an asymmetric partition of ki-
+                                                                                            4.5. Reconnection Ratenetic energy between the two fluids in the nonlinear phase.
+
+===== PDF PAGE 16 =====
+16
+
+     100                                                   100
+                                                                     = 10 1
+                                                                     = 10 2
+
+                                     0)
+   10 1                                             10 1
+ 0                                                                                                                                /(B0vA, /vA,
+                                           Ez
+ vin
+         2                                  ion ( = 10 1)  =    2   10                                               10                                                                                 Rrec                                          ion ( = 10 2)
+                                          neutral ( = 10 1)
+                                          neutral ( = 10 2)
+   10 3                                             10 3       0       1       2       3       4       5        0       1       2       3       4       5
+                                          t [tA, i]                                                                        t [tA, i]
+
+Figure 10. Time evolution of the inflow speed and the reconnection rate. Left: the maximum inflow speed averaged over the active reconnection
+sites, normalized to the total Alfv´en speed, shown separately for the ion (solid) and neutral (dashed) fluids.  Right: the reconnection rate
+Rrec = ⟨Ez⟩/(B0vA,0) defined from the out-of-plane electric field at the same sites.
+
+  Quantifying the reconnection rate in our setup requires      a modest Ez therefore shows that the inflow is not the rate-
+care. With periodic boundaries, the plasmoids cannot leave       limiting step: the bottleneck is the Ohmic reconnection in the
+the domain, so the reconnected flux is not advected out but       inner layer, while the ambipolar drift acts upstream of it—
+accumulates in the sheet and is removed only through Ohmic       accelerating the inflow and reshaping the sheet geometry—
+dissipation. We therefore measure the rate locally at the ac-       without altering the Ohmic process that ultimately sets the
+tive reconnection sites, identified as the local minima of the        rate.
+vector potential Az along the sheet midplane (Fig. 10). We       The ξ = 10−1 run shows the same qualitative ordering
+calculate the maximum transverse inflow velocity averaged       but with a smaller ion–neutral inflow contrast, and its Ez-
+over these sites, ⟨vin⟩/vA,0, separately for the ions and neu-      based rate rises monotonically to a quasi-steady Rrec ≈0.02.
+trals, and the reconnection rate defined from the peak out-of-      The two runs thus remain in the plasmoid-mediated regime,
+plane electric field Ez = −∂tAz,                               with rates of a few percent of vA,0 (Uzdensky et al. 2010;
+                                                              Loureiro et al. 2012; Comisso et al. 2016), but follow distinct
+                            ⟨Ez⟩(t)                   Rrec(t) =             ,                (16)      temporal paths: Rrec in the ξ = 10−1 run climbs gradually
+                      B0 vA,0                             to a higher steady value ≈0.02 at t ≈1.5 tA,i and further
+                                                                  increase to ≈0.035 at t ≈4 tA,i when apparent coalescence
+at the same reconnection sites.  Since Ez  directly mea-
+                                                              occurs (see Fig. 1). Since Ez ≃ηJz at the reconnection sitessures the rate at which flux is reconnected,  it is insensi-
+                                                        and η, B0, and vA,0 are identical in the two runs, the slightlytive to the non-reconnection motions—plasmoid advection
+                                                            lower steady rate of the ξ = 10−2 run reflects a lower mean
+and coalescence-driven flows—that contaminate the inflow-
+                                                          Jz at its reconnection sites: the strongly fragmented chainvelocity estimate, and we adopt it as the reconnection rate
+                                                                        distributes the reconnection over a larger number of weaker
+throughout.
+                                                              X-points, lowering the ensemble-averaged Ez relative to the  In the strongly decoupled ξ = 10−2 run, the ion inflow ve-
+                                                                  fewer, stronger sites of the ξ = 10−1 run.locity rises sharply to ⟨vin⟩∼0.5 vA,0 within t ≲tA,i and re-
+mains high, far above the neutral inflow velocity (∼0.1 vA,0,                                  5. DISCUSSION
+dashed red): the ambipolar drift draws the ions rapidly into
+                                                                                        5.1. Astrophysical Implicationsthe sheet while the neutrals lag behind. The reconnection
+electric field, by contrast, peaks at only Rrec ≈0.035 near       The weakly ionized regime is important for the ISM (Shu
+t ≈0.5 tA,i—during the initial linear tearing stage—and      1992; Draine & McKee 1993; Ferri`ere 2001; Leake & Ar-
+then relaxes to a quasi-steady Rrec ≈0.01. The rate seen in       ber 2006; Li & Houde 2008; McKee et al. 2010; Lazarian
+the ξ = 10−2 case is achieved without the formation of large-        et al. 2012; Hu et al. 2021; Liu et al. 2022), the solar chro-
+scale plasmoids; coalescence is slowed at sub-ℓdec scales and      mosphere, and protoplanetary disks, where reconnecting lay-
+the current sheet is instead populated by a dense, steady-state       ers can enter the ambipolar diffusion range, and ions and
+ensemble of small plasmoids (see Fig. 1). At the active re-       neutrals no longer respond identically to the magnetic field.
+connection sites, the reconnection field is set by the Ohmic    We caution that our isothermal simulations are 2D and ne-
+term, Ez ≃ηJz, so Rrec measures the rate of the topolog-       glect ionization-recombination chemistry; the implications
+ical flux annihilation, which is necessarily Ohmic.  That a       discussed below should therefore be further tested.
+rapid ambipolar ion inflow coexists with ion-density pile-ups         In the weakly ionized run, macroscopic “monster” plas-
+of up to four orders of magnitude above its initial value and      moids are suppressed, and the layer fragments into a dense
+
+===== PDF PAGE 17 =====
+                                                                                                     17
+
+chain of sub-scale plasmoids threaded by numerous thin cur-        ics and finds thinning to the ion inertial scale di, followed by
+rent sheets (see Fig. 12).  If similar fragmentation occurs in      Hall-mediated fast reconnection. Our two-fluid MHD model
+chromospheric or prominence current sheets, magnetic en-       contains neither Hall physics nor a kinetic inertial scale; its
+ergy release may be distributed over many short-lived, fine-       sheet thickness is instead set by the ambipolar configuration
+scale events.  Our results suggest that neutral decoupling      and Ohmic resistivity. The two studies therefore probe dis-
+shifts the nonlinear plasmoid evolution toward a more frag-        tinct MHD and kinetic regimes, whose connection remains
+mented, multi-threaded layer, rather than simply rescaling      an important topic for future work.
+the fully ionized plasmoid hierarchy.
+  The ion pile-up at sub-ℓdec scales embedded in a smoother                               5.3. Limitations
+neutral envelope follows from the species-dependent re-                                                                                  5.3.1. Neglect of ionization and recombination
+sponse to magnetic stresses at a fixed scale, and we expect
+it to persist beyond the 3D plasmoid geometry studied here.       Our two-fluid model captures ion–neutral decoupling but
+The nonlinear geometry will likely be richer in 3D, where       neglects ionization and recombination.  This limitation is
+the plasmoids correspond to flux ropes that can kink, recon-      most relevant in the compressed cores of the ξ = 10−2
+nect, fragment, or couple to ambient turbulence. Quantita-       run, where ρi/ρi,0 reaches ∼5 × 103. Because the radia-
+tive comparison with observations will require models that        tive recombination rate scales as ρ2i , it may be enhanced by
+include ionization balance and guide-field geometry. Overall,      up to ∼107 relative to the upstream value, while the local
+our results suggest that weak ionization changes the pathway      recombination time decreases as τrec ∝ρ−1i  and may ap-
+by which reconnection proceeds: ambipolar drift promotes      proach the dynamical time.  Recombination would reduce
+early current-sheet thinning and fragmentation, while ion–       the ion pile-up, replenish the neutral component, and modify
+neutral decoupling imprints different small-scale structures       the local ion–neutral coupling and pressure balance (Vish-
+on the ionized and neutral components.                           niac & Lazarian 1999). The extreme overdensities reported
+  The reconnection rate exhibits a regime-dependent tempo-       here should therefore be regarded as upper limits.  Quan-
+ral behavior: the strongly decoupled ξ = 10−2 run over-        tifying this feedback requires a self-consistent ionization–
+shoots and relaxes to a lower steady rate, while the transi-      recombination network, which we defer to future work.
+tional ξ = 10−1 run rises monotonically to a higher value.
+In the ξ = 10−2 cases, the rapid ion inflow is not matched                       5.3.2. Periodic outflow boundaries
+by an equally rapid reconnection of flux. This behavior is      We adopt periodic boundaries along the outflow direction,
+consistent with an ion-density pile-up of up to four orders of      which could in principle allow reconnected flux to recircu-
+magnitude above its initial value, because rapid ion inflow        late and influence the layer. This does not occur within the
+supplies ions faster than they can be processed and expelled      analyzed interval. The ion and neutral outflow speeds are
+by reconnection.                                              comparable, vx,i ≈vx,n ∼0.3–0.75 vA,0 (Figs. 7 and 5),
+                                                              corresponding to a minimum recirculation time of ≳27 tA,i.
+             5.2. Comparison with earlier work                                                             This greatly exceeds the analyzed duration of 5 tA,i, so re-
+  Ion–neutral drift broadens the effective tearing layer and      connected flux cannot traverse the domain and return to the
+increases the growth rate relative to the Ohmic case. Ac-       reconnection region during the reported evolution.
+cordingly, the measured growth rate rises as the ionization          Finally, we consider only three ionization fractions at fixed
+fraction decreases. This acceleration is configurational rather       β, η, and γd. A broader exploration of (ξ, β, η, γd), together
+than directly dissipative: ambipolar drift reshapes the sheet      with three-dimensional simulations that permit additional in-
+into a more tearing-unstable state but does not itself change        stabilities and turbulence, is left to future work.
+magnetic topology (§ 3.1.2), which remains controlled by
+Ohmic resistivity. Thus, lower ionization accelerates onset                                 6. CONCLUSION
+and alters the plasmoid hierarchy without increasing the late-      We have carried out 2D high-resolution (16384 × 4096
+time Ez-based reconnection rate (Fig. 10).                            cells) two-fluid (ion + neutral) simulations of Harris-sheet
+ A related sequence was found by Tolman et al. (2024)       reconnection spanning the fully ionized (ξ =  1), transi-
+in a self-forming, weakly ionized sheet with ionization–        tional (ξ = 10−1), and ambipolar-diffusion (AD) dominated
+recombination: ambipolar thinning initially outpaces tearing,       (ξ = 10−2) regimes at fixed Lundquist number S = 105 and
+then stalls as ions decouple near the null and reconnection be-      plasma beta β = 2. The simulations follow the plasmoid in-
+gins. Our simulations show a similar progression from am-        stability from linear onset into the deeply nonlinear cascade.
+bipolar thinning to tearing in the decoupled regime. How-      Our major findings are as follows.
+ever, we initialize a Harris equilibrium and omit ionization–
+recombination, so their onset time is not directly applica-           1. Neutral decoupling suppresses the monster plasmoid.
+ble; the ambipolar singularity near the null (Brandenburg &             In the fully ionized run, the sheet evolves through pro-
+Zweibel 1994) is regularized here solely by Ohmic resistiv-            longed Sweet-Parker thinning into a hierarchy dom-
+ity.                                                                      inated by a single macroscopic “monster” plasmoid.
+  Our model also differs from the three-fluid, five-moment           With a dynamically significant neutral component, this
+study of Wang et al. (2026), which includes electron dynam-              large-scale coalescence is suppressed, and the sheet in-
+
+===== PDF PAGE 18 =====
+18
+
+      stead fragments into a dense, extended chain of plas-              character: the the strongly decoupled ξ = 10−2 run
+     moids separated by thin interplasmoid current sheets.            overshoots to Rrec ≈0.035 during the initial pile-
+     The fragmentation strengthens as ξ decreases.                 up and relaxes to a quasi-steady ≈0.01, whereas the
+                                                                    ξ = 10−1 run rises monotonically to a higher steady
+    2. The instability develops in two stages.  The current          ≈0.02. In the strongly decoupled run, the ambipolar
+      sheet first thins rapidly under AD-mediated flux com-                drift drives a rapid ion inflow, ⟨vin⟩∼0.5 vA,0, that far
+      pression, more than an order of magnitude faster than           above the neutral inflow velocity ∼0.1 vA,0.
+      the purely Ohmic Sweet–Parker thinning of the fully
+      ionized case; sub-ℓdec species differentiation then sets      1  Y.H. thanks Elizabeth Tolman for helpful discussions. Y.H.
+       in. The linear plasmoid growth rate increases with de-      2   is supported by the Sherman Fairchild Postdoctoral Fellow-
+      creasing ionization, consistent with AD configuring a      3  ship at the California Institute of Technology.  Y.H. ac-
+       thinner, more tearing-unstable sheet (δAD > δSP).            4  knowledges the support for this work provided by NASA
+                                                                                             5  through the NASA Hubble Fellowship grant No. HST-HF2-
+    3. Ions and neutrals re-couple inside plasmoids. Below
+                                                                                             6  51557.001 awarded by the Space Telescope Science Insti-
+      ℓdec the ions are concentrated into dense plasmoids,
+                                                                                             7   tute, which is operated by the Association of Universities
+      reaching peak overdensities ρi/ρi,0 ≈10 (ξ = 10−1)
+                                                                                             8   for Research in Astronomy, Incorporated, under NASA con-
+     and ∼3 −5 × 103 (ξ = 10−2), while the neutral
+                                                                                             9   tract NAS5-26555.  This work used SDSC Expanse CPU
+      density remains comparatively smooth ρn/ρn,0 ≈1.6
+                                                                                            10  and NCSA Delta CPU through allocations PHY230032,
+      (ξ = 10−1) and ∼2 −2.5 (ξ = 10−2). The pile-up
+                                                                                            11  PHY230033, PHY230091, PHY230105, PHY230178, and
+       raises the local ionization fraction by up to two orders
+                                                                                            12  PHY240183, from the Advanced Cyberinfrastructure Coor-
+      of magnitude, driving plasmoid cores toward near-full
+                                                                                            13  dination Ecosystem:  Services & Support (ACCESS) pro-
+      ionization and contracting the local ℓdec ∝ρ−1i   be-     14  gram, which  is supported by National Science Founda-
+     low the plasmoid scale, so that the two fluids re-couple
+                                                                                            15   tion grants #2138259, #2138286, #2138307, #2137603,
+      within growing plasmoids even as they remain decou-
+                                                                                            16  and #2138296.  A.L. acknowledges the support of NSF
+      pled in the dilute inter-plasmoid peripheries.
+                                                                                            17  grants AST 2307840 and NASA SEP864 80NSSC25K0067.
+                                                                                            18  S.X. acknowledges the support from the NASA ATP award    4. Reconnection rate is kinematically decoupled from the
+                                                                                            19  80NSSC24K0896.      ion inflow.  Measured from the out-of-plane elec-
+        tric field at the reconnection sites, the rate remains
+      plasmoid-mediated in both partially ionized runs, at
+      a few percent of vA,0, but with a distinct temporal       Software: AthenaK (Stone et al. 2024)
+
+                                      APPENDIX
+
+
+                                             A. FULLY IONIZED CASE
+
+  Fig. 11 shows the 2D spatial distributions for the normalized plasma density, velocity magnitude, magnetic field strength,
+and out-of-plane current density in the fully ionized (ξ = 1), single-fluid MHD limit. In stark contrast to the highly fragmented,
+thinner current sheets observed in the partially ionized cases, this fully ionized scenario is dominated by the formation of a macro-
+scopic ”monster” plasmoid at the center, resulting from the successive coalescence of smaller magnetic plasmoids. The velocity
+map (second panel) clearly highlights the high-speed reconnection outflow jets feeding into these plasmoids. Furthermore, the
+high-resolution maps reveal highly intricate, wrapped internal substructures and nested cores within the primary central plasmoid
+across all physical quantities, reflecting the complex topological evolution and the dynamical ”memory” of past merging events.
+
+                                                B. PLASMOID STATISTICS
+ We identify plasmoids using the in-plane flux function Az, defined by B⊥= ˆz×∇Az, so that By = ∂xAz, Bx = −∂yAz, and
+Az is constant along in-plane magnetic-field lines. Here, x is the direction along the current sheet and y is the direction across it,
+so that Bx is the reconnecting field.
+  Because the plasmoids intersect the current-sheet midplane, we reconstruct the flux function along y = 0 from
+
+                                       Z x
+                                   Az(x, 0) =      [By(x′, 0) −⟨By⟩x] dx′,                                 (B1)
+                                                         xmin
+
+where the numerically negligible residual mean of By is removed to enforce periodicity and avoid an artificial linear drift in Az.
+  For the magnetic polarity adopted here, O-points are local maxima of Az(x, 0) and X-points are local minima. For an plasmoid
+centered at Ok and bounded by adjacent X-points X−k and X+k , we define its reconnected flux as
+                               ψk = Az(Ok) −max Az(X−k ), Az(X+k )  ,                                 (B2)
+
+===== PDF PAGE 19 =====
+                                                                                                     19
+
+where the larger X-point value determines the outermost closed contour. Its along-sheet extent is
+
+                                    wk = x(X+k ) −x(X−k )  ,                                        (B3)
+
+with periodic wrapping included when necessary. Candidate extrema are identified using a prominence threshold proportional to
+the instantaneous flux range,
+
+                           ∆Az = max Az(x, 0) −min Az(x, 0).                                   (B4)
+                                                x              x
+   Ly                                                                                                                                   2.0
+
+  3                                                                                                                                      1.8  4Ly
+                                                                                                                                        1.6 0
+
+
+                                           /  12Ly
+                                                                                                                                        1.4
+  14Ly                                                                                                                                        1.2
+
+   0                                                                                                                                   1.0
+   Ly
+                                                                                                                                        1.2
+
+  3                                                                                                                                      1.0  4Ly
+                                                                                                                                        0.8
+  12Ly                                                                                                                                   0.6v/vA
+
+                                                                                                                                        0.4
+  14Ly
+                                                                                                                                        0.2
+
+   0
+   Ly
+                                                                                                                                  1.50
+  34Ly                                                                                                                             1.25
+                                                                                                                                  1.00
+  12Ly                                                                                                                             0.75B/B0
+  1                                                                                                                               0.50  4Ly
+                                                                                                                                  0.25
+
+   0
+   Ly                                                                                                                                   2.0
+                                                                                                                                        1.5
+  34Ly                                                                                                                                   1.0
+                                                                                                                                        0.5
+  12Ly                                                                                                                                   0.0  Jz/Jz,0
+                                                                                                                                          0.5
+  14Ly                                                                                                                                     1.0
+                                                                                                                                          1.5
+   0                                                                                                                                          2.0    0                                    14Lx                                   12Lx                                   34Lx                                 Lx
+
+Figure 11. 2D spatial distributions for the fully ionized (ξ = 1), single-fluid MHD limit in the fully developed non-linear regime (t = 37tA,i).
+From top to bottom, the panels display the normalized plasma density (ρ/ρ0), velocity magnitude (v/vA,0), magnetic field strength (B/B0),
+and out-of-plane current density (Jz/Jz,0) across the entire computational domain.
+
+===== PDF PAGE 20 =====
+20
+
+
+
+
+
+Figure 12. Plasmoid statistics versus ion Alfv´en times tA,i for ξ = 10−1 (blue) and ξ = 10−2 (red). Left: number of plasmoids Nplasmoid.
+Middle: size of the largest plasmoid normalized by the sheet length, Lmax/Lz. Right: fraction of the reconnected flux in the largest plasmoid,
+ψmax/ Pk ψk. Plasmoids are identified from the midplane flux function Az(0, y) with flux content ψk ≥0.05 ∆Az.
+
+
+We count a plasmoid as a plasmoid when
+                                           ψk ≥f∆Az,                                              (B5)
+
+with f = 0.05. Because the plasmoid hierarchy extends toward the resistive scale (Uzdensky et al. 2010), the absolute count
+depends on the threshold. We therefore verify that the qualitative trends are unchanged over the plateau of the count–threshold
+relation and cross-check the extrema using zero crossings of By(x, 0) = ∂xAz.
+  Fig. 12 shows the plasmoid number, the along-sheet extent of the largest-flux plasmoid, and the fraction of identified plasmoid
+flux contained in that plasmoid. In the ξ = 10−1 case, the sheet initially contains about 40 plasmoids. The count briefly rises to
+∼70 before dropping to ∼15–25, indicating rapid loss or coarsening of small plasmoids. Near t ≃3.3 tA,i, the largest-plasmoid
+flux fraction transiently reaches ∼0.3, together with an increase in its extent, consistent with a major coalescence event and the
+temporary formation of a dominant plasmoid. Secondary tearing later regenerates smaller plasmoids, and the largest-plasmoid
+flux fraction decreases again. The evolution is therefore intermittent and strongly affected by plasmoid merging.
+  In contrast, the ξ = 10−2 case shows a smoother decline in plasmoid number without a comparable collapse. The largest
+plasmoid remains relatively small, with wmax/Lx ≲0.03, and its flux fraction increases only gradually from ∼0.02 to ∼0.06.
+Thus, the reconnected flux remains distributed among many plasmoids, and the declining count is more consistent with gradual
+coarsening than with the formation of a single dominant plasmoid.
+
+                       C. NEUTRAL DENSITY JUMP IN THE WEAKLY IONIZED ξ = 10−2 RUN
+  Fig. 13 shows ion and neutral density maps of the tracked plasmoid in the ξ = 10−2 run at t = 4.1, 4.4, 4.7, and 5tA,i. The
+ions form a sharply compressed, wound core with ρi/ρi,0 > 100, whereas the neutrals show only a smooth enhancement of about
+a factor of two. During relaxation, the ion core broadens and elongates but remains dense. By t = 5tA,i, the neutral density
+instead develops a central depletion, reaching ρn/ρn,0 ∼0.6 at the centroid.
+  The outflow profiles in Fig. 14 show the same evolution. At t = 4.1tA,i, the central ion thermal pressure and normalized
+squared reconnecting field, B2x/PB,0, peak at ∼30 and ∼102, respectively, and then decline as the compressed core and
+trapped magnetic flux relax. The neutral pressure remains much smaller, ∼2–3.5PB,0, and develops a shallow central minimum.
+Antisymmetric neutral outflows reach |vy,n| ∼0.5–0.7vA,0, while a0∇· vn/vA,0 ∼4–6 indicates expansion. The ion–neutral
+drift is small at the centroid but reaches ∼1–1.5vA,0 near the surrounding current sheets and outflow fronts, allowing the two
+fluids to relax at different rates.
+  Fig. 15 indicates that this expansion is pressure-driven. The wings remain near the upstream thermal pressure, ∼3–4PB,0,
+while the core retains a strong total-pressure excess. Near maximum compression at t = 4.1tA,i, the peak is thermally dominated,
+with Pth ∼2 × 102PB,0 and B2/2 ∼1.5 × 102PB,0. By t = 5tA,i, magnetic pressure dominates, with B2/2 ∼102PB,0 and
+Pth ∼30–40PB,0. Meanwhile, the ram pressure in the wings grows and becomes smoother as the outflow develops.
+  This thermal-to-magnetic transition marks the shift from peak compression to relaxation. As coalescence-driven inflow weak-
+ens, expansion rapidly lowers the thermal pressure, whereas the wound magnetic flux decays more slowly. The ions therefore
+broaden while remaining magnetically confined and overdense. Neutrals, coupled only through drag, expand more freely on sub-
+ℓdec scales, producing positive divergence and a central density depletion. The core thus remains in a dynamic balance among
+thermal, magnetic, and ram-pressure forces rather than reaching static equilibrium.
+
+===== PDF PAGE 21 =====
+                                                                                                     21
+
+
+
+
+
+                                                                                                                                              [hbtp!]
+
+Figure 13. Ion (left) and neutral (right) density maps in the ξ = 10−2 run, shown at four times during the nonlinear phase (t = 4.1, 4.4, 4.7,
+and 5 tA,i, top to bottom). Each panel is a zoom on the tracked plasmoid, spanning ∆x ∈[−0.01, 0.01] Lx and ∆y ∈[−0.04, 0.04] Ly.
+
+
+
+
+
+Figure 14. 1D transverse profiles through the plasmoid, cut along the outflow direction (∆x) at the four times of Fig. 13 (t = 4.1, 4.4, 4.7,
+and 5 tA,i; lighter to darker shades). Top row: neutral thermal pressure Pth,n/PB,0 (left), ion thermal pressure Pth,i/PB,0 (middle), and the
+reconnecting- field B2x/PB,0 (right). Bottom row: the scaled neutral velocity divergence a0 ∇·vn/vA,0 (left), the ion outflow velocity vy,i/vA,0
+(middle), and the ion–neutral drift speed |vi −vn|/vA,0 (right).
+
+===== PDF PAGE 22 =====
+22
+
+                                       t = 4.1tA, i                                                         t = 5tA, i
+         102                                           102
+         101                                           101
+   0 100                    0 100
+        P/PB,                                                                        P/PB,
+       10 1                                      10 1
+       10 2                                      10 2         Pth            v2
+                                                                              B2/2           total
+       10 3                                      10 3            -0.01              0                0.01      -0.01              0                0.01
+                            x [Lx]                                        x [Lx]
+
+Figure 15. Total pressure budget through the plasmoid presented in Fig. 13, cut along the outflow direction (∆x) at t = 4.1 tA,i (left) and
+t = 5 tA,i (right). Each curve is the sum of the ion and neutral contributions: thermal pressure Pth (red), magnetic pressure B2/2 (blue), ram
+pressure ρv2 (green), and their total (black), all normalized to the upstream magnetic pressure PB,0.
+
+
+                                              D. RESOLUTION STUDY
+  To assess numerical convergence, we repeated the ξ = 10−2 run at half the fiducial resolution (8192 × 2048 cells; red) and
+compared it with the fiducial 16384 × 4096 run (blue) in Fig. 16. The two runs agree well through both the linear and nonlinear
+stages. The lower-resolution case shows slightly larger RMS velocity and kinetic energy during the linear and early nonlinear
+phases, together with a marginally higher growth rate, consistent with modest resolution-dependent numerical dissipation. The
+magnetic-energy components are nearly indistinguishable, with both the reconnecting field Bx and plasmoid field By overlapping
+throughout the evolution. These small differences indicate that the fiducial run adequately resolves the linear growth and nonlinear
+plasmoid dynamics, including the relevant ion–neutral decoupling scales.
+
+     100                               10 2
+
+                                                                         10 1
+                                      10 3
+ 0 10 1
+                                                           4                               10 3                                      10 vrms/vA,
+                                                                                                                                   By                                                                                                                                                                 (islands),                                                                                                                                       Nx = 16384   10 2                          ion,                                   Nx =                                   16384                                                                                                        ion,                                                                                      Nx =                                                                                  16384                                                                                                                                                                                                    Ekin(t)/Emag(0)                                                                                                                                                                                                                                                                                                                                                                                                       Emag(t)/Emag(0)                                                                         10 5                                                                                                                                   Bx                                                                                                                                                (reconnecting),                                                                                                                                            Nx = 16384                                      10 5                                      Nx                                                                                         Nx                                     neutral,                            = 16384                                                                                                  neutral,                                                                = 16384
+                                       ion, Nx = 8192                                                 ion, Nx = 8192                                By (islands), Nx = 8192
+                                     neutral, Nx = 8192                                          neutral, Nx = 8192                            Bx (reconnecting), Nx = 8192
+   10 3                               10 6                               10 7       0.0   0.5   1.0   1.5   2.0   2.5       0.0   0.5   1.0   1.5   2.0   2.5       0.0   0.5   1.0   1.5   2.0   2.5
+                              t [tA, i]                                                 t [tA, i]                                                 t [tA, i]
+
+Figure 16. The three columns display, from left to right: the root-mean-square velocity (vrms) normalized by the upstream total Alfv´en
+speed (vA,0); the kinetic energy (Ekin = 2ρv2)1     normalized by the initial total magnetic energy Emag(0); and the magnetic energy components
+(Emag = B2/8π) normalized by Emag(0). Solid and dashed lines in the left and middle columns denote the ion and neutral fluids, respectively.
+The red and blue lines denote the low-resolution (8192 × 2048 cells) and high-resolution (16384 × 4096 cells). In the right column, the solid
+lines represent the energy of the reconnected magnetic field component (By, corresponding to magnetic plasmoids), while the dashed lines track
+the reconnecting field component (Bx). The background shading delineates the linear growth stage (light green) and the subsequent non-linear
+stage (pale yellow).
+
+===== PDF PAGE 23 =====
+                                                                                                     23
+
+                                    REFERENCES
+
+Arber, T. D., Haynes, M., & Leake, J. E. 2007, A&A, 471, 649,          Kowal, G., Lazarian, A., Vishniac, E. T., & Otmianowska-Mazur,
+   doi: 10.1051/0004-6361:20077980                                 K. 2009, ApJ, 700, 63, doi: 10.1088/0004-637X/700/1/63
+Balbus, S. A., & Hawley, J. F. 1998, Reviews of Modern Physics,         Kulsrud, R., & Pearce, W. P. 1969, ApJ, 156, 445,
+  70, 1, doi: 10.1103/RevModPhys.70.1                                      doi: 10.1086/149981
+Ballester, J. L., Alexeev, I., Collados, M., et al. 2018, SSRv, 214,          Lazarian, A., Esquivel, A., & Crutcher, R. 2012, ApJ, 757, 154,
+  58, doi: 10.1007/s11214-018-0485-6                                       doi: 10.1088/0004-637X/757/2/154
+Bhattacharjee, A., Huang, Y.-M., Yang, H., & Rogers, B. 2009,            Lazarian, A., Eyink, G. L., Jafari, A., et al. 2020, Physics of
+  Physics of Plasmas, 16, 112102, doi: 10.1063/1.3264103                 Plasmas, 27, 012305, doi: 10.1063/1.5110603
+Biskamp, D. 2000, Magnetic Reconnection in Plasmas (Cambridge        Lazarian, A., & Vishniac, E. T. 1999, ApJ, 517, 700,
+  University Press), doi: 10.1017/CBO9780511599958                       doi: 10.1086/307233
+Borges, R., Carmona, M., Costa, B., & Don, W. S. 2008, Journal of        Lazarian, A., Vishniac, E. T., & Cho, J. 2004, ApJ, 603, 180,
+  Computational Physics, 227, 3191,                                         doi: 10.1086/381383
+   doi: 10.1016/j.jcp.2007.11.038                                        Lazarian, A., Zhang, B., & Xu, S. 2019, ApJ, 882, 184,
+Brandenburg, A., & Zweibel, E. G. 1994, ApJL, 427, L91,                    doi: 10.3847/1538-4357/ab2b38
+   doi: 10.1086/187372                                              Leake, J. E., & Arber, T. D. 2006, A&A, 450, 805,
+Burkhart, B., Lazarian, A., Balsara, D., Meyer, C., & Cho, J. 2015,           doi: 10.1051/0004-6361:20054099
+  ApJ, 805, 118, doi: 10.1088/0004-637X/805/2/118                   Leake, J. E., Lukin, V. S., Linton, M. G., & Meier, E. T. 2012, ApJ,
+Cerutti, B., Uzdensky, D. A., & Begelman, M. C. 2012, ApJ, 746,           760, 109, doi: 10.1088/0004-637X/760/2/109
+  148, doi: 10.1088/0004-637X/746/2/148                                  Li, H.-b., & Houde, M. 2008, ApJ, 677, 1151, doi: 10.1086/529581
+Comisso, L., Lingam, M., Huang, Y.-M., & Bhattacharjee, A.             Liu, M., Hu, Y., & Lazarian, A. 2022, MNRAS, 510, 4952,
+  2016, Physics of Plasmas, 23, 100702, doi: 10.1063/1.4964481            doi: 10.1093/mnras/stab3783
+Coppi, B., Galvao, R., Pellat, R., Rosenbluth, M., & Rutherford, P.        Loureiro, N. F., Schekochihin, A. A., & Cowley, S. C. 2007,
+  1976, Soviet Journal of Plasma Physics, 2, 533                          Physics of Plasmas, 14, 100703, doi: 10.1063/1.2783986
+Draine, B. T. 1986, MNRAS, 220, 133,                                  Loureiro, N. F., Schekochihin, A. A., & Uzdensky, D. A. 2012,
+   doi: 10.1093/mnras/220.1.133                                         Physics of Plasmas, 19, 042303, doi: 10.1063/1.3703318
+Draine, B. T., & McKee, C. F. 1993, ARA&A, 31, 373,                  Lyubarsky, Y. E. 2001, ApJ, 547, 437, doi: 10.1086/318354
+   doi: 10.1146/annurev.aa.31.090193.002105                   —. 2005, MNRAS, 358, 113,
+Drenkhahn, G., & Spruit, H. C. 2002, A&A, 391, 1141,                       doi: 10.1111/j.1365-2966.2005.08767.x
+   doi: 10.1051/0004-6361:20020839                               Masuda, S., Kosugi, T., Hara, H., Tsuneta, S., & Ogawara, Y. 1994,
+Evans, C. R., & Hawley, J. F. 1988, ApJ, 332, 659,                         Nature, 371, 495, doi: 10.1038/371495a0
+   doi: 10.1086/166684                                       McKee, C. F., Li, P. S., & Klein, R. I. 2010, ApJ, 720, 1612,
+Ferri`ere, K. M. 2001, Reviews of Modern Physics, 73, 1031,                  doi: 10.1088/0004-637X/720/2/1612
+   doi: 10.1103/RevModPhys.73.1031                                   Mestel, L., & Spitzer, L., J. 1956, MNRAS, 116, 503,
+Harris, E. G. 1962, Il Nuovo Cimento, 23, 115,                                doi: 10.1093/mnras/116.5.503
+   doi: 10.1007/BF02733547                                        Mouschovias, T. C. 1996, ApJ, 466, 814, doi: 10.1086/177554
+Hillier, A., Takasao, S., & Nakamura, N. 2016, ApJ, 827, 152,          Murphy, N. A., & Lukin, V. S. 2015, ApJ, 805, 134,
+   doi: 10.3847/0004-637X/827/2/152                                         doi: 10.1088/0004-637X/805/2/134
+Hu, Y., Comisso, L., Sironi, L., & Xu, S. 2026, ApJ, 1005, 197,           Ni, L., Kliem, B., Lin, J., & Wu, N. 2015, ApJ, 799, 79,
+   doi: 10.3847/1538-4357/ae75b4                                            doi: 10.1088/0004-637X/799/1/79
+Hu, Y., Lazarian, A., & Xu, S. 2021, ApJ, 915, 67,                        Ni, L., Lin, J., Roussev, I. I., & Schmieder, B. 2018, ApJ, 852, 95,
+   doi: 10.3847/1538-4357/ac00ab                                            doi: 10.3847/1538-4357/aa9edb
+Hu, Y., Xu, S., Arzamasskiy, L., Stone, J. M., & Lazarian, A. 2024,        Pareschi, L., & Russo, G. 2005, Journal of Scientific Computing,
+  MNRAS, 527, 3945, doi: 10.1093/mnras/stad3493                        25, 129, doi: 10.1007/s10915-004-4636-4
+Huang, Y.-M., & Bhattacharjee, A. 2010, Physics of Plasmas, 17,          Parker, E. N. 1957, Journal of Geophysical Research, 62, 509,
+  062104, doi: 10.1063/1.3420208                                            doi: 10.1029/JZ062i004p00509
+—. 2013, Physics of Plasmas, 20, 055702, doi: 10.1063/1.4802941       Samtaney, R., Loureiro, N. F., Uzdensky, D. A., Schekochihin,
+Kowal, G., Falceta-Gonc¸alves, D. A., Lazarian, A., & Vishniac,            A. A., & Cowley, S. C. 2009, Physical Review Letters, 103,
+  E. T. 2017, ApJ, 838, 91, doi: 10.3847/1538-4357/aa6001               105004, doi: 10.1103/PhysRevLett.103.105004
+
+===== PDF PAGE 24 =====
+24
+
+Shibata, K., & Magara, T. 2011, Living Reviews in Solar Physics,         Vicentin, G. H., Kowal, G., de Gouveia Dal Pino, E. M., &
+   8, 6, doi: 10.12942/lrsp-2011-6                                          Lazarian, A. 2026, ApJ, 1001, 209,
+Shu, F. H. 1983, ApJ, 273, 202, doi: 10.1086/161359                         doi: 10.3847/1538-4357/ae5815
+                                                                        Vishniac, E. T., & Lazarian, A. 1999, ApJ, 511, 193,—. 1992, The physics of astrophysics. Volume II: Gas dynamics.
+                                                                                doi: 10.1086/306643
+Sironi, L., Uzdensky, D. A., & Giannios, D. 2025, ARA&A, 63,
+                                                           Wang, L., Dong, C., Huang, Y.-M., et al. 2026, arXiv e-prints,
+  127, doi: 10.1146/annurev-astro-020325-115713
+                                                                      arXiv:2602.23683, doi: 10.48550/arXiv.2602.23683
+Stone, J. M., & Gardiner, T. A. 2009, New Astronomy, 14, 139,
+                                                             Xu, S., Lazarian, A., & Yan, H. 2015, ApJ, 810, 44,
+   doi: 10.1016/j.newast.2008.06.003
+                                                                                doi: 10.1088/0004-637X/810/1/44
+Stone, J. M., Tomida, K., Felker, K. G., Grete, P., & White, C. J.                                                             Xu, S., Yan, H., & Lazarian, A. 2016, ApJ, 826, 166,
+  2024, arXiv e-prints. https://arxiv.org/abs/2409.16053                     doi: 10.3847/0004-637X/826/2/166
+Sweet, P. A. 1958, in IAU Symposium, Vol. 6, Electromagnetic          Yamada, M., Kulsrud, R., & Ji, H. 2010, Reviews of Modern
+  Phenomena in Cosmical Physics, ed. B. Lehnert, 123                     Physics, 82, 603, doi: 10.1103/RevModPhys.82.603
+Tolman, E. A., Kunz, M. W., Stone, J. M., & Arzamasskiy, L.            Zhang, B., & Yan, H. 2011, ApJ, 726, 90,
+  2024, ApJ, 967, 136, doi: 10.3847/1538-4357/ad35c0                      doi: 10.1088/0004-637X/726/2/90
+Uzdensky, D. A., Loureiro, N. F., & Schekochihin, A. A. 2010,           Zweibel, E. G. 2002, ApJ, 567, 962, doi: 10.1086/338682
+                                                                    Zweibel, E. G., & Yamada, M. 2009, ARA&A, 47, 291,  Physical Review Letters, 105, 235002,
+                                                                                doi: 10.1146/annurev-astro-082708-101726   doi: 10.1103/PhysRevLett.105.235002

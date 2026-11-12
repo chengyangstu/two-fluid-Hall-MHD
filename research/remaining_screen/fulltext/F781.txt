@@ -1,0 +1,763 @@
+
+===== PDF PAGE 1 =====
+                                                UCRL—101516
+
+                                                      DE90 007250
+
+
+         Direct Implicit Simulation of
+       Collisionless Magnetic Reconnection
+
+
+       Gregory E. Francis, Dennis W. Hewett, and Claire E. Max
+
+                   Institute of Geophysics and Planetary Physics
+                  Lawrence Livermore National Laboratory
+                             University of California
+
+
+
+
+                             Abstract
+
+Collisionless reconnection of magnetic field lines depends upon electron in­
+ertia effects and details of the electron and ion distribution functions, thus
+requiring a kinetic description of both. Though traditional explicit PIC
+techniques provide this description in principle, they are severly limited
+in parameters by time step constraints.  This parameter regime has been
+expanded in this work by using the recently constructed 2.5 D electromag­
+netic code AVANTI. The code runs stably with arbitrarily large At and is
+quite robust with respect to large fluctuations occurring due to small num­
+bers of particles per cell. We find excellent agreement with linear electron
+tearing theory for early simulation times, provided electrostatic effects are
+included in the theory. In the non-linear regime following tearing, we ob­
+serve electrostatic ringing of electrons and trapped flux into the magnetic
+island, superposed on linear growth determined by the ion sound velocity.
+It  is found that the inclusion of a guide magnetic field (magnetic shear)
+severely slows the initial stages of reconnection and damps out the elec­
+trostatic ringing  if local values of the guide field are above a threshold
+determined by questions of electron mobility.
+
+
+
+
+
+                                                       1
+
+                                                                  THIS oocuwsnt IS mm®                                                         fllSTfliBUTION OF
+
+===== PDF PAGE 2 =====
+                       DISCLAIMER
+
+This report was prepared as an account of work sponsored by an
+agency of the United States Government. Neither the United States
+Government nor any agency thereof, nor any of their employees,
+makes any warranty, express or implied, or assumes any legal liability
+or responsibility for the accuracy, completeness, or usefulness of any
+information, apparatus, product, or process disclosed, or represents
+that its use would not infringe privately owned rights. Reference
+herein to any specific commercial product, process, or service by
+trade name, trademark, manufacturer, or otherwise does not
+necessarily constitute or imply its endorsement, recommendation, or
+favoring by the United States Government or any agency thereof. The
+views and opinions of authors expressed herein do not necessarily
+state or reflect those of the United States Government or any agency
+thereof.
+
+
+
+
+
+                 DISCLAIM ER
+
+Portions of this document may be illegible in electronic image
+
+products. Images are produced from the best available
+
+original document.
+
+===== PDF PAGE 3 =====
+/
+
+
+
+
+
+                                                    1. Introduction
+
+        We report here continued research [Hewett et  al., 1988\ on the evolution
+            of magnetic field reconnection in a collisionless plasma neutral sheet, using
+             implicit particle-in-cell computer simulations. The general two-dimensional
+              collisionless neutral sheet configuration is thought to be of relevance to the
+           magnetotails of the earth and other magnetized planets, where reconnection
+                 is associated with magnetic sub-storms [Coroniti and Kennel, 1972; Russell
+           and McPherron, 1978; Schindler,  1980]', and to the eventual fate of tangled
+           magnetic field lines in collisionless astrophysical plasmas, in which estimates
+            of the thermal conductivity depend sensitively on the largely unknown rate
+            of field-line reconnection [Cowie and McKee, 1977\. The specific parameters
+            of our simulation are quite close to plasma conditions in the laboratory
+           reconnection experiments of Stenzel and Gekelman [Stenzel and Gekelman,
+             1981; Gekelman and Stenzel, 1981\.
+               In simplest form reconnection in a collisional plasma can be modeled us­
+            ing the MHD equations with a fixed value for the plasma resistivity. This
+             yields a reduced, one-fluid description in which the large-scale topology and
+          dynamics of reconnecting regions can be studied. By contrast,  collision­
+               less reconnection of magnetic field lines depends on electron inertia effects
+          and the detailed behavior of the electron distribution function to provide
+            the necessary freedom for magnetic topology changes. The formation of a
+           non-Maxwellian tail on the ion distribution can be an important observed
+           consequence of collisionless reconnection. Hence a faithful computational
+          model must include a kinetic description of both electrons and ions.
+              Although traditional explicit particle-in-cell (PIC) techniques provide
+             this description, stability requirements restrict the time step to such small
+            values that computer constraints limit the simulation either to short tempo­
+              ral periods (e.g. 100 plasma periods a;",.1 or less), or to artificially small ion-
+             to-electron mass ratios (e.g. Mi/me « 10 to 25) [Leboeuf et al., 1982; Leboeuf
+                et al., 1984; Hoshino, 1987]. In the present paper a new 2.5D fully electro­
+           magnetic Direct Implicit PIC plasma simulation code AVANTI [Hewett and
+            Langdon, 1987] allows us to follow the dynamics of collisionless reconnection
+             for all relevant Mi/me, and for a factor of 2 to 3 longer timescales. The
+           code runs stably with arbitrarily large At and is quite robust with respect
+             to large fluctuations occurring due to small numbers of particles per cell.
+
+
+                                                        2
+
+===== PDF PAGE 4 =====
+This code  is ideally suited for studies of magnetic reconnection because
+of the increased flexibility in time step selection. High frequency plasma
+behavior that proves immaterial to magnetic reconnection need not be re­
+solved numerically. For example, neither purely electromagnetic modes or
+electron plasma oscillations are important in this process and are not re­
+solved. We select the appropriate time step, typically ojpeAt « 1-2, needed
+to give detailed resolution of electron gyro-motion and other particle-field
+interactions that are important to collisionless reconnection.  Further de­
+tails of this method can be found in Hewett and Langdon [198T\ and references
+therein. Overall, we estimate that this implicit technique has expanded the
+parameter regime that can be studied by at least an order of magnitude.
+   The simulation region consists of a 40x96 x-y mesh, with all quantities
+initially uniform in y.  Starting with a constant ion temperature and a
+Gaussian ion density profile we derive the initial equilibrium fields shown
+in Figure 1(a). The initial neutral sheet width 8 is 2c/u;pe. Larmor radii for
+electrons and ions outside of the neutral sheet are pe = QAc/u}pe and  />,• =
+20cf(jjpe, respectively. By way of comparison, the laboratory reconnection
+experiments of Stenzel and Gekelman [l979\ typically use 8 = Zcfwpt, pe =
+QAc/ojpt and  p,- = 2c/cjpe. The x-gradient in magnetic pressure near the
+neutral sheet is balanced by gradients in electron and ion particle density.
+Periodic boundary conditions are imposed at the top and bottom of the
+box. At the sides of the box, fields and particle densities approach values
+that are constant with x.  Boundary conditions at the sides are perfect
+reflection for particles, Dirichlet conditions for E, and Neumann conditions
+for B.
+   This equilibrium resembles the Harris equilibrium, [Harris, 1962] but the
+ions carry no current, and are electrostatically confined. We also allow for
+anisotropy in electron temperatures parallel (Te||) and perpendicular (Tex)
+to the initial magnetic field.  Following the work of Chen and Palmadesso
+[1984], we allow a cooler Te\\ to trigger the initial stages of reconnection.
+
+
+                              2. Simulation Results
+
+Figure l(b-d) shows the time evolution of the magnetic field topology for a
+typical simulation. Contours of magnetic flux are shown as solid lines; the
+
+
+
+                                            3
+
+===== PDF PAGE 5 =====
+dotted contour is the “separatrix”, inside of which lies magnetic flux that
+has become trapped due to reconnection. Frame 1(b) shows the magnetic
+configuration characteristic of the early stages of reconnection, before the
+ions have had time to move.  The electron current at the neutral sheet
+has already formed small-scale filaments, resulting in several magnetic X-
+points within the simulation volume. Later, Figure 1(c) shows that some
+of these small-scale filaments have coalesced. Still later, when enough time
+has passed for ion dynamics to become important, we see one remaining
+magnetic island, as in Figure 1(d). This stage of the process is typically
+reached in approximately 1-3 Alfven transit times. The remaining O-point
+continues to grow in amplitude, for our parameters, until the separatrix
+approaches the boundaries of the simulation box. The simulation is then
+terminated; further results would be artifacts of the boundary conditions.
+  A current-aligned component of the electric field (Ez) develops as the
+small-scale current filaments coalesce; this field is consistent with the E x B
+drift of the electrons (but not the unmagnetized ions) into the final O-point
+through the X-point. The resulting electron current in the x-y simulation
+plane generates a current-aligned component of the magnetic field (Bz)
+with quadrupole structure. Shown in Fig. 2 are the a) contours of Ez and
+b) Bz at the same time as Fig. Id contours.  It has been shown [Hoshino,
+1987\ that the suppression of this quadrupole field does not affect the rate
+of magnetic reconnection, suggesting that Bz is not a cause, but an effect,
+of the reconnection process.
+   Simulations with large ion-electron mass ratio (M,- fme> 200) reveal an
+oscillation in the sign of the current-aligned Bz quadrupole. The cause is
+an oscillation in the electron flow through the X-point. Since the magnetic
+field  is “frozen”  into the electron component, the magnitude of trapped
+magnetic flux will also oscillate as the electrons flow into and out of the
+O-point.  Observation of trapped flux as a function of time for various
+Mi/me provides information about the moderating influence of the ions on
+the electron oscillation. This temporal behavior is consistent with the ions
+attempting to follow the electrons into the O-point, pulled by an ambipolar
+electric field.  For large ion-to-electron mass ratios (> 200), the electron
+flow reverses before the ions can neutralize the excess electronic charge.
+These curves are shown in Figure 3 for six different values of M</me.
+   Late in time after the oscillations damp out, the trapped flux grows
+
+
+                                        4
+
+===== PDF PAGE 6 =====
+approximately linearly in time, at a rate proportional to the ion-acoustic
+speed, va = [kTg/Mi)1^2. (Consistent with this scaling, in the limit M,7me —►
+oo the trapped flux experiences simple oscillation with no secular growth.)
+This late-time oscillation and secular growth of trapped flux  is a quali­
+tatively different phenomenon than has been reported in previous studies
+[Leboeuf et al., 1982; Hoshino, 1987\. Previous investigators, using Mi/me=10-
+25, saw the coalescence of small-scale magnetic islands and sometimes saw
+oscillatory behavior, but after the island began to interact with the outer
+wall. Inadequate separation between the ion and electron timescales would
+obscure the late time oscillations that we see resulting from charge separa­
+tion electric fields and from E x B forces, superposed on continued secular
+growth of trapped flux (Fig. 3).
+   The nature of the three temporal regions described above for   /me >
+200 can be clarified by an idealized simulation having Te\\/Te± = 0, and
+Milme — 2000. Figure 4 shows the time evolution of a) trapped magnetic
+flux, b) quadrupole z component of magnetic field, c) electron flow energy
+in the y- and z-directions, and d) z components of electric field and current.
+Region I, in which the trapped flux grows linearly with time, corresponds
+to the early electron-driven formation of small-scale current filaments as
+evidenced in Figure 1(b). Region II corresponds to the coalescence of the
+small-scale multiple X-points, and shows exponential growth of trapped
+flux.  The end of region II  is signaled by a peak in y-directed electron
+energy (Fig.  4c)consistent with jetting, and a corresponding reduction of
+the z-directed energy caused by the Eg required for the jetting. In Region
+III, ions play the decisive role:  an ambipolar electric field between the
+electrons and much-more-massive ions reverses the electron flow, causing
+oscillations back and forth from the external region through the X-point to
+the O-point. These oscillations are seen most clearly in Figure 4(b).
+   The oscillations that are evident in the z component of the electric
+field, Figure 4(d), are not found in the z component of the current.  In
+fact there is no proportionality at all between the time behaviors of Ez and
+Jg. The z components of the current and electric field do not even occupy
+the same volume in our simulations.  Early in the reconnection process
+the electrons that carry Jz move away from the X-points, and subsequent
+currents flow in the vicinity of the O-points.  This behavior  is seen in
+laboratory reconnection experiments as well [Gekelman and Pfister, 1987\.
+
+
+                                          5
+
+===== PDF PAGE 7 =====
+Even if there were an “anomalous resistivity”  rj, the rate of dissipation tjJ2
+would be quite small at the X-point, since Jz  is small there.  Thus the
+MHD picture with an “anomalous resistivity”  rj acting on the ^-component
+of current at the X-point seems to be qualitatively incorrect for the cases
+we have examined here.
+   The distinction between regions I and II in Figure 4 is the linear, rather
+than exponential, growth of trapped flux at early time. Previous specula­
+tion [Hewett et al., 1988] that the distinction is not due to the extreme initial
+anisotropy (Te\\/Tel_ = 0) has been proven. Shown in Figure 5(a) are plots
+of trapped flux for two runs starting with anisotropies having the extreme
+value of 0 and our canonical value of 4/9. The qualitative similarity of
+the two simulations throughout the run and especially in the early time
+surrounding regions I and II affirm our early speculation.
+   The second more likely possibility for the distinction between regions
+I and II is that the large fluctuation noise is associated with the limited
+number of simulation particles (Ne =  iVf- = 27,000).  This noise provides
+very early “reconnection” with sufficient amplitude to obscure the early
+exponential growth. Simulation of this problem with (Te\\/Te± =4/9) and
+an order of magnitude more particles (Ne = Ni = 216,000) does indeed
+show exponential growth (Fig.  5b) and the absence of the linear growth
+of region I. Further, we find the exponential growth to be consistent with
+the linear collisionless electron-driven tearing mode instability [Coppi et al.,
+1966;Laval et al., 1966], providing consideration is made in the theory for the
+inclusion of the electrostatic effects [Katanuma and Kamimura, 1980; Hoshino,
+1987].
+   The evidence is that simple fluctuations near the field null cause small
+scale islands to form with amplitudes proportional to the initial particle
+noise level. These early islands, through not the most unstable length in y,
+dominate the simulation until the exponential growth of the most unstable
+island length overtakes the growth of the early perturbations. Large num­
+bers of simulation particles suppress the initial noise-related perturbations
+and exhibit only exponential growth of the most unstable mode. This re­
+sult is further supported by examining the Fourier spectrum in y of Bz in
+Fig. 6 that shows the linearly-predicted most unstable mode dominating
+the mode with one-half the wavelength.
+  We note that the simulation with fewer particles displays excellent qual­
+
+
+                                      6
+
+===== PDF PAGE 8 =====
+itative agreement (see Fig. 5b) for those phenomena occurring in the non­
+linear regime-providing confidence for further study with relatively inex­
+pensive simulations using fewer simulation particles.
+
+
+                                3. Magnetic Shear
+
+The addition of a zeroth-order magnetic field aligned with the sheet current
+retains most of the features of the simulations just described. We report
+here the findings of an on-going parametric study of the effects of mag­
+netic shear on the reconnection process. The magnetic shear is introduced
+through the inclusion of a zero order dc magnetic field in the z-direction
+which  is  initially taken to be uniform across the simulation plane. We
+began this study in an attempt to connect our previous findings with­
+out shear to problems in laboratory plasmas, such as tokamaks, compact
+toroids, reversed-field pinches, and the reconnection experiments of Stenzel
+and Gekelman \l979\. In these systems magnetic reconnection takes place in
+the presence of magnetic shear.
+   In Figure 7 we plot the time histories of trapped flux for four different
+values of the initial guide magnetic field Bzq. The first thing to be noted
+from Figure 7  is that much of the basic physics involved in collisionless
+magnetic reconnection appears to be unaffected by the inclusion of a guide
+magnetic field. Of note are two exceptions to this observation. First, there
+appears to be a discontinuous, or at least non-linear, decrease in the initial
+growth rate between the simulation runs having Bzq = Bq = 0.12 and
+Bz0 = 2B0. This can be understood by looking at the threshold for Bzq,
+above which the electrons in the neutral sheet are no longer un-magnetized.
+We define this threshold Bze such that the electron Larmor radius in the
+neutral sheet pe(x =  0)  is equal to the geometric mean of the neutral
+sheet width 8 and the electron Larmor radius outside of the neutral sheet
+pe(x » 6):
+
+
+                                                                                       (1)
+
+This calculation yields a critical guide field of Bzc = 0.18, above which the
+neutral sheet electrons are magnetized and no longer free to stream. Note
+
+
+
+                                          7
+
+===== PDF PAGE 9 =====
+that this critical value of      lies halfway between that of the two runs in
+question.
+   The second point to make from Figure 7 is that the electrostatic ringing
+is apparently unaffected by the transition above Bze: the amplitude of the
+oscillation of electrons and magnetic flux into and out of the magnetic island
+is just as large for the case Bzo = 2Bq > Bzc as it is for Bzq = Bq < Bze.
+It is not until Bz0 is raised to 4B0 (>> Bzc) that the electrostatic ringing
+is damped away by the increased viscosity in the system. Since the ringing
+is a manifestation of electron jetting (free streaming into the O-point), we
+would not expect to see the ringing above Bze. To explain this apparent
+discrepancy, we look at a contour map of guide magnetic field for the case
+Btf = 2B0 (see Fig. 8a). We find that as electrons are gathered and heated
+inside of a magnetic island, the Bz in the island is reduced from its initial
+uniform value Bzq. This “hollowing out” of the guide magnetic field at an
+island is due to a Kelvin-Helmholz instability that drives electron current
+around the perimeter of the magnetic island.  Figure 8(a) shows that at
+the time t = 410w“e1, when the Bzq = 2Bq case is making the transition
+between the exponential growth of the electron tearing mode and the linear
+growth of the ion-mediated reconnection, the guide field in the magnetic
+island has been reduced through this hollowing-out process to values below
+the threshold Bze, thus allowing the neutral sheet electrons to jet. A similar
+map for the case Bzo = 4Bq shows that the guide field is not reduced below
+the threshold at the time of transition, hence the electrostatic ringing is
+damped.
+
+
+                                   4. Discussion
+
+The results of the present work agree qualitatively with behavior seen in
+previous computer simulations at early and intermediate times   :  1) initial
+formation of small-scale magnetic islands, and 2) rapid coalescence of these
+into larger structures, with concomitant development of a driving Ez. We
+observe a new type of behavior at later times, for ion-to-electron mass
+ratios above 200: oscillatory electron currents through the X-point in the
+x-y plane, superimposed on linear (not exponential) growth of trapped flux
+at a rate proportional to
+
+
+
+                                            8
+
+===== PDF PAGE 10 =====
+   Our simulations indicate that the region showing oscillatory behavior
+(Region III of Fig. 4a)  is one in which an electron current flows into and
+out of the O-points through the X-points. The ions attempt to follow the
+electron current, pulled by an ambipolar electric field. But only for small
+ion-to-electron mass ratios (< 200) can they succeed in doing so before the
+electron flow reverses. Such behavior emphasizes that in our simulations
+the magnetic flux  is frozen into the electron component rather than the
+plasma as in the usual MHD formulation.
+   Near the end of our simulation the growth of trapped flux occurs with
+one dominant mode in Bx, because shorter wavelength modes have already
+undergone coalescence. Thus theories of nonlinear saturation which rely
+on the presence of many modes in /c-space [Coroniti, 1977; Biskamp et  al.,
+1970] are not applicable here. The late-time amplitudes are large in our
+simulations: (Bx)/Bq ~ (v/^Pe/^)1 ~ 0-3 at time GOOu;^1. In addition, {Bx)
+continues to increase at late times in the simulation, with trapped flux grow­
+ing linearly with time. This late-time continued growth, which has not been
+reported in previous particle-in-cell computer simulations, qualitatively re­
+sembles the Sweet-Parker phase predicted for MHD reconnection [Parker,
+1979], and would be a particularly interesting case for further analysis.
+    Generally, the sheared magnetic field configuration displays much of
+the behavior observed in the nonsheared studies. In particular, spontaneous
+reconnection can occur in both cases; it can be characterized as having three
+regimes; and with small enough Bxq, can exhibit the late time oscillation
+of the trapped flux mediated by the ion mass. In some cases, however, the
+plasma is unable to mimic zero-shear behavior until it has expelled enough
+Bz so that local values are below thresholds determined by questions of
+electron mobility. We find, in particular, that the rapid coalescence of small
+filaments into large current channels at the O-points are inhibited until the
+Bz  field along the original By  field null  is suitably reduced.   Similarly,
+the zero-shear simulations exhibited flux oscillations as the un-magnetized
+electrons respond to E x B and ambipolar forces. We find that with strong
+shear this oscillation is inhibited unless the local field is below a threshold
+
+Bzc-
+   This research was performed under the auspices of the U.S. Department
+of Energy by the Lawrence Livermore National Laboratory under contract
+no. W-7405-ENG-48.
+
+
+                                     9
+
+===== PDF PAGE 11 =====
+References
+
+
+Biskamp, D., R.Z. Sagdeev, and K. Schindler, Nonlinear evolution of the
+     tearing instability in the geomagnetic tail, Cosmic Electrodynamics 1,
+    297 (1970).
+
+Chen, J., and P. Palmadesso, Tearing instability in an anisotropic neutral
+     sheet, Phys. Fluids 27, 1198 (1984).
+
+Coppi, B., G. Laval, and R. Pellat, Dynamics of the geomagnetic tail, Phys.
+    Rev. Lett., 16, 1207 (1966).
+
+Coroniti, F.V., and C.F. Kennel, Polarization of the auroral electrojet, J.
+    Geophys. Res. 77, 3361 (1972).
+
+Coroniti, F.V., Nonlinear evolution of the collisionless tearing mode, Phys.
+    Rev. Lett. 38, 1355 (1977).
+
+Cowie, L.L., and C.F. McKee, The evaporation of spherical clouds in a hot
+     gas, 1. Classical and saturated mass loss rates, Astrophys. J. 211, 135
+     (1977).
+
+Gekelman, W., and H. Pfister, Experimental observation and theoretical
+     analysis of the tearing mode in an electron current sheet, Bull. Am.
+     Phys. Soc. 32, 1753 (1987).
+
+Gekelman, W., and R.L. Stenzel, Magnetic field line reconnection experi­
+    ments 2. Plasma parameters, J. Geophys. Res. 86, 659 (1981).
+
+Harris, E.G., On a plasma sheath separating regions of oppositely directed
+    magnetic field, Nuovo Cimento 23, 115 (1962).
+
+Hewett, D.W., G.E. Francis, and C.E. Max, New regimes of magnetic re­
+     connection in collisionless plasmas, Phys. Rev. Lett. 61, 893, August
+      15, (1988).
+
+
+
+                                       10
+
+===== PDF PAGE 12 =====
+Hewett, D.W., and A.B. Langdon, Electromagnetic direct implicit plasma
+     simulation, J. Comp. Phys. 72, 121 (1987).
+
+Hoshino, M., The electrostatic effect for the collisionless tearing mode, J.
+    Geophys. Res. 92, 7368 (1987).
+
+Katanuma,  I., and T. Kamimura, Simulation studies of the collisionless
+     tearing instabilities, Phys. Fluids 23, 2500 (1980).
+
+Laval, G., R. Pellat, and M. Vuillemin, Instabilites electromagnetiques des
+    plasmas sans collisions, in Plasma Physics and Controlled Nuclear Fusion
+     Research, Vol. 2, p.259, (I.A.E.A., Vienna, 1966).
+
+Leboeuf, J.N., T. Tajima, and J.M. Dawson, Dynamic magnetic X points,
+    Phys. Fluids 25, 784 (1982).
+
+Leboeuf, J.N., F. Brunei, T. Tajima, J. Sakai, C.C. Wu, and J.M. Dawson,
+    Computer modeling of fast collisionless reconnection, in Magnetic Re­
+     connection in Space and Laboratory Plasmas, edited by E.W. Hones (Am.
+    Geophys. Union, Washington DC, 1984), pg. 282.
+
+Parker, E.N., Cosmical Magnetic Fields, (Clarendon Press, Oxford, 1979),
+    chapter 15.
+
+Russell, C.T., and R.L. McPherron, The magnetotail and substorms, Space
+     Sci. Rev. 15, 205 (1973).
+
+Schindler, K., in Dynamics of the Magnetosphere, edited by  S.-I. Akasofu
+     (Reidel, Hingham, Mass., 1980), page 311.
+
+Stenzel, R.L., and W. Gekelman, Experiments on magnetic field-line recon­
+     nection, Phys. Rev. Lett. 42, 1055 (1979).
+
+Stenzel, R.L., and W. Gekelman, Magnetic field line reconnection experi­
+    ments 1. Field topologies, J. Geophys. Res. 86, 649 (1981).
+
+
+
+
+                                           11
+
+===== PDF PAGE 13 =====
+Figure Captions
+
+Figure  1.  a) Profiles of initial electrostatic field Ex (dashed) and mag­
+netic field Bv  (solid) across the neutral sheet.  Both fields have units of
+meccjpeo/e.  The sheet current in the z direction  is carried by electrons.
+Ions are contained by the electrostatic  field.  The initially uniform elec­
+tron and ion temperatures are Te±/mec2 — 2.8 x 10-2,  Te|| = (4/9)2Ylj
+Tilmec2 = 8.0 x 10-2. (b-d): Magnetic flux contours (solid) and separatrix
+(dotted) in x-y plane: (b) At t = SOo;^1, showing small-scale electron-driven
+filaments; (c) Att = lOOw^1, as coalescence begins; (d) At t = 410a;“(.1, with
+only one X-point remaining.
+
+
+Figure 2. The current-aligned component of the (a) electric field at time
+t = 2400;"/, consistent with the magnetic flux configuration of Fig. Id and
+(b) the magnetic quadrupole structure of the current-aligned component of
+the magnetic field for the same time.
+
+
+Figure 3. Trapped magnetic flux vs time, for six different M,/me.  In all
+cases, Te|j/Tex = 4/9 initially. The long-time linear growth is proportional
+to
+
+
+Figure 4. Time evolution of an idealized simulation with initial Te\\/Te± = 0
+and Mi/me = 2000:  (a) trapped magnetic flux; (b) peak-to-peak amplitude
+of quadrupole magnetic field Bz\ (c) electron flow energy in the y- and z-
+directions versus time; and (d) Ez (dots) and Jz (triangles) at the y-position
+of the X-point, averaged over x.
+
+
+Figure 5.  Trapped magnetic flux vs time with (a)  all parameters equal
+except for different Tey/rex. Shown in (b) is a comparison with Te||/Tex =
+4/9 but with one run having an order of magnitude more particles.
+
+
+
+
+
+                                         12
+
+===== PDF PAGE 14 =====
+Figure 6. Time histories of the Fourier amplitudes for the many particle
+run shown in Fig.  5b.  The most unstable mode ky — 0.2a>pe/c clearly
+dominates the mode with half the wavelength kv = QA<jjpe/c that appears
+to be the most unstable early in the high noise runs (as in Fig. lb).
+
+
+Figure 7. Trapped magnetic flux vs time for four different values of the
+initial guide magnetic field Bzq. Electrons in the neutral sheet are strongly
+magnetized for Bzq > 0.18.
+
+
+Figure 8.  a) Contour map of the guide magnetic field at time t = 410u;~e1
+for the case B^ = 2B0 = 0.24 of Fig.  4. The field inside of the island
+is below the threshold Bzc.  b) Magnetic flux contours at the same time
+indicating the position of the magnetic island.
+
+
+
+
+
+                                        13
+
+===== PDF PAGE 15 =====
+                                                           (b)
+         (a)
+
+
+10
+
+X
+ c/e)
+
+(m
+
+
+B
+
+
+
+
+                 x (C/ttpJ
+
+
+        (c)                                                   (d)
+
+
+ (C/Mpe)
+y
+
+
+
+
+
+                  X (c/G)    )                                  X (c/O)     )
+
+===== PDF PAGE 16 =====
+- 10   1                                          C2
+
+
+
+    3 .00 —
+
+
+
+
+
+     J .00 —
+
+
+
+
+
+                       -0.50                0.00                0.50
+
+
+
+
+
+                         -0  . so
+
+
+
+
+
+                                                                 ?■
+
+===== PDF PAGE 17 =====
+ r
+ (a
+
+x
+ilu
+
+d
+
+===== PDF PAGE 18 =====
+Electron flow energy
+                                Trapped flux
+                                 P                                 O  9cn        .■*O      r1cn
+
+
+
+
+
+                                                z'quad
+
+    o    ro     £*        <7>
+
+
+
+
+
+       b«-*  bK)   oW
+
+===== PDF PAGE 19 =====
+                         T^/T., = 4/9.  N, = N.=27.000
+
+
+                         T^/T., =0. N,=N.=27.000
+
+
+
+
+
+                        Time (in units of        ')
+
+
+
+
+
+.5 -                                                  N,=N.=216.000
+                                                       N,=N.= 27.000
+
+
+
+
+
+                         Time (in units of u^,  ')
+
+===== PDF PAGE 20 =====
+                                                                                 T        I             T    T                         i              i              i       r            i              i                 i                      i
+
+
+
+
+
+                               .06
+
+
+                                                        ky=27T/Ly=0.2cjpe/c
+
+
+                                                           cv
+                                                     ky=47T/Ly=0.4wpe/c
+                                .04
+                 c
+                                                                                                    li
+
+
+                                  CD
+
+
+
+                                .02
+
+
+
+
+
+                                                                                                                                                                                                                                     i              i                 i            J____  I                                                        i              i              i             i   i—i
+                                        50          100         150         _1200        250         300
+                                                 Time  (in units of  cjpe    )
+
+
+C
+
+===== PDF PAGE 21 =====
+^ -X
+
+
+               Trapped Flux (arbitrary units)
+
+
+    o                   cn                                       cn                    ro
+
+
+
+   100
+
+
+   200
+
+ Time   300
+(in
+ units   400
+of
+ cope
+
+
+)
+     _1500
+
+
+   600               CH  tn
+
+
+   700
+
+===== PDF PAGE 22 =====
+N
+
+
+
+
+
+                              I                                                                                                                                                                                              I
+         o'                    5                 5
+o        re                  M
+                                                                                            fi

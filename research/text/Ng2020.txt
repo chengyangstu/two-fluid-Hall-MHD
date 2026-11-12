@@ -1,0 +1,1127 @@
+An improved ten-moment closure for reconnection and instabilities
+Jonathan Ng,1, 2, a) A. Hakim,3 L. Wang,3 and A. Bhattacharjee1, 3, 4
+1)Department of Astrophysical Sciences, Princeton University, Princeton, NJ 08542
+2)Department of Astronomy, University of Maryland, College Park, MD 20742
+3)Princeton Plasma Physics Laboratory, Princeton NJ 08543
+4)Princeton Center for Heliophysics, Princeton University, Princeton NJ 08542
+(Dated: 26 July 2020)
+The integration of kinetic eﬀects in ﬂuid models is important for global simulations of the Earth’s magneto-
+sphere. The use of the two-ﬂuid ten-moment model, which includes the pressure tensor for both species, has
+had some success in simulating Ganymede and Mercury with a simple closure model. We discuss a heat ﬂux
+closure which accounts for some limitations of the earlier work while remaining computationally tractable.
+Comparisons with kinetic simulations for magnetic reconnection and lower-hybrid drift instabilities show good
+agreement with kinetic results and improvements on previous closure models.
+I.
+INTRODUCTION
+The modelling of large-scale collisionless plasma envi-
+ronments such as magnetospheres is a challenging prob-
+lem, as it requires the coupling of global features to small-
+scale physics. Most global models of the Earth’s mag-
+netosphere use Magnetohydrodynamics (MHD), which
+treats the plasma as a single conducting ﬂuid1–3. While
+these models can simulate the large spatial and temporal
+scales involved, they are missing the small-scale kinetic
+physics.
+There are many approaches to adding physical eﬀects
+beyond MHD in simulation models, such as the inclu-
+sion of pressure anisotropy4,5, the Hall-current term6,7,
+the use of hybrid codes with kinetic ions and ﬂuid
+electrons8–11 and embedding kinetic boxes within larger-
+scale ﬂuid simulations12,13.
+In this paper we consider the multi-ﬂuid moment
+model, in which moments of the kinetic equation up
+to the pressure tensor are evolved. This has been used
+in local studies of reconnection and instabilities14–21, as
+well as global simulations of Ganymede22, Mercury23 and
+Uranus24. While these studies have had some success in
+terms of both theoretical results and observational com-
+parisons, the issue of closure (in this case the form of
+the heat ﬂux) still remains, both in terms of physical
+modelling and computational cost. In contrast to ear-
+lier studies, which have used a nonlocal Landau-ﬂuid-
+like closure18, which is costly, or a local relaxation to
+isotropy16,17, which has limitations, to approximate ki-
+netic eﬀects, we employ an eﬀective thermal conductiv-
+ity. This is similar to the approaches used in Refs. 21
+and 25, and we perform comparisons with both kinetic
+simulations and other closure approximations.
+The scope of this paper is conﬁned to two test prob-
+lems which have been studied extensively using two-ﬂuid
+and kinetic models. We ﬁrst study magnetic reconnec-
+tion using the island coalescence geometry. While this is
+a)Electronic mail: jonng@umd.edu
+an idealised setup, the merging of ﬂux tubes is an impor-
+tant process for particle acceleration and energy transfer
+in space and astrophysical plasmas26–28. Previous kinetic
+studies of coalescence have shown that the normalised re-
+connection rate is aﬀected by the system-size29,30, a re-
+sult which cannot be reproduced by Hall-MHD because of
+the importance of ion physics. How well the ten-moment
+model reproduces these kinetic results depends on the
+closure used – in Refs. 17 and 18 the importance of the
+ion pressure tensor could only be recovered at small sys-
+tem sizes, while Ref. 21 found good agreement up to large
+system sizes. We ﬁnd that we are able to reproduce the
+kinetic system-size scaling29 as well the structure of the
+ion diﬀusion region in guide-ﬁeld reconnection.
+We then study the lower-hybrid drift instability
+(LHDI), which is driven by diamagnetic currents in in-
+homogeneous plasmas31.
+This instability is found at
+the edge of current sheets in both simulations and
+observations32–34. In the magnetosphere, the LHDI may
+drive turbulence during magnetopause reconnection35,36,
+and can quicken the onset of reconnection in regimes rel-
+evant to magnetotail reconnection37,38. Prior studies of
+the LHDI using the ten-moment model show that it is
+important to retain the ion kinetic eﬀects using the non-
+local closure19,20, and we ﬁnd the heat ﬂux closure in this
+work is able to reproduce the growth of the LHDI in a
+current sheet.
+This paper is organised as follows: In Section II we
+discuss the ten-moment equations used in this paper and
+various closures. Section III describes a study of recon-
+nection using the island coalescence geometry and sim-
+ulations of the LHDI are discussed in Section IV. We
+summarise the results in Section V.
+
+II.
+FLUID MODEL
+The ten-moment equations are derived by taking mo-
+ments of the kinetic equation
+∂n
+∂t +
+∂
+∂xj
+(nuj) = 0
+m ∂
+∂t(nui) + ∂Pij
+∂xj
+= nq(Ej + ϵijkujBk)
+∂Pij
+∂t
++ ∂Qijk
+∂xk
+= nqu[iEj] + q
+mϵ[iklPkj]Bl,
+(1)
+where Pij and Qijk are the second and third moments of
+the distribution function
+Pij ≡m
+Z
+vivjfd3v
+Qijk ≡m
+Z
+vivjvkfd3v,
+(2)
+and the square brackets denote a sum over permutations
+of the indices (e.g. u[iEj] = uiEj + ujEi).
+The third
+moment tensor Qijk can be written in terms of the heat
+ﬂux tensor qijk ≡m
+R
+(vi −ui)(vj −uj)(vk −uk)fd3v
+Qijk = qijk + u[iPjk] −2mnuiujuk.
+(3)
+In earlier work, the closure of the equations in the col-
+lisionless limit used a three-dimensional extension of the
+Hammett-Perkins closure18, which can be expressed as
+follows for both electrons and ions39:
+qijk(x) = n(x)ˆqijk(x)
+(4)
+where ˆqijk in Fourier space is ˜qijk and is calculated as
+˜qijk = −i vt
+|k|χk[i ˜Tjk].
+(5)
+Here ˜Tjk is the Fourier transform of the deviation of the
+local temperature tensor from the mean. The 1/|k| scal-
+ing makes this a non-local closure when expressed in real
+space40,41 and provides a 1 to 3 pole Pad´e approximation
+of various components of the dielectric tensor. The coef-
+ﬁcient χ =
+p
+4/9π is the best ﬁt value for the diagonal
+qiii component and reduces to the closure in Refs.39,40
+in the 1-D limit. This is an unmagnetised closure (espe-
+cially relevant to ions in this geometry in which there is
+no guide ﬁeld) which approximates linear phase mixing,
+allowing the wavenumber-dependent damping of spurious
+short-wavelength oscillations which are present in higher
+moment ﬂuid models40,42.
+The evaluation of the nonlocal closure is computation-
+ally expensive due to the need to take the Fourier trans-
+form, which scales as O(N log N) and requires global
+communications in parallel systems, every time step.
+This makes it unsuitable for large scale simulations. Al-
+though our previous work used the nonlocal method with
+improvements in the results18, the computational cost
+was much greater than when using the simpler closure
+of Refs.16,17, which relaxes the pressure tensor to local
+isotropy.
+In this work we use an approximation similar to that
+of Sharma et al.25, which replaces the nonlocal heat
+ﬂux with a local heat ﬂux by picking a characteristic
+wavenumber in Eq. (5). This is equivalent to using a ther-
+mal conductivity and was used in studies of ﬂuid simula-
+tions of the magnetorotational instability25 The resulting
+expression is
+qijk = −vt
+|ks|χ∂[iTjk],
+(6)
+where ks is a constant or spatially varying parameter for
+each species. In comparison to Refs 16, 17, 43, and 44, in
+which ∂iqijk is replaced by a relaxation term proportional
+to (Pij −1
+3trace(P)δij), this provides a local approxima-
+tion to the heat ﬂux rather than just an isotropisation.
+Heuristically, the closure is obtained by replacing the
+|k| in the denominator of Eq. (5) by a constant (or spa-
+tially dependent) k0, while the model of Refs. 16 and 17
+replaces all the ks with a constant. Equation (6) is simi-
+lar to the gradient-driven closure used in Ref. 21, though
+they use the approximation ∂mqijm ∝∇2(Pij −pδij).
+where p is the local isotropic pressure. The main diﬀer-
+ences are the explicit form of the heat-ﬂux tensor, and
+the use of temperature gradients rather than gradients of
+the deviation from isotropy. Our approximation is closer
+to that of Ref. 25 extended to multiple dimensions. We
+also note that ∂mqijm is not traceless and there is no
+explicit relaxation to isotropy in the closure used here,
+unlike earlier models which use the isotropisation as an
+approximation16,21, or a heuristic isotropisation term to
+account for electron-scale instabilities43,44.
+The moment equations coupled to Maxwell’s equa-
+tions are implemented in the ﬁnite-volume module of
+Gkeyll, which uses a high-resolution wave propagation
+method for the hyperbolic part of the equations and a
+local implicit method for the source terms14,45,46. The
+parabolic source term is evolved using a super-time-
+stepping method47.
+III.
+RECONNECTION
+A.
+Simulation set-up
+We perform two-ﬂuid ten-moment simulations of the
+island coalescence problem to study the eﬀect of the clo-
+sure described above. The initial conditions are a Fadeev
+equilibrium48, described by
+Ay = −λB0 ln [cosh(z/λ) + ϵ cos(x/λ)]
+n = n0(1 −ϵ2)/ [cosh(z/λ) + ϵ cos(x/λ)]2 + nb.
+(7)
+Here B0 is the x-component of the magnetic ﬁeld up-
+stream of the layer, ϵ controls the island size and λ is the
+2
+
+half width of the current sheet. We use the same physical
+parameters as described in previous studies17,29,30, with
+ϵ = 0.4, which corresponds to an island half-width of ap-
+proximately 1.2λ, and background density nb = 0.2n0.
+The simulations are translationally symmetric in the y
+direction and the system size is Lx × Lz = 4πλ × 2πλ,
+with periodic boundary conditions in the x direction.
+Conducting walls for ﬁelds and reﬂecting walls for ﬂuid
+quantities (and particles in the comparison kinetic simu-
+lations) are used in the z direction. For λ/di = 5, we use
+640 × 320 cells, and maintain the same grid-spacing for
+larger systems. We use mass ratio mi/me = 25, electron
+thermal speed vt,e/c = 0.35 and Ti = Te = T, and the
+value of T is set by the upstream equilibrium condition
+β = 1. The ratio of electron plasma frequency to gyrofre-
+quency is ωpe/Ωce = 2. A 10% initial perturbation in the
+magnetic ﬁeld is applied to initiate merging in the centre
+of the domain. The closure parameter for each species is
+set as k0,s = 1/ds, where ds is the species inertial length.
+The reference kinetic results in this study were performed
+using VPIC49 and PSC50.
+In this geometry, the initial islands are unstable to the
+coalescence instability51 and approach each other, caus-
+ing a reconnecting current sheet to form in the centre
+of the domain. The peak reconnection rate is reached
+around t = tA, one global Alfv`en time of the system. We
+deﬁne the reconnection rate as ER = (1/B′V ′
+A)∂ψ/∂t in
+the same manner as Refs.17, 29, and 30, where B′ and
+V ′
+A are calculated using the maximum in-plane magnetic
+ﬁeld between the centres of the two islands at t = 0.
+The ﬂux within an island ψ is deﬁned as the diﬀerence
+between Ay at the X- and O-points.
+B.
+Reconnection rate
+We ﬁrst compare the reconnection rates using the ten-
+moment model to the results of kinetic simulations with
+varying system size and guide ﬁelds.
+The results are
+shown in Fig. 1, which compares the average reconnec-
+tion rates (over 1.5tA) found in a Hall-MHD, two-ﬂuid
+and kinetic models. The use of the average rate rather
+than the peak rate is because reconnection in this system
+does not reach a steady-state. Similar comparisons have
+been performed in Refs 17, 18, and 29. As mentioned
+earlier, the kinetic simulations showed a reduction of re-
+connection rate with system size. This was attributed to
+ion kinetic eﬀects29, and was only reproduced in smaller
+systems when using the local and nonlocal ten-moment
+closures17,18, though the work of Ref. 21 did reproduce
+the kinetic scaling. When using the closure in Eq. (5),
+we obtain good agreement between the kinetic and ten-
+moment results at larger systems as well.
+With the addition of a guide ﬁeld, reconnection rates
+in kinetic simulations tend to return to Hall-MHD like
+values as the guide ﬁeld increases52. This was attributed
+to a combination of a narrower ion-diﬀusion region and
+a reduction in the eﬀects of the non-gyrotropic ion pres-
+101
+4 × 100
+6 × 100
+2 × 101
+3 × 101
+/di
+10
+2
+10
+1
+ER
+Avg. reconnection rate
+Kinetic
+Nonlocal
+Local
+Hall MHD
+Gradient
+( /di)
+0.8
+FIG. 1. Variation of average reconnection rates with system
+size for Bg = 0 using kinetic, Hall-MHD, ten-moment models
+with local, nonlocal and gradient-driven closures.
+The line
+shows the (λ/di)−0.8 scaling found in Ref. 29.
+0.00
+0.25
+0.50
+0.75
+1.00
+1.25
+1.50
+1.75
+2.00
+Bg/B0
+0.4
+0.5
+0.6
+0.7
+0.8
+ER
+Max. reconnection rate
+Kinetic
+Local
+Gradient
+FIG. 2. Variation of maximum reconnection rates with guide
+ﬁeld for λ/di = 5 using the gradient-driven closure. Local
+and kinetic rates are from Ref.52.
+sure tensor. As shown in Figure 2, the maximum rate
+increases with guide ﬁeld up to Bg/B0 = 1, before de-
+creasing at a higher guide ﬁeld, consistent with the rates
+obtained in kinetic simulations and ﬂuid simulations us-
+ing the local closure. As noted in Ref. 52, this behaviour
+diﬀers from the expectations of guide-ﬁeld reconnection
+in symmetric current sheets, in which the reconnnection
+rate decreases for larger Bg. A similar trend is observed
+for the average reconnection rates.
+C.
+Ion pressure tensor
+In the fully kinetic and hybrid studies of island
+coalescence29,52, it was shown that for comparable Ti and
+Te, a broad (2–3 di) ion diﬀusion region develops. Within
+this region, the non-ideal electric ﬁeld is balanced by the
+divergence of the ion pressure tensor, in contrast to Hall
+MHD, where the ion inertia and resistivity balance the
+electric ﬁeld in a narrower diﬀusion region.
+This was
+3
+
+4
+2
+0
+2
+4
+0.0
+0.5
+ER
+Bg/B0 = 0
+Ion momentum equation
+4
+2
+0
+2
+4
+0.0
+0.5
+ER
+Bg/B0 = 0.4
+E + v × B
+P/nie
+midvi/dt
+4
+2
+0
+2
+4
+x[di]
+0.0
+0.5
+ER
+Bg/B0 = 2.0
+FIG. 3. Decomposition of the ion momentum equation show-
+ing the varying thickness and relative contributions of the ion
+inertia and pressure tensor at diﬀerent values of the guide
+ﬁeld. The Bg = 2 case used higher spatial resolution to re-
+solve the electron gyroradius. This aﬀected the peak value of
+∇· P but not the maximum reconnection rate.
+accompanied by ion anisotropy and agyrotropy, and the
+reduced reconnection rates were thus attributed to ion
+kinetic eﬀects.
+When using the ten-moment model, it was shown17,18
+that in small systems (di/L = 5), the wider ion diﬀusion
+region could be reproduced by modifying the free pa-
+rameter in the ion pressure relaxation or by using the
+nonlocal closure.
+In Figure 3 we present the decom-
+position of the ion momentum equation in the out-of-
+plane direction for simulations with λ/di = 5 and vary-
+ing guide ﬁeld. Using the temperature-gradient driven
+closure, when Bg = 0, the spatial extent of the non-ideal
+electric ﬁeld shows that the wider ion diﬀusion region
+is still observed, and the ion pressure tensor is respon-
+sible for balancing the electric ﬁeld.
+As Bg increases,
+the diﬀusion region becomes narrower, and the relative
+contribution of the inertial term becomes larger. These
+results are consistent with the earlier kinetic studies29,52.
+The importance of the ion pressure tensor is also be
+highlighted by using aother common metric, the agy-
+rotropy A∅, which measures the deviation of the distribu-
+tion function from cylindrical symmetry53. This quantity
+is shown in Fig. 4. In Ref. 18 it was shown that the non-
+local closure was able to reproduce the features of the ion
+agyrotropy found in kinetic simulations, while the model
+using local relaxation had qualitative discrepancies. In
+Fig. 4 we compare the structure of the ion agyrotropy
+in the ﬂuid and kinetic simulations.
+When using the
+temperature-gradient driven closure, the features of the
+ion agyrotropy in the reconnection region are reproduced,
+with enhancement both upstream and downstream en-
+hancements. This was previously only possible when us-
+ing the nonlocal closure18. In contrast, the structure of
+the agyrotropy when using the local relaxation is qual-
+5
+0
+5
+z[di]
+Kinetic
+Ion agyrotropy
+5
+0
+5
+z[di]
+Gradient
+closure
+5
+0
+5
+z[di]
+Nonlocal
+closure
+6
+4
+2
+0
+2
+4
+6
+x[di]
+5
+0
+5
+z[di]
+Local
+closure
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25
+0.30
+0.35
+FIG. 4. Comparison of ion agyrotropy between kinetic and
+various ten-moment closures for λ/di = 5 and Bg = 0.
+itatively diﬀerent, with little enhancement downstream
+and two distinct regions upstream.
+D.
+Electron pressure tensor
+A weakness of the ten-moment closures used in Refs. 17
+and 18 is the description of the electron dynamics. While
+the oﬀ-diagonal components are suﬃciently large to bal-
+ance the reconnection electric ﬁeld at the x-point in
+agreement with kinetic simulations16, the larger scale
+structure of the electron anisotropy is not reproduced.
+This is because the electrons are isotropised too strongly.
+When using the local isotropisation, the relaxation rate of
+approximately vt,e/de is fast compared to the time scales
+of the system, while the closure used in Ref. 18 eﬀectively
+allows too much heat-ﬂux across ﬁeld lines. As electron
+pressure anisotropy (p∥/p⊥) is important for setting the
+structure of reconnection regions54,55, it is important for
+the electron model to allow anisotropy to develop.
+Figure. 5 shows the electron pressure anisotropy from
+the Bg = 0, λ/di = 5 simulation using the various mod-
+els.
+In the kinetic simulation, p∥is larger than p⊥in
+the region outside the two merging islands, but smaller
+than p⊥in the reconnection outﬂow. Electron anisotropy
+also develops outside the main island. As mentioned ear-
+lier, the electron pressure is almost isotropic when using
+local relaxation, aside from a small region around the x-
+point. The nonlocal closure shows some anisotropy but
+the values do not approach those of found in the kinetic
+simulation.
+There are still discrepancies between the ﬂuid and ki-
+4
+
+10
+0
+10
+z[di]
+Kinetic
+Electron anisotropy
+10
+0
+10
+z[di]
+Gradient
+closure
+10
+0
+10
+z[di]
+Nonlocal
+closure
+30
+20
+10
+0
+10
+20
+30
+x[di]
+10
+0
+10
+z[di]
+Local
+closure
+0.6
+0.8
+1.0
+1.2
+1.4
+FIG. 5. Comparison of electron anisotropy between kinetic
+and various ten-moment closures.
+netic model.
+There is no clear boundary between the
+main island and the outside regions at larger |z|, and
+there is no large p∥/p⊥along the z = 0 line as can be
+seen in the kinetic simulations. The agreement can be
+improved by treating diﬀusion parallel and perpendicu-
+lar to the magnetic ﬁeld diﬀerently, as will be discussed
+in Section V.
+IV.
+LOWER-HYBRID DRIFT INSTABILITY
+In thin current sheets with density gradients, the lower-
+hybrid drift instability (LHDI) can be excited. This is
+an instability driven by the diamagnetic current with a
+broad range of wavenumbers (me/mi)1/4 < kρe < 1 with
+frequency ω ≈Ωlh ∼√ΩceΩci31,56.
+The ﬂuctuations
+are located at the edge of the current sheet, where the
+density gradient is strongest, and have been observed in
+space, experiments and simulations32,33,57.
+We have shown previously in eigenmode calculations
+and simulations that the ten-moment model is able to
+capture the LHDI in the regime where the ion kinetic
+response is important when using a nonlocal heat-ﬂux
+closure, while using the local relaxation of the pressure
+tensor led to parameter-dependent results19. In particu-
+lar, using the same relaxation parameters as in reconnec-
+tion simulations led to greatly reduced growth rates.
+Here we repeat the simulations performed in Ref. 19
+to show the development of the LHDI using the gradient-
+driven closure. The initial conditions are a Harris sheet
+in the y-z plane, with L = ρi, vt,e = 0.06c, mi/me = 36,
+Ti/Te = 10 with Ly × Lz = 6.4L × 12.8L. The simula-
+tions are given an initial perturbation with mode number
+8, which corresponds to kyρe ≈0.41. For these parame-
+ters, the kinetic ion response is important. We use both
+ks = 1/ds, which is used in reconnection simulations,
+and ks = ky to show the eﬀect of varying the eﬀective
+conductivity parameter. The results are compared to the
+Vlasov-Maxwell simulations in Ref. 19.
+The structure of the electric ﬁeld Ey at tΩci = 6 is
+shown in Fig. 6, in which we compare the ten-moment
+results to the kinetic results of Ref. 19. The LHDI is ex-
+cited in both ﬂuid simulations away from the centre of the
+current sheet, as expected for the electrostatic LHDI58.
+The measured growth rate with ks = ky is 0.86Ωci, while
+with ks = 1/ds, the growth rate is 1.33Ωci. In the ki-
+netic simulations of Ref. 19, the growth rate was 1.1Ωci,
+consistent with the growth rate from linear theory31 in
+the most unstable region around z/L = 1.6. For compar-
+ison, the growth rate when using the local closure (with
+k0,i = ky, k0,e = 0 as in Ref.19) is 0.34Ωci, and the max-
+imum Ey is an order of magnitude smaller at this time
+slice.
+For the ks = ky case, in which the free parameter is
+tuned to match the wavenumber of the excited mode, the
+structure of the LHDI electric ﬁeld is consistent with the
+kinetic result, and the slower growth rate is similar to
+that obtained when using the nonlocal closure19 (0.86Ωci
+vs 0.84Ωci). When ks = 1/ds, the growth rate is faster,
+the mode structure has multiple peaks, and the LHDI
+electric ﬁeld is stronger (we have reduced Ey by a factor
+of two in Fig. 6).
+Because of the faster growth rate,
+it is likely that other harmonics58 have been excited and
+contribute to the electric ﬁeld. We have conﬁrmed this by
+looking at the electric ﬁeld structure at earlier times, at
+which the mode structure is similar to the kinetic result.
+These results show that it is possible to simulate both
+reconnection and the LHDI using the same parameters
+(ks ≈1/ds), which was not possible with the local re-
+laxation of the pressure tensor19,20.
+The role of the
+LHDI during the reconnection process is beyond the
+scope of this paper and will be the subject of future
+work. In kinetic simulations, it has been shown that the
+LHDI can increase the tearing mode growth rate prior to
+reconnection37,59, or lead to particle mixing36 and cause
+apparent anomalous resistivity and viscosity35.
+It will
+thus be important to determine if the diﬀerent growth
+rates obtained using the ﬂuid model aﬀect the physics of
+the reconnecting current sheet.
+V.
+DISCUSSION
+The use of a temperature-gradient-driven closure with
+the two-ﬂuid ten-moment model shows marked improve-
+ments over previous approximations17,18. For reconnec-
+tion in the island coalescence geometry, the reconnection
+rate shows a strong scaling with system size in agreement
+with kinetic simulations29 and a diﬀerent implementation
+of the gradient-driven closure21.
+In the case of guide-
+5
+
+5
+0
+5
+z [
+i]
+Ey, Kinetic
+5
+0
+5
+z [
+i]
+Ey/2, Fluid, ks = 1/ds 
+3
+2
+1
+0
+1
+2
+3
+y [
+i]
+5
+0
+5
+z [
+i]
+Ey, Fluid, ks = ky
+0.4
+0.2
+0.0
+0.2
+0.4
+FIG. 6. Structure of Ey in simulations of the LHDI at tΩci =
+6. Ey is normalised to B0vA0. The electric ﬁeld is reduced
+by a factor of two in the middle plot so the colours are not
+washed out as the growth rate is faster using the model with
+ks = 1/ds.
+ﬁeld reconnection, the variation of the reconnection rate
+is consistent with fully kinetic and hybrid studies52, as
+is the structure of the ion diﬀusion region. We have also
+been able to simulate the lower-hybrid drift instability in
+a current sheet with the ten-moment model, which was
+previously only possible when using a nonlocal closure or
+tuning the model parameters carefully19.
+To date, the only large-scale simulations performed us-
+ing the ten-moment model have used local relaxation of
+the pressure tensor20,22,23, with some success in compari-
+son to observations. The closure used in this paper, while
+having larger computational costs, shows better agree-
+ment with kinetic simulations, particularly for the recon-
+nection and instability physics being investigated20,22,23.
+An underlying reason behind the improvement is that the
+new closure can be understood as a relaxation of tem-
+perature to uniformity at a rate proportional to k2/|k0|
+(in Fourier space) compared to a relaxation to isotropy
+with a ﬁxed rate. This causes a lower relaxation rate at
+long wavelengths and a faster rate at short wavelengths,
+though the form diﬀers from the |k|vt of Ref. 39 and
+there is a free parameter. It is interesting to note that
+the use of the closure in this paper gives better agreement
+with kinetic results than the full nonlocal version used in
+Ref. 18. This is because the implementation [Eq. (5)] is
+unmagnetised. The consequences of this can be seen in
+the better description of ion physics than electron physics
+as shown in Section III D since ρi > ρe, and the discrep-
+ancies at larger system sizes, where ρi becomes smaller
+compared to the system size. The eﬀective k2/|k0| scal-
+ing of the new closure reduces the contribution of longer
+wavelength perturbations to the heat ﬂux, which is a bet-
+ter physical description.
+Further improvements to the
+model may include the modiﬁcation of Eq. (6) so that the
+parallel and perpendicular heat-ﬂuxes are treated sepa-
+rately. This will allow the perpendicular heat ﬂux to be
+reduced in regions where the magnetic ﬁeld is strong.
+This work was supported by DOE Contract DE-AC02-
+09CH11466, DOE Award DE-SC0016278 and NSF Grant
+AGS-1338944. We thank G. Hammett for many discus-
+sions about closures. The data that support the ﬁndings
+of this study are available from the corresponding author
+upon reasonable request.
+1J. Raeder, J. Berchem, and M. Ashour-Abdalla, “The geospace
+environment modeling grand challenge: Results from a global
+geospace circulation model,” Journal of Geophysical Research:
+Space Physics 103, 14787–14797 (1998).
+2G. T´oth, I. V. Sokolov, T. I. Gombosi, D. R. Chesney, C. R.
+Clauer, D. L. De Zeeuw, K. C. Hansen, K. J. Kane, W. B. Manch-
+ester, R. C. Oehmke, K. G. Powell, A. J. Ridley, I. I. Roussev,
+Q. F. Stout, O. Volberg, R. A. Wolf, S. Sazykin, A. Chan, B. Yu,
+and J. Kota, “Space weather modeling framework: A new tool for
+the space science community,” Journal of Geophysical Research:
+Space Physics 110 (2005), 10.1029/2005JA011126.
+3P. Janhunen, M. Palmroth, T. Laitinen, I. Honkonen, L. Juu-
+sola, G. Facsk´o,
+and T. Pulkkinen, “The gumics-4 global mhd
+magnetosphere–ionosphere coupling simulation,” Journal of At-
+mospheric and Solar-Terrestrial Physics 80, 48–59 (2012).
+4G. Chew, M. Goldberger,
+and F. Low, “The boltzmann equa-
+tion and the one-ﬂuid hydromagnetic equations in the absence of
+particle collisions,” Proc. R. Soc. Lond. A 236, 112–118 (1956).
+5X. Meng, G. Toth, M. W. Liemohn, T. I. Gombosi,
+and
+A. Runov, “Pressure anisotropy in global magnetospheric simula-
+tions: A magnetohydrodynamics model,” Journal of Geophysical
+Research: Space Physics 117 (2012), 10.1029/2012JA017791.
+6A. Otto, “Geospace environment modeling (gem) magnetic re-
+connection challenge: Mhd and hall mhdconstant and current
+dependent resistivity models,” Journal of Geophysical Research:
+Space Physics 106, 3751–3757 (2001).
+7J. C. Dorelli, A. Glocer, G. Collinson,
+and G. T´oth, “The role
+of the hall eﬀect in the global structure and dynamics of plan-
+etary magnetospheres: Ganymede as a case study,” Journal of
+Geophysical Research: Space Physics 120, 5377–5392 (2015).
+8Y. Kempf, D. Pokhotelov, S. von Alfthan, A. Vaivads, M. Palm-
+roth,
+and H. E. J. Koskinen, “Wave dispersion in the hybrid-
+vlasov model: Veriﬁcation of vlasiator,” Physics of Plasmas 20,
+112114 (2013), https://doi.org/10.1063/1.4835315.
+9H.
+Karimabadi,
+H.
+X.
+Vu,
+D.
+Krauss-Varban,
+and
+Y. Omelchenko, “Global Hybrid Simulations of the Earth’s Mag-
+netosphere,” in Numerical Modeling of Space Plasma Flows, As-
+tronomical Society of the Paciﬁc Conference Series, Vol. 359,
+edited by G. P. Zank and N. V. Pogorelov (2006) p. 257.
+10Y. Omelchenko and H. Karimabadi, “Hypers:
+A unidimen-
+sional asynchronous framework for multiscale hybrid simula-
+tions,” Journal of Computational Physics 231, 1766 – 1780
+(2012).
+11Y. Lin, J. R. Johnson, and X. Y. Wang, “Hybrid simulation of
+mode conversion at the magnetopause,” Journal of Geophysical
+Research: Space Physics 115 (2010), 10.1029/2009JA014524.
+12G. T´oth, X. Jia, S. Markidis, I. B. Peng, Y. Chen, L. K. S.
+Daldorﬀ, V. M. Tenishev, D. Borovikov, J. D. Haiducek, T. I.
+Gombosi, A. Glocer,
+and J. C. Dorelli, “Extended magne-
+tohydrodynamics with embedded particle-in-cell simulation of
+ganymede’s magnetosphere,” Journal of Geophysical Research:
+Space Physics 121, 1273–1293 (2016), 2015JA021997.
+13S. Lautenbach and R. Grauer, “Multiphysics simulations of col-
+lisionless plasmas,” Frontiers in Physics 6, 113 (2018).
+14A. Hakim, “Extended mhd modelling with the ten-moment equa-
+tions,” Journal of Fusion Energy 27, 36–43 (2008).
+15E. A. Johnson, Ph.D. thesis, University of Wisconsin-Madison
+(2011).
+16L. Wang,
+A. H. Hakim,
+A. Bhattacharjee,
+and K. Ger-
+maschewski, “Comparison of multi-ﬂuid moment models with
+6
+
+particle-in-cell simulations of collisionless magnetic reconnec-
+tion,” Physics of Plasmas (1994-present) 22, 012108 (2015).
+17J. Ng, Y.-M. Huang, A. Hakim, A. Bhattacharjee, A. Stanier,
+W. Daughton, L. Wang,
+and K. Germaschewski, “The island
+coalescence problem: Scaling of reconnection in extended ﬂuid
+models including higher-order moments,” Physics of Plasmas 22,
+112104 (2015).
+18J.
+Ng,
+A.
+Hakim,
+A.
+Bhattacharjee,
+A.
+Stanier,
+and
+W. Daughton, “Simulations of anti-parallel reconnection using
+a nonlocal heat ﬂux closure,” Physics of Plasmas 24, 082112
+(2017), https://doi.org/10.1063/1.4993195.
+19J. Ng, A. Hakim, J. Juno, and A. Bhattacharjee, “Drift instabil-
+ities in thin current sheets using a two-ﬂuid model with pressure
+tensor eﬀects,” Journal of Geophysical Research: Space Physics
+124, 3331–3346 (2019).
+20J. M. TenBarge, J. Ng, J. Juno, L. Wang, A. H. Hakim,
+and
+A. Bhattacharjee, “An extended mhd study of the 16 october
+2015 mms diﬀusion region crossing,” Journal of Geophysical Re-
+search: Space Physics 124, 8474–8487 (2019).
+21F. Allmann-Rahn, T. Trost, and R. Grauer, “Temperature gra-
+dient driven heat ﬂux closure in ﬂuid simulations of collisionless
+reconnection,” Journal of Plasma Physics 84, 905840307 (2018).
+22L. Wang, K. Germaschewski, A. Hakim, C. Dong, J. Raeder, and
+A. Bhattacharjee, “Electron physics in 3-d two-ﬂuid 10-moment
+modeling of ganymede’s magnetosphere,” Journal of Geophysical
+Research: Space Physics 123, 2815–2830 (2018).
+23C. Dong, L. Wang, A. Hakim, A. Bhattacharjee, J. A. Slavin,
+G. A. DiBraccio,
+and K. Germaschewski, “Global ten-moment
+multiﬂuid simulations of the solar wind interaction with mercury:
+From the planetary conducting core to the dynamic magneto-
+sphere,” Geophysical Research Letters 46, 11584–11596 (2019).
+24S. Jarmak,
+E. Leonard,
+A. Akins,
+E. Dahl,
+D. Cremons,
+S. Coﬁeld, A. Curtis, C. Dong, E. Dunham, B. Journaux, D. Mu-
+rakami, W. Ng, M. Piquette, A. P. Girija, K. Rink, L. Schurmeier,
+N. Stein, N. Tallarida, M. Telus, L. Lowes, C. Budney,
+and
+K. Mitchell, “Quest: A new frontiers uranus orbiter mission con-
+cept study,” Acta Astronautica 170, 6 – 26 (2020).
+25P. Sharma, G. W. Hammett, E. Quataert,
+and J. M. Stone,
+“Shearing box simulations of the mri in a collisionless plasma,”
+The Astrophysical Journal 637, 952 (2006).
+26X. Li, F. Guo, H. Li,
+and G. Li, “Particle acceleration during
+magnetic reconnection in a low-beta plasma,” The Astrophysical
+Journal 843, 21 (2017).
+27M. Lyutikov, L. Sironi, S. S. Komissarov,
+and O. Porth, “Par-
+ticle acceleration in relativistic magnetic ﬂux-merging events,”
+Journal of Plasma Physics 83, 635830602 (2017).
+28M. Zhou, P. Bhat, N. F. Loureiro, and D. A. Uzdensky, “Mag-
+netic island merger as a mechanism for inverse magnetic energy
+transfer,” Phys. Rev. Research 1, 012004 (2019).
+29A. Stanier, W. Daughton, L. Chac´on, H. Karimabadi, J. Ng,
+Y.-M. Huang, A. Hakim,
+and A. Bhattacharjee, “Role of ion
+kinetic physics in the interaction of magnetic ﬂux ropes,” Phys.
+Rev. Lett. 115, 175004 (2015).
+30H. Karimabadi, J. Dorelli, V. Roytershteyn, W. Daughton, and
+L. Chac´on, “Flux pileup in collisionless magnetic reconnection:
+Bursty interaction of large ﬂux ropes,” Phys. Rev. Lett. 107,
+025002 (2011).
+31R.
+C.
+Davidson,
+N.
+T.
+Gladd,
+C.
+S.
+Wu,
+and
+J.
+D.
+Huba, “Eﬀects of ﬁnite plasma beta on the lower-hybrid-
+drift instability,” The Physics of Fluids 20, 301–310 (1977),
+http://aip.scitation.org/doi/pdf/10.1063/1.861867.
+32S. D. Bale, F. S. Mozer,
+and T. Phan, “Observation of lower
+hybrid drift instability in the diﬀusion region at a reconnect-
+ing magnetopause,” Geophysical Research Letters 29, 33–1–33–4
+(2002), 2180.
+33G. Lapenta, J. U. Brackbill,
+and W. S. Daughton, “The un-
+expected role of the lower hybrid drift instability in magnetic
+reconnection in three dimensions,” Physics of Plasmas 10, 1577–
+1587 (2003), http://dx.doi.org/10.1063/1.1560615.
+34D. B. Graham, Y. V. Khotyaintsev, C. Norgren, A. Vaivads,
+M. Andr´e, S. Toledo-Redondo, P.-A. Lindqvist, G. Marklund,
+R. Ergun, W. Paterson, et al., “Lower hybrid waves in the ion
+diﬀusion and magnetospheric inﬂow regions,” Journal of Geo-
+physical Research: Space Physics 122, 517–533 (2017).
+35L. Price, M. Swisdak, J. F. Drake, P. A. Cassak, J. T. Dahlin,
+and R. E. Ergun, “The eﬀects of turbulence on three-dimensional
+magnetic reconnection at the magnetopause,” Geophysical Re-
+search Letters 43, 6020–6027 (2016), 2016GL069578.
+36A. Le, W. Daughton, L.-J. Chen, and J. Egedal, “Enhanced elec-
+tron mixing and heating in 3-d asymmetric reconnection at the
+earth’s magnetopause,” Geophysical Research Letters 44, 2096–
+2104 (2017), 2017GL072522.
+37P. Ricci, J. U. Brackbill, W. Daughton,
+and G. Lapenta, “In-
+ﬂuence of the lower hybrid drift instability on the onset of mag-
+netic reconnection,” Physics of Plasmas 11, 4489–4500 (2004),
+https://doi.org/10.1063/1.1778744.
+38K. G. Tanaka, I. Shinohara,
+and M. Fujimoto, “Parameter de-
+pendence of quick magnetic reconnection triggering: A survey
+study using two-dimensional simulations,” Journal of Geophysi-
+cal Research: Space Physics 111 (2006), 10.1029/2006JA011968.
+39G. W. Hammett and F. W. Perkins, “Fluid moment models
+for landau damping with application to the ion-temperature-
+gradient instability,” Phys. Rev. Lett. 64, 3019–3022 (1990).
+40G. W. Hammett, W. Dorland, and F. W. Perkins, “Fluid mod-
+els of phase mixing, landau damping, and nonlinear gyrokinetic
+dynamics,” Physics of Fluids B 4, 2052–2061 (1992).
+41P. B. Snyder and G. W. Hammett, “A landau ﬂuid model for
+electromagnetic plasma microturbulence,” Physics of Plasmas 8,
+3199–3216 (2001).
+42P. J. Palmadesso, S. B. Ganguli,
+and H. G. Mitchell, “Mul-
+timoment ﬂuid simulations of transport processes in the auro-
+ral zones,” in Modeling Magnetospheric Plasma (American Geo-
+physical Union, 1988) pp. 133–143.
+43M. Hesse, D. Winske, and M. M. Kuznetsova, “Hybrid modeling
+of collisionless reconnection in two-dimensional current sheets:
+Simulations,” Journal of Geophysical Research: Space Physics
+100, 21815–21825 (1995).
+44L. Yin, D. Winske, S. P. Gary, and J. Birn, “Hybrid and hall-mhd
+simulations of collisionless reconnection: Dynamics of the elec-
+tron pressure tensor,” Journal of Geophysical Research: Space
+Physics 106, 10761–10775 (2001).
+45A. Hakim, J. Loverich,
+and U. Shumlak, “A high resolution
+wave propagation scheme for ideal two-ﬂuid plasma equations,”
+Journal of Computational Physics 219, 418 – 442 (2006).
+46L. Wang, A. Hakim, J. Ng, C. Dong,
+and K. Germaschewski,
+“Exact and locally implicit source term solvers for multiﬂuid-
+maxwell systems,” Submitted, Journal of Computational Physics
+(2020).
+47C. D. Meyer, D. S. Balsara,
+and T. D. Aslam, “A stabi-
+lized rungekuttalegendre method for explicit super-time-stepping
+of parabolic and mixed equations,” Journal of Computational
+Physics 257 (2014), 10.1016/J.JCP.2013.08.021.
+48V. M. Fadeev, I. F. Kvartskhava,
+and N. N. Komarov, “Self-
+focusing of local plasma currents,” Nucl. Fusion 5 (1965).
+49K. J. Bowers, B. J. Albright, L. Yin, B. Bergen,
+and T. J. T.
+Kwan, “Ultrahigh performance three-dimensional electromag-
+netic relativistic kinetic plasma simulation,” Physics of Plasmas
+15, 055703 (2008), https://doi.org/10.1063/1.2840133.
+50K. Germaschewski, W. Fox, S. Abbott, N. Ahmadi, K. Maynard,
+L. Wang, H. Ruhl,
+and A. Bhattacharjee, “The plasma sim-
+ulation code: A modern particle-in-cell code with patch-based
+load-balancing,” Journal of Computational Physics 318, 305 –
+326 (2016).
+51J. M. Finn and P. K. Kaw, “Coalescence instability of magnetic
+islands,” Physics of Fluids 20, 72–78 (1977).
+52A.
+Stanier,
+W.
+Daughton,
+A.
+N.
+Simakov,
+L.
+Chacn,
+A. Le, H. Karimabadi, J. Ng,
+and A. Bhattacharjee, “The
+role of guide ﬁeld in magnetic reconnection driven by is-
+land
+coalescence,”
+Physics
+of
+Plasmas
+24,
+022124
+(2017),
+http://aip.scitation.org/doi/pdf/10.1063/1.4976712.
+7
+
+53J. Scudder and W. Daughton, “illuminating electron diﬀusion
+regions of collisionless magnetic reconnection using electron agy-
+rotropy,” Journal of Geophysical Research: Space Physics 113,
+n/a–n/a (2008), a06222.
+54A. Le, J. Egedal, O. Ohia, W. Daughton, H. Karimabadi,
+and
+V. S. Lukin, “Regimes of the electron diﬀusion region in magnetic
+reconnection,” Phys. Rev. Lett. 110, 135004 (2013).
+55J. Egedal, A. Le,
+and W. Daughton, “A review of pressure
+anisotropy caused by electron trapping in collisionless plasma,
+and its implications for magnetic reconnection,” Physics of Plas-
+mas 20, 061201 (2013).
+56W.
+Daughton,
+“The
+unstable
+eigenmodes
+of
+a
+neu-
+tral
+sheet,”
+Physics
+of
+Plasmas
+6,
+1329–1343
+(1999),
+http://dx.doi.org/10.1063/1.873374.
+57T. A. Carter,
+M. Yamada,
+H. Ji,
+R. M. Kulsrud,
+and
+F. Trintchouk, “Experimental study of lower-hybrid drift tur-
+bulence in a reconnecting current sheet,” Physics of Plasmas 9,
+3272–3288 (2002), http://dx.doi.org/10.1063/1.1494433.
+58W. Daughton, “Electromagnetic properties of the lower-hybrid
+drift instability in a thin current sheet,” Physics of Plasmas 10,
+3103–3119 (2003), http://dx.doi.org/10.1063/1.1594724.
+59W. Daughton, G. Lapenta, and P. Ricci, “Nonlinear evolution of
+the lower-hybrid drift instability in a current sheet,” Phys. Rev.
+Lett. 93, 105004 (2004).
+60J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton,
+M. Hesse, M. Kuznetsova, Z. W. Ma, A. Bhattacharjee, A. Otto,
+and P. L. Pritchett, “Geospace environmental modeling (gem)
+magnetic reconnection challenge,” Journal of Geophysical Re-
+search: Space Physics 106, 3715–3719 (2001).
+Appendix A: Role of the heat ﬂux in symmetric
+reconnection
+It was shown in Ref. 15 that the ten-moment model
+requires some kind of heat ﬂux at the X-point to sup-
+port reconnection in two dimensions. This has implica-
+tions for the types of models that can be employed to
+capture reconnection. We reproduce the argument here
+in order to highlight the importance of the heat ﬂux in
+higher-moment models and show that the naive addition
+of additional moments does not necessarily lead to better
+results.
+Consider the equation for Pxx of either species at the
+X-point, where x is the outﬂow direction, and z is the
+inﬂow direction:
+∂Pxx
+∂t +∇·(uPxx)+2 (Pxx∂xux + Pxz∂zux)+∇·q
+= 2q
+m (BzPxy −ByPxz) .
+(A1)
+In steady state, consider the above equation along x =
+0. By symmetry, ux = By = Bz = 0, x gradients of Pxx
+and z gradients of ux are zero. We ﬁnd
+uz∂zPxx + Pxx∇· u + 2Pxx∂xux + ∇· q = 0.
+(A2)
+We can use the continuity equation to relate ux and
+uz. Along the z axis, we ﬁnd
+∂xux + ∂zuz = 1
+nuz∂zn,
+(A3)
+10
+5
+0
+5
+10
+3
+2
+1
+0
+1
+2
+3
+z[di]
+Pxx at tΩci0 = 5
+0.001
+0.005
+0.009
+10
+5
+0
+5
+10
+x[di]
+3
+2
+1
+0
+1
+2
+3
+z[di]
+ρvey
+0.0050
+0.0025
+0.0000
+FIG. 7. Electron pressure Pxx and out-of-plane momentum
+density in a Harris sheet reconnection simulation with no
+pressure-tensor relaxation.
+Close to z = 0, we write uz = Cz2m+1 + O(z2m+2),
+n = n0 + Dz2l + O(z2l+1) due to the symmetry of the
+reconnection region (l ≥1, m ≥0). Then from the con-
+tinuity equation, the lowest order term on the RHS is
+z2l+2m, while ∂zuz = (2m + 1)Cz2m + O(z2m+1). Thus,
+∂xux must be −(2m + 1)Cz2m to leading order
+Substituting this back in to the pressure equation (A2),
+we get
+z∂zPxx = 2(2m + 1)Pxx +
+1
+Cz2m ∇· q.
+(A4)
+If ∇· q = 0, the diﬀerential equation has solution
+P = P0z2(2m+1),
+(A5)
+but this is zero at the origin, which is unphysical. This
+is illustrated in Fig. 7, which shows the electron pressure
+and out-of-plane momentum ρvy in a ten-moment sim-
+ulation of reconnection using the parameters of Ref. 60.
+The relaxation constant is zero for both species while
+the geometry of the reconnection region is forming, the
+pressure at the centre is becoming small, and the current
+sheet is unphysically split into four. Thus, there must be
+a heat ﬂux or some collisional term to ensure a physical
+pressure at the X-point and allow reconnection to take
+place.
+8

@@ -1,0 +1,1753 @@
+Draft version August 5, 2022
+Typeset using LATEX twocolumn style in AASTeX63
+Energy transport during 3D small-scale reconnection driven by anisotropic plasma turbulence
+Jeffersson A Agudelo Rueda
+,1, 2 Daniel Verscharen
+,2 Robert T. Wicks
+,3 Christopher J. Owen
+,2
+Georgios Nicolaou
+,2 Kai Germaschewski
+,4 Andrew P. Walsh
+,5 Ioannis Zouganelis
+,5 and
+Santiago Vargas Dom´ınguez
+6
+1Department of Physics and Astronomy, Dartmouth College, Hanover, NH, USA
+2Mullard Space Science Laboratory, UCL, Holmbury St. Mary, Dorking, Surrey, RH5 6NT, UK
+3Department of Mathematics, Physics and Electrical Engineering, Northumbria University, Newcastle upon Tyne, NE1 8ST, UK
+4Space Science Center, University of New Hampshire, Durham NH 03824, USA
+5European Space Astronomy Centre, Urb. Villafranca del Castillo, E-28692 Villanueva de la Ca˜nada, Madrid, Spain
+6Universidad Nacional de Colombia, Observatorio Astron´omico Nacional, Ed. 413 Bogot´a, Colombia
+(Received December -, 2021; Revised – –, 2022; Accepted – –, 2022)
+Submitted to APJ
+ABSTRACT
+Energy dissipation in collisionless plasmas is a longstanding fundamental physics problem. Although
+it is well known that magnetic reconnection and turbulence are coupled and transport energy from
+system-size scales to sub-proton scales, the details of the energy distribution and energy dissipation
+channels remain poorly understood.
+Especially, the energy transfer and transport associated with
+three dimensional (3D) small-scale reconnection that occurs as a consequence of a turbulent cascade
+is unknown. We use an explicit fully kinetic particle-in-cell code to simulate 3D small scale magnetic
+reconnection events forming in anisotropic and Alfv´enic decaying turbulence. We identify a highly
+dynamic and asymmetric reconnection event that involves two reconnecting ﬂux ropes.
+We use a
+two-ﬂuid approach based on the Boltzmann equation to study the spatial energy transfer associated
+with the reconnection event and compare the power density terms in the two-ﬂuid energy equations
+with standard energy-based damping, heating and dissipation proxies.
+Our ﬁndings suggest that
+the electron bulk ﬂow transports thermal energy density more eﬃciently than kinetic energy density.
+Moreover, in our turbulent reconnection event, the energy-density transfer is dominated by plasma
+compression. This is consistent with turbulent current sheets and turbulent reconnection events, but
+not with laminar reconnection.
+Keywords: Magnetic Reconnection, Turbulence.
+1. INTRODUCTION
+The solar wind in the inner heliosphere is a weakly col-
+lisional turbulent plasma in which the energy is trans-
+ported from large (∼109 km) to small (∼10−1 km)
+scales via an active turbulent cascade (Coleman Jr 1968;
+Marsch & Tu 1990). Although the collisionless nature
+of the solar wind precludes classical viscous dissipation
+of these turbulent ﬂuctuations, the non-adiabatic evolu-
+tion of the solar wind (Gazis & Lazarus 1982; Matteini
+Corresponding author: Jeﬀersson Andres Agudelo Rueda
+jeﬀersson.agudelo.18@ucl.ac.uk
+et al. 2007; Hellinger et al. 2011) suggests the action of
+local heating mechanisms (Barnes 1968; Goldstein et al.
+2015). The plasma-physics processes responsible for this
+heating are not fully understood yet. The observed ve-
+locity distribution function of the solar wind species of-
+ten exhibits non-thermal features e.g.
+(Marsch et al.
+1982; Feldman et al. 1975, 1978; McComas et al. 1992).
+Important progress has been made to understand
+heating and energy dissipation e.g. (Gary 1999; Howes
+et al. 2017; Klein et al. 2017; Matthaeus et al. 2020).
+Landau damping, ion cyclotron damping and stochas-
+tic heating are considered collisionless dissipation mech-
+anisms that transfer energy from the electromagnetic
+ﬁeld to the plasma particles (Marsch et al. 2003; Kasper
+arXiv:2208.02350v1  [physics.plasm-ph]  3 Aug 2022
+
+2
+J.A. Agudelo Rueda et al.
+et al. 2008; Chandran et al. 2010, 2013).
+The dissi-
+pation occurs predominantly in intermittent structures
+which form in plasma turbulence (Matthaeus et al. 1999;
+Kiyani et al. 2015).
+Like turbulence, magnetic reconnection is a process
+that emerges on a broad range of scales and under a
+large variety of plasma conditions. Magnetic reconnec-
+tion occurs when magnetic structures form regions in
+which the frozen-in condition is locally broken allowing
+the exchange of particles between the magnetic struc-
+tures (Hesse & Schindler 1988; Schindler et al. 1988).
+Magnetic reconnection and turbulence are closely
+linked.
+Magnetic reconnection self-consistently occurs
+as a consequence of the turbulent cascade (Servidio et al.
+2010; Loureiro & Boldyrev 2020; Agudelo Rueda et al.
+2021) and turbulence emerges in current sheets, exhaust
+ﬂows, electron streamers, and shocks associated with re-
+connection events (Pucci et al. 2017; Kowal et al. 2017;
+Lapenta et al. 2020).
+During magnetic reconnection,
+plasma particles are heated and accelerated while the
+magnetic ﬁeld topology changes (Pontin 2011; Zweibel
+& Yamada 2016; Lazarian et al. 2020).
+The role of magnetic reconnection for the evolution
+of energy in collisionless plasmas is unclear. Although
+magnetic reconnection transports energy from large to
+small scales (Sundkvist et al. 2007; Franci et al. 2017;
+Loureiro & Boldyrev 2020), the details of the energy
+transport across scales and the role of reconnection in
+the turbulent cascade are a matter of ongoing research
+(Loureiro & Boldyrev 2017; Franci et al. 2017; Adhikari
+et al. 2021). The energy transfer between ﬁelds and par-
+ticles as well as the transfer between kinetic and thermal
+degrees of freedom during reconnection are the key ob-
+jectives of this research area.
+The energy transfer and transport associated with
+magnetic reconnection has been addressed by previous
+studies that focus on idealized 2D Harris current-sheet
+reconnection (Yin et al. 2001; Schmitz & Grauer 2006;
+Wang et al. 2015; Pezzi et al. 2021), 3D laminar colli-
+sionless reconnection in the context of magnetospheres
+(Wang et al. 2018) and 2D reconnection in turbulent
+plasma (Fadanelli et al. 2021).
+In this work, we use
+particle-in-cell (PIC) simulations to study the energy
+transfer associated with 3D small-scale magnetic recon-
+nection that self-consistently occurs as a consequence
+of an anisotropic turbulent cascade.
+In section 2, we
+present our theoretical framework to study the energy
+transfer and transport in our plasma simulations.
+In
+section 3 we present our simulation results emphasizing
+the presence of agyrotropy in section 3.3 and the energy
+distribution in section 3.4. In section 4, we discuss the
+implications of our results and in section 5 we provide
+conclusions.
+2. ENERGY TRANSFER AND TRANSPORT
+The total energy in a closed volume of plasma is
+partitioned amongst the particles and the electromag-
+netic ﬁelds.
+The bulk kinetic energy density of the
+particle species s is associated with the ﬁrst velocity
+moment of the particle velocity distribution function
+fs = fs(x, v, t) and therefore with the bulk ﬂux of the
+particles. The thermal energy density is associated with
+the second velocity moment and thus the pressure of
+the particles. The evolution of fs follows the Boltzmann
+equation
+∂fs
+∂t +v·∇fs + qs
+ms
+(E + v × B)·∇vfs =
+∂fs
+∂t
+
+c
+, (1)
+where v is the velocity, E is the electric ﬁeld, B is the
+magnetic ﬁeld, qs is the charge and ms is the mass of
+a particles. The term (∂fs/∂t)c on the right-hand side
+represents the change in the distribution function due
+to collisions. This term includes individual correlations
+between ﬁelds and particles, based on the particles’ in-
+dividual Coulomb potentials (Klimontovich 1997). To
+study the energy transport we derive a set of energy
+equations based on the Boltzmann equation (1).
+We
+ﬁrst deﬁne the density
+ns ≡
+Z
+fsd3v,
+(2)
+the bulk velocity
+us ≡1
+ns
+Z
+fsvd3v,
+(3)
+and the pressure tensor
+Ps ≡ms
+Z
+fs(v −us)(v −us)d3v,
+(4)
+where (v−us)(v−us) is the dyadic product. We deﬁne
+the heat ﬂux vector
+hs ≡1
+2ms
+Z
+fs(v −us) · (v −us)(v −us)d3v.
+(5)
+We deﬁne the ﬁrst moment of the collision term in Eq.
+(1) as
+Ξ1 =
+Z
+v
+∂fs
+∂t
+
+c
+d3v,
+(6)
+and the second moment as
+Ξ
+2 =
+Z
+vv
+∂fs
+∂t
+
+c
+d3v,
+(7)
+
+Energy Transfer and Turbulent Reconnection
+3
+With these deﬁnitions, we compute the ﬁrst and sec-
+ond moments of Eq. (1) (see Appendix A for details).
+The ﬁrst moment of Eq. (1) yields the kinetic energy
+equation
+dεk
+s
+dt + us · ∇· Ps + εk
+s∇· us −qsns(us · E) = Ξk
+s, (8)
+where d/dt = ∂/∂t+(us ·∇) is the total time derivative,
+εk
+s = 1
+2nsms(us · us),
+(9)
+is the kinetic energy density and
+Ξk
+s = msus · Ξ1
+s
+(10)
+represents the irreversible kinetic energy transfer. The
+terms us·∇·Ps, εk
+s∇·us and the advective term (us·∇)εk
+s
+are associated with the term v · ∇fs in Eq. (1). There-
+fore, these terms represent kinetic energy-density trans-
+port due to the free streaming of particles. Conversely,
+the term −qsns(us·E), associated with the electric ﬁeld,
+represents the energy-density transfer between particle
+bulk ﬂows and ﬁelds.
+The second moment of Eq.
+(1) yields the thermal
+energy equation
+dεth
+s
+dt
++ ∇· hs + ∇us : Ps + εth
+s ∇· us = Ξth
+s ,
+(11)
+where
+εth
+s = 1
+2Tr(Ps)
+(12)
+is the thermal energy density and
+Ξth
+s = −msus · Ξ1 + ms
+2 Tr
+
+Ξ
+2
+(13)
+represents the irreversible the thermal energy transfer.
+The term Tr stands for the trace of the tensor and ∇us :
+Ps is the double contraction of the strain tensor ∇us and
+Ps. The terms ∇·hs, ∇us : Ps and εth
+s ∇·us, associated
+with v·∇fs in Eq. (1), represent thermal energy-density
+transport due to the free streaming of particles.
+The terms on the left-hand sides of Eqs.
+(8) and
+(11) describe collisionless processes whereas the terms
+on the right-hand sides describe collisional processes in
+the plasma which generate an increase in the plasma
+entropy.
+Equations (8) and (11) alone do not capture total en-
+ergy conservation because they do not account for the
+rate of change in the electromagnetic energy density
+∂εem/∂t, nor for the electromagnetic energy ﬂux ∇· S,
+where
+εem = 1
+2
+ 1
+µ0
+B · B + ϵ0E · E
+
+(14)
+is the electromagnetic energy density and S = E×B/µ0
+is the Poynting vector. The expression that accounts for
+these changes is Poynting’s theorem
+∂εem
+∂t
++ ∇· S + J · E = 0.
+(15)
+Nevertheless, Equations (8) and (11) are exact in their
+description of the kinetic and thermal energy-density
+transfer and transport, as well as the energy-density ex-
+change between ﬁelds and particles.
+Before tackling the energy transfer problem, we ex-
+plicitly deﬁne the following three terms, which are often
+used interchangeably in the literature:
+• Heating is any increase in εth
+s , and cooling is any
+decrease in εth
+s . Heating can be either reversible
+or irreversible.
+• Damping is any decrease in εem, and growth is any
+increase in εem. Damping/growth can be either
+reversible or irreversible.
+• Dissipation is any irreversible energy transfer lead-
+ing to an increase in εth
+s .
+Dissipation corresponds to an increase in entropy of
+the velocity distribution function, which is challenging
+to quantify directly both in space measurements and
+in simulations. Nonetheless, recent studies (Pezzi et al.
+2019; Matthaeus et al. 2020; Pezzi et al. 2021) show that
+in collisionless plasmas energy-based dissipation proxies
+such as the Zenitani parameter (Zenitani et al. 2011)
+Dz,s = J · (E + us × B) −nsqs(us · E),
+(16)
+and the strain-pressure interaction ∇us : Ps (Yang
+et al. 2017) are spatially correlated with dimensionless
+measures of non-thermal distribution functions (Kauf-
+mann & Paterson 2009; Greco et al. 2012; Liang et al.
+2019) and plasma agyrotropy (Scudder & Daughton
+2008). In Eq. (16), J = P
+s=i,e qsnsus is the electric
+current density.
+These energy-based dissipation proxies are eﬀectively
+power density terms derived from the left-hand sides of
+our Eqs.
+(8) and (11).
+According to our deﬁnitions,
+Dz,s is a damping measure since it quantiﬁes the energy
+transfer from the electromagnetic ﬁelds into bulk kinetic
+energy and vice versa.
+The strain-tensor interaction has gyrotropic and agy-
+rotropic contributions. We de-compose the pressure ten-
+sor as Pij,s = psδij + Πij,s, where
+ps =
+3
+X
+i=1
+Pii,s/3
+(17)
+
+4
+J.A. Agudelo Rueda et al.
+is the isotropic scalar pressure and
+Πij,s = (Pij,s + Pji,s)/2 −psδij
+(18)
+is the deviatoric pressure. Likewise, the strain-rate ten-
+sor ∇us can be expressed as ∇uij,s = θsδij/3 + Dij,s,
+where θs = ∇· us represents the dilatation term and
+Dij,s = 1
+2
+∂ui,s
+∂xj
++ ∂uj,s
+∂xi
+
+−1
+3θsδij,
+(19)
+represents the symmetric traceless strain-rate tensor
+(Yang et al. 2017). Thus, the strain-tensor interaction,
+which is a heating/cooling proxy according to our deﬁ-
+nitions, is
+∇us : Ps = psθs + Πij,sDij,s,
+(20)
+where the ﬁrst terms on the right-hand side is known
+as pθs and the second term on the right-hand side is
+known as Pi-Ds(Yang et al. 2017).
+For comparison
+with previous studies (Pezzi et al. 2021; Bandyopadhyay
+et al. 2020), in section 3.6, we compute Dij,s, psθs and
+Πij,sDij,s and compare them with the energy transfer
+and transport terms, −nsqs(us · E) and ∇us : Ps, in
+Eqs. (8) and (11).
+3. SIMULATION RESULTS
+3.1. Simulation setup
+We use the explicit Plasma Simulation Code (PSC,
+Germaschewski et al. 2016) to simulate anisotropic
+Alfv´enic turbulence in an ion-electron plasma in the
+presence of a constant background magnetic ﬁeld B0 =
+B0ˆz. The simulation domain is an elongated box of size
+Lx × Ly × Lz = 24di × 24di × 125di with spatial res-
+olution ∆x = ∆y = ∆z = 0.06di, where di = c/ωpi
+is the ion inertial length, c is the speed of light, ωpi =
+p
+n0q2
+i /miϵ0 is the ion plasma frequency and n0 is the
+constant initial ion density. The background ion Alfv´en
+speed ratio in our simulations is vA,i/c = 0.1, where
+vA,i = B0/√µ0n0mi is the ion Alfv´en speed. The num-
+ber of macro particles per cell is 100 ions and 100 elec-
+trons.
+We use a mass ratio of mi/me = 100 so that
+de = 0.1di. We set the initial thermal-to-magnetic en-
+ergy ratio βs = 2n0µ0kBTs/B2
+0 = 1 where Ts is the tem-
+perature of species s and kB is the Boltzmann constant.
+The details of the simulation setup and the overall sim-
+ulation results are presented by Agudelo Rueda et al.
+(2021), where the authors report a reconnection event
+that involves two reconnecting ﬂux-ropes.
+3.2. Reconnection event overview
+Panel a) in Figure 1 shows the volume rendering of the
+current density in our simulation domain at the simu-
+lated time t = 120ω−1
+pi . Current ﬁlaments that form in
+the turbulent cascade are mostly elongated along the di-
+rection of the background magnetic ﬁeld. At this time
+in the simulation, we apply the set of indicators pre-
+sented by Agudelo Rueda et al. (2021) to identify and
+locate reconnection sites.
+We select one reconnection
+event that involves two reconnecting ﬂux-ropes as shown
+in panel b) of Figure 1 where the magnetic-ﬁeld lines are
+color-coded with |B|. The magnetic ﬂux-ropes contain
+an intense magnetic ﬁeld, especially the lower ﬂux-rope
+which is more twisted and has a smaller radius than
+the upper ﬂux-rope. Conversely, the magnetic ﬁeld be-
+tween the ﬂux-ropes is weak. The cuts in panel b) show
+Jz in the xy simulation plane. For our analysis of this
+event, we apply a 2D cut in the xy-plane at z = 77di.
+Panel c) of Figure 1 shows the magnetic-ﬁeld lines of
+the ﬁeld components in the xy-plane, i.e., (Bx, By) as
+black contours. Panel c) illustrates the complexity of
+the magnetic topology in the region of interest. For our
+energy analysis we select a volumetric sub-region of size
+10 d3
+i centered around the identiﬁed reconnecting region.
+The green squared in panel c) highlights the intersection
+of the selected sub-region with the central 2D cut from
+panel b).
+Even though the background ﬁeld is in the z-direction,
+the current structures are not exactly aligned with the
+z-direction. Instead, the geometric features of the recon-
+nection event are aligned with the plane perpendicular
+to the current sheet that sustains the magnetic gradient.
+Therefore, we determine a reference frame that is aligned
+with the main axis of the current sheet. We determine
+the direction of the main axis of the current-sheet by
+3D rendering Jz and measuring the inclination of the
+coherent structure that crosses the point x = 13.5di and
+y = 21.5di in the xy-plane. We then apply a coordinate
+transformation from the reference frame (RF) (x, y, z)
+to a new RF (r, p, a) aligned with the main axis of the
+current-sheet. The unit vectors of this RF are (ˆr, ˆp, ˆa).
+In this RF ˆa is anti-parallel to the main axis of the
+current-sheet, ˆp is an arbitrary vector in the plane per-
+pendicular to ˆa, and ˆr is the vector that completes the
+right-handed coordinate system. Since the components
+r and p are in the plane perpendicular to the current
+structure, we denote them as the in-plane components.
+In the following analysis we use the RF (r, p, a) and
+select a cubic region of size 10 di. Although the event
+is three-dimensional and the magnetic ﬁeld lines extend
+in three dimensions, we select a 2D cut of the cubic
+region in the rp-plane similar to the green square in
+panel c) of Figure 1. This 2D cut is representative of
+the reconnection event as we show in Section 3.3.
+Panel a) in Figure 2 shows the magnetic-ﬁeld magni-
+tude in the region of interest normalized to B0.
+The
+
+Energy Transfer and Turbulent Reconnection
+5
+a)
+b)
+c)
+Figure 1. Spatial context of the reconnection event within the simulation domain. Panel a) shows a volume rendering of |J|.
+Panel b) shows the 3D magnetic ﬁeld lines color-coded with |B|. On the vertical cuts in panel b) we show Jz. Panel c) shows
+the magnetic ﬁeld lines in the xy-plane. The black contours show in-plane magnetic-ﬁeld lines. The green square highlights the
+size and position of the region for the energy analysis.
+black contours represent the in-plane magnetic-ﬁeld
+lines which we compute by creating an array of seed
+points placed on the vertices of a squared grid in the rp-
+plane. Then, we use the in-plane magnetic ﬁeld vectors
+to create the streamlines. We propagate the numerical
+integration in both directions: forwards and backwards.
+Panel b) in Figure 2 shows (Ba −Ba,0)/B0, where Ba
+is the out-of-plane component of the magnetic ﬁeld and
+Ba,0 = B0 · ˆa is the projection of B0 on the a-direction.
+We subtract Ba,0 to improve the visibility of the multi-
+polar conﬁguration of this component. The black arrows
+in this panel represent the in-plane magnetic-ﬁeld vec-
+tors Brp = Brˆr + Bpˆp.
+In order for reconnection to
+occur, the in-plane components of the magnetic ﬁelds of
+reconnecting structures must have diﬀerent directions.
+The plotted in-plane magnetic-ﬁeld lines suggest the
+presence of eﬀective separatrices between regions of op-
+posite Brp within the black square.
+The in-plane magnetic-ﬁeld lines in panel a) along
+with the direction of the in-plane magnetic-ﬁeld vectors
+suggest the presence of two x-points which we mark with
+two black stars, one located at r = 5.58di and p = 6.6di
+and the other at r = 6.5di and p = 6.2di. We estab-
+lish the position of the x-points by identifying the saddle
+points of the in-plane magnetic ﬁeld. The magnetic con-
+ﬁguration is complex, and the black square outlines the
+central region in which the reconnection occurs. Within
+this region, the magnetic ﬁeld is non-uniform. The sub-
+region where |B| ≈0 represents a null region.
+From
+now on, we refer to the region enclosing the x-points
+as the diﬀusion region. Since transverse 2D cuts to 3D
+magnetic ﬂux-ropes resemble the geometry of magnetic
+
+6
+J.A. Agudelo Rueda et al.
+a)
+b)
+c)
+d)
+Figure 2. 2D cuts in the rp-plane at simulation time t = 120ω−1
+pi . a) Magnetic ﬁeld magnitude |B|/B0. The black contours
+represent the in-plane magnetic-ﬁeld lines and the black stars represent two x-points. b) Out of plane component magnetic
+ﬁeld (Ba −Ba,0)/B0. The black arrows in this panel represent the in-plane magnetic vectors (Brp). c) Out of plane electron
+speed ua,e/vA,i. The black arrows in this panel represent the in-plane electron velocity vectors (urp,e/vA,i). d) out of plane ion
+speed ua,i/vA,i. The black arrows in this panel represent the in-plane ion velocity vectors (urp,i). In all panels the black square
+outlines the diﬀusion region.
+islands, we now refer to the magnetic-ﬁeld lines which
+are quasi-circular in panel a) as magnetic islands.
+Panel c) shows the out of plane component of the elec-
+tron velocity ua,e normalized to the ion Alfv´en speed
+vA,i. The red color indicates electrons moving out of the
+plane whereas the blue color indicates electrons mov-
+ing into the plane.
+The black arrows of this panel
+represent the in-plane electron velocity vectors urp,e =
+ur,eˆr + up,eˆp. Within the region of interest, there are
+counter-streaming electrons following the separatrices.
+Likewise, we locate electrons streaming out of the plane
+through the diﬀusion region. Within the magnetic is-
+lands the electrons stream into the plane. In most of
+the magnetic islands, the electrons follow quasi-circular
+orbits due to their magnetization. However, in the mag-
+netic island centered at r = 4.5di and p = 2.2di, the
+electrons demagnetize and traverse into the magnetic
+island connecting with the stream of electrons at the
+edge of the magnetic island.
+Panel d) shows the out of plane component of the ion
+velocity ua,i normalized to vA,i. The black arrows in this
+panel represent the in-plane ion velocity vectors urp,i =
+ur,iˆr+up,iˆp. Within the diﬀusion region the out of plane
+ion velocity is small which suggests that the ion motion
+is mostly constrained to the plane. The in-plane motion,
+however, is considerable and the ions move across the
+separatrices since they are demagnetized.
+3.3. Particle agyrotropy in the diﬀusion region
+During the reconnection of magnetic ﬂux-ropes, the
+plasma expansion/contraction is not isotropic. There-
+fore, at kinetic scales the plasma pressure of each species
+can develop anisotropy and agyrotropy. Figure 3 shows
+our pressure terms according to Eqs. (17) and (18) for
+electrons and ions normalised to the initial ion pressure
+p0 = n0miv2
+A,i.
+Panels a) and e) show the isotropic
+scalar pressure for electrons pe and ions pi respectively.
+For both species, the scalar pressure is greater inside the
+magnetic islands than outside due to the large density of
+particles (not shown here). Likewise, pe and pi display
+gradients along and across the separatrices. We ﬁnd that
+pe is lower in the region between the magnetic islands
+as well as between the x-points compared to inside the
+magnetic islands.
+Panels b), c) and d) of Figure 3 show the oﬀ-diagonal
+components of the electron pressure tensor according
+to Eq. (18), Πra,e, Πpa,e, and Πpr,e, respectively. We
+here introduce our notation ⟨...⟩for the spatial aver-
+age of a quantity over a given domain. The averages
+over the sub-domain of |Πra,e|, and |Πpa,e|, ⟨|Πra,e|⟩,
+and ⟨|Πpa,e|⟩, are about 10% of ⟨pe⟩. Πra,e and Πpa,e
+present a strong dipole-like conﬁguration centered on
+the magnetic islands. There is a shallower, yet visible,
+gradient in Πra,e, Πpa,e and Πpr,e in the region between
+the islands as well as in the diﬀusion region. Conversely,
+Πpr,e exhibits a quadrupolar conﬁguration within the
+magnetic islands. The non-zero values of Πra,e, Πpa,e
+and Πpr,e show that the plasma is agyrotropic, suggest-
+ing that small-scale kinetic processes occur. Similar pat-
+
+Energy Transfer and Turbulent Reconnection
+7
+terns are reported along the separatrices of 2D collision-
+less reconnection (Yin et al. 2001; Schmitz & Grauer
+2006; Wang et al. 2015) and laminar 3D collisionless
+reconnection (Wang et al. 2018). However, unlike pre-
+vious studies, we observe the same patterns within the
+magnetic islands of turbulent 3D magnetic reconnection.
+This is a fundamental diﬀerence between the reconnec-
+tion that occurs in turbulence and steady state reconnec-
+tion that occurs in Harris current-sheet conﬁgurations.
+Panels f), g) and h) of Figure 3 show the oﬀ-diagonal
+components of the ion pressure tensor according to
+Eq. (18), Πra,i, Πpa,i and Πpr,i respectively. The oﬀ-
+diagonal terms for ions, unlike electrons, have a less co-
+herent pattern attached to the in-plane magnetic ﬁeld
+topology. The reason for this detachment lies in the de-
+magnetization of the ions at these scales. Nevertheless,
+there is a gradient of these terms suggesting agyrotropy
+eﬀects in the ion dynamics as well.
+Figure 4 shows a magniﬁcation of the region enclosed
+by the black square in Figure 2. Panels a) to d) show
+a magniﬁcation of the electron pressure terms shown in
+panels a) to d) of Figure 3.
+To make a direct com-
+parison with previous 2D studies, panels e) to h) show
+sketches summarizing known patterns associated with
+the electron pressure components that emerge from 2D
+collisionless reconnection in the absence of a guide ﬁeld
+(Yin et al. 2001; Schmitz & Grauer 2006; Wang et al.
+2015).
+In this region, unlike within the magnetic is-
+lands of Figure 3, our simulation results of the elec-
+tron pressure patterns match those patterns shown in
+the sketches in panels e) to h) in the region where the
+magnetic ﬁeld has a local minimum according to panel
+a) in Figure 1. However, below the x-point located at
+r = 5.58di and p = 6.6di, the pattern no longer corre-
+sponds to the sketched expectations. Moreover, Πpr,e is
+less coherent, and we do not recognize a clear quadrupo-
+lar conﬁguration as in the sketches for the 2D case.
+Figure 5 shows a 3D representation of the pressure
+components for electrons in panels a) through d), and for
+ions in panels e) through h). The 2D cut at a = 2.76di
+corresponds to the 2D cut in Figure 3.
+The plotted
+3D structures are isosurfaces of the pressure component
+depicted on the 2D planes. For a given quantity ψ, the
+value of the isosurfaces corresponds to Sψ = ±(⟨|ψ|⟩+
+2σ|ψ|), where σ|ψ| is the standard deviation of |ψ|. The
+isosurfaces in panels a) through h) have the shape of
+elongated and thin surfaces with local curvatures along
+the a-axis. The agyrotropic patterns in Figure 3 extend
+for ∼5di along the a-axis.
+3.4. Energy transfer and transport
+We use the power density expressions for the kinetic
+energy in Eq. (8) and thermal energy in Eq. (11) to de-
+scribe the energy transfer and transport associated with
+our reconnection event.
+To compute the partial time
+derivatives of a quantity, we use a central diﬀerence ap-
+proach. Since the Alfv´en transient time is ∼100 ω−1
+pi ,
+a time resolution of 6 ω−1
+pi
+is suﬃcient to capture the
+relevant dynamics of interest. To estimate the spatial
+derivatives, we use a standard cell-centered ﬁrst neigh-
+bors approach. We calculate all scalar products cell-wise
+in the simulation domain. Panels a) to e) of Figure 6
+show 2D cuts of each term in Eq. (8) for electrons nor-
+malized to ∆ε0 = ωpimiv2
+A,i.
+Panel a) shows, at the simulation time t = 120ω−1
+pi ,
+the total time derivative of the kinetic energy density
+dεk
+e/dt.
+The domain exhibits considerable temporal
+changes of the kinetic energy density at the centers of the
+magnetic islands. We also detect negative dεk
+e/dt at the
+edge of the top left magnetic island and positive dεk
+e/dt
+in the diﬀusion region. Conversely, there is almost no
+change in εth
+e in the region between the x-points.
+Panel b) shows the scalar product ue · ∇· Pe which
+quantiﬁes the change of kinetic energy due to the advec-
+tion of the pressure tensor. This energy change is trans-
+ported by the electron ﬂow. The quantity ue · ∇· Pe is
+also known as the pressure work (Fadanelli et al. 2021).
+There is a strong conversion of energy associated with
+the pressure work at the center of the magnetic islands.
+However, the energy change associated with this term is
+around 10 times greater than the local dεk
+e/dt. Unlike
+dεk
+e/dt, at the edge of the top left magnetic island, there
+is a strong gradient of ue · ∇· Pe from the left-hand
+side of the magnetic island to the right-hand side. In
+addition, ue · ∇· Pe has a local minimum in the region
+between the x-points.
+Panel c) shows εk
+e∇· ue which represents the kinetic
+energy change due to divergent or convergent ﬂow pat-
+terns in the electron bulk velocity. Like for the previous
+terms, εk
+e∇· ue is greater at the center of the magnetic
+islands than in the region between them. There is no
+noticeable gradient of this terms between the x-points.
+Although panels a), b) and c) show similar patterns in
+their signs, there are local diﬀerences, specially in the
+diﬀusion region.
+Panel d) shows −qene(ue · E) which represents the
+energy exchange between the electrons and the electric
+ﬁeld. We ﬁnd a considerable energy conversion not only
+within the magnetic islands but also in the region be-
+tween the islands as well as in the region between the
+x-points. In the region between the x-points, the elec-
+trons gain kinetic energy from the electric ﬁeld. Along
+the separatrix next to the top left island, the electron
+
+8
+J.A. Agudelo Rueda et al.
+a)
+b)
+c)
+d)
+e)
+f)
+g)
+h)
+Figure 3. 2D cuts of the pressure tensor components in the rp-plane at the simulation time t = 120ω−1
+pi . a) Electron scalar
+pressure pe/p0. Oﬀ-diagonal components of the electron pressure tensor: b) Πra,e/p0, c) Πpa,e/p0 and d) Πpr,e/p0. e) Ion scalar
+pressure pi/p0. Oﬀ-diagonal components of the ion pressure tensor: f) Πra,i/p0, g) Πpa,i/p0 and h) Πra,i/p0.
+bulk motion is decelerated by the electric ﬁeld. Com-
+paring panels b) and d) ue · ∇· Pe and −qene(ue · E)
+balance with each other in the diﬀusion region.
+Panel e), shows Ξk
+s, which we compute as the sum of
+all terms at the left hand side of Eq. (8). There are re-
+gions with positive and negative Ξk
+e within the magnetic
+islands. On the contrary, Ξk
+e is predominately positive
+within the diﬀusion region and along the separatrices.
+Although we do not include binary collisions in our
+code explicitly, we acknowledge that the ﬁnite number
+of macro particles aﬀects the system in a way similar to
+collisions, and leads to an undersampling of non-thermal
+ﬁne structure in the velocity distribution function, which
+generates a loss of information and thus increase in en-
+tropy.
+In a real plasma, binary collisions between particles
+drive the system to a thermal equilibrium, thus smooth-
+ing out the distribution function. Similarly, a ﬁnite num-
+ber of particles represents a low number of counts to
+compute the statistical measures. Therefore, when com-
+puting macroscopic quantities, the contribution from
+non-thermal particles is overshadowed by the core distri-
+bution. It is eﬀectively a coarse-grained eﬀect, similar to
+the actual eﬀect of collisions, albeit on a diﬀerent time
+scale. Although this eﬀect occurs earlier in PIC simula-
+tions with a ﬁnite number of particles than in the real
+solar wind. We conjecture that the impact is ultimately
+comparable.
+Panels f) to j) of Figure 6 show 2D cuts of each term
+in Eq. (11) normalized to ∆ε0. Panel f) depicts dεth
+e /dt.
+As in the kinetic-energy case, dεth
+e /dt has local extrema
+associated with the magnetic islands. The main change
+in dεth
+e /dt is due to the advective term (ue · ∇)εth
+e . By
+
+Energy Transfer and Turbulent Reconnection
+9
+a)
+b)
+c)
+d)
+e)
+f)
+g)
+h)
+Figure 4.
+Magniﬁcation of the region delimited by the black square in Figure 2 in the rp-plane at the simulation time
+t = 120ω−1
+pi . a) Electron scalar pressure pe. Oﬀ-diagonal components of the electron pressure tensor: b) Πra,e, c) Πpa,e and d)
+Πpr,e. Panel e) shows a sketch of the patterns of the scalar pressure emerging in 2D simulations of reconnection, and f) to h)
+show sketches of the oﬀdiagonal terms of the electron pressure based on 2D Harris current sheet reconnection without guide
+ﬁeld (Yin et al. 2001).
+direct comparison with panel b), we note similar power
+density patterns between dεth
+e /dt and ue · ∇· Pe.
+For the heat-ﬂux term ∇· he, we do not directly com-
+pute ∇· he as a particle moment, but use a Hammett-
+Perkins approach (Hammett & Perkins 1990) to esti-
+mate its contribution. This approach has been success-
+fully applied in previous collisionless reconnection stud-
+ies (Wang et al. 2015; Ng et al. 2015, 2017).
+In this
+framework, we estimate
+∇·he ≈vth
+e
+1
+2|k0|Tr [Pij,e −⟨Pij,e⟩−δij(ne −⟨ne⟩)⟨Te⟩] ,
+(21)
+where vth
+e
+=
+p
+2kBTe/me is the thermal speed of the
+electrons. The wave number k0 =
+√
+3/|Ls| is a repre-
+sentative wave number associated with a sub-domain of
+volume Vs = L3
+s where Ls = 10.08 di which we select
+as the region to study the energy conversion during the
+reconnection event. Panel g) shows our estimation of
+∇· he. There is a positive power density contribution
+from particle heatﬂux inside the magnetic islands. Con-
+versely, there is a negative contribution in the regions
+between the magnetic islands.
+Panel h) depicts the energy transfer ∇ue : Pe between
+kinetic and thermal energies. This term has contribu-
+tions from the diagonal elements of the tensors which
+are associated with the isotropic energy transport and
+from the oﬀ-diagonal elements that quantify the agy-
+rotropy in the plasma. There is positive ∇ue : ∇Pe in
+the region between the magnetic islands which is asso-
+ciated with counter streaming electrons. We locate an
+x-like structure centered in the region where the mag-
+netic ﬁeld strength exhibits a local minimum.
+In the
+region between the x-points as well as to the left of the
+diﬀusion region, ∇ue : Pe < 0.
+
+10
+J.A. Agudelo Rueda et al.
+a)
+b)
+c)
+d)
+e)
+f)
+g)
+h)
+Figure 5. 2D cuts in the rp-plane and isosurfaces of the pressure tensor components at the simulation time t = 120ω−1
+pi .
+a) Electron scalar pressure pe/p0. Oﬀ-diagonal components of the electron pressure tensor: b) Πra,e/p0, c) Πpa,e/p0, and d)
+Πpr,e/p0. e) Ion scalar pressure pi/p0. Oﬀ-diagonal components of the ion pressure tensor: f) Πra,i/p0, g) Πpa,i/p0, and h)
+Πra,i/p0.
+
+Energy Transfer and Turbulent Reconnection
+11
+Panel i) shows the thermal energy transport εth
+e ∇· ue
+associated with the compression/expansion of the elec-
+tron ﬂow. At ﬁrst glance the positive/negative patterns
+in εth
+e ∇·ue seem very similar to the patterns in ∇ue : Pe.
+The reason for this similarity is that the main energy
+transport in ∇ue : Pe is associated with the contri-
+bution of diagonal elements as we show in section 3.6.
+However, we ﬁnd local diﬀerences due to the agyrotropic
+contributions. From all terms on the left-hand sides of
+Eqs. (8) and (11), only the terms associated with the
+strain tensor present an extended asymmetric x-point-
+like structure in the diﬀusion region. Comparing panels
+c) and i), εth
+e ∇·ue is on average larger and forms broader
+structures than εk
+e∇· ue.
+Panel j), shows Ξth
+s , which we compute as the sum of
+all terms on the left hand side of Eq. (11).This energy
+transfer is signiﬁcant as the diﬀerent terms on the left-
+hand side of Eq. (11) do not sum to zero.
+In Figure 7, we show vertical 1D cuts of the power den-
+sity terms along the p-direction at r = 5.58 di to visual-
+ize the relation between the diﬀerent terms for plasma
+electrons. We further show a magniﬁcation of the re-
+gion delimited by the black square from Figure 2. Panel
+a) shows the kinetic power density terms in Eq.
+(8).
+We observe that the ﬂuctuations in dεk
+e/dt (green line)
+and εk
+e∇· ue (black line) are negligible compared with
+ue ·∇·Pe (red line) and −qeneE·ue (yellow line). How-
+ever, there is a noticeable disturbance in all quantities in
+the range p = 6.96 di to p = 7.84 di which is located in
+the region of the diﬀusion region at which the magnetic
+ﬁeld is nearly zero. Along the 1D cut, ue · ∇· Pe and
+−qeneE · ue are anti-correlated.
+This anti-correlation
+breaks when the disturbances in dεk
+e/dt and εk
+e∇·ue oc-
+cur. For this panel, the curve of Ξk
+s (blue line) changes
+sign when crossing the x-point.
+Panel b) shows the thermal power density terms in Eq.
+(11). Comparing panels a) and b), we observe that the
+ﬂuctuations in the thermal power density terms are more
+pronounced than those in the kinetic power density. In
+panel b), the ﬂuctuations in dεth
+e /dt (green line) and
+∇· he (red line) are negligible compared with ∇us : Pe
+(black line) and εth
+e ∇· ue (yellow line). Unlike in the
+kinetic power density case, the contributions from all
+terms in Eq. (11) are either positive or negative at the
+same location showing no anti-correlation between the
+dominant terms. We note that Ξth
+e
+(blue line), unlike
+Ξk
+e, is positive on both sides of the x-point.
+Figure 8 shows a 3D representation of the kinetic
+power density terms in panels a) through d), and of ther-
+mal power density terms in panels e) through h). The 2D
+cut at a = 2.76di corresponds to the 2D cuts in Figure 6.
+The plotted 3D structures are isosurfaces of the power
+density terms depicted on the 2D planes.
+Panels a)
+through d) show that the isosurfaces of dεk
+e/dt, ue·∇·Pe,
+and εk
+e are mostly thin ﬁlaments, whereas the isosur-
+faces of −qeneue · E consist of broad patches.
+More-
+over, there are more regions with −qeneue · E > 0 than
+with −qeneue · E < 0. Panels e) and f) show that the
+isosurfaces of dεth
+e /dt and ∇· he are also ﬁlamentary.
+Conversely, panels g) and h) show that the isosurfaces
+of us : Pe and εth
+e ∇· ue are mainly thin sheets.
+Figure 9 depicts isosurfaces of Ξk
+e in panel a) and Ξth
+e
+in panel b). The most evident isosurface of Ξk
+e is a ﬁl-
+ament located within the reconnecting ﬂux-rope. Con-
+versely, the isosurfaces of Ξth
+e are mostly thin sheets con-
+nected to the ﬂux ropes.
+3.5. Time evolution
+PIC simulations are aﬀected by ﬁnite particle size,
+ﬁnite number of particles, and numerical integration
+errors that are eﬀectively “collisional” contributions
+since they generate phase-space particle diﬀusion (Hock-
+ney 1971; Dawson 1983; Klimontovich 2013; Birdsall &
+Langdon 2018; Groˇselj 2019). Although the right-hand
+sides of the power-density relations in Eqs. (8) and (11)
+include the contribution from numerical sources such
+as round-oﬀerrors and numerical heating, they also in-
+clude contributions from the averaged, secular (includ-
+ing quasi-linear) correlations between ﬁelds and the par-
+ticle distribution functions (Klein & Howes 2016; Howes
+et al. 2017; Klein et al. 2017). As shown by the ﬁeld–
+particle correlation method, meaningful averages of the
+non-linear correlations between the ﬂuctuating electric
+ﬁeld and the ﬂuctuating perturbation of the distribution
+function deﬁne the secular transfer of energy from the
+ﬁelds to the particles. Thus, even in a purely collisionless
+plasma, the right hand sides of Eqs. (8) and (11), after
+suitable averaging, is not exactly zero.
+In this inter-
+pretation, the averaging over higher-order ﬁeld-particle
+correlations introduces the irreversibility and thus the
+dissipation into the kinetic description. All PIC systems
+share this behaviour with statistical particle systems in
+reality.
+In this section, we present a time-evolution analysis of
+the energy-density terms in order to estimate the nature
+of Ξk
+s and Ξth
+s . Figure 10a) shows the time evolution of
+the energy densities averaged over the full simulation do-
+main (solid curves, subscript full) and averaged over the
+sub-domain (dashed curves, subscript sub). The curves
+are normalized to ε0 = miv2
+A,i. The total energy density
+is εT = εk
+e +εk
+i +εth
+e +εth
+i +εem. The averaged total en-
+ergy densities ⟨εT
+full⟩and ⟨εT
+sub⟩(green curves) remain
+approximately constant. This suggests that numerical
+heating is negligible in our energy balance.
+
+12
+J.A. Agudelo Rueda et al.
+a)
+b)
+c)
+d)
+e)
+f)
+g)
+h)
+i)
+j)
+Figure 6. 2D cuts in the rp-plane at the simulation time t = 120ω−1
+pi . Panels a) to e): kinetic power density terms for electrons.
+Panels f) to j): thermal power density terms for electrons. All quantities are normalised to ∆ε0 = ωpimiv2
+A,i. The vertical
+dashed lines in panels a) and f) show the 1D trajectory for our 1D analysis.
+a)
+b)
+Figure 7. 1D cuts of the power density terms along the ˆp-direction at r = 5.58 di and at the simulation time t = 120ω−1
+pi . a)
+Kinetic power density terms in Eq. (8). b) Thermal power density terms in Eq. (11). The vertical dashed line represents the
+crossing of the x-point r = 5.58di and p = 6.6di.
+The thermal energy densities of both the ions (black
+curves) and the electrons (magenta curves) are greater
+than the kinetic energy densities of both the ions (yel-
+low curves) and electrons (red curves). When averaged
+over the sub-domain, the energy densities present more
+variability due to the in-ﬂowing and out-ﬂowing of en-
+ergy density through the boundaries of the sub-domain.
+Nevertheless, the time evolution of the quantities εfull
+and εsub is approximately comparable.
+Figure 10b) depicts the time evolution of the abso-
+lute values of the energy-density rates ∆⟨ε⟩/∆t (dashed
+curves) and the dissipative power-density rates Ξ (solid-
+dotted curves), now averaged over the full simulation
+domain and normalized to εT
+full.
+The time diﬀerence
+
+Energy Transfer and Turbulent Reconnection
+13
+∆t = 6ω−1
+pi
+is the diﬀerence between two consecutive
+output times of our simulation.
+As shown in panel b), in the case of the ions, the
+thermal energy-density rate (black-dashed curve) and
+the kinetic energy-density rate (yellow-dashed curve)
+are greater than the dissipative power-density terms
+Ξth
+i
+(black solid-dotted curve) and Ξk
+i (yellow solid-
+dotted curve). The same ordering applies to the elec-
+tron case in which the thermal energy-density rate (ma-
+genta dashed curve) and kinetic energy-density rate (red
+dashed curve) are greater than Ξk
+e (red solid-dotted
+curve) and Ξk
+e (magenta solid-dotted curve). For both
+species, ∆εth increases faster than ∆εk.
+During the initial phase of the simulation (tωpi ≲
+100), we ﬁnd that ⟨Ξk
+e⟩> ⟨Ξth
+e ⟩when averaged over
+the full simulation domain. Afterwards, for tωpi ≳100,
+we ﬁnd that ⟨Ξk
+e⟩< ⟨Ξth
+e ⟩when averaged over the full
+simulation domain until the simulation ends. The time
+tωpi ≈100 corresponds to the moment at which the
+overall Jrms reaches its global maximum in our sim-
+ulation and signiﬁcant magnetic reconnection sets in
+(Agudelo Rueda et al. 2021).
+The total energy-density rate ∆εT
+full (green dashed
+curve) is lower than ∆εk and εth for both species. More-
+over, ⟨Ξth
+e ⟩and ⟨Ξk
+e⟩are negligible compared with the
+kinetic and thermal energy-density rates. This suggests
+that any irreversible energy transfer and thus numeri-
+cal heating are negligible for the energy balance in our
+simulation. However, Ξth
+e and Ξk
+e are locally important
+near the reconnection region, see Figure 7.
+3.6. Comparison with damping and heating proxies
+In recent studies (Yang et al. 2017; Pezzi et al. 2019;
+Matthaeus et al. 2020; Pezzi et al. 2021) the collision-
+less energy dissipation problem is tackled by studying
+quantities such as the Zenitani parameter deﬁned in Eq.
+(16) and the strain-pressure interaction deﬁned in Eq.
+(20). We also explore these damping and heating prox-
+ies for comparison with our methods. Figure 11 depicts
+2D cuts in the rp-plane and 1D cuts of these damping
+and heating proxies. Panel a) shows Dze. Similar to our
+kinetic and thermal power density terms, the magnetic
+islands present strong variations of Dze. On the con-
+trary, in the diﬀusion region, we see a coherent positive
+Dze signature.
+Panel b) shows pθe. The positive/negative patterns
+of this quantity are almost identical to our patterns of
+∇ue : Ps (panel h) in Figure 6. This similarity illus-
+trates that the main contribution to the strain-tensor in-
+teraction comes from the diagonal elements of the strain
+tensor.
+Panel c) shows Pi-De. Although the positive/negative
+patterns in Pi-De are similar to those in pθe, Pi-De
+presents clear diﬀerences, especially near the null re-
+gion where Pi-De has the opposite sign of pθe along
+the separatrices. Moreover, along the separatrices, |Pi-
+De| > Dze and they share the same sign whereas in the
+region between the x-points Pi-De < 0 and Dze > 0.
+Panel d) shows 1D cuts of Dze (blue line), pθe (red
+line) and Pi-De (black line). We ﬁnd that pθe is highly
+variable and, on average, greater than Dze and Pi-De.
+This is considerably diﬀerent compared with the Harris
+current-sheet case (Pezzi et al. 2021) in which Dze is the
+dominant energy-transfer proxy. However, this behav-
+ior is consistent with turbulent simulations (Pezzi et al.
+2021) and with observations of turbulent reconnection
+(Bandyopadhyay et al. 2021).
+4. DISCUSSION
+The type of magnetic reconnection that occurs from
+a turbulent cascade (Servidio et al. 2010; Loureiro &
+Boldyrev 2020; Fadanelli et al. 2021; Agudelo Rueda
+et al. 2021) presents a more complex geometry of the
+diﬀusion region compared to its laminar counterpart.
+Likewise, the geometry of the regions with enhanced
+energy transport and transfer is more complex. More-
+over, in a 3D geometry, the particle motion along the
+out of plane direction allows energy transfer that 2D
+geometry precludes. For instance, the agyrotropic pat-
+terns in magnetic islands of 2D reconnection (Scudder &
+Daughton 2008) are located in the diﬀusion region out-
+side the magnetic islands. Conversely, in our 3D case we
+observe agyrotropic patterns in the cross section of the
+ﬂux-ropes, which we call magnetic islands.
+Since the plasma density is greater in the centers of the
+magnetic islands, these regions exhibit a greater plasma
+pressure compared to outside the islands. Patterns of
+agyrotropic plasma pressure are present not only within
+the magnetic islands but also in the regions between
+them (Figure 3).
+The non-uniform guide magnetic ﬁeld present in this
+reconnection event aﬀects its geometry. Despite the 3D
+nature of this event, for the diﬀusion region in which
+|B| ≤0.4B0, we observe gyrotropic/agyrotropic pat-
+terns (section 3.3) similar to those observed in 2D lam-
+inar reconnection without guide ﬁeld (Yin et al. 2001).
+However, given the complex geometry of our event, we
+do not observe gyrotropic/agyrotropic patterns match-
+ing 2D reconnection in the part of the diﬀusion region
+below the x-points.
+Moreover, we do not observe a
+quadrupolar pattern of the in-plane component Πpr,e
+
+14
+J.A. Agudelo Rueda et al.
+a)
+b)
+c)
+d)
+e)
+f)
+g)
+h)
+Figure 8. 2D cuts in the rp-plane and isosurfaces of the power density terms at the simulation time t = 120ω−1
+pi . Panels a)
+to e): kinetic power density terms for electrons. Panels f) to j): thermal power density terms for electrons. All quantities are
+normalised to ∆ε0 = ωpimiv2
+A,i.
+
+Energy Transfer and Turbulent Reconnection
+15
+a)
+b)
+Figure 9. 2D cuts in the rp-plane and isosurfaces at the simulation time t = 120ω−1
+pi . Panel a): kinetic power density dissipation
+Ξk
+e. b): thermal power density dissipation Ξth
+e . All quantities are normalised to ∆ε0 = ωpimiv2
+A,i.
+a)
+b)
+Figure 10. a) Time evolution of the energy densities averaged over the full simulation domain (solid curves) and over the
+sub-domain (dashed curves). The total energy density is εT = εk
+e +εk
+i +εth
+e +εth
+i +εem. b) Time evolution of the absolute values
+of the energy-density rates ∆⟨ε⟩/∆t (dashed curves) and the dissipative power densities Ξ (solid-dotted curves), averaged over
+the full simulation domain and normalized to εT
+full.
+
+16
+J.A. Agudelo Rueda et al.
+(Figure 4d) within the diﬀusion region which is charac-
+teristic of agyrotropy in 2D reconnection without guide
+ﬁeld (Yin et al. 2001).
+In the reconnection event that we analyze, although
+of turbulent nature, the out of plane electron motion is
+consistent with the 3D shape of electron diﬀusion regions
+observed in laboratory plasmas (Furno et al. 2005; Yoo
+et al. 2013; Yamada et al. 2014).
+In our event, dεk
+e/dt > 0 along the separatrices and
+dεk
+e/dt < 0 in the outer part of the reconnecting mag-
+netic island (Figure 6a). This corresponds to the accel-
+eration of electrons along the separatrices (Figure 6c)
+and the presence of a stagnation region. The shear be-
+tween the ﬂux ropes increases the electron thermal en-
+ergy and pressure and the bulk kinetic energy reduces
+at the stagnation point.
+At the locations of the separatrices ue·∇·Pe > 0 (Fig-
+ure 6b). This suggests electron streams that increase
+the electron pressure.
+Conversely, ue · ∇· Pe < 0 in
+the region between the x-points. This suggests electron
+streams that reduce the electron pressure and push the
+plasma within the diﬀusion region to a local thermal
+equilibrium. While reconnection is occurring, the high
+pressure electrons are allowed to ﬁll in the diﬀusion re-
+gion.
+Within the diﬀusion region, the electric ﬁeld increases
+the electron kinetic energy density and the work done
+by the electric ﬁeld on the electrons −qene(ue · E) par-
+tially balances with the advection of the electron pres-
+sure. This is consistent with previous studies (Fadanelli
+et al. 2021).
+The irreversible electron energy-density change Ξk
+e
+(Figure 6e) is non-zero everywhere in the vicinity of
+the reconnecting structures. The quantity Ξk
+e displays
+structures with positive and negative values within the
+magnetic islands suggesting that collisional processes ac-
+celerate and decelerate electron bulk ﬂows within the
+magnetic islands.
+Conversely, in the diﬀusion region,
+the positive value of Ξk
+e indicates that electrons are ir-
+reversibly accelerated.
+Unlike previous studies of turbulent reconnection
+(Fadanelli et al. 2021), we estimate the electron ther-
+mal energy transfer associated with each term of Eq.
+(11). Compared to the case of the kinetic power den-
+sity, the thermal power density terms present stronger
+ﬂuctuations.
+This is evident when comparing dεk
+e/dt
+(Figure 6a) and dεth
+e /dt (Figure 6f) as well as compar-
+ing εk
+e∇· ue (Figure 6c) and εth
+e ∇· ue ( Figure 6i). This
+diﬀerence suggests that the electron bulk ﬂows more ef-
+ﬁciently transport thermal energy density than bulk ki-
+netic energy density.
+The power density terms associated with the compres-
+sion/expansion of the ﬂow ∇ue : Ps and εth
+e ∇· ue ex-
+hibit a strong coherence with the electron motion along
+the reconnection separatrices. The electron streams gain
+thermal energy (i.e., heating) associated with the recon-
+nection. This is consistent with simulations of fast colli-
+sionless reconnection at low β (Loureiro et al. 2013) and
+observations of magnetospheric reconnection (Chasapis
+et al. 2017; Holmes et al. 2019).
+The most important contribution to ∇ue : Ps comes
+from the isotropic part of the strain pressure term.
+Correspondingly, εth
+e ∇· ue presents patterns similar to
+∇ue : Ps. Moreover, the contribution of the oﬀ-diagonal
+elements in ∇ue and Pe to the thermal energy trans-
+port is less than the isotropic contribution, which is con-
+sistent with previous studies of turbulent reconnection
+(Fadanelli et al. 2021; Bandyopadhyay et al. 2021). The
+terms associated with electron compressibility (εth
+e ∇·ue
+and ∇ue : Ps) are typically greater than the heat ﬂux
+contribution (∇·hs) suggesting that, for collisionless re-
+connection, compressible thermal energy-density trans-
+port is important for electrons. On average, within the
+sub-domain, the electrons gain kinetic energy at the ex-
+pense of the electric ﬁeld (Figure 8d).
+The electrons
+both lose and gain thermal energy (Figures 8g and 8h)
+predominantly along thin sheet-like structures.
+Similar to the irreversible kinetic energy-density trans-
+fer Ξk
+e, the irreversible thermal energy transfer Ξth
+e
+is
+non-zero within the reconnecting structures as well as
+within the diﬀusion region.
+Moreover, electrons irre-
+versibly gain thermal energy density at the location of
+the separatrices and within the diﬀusion region.
+The irreversible kinetic energy-density transfer is
+mainly conﬁned to the ﬂux-ropes in our simulation (Fig-
+ure 9a).
+Conversely, the irreversible thermal energy-
+density transfer (Figure 9b) occurs in thin sheet-like
+structures that extend for over 5di.
+Although ⟨Ξk
+e⟩is negligible compared to ∆εk
+e (Fig-
+ure 10b), the fact that Ξk
+e is comparable to qeneE · ue
+and ue · ∇· Pe (Figure 7a) implies that Ξk
+e must be con-
+sidered in the local kinetic energy transfer of electrons as
+it includes important information about the oscillating
+energy associated with instantaneous ﬁeld–particle cor-
+relations (Klein & Howes 2016; Howes et al. 2017; Klein
+et al. 2017). Only meaningful averages of the non-linear
+correlations between the ﬂuctuating electric ﬁeld and the
+ﬂuctuating perturbation of the distribution function de-
+ﬁne the secular transfer of energy from the ﬁelds to the
+particles. Therefore, we propose that an energy-balance
+analysis based on the energy-density expressions derived
+from the collisionless Vlasov equation is not entirely ac-
+curate for kinetic simulations. Because numerical eﬀects
+
+Energy Transfer and Turbulent Reconnection
+17
+a)
+b)
+c)
+d)
+Figure 11. Damping and heating proxies at the simulation time t = 120ω−1
+pi . 2D cuts in the rp-plane of a) Zenitani parameter
+for electrons Dze. b) Diagonal part of the strain-pressure interaction pθe. c) Oﬀ-diagonal part of the strain-pressure interaction
+Pi-De. d) 1D cut of these terms as in Figure 7.
+in kinetic simulations act as an eﬀective collision oper-
+ator, the energy balance equations derived from Vlasov
+without provision for the terms on the right-hand side
+of Eq. 1 are not exactly satisﬁed.
+Comparing our results with damping (Dz,e) and heat-
+ing (pθe and Pi-De) proxies (Pezzi et al. 2021), we ob-
+serve that ﬂuctuations of pθe inside the diﬀusion region
+(Figure 11d) are typically greater than ﬂuctuations of
+Dz,e and Pi-De. Integrating over the sub-domain (not
+shown here), we ﬁnd that pθe/∆ε0|V > |PiDe|/∆ε0|V .
+This suggests that, within the sub-domain, the electron
+heating is mostly due to compressive eﬀects.
+This is
+consistent with results from turbulent simulations (Pezzi
+et al. 2021) and observations of turbulent reconnection
+(Bandyopadhyay et al. 2021), but not with results from
+simulations of laminar reconnection.
+The proxies pθe and Pi-De share the same signs at
+most locations in our simulation domain. However, in
+the diﬀusion region near the null region, the opposite
+sign of Pi-De and pθe suggests that agyrotropic heat-
+ing mechanisms can emerge to compensate for any re-
+duction or increase in the thermal energy density due
+to isotropic heating mechanisms.
+Moreover, integrat-
+ing over the sub-domain and over time, we ﬁnd that
+pθe|V,t = 0.0137 and Pi-De|V,t = −0.0190. This sug-
+gests that pθ is greater than Pi-D within the diﬀusion
+region at the particular time selected but not thought
+out the whole simulation, due to a local eﬀect.
+The positive values of Dz,e and the negative value
+of pθe and Pi-De in the region between the x-points
+suggest that electrons gain kinetic energy density from
+the ﬁelds while losing thermal energy density. Between
+the x-points, the electric ﬁeld accelerates electrons (Fig-
+ure 6d). The increase in the electrons’ kinetic energy
+density may be due to Landau damping (Landau 1946;
+Howes et al. 2006; Li et al. 2016). Conversely, the mag-
+netic pressure (not shown here) increases near the re-
+gion between the x-points. The total pressure balance
+requires a depletion of pe and pi (as conﬁrmed by Fig-
+ures 3a and 3e) in the diﬀusion region. Plasma pressure
+depletion have been suggested to be responsible for the
+onset of fast reconnection in collisionless plasmas (Liu
+et al. 2022).
+Thus the expansion and the consequen-
+tial cooling-oﬀof the electrons reduces their thermal en-
+ergy.
+5. CONCLUSIONS
+We derive a framework to quantify the collision-like
+eﬀects that lead to irreversible energy transfer and thus
+dissipation in PIC plasmas.
+We identify and locate
+magnetic reconnection as a key mechanism for heating,
+damping, and dissipation in plasma turbulence in low-
+collisionality systems like the solar wind.
+Previously, the transfer and transport of energy in
+plasmas with low collisionality has been studied sepa-
+rately in simulations of reconnection (Hesse & Winske
+1998; Hesse et al. 2001; Zenitani et al. 2011; Mu˜noz et al.
+2017; Pucci et al. 2018; Pezzi et al. 2019, 2021) and tur-
+bulence (Wan et al. 2012; Yang et al. 2017; Li et al.
+2019; Pezzi et al. 2021). The transfer and transport in
+magnetic reconnection that forms from a turbulent cas-
+cade have been limited to 2D geometries (Parashar et al.
+2009; Fadanelli et al. 2021) and observations (Chasapis
+et al. 2018; Bandyopadhyay et al. 2020), while the 3D
+case has received little attention. We study, for the ﬁrst
+time the energy transport associated with 3D magnetic
+
+18
+J.A. Agudelo Rueda et al.
+reconnection that occurs as a consequence of a turbulent
+cascade to a high level of detail and including all power
+density terms resulting from the full Boltzmann equa-
+tion. We extend the analysis of similar studies (Fadanelli
+et al. 2021) by exploring the transfer and transport of
+thermal energy for electrons.
+The energy transfer and transport in collisionesless
+plasmas is believed to be governed by non-thermal and
+kinetic mechanisms such as resonant (Marsch et al. 2003;
+Kasper et al. 2008) and non resonant heating processes
+(Chandran et al. 2010, 2013). However, the irreversible
+energy transport is ultimately associated with collisional
+eﬀects Schekochihin et al. (2009).
+The agyrotropy signatures present in the reconnection
+diﬀusion region as well as in the reconnecting magnetic
+structures allows for agyrotropic energy transfer mecha-
+nisms such agyrotropic-driven instabilities to take place
+not only near the electron diﬀusion region (Ricci et al.
+2004; Roytershteyn et al. 2012; Graham et al. 2017) but
+also within the reconnecting magnetic structures. These
+signatures are three-dimensional as they extend in the
+a-direction for over 5di. A study of the instabilities that
+occur during a 3D turbulent reconnection event would
+be worthwhile to enhanced our understanding of the col-
+lisionless energy dissipation.
+We show that the contribution to the energy-density
+transfer from collision is not negligible. To determine
+the exact source of this contribution, future work must
+use large number of particles while keeping the 3D geom-
+etry. In addition, the inclusion of a controllable collision
+operator would allow for a detailed study of collisions in
+3D reconnection (Pezzi 2017; Donnel et al. 2019; Boesl
+et al. 2020; Pezzi et al. 2021).
+The general framework that we introduce is suitable
+for estimating the irreversible energy-density transfer of
+the particle species in the solar wind. For instance, Eqs.
+(8) and (11) can be applied to spacecraft data to study
+the radial evolution of energy as a function of helio-
+spheric distance in the solar wind.
+This work would
+be of interest both for the energetics of solar-wind elec-
+trons (Scime et al. 1994; Innocenti et al. 2020) and the
+solar wind prontons (Matteini et al. 2007; Hellinger et al.
+2011; Adhikari et al. 2020)
+ACKNOWLEDGMENTS
+J.A.A.R is supported by the European Space Agency’s
+Networking/Partnering Initiative (NPI) program under
+contract 4000127929/19/NL/MH/mg and the Colom-
+bian program Pasaporte a la Ciencia, Foco Sociedad
+- Reto 3 under grant 3933061.
+D.V. is supported
+by STFC Ernest Rutherford Fellowship ST/P003826/1.
+D.V., G.N. and C.J.O. are supported by STFC Con-
+solidated Grants ST/S000240/1 and ST/W001004/1.
+R.T.W. is supported by STFC Consolidated Grant
+ST/V006320/1. K.G. is supported by NSF grant AGS-
+1460190. This work was performed using the DiRAC
+Data Intensive service at Leicester, operated by the
+University of Leicester IT Services, which forms part
+of the STFC DiRAC HPC Facility (www.dirac.ac.uk).
+The equipment was funded by BEIS capital fund-
+ing via STFC Capital Grants ST/K000373/1 and
+ST/R002363/1 and STFC DiRAC Operations Grant
+ST/R001014/1.
+DiRAC is part of the National e-
+Infrastructure. This work was discussed at the “Joint
+Electron Project” at MSSL.
+APPENDIX
+A. DERIVATION OF THE EQUATIONS FOR THE ENERGY DENSITIES
+To derive the nth moment of the Boltzmann equation (1), we take the dyadic product of Eq. (1) with vn on the left
+and integrate the equation over the entire velocity space. The zeroth moment leads to
+∂ns
+∂t + ∇· (nsus) = Ξ0
+s.
+(A1)
+The collision operator has the property Ξ0
+s = 0 as it must conserve the number of particles. In this case, Eq. (A1) is
+the continuity equation. The ﬁrst moment leads to
+∂(nsus)
+∂t
++ 1
+ms
+∇· Ps −qs
+ms
+ns(E + us × B) = Ξ1
+s,
+(A2)
+where
+Ps ≡ms
+Z
+fsvvd3v.
+(A3)
+
+Energy Transfer and Turbulent Reconnection
+19
+We separate the second moment in Eq. (A3) according to ∇· P = ∇· P + ∇· (nmuu), where P is deﬁned in Eq. (4).
+Invoking Eq. (A1), Eq. (A2) takes the form
+d(nsmsus)
+dt
+= −∇· Ps −(∇· us)nsmsus + qsns(E + us × B) + msΞ1
+s.
+(A4)
+This equation describes the total change in time of the bulk momentum density for each species.
+The second moment of Eq. (1) yields
+∂Ps
+∂t + ∇·
+
+(Qijk,s + ui,sPij,s + Pij,suk,s + uj,sPik,s)ˆei ⊗ˆej ⊗ˆek
+−qs
+ms
+ Ps × B −B × Ps
+
+=
+−∇· (nsmsususus) −∂(nsmsusus)
+∂t
++ qsns
+
+Eus + usE + 1
+ms
+((usus) × B −B × (usus))
+
++ msΞ
+2
+s,
+(A5)
+where Qijk,s represent the elements of the heat-ﬂux tensor
+Qs ≡ms
+Z
+fs(v −us)(v −us)(v −us)d3v.
+(A6)
+Eqs. (A4) and (A5) are the exact ﬁrst and second moments of Eq. (1).
+We proceed to derive expressions for the energy densities εk
+s and εth
+s . For this purpose, we take the scalar product
+of Eq. (A4) with us which leads to Eq. (8). To obtain an expression for the thermal energy εth, we take the trace of
+Eq. (A5). For the calculation of the trace of the cross product terms in Eq. (A5) we use an element-wise approach.
+If A is a vector and M is a second rank tensor, the cross product is deﬁned as A × M = ϵlipAiMpqˆel ⊗ˆeq. It can be
+shown that M × A = −
+
+A × M
+T T
+, where M
+T is the transposed of M and Tr(A × M) = ϵijkAiMjk. Moreover, if
+M is a symmetric tensor, then Tr(A × M) = 0. In addition, the trace of ∇· Q corresponds to 2∇· h. This procedure
+leads to
+dεth
+s
+dt
++ dεk
+s
+dt + ∇· hs + ∇us : Ps + (∇· us)εth
+s + us · (∇· Ps) =
+−(∇· us)εk
+s + qsnsE · us + 1
+2Tr
+
+msΞ
+2
+s
+
+.
+(A7)
+Combining Eqs. (8) and (A7), we obtain Eq. (11).
+REFERENCES
+Adhikari, L., Zank, G. P., Zhao, L.-L., et al. 2020, The
+Astrophysical Journal Supplement Series, 246, 38
+Adhikari, S., Parashar, T. N., Shay, M. A., et al. 2021,
+Phys. Rev. E, 104, 065206
+Agudelo Rueda, J. A., Verscharen, D., Wicks, R. T., et al.
+2021, Journal of Plasma Physics, 87
+Bandyopadhyay, R., Matthaeus, W. H., Parashar, T. N.,
+et al. 2020, Physical Review Letters, 124, 255101
+Bandyopadhyay, R., Chasapis, A., Matthaeus, W., et al.
+2021, arXiv preprint arXiv:2111.03118
+Barnes, A. 1968, The Astrophysical Journal, 154, 751
+Birdsall, C. K., & Langdon, A. B. 2018, Plasma physics via
+computer simulation (CRC press)
+Boesl, M., Bergmann, A., Bottino, A., et al. 2020,
+Contributions to Plasma Physics, 60, e201900117
+Chandran, B., Verscharen, D., Quataert, E., et al. 2013,
+The Astrophysical Journal, 776, 45
+Chandran, B. D., Li, B., Rogers, B. N., Quataert, E., &
+Germaschewski, K. 2010, The Astrophysical Journal, 720,
+503
+Chasapis, A., Matthaeus, W., Parashar, T., et al. 2017, The
+Astrophysical Journal, 836, 247
+Chasapis, A., Yang, Y., Matthaeus, W., et al. 2018, The
+Astrophysical Journal, 862, 32
+Coleman Jr, P. J. 1968, The Astrophysical Journal, 153, 371
+Dawson, J. M. 1983, Reviews of modern physics, 55, 403
+Donnel, P., Garbet, X., Sarazin, Y., et al. 2019, Computer
+Physics Communications, 234, 1
+
+20
+J.A. Agudelo Rueda et al.
+Fadanelli, S., Lavraud, B., Califano, F., et al. 2021, Journal
+of Geophysical Research: Space Physics, 126,
+e2020JA028333
+Feldman, W., Asbridge, J., Bame, S., Gosling, J., &
+Lemons, D. 1978, Journal of Geophysical Research: Space
+Physics, 83, 5285
+Feldman, W., Asbridge, J., Bame, S., Montgomery, M., &
+Gary, S. 1975, Journal of Geophysical Research, 80, 4181
+Franci, L., Cerri, S. S., Califano, F., et al. 2017, The
+Astrophysical Journal Letters, 850, L16
+Furno, I., Intrator, T. P., Hemsing, E. W., et al. 2005,
+Physics of Plasmas, 12, 055702
+Gary, S. P. 1999, Journal of Geophysical Research: Space
+Physics, 104, 6759
+Gazis, P. R., & Lazarus, A. J. 1982, Geophysical Research
+Letters, 9, 431
+Germaschewski, K., Fox, W., Abbott, S., et al. 2016,
+Journal of Computational Physics, 318, 305
+Goldstein, M., Wicks, R., Perri, S., & Sahraoui, F. 2015,
+Philosophical Transactions of the Royal Society A:
+Mathematical, Physical and Engineering Sciences, 373,
+20140147
+Graham, D. B., Khotyaintsev, Y. V., Vaivads, A., et al.
+2017, Physical Review Letters, 119, 025101
+Greco, A., Valentini, F., Servidio, S., & Matthaeus, W.
+2012, Physical Review E, 86, 066405
+Groˇselj, D. 2019, PhD thesis, lmu
+Hammett, G. W., & Perkins, F. W. 1990, Physical Review
+Letters, 64, 3019
+Hellinger, P., Matteini, L., ˇStver´ak, ˇS., Tr´avn´ıˇcek, P. M., &
+Marsch, E. 2011, Journal of Geophysical Research: Space
+Physics, 116
+Hesse, M., Birn, J., & Kuznetsova, M. 2001, Journal of
+Geophysical Research: Space Physics, 106, 3721
+Hesse, M., & Schindler, K. 1988, Journal of Geophysical
+Research: Space Physics, 93, 5559
+Hesse, M., & Winske, D. 1998, Journal of Geophysical
+Research: Space Physics, 103, 26479
+Hockney, R. 1971, Journal of Computational Physics, 8, 19
+Holmes, J., Ergun, R., Nakamura, R., et al. 2019, Journal
+of Geophysical Research: Space Physics, 124, 8788
+Howes, G. G., Cowley, S. C., Dorland, W., et al. 2006, The
+Astrophysical Journal, 651, 590
+Howes, G. G., Klein, K. G., & Li, T. C. 2017, Journal of
+Plasma Physics, 83
+Innocenti, M. E., Boella, E., Tenerani, A., & Velli, M. 2020,
+The Astrophysical Journal Letters, 898, L41
+Kasper, J., Lazarus, A., & Gary, S. 2008, Physical Review
+Letters, 101, 261103
+Kaufmann, R. L., & Paterson, W. R. 2009, Journal of
+Geophysical Research: Space Physics, 114
+Kiyani, K. H., Osman, K. T., & Chapman, S. C. 2015,
+Dissipation and heating in solar wind turbulence: from
+the macro to the micro and back again, The Royal
+Society Publishing
+Klein, K. G., & Howes, G. G. 2016, The Astrophysical
+Journal Letters, 826, L30
+Klein, K. G., Howes, G. G., & TenBarge, J. M. 2017,
+Journal of Plasma Physics, 83
+Klimontovich, Y. L. 1997, Physics-Uspekhi, 40, 21
+—. 2013, The Statistical Theory of Non-Equilibrium
+Processes in a Plasma: International Series of
+Monographs in Natural Philosophy, Vol. 9, Vol. 9
+(Elsevier)
+Kowal, G., Falceta-Gon¸calves, D. A., Lazarian, A., &
+Vishniac, E. T. 2017, The Astrophysical Journal, 838, 91
+Landau, L. D. 1946, Oscillations of an electron plasma (US
+Atomic Energy Commission)
+Lapenta, G., Pucci, F., Goldman, M., & Newman, D. 2020,
+The Astrophysical Journal, 888, 104
+Lazarian, A., Eyink, G. L., Jafari, A., et al. 2020, Physics
+of Plasmas, 27, 012305
+Li, T. C., Howes, G. G., Klein, K. G., Liu, Y.-H., &
+TenBarge, J. M. 2019, Journal of Plasma Physics, 85
+Li, T. C., Howes, G. G., Klein, K. G., & TenBarge, J. M.
+2016, The Astrophysical Journal Letters, 832, L24
+Liang, H., Cassak, P. A., Servidio, S., et al. 2019, Physics of
+Plasmas, 26, 082903
+Liu, Y.-H., Cassak, P., Li, X., et al. 2022, Communications
+Physics, 5, 1
+Loureiro, N., Schekochihin, A., & Zocco, A. 2013, Physical
+Review Letters, 111, 025002
+Loureiro, N. F., & Boldyrev, S. 2017, Physical Review
+Letters, 118, 245101
+—. 2020, The Astrophysical Journal, 890, 55
+Marsch, E., M¨uhlh¨auser, K.-H., Schwenn, R., et al. 1982,
+Journal of Geophysical Research: Space Physics, 87, 52
+Marsch, E., & Tu, C.-Y. 1990, Journal of Geophysical
+Research: Space Physics, 95, 11945
+Marsch, E., Vocks, C., & Tu, C.-Y. 2003, Nonlinear
+Processes in Geophysics, 10, 101
+Matteini, L., Landi, S., Hellinger, P., et al. 2007,
+Geophysical Research Letters, 34
+Matthaeus, W. H., Yang, Y., Wan, M., et al. 2020, The
+Astrophysical Journal, 891, 101
+Matthaeus, W. H., Zank, G. P., Smith, C. W., & Oughton,
+S. 1999, Physical Review Letters, 82, 3444
+McComas, D., Bame, S., Feldman, W., Gosling, J., &
+Phillips, J. 1992, Geophysical Research Letters, 19, 1291
+
+Energy Transfer and Turbulent Reconnection
+21
+Mu˜noz, P., B¨uchner, J., & Kilian, P. 2017, Physics of
+Plasmas, 24, 022104
+Ng, J., Hakim, A., Bhattacharjee, A., Stanier, A., &
+Daughton, W. 2017, Physics of Plasmas, 24, 082112
+Ng, J., Huang, Y.-M., Hakim, A., et al. 2015, Physics of
+Plasmas, 22, 112104
+Parashar, T., Shay, M., Cassak, P., & Matthaeus, W. 2009,
+Physics of Plasmas, 16, 032310
+Pezzi, O. 2017, Journal of Plasma Physics, 83
+Pezzi, O., Yang, Y., Valentini, F., et al. 2019, Physics of
+Plasmas, 26, 072301
+Pezzi, O., Liang, H., Juno, J., et al. 2021, Monthly Notices
+of the Royal Astronomical Society, 505, 4857
+Pontin, D. 2011, Advances in Space Research, 47, 1508
+Pucci, F., Servidio, S., Sorriso-Valvo, L., et al. 2017, The
+Astrophysical Journal, 841, 60
+Pucci, F., Usami, S., Ji, H., et al. 2018, Physics of Plasmas,
+25, 122111
+Ricci, P., Brackbill, J., Daughton, W., & Lapenta, G. 2004,
+Physics of Plasmas, 11, 4489
+Roytershteyn, V., Daughton, W., Karimabadi, H., &
+Mozer, F. 2012, Physical Review Letters, 108, 185001
+Schekochihin, A., Cowley, S., Dorland, W., et al. 2009, The
+Astrophysical Journal Supplement Series, 182, 310
+Schindler, K., Hesse, M., & Birn, J. 1988, Journal of
+Geophysical Research: Space Physics, 93, 5547
+Schmitz, H., & Grauer, R. 2006, Physics of Plasmas, 13,
+092309
+Scime, E. E., Bame, S. J., Feldman, W. C., et al. 1994,
+Journal of Geophysical Research: Space Physics, 99,
+23401
+Scudder, J., & Daughton, W. 2008, Journal of Geophysical
+Research: Space Physics, 113
+Servidio, S., Matthaeus, W., Shay, M., et al. 2010, Physics
+of Plasmas, 17, 032315
+Sundkvist, D., Retin`o, A., Vaivads, A., & Bale, S. D. 2007,
+Physical Review Letters, 99, 025004
+Wan, M., Matthaeus, W., Karimabadi, H., et al. 2012,
+Physical Review Letters, 109, 195001
+Wang, L., Germaschewski, K., Hakim, A., et al. 2018,
+Journal of Geophysical Research: Space Physics, 123,
+2815
+Wang, L., Hakim, A. H., Bhattacharjee, A., &
+Germaschewski, K. 2015, Physics of Plasmas, 22, 012108
+Yamada, M., Yoo, J., Jara-Almonte, J., et al. 2014, Nature
+Communications, 5, 1
+Yang, Y., Matthaeus, W. H., Parashar, T. N., et al. 2017,
+Physics of Plasmas, 24, 072306
+Yin, L., Winske, D., Gary, S., & Birn, J. 2001, Journal of
+Geophysical Research: Space Physics, 106, 10761
+Yoo, J., Yamada, M., Ji, H., & Myers, C. E. 2013, Physical
+Review Letters, 110, 215007
+Zenitani, S., Hesse, M., Klimas, A., & Kuznetsova, M. 2011,
+Physical Review Letters, 106, 195003
+Zweibel, E. G., & Yamada, M. 2016, Proceedings of the
+Royal Society A: Mathematical, Physical and
+Engineering Sciences, 472, 20160479

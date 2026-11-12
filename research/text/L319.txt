@@ -1,0 +1,2135 @@
+Reconnection in 2D Inertial Magnetohydrodynamics
+Lydia Boubendir, Peter Constantin, Hezekiah Grayer II, and Zhongtian Hu
+ABSTRACT. We consider two-fluid equations of inertial magnetohydrodynamics in two
+spatial dimensions. These equations can be recast as the evolution of two active scalars,
+with fluid-like interaction kernels. The equations come in two flavors, left-handed and
+right-handed. They are conservative and have global unique solutions for both smooth
+initial data and for initial data in Yudovich class L1(R2) ∩L∞(R2). We prove that the
+inviscid limit holds in Yudovich class. We prove the persistence of C2,α regularity of patch
+boundaries through merger events for the left-handed equations. We finally show numerical
+examples of magnetic reconnection, validating known rigorous results and uncovering new
+cases.
+1. Introduction
+Magnetic reconnection, a dynamical change of topology of the magnetic field lines, is a
+physical phenomenon of great importance to magnetohydrodynamics and plasma physics
+[3], [13]. The equations of ideal magnetohydrodynamics do not permit topology change
+in the absence of singularities. Magnetic resistivity can be responsible for a change of
+topology, but its time scale is in general too slow to explain the observed phenomena. A
+more rapid mechanism which does not require either singularities or resistivity was proposed
+in the physics literature [4], [6], [12]. The mechanism is due to inertia of electrons and it is
+described using fluid-like models with two fluids. The models are Hamiltonian, are derived
+from action principles and have been studied numerically, but not by rigorous mathematics,
+as far as we know, before the work [9]. That work was devoted to two-dimensional theory
+and proved regularity results and topological change due to merger of two active scalars.
+The present paper is a continuation of [9]. We consider two-dimensional inertial magne-
+tohydrodynamics where evolution of the electronic vorticity ω is coupled to the evolution of
+the magnetic canonical momentum F. The system of equations is
+(
+∂tF + {ψ, F} + {ϕ, ω} = 0,
+∂tω + {ψ, ω} + {ϕ, F} = 0,
+(1)
+2020 Mathematics Subject Classification. Primary 35Q31; Secondary 35Q85.
+Key words and phrases. inertial magnetohydrodynamics, magnetic reconnection, two-fluid plasma, vortex
+patches, contour dynamics, zero resistivity limit.
+1
+arXiv:2610.23494v1  [math.AP]  16 Oct 2026
+
+2
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+in R2, where {f, g} = ∂1f∂2g −∂2f∂1g is the Poisson bracket. The electron fluid’s stream
+function ψ is related to the vorticity by
+∆ψ = ω,
+(2)
+and the magnetic potential ϕ is related to the magnetic canonical momentum by
+−∆ϕ + ϕ = ±F.
+(3)
+The different ± cases are distinct, but are both conservative and derived from action principles.
+In [9] and in the present work, the (+) case is called right-handed, and the (−) case is called
+left-handed. Although only the right-handed system was considered in the physics literature
+[6], [12], both cases are mathematically interesting, yet quite different. Both systems can be
+re-written by a linear change of the dependent variables as evolution systems of two active
+scalars. Active scalars are real valued functions of space and time which evolve in time
+by pure transport, carried by incompressible velocities they instantaneously create. The
+velocities are computed from the scalars using time-independent, constant coefficient, and
+(in the present case) linear equations of state. The Yudovich class is the class of active scalars
+whereby (both) the scalars are bounded and integrable in space. Patches are particular cases,
+where the scalars are indicator functions of bounded domains in R2. The Yudovich class is
+preserved in time, and weak solutions exist and are unique in it [9]. Each of the two flavors
+(right-handed and left-handed) has screened and unscreened versions. In the unscreened
+versions (3) is replaced by −∆ϕ = ±F, i.e. the term ϕ is dropped. (That term physically
+corresponds to screening by an electronic skin depth).
+The key feature of interest in the model (1) is the prediction of magnetic reconnection,
+i.e., topological change of the magnetic field B = ∇⊥ϕ, without resistivity. Until recently,
+this feature was only captured in numerical simulations [6]. In [9] the global well-posedness
+of (1) was obtained both in the Yudovich class and in the smooth category. Topological
+change was shown to occur in both the case of smooth solutions and patch solutions, and the
+results were for both the right-handed and left-handed systems.
+In this paper we prove the convergence of solutions of vanishing resistivity to the
+solutions of the inertial MHD system (1). This is done by adapting the method of [8] to the
+case of two fluids. The result of [8] was for the two dimensional torus T2, and extending it
+to the whole space presents certain challenges. One of the key elements of the result of [8]
+was the exponential integrability of the gradient of velocity. In Yudovich class the velocity is
+not Lipschitz-continuous, and the exponential integrability is a weaker surrogate for that. In
+the whole space, obviously there cannot be a global exponential integrability, and we have
+to localize the result. In addition, the decay of velocities is too slow for energy methods,
+and the velocities do not have self-contained equations like in the Euler and Navier-Stokes
+equations. We use methods form [10] to control decay at spatial infinity of the active scalars,
+in the resistive case, and overcome thus the technical obstructions to global Yudovich class
+zero resistivity limit. The proof is presented in Section 3.
+The left-handed unscreened system consists of a pair of incompressible Euler equations
+which do not interact with each other. As it is known [5], [7], in the Euler equations vortex
+patch boundaries stay smooth through the evolution, if they start smooth. In Section 4 we
+show, for the left-handed screened system, that C1,α- and C2,α-regularity of patch boundaries
+persists globally, even through merger.
+
+3
+We conduct a numerical study of reconnection for patch solutions. In Section 5 we
+describe the algorithm, and in Section 6 we describe the results of the numerical simulations.
+These are as follows. For the left-handed screened equations, initialized by a disk and
+an ellipse, we show merger and then un-merger as the ellipse rotates through the disk, in
+complete analogy with the pure Eulerian dynamics of the unscreened equations. In the
+right-handed unscreened case, initialized by two patch disks with the same sign, we observe
+numerically translational merger. The patches travel along a common path and merge. When
+the right-handed unscreened equations are initialized by two patch disks of opposite signs,
+we observe orbiting patches deforming but not merging, indicating the possibility of (quasi)
+periodic solutions. We also show that the symmetry that was proved rigorously in [9] to lead
+to merger, does so numerically as well. Namely, we show that for right-handed unscreened
+and screened equations, initialized by four disks, with the same sign across the horizontal
+axis, and opposite sign across the vertical axis, there is merger across the horizontal axis.
+2. The active scalar system
+The sum and difference of the equations in the system (1) yield
+(
+∂t(F + ω) + {ψ + ϕ, F + ω} = 0,
+∂t(F −ω) + {ψ −ϕ, F −ω} = 0.
+(4)
+We define the scalars
+σ± = F ± ω
+(5)
+and organize them into the vector
+σ = (σ+, σ−).
+(6)
+The inertial MHD system (1) is thus equivalent to the transport equations
+∂tσ± + V±(σ) · ∇σ± = 0,
+(7)
+where in the right-handed system
+V±(σ) = U(ω) ± B(F),
+(8)
+and in the left-handed system
+V±(σ) = U(ω) ∓B(F).
+(9)
+The operators are
+U(ω) = ∇⊥(∆−1) ω,
+(10)
+and
+B(F) = ∇⊥(1 −∆)−1F.
+(11)
+By construction, U, B and V± have divergence free ranges. The operator U is the Biot–Savart
+law from the incompressible Euler equations, and the operator B is a screened version of
+−U.
+
+4
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+3. The ideal inertial MHD limit
+We first introduce the viscous version of (7):
+∂tσν
+± + V±(σν) · ∇σν
+± −ν∆σν
+± = 0,
+ν > 0.
+(12)
+This is the setting where the conductive fluid has momentum dissipation and ohmic dissipa-
+tion of equal rate ν. The limit ν →0 recovers ideal inertial MHD (1), or equivalently, (7).
+We show that any Yudovich solution of compact support to (7) may be recovered in this limit
+in a strong sense. We consider equal viscosities only for simplicity of exposition. The results
+hold for viscosities that vanish independently. We denote the space Y = L1(R2) ∩L∞(R2)
+and its product Y2 = Y × Y.
+We recall here information about the solutions.
+PROPOSITION 1. We consider initial data τ = (τ+, τ−) ∈Y2 with compact support
+included in a ball of radius L and we take an arbitrary time interval [0, T]. We assume that
+∥τ∥L∞≤Ω∞.
+(13)
+The unique Yudovich solution of system (7) and the unique solution of (12) with the same
+initial data obey
+∥V±(σ)∥L∞≤V∞
+(14)
+where
+V∞= CLΩ∞
+(15)
+with C > 0 an absolute constant. We consider the ball
+BT = {x ∈R2 | |x| ≤L
+
+1 + V∞
+T
+L
+
+}.
+(16)
+Then, the support of the solution σ(t) of (7) is included in BT . The solution of (12) with the
+same initial data obeys
+∥σν(t)∥Lp(R2\DT ) ≤C∥τ∥Lpe−LV∞
+ν
+(17)
+for any 1 ≤p ≤∞and all t ≤T, where
+DT = {x ∈R2 | |x| ≤9L
+
+2 + V∞
+T
+L
+
+}.
+(18)
+We took Re = V∞L
+ν
+≥1.
+PROOF. The bound (14) follows from the Biot-Savart law and from the fact that Lp
+norms of σν are non-increasing in time. The proof of (17) follows the proof of Proposition 4
+of [10]: the viscous solutions σν obey bounds with exponential weights e
+V∞
+ν
+√
+1+|x|2. The
+expanding domain is {x ∈R2 | |x| ≤9L(1 + Re−1 + V∞T
+L)} ⊂DT .
+□
+THEOREM 1. Let σ = (σ+, σ−) be the unique Yudovich solution of system (7) with
+initial data τ = (τ+, τ−) ∈Y2 compactly supported in a ball of radius L. Let T > 0
+be arbitrary and let σν = (σν
++, σν
+−) be the solution to system (12) with the initial data
+τ ν = (τ ν
++, τ ν
+−). Assume that the initial data belong to a ball in Y2, and in particular,
+∥τ∥L∞≤Ω∞, ∥τ ν∥L∞≤Ω∞.
+(19)
+
+5
+Assume that τ is supported in the ball of radius L and that (17) holds. For any p ∈[1, ∞), if
+lim
+ν→0 ∥τ ν −τ∥Lp = 0,
+(20)
+then
+lim
+ν→0 sup
+t∈[0,T]
+∥σν
+± −σ±∥Lp = 0.
+(21)
+REMARK 1. In view of Proposition 1, the condition (17) is verified if the viscous initial
+data are compactly supported in a ball of radius L.
+The proof follows the pattern of the proof in [8], where the inviscid incompressible Euler
+limit was proved in the Yudovich class. Instead of scalar equations, we are now considering
+a system with two scalars. In addition, nontrivial adjustments need to be made because we
+are operating in the whole space, not on the torus. The velocity associated to a Yudovich
+σ, even if the latter is compactly supported, typically decays only like 1
+r, and thus fails to
+be in L2. Also, a key element of [8] was the global exponential integrability of gradients
+of velocity, which must be replaced here by local integrability. The strategy of proof is the
+same though. We prove a short time convergence on any time interval of order cΩ−1
+∞if the
+initial data converge in L2 and have the properties stemming from Proposition 1. We obtain
+the long time limit by taking many steps (of the order TΩ∞). If we start from the same
+initial data, the inviscid solution will be compactly supported in BT and the viscous solution
+will obey (17) and in particular it will be exponentially small outside the fixed larger set
+D = DT , for all t ≤T. We use these attributes of the solutions throughout the proof. We
+prove the result for the right-handed system. The proof for the left handed system is the
+same.
+3.1. Proof for the right-handed system. In this section, we consider the right-handed
+system given by (7) and (8), together with the viscous version
+(
+(∂t + V+(σν) · ∇−ν+∆)σν+
++ = 0,
+(∂t + V−(σν) · ∇−ν−∆)σν−
+−= 0.
+(22)
+Above, σν = (σν+
++ , σν−
+−) for viscosities ν± > 0. The initial data is denoted τ ν = (τ ν+
++ , τ ν−
+−).
+We prove
+PROPOSITION 2. Let σ, σν solve right-handed systems (7) and (22), respectively, with
+initial data τ, τ ν ∈Y2. Suppose that τ is compactly supported in the ball BT , assume both
+τ and τ ν obey (13) and that σν obeys (17). Then if
+lim
+ν±→0 ∥τ ν±
+± −τ±∥L2 = 0,
+there exists a universal constant C∗> 0 such that
+lim
+ν±→0 sup
+t∈[0,T∗]
+∥σν±
+± −σ±∥L2 = 0,
+where T∗= (C∗Ω∞)−1.
+
+6
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+Proposition 2 implies a more general version of Theorem 1 where ν is replaced by
+possibly distinct ν±. To prove Proposition 2, we consider the transport of mollified initial
+data. We fix a scale l > 0 and consider σl = (σ+,l, σ−,l) which satisfies the system
+(
+(∂t + V+(σ) · ∇)σ+,l = 0,
+(∂t + V−(σ) · ∇)σ−,l = 0,
+(23)
+equipped with initial data τl := φl ∗τ, where φl is the standard mollifier at scale l; moreover,
+consider σν
+l = (σν+
++,l, σν−
+−,l) which satisfies the system
+(
+(∂t + V+(σν) · ∇−ν+∆)σν+
++,l = 0,
+(∂t + V−(σν) · ∇−ν−∆)σν−
+−,l = 0,
+(24)
+equipped with data τ ν
+l := φl ∗τ ν. The transporting velocities are fixed; only the initial data
+have been mollified.
+We decompose
+∥σν±
+± −σ±∥L2 ≤∥σν±
+± −σν±
+±,l∥L2 + ∥σν±
+±,l −σ±,l∥L2 + ∥σ±,l −σ±∥L2.
+Because the transporting velocities are the same, the first and the third term above converge
+to 0 as we send l to zero, uniformly in ν±. It remains to establish that
+lim
+ν±→0 sup
+t∈[0,T∗]
+∥σν±
+±,l −σ±,l∥L2 = 0
+(25)
+holds for a fixed ℓ. We note that the inviscid initial data are smooth and compactly supported
+and that the viscous solution obeys (17) (by the same proof). As a preliminary, we adapt
+two technical lemmas from [8]. The first one concerns the exponential integrability for the
+velocity:
+LEMMA 1. Let σ ∈Y2 with
+∥σ∥L∞≤Ω∞.
+Assume that there exists a compact D ⊂⊂R2 such that
+∥σ∥Lq(R2\D) ≤CΩ∞|D|
+1
+q
+(26)
+holds for all q ≥1. Then, there exist absolute non-dimensional constants γ > 0 and C > 0
+such that, for any measurable set A we have
+Z
+A
+exp
+γ|∇V±(σ)(x)|
+Ω∞
+
+dx ≤C(|A| + |D|).
+(27)
+REMARK 2. Note that the condition (26) is satisfied by solutions of the inviscid equations
+with D = BT and solutions of viscous equations with D = DT in view of (17).
+PROOF. The proof follows from the observation that the condition (26) implies that
+∥σ±∥Lp ≤CΩ∞|D|
+1
+p holds for p ≥1. Then, expanding the exponential in power series and
+applying the Calder´on–Zygmund Lp bounds, and then choosing γ small enough like in [8]
+concludes the proof. The zeroth order term introduces the dependence on |A|. The first order
+term needs to be interpolated between the zeroth order and the second order, because the CZ
+estimate fails there, but this changes only the prefactor in the right hand side of (27).
+□
+
+7
+The second technical lemma is an adaptation of Lemma 2 in [8] for R2.
+LEMMA 2. Let u(x, t) be divergence-free in R2 and assume that ω = ∇⊥· u ∈Y obeys
+∥ω∥L∞≤Ω∞and ∥ω∥L2 ≤Ω2. We also assume that there exists a set D such that
+∥ω∥Lq(R2\D) ≤CΩ∞|D|
+1
+q
+(28)
+holds for all q ≥1. Let a non-negative θ solve
+∂tθ + u · ∇θ −ν∆θ ≤|∇u|θ.
+(29)
+Then for T(p) = γ(p−1)
+2pΩ∞and any p > 1, there exist constants C1 and C2 depending only on
+Ω∞, Ω2 and |D| such that
+∥θ(t)∥2
+L2 ≤C1∥θ(0)∥2p
+L2p + C2
+(30)
+holds for 0 ≤t ≤T(p).
+PROOF. We take a smooth, decreasing p(t) ≥1 as in the proof of Lemma 2 in [8] and
+take the evolution of
+R
+θ2p(t)dx. We have
+1
+2
+d
+dt
+Z
+θ2p(t)dx = p′(t)
+Z
+(log θ)θ2p(t)dx + p(t)
+Z
+θ2p−1∂tθ dx
+≤p′(t)
+Z
+(log θ)θ2p(t)dx + p(t)
+Z
+θ2p(t)|∇u| dx.
+(31)
+Now we take a large constant M and consider the set A = {x | |∇u| ≥M}. We have
+that |A| ≤
+∥∇u∥2
+L2
+M2
+. On A we use the inequality ab ≤ea + b ln b with a = γ |∇u(x)|
+Ω∞
+and
+b = Ω∞
+γ θ2p(t) and Lemma 1. We obtain from (31) and (27)
+1
+2
+d
+dt
+Z
+θ2p(t)dx ≤(p′(t) + 2Ω∞
+γ
+p(t)2)
+Z
+(log θ)θ2p(t)dx
++
+
+p(t)
+
+M + C(|D| + C Ω2
+2
+M2 )
+
++ Ω∞
+γ
+log
+Ω∞
+γ
+ Z
+θ2p(t) dx.
+(32)
+We choose p(t) to solve p′(t) + 2Ω∞
+γ p(t)2 = 0 and conclude as in the proof of Lemma 2 of
+[8].
+□
+We apply this lemma to deduce an uniform in viscosity H1 bound for the solutions of
+the transport of mollified initial data:
+LEMMA 3. Let l > 0 be fixed. There exists a universal constant C∗> 0 and Cl > 0
+depending only on l and ∥τ∥Lp, p > 2 such that
+sup
+t∈[0,T∗]
+(∥σν±
+±,l∥H1 + ∥σ±,l∥H1) ≤Cl,
+(33)
+for T∗= (C∗Ω∞)−1.
+PROOF. We show the proof of the bound for σν+
++,l. Differentiating the first equation of
+(24), we have
+∂t∇σν+
++,l −V(σν) · ∇(∇σν+
++,l) −ν+∆∇σν+
++,l = ∇V(σν) · ∇σν+
++,l,
+(34)
+
+8
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+which implies
+(∂t −V(σν) · ∇−ν+∆)|∇σν+
++,l| ≤|∇V(σν)||∇σν+
++,l|.
+(35)
+Then using Lemma 2 with θ = |∇σν+
++,l| and taking advantage of the fact that the initial data
+are bounded in Lp with p > 2 (paying in ℓ) we conclude the proof.
+□
+In order to prove (25), we note
+1
+2
+d
+dt∥σν±
+±,l −σ±,l∥2
+L2
+= −
+Z
+(V±(σν) −V±(σ)) · ∇σν±
+±,l(σν±
+±,l −σ±,l) dx −ν±∥∇σν±
+±,l −∇σ±,l∥2
+L2
+−ν±
+Z
+∇σ±,l · ∇(σν±
+±,l −σ±,l) dx
+≤CΩ∞Cl∥V±(σν) −V±(σ)∥L∞(0,T∗;L2(D)) + ν±C2
+l + Cℓ∥τ∥2
+Ye−LV∞
+ν .
+(36)
+Indeed, the portion outside D of the integral involving V±(σν) −V±(σ) is bounded by an
+L4 −L2 −L4 H¨older bound, using the boundedness of the velocities in L4, the bounds (33)
+and (17) with p = 4. We used Lemma 3 for the last term in the equality. In view of the
+differential inequality above, to establish the limit (25) and thus Proposition 2, it suffices to
+show that
+lim
+ν±→0 ∥V±(σν) −V±(σ)∥L∞(0,T∗;L2(D)) = 0.
+(37)
+In other words, it suffices to prove an analogue of Lemma 4 in [8] for V±(σ). We
+denote for simplicity of exposition the difference as h = σν
+± −σ± and the semisum as
+H = 1
+2(σν
+± + σ±). Let ψ, Ψ and ϕ, Φ satisfy
+∆ψ = h,
+∆Ψ = H,
+−∆ϕ + ϕ = h,
+−∆Φ + Φ = H.
+(38)
+In view of the definition of V±, we rewrite it as
+V±(h) = 1
+2∇⊥(ψ ± ϕ).
+(39)
+From (39), we see that (37) amounts to controlling ∥∇ψ∥L2(D) and ∥∇ϕ∥L2(D). We show
+how to control ∇ψ, the bound of ∇ϕ is similar.
+The equation for h is
+∂th + V · ∇h + v · ∇H = ν∆h + ν∆H
+(40)
+where v = V±(σν
+± −σ±) = V±h and V = 1
+2V±(σ± + σν
+±) = V±H. Consider a smooth
+cutoff χ equal to 1 on a neighborhood of DT and compactly supported. More precisely, we
+consider χR := χ(|x|
+R ) with R sufficiently large and time independent, whose precise value
+will be made explicit below. For the ease of reading, we denote χR by χ.
+We establish first some properties of V, v, h and H. For h and H, we have Yudovich
+bounds (time independent) and bounds which decay exponentially
+∥e|·| V∞
+ν t[|h(·, t)| + |H(·, t)|]∥Lq ≤Cq
+(41)
+for all 1 ≤q < ∞. Then with the above bounds, we show that
+|ψ(x, t)| + |Ψ(x, t)| ≤C log R,
+(42)
+
+9
+and
+|∇ψ(x, t)| + |∇Ψ(x, t)| ≤CR−1
+(43)
+uniformly for x ∈supp χ. Indeed, to prove (42) it suffices to obtain the following estimate:
+Z
+|log |x −y|| |H(y, t)|dy ≤C log R
+(44)
+for |x| ≤R. For |x −y| ≤1 we split log ||x −y||
+p
+|H(y)|
+p
+|H(y)| and use L2 −L2
+to obtain C
+p
+∥H∥L∞from the first integral because log |z| is integrable on |z| ≤1, and
+p
+∥H∥L1 for the second integral. For the case |x −y| ≥1 and |y| ≤R, we use L1 for H
+and that | log |x −y|| < log R for 1 < |x −y| ≤2R. On the other hand for |y| ≥R we use
+the fact that | log |y|H| is square integrable because of the rapid decay of H.
+To prove (43), it suffices to show that for |x| ≤R,
+
+Z
+x −y
+|x −y|2 H(y, t)dy
+ ≤CR−1.
+(45)
+If |x −y| > R
+2 , we bound H by L1 and the kernel by CR−1. If |x −y| ≤R
+2 , we estimate
+the kernel in L1 and use the exponential decay of H.
+We also need an estimate for ∆−1∂th. In conservative form we have
+∂th = div (−V h −vH + ν∇h + ν∇H)
+(46)
+and use bounds on Riesz potentials,
+∥RΛ−1(uH + Uh)∥Lr ≤C∥uH + Uh∥Lq
+with 1
+r = 1
+q −1
+2 with q < 2. We obtain that
+∥∂tψ∥Lr ≤K2 + νK
+(47)
+with r > 2 and K the Yudovich norm.
+We take (40) and multiply by −χψ. After integrating by parts, we have
+1
+2
+d
+dt
+Z
+(χ|∇ψ|2)dx =
+Z
+(∇ψ · ∇V ∇ψ + Hv · ∇ψ)χdx
++
+Z
+s(ν) · ∇χdx −ν
+Z
+(h + H)∆(χψ)dx +
+Z
+∂tψ∇· (ψ∇χ)dx
+(48)
+In the case of a single fluid v · ∇ψ = 0, but for two fluids the cancellation does not hold.
+Nevertheless, the term has a bounded multiplying factor H. More care is required for the
+term with the vector s(ν)
+s(ν) = ψ(Hu −hU) −1
+2|∇ψ|2U + (V · ∇ψ)∇ψ.
+(49)
+The first piece is bounded in L1 by log R times norms in ∥uH −Uh∥L1. For the second and
+third piece, we bound |∇ψ|2U in L∞by KR−2 after using (43), and bound ∇χ in L1 by
+CR. Therefore
+
+Z
+s(ν) · ∇χdx
+ ≤K(1 + log R)R−1
+(50)
+
+10
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+where K depends on norms in Y of both σ and σν which are uniformly bounded and constant
+in time. The terms from the Laplacian when χ is not differentiated are O(ν). Then,
+Z
+∂tψ∇· (ψ∇χ)dx =
+Z
+∂tψψ∆χ dx +
+Z
+∂tψ∇ψ · ∇χ dx.
+(51)
+gives two terms. We use (42) and ∂tψ in L4 with (47) for the term ∂tψψ∆χ and have
+log R∥∆χ∥L
+4
+3 = (log R)R−1
+2 . In the term ∂tψ∇ψ · ∇χ we use L4 for ∇χ and say L3 for
+∇ψ leaving L
+12
+5 for ∂tψ. This term is thus bound by
+
+Z
+∂tψ∇· (ψ∇χ)dx
+ ≤K(1 + log R)R−1
+2
+(52)
+Now we estimate the term with ∇ψ ·∇V ∇ψ. We split at height M for the size of |∇ψ|2.
+We get a contribution of the form KM −1
+2 from the “bad” region:
+Z
+{|∇ψ|2≥M}
+∇ψ · ∇V ∇ψχdx ≤KM−1
+2
+(53)
+This power comes from a priori bounds for ∇V ∈L4 and for ∇ψ ∈L4. In the ”good”
+region we use the inequality
+ab ≤ϵea + log ϵ−1b + b log b
+which follows from the familiar ab ≤ea + b log b −b for nonnegative a, b by considering
+whether a ≥log ϵ−1 or not. If a ≤log ϵ−1 then we obtain ab ≤(log ϵ−1)b. If it is greater,
+we use the inequality a′b ≤ea′ +b log b for a′ = a+log ϵ. We obtain an error ϵK. Therefore
+Z
+{|∇ψ|2<M}
+∇ψ · ∇V ∇ψχdx ≤ϵK + log
+M2
+ϵ
+ Z
+χ|∇ψ|2dx
+(54)
+Overall, the right hand side of (48) is bounded by
+H∞
+
+1 + log
+M2
+ϵ
+ Z
+χ|∇ψ|2dx + (ν + y0)K0
+(55)
+where we set
+(ν + y0)K0 = ϵK + KM−1
+2 + KR−1
+2 log R + Kν.
+(56)
+with y0 =
+R
+χ|∇ψ(0)|2dx. This is obtained by taking independently and explicitly ϵ and
+M−1 in terms of ν + y0 and R in terms only of ν. (We could have done this for M−1 and ϵ
+as well, but we need (and afford) them to be slightly larger.) We write
+y(t) =
+Z
+χ|∇ψ|2dx.
+(57)
+The diffential inequality is
+dy
+dt ≤
+
+H∞
+
+1 + log
+M2
+ϵ
+
+y(t) + K0(ν + y0)
+(58)
+
+11
+Our integrating factor is e−H∞(1+log( M2
+ϵ ))t = e−H∞t 
+M2
+ϵ
+−tH∞. We multiply by it and
+integrate
+y(t) ≤
+"
+y(0) +
+K0(ν + y0)
+H∞(1 + log(M2
+ϵ ))
+#
+eH∞t
+M2
+ϵ
+tH∞
+≤(H∞+ K0)H−1
+∞(ν + y0)eH∞t
+M2
+ϵ
+tH∞
+(59)
+Now M2
+ϵ
+= K(ν + y0)−A with a fixed A > 0 and for AtH∞< 1 we have convergence to
+zero as ν + y0 →0.
+We have shown the required convergence for ∇ψ in the inviscid limit, and a similar
+argument yields convergence for ∇ϕ. In particular, (25) and thus Proposition 2 is proved.
+Theorem 1 follows via iteration, see [10].
+4. Patch regularity for left-handed equations
+In this section, we prove the propagation of regularity for the patch boundary in H¨older
+spaces. We show that the C2,α boundary regularity can be preserved even when a σ+ patch
+intersects transversally with a σ−patch.
+4.1. Propagation of C1,α regularity. Fix α ∈(0, 1). We start with the propagation of
+C1,α regularity for patch solutions to the Left-handed, Screened (LS) model by following
+the approach `a la [5]. We recall from [9] that the (LS) model can be equivalently formulated
+as
+∂tσ± + v± · ∇σ± = 0,
+v± = ±U(σ±) ∓S(F),
+(60)
+where S := ∇⊥(I −∆)−1∆−1, F = σ++σ−
+2
+.
+Following [5], we reformulate the patch problem as follows: let σ± = a±χΩ±, where
+Ω± are bounded domains in R2. We consider scalars φ± solving
+(
+∂tφ± + v± · ∇φ± = 0,
+φ±(x, 0) = φ±,0(x),
+(61)
+where v± can be explicitly written as:
+v±(x) = ±a±
+2π
+Z
+Ω±(t)
+∇⊥
+x log |x −y|dy
+∓
+ 
+a+
+4π
+Z
+Ω+(t)
+∇⊥
+x G(|x −y|)dy + a−
+4π
+Z
+Ω−(t)
+∇⊥
+x G(|x −y|)dy
+!
+=: ±U(σ±) ∓S(F)
+(62)
+where for r > 0, G(r) = K0(r) + log r and K0 is the modified Bessel function. Moreover,
+the patches Ω± are given by
+Ω±(t) = {φ±(x, t) > 0}.
+(63)
+We assume that the initial domains Ω±,0 are defined as:
+Ω±,0 = {φ±,0(x) > 0},
+(64)
+
+12
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+where φ±,0 ∈C1,α(R2), and the following nondegeneracy condition holds:
+inf
+x∈∂Ω±,0 |∇φ±,0(x)| ≥m > 0.
+(65)
+We also introduce the following notations: since σ± is transported by incompressible
+flows v±, we set
+(L±)2 := |Ω±(t)| = |Ω±,0|.
+With the above notation, we record the following conserved quantities:
+∥σ±∥Lp = a±(L±)
+2
+p ,
+p ∈[1, ∞].
+(66)
+We also introduce the notations: given a function f,
+|∇f|inf :=
+inf
+x∈∂Ω±(t) |∇f(x, t)|,
+|f|α := sup
+x̸=x′
+|f(x) −f(x′)|
+|x −x′|α
+.
+We first show the following result concerning the propagation of the C1,α regularity of
+φ±.
+THEOREM 2. Suppose a± ̸= 0, Ω±,0, φ±,0 ∈C1,α, α ∈(0, 1), such that (64) and (65)
+hold. There exists a constant C > 0 depending only on initial data and α that the problem
+(61)–(64) has a unique solution φ±(x, t) ∈C1,α(R2) with the following bounds:
+∥∇v±(·, t)∥L∞≤C∥∇v±(·, 0)∥L∞eCt,
+(67)
+|∇φ±(·, t)|α ≤C(|∇φ±(·, 0)|α + ∥∇φ±(·, 0)∥L∞t)eCt+C0eCt,
+(68)
+∥∇φ±(·, t)∥L∞≤∥∇φ±(·, 0)∥L∞eeCt,
+(69)
+|∇φ±(·, t)|inf ≥|∇φ±(·, 0)|infe−eCt,
+(70)
+for t ≥0, where C0 is a dimensional constant.
+The rest of this subsection is dedicated to the proof of Theorem 2. We arrange the proof
+into the following steps.
+Step 1: Estimates for the singular part U(σ±). Since the operator U coincides with the
+classical Biot-Savart operator for 2D incompressible Euler, we record the following results
+from [5] concerning Euler patches:
+PROPOSITION 3. Let φ± be related to Ω± as in (63) and (64). Then for α ∈(0, 1), the
+following inequality holds:
+∥∇U(σ±)∥L∞≤
+9
+2 + 2
+α
+
+|a±|
+ 1 + log ∆±
+α
+
+,
+(71)
+where
+∆±
+α := |∇φ±|αLα
+±
+|∇φ±|inf
+.
+Moreover, we have the following result:
+
+13
+PROPOSITION 4. There exists a universal constant C0 > 0 such that if W± ∈Cα(R2, R2)
+is a divergence-free vector field tangential to ∂Ω±, then
+|∇U(σ±)W±|α ≤C0∥∇U(σ±)∥L∞|W±|α.
+(72)
+Step 2: Estimates for the regular part S(F). In this step, we first prove the following
+proposition concerning the regularity of ∇S(F):
+PROPOSITION 5. Let σ± = a±χΩ± and F = 1
+2(σ+ + σ−). The following bound holds:
+∥∇S(F)∥H2 ≤∥F∥L2.
+(73)
+In particular, the following bound also holds: for α ∈(0, 1),
+∥∇S(F)∥L∞+ |∇S(F)|α ≤Cα(|a+|L+ + |a−|L−).
+(74)
+PROOF. To prove the proposition, it is more convenient to use the Fourier representation:
+ˆ
+∇S(F)(ξ) =
+ξ⊥ξ
+|ξ|2(1 + |ξ|2)
+ˆF(ξ).
+Then by Plancherel’s identity and the above identity, we see that
+∥∇S(F)∥2
+H2 =
+Z
+R2(1 + |ξ|2)2
+
+ξ⊥ξ
+|ξ|2(1 + |ξ|2)
+ˆF(ξ)
+
+2
+dξ ≤∥F∥2
+L2,
+which proves (73). The estimate (74) follows from Sobolev embedding and (66).
+□
+The following corollary then holds:
+COROLLARY 1. If W ∈(L∞∩Cα)(R2, R2) is an arbitrary divergence-free vector
+field, then
+|∇S(F)W|α ≤Cα(|a+|L+ + |a−|L−)(∥W∥L∞+ |W|α),
+(75)
+where Cα is defined in (74).
+Step 3: Time-dependent estimate for ∇⊥φ±. We prove the following result:
+PROPOSITION 6. Let T > 0. Assume that φ± is a solution to (61) on time interval
+[0, T). Suppose that φ± ∈C1,α and |∇φ±|inf > 0 for all t ∈[0, T). Then
+|∇φ±(·, t)|α ≤
+
+|∇φ±(·, 0)|α + ¯C(a±, L±, α)∥∇φ±(·, 0)∥L∞t
+
+× exp
+
+2 ¯C(a±, L±, α)t + (C0 + 1)
+Z t
+0
+∥∇U±(σ±)(·, s)∥L∞ds
+
+,
+(76)
+∥∇φ±(·, t)∥L∞≤∥∇φ±,0∥L∞exp
+Z t
+0
+∥∇v±(·, s)∥L∞ds
+
+,
+(77)
+|∇φ±(·, t)|inf ≥∥∇φ±,0∥inf exp
+
+−
+Z t
+0
+∥∇v±(·, s)∥L∞ds
+
+.
+(78)
+
+14
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+PROOF. From (61), we see that W± := ∇⊥φ± satisfies
+∂tW± + v± · ∇W± = ∇v±W±.
+(79)
+Then estimates (77) and (78) follow on the Lagrangian paths of v±. We then focus on the
+proof of (76). By following an identical computation to that in [5], the following estimate
+holds:
+|W±(·, t)|α ≤|W±(·, 0)|α exp
+
+α
+Z t
+0
+∥∇v±(·, s)∥L∞ds
+
++
+Z t
+0
+|∇v±W±|α exp
+
+α
+Z t
+s
+∥∇v±(·, s′)∥L∞ds′
+
+ds.
+(80)
+Denoting Q±(s) = ∥∇v±(·, s)∥L∞and using estimates (72), (75), we further have
+|W±(·, t)|α ≤|W±(·, 0)|α exp
+
+α
+Z t
+0
+Q±(s)ds
+
++
+Z t
+0
+( ¯C(a±, L±, α) + C0∥∇U(σ±)∥L∞)|W±(·, s)|α exp
+
+α
+Z t
+s
+Q±(s′)ds′
+
+ds
++
+Z t
+0
+( ¯C(a±, L±, α)|W±(·, s)|L∞) exp
+
+α
+Z t
+s
+Q±(s′)ds′
+
+ds,
+where ¯C(a±, L±, α) := Cα(|a+|L+ + |a−|L−).
+Multiplying on both sides by exp
+
+−α
+R t
+0 Q±(s)ds
+
+and defining
+G±(t) := |W±(·, t)|α exp
+
+−α
+Z t
+0
+Q±(s)ds
+
+,
+we deduce that
+G±(t) ≤|W±(·, 0)|α +
+Z t
+0
+( ¯C(a±, L±, α) + C0∥∇U(σ±)∥L∞)G±(s)ds
++
+Z t
+0
+( ¯C(a±, L±, α)|W±(·, s)|L∞) exp
+
+−α
+Z s
+0
+Q±(s′)ds′
+
+ds
+≤|W±(·, 0)|α +
+Z t
+0
+( ¯C(a±, L±, α) + C0∥∇U(σ±)∥L∞)G±(s)ds
++ ¯C(a±, L±, α)∥W±(·, 0)∥L∞
+Z t
+0
+exp
+
+(1 −α)
+Z s
+0
+Q±(s′)ds′
+
+ds,
+where we used (77) in the last inequality above. Now applying Gr¨onwall inequality, we
+arrive at
+G±(t) ≤
+
+|W±(·, 0)|α + ¯C(a±, L±, α)∥W±(·, 0)∥L∞
+Z t
+0
+exp
+
+(1 −α)
+Z s
+0
+Q±(s′)ds′
+
+ds
+
+× exp
+
+¯C(a±, L±, α)t + C0
+Z t
+0
+∥∇U(σ±)(·, s)∥L∞ds
+
+,
+
+15
+Multiplying on both sides by exp
+
+α
+R t
+0 Q±(s)ds
+
+, we obtain the following estimate:
+|∇φ±(·, t)|α ≤
+
+|W±(·, 0)|α + ¯C(a±, L±, α)∥W±(·, 0)∥L∞
+Z t
+0
+exp
+
+(1 −α)
+Z s
+0
+Q±(s′)ds′
+
+ds
+
+× exp
+
+¯C(a±, L±, α)t + C0
+Z t
+0
+∥∇U(σ±)(·, s)∥L∞ds + α
+Z t
+0
+∥∇v±(·, s)∥L∞ds
+
+.
+Recall that ∇v± = ±∇U(σ±) ∓∇S(F) and the bound (74), we have
+∥∇v±∥L∞≤∥∇U(σ±)∥L∞+ ¯C(a±, L±, α).
+Moreover, we have the bound
+Z t
+0
+exp
+
+(1 −α)
+Z s
+0
+Q±(s′)ds′
+
+ds ≤t exp
+
+(1 −α)
+Z t
+0
+∥∇v±(·, s)∥L∞ds
+
+.
+Combining the above three estimates, we finally arrive at
+|∇φ±(·, t)|α ≤
+
+|W±(·, 0)|α + ¯C(a±, L±, α)∥W±(·, 0)∥L∞t
+
+× exp
+
+¯C(a±, L±, α)t + C0
+Z t
+0
+∥∇U(σ±)(·, s)∥L∞ds +
+Z t
+0
+∥∇v±(·, s)∥L∞ds
+
+≤
+
+|W±(·, 0)|α + ¯C(a±, L±, α)∥W±(·, 0)∥L∞t
+
+× exp
+
+2 ¯C(a±, L±, α)t + (C0 + 1)
+Z t
+0
+∥∇U(σ±)(·, s)∥L∞ds
+
+,
+which yields (76).
+□
+Using a Gr¨onwall argument by invoking Proposition 6 and Proposition 3, Theorem 2 is
+proved.
+4.2. Propagation of higher regularity. With the global-in-time propagation of C1,α
+regularity established in the previous subsection, we now concern ourselves with the propa-
+gation of higher regularity. For the sake of clarity, and without loss of generality we take
+a± = 1.
+
+16
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+To start with, we observe that Theorem 2 enables us to use the following Contour
+Dynamics Equation (see [9]): for all t ≥0,
+∂tz+(α, t) = 1
+2π
+Z 2π
+0
+log |z+(α) −z+(β)|∂z+
+∂β (β)dβ
+−1
+4π
+Z 2π
+0
+˜G(|z+(α) −z+(β)|)∂z+
+∂β (β)dβ
+−1
+4π
+Z 2π
+0
+˜G(|z+(α) −z−(β)|)∂z−
+∂β (β)dβ,
+∂tz−(α, t) = −1
+2π
+Z 2π
+0
+log |z−(α) −z−(β)|∂z−
+∂β (β)dβ
++ 1
+4π
+Z 2π
+0
+˜G(|z−(α) −z+(β)|)∂z+
+∂β (β)dβ
++ 1
+4π
+Z 2π
+0
+˜G(|z−(α) −z−(β)|)∂z−
+∂β (β)dβ,
+(81)
+equipped with initial parametrization z±(α, 0) = z±,0(α), α ∈[0, 2π]. Here, the kernel
+˜G : [0, ∞) →R defined by
+˜G(r) = log r + K0(r) −(log 2 −γe),
+(82)
+where K0 is the modified Bessel function and γe is the Euler’s constant, enjoys the following
+properties: let x ∈R2 and denote r = |x|.
+(1) (Far-field properties) ˜G ∈C∞([1, ∞)). Moreover, the following estimates hold:
+for r ≥1,
+| ˜G(r)| ≤C0(1 + log r),
+|∇j
+x ˜G(r)| ≤Cj
+rj ,
+j ∈N,
+(83)
+where C0, Cj are universal constants.
+(2) (Near-field properties) For r ∈(0, 1), the following estimates hold:
+| ˜G(r)| ≤C0r2(1 + | log r|),
+|∇˜G(r)| ≤C1r(1 + | log r|),
+|∇2 ˜G(r)| ≤C2(1 + | log r|),
+|∇3 ˜G(r)| ≤C3
+1
+r.
+(84)
+In particular, ∇˜G(r) is Log-Lipschitz.
+The bounds (83) and (84) are known properties of the Bessel potential (see e.g. [1]). Finally,
+we introduce the arc-chord quantity
+|z|∗:= inf
+β̸=β′
+
+z(β) −z(β′)
+β −β′
+ .
+We dedicate the rest of the section to proving the following main result:
+THEOREM 3. Fix γ ∈(0, 1). Assume that z±,0 ∈C2,γ(T), |z±,0|∗≥m > 0, and
+|z′
+±,0| ≤M < ∞. Then the system (81) admits a unique solution z±(α, t) ∈C2,γ(T) for
+
+17
+all t ≥0. In particular, for any T > 0, there exists C(T) depending only on initial data, T,
+m, M, and γ that
+sup
+t∈[0,T]
+(∥z±(·, t)∥C2,γ(T) + |z±|−1
+∗
++ |z′
+±|∗) ≤C(T).
+(85)
+We start with showing the following bounds concerning a global arc-chord control and
+patch perimeter for σ± patches, which are consequences of the C1,α theory. Such estimates
+are known for Euler patches, and we record them here for the sake of completeness.
+PROPOSITION 7. For γ ∈(0, 1), let σ± = a±χΩ±(t) be the global C1,γ patch solution
+to the left-handed model (60). Let φ± ∈C1,γ be the patch-defining scalars corresponding
+to σ± satisfying (61). Define λ±(t) := |∂Ω±(t)| to be the perimeter of the σ± patches. For
+any T > 0, there exists C(T) > 0 depending only on initial data, γ, and T such that
+sup
+t∈[0,T]
+λ±(t) ≤C(T).
+(86)
+Moreover, let z± : [0, 2π] →R2 be a C1,γ Lagrangian parametrization of the boundaries to
+the σ± patches. For any T > 0, there exists C(T) > 0 depending only on initial data, γ,
+and T such that
+sup
+t∈[0,T]
+|z±|−1
+∗
+≤C(T).
+(87)
+PROOF. Without loss of generality, we take a± = 1. Fix T > 0. We start with proving
+(86). Since the scaling φ± 7→µ±φ±, µ± > 0, holds the patch boundary invariant, we may
+choose µ± > 0 appropriately such that the following gauge choice is valid: we select the
+initial parametrization z± : [0, 2π] →R2 to be such that
+∂βz±(β, 0) = ∇⊥φ±(z±(β, 0), 0).
+(88)
+Note that this is indeed a valid regular parametrization since |∇φ±(·, 0)|inf > 0. We claim
+that for any t ≥0,
+∂βz±(β, t) = ∇⊥φ±(z±(β, t), t).
+(89)
+Indeed, on one hand, as ∂tz±(β, t) = v±(z±(β, t), t), differentiating in β we obtain
+∂t∂βz±(β, t) = ∇v±(z±(β, t), t)∂βz±(β, t).
+On the other hand, from (61) we have
+(∂t + v± · ∇)∇⊥φ± = ∇v±∇⊥φ±,
+from which we obtain
+∂t∇⊥φ±(z±(β, t), t) = ∇v±(z±(β, t), t)∇⊥φ±(z±(β, t), t).
+Then the claim follows from uniqueness for ODE. Hence,
+λ±(t) =
+Z 2π
+0
+|∂βz±(β, t)|dβ ≤2π∥∇φ±∥L∞,
+which concludes the proof of (86) after using (69), which implies that
+supt∈[0,T] ∥∇φ±(·, t)∥L∞< C(T) for some C(T) > 0.
+
+18
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+To show (87), we fix β, β′ ∈[0, 2π] such that β ̸= β′. We see that from ∂tz±(β, t) =
+v±(z±(β, t), t) there is:
+1
+2
+d
+dt|z±(β, t) −z±(β′, t)|2
+= (z±(β, t) −z±(β′, t)) · (v±(z±(β, t), t) −v±(z±(β′, t), t))
+≥−∥∇v±(·, t)∥L∞|z±(β, t) −z±(β′, t)|2.
+From which we obtain
+1
+2
+d
+dt|z±|2
+∗≥−∥∇v±(·, t)∥L∞|z±|2
+∗.
+The above differential inequality plus (67) yields (87).
+□
+For convenience, we introduce the following multilinear maps: given bounded vectors
+a, b,
+I±
+1 (z; a) :=
+Z 2π
+0
+∇i ˜G(|z −z±(β)|)ai∂βz±(β)dβ,
+(90)
+I±
+2 (z; a, b) :=
+Z 2π
+0
+(∇2 ˜G(|z −z±(β)|))ijaibj(∂βz±(β))dβ,
+(91)
+We first show the following lemma.
+LEMMA 4. Assume that z± ∈C1(T), |z|∗> 0, and a, b are bounded vectors. Then
+both maps z 7→I±
+1 (z; a) and z 7→I±
+2 (z; a, b) are uniformly bounded and Log-Lipschitz. In
+particular, the following bounds hold: for any z ∈R2, there exists some universal constant
+C > 0 such that
+|I±
+1 (z; a)| ≤C|a|λ±(t),
+(92)
+and
+|I±
+2 (z; a, b)| ≤C(∥z±∥C1, |z±|∗)|a||b|,
+(93)
+Moreover, for |z1 −z2| < 1,
+|I±
+1 (z1; a) −I±
+1 (z2; a)| ≤Cλ±(t)|a||z1 −z2| (1 + | log |z1 −z2||) ,
+(94)
+and
+|I±
+2 (z1; a, b)−I±
+2 (z2; a, b)| ≤C(∥z±∥C1, |z±|∗)|a||b||z1−z2| (1 + | log |z1 −z2||) . (95)
+PROOF. We begin with estimates concerning I1. The bound (92) follows from the fact
+that ∇˜G is a uniformly bounded kernel in view of (83) and (84). To show (94), we observe
+that
+I±
+1 (z1; a) −I±
+1 (z2; a)
+=
+Z 2π
+0
+h
+∇˜G(|z1 −z±(β)|) −∇˜G(|z2 −z±(β)|)
+i
+· a∂βz±(β)dβ.
+Using (83), (84), and that ∇˜G(r) is Log-Lipschitz, we arrive at
+|I±
+1 (z1; a) −I±
+1 (z2; a)| ≤C|a||z1 −z2|(1 + |log |z1 −z2||)λ±(t),
+|z1 −z2| < 1.
+This completes the proof of (94).
+
+19
+To prove (93), we define the set E±
+r (z) := {β ∈[0, 2π] | |z −z±(β)| < r} given
+z ∈R2, r > 0. Then we decompose I±
+2 as follows:
+I±
+2 (z; a, b) =
+ Z
+E±
+1 (z)
++
+Z
+T\E±
+1 (z)
+!
+(∇2 ˜G(|z −z±(β)|))ijaibj(∂βz±(β))dβ =: I1 + I2.
+By (83), we note that ∇2 ˜G(r) is uniformly bounded for r ≥1. Then it follows that
+|I2| ≤C|a||b|λ±(t).
+To estimate I1, we observe from (84) that
+|I1| ≤C∥z±∥C1|a||b|
+Z
+E±
+1 (z)
+
+1 + log
+1
+|z −z±(β)|
+
+dβ.
+To proceed, we claim the following bound for the set E±
+r (z): for any z ∈R2, r > 0,
+|E±
+r (z)| ≤min
+
+2π,
+4r
+|z±|∗
+
+.
+(96)
+To show (96), we consider Er(z) ̸= ∅. We choose β0 ∈E±
+r (z). Then for any β ∈E±
+r (z),
+we use the definition of |z±|∗to deduce that
+|z±|∗|β −β0| ≤|z±(β) −z±(β0)| ≤|z −z±(β)| + |z −z±(β0)| ≤2r.
+Hence, E±
+r (z) ⊂{β ∈T | |β −β0| ≤
+2r
+|z±|∗} and the claimed estimate (96) follows. With
+(96) and the identity
+log 1
+r =
+Z ∞
+0
+χ{r<e−t}dt,
+r ∈(0, 1),
+we deduce that
+Z
+E±
+1 (z)
+log
+1
+|z −z±(β)|dβ =
+Z
+E±
+1 (z)
+Z ∞
+0
+χE±
+e−t(z)dtdβ ≤2π
+Z ∞
+0
+min{2π, 4e−t
+|z±|∗
+}dt
+≤C
+
+1 + log
+
+1 +
+1
+|z±|∗
+
+.
+(97)
+Combining all estimates above, we conclude that
+|I1| ≤C(∥z±∥C1, |z±|∗)|a||b|.
+This estimate together with that for I2 yields the desired bound (93).
+We finally prove (95). We fix z1, z2 ∈R2 and let δ = |z1 −z2|. Without loss of
+generality, we assume δ to be sufficiently small. Note that
+I±
+2 (z1; a, b) −I±
+2 (z2; a, b) =
+ Z
+E±
+4δ(z1)
++
+Z
+E±
+1 (z1)\E±
+4δ(z1)
++
+Z
+T\E±
+1 (z1)
+!
+
+∇2 ˜G(|z1 −z±(β)|) −∇2 ˜G(|z2 −z±(β)|)
+ij
+aibj∂βz±(β)dβ
+=: J1 + J2 + J3.
+
+20
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+To estimate J1, we note that for any β ∈E±
+4δ(z1), we must also have |z2 −z±(β)| ≤5δ.
+Then invoking (84) we have
+|J1| ≤C|a||b|∥z±∥C1
+ Z
+E±
+4δ(z1)
+
+1 + log
+1
+|z1 −z±(β)|
+
+dβ
++
+Z
+E±
+5δ(z2)
+
+1 + log
+1
+|z2 −z±(β)|
+
+dβ
+
+.
+To estimate the first integral in the parenthesis above, we have
+Z
+E±
+4δ(z1)
+
+1 + log
+1
+|z1 −z±(β)|
+
+dβ
+≤(1 + log 1
+4δ)|E±
+4δ(z1)| +
+Z
+E±
+4δ(z1)
+log
+4δ
+|z1 −z±(β)|dβ
+≤C(|z±|∗)δ log δ−1 +
+Z
+E±
+4δ(z1)
+log
+4δ
+|z1 −z±(β)|dβ,
+(98)
+where we used the bound (96) in the final inequality above. To estimate the integral in (98),
+a similar argument to (97) reveals the bound:
+Z
+E±
+4δ(z1)
+log
+4δ
+|z1 −z±(β)|dβ ≤C
+δ
+|z±|∗
+
+1 −log
+δ
+|z±|∗
+
+.
+Hence the above bound together with (98) yields:
+Z
+E±
+4δ(z1)
+
+1 + log
+1
+|z1 −z±(β)|
+
+dβ ≤C(|z±|∗)δ(1 + log δ−1).
+A similar argument also yields the following bound:
+Z
+E±
+5δ(z2)
+log
+4δ
+|z2 −z±(β)|dβ ≤C(|z±|∗)δ(1 + log δ−1).
+Summarizing the above bounds, we conclude that
+|J1| ≤C(|z±|∗, ∥z±∥C1)|a||b|δ(1 + log δ−1).
+(99)
+We then estimate J3. Given z1, z2 fixed, we define z(s) := z1 + s(z2 −z1), s ∈[0, 1].
+Then we observe that for β ∈T\E±
+1 (z1),
+|z(s) −z±(β)| ≥1
+2,
+s ∈[0, 1].
+Invoking the Mean Value Theorem and (83), we see that for any β ∈T\E±
+1 (z1), there exists
+s(β) ∈[0, 1] such that
+|J3| =
+
+Z
+T\E±
+1 (z1)
+h
+∇3 ˜G(z(s(β)) −z±(β))
+iijk
+aibj(z1 −z2)k∂βz±(β)dβ
+
+≤C|a||b|
+Z
+T\E±
+1 (z1)
+δ
+|z(s(β)) −z±(β)|3 |∂βz±(β)|dβ
+≤C|a||b|∥z±∥C1δ.
+(100)
+
+21
+Finally, to estimate J2, we observe that for any β ∈E±
+1 (z1)\E±
+4δ(z1), |z(s) −z±(β)| ≥
+3
+4|z1 −z±(β)|. Hence by a similar argument to (100) using the Mean Value Theorem and
+(84), we have
+|J2| ≤C|a||b|∥z±∥C1δ
+Z
+4δ<|z1−z±(β)|≤1
+1
+|z1 −z±(β)|dβ.
+(101)
+We define Ej = {β ∈T | 2j4δ < |z1 −z±(β)| ≤2j+14δ}. Let J be the smallest natural
+number such that 2J+14δ ≥1. Then clearly J ∼log δ−1. Hence,
+Z
+4δ<|z1−z±(β)|≤1
+1
+|z1 −z±(β)|dβ ≤
+J
+X
+j=0
+Z
+Ej
+1
+|z1 −z±(β)|dβ
+≤
+J
+X
+j=0
+(2j4δ)−1|Ej| ≤
+J
+X
+j=0
+(2j4δ)−1 16 · 2j+1δ
+|z±|∗
+≤
+C
+|z±|∗
+log δ−1,
+where we used that Ej ⊂E2j+14δ(z1) and therefore |Ej| ≤16·2j+1δ
+|z±|∗. Combining the above
+estimate with (101) we arrive at
+|J2| ≤C(∥z±∥C1, |z±|∗)|a||b|δ log δ−1.
+(102)
+The desired estimate (95) then follows from (99), (102), and (100).
+□
+With the technical preparations above, we complete the proof of Theorem 3. Recalling
+(81), we first write
+∂tz+ = F1 + F2 + F3,
+(103)
+where
+F1 = 1
+2π
+Z 2π
+0
+log |z+(α) −z+(β)|∂z+
+∂β (β)dβ,
+F2 = −1
+4π
+Z 2π
+0
+˜G(|z+(α) −z+(β)|)∂z+
+∂β (β)dβ,
+F3 = −1
+4π
+Z 2π
+0
+˜G(|z+(α) −z−(β)|)∂z−
+∂β (β)dβ.
+Fix T > 0. From the global in time propagation of C1,γ boundary regularity for any
+γ ∈(0, 1) and Proposition 7, there exists C(T) > 0 such that
+sup
+t∈[0,T]
+(∥z±∥C1,γ + λ±(t) + |z±|−1
+∗) < C(T).
+(104)
+By [2, Proposition 4.7], we have the following bound:
+∥F1(·, t)∥C2,γ ≤C(T)(1 + ∥z±∥C2,γ),
+t ∈[0, T].
+To estimate F2, we observe that
+∂2
+αF2(α) = −1
+4π
+ I+
+1 (z+(α); ∂2
+αz+(α)) + I+
+2 (z+(α); ∂αz+(α), ∂αz+(α))
+
+.
+
+22
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+Then applying (92) and (93), we have
+∥∂2
+αF2∥L∞≤C(T)∥∂2
+αz±∥L∞+ C(T)∥z±∥2
+C1,γ ≤C(T)(1 + ∥∂2
+αz±∥L∞).
+(105)
+Selecting α, α′ ∈T such that α ̸= α′, we further observe that
+∂2
+αF2(α) −∂2
+αF2(α′) = −1
+4π
+
+I+
+1 (z+(α); ∂2
+αz+(α)) −I+
+1 (z+(α′); ∂2
+αz+(α))
+
+−1
+4π
+
+I+
+1 (z+(α′); ∂2
+αz+(α) −∂2
+αz+(α′))
+
+−1
+4π
+
+I+
+2 (z+(α); ∂αz+(α), ∂αz+(α)) −I+
+2 (z+(α′); ∂αz+(α), ∂αz+(α))
+
+−1
+4π
+
+I+
+2 (z+(α′); ∂αz+(α) −∂αz+(α′), ∂αz+(α))
+
+−1
+4π
+
+I+
+2 (z+(α′); ∂αz+(α′), ∂αz+(α) −∂αz+(α′))
+
+=:
+5
+X
+j=1
+Tj.
+Denote δ = |α −α′| and assume without loss of generality that δ is sufficiently small. Using
+(104) together with (92) and (93) respectively,
+|T2| + |T4| + |T5| ≤C(T)(∥∂2
+αz+∥Cγδγ + ∥z+∥C1,γδγ) ≤C(T)(1 + ∥z+∥C2,γ)δγ.
+Invoking (94) and (95) respectively, we also have
+|T1| + |T3| ≤C(T)(∥∂2
+αz+∥Cγ + ∥z+∥2
+C1,γ)δ log δ−1 ≤C(T)(1 + ∥∂2
+αz±∥Cγ)δγ.
+where the last inequality follows from choosing δ sufficiently small. Combining the above
+two estimates,
+∥∂2
+αF2∥Cγ ≤C(T)(1 + ∥∂2
+αz±∥Cγ).
+(106)
+A very similar argument also yields the following bound for F3:
+∥∂2
+αF3∥L∞+ ∥∂2
+αF3∥Cγ ≤C(T)(1 + ∥∂2
+αz±∥L∞+ ∥∂2
+αz±∥Cγ).
+(107)
+Using (105), (106), (107), and the equation for z+, we arrive at the following differential
+inequality:
+d
+dt(∥∂2
+αz+∥Cγ + ∥∂2
+αz+∥L∞) ≤C(T)(1 + ∥∂2
+αz+∥Cγ + ∥∂2
+αz+∥L∞),
+t ∈[0, T].
+from which we obtain supt∈[0,T](∥∂2
+αz+∥Cγ + ∥∂2
+αz+∥L∞) ≤C(T). The same bound for
+z−is also obtained by a similar argument. This estimate together with (104) concludes the
+proof of Theorem 3.
+5. The numerical algorithm
+In this section, we validate numerically the theoretical finding of merger in the odd-even
+symmetry case, and explore potential mergers for other initial conditions. First, analytical
+representations are derived for four different initial conditions, as the basis for our numerical
+approximation. The approximation techniques we use are based on [11].
+
+23
+The initial boundaries of the vortex patches are closed curves in R2, which we parame-
+terize clockwise for α ∈[0, 2π]. We linearly interpolate the curves with N nodes, which
+correspond to our discretization of the boundaries of our patches. The nodes are initially
+evenly distributed in α, and the contour is remeshed every 5 time steps in order to maintain
+the uniform density of nodes (in α). We then evolve the patches discretely using second-order
+finite differences to compute the differential contour element, second-order quadrature in α,
+and a fourth-order Runge-Kutta scheme for the time evolution.
+In order to satisfy the CFL condition, we choose time-step:
+∆t = 1
+N
+(108)
+All numerical tests exhibit short-time convergence. We see no difference in behavior
+of patches evolved with ∆t =
+1
+N and ∆t =
+1
+10N . As in [11], we see that if there are too
+few nodes along the contour or if these nodes are spaced too far apart, the evolution of the
+discretized contour exhibits instability. After some time dependent on the initialization of the
+patches, the simulations become inaccurate as small scales form and the contour filaments.
+The numerical results we shall report are well before this time by an order of magnitude. In
+the results we report, the number of nodes is fixed to N = 512.
+To visualize F and ϕ, we solve an elliptic problem in the Eulerian frame. We mesh a
+relevant rectangular domain containing the contours throughout their time evolution and
+compute the values over time of σ+, σ−by evaluating for each time-step the scalar multiples
+by a± of indicator functions on the patches Ω+, Ω−in the interiors of z+, z−:
+σ± = a±χΩ±(x)
+F is computed by taking the average of σ+ and σ−.
+For the right-handed unscreened system, we then compute ϕ = (−∆)−1F using the
+fundamental solution of the Laplacian:
+ϕ(x, t) = −1
+2π
+Z
+R2 log |x −y|F(y) dy
+(109)
+For the right-handed screened system, we compute ϕ = (I −∆)−1F. Analytically we use
+the convolution of F with the Bessel potential:
+ϕ(x, t) = 1
+2π
+Z
+R2 K0(|x −y|)F(y, t) dy
+(110)
+where K0 is the modified Bessel function of the second kind of order zero. Similarly, for the
+left-handed screened system we compute ϕ = (∆−I)−1F, introducing a minus sign to the
+above.
+5.1. Translational merger. We start our numerical experimentation by looking at
+the right-handed, unscreened model in the case of the following initial conditions: set
+σ+(x, 0) = χB and σ−(x, 0) = χ ˜B, where B is a disk centered at (d/2 + r, 0) with radius
+r. Here, r, d > 0. Also, ˜B is mirror image of B across x2 axis. Let B, ˜B be parametrized
+by z+, z−, evolved according to the following right-handed unscreened contour dynamics:
+
+24
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+∂tz+ = −1
+2π
+Z 2π
+0
+log |z+(α) −z−(β)|∂βz−(β)dβ,
+∂tz−= 1
+2π
+Z 2π
+0
+log |z−(α) −z+(β)|∂βz+(β)dβ.
+(111)
+We use an explicit time-marching algorithm in order to advance the vortex patches every
+time-step. The contours of the vortex patches z+, z−are discretized into N nodes. Let
+z±,j represent the j-th node of each respective patch. We employ the trapezoidal rule to
+compute the integrals in (111), and second-order central finite differences to approximate
+the differential contour elements ∂βz±(β)dβ:
+∆z±,j = z±,j+1 −z±,j−1
+2
+(112)
+We then sum the kernel interactions. See:
+∂tz+,i ≈−1
+2π
+N
+X
+j=1
+log |z+,i −z−,j|∆z−,j
+(113)
+Let this finite differences method be denoted V (z+, z−) = (∂tz+, ∂tz−). To advance the
+position of the vortex patches in time, we utilize an explicit fourth-order Runge-Kutta method.
+For a given time step ∆t, the positions at the next time are updated as follows:
+(k1+, k1−) = V
+
+z(n)
++ , z(n)
+−
+
+(k2+, k2−) = V
+
+z(n)
++ + ∆t
+2 k1+ , z(n)
+−+ ∆t
+2 k1−
+
+(k3+, k3−) = V
+
+z(n)
++ + ∆t
+2 k2+ , z(n)
+−+ ∆t
+2 k2−
+
+(k4+, k4−) = V
+
+z(n)
++ + ∆tk3+ , z(n)
+−+ ∆tk3−
+
+z(n+1)
+±
+= z(n)
+± + ∆t
+6 (k1± + 2k2± + 2k3± + k4±)
+(114)
+As the vortex patches evolve, we remesh the contours z+, z−every 5 time-steps using a
+periodic cubic spline interpolation in order to maintain even spacing between the N nodes.
+5.2. Antipodal disks. The antipodal disk scenario is evolved according to the right-
+handed unscreened system (111) where the contours z± bound patches of opposite sign. That
+is, we set σ+(x, 0) = χB and σ−(x, 0) = −χ ˜B, where B is a disk centered at (d/2 + r, 0)
+with radius r. The contours z+, z−evolve according to the following system:
+∂tz+ = 1
+2π
+Z 2π
+0
+log |z+(α) −z−(β)|∂βz−(β)dβ,
+∂tz−= 1
+2π
+Z 2π
+0
+log |z−(α) −z+(β)|∂βz+(β)dβ.
+(115)
+The time integration, spatial discretization, and periodic remeshing protocols are identi-
+cal to those described in Section 2.1.
+
+25
+5.3. Odd-even symmetry. In [9], a merger scenario is proved for the right-handed
+screened system with assumed odd-even symmetry. By odd-even symmetry, we mean the
+following symmetry:
+σ±(t, −x1, x2) = −σ±(t, x1, x2),
+σ+(t, x1, x2) = σ−(t, x1, −x2).
+(116)
+The four patches we track are bounded by contours z, −z, ¯z, ˜z where ˜z = (−z1, z2) and
+¯z = (z1, −z2). The symmetry allows us to keep track of only one contour z which is placed
+initially in the first quadrant, as the other three contours −z, ¯z, ˜z follow by symmetry. We
+evolve z according to the following equation:
+∂tz = 1
+4π
+Z 2π
+0
+(log |z(α) −z(β)| + K0(|z(α) −z(β)|)) ∂βz(β)dβ
++ 1
+4π
+Z 2π
+0
+(log |z(α) −˜z(β)| + K0(|z(α) −˜z(β)|)) ∂β˜z(β)dβ
++ 1
+4π
+Z 2π
+0
+(log |z(α) −¯z(β)| −K0(|z(α) −¯z(β)|)) ∂β¯z(β)dβ
++ 1
+4π
+Z 2π
+0
+(log |z(α) + z(β)| −K0(|z(α) + z(β)|)) (−∂βz(β))dβ
+(117)
+We also examine the right-handed unscreened system with the same odd-even symmetry.
+In the unscreened scenario, the contour z is evolved according to the equation:
+∂tz = 1
+2π
+Z 2π
+0
+log |z(α) −¯z(β)|∂β¯z(β)dβ −1
+2π
+Z 2π
+0
+log |z(α) + z(β)|∂βz(β)dβ
+(118)
+Our algorithm computes the time marching of z, which is then reflected across the x−
+and y−axes to visualize the positions of all four patches over time. The discretization and
+remeshing are identical to those described in Section 2.1.
+In order to compute F and ϕ in these scenarios, we see that the symmetry (116) implies
+that:
+F = 1
+2(σ+ + σ−) = 1
+2(χΩz −χΩ˜z + χΩ¯z −χΩ−z)(x)
+(119)
+Then, ϕ is computed numerically as described above.
+
+26
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+5.4. Left-handed screened system. In Constantin–Hu [9], merger is proven for the
+left-handed screened system modeled by the contour dynamics equation:
+∂tz+ = 1
+2π
+Z 2π
+0
+log |z+(α) −z+(β)|∂βz+(β)dβ
++ 1
+4π
+Z 2π
+0
+¯G(|z+(α) −z+(β)|)∂βz+(β)dβ
++ 1
+4π
+Z 2π
+0
+¯G(|z+(α) −z−(β)|)∂βz−(β)dβ,
+∂tz−= −1
+2π
+Z 2π
+0
+log |z−(α) −z−(β)|∂βz−(β)dβ
+−1
+4π
+Z 2π
+0
+¯G(|z−(α) −z+(β)|)∂βz+(β)dβ
+−1
+4π
+Z 2π
+0
+¯G(|z−(α) −z−(β)|)∂βz−(β)dβ,
+(120)
+where ¯G(r) = −K0(r) −log r and K0 is the modified Bessel function of the second kind.
+The merger scenario is initiated by σ−a circular patch with intensity 1 and σ+ a Kirchoff’s
+ellipse with intensity 1. See [9]. Our algorithm is the same as previously described.
+6. Numerical simulations
+In our Figures, the leftmost plots show the positions of the contours z+, z−. The center
+plots show the position and value of F, with red patches corresponding to σ+ and blue
+patches corresponding to σ−. Bright red corresponds to F taking on the value 0.5, while
+dark red corresponds to F = 1, and blue corresponds to F taking on the value −0.5 while
+dark blue corresponds to F = −1. The rightmost plots show the position and value of the
+level sets ϕ = c with a color corresponding to the certain value c. Blue corresponds to values
+of ϕ closer to its global minimum over time and space, while red curves correspond to values
+of ϕ closer to its global maximum.
+6.1. Translational merger. In this scenario of the right-handed unscreened system,
+the two contours z+, z−travel in the negative x2 direction together before merging. Their
+behavior is symmetric across the y-axis. In Figure 1 are contours z+, z−initialized at t = 0
+as circles of radius 1 centered at (−2, 0) and (2, 0) respectively. The level curves drawn are
+ϕ = −0.85, −0.75, −0.6, −0.5, −0.4, −0.3
+are drawn, going from blue to red.
+Here, we have numerical evidence of a situation in which the two contours and their
+magnetic fields initially have two connected components. As they translate in time, they
+become one connected component, therefore changing topology. Indeed, we see that numer-
+ically the change in topology of F corresponds to a subsequent change in topology of ϕ.
+Illustrating this is the disconnection of the level set ϕ = −0.4 between t = 30 and t = 40.
+The level set ϕ = −0.3 shrinks and disappears throughout the time evolution: see that
+the level set ϕ = −0.3 is present prior to t = 20 and is not present at t = 30 and therefore
+
+27
+indicate another kind of change in topology of ϕ. ϕ attains its global maximum at t ≈0.29
+and then decreases over time.
+6.2. Antipodal disks. In this initialization of the right-handed unscreened system,
+two contours revolve about one another in the clockwise direction while deforming. This
+behavior is symmetric. The two contours z+, z−are initialized at t = 0 as circles of radius 1
+centered at (−1.5, 0) and (1.5, 0) respectively, and throughout the simulation they do not
+merge or intersect. See Figure 2. Pictured are level curves
+ϕ = −0.85, −0.75, −0.6, −0.5, −0.4, −0.27, −0.25, −0.23, −0.2
+in colors blue to red, respectively. At t = 0, the level set ϕ = −0.2 is the only level set
+in two disconnected components. Although the contours remain disconnected, we observe
+a change in topology of ϕ. Indeed, certain level curves of ϕ = c disconnect: the level set
+ϕ = −0.23 is disconnected at t = 20.
+6.3. Odd-even symmetry. We exhibit here the unscreened and screened odd-even
+symmetry systems with contours z, −z, ˜z, ¯z with z initialized at t = 0 as a circle of radius
+0.45 centered at (0.5, 0.5). In both the unscreened and screened case, the contours drift
+towards one another and merge. See Figure 3 for the unscreened system. The level curves
+ϕ = ±0.02, ±0.04, ±0.05, ±0.06
+are pictured where negative values are blue and positive values are red. We observe changes
+in topology in ϕ over time; level sets ϕ = ±0.06 disconnect between t = 3 and t = 4.5.
+As noted in Section 2.3, we numerically verify the existence of merger in the screened
+odd-even symmetry case for contours initialized close enough together, a small-scale version
+of which has been rigorously justified in [9]. See Figure 4. The level curves for
+ϕ = ±0.02, ±0.04, ±0.05, ±0.06, ±0.99ϕ∞
+are displayed where ϕ∞is the (discrete) maximum in space and time. Note that after t = 0,
+the level curves ϕ = ±0.99ϕ∞vanish, exhibiting a topological change in ϕ. Moreover, the
+level sets ϕ = ±0.06 become disconnected between t = 0 and t = 1 before vanishing, and
+the level sets ϕ = ±0.05 become disconnected between t = 2 and t = 3.
+6.4. Left-handed screened system. We initialize z+ as an ellipse and z−as a circle
+centered at the origin for small R = 1 and d = R
+2 ≡0.5.
+z+(α) =
+ d + 2R + R cos α, 2R sin α
+
+, z−(α) =
+ R cos α, R sin α
+
+, α ∈[0, 2π]
+(121)
+Indeed, we see merger and un-merger of z+ and z−, as well as topological changes in ϕ.
+See Figure 5. At t ≈9, another connected component of the level set ϕ = −0.25 appears,
+pictured in the plot at t = 10. At t = 15 we see both connected components of the level set
+ϕ = −0.25 have merged into one connected component. At t = 20, we see that the level set
+ϕ = −0.25 has again become two disconnected components.
+
+28
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+t = 0
+t = 10
+t = 20
+t = 30
+t = 40
+z±
+F
+ϕ
+FIGURE 1. Right-handed unscreened system with the same sign initial data
+in Section 6.1.
+
+29
+t = 0
+t = 10
+t = 20
+t = 30
+t = 40
+z±
+F
+ϕ
+FIGURE 2. Right-handed unscreened system the opposite sign initial data
+in Section 6.2.
+
+30
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+t = 0
+t = 1.5
+t = 3
+t = 4.5
+t = 6
+z, ˜z, ¯z, −z
+F
+ϕ
+FIGURE 3. Right-handed unscreened system with odd-even symmetric data
+given in Section 6.3.
+
+31
+t = 0
+t = 1
+t = 2
+t = 3
+t = 4
+z, ˜z, ¯z, −z
+F
+ϕ
+FIGURE 4. Right-handed screened system with odd-even symmetric initial
+given in Section 6.3.
+
+32
+LYDIA BOUBENDIR, PETER CONSTANTIN, HEZEKIAH GRAYER II, AND ZHONGTIAN HU
+t = 0
+t = 5
+t = 10
+t = 15
+t = 20
+z±
+F
+ϕ
+FIGURE 5. Left-handed screened system with data given in Section 6.4
+
+33
+Acknowledgments. The work of P.C. was partially supported by NSF grant DMS-2606072.
+The work of Z.H. was partly supported by a Simons Collaboration Grant 601960. H.G.
+acknowledges support from the AMS–Simons Travel Grant and the hospitality of Vincent
+Martinez at CUNY–Hunter College during the summer of 2026.
+Disclosure on AI usage. Generative artificial intelligence tools were used during manuscript
+preparation exclusively for literature search, software development, typesetting, and proof-
+reading prose and algebra. Every suggestion, computation, and reference produced by the
+AI systems was independently verified and, where necessary, corrected or reformulated by
+the authors, who take full responsibility for the manuscript as it is presently written.
+References
+[1] N. Aronszajn, K. T. Smith, Theory of Bessel potentials. I, Ann. Inst. Fourier (Grenoble), 11, (1961),
+385–475.
+[2] A. Bertozzi, Existence, uniqueness, and a characterization of solutions to the contour dynamics equation,
+Princeton University ProQuest Dissertations & Theses, (1991).
+[3] D. Biskamp. Nonlinear magnetohydrodynamics, volume 1 of Cambridge Monographs on Plasma Physics.
+Cambridge University Press, Cambridge, 1993.
+[4] A. Boozer, Electric Inertia and Magnetic Reconnection arXiv:2509.14400v1 [physics.plsam-ph] (2025)
+[5] A. Bertozzi, P. Constantin, Global regularity for vortex patches, Commun. Math. Phys., 152, (1993), 19 –
+28.
+[6] E. Cafaro, D. Grasso, F. Pegoraro, F. Porcelli, and A. Saluzzi, Invariants and Geometric Structures in
+Nonlinear Hamiltonian Magnetic Reconnection, Phys. Rev Lett. 80 20, (1998), 4430-4433.
+[7] J-Y. Chemin, Persistance de structures g´eom´etriques dans les fluides incompressibles bidimennsionels,
+Ann. Ecol. Norm Sup. 26, 517-542 (1993).
+[8] P. Constantin, T. D. Drivas, T. M. Elgindi, Inviscid limit of vorticity distributions in Yudovich class, Comm.
+Pure Appl. Math., 75, 60–82, (2022).
+[9] P. Constantin and Z. Hu. ”Electric inertia and ideal magnetic reconnection in 2D.” arXiv preprint
+arXiv:2604.15568 (2026).
+[10] P. Constantin and J. Wu. ”Inviscid limit for vortex patches.” Nonlinearity 8, no. 5 (1995): 735-742.
+[11] D. G. Dritschel, Contour Dynamics and Contour Surgery: Numerical Algorithms for Extended, High-
+Resolution Modelling of Vortex Dynamics in Two-Dimensional, Inviscid, Incompressible Flows, Computer
+Physics Reports, 10, (1989), 77-146.
+[12] M. Lingam, P. J. Morrison, E. Tassi, Inertial magnetohydrodynamics, Physics Letters A 379 (2015),
+570-576.
+[13] J. B. Taylor. Relaxation and magnetic reconnection in plasmas. Rev. Mod. Phys., 58, (1986), 741-763.
+DEPARTMENT OF MATHEMATICS, PRINCETON UNIVERSITY, PRINCETON, NJ 08544
+Email address: lydia.boubendir@princeton.edu
+DEPARTMENT OF MATHEMATICS, PRINCETON UNIVERSITY, PRINCETON, NJ 08544
+Email address: const@math.princeton.edu
+DEPARTMENT OF MATHEMATICS, STANFORD UNIVERSITY, STANFORD, CA 94305
+Email address: hezekiah@stanford.edu
+DEPARTMENT OF MATHEMATICS, UNIVERSITY OF MARYLAND, COLLEGE PARK, MD 20742
+Email address: zh1077@umd.edu

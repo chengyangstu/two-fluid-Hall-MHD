@@ -1,0 +1,1275 @@
+
+===== PDF PAGE 1 =====
+  Multiparametric study of tearing modes in thin current sheets
+            H Betar, D del Sarto, M Ottaviani, A Ghizzo
+
+
+
+   To cite this version:
+
+   H Betar, D del Sarto, M Ottaviani, A Ghizzo. Multiparametric study of tearing modes in thin current sheets.
+     Physics of Plasmas, 2020, 27, ⟨10.1063/5.0022133⟩. ⟨hal-03320852⟩
+
+
+
+
+
+                 HAL Id: hal-03320852
+                https://hal.univ-lorraine.fr/hal-03320852v1
+
+                                    Submitted on 16 Aug 2021
+
+
+
+
+  HAL is a multi-disciplinary open access archive      L’archive ouverte pluridisciplinaire HAL, est des-
+for the deposit and dissemination of scientific re-  tinée au dépôt et à la diffusion de documents scien-
+search documents, whether they are published or not.  tifiques de niveau recherche, publiés ou non, émanant
+The documents may come from teaching and research  des établissements d’enseignement et de recherche
+institutions in France or abroad, or from public or pri-  français ou étrangers, des laboratoires publics ou
+vate research centers.                                   privés.
+
+
+                            HAL Authorization
+
+===== PDF PAGE 2 =====
+Multiparametric study of tearing modes in
+thin current sheets
+
+Cite as: Phys. Plasmas 27, 102106 (2020); https://doi.org/10.1063/5.0022133
+Submitted: 17 July 2020 . Accepted: 10 September 2020 . Published Online: 14 October 2020
+
+H. Betar, D. Del Sarto     , M. Ottaviani, and A. Ghizzo
+
+
+
+
+
+ARTICLES YOU MAY BE INTERESTED IN
+
+Global ITG eigenmodes: From ballooning angle and radial shift to Reynolds stress and
+nonlinear saturation
+Physics of Plasmas 27, 072507 (2020); https://doi.org/10.1063/5.0006765
+
+Quasilinear modeling of heat flux from microtearing turbulence
+Physics of Plasmas 27, 082306 (2020); https://doi.org/10.1063/5.0019082
+
+Global gyrokinetic nonlinear simulations of kinetic infernal modes in reversed shear tokamaks
+Physics of Plasmas 27, 092302 (2020); https://doi.org/10.1063/5.0013349
+
+
+
+
+
+ Phys. Plasmas 27, 102106 (2020); https://doi.org/10.1063/5.0022133                                                27, 102106
+
+ © 2020 Author(s).
+
+===== PDF PAGE 3 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+ Multiparametric study of tearing modes in thin
+ current sheets
+
+
+
+   Cite as: Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133
+   Submitted: 17 July 2020 . Accepted: 10 September 2020 .
+   Published Online: 14 October 2020
+
+   H. Betar,1,a) D. Del Sarto,1,b)   M. Ottaviani,2,c) and A. Ghizzo1,d)
+
+   AFFILIATIONS
+
+    1Institut Jean Lamour, UMR 7198 CNRS—Universite de Lorraine, F-54000 Nancy, France
+   2CEA, IRFM, F-13108 Saint-Paul-lez-Durance, France
+
+    a)Electronic mail: homam.betar@univ-lorraine.fr
+   b)Author to whom correspondence should be addressed: daniele.del-sarto@univ-lorraine.fr
+    c)Electronic mail: maurizio.ottaviani@cea.fr
+    d)Electronic mail: alain.ghizzo@univ-lorraine.fr
+
+
+  ABSTRACT
+
+  We investigate the asymptotic scaling of the growth rate and of the characteristic layer width of reduced-MHD tearing modes occurring in thin
+    current sheets when reconnection depends on two non-ideal parameters. For this purpose, we use a new multi-precision ﬁnite difference
+    eigensolver. The viscous-resistive regime, the warm-resistive regime that includes both resistivity and electron temperature effects, the warm-
+    inertial regime in which a ﬁnite electron inertia replaces resistivity in allowing reconnection, and the inertial-resistive regime that includes both
+    electron inertia and resistivity are investigated. Previous analytical results of the ﬁrst three regimes are recovered. For all regimes, the scalings of
+    the width of the reconnecting layer are provided in the different limits of the wavelength spectrum, and general estimates for the fastest growing
+   modes are obtained and generalized to different magnetic equilibria. Implications for the disruption of evolving current sheets are discussed.
+
+    Published under license by AIP Publishing. https://doi.org/10.1063/5.0022133
+
+
+      I. INTRODUCTION                                              magnetic ﬁeld conﬁguration ByðxÞ in the x, y plane where we only
+                                                                           consider reconnection modes that satisfy the condition @=@z ¼ 0,        In this work, we carry out a numerical study of the stability of
+                                                                      with z being the direction of a uniform large guide ﬁeld that ensures    thin current sheets in a class of extended magnetohydrodynamic
+                                                                   plasma incompressibility in the ideal case. With this restriction, for the   (MHD) models.
+                                                                        conﬁgurations that we will investigate, reconnection can occur only at       Thin current sheets can occur in laboratory plasmas, such as in
+    the m¼ 1 mode in tokamaks, and in a variety of space plasmas. They     the resonant surface x¼ 0, with x being the inhomogeneity direction
+    are also observed in numerical simulations of MHD turbulence. They     of the sheared magnetic ﬁelds.
+    are characterized by large aspect ratios L/a, with L being the length of      We will investigate regimes where one non-ideal effect beside
+    the sheet and a its width, a background magnetic ﬁeld B0, and a sheet      resistivity intervenes in the reconnection process: we will consider ion
+    magnetic ﬁeld Bcs, not necessarily of the same order as B0.                    viscosity, electron temperature, and a ﬁnite electron inertia, respec-
+       Thin current sheets generally possess a broad range of unstable      tively. Although considering just two of the non-ideal effects at a time
+   modes, ranging from a minimum wavenumber kmin of order 1=L to a    may not represent more realistic regimes where all of them may play
+   maximum wavenumber kmax of order 1=a. The spectrum has usually a     together, the present investigation can shed light on how these effects
+   maximum at a wavenumber kM such that 1=L   kM    1=a. The    combine in allowing the onset and the development of reconnection.
+   maximum growth rate cM is important to assess the eventual fate of    For this purpose, we have developed a multi-precision linear solver
+    the current sheet in the context of an evolving plasma. This notion will     that uses ﬁnite difference schemes with tunable precision on a non-
+   be discussed later in a more precise way. Also, in the following analy-    uniform grid with double periodic boundary conditions. It must also
+     sis, we will assume a continuum spectrum of wave-vectors k, which is    be noted that integration of the linear problem in regimes where the
+    formally valid only in the limit kL ! 1.                                 non-ideal parameters are sufﬁciently small, so as to justify the applica-
+       The linear analysis is performed in the 2D, slab geometry approx-     tion of the asymptotic matching techniques of the boundary layer the-
+    imation of the reduced magnetohydrodynamic (MHD) model, which     ory, is challenging also from a computational point of view because
+     is valid in the strong guide ﬁeld limit: we assume a sheared equilibrium    one must resolve strong spatial gradients in intervals of the domain
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-1
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 4 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+    with thickness that scales as some positive power of the small non-      latter  is  in  turn  related  to  the  electron–ion  viscosity     ei:  by
+    ideal parameters.                                             g ¼ 2p ei=x2pe in dimensional units or by S  1 ¼  eid2e=2 in dimen-
+        This work is organized as follows:                                      sionless units.
+         Section II introduces the reduced-MHD (RMHD) equations we         Equations (1) and (2) have been derived in Refs. 3 and 4 in the
+    consider and the non-ideal parameters of the problem.                       collisional regime (de ¼ qs ¼ 0) by relying on the assumption of a
+         Section III discusses the linear limit of the equations and the                                                                        uniform, strong guide ﬁeld along the z direction. The parameter qs,
+    numerical solver. Further details on the ﬁnite difference scheme and                                                                 which  violates the Lagrangian invariance of the  parallel electron
+   on the choice of the grid non-uniformity in relation to ill-conditioning                                                                           canonical momentum F ¼ w   d2er2w, is related to electron parallel
+    of solutions and to machine precision are presented in Appendixes A                                                                               compressibility effects.5 It is, however, also considered to be a Finite-
+   and B, respectively. Details on the choice of the equilibrium proﬁles                                                                    Larmor-Radius (FLR) effect since in a strong guide ﬁeld limit, it can be
+    are given in Sec. III A.                                                            shown to be due to a non-isotropic component of the electron pres-
+         Section IV recalls some general features about thin current sheet                                                                            sure tensor (see the early derivation of Ref. 6, in which it was obtained
+     stability, which are reviewed in a qualitative manner for the purely                                                                 by including also a kinetic modeling of ion FLR effects, and a more
+     resistive case.                                                                             recent ﬂuid re-derivation in Ref. 7).
+         Section V presents the results of the linear analysis in the viscous-                                                                    Note that the strong guide ﬁeld hypothesis with which RMHD
+     resistive regime, for which numerical results already available in the lit-
+                                                                            Eqs. (1) and (2) have been derived assumes ﬂuctuations of the guide
+    erature1,2 have provided also a benchmark test for the solver.                                                                         ﬁeld to be ordered dBz   ðjB?j=B0Þ2, which are then negligible with
+         Section VI is devoted to discuss the warm-resistive regime, where
+                                                                               respect to other quantities ordered   jB?j=B0     1. While the Hall-
+    electron temperature effects combine with resistivity.
+                                                                  term contribution in Ohm’s law is, therefore, completely neglected in
+         Section VII addresses the warm-inertial regime, with a focus on
+                                                                           the RMHD slab geometry here considered, it must be pointed out that
+    the comparison between electron inertia and resistivity in allowing                                                                                   alternative derivations of an identical set of equations exist,7–11 which
+    reconnection.
+                                                                                       relate the qs-depending terms of (1) to the Hall-term in Ohm’s law         Section VIII considers the inertial-resistive regime in which elec-
+                                                                          while assuming a standard polytropic (isothermal) closure for the elec-
+    tron inertia combines with resistivity.
+                                                                                   trons. In the latter kind of derivation, with respect to which [(1) and         Section IX is devoted to the discussion of the results and their
+                                                                                    (2)] may be called “low-b reduced Hall-MHD” equations, we must    place in the understanding of the stability of thin sheets in evolving
+                                                                         order dBz   jB?j=B0. In both cases, however, linearization of the sys-    plasmas.
+                                                             tem equations around a homogeneous equilibrium yields in the ideal         Section X summarizes the main points of the article and its
+                                       MHD limit the dispersion relation of shear Alfven waves, which    motivation.
+                                                              become kinetic/inertial Alfven waves (see, e.g., Ref. 12, pp. 20–21)
+      II. MODEL EQUATIONS                                  when the microscopic scales qs and de are attained and included.
+     We consider the incompressible reduced-MHD model (hereafter,     Further discussion on the role of plasma b in RMHD orderings can be
+  RMHD) where the dynamics of perturbations is dominated by Alfven    found in Ref. 70.
+   modes. We take its 2D limit, cold ion limit in slab geometry (x, y). The         In conclusion, while throughout this article we will historically
+   model equations are as follows:                                                 refer to the RMHD interpretation of Eqs. (1) and (2) with no Hall-term
+                                                                                 contribution, for which boundary layer calculations have been carried
+               @F
+            þ ½u; F ¼ q2s ½ U; w þ S 1r2w;              (1)     out in the past, the results we are going to discuss can be applied also to
+                   @t                                                  plasmas described by the low-b reduced Hall-MHD model.
+            @U
+            þ ½ u; U ¼ w; r2w þ R 1r2U:            (2)       III. LINEAR PROBLEM
+                  @t
+                                                                The system of equations (1) and (2) is linearized by introducing
+       The previous system is non-dimensionalized using the reference                                                                           small perturbations of the form f ðx; yÞ     ~f ðxÞeikyect on static equilib-
+    magnetic ﬁeld (B0), the reference length a that represents the equilib-
+                                                                rium proﬁles with w0 ¼ w0ðxÞ 6¼ 0 and u0 ¼ 0. This leads to the fol-
+   rium magnetic ﬁeld gradient scale, and the Alfven time sA ¼ a=vA,
+                           pﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃ          lowing system:   where  the  Alfven  velocity  is  given by vA ¼ B0=  4pmin0 . The
+    “Poisson bracket” representation is given by ½f ; g ¼ @xf @yg   @yf @xg.                 @2                       @2
+                                                                                                                            k2  u1                                                                         c 1   d2e                                                                                                 k2   w1 ¼   ikq2s w00   The magnetic stream function w is related (in dimensional units) to                                                                              @x2                                                                                                      @x2
+    the magnetic ﬁeld by B ¼ rw   ez þ B0ez, while the velocity stream                                                                                                                                                 1  @2    function is related to the E  B velocity by vE B ¼ ru    ez. Also,                                þikF00u1 þ S           k2  w1;   (3)                                                                                                           @x2
+   F ¼ w   d2er2w and U ¼ r2u. Here, de ¼ c=ðxpeaÞ is the electron
+                                                                             @2                                                                                                  @2    skin depth normalized to a (where xpe is the electron plasma fre-           c                                                                                             k2  u1 ¼ ik w00                                                                                                                     k2      w0000  w1        pﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃ                                                  @x2                  @x2
+    quency), qs ¼    me=mi  veth=ðaXiÞ is the ion-sound Larmor radius
+                                                                                                                                  1  @4       @2    normalized to a (where ma is the mass of the species, a ¼ e; i; veth is                þ R          2k2  þ k4   u1:    (4)                                                                                                @x4      @x2    the electron thermal velocity, and Xi is the ion cyclotron frequency),
+   R ¼ avA=   is the Reynolds number related to ion–ion viscosity    , and          Different reconnection regimes can be studied this way. In the
+   S ¼ avA=gm is the Lundquist number related to the magnetic diffusiv-     following, we will focus on collisional regimes in which only two
+     ity gm ¼ c2g=ð4pÞ, where g is the plasma resistivity. Note that the     parameters at a time will be chosen to be different from zero: S and R,
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-2
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 5 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+   S and qs, and S and de. Equations (3) and (4) can be written in the     point of the perturbed z-current component) from x¼ 0. The one on
+    following form:                                                      D0 in the constant-w limit relies on the estimation D0 ¼ 2c1=c0, where
+                                                                                      c0   w1ð0Þ and c1   maxðxÞfw01g. We will show that these deﬁnitions
+         d   0   w     l1  l2   w               c          ¼                               ;          (5)     allow the correct estimation of the scalings already known from ana-
+                 0  ia   u     l3  l4   u                                                                                              lytical boundary layer calculations where available (the analytical moti-
+             @2                          @2                           vation behind these choices will be discussed in detail in a future
+   a ¼                                                                           ;  l1 ¼ S 1a;                      k2; d ¼ 1 þ k2d2e   d2e                                                                               paper). Among the reconnection regimes here considered, only in the            @x2                                        @x2
+      l2 ¼ kq2s w00a   kF00;  l3 ¼ kw00a    ikw0000 ;                    viscous-resistive regime, the scalings of d were already available from                                                                                   theoretical estimations22 and had been numerically conﬁrmed.2 In the
+                                @4       @2                           small and large wavelength limits of the warm-resistive case, they had      l4 ¼ iR 1E; and E ¼       2k2  þ k4:
+                               @x4      @x2                            instead been analytically obtained in Ref. 23 with heuristic arguments
+                                                                            applied to boundary layer results in the warm-collisionless regime.      An exact analytical solution to this general eigenvalue problem
+    does not generally exist in a closed form, but approximated analytical
+    solutions, using a boundary layer approach, can be obtained in the    A. Equilibrium choice and D0
+    purely resistive constant-w regime13 and internal kink14,15 regimes or         In this article, we study the (in)stability of planar current sheets
+    in purely collisionless reconnection regimes.16–18 Heuristic estimations     Jzðx; yÞ of extension L along y and thickness a along the shear coordi-
+     (cf. Sec. IV) can be sometimes used to evaluate the scalings of the     nate x, which have a single resonant point, say at x ¼ 0. This leads to
+   growth rates and of the reconnecting layer width by relying on an     excluding the onset of “double24” or “multiple tearing” modes and cor-
+    appropriate balancing of the terms of Eqs. (3) and (4), without work-                                                                      responds to a magnetic shear ﬁeld that has a single zero with respect
+    ing out all the calculations of the asymptotic matching of the boundary                                                                            to the x variable.
+    layer approach. This kind of simpliﬁed analysis has been ﬁrst applied                                                                       Although different magnetic equilibrium proﬁles can be consid-
+    to kinetic tearing equations.19 Even in this case, however, the support                                                                                  ered, which are compatible with  this  choice, we focus here on
+    of numerical calculations may be required, as for regimes in which                                                                            “Grasso’s equilibrium,” ﬁrst proposed in Ref. 25,
+    ﬁnite Larmor radius effects are included (this point will be addressed
+    in detail in a forthcoming article).                                                                             aBcs
+                                                                                w0 ¼                    :                      (6)     A numerical approach to the eigenvalue problem (5) is, therefore,                               2cosh2ðx=aÞ
+    useful to determine the scalings and eigenmode proﬁles in different
+    reconnection regimes. For this, one needs to resolve accurately the    The  above  expression   is  in  dimensional  units.   It  becomes
+    thin layer (hereafter named the “inner layer”) around the reconnecting    w0 ¼ Bcs=ð2cosh2ðxÞÞ when normalized as in Sec. II.
+    current sheet, where non-ideal MHD effects become important. We      We recall that in a slab geometry, the analytical form of the equi-
+    indicate with d the thickness of such a layer.                              librium proﬁle modiﬁes the value at ﬁxed k of the D0 instability param-
+      To this purpose, we have developed an eigensolver for a slab peri-     eter since the deﬁnition of the latter,
+    odic box of dimensions ½  Lx=2; Lx=2     ½  Ly=2; Ly=2 , which uses
+                                                                                                   w0outðeÞ   w0outð  eÞ   compact ﬁnite difference schemes of tunable precision for the deriva-                      D0    lim                                                                                                                                                                                         ;                (7)
+    tives (see Appendix A) on a non-uniform grid along the x-direction                            e!0      woutð0Þ
+    (see Appendix B). The non-uniformity of the grid ensures the spatial                                                                   depends on the solution wout of the linear problem in the “outer”
+    resolution of the inner layer, where the grid spacing can be chosen to                                                                 boundary layer domain. This corresponds to the J  B ¼ 0 equilib-
+   be much smaller than in the outer layer, where the non-ideal parame-                                                                rium force condition in the momentum equation (1) once linearized,
+    ters can be neglected. While this guarantees a faster convergence of the
+    solution of the eigenvalue problem,  it also leads to ill-conditioned                         wout; w000 þ w0; r2wout ¼ 0;                (8)
+    ﬁnite difference matrices when the non-uniformity is high and the
+    non-ideal parameters take asymptotically small values. This is espe-    which is equivalent to
+     cially true for the eigenfunctions that converge much more slowly                       !
+                                                                                                                                                  w0000
+                                                                                                                           wout:                   (9)    than the eigenvalues. It should be noted that this ill-conditioning is an                               w00out ¼   k2 þ    unavoidable feature of the numerical solution, when ﬁnite-difference                                       w00
+   schemes are used to compute the derivatives inside the inner layer. We
+   have solved this latter problem by developing a multi-precision algo-     This leads to an analytical dependence D0 ¼ D0ðka; w0Þ, which is here
+    rithm  that  relies on  the Advanpix  Multi-precision Computing     taken to be a monotone decreasing function of ka (in dimensional
+   Toolbox for MATLAB20 for arbitrary machine precision calculations      units). Since for each equilibrium choice the interval of values of k
+   and that solves the eigenvalue problem related to the ﬁnite difference     allowed for a continuous spectrum of unstable tearing modes is ﬁxed
+   scheme described above with a generalized Schur decomposition21,69    by the condition D0ðkaÞ > 0, the interval of unstable wave-vectors is
+    (or QZ decomposition).                                                 the interval ð0; kmgÞ, where k¼ 0 and k ¼ kmg are marginally stable
+        In all the results that follow, the dependence of the scalings on    modes for which D0 ¼ 0. In the presence of a continuum spectrum of
+   both d and stability parameter D0 introduced in Ref. 13 has been     wave-vectors, the large wavelength limit k ! 0 and the small wave-
+    explicitly veriﬁed by direct numerical calculation. To this purpose, the     length limit k ! kmg of the dispersion relation correspond to the
+    scaling dependence on d has been obtained by “deﬁning” and thus     large-D0 or internal-kink regime14,15 and to the small-D0 or constant-w
+    evaluating d as the distance of the maxima of w0001  (i.e., of the inﬂection     regime13 (cf. also Fig. 1), respectively.
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-3
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 6 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+                                                                            introduced, with each layer being related to a different non-ideal
+                                                                          parameter. Indeed, it is not trivial to identify the characteristic scale
+                                                                             lengths delimiting the size of each boundary layer since they require
+                                                                                 close inspection of the differential equations involved and since their
+                                                                                 scaling with the non-ideal parameters depend on a priori orderings
+                                                                                that need to be veriﬁed once the solution has been obtained. The need
+                                                                            to perform a multiple boundary layer calculation has been shown by
+                                                                      Pegoraro and Schep in the so-called semi-collisional regime.18 In that
+                                                                                                article, the linear problem for tearing modes in the presence of both
+                                                                                            resistivity and electron (and ion) temperature effects has been solved
+                                                                                     analytically in Fourier space. This multiple boundary layer technique
+                                                                                 has, then, been adopted in other regimes: in the semi-collisional inter-
+                                                                           nal-kink instability,17 in viscous-resistive reconnection,22 where both
+                                                                             ﬁnite resistivity and ion viscosity inﬂuence the growth rate, and in col-
+                                                                                         lisionless regimes,27 where reconnection is ruled by electron inertia
+                                                              and Finite-Larmor-Radius effects.
+                                                                       These analytical estimates have provided for the years to follow
+                                                                           the basis of several studies in which the scaling of the reconnection
+                                                                                   rate plays a fundamental role also for the interpretation of nonlinear
+                                                                           simulation results. Relatively few works have undertaken the system-
+     FIG. 1. The continuous line shows the dependence of c on                                                         ka in the continuous      atic numerical study of the problem and the veriﬁcation of the few                                                                             1      interval ½0; kmga , for tearing modes due to  resistivity (S  ¼ 5   10  6). Dots,                                                                                   available theoretical estimates, especially for tearing on single resonant
+      stars, and squares correspond instead to the discrete modes that can be destabi-
+                                                                                    surfaces.      lized when L=a ¼ p (black square), 2p (green star), 20 (blue dots), and 40 (red
+      stars), respectively, The largest oscillation number correspondsp ﬃﬃ       to jkmgL=ð2pÞe,         At the same time, it is worth recalling that it is sometimes possi-     where “j…e” means the “integer part of.” Here, kmga ¼  5 is ﬁxed by the equilib-      ble to obtain the estimates of the growth rate and of the layer width by
+     rium proﬁle (6), whereas, for comparison, kmga ¼ 1 in the case of Harris pinch     combining the boundary layer approach with some ansatz about the
+      equilibrium.28                                                                          ordering of terms and scales in the linear equations, which are essen-
+                                                                                                  tially based on dimensional estimates and whose consistency must be
+                            p ﬃﬃ        In this regard, equilibrium (6), which has kmga ¼  5, was intro-     veriﬁed a posteriori. This is what we hereafter refer to as the “heuristic
+   duced because at ﬁxed k, it provides comparably higher values of D0     approach.” Below, we are going to provide an example in the purely
+    than, for example, the w0 ¼ cos ðx=aÞ proﬁle in an interval with      resistive regime (and in the viscous-resistive regime, in Sec. V).
+    Lx ¼ 2p. In this sense,  it  is particularly useful for the numerical        Aiming at reviewing some qualitative, general features of the cur-
+   modeling of large-D0 modes, both for the linear (i.e., scaling analysis)     rent sheet  stability,  let us now proceed with some dimensional
+   and nonlinear dynamics. It must be noted that this equilibrium is peri-     estimates.
+    odic in x only in the formal limit Lx=a ! 1. Therefore, the periodic         Consider  ﬁrst a current  sheet  of  intensity  J0  in an MHD
+    conditions in x, required by the present version of the code (they can     hydrogen-type plasma with (ion) density n0 and mass m. The “natural
+   be in principle relaxed in the numerical scheme), are granted by taking     timescale” that we can build with these parameters, irrespectively of the
+    a sufﬁciently large interval Lx. For example, for a choice Lx ¼ 4pa,     width of the sheet, is
+   which is typical for numerical simulations of tearing modes in numeri-                                                 1=2
+                                                                              mn0       c    cal boxes with aspect ratios of order of unity, w0ð62pÞ ’ 7   10  6.                             s0                             :                  (10)
+   The numerical error introduced in this way is shown to be negligible                            4p         J0
+   by the results presented later. We note, however, that a slightly modi-                                                                                                 It must be noted that only the current density amplitude, J0, enters in
+   ﬁed version of equilibrium (6) has been also considered in Ref. 26,                                                                                       this deﬁnition. In the geometry we have chosen, it can be specialized
+   where constant values have been added to the ﬁrst terms of the                                                                               further so to make explicit its dependence on a characteristic length
+    Fourier expansion in x of w0, in order to ameliorate the convergence    and on a magnetic ﬁeld intensity by using J0    Bcs=a; in this case, s0
+    of its numerical Fourier series in boxes with ﬁnite values of Lx=a.         becomes the transition time of a shear Alfven wave across the distance
+    IV. GENERAL FEATURES OF THE LINEAR CURRENT            a. Notice, however that, unless additional hypothesis is made, in gen-
+  SHEET STABILITY                                                               eral, Bcs 6¼ B0 since the validity of the reduced MHD equations only
+                                                                               requires that the relevant time-scales are longer than the inverse total
+       The linear study of reconnecting instabilities presents a difﬁcult
+                                                                            cyclotron frequency.
+    analytical challenge when more than one non-ideal parameter  is
+                                                                        For illustrative purposes, let us now proceed by considering for
+    included in the generalized Ohm’s law, even in the slab geometry
+                                                                                 simplicity the case of the purely resistive tearing. By restoring the
+    approximation of the RMHD model that we consider here. The main
+                                                                     dimensions in Eqs. (3) and (4), one has
+    reason is due to the fact that the boundary layer analysis, ﬁrst used to
+    address this problem in the resistive regime in the seminal paper by                  cw1 ¼ ikw00^u1 þ gm w001   k2w1  ;             (11)
+    Furth, Killeen, and Rosenbluth13 (FKR, hereafter), often requires a
+    multiple boundary layer approach when more microscopic scales are        c4pn0m  ^u001   k2^u1 ¼ ikw00 w001   k2w1     ikw0000 w1;     (12)
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-4
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 7 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+   where ^u   c/=B0tot. Here, / is the electrostatic potential and B0tot the     typical aspect ratio of the current sheet is taken to be very large, so the
+   modulus of the total equilibrium magnetic ﬁeld, which, in the strong    approximation L=a ! 1 can be adopted. A paradigmatic example,
+    guide ﬁeld  limit having B0z     Bcs,  is B0tot ’ B0z ¼ B0. Note  that,     already considered by Dungey in his ﬁrst formalization of the notion
+    although dimensional, these equations have no explicit dependence on     of reconnection,35,36  is provided by the terrestrial magnetotail.  Its
+    the reference magnetic ﬁeld B0, which has been incorporated in the      instability to reconnecting modes in a continuous spectrum of wave-
+    quantity ^u, the stream function of the ﬂuid.                               lengths has been addressed in a kinetic framework in Ref. 37 and then
+      When we consider the solution of Eqs. (11) and (12) at a distance    by considering resistive slab tearing modes in Refs. 32 and 38. Other
+   from the neutral line of the order of the reconnecting layer width d, we     astrophysical applications of tearing theory to large aspect ratio cur-
+   can neglect k2 with respect to the second order derivative in x of the     rent sheets have been, then, considered for coronal mass ejections (see
+    perturbed quantities. We can also approximate w00jx’d    dw000jx’d      Ref. 39–42), whose occurrence close to neutral magnetic points noted
+  ’ 4pJ0d=c and neglect the w0000 term. By ordering w001=w1   1=d2, we,    by Giovanelli43 had indeed motivated Hoyle44 and Dungey35,36 to
+    then, obtain the two time scales                                          explore and formalize the mechanism that would have been later
+                                                               dubbed as magnetic reconnection.45 In particular, as noted by Velli and
+                         kd                                   gm                       c                            and  c                                                                         :                 (13)    Hood,41 an aspect ratio of the order of L=a   20 is typically sufﬁcient
+                               s0              d2                            to allow the instability of modes with a wave-vector close enough to
+                                                                                that of the fastest growing mode as computed by considering a contin-   The former is essentially the shear-Alfven wave dispersion relation at
+    the scale x    d, it is related to the natural timescale s0, and it does not    uous spectrum (cf. Fig. 1).
+                                                                            In the numerical results that follow, however, the fastest mode   depend explicitly on the current sheet width a nor on the characteristic
+                                                                       has been identiﬁed by selecting, for each ﬁxed couple of non-ideal    system length L.
+       The second timescale is the resistive diffusion time along x over     parameters at play, the wave number that displayed thep maximum                                                                                                                                                                                                                                                                  ﬃﬃ
+    the scale d.                                                      growth rate after a scan over about 40 modes in the  0;  5  interval
+       The above estimate is valid in the large D0 limit, that is, as long as     of the (normalized) k variable.
+   D0d    1.                                                            Although only the small-D0 and fastest growing mode wavelength
+        In  the  small-D0  limit, one must assume w01=w1   D0 and      limits are physically relevant to the stability of a planar current sheet
+     w001=w1   D0=d. One, then, has the two conditions                                (cf. discussion in Sec. IXA), it must be noted that the slab tearing anal-
+                                                                                       ysis in the k ! 0 limit is formally equivalent to that of the internal
+                        kdðD0dÞ1=2           gmD0                     kink mode in large aspect ratio tokamaks.14,15 Because of this, in the
+                   c             and  c             :            (14)
+                              s0                d                          following, we will always note in each reconnection regime the scalings
+                                                                              in the large-D0 limit too.
+     We have, thus, heuristically obtained the following scalings in the
+    large- (label LD) and small-D0 (label SD) limits, respectively:
+                                                                   V. VISCOUS-RESISTIVE REGIME (R  1; S  1)
+                       kdLD
+                  cLD                                               ;   dLD    s0k 1gm  1=3;           (15)      We here identify as “viscous-resistive” the regime in which we
+                             s0                                         can set de ¼ qs ¼ 0 in Eqs. (1) and (2). The eigen-matrix coefﬁcients
+                  kdSDðD0dSDÞ1=2                                            in Eq. (5) take, then, the form            cSD                            ;   dSD    s0k 1gm 2=5D01=5:    (16)
+                          s0                                                      @2
+                                 a ¼        k2; d ¼ 1;  l1 ¼ S 1a;  l2 ¼  kw00;       Note that by treating the wavenumber as a parameter, there is no              @x2
+    explicit dependence on the sheet length L. Moreover, the dependence       l3 ¼ kw00a    ikw0000 ;
+   on the scale a occurs only for the small-D0 solution via the instability
+                                                                                                 @4       @2
+    parameter D0ðkaÞ, which ﬁxes the range of values of ka 2 ð0; kmgaÞ       l4 ¼ iR 1E; and E ¼       2k2  þ k4:
+    allowed for the unstable modes.                                                                @x4      @x2
+         Scalings [(15) and (16)], then, deﬁne the two ranges of the spec-         Although linear tearing modes in this regime have been already
+   trum of unstable modes, which meet at a wavenumber such that     extensively studied in the literature (see Refs. 1, 2, 22, 46, and 47), they
+   dLD   dSD   D0  1. This situation is illustrated in Fig. 1, where the     are considered here for two reasons. The ﬁrst one is that previous stud-
+   dependence of c is represented with respect to both a continuum spec-      ies in this regime chose different equilibria from (6). The second one is
+   trum and a discrete spectrum in k; the latter is given for different val-     that comparison with previous results that do not depend on the
+    ues of L/a. One observes that the wavenumber at which the two ranges     choice of the equilibrium proﬁle (notably the results in the constant-w
+   meet corresponds to the most unstable mode if L/a is sufﬁciently large.     or small-D0 limit) provides a benchmark test for the newly developed
+       The scaling of this fastest growing mode depends on the mag-     eigensolver.
+    netic equilibrium proﬁle, and  its calculation generally requires a      We have recovered the well-known scaling laws both in the
+    numerical approach even if estimates based on the algebraic scaling of     purely resistive13,14,32 regime,
+    D0ðkaÞ for small values of ka can be given from the small- and large-
+    D0 limits of the dispersion relation.29,30                                               cLD   k2=3S  1=3;   dLD   k 1=3S  1=3;           (17)
+       The scaling of the fastest growing mode was already addressed in                                                                                    cSD    k2=5D04=5S  3=5;   dSD   k 2=5D01=5S  2=5;      (18)    a series of papers by Cross and Van Hoven,31–34 which were mainly
+    focused on applications to astrophysical plasmas. In these papers, the    and in the viscous-resistive regime,22
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-5
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 8 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+             cLD   k2=3R1=3S  2=3;   dLD   k 1=3R 1=6S  1=6;      (19)     (or d) whose solution gives the sought scalings. Equations (19) and
+                                                                             (20) are obtained by assuming the R 1-related terms to be dominant,
+             cSD   k1=3D0R1=6S  5=6;   dSD   k 1=3R 1=6S  1=6;     (20)     which, by developing the algebra, is seen to correspond to R  1    S  1
+   where the subscripts “LD” and “SD” label the large-D0 or large wave-     for D0dLD   1 and to c   ðS 1D0=dSDÞ   R 1dSD2 for D0dSD     1.
+                                                                   Using    (20),   the    latter   condition   a    posteriori   means
+    length limit ka ! 0þ and the small-D0 or small wavelength ka !         1                                                    R     S 7=5ðk 1=3D0Þ6=5. Leaving k unordered with respect to R and
+    ðkmgaÞ   limit of the dispersion relation, respectively. Note that the                                                 1                                                                                            S, one so recovers the condition R     S  7=5, already evidenced by
+    reconnecting layer width in the viscous-resistive regime has the same                                                                     Bian and Vekstein48 from boundary layer calculations in a problem of    scaling in both the large- and small-D0 limits [Eqs. (19) and (20)].
+                                                                            forced reconnection. Using instead the upper limit of the D0dSD   1
+    Scalings [(17) and (18)] correspond to (15) and (16), respectively, once                                                               1        1                                                                              condition, that is, of k 1=3D0  R1=6S1=6, the R     S   ordering is
+    the latter are normalized as speciﬁed in Sec. II.
+                                                                               re-obtained. Equations (17) and (18) are obtained in the opposite lim-
+        These benchmark results are shown in the right frames of Fig. 2.                                                                             1        1                                                                                                     its when S 1-related terms are dominant. The condition R     S
+   For the growth rates, these scalings had been already numerically veri-                                                                              in the large-D0 limit is, therefore, more restrictive and can be generally
+   ﬁed in the past, for example, in Refs. 1, 46, and 47, although with a dif-
+                                                                assumed as required for the occurrence of the viscous-resistive regime,
+    ferent magnetic equilibrium (which does not affect these results). It is,
+                                                          when a continuous variation of k is assumed in a slab geometry.
+    however, in the more recent work by Tenerani et al.2 that a more
+                                                A further scaling, which is of physical interest in a large aspect
+    extensive numerical study has been performed also for the scaling of                                                                                     ratio current sheet, is that of the mode with the highest growth rate.13
+    the reconnecting layer width and in all wavelength limits of the slab                                                            The scalings of this mode occurring at D0d   1 do depend on the
+    dispersion relation, with a different eigensolver than the one used here.                                                                           choice of the equilibrium proﬁle,29 as it had been already numerically
+       The scalings [(17)–(20)] can be estimated by means of the                                                                  found by Cross and Van Hoven.31 Previous studies of this mode in the
+    heuristic-type argument outlined in Sec. IV. A relation is obtained by                                                                                    viscous-resistive regime have focussed2 on a Harris-pinch equilib-
+    balancing the dominant                          terms of Eq. (4), which, by assuming uðNÞ1       rium.28 In Ref. 29, however, general formulas for the maximum                      ðNÞ
+     u1=dN (with    expressing the Nth-order derivative with respect to    growth rate for a general equilibrium proﬁle have been proposed for
+     x), we write as cu1=d2    ikdw001 þ R 1u1=d4. Using the latter and the     the collisionless, purely resistive and viscous-resistive regimes [see Eqs.
+    estimates obtained from (3) so to eliminate u1 and w001 in terms of w1     (23)–(25)  therein]:  these  scalings can be estimated by equating
+    (that  is, u1     icw1=ðkdÞ and w001   cSw1), we get the qualitative                                                                   cSDðkMÞ ¼ cLDðkMÞ ¼ cM, while assuming D0ðkÞ   k  p for k    1.
+    expression as follows:                                                                   These formulas agree with the results obtained for a Harris-pinch pro-
+                                             2                                               ﬁle2,13,49 (case p ¼ 1), and they have been veriﬁed also for equilibrium                         c  R 1d     k2d4S:                   (21)
+                                                                                            (6), indirectly in the warm collisionless case in Ref. 29 (by comparison
+   Combination of (21) with the relations obtained from Ohm’s law     with previous results by Comisso et al.50) and directly with another
+    (second relation of (13) and (14)) yields two polynomial relations for c     numerical solver in the purely resistive, inviscid regime in Ref. 30.
+
+
+
+
+
+     FIG. 2. Scaling laws in the visco-resistive regime of Sec. V (dots are numerically obtained values). Left frames: growth rate of the fastest growing mode cM as a function of R
+      (top) and of S (bottom). Center frames: wavenumber of the fastest growing mode kM as a function of R (top) and S (bottom). Right frames: growth rates in the large-D0 and
+     small-D0 limits (labels cLD and cSD, respectively) as a function of R and S.
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-6
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 9 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+   For convenience, we rewrite here these general scalings for the fastest     VI. WARM-RESISTIVE REGIME (qs; S  1)
+   growing mode D0d   1 by including also the corresponding estimates      We consider the regime in which only temperature effects and a
+    for kM and dM (they can be, then, easily rewritten in terms of Prandtl     ﬁnite collision rate dominate. That is, we can assume R  1 ¼ de ¼ 0 in
+   number P    =g ¼ S=R),                                               Eqs. (3) and (4) so that they become
+                8               p      1þ2p
+                                                                                    @2                                                                                                             @2                              cM  R 1þ3pS  1þ3p;            Viscous   Resistive                                                                                                                                 k2  w;    (26)                                                                                                    k2 u   kw00u þ S  1                                                                                                   1               cw ¼ kq2s w00                >>><                                                                                 @x2                      @x2              regime ðP    1Þ      kM    ðR 1=2S  1=2 Þ 1þ3p  ;     (22)
+                                                                                                   p                                                                                @2                                                                                                    @2
+                                                                                c                                                                1=2 Þ 1þ3p;                                                                                                k2 u ¼  kw00                                                                                                                      k2      kw0000  w:      (27)              for limk!0 D0   k  p >>>: dM    ðR 1=2S                                                                             @x2                @x2
+
+                                                                                                                                                                                 @2                    8                                                      a                                                                        ¼                                                                                        coefﬁcients                                                                                                     of                                                                                                    the eigen-matrices                                                                                                                            of Eq.                                                                                                                                        (5)                                                                                                                                    are                                                                                                                                                                             @x2
+                                                                         1a;                                        d ¼                                                                      ¼                                                                                                                             kw0                                                                                                     1, l1 ¼ S                                                                               l3                    >>< cM   S  1þ3p;1þp1                       k2; The                 Resistive regime ðP    1Þ                                                                l2 ¼ kq2s w00a                                                                                                                 kw00;                                                                                 0a
+                                                                              1þ3p;                                              S                                                                                                                                                        , and                                                ¼ 0.                                                     l4                                                                  (23)        kw0000
+                                                                                               p
+                                                                The                                                                                              linear                                                                               problem                                                                                                       in this warm-resistive regime has been ﬁrst                   for limk!0 D0   k  p  >>: kM                                                                              1þ3p:                                              S                                  dM
+                                                                            studied analytically by means of a boundary layer theory in Ref. 18.
+    In the left and center frames of Fig. 2, we have plotted the scalings of    Although  in  that  treatment  diamagnetic  drift  effects were  also
+   cM and kM, with respect to the Reynolds and Lundquist numbers,     included, here we neglect them, as equilibrium density ﬂuctuations are
+   which we have numerically obtained by solving the eigenvalue prob-     not retained in the model of Eqs. (3) and (4). In the same paper, the
+   lem for equilibrium (6). The complete set of numerical results is sum-      effect of ﬁnite ion Larmor radius corrections was also retained by
+   marized by                                                 means of a (gyro)-kinetic modeling of the ion response.51 Although
+                 8                                  ion FLR effects can be included in the model by means of Pade-type
+                 >< cM   R2=7S  5=7;                   approximants6,52 or by means of more reﬁned approximations,53,54              Viscous   Resistive
+                              kM  R 1=14S  1=14;       (24)     which, in the collisionless limit, preserve the Hamiltonian character of
+               regime ðP    1Þ  >:                             dM  R 1=7S  1=7;                  the system for the arbitrary values of qi, we have chosen not to include
+                  8                            them in the present analysis. In this sense, we depart from the “semi-
+                  >< cM   S  3=7;                         collisional” limit, identiﬁed in the kinetic study by Drake and Lee19                          Resistive
+                               kM   S  1=7;             (25)    through the condition cd2e    S  1    ðkdeÞD0 1=2q3=2i    .                   regime ðP    1Þ                  >:                              dM   S  2=7:                     The scalings given in Refs. 17 and 18 for the warm-resistive case
+                                                              and in Ref. 27 for the warm-collisionless case can be recovered from
+   Equations (24) and (25) correspond to the analytical estimations                                                                           those discussed in this work with the substitution q2s ! q2i þ q2s .
+    [(22) and (23)] after the substitution p ¼ 2, valid for equilibrium                                                                  However, the loss of symmetry between q2s and q2i  in the warm-
+    (6). The transition to a purely resistive regime in which the effects                                                                                       collisionless growth rate, which was noted in Ref. 55, requires further
+    of  viscosity become  negligible  is  qualitatively  in  agreement                                                                                    investigation. The warm-collisionless scalings (de 6¼ 0; qs 6¼ 0) were
+   with that obtained in Ref. 2 for a Harris equilibrium, and the scal-                                                                                 also obtained by Zocco and Scheckochihin,23 starting from a reduced
+    ings for cM and kM of (25) coincide with those already veriﬁed in     semi-kinetic model somewhat different from the one considered in
+    Ref. 30.                                                                       Refs. 18, 27, and 51 (see also Ref. 6), and by integrating the boundary
+      Two distinct regions are visible in Fig. 2. The ﬁrst one is for                                                                                  layer equations in coordinate space.
+   R   S  (see,  e.g., the yellow line in the top frames of Fig. 2 for        The heuristic estimation of the tearing scalings in the presence of
+   R   S ¼ 106). This region represents the visco-resistive case, and its                                                                            qs  is much more  difﬁcult than in “cold”  (i.e., qs ¼ 0) regimes.
+    scalings conﬁrm those of Eq. (24). The second region is for R   S (see,    However, as it happens for the cold collisionless limit with qs ¼ 0 and
+     e.g., the yellow line of Fig. 2 for R > S ¼ 106) and corresponds to a                                                                               de 6¼ 0, in which the collisionless scalings can be deduced from those
+    purely resistive limit in which viscosity negligibly contributes. Its scal-     of the purely resistive regime after substituting56 d2e ! S 1=c,  it is
+    ings are given by Eq. (25). A transition region between these two limit     easy to verify that the scalings of the warm-resistive regime below can
+    regimes is also visible. This region is characterized by a reversal of the    be equally recovered from those of the warm collisionless case ﬁrst dis-
+    slope in the scaling of kM with R 1—see the top-center frame of Fig. 2,     cussed in Ref. 27. This is also the criterion used in Ref. 23 to re-obtain
+   where a relative minimum of kMðR 1Þ is clearly visible. No power law     the results of Refs. 17 and 18 and to deduce the corresponding scalings
+    scaling has been measured here.                                             for the inner layer width from boundary analysis calculations in a
+       The growth rates of the fastest mode in both viscous-resistive and     semi-kinetic warm-collisionless regime.
+    purely resistive regimes for equilibrium (6) can be compared by re-        The corresponding scaling laws, conﬁrmed by the numerical sol-
+    writing their ratio in terms of the Prandtl number: cMS    P2=7cMS;R,     utions, are as follows:
+   where cMS stands for the scaling of Eq. (24) and cMS;R for that of (25).
+    This relationship indicates the intuitive role of the viscosity in slowing               cLD    k6=7q4=7s  S  1=7; dLD   k 4=7q s 5=7 S  4=7;       (28)
+   down the tearing growth rate as P overtakes unity (cf. the values of cM                                                                               cSD   ðkD0Þ2=3q2=3s  S  1=3; dSD   k 2=3D01=3q s 2=3 S  2=3:     (29)    plotted in the right frames of Fig. 2). In the parameter range we have
+    numerically explored, the limits of applicability of Eqs. (24) and (25)         In Fig. 3, we plot the growth rates cSD and cLD vs different param-
+    in terms of the value of P can be quantitatively expressed as given by     eters (k, S, and qs) and the corresponding scaling laws of dSD and dLD.
+   P   10  1 and P   10, respectively.                              The conditions of validity of these scalings are obtained from the
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-7
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 10 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+     FIG. 3. Scaling laws in the warm-resistive regime of Sec. VI (blue dots are numerically obtained values): growth rates c are displayed in the two upper panels, and reconnect-
+      ing layer widths d are displayed in the two lower panels. Labels LD and SD correspond to the large-D0 and small-D0 limits, respectively. In left ﬁgures (SD case), the abscissa
+      variables are z ¼ k  2=3D01=3 and z1 ¼ ðkD0Þ2=3.
+
+
+    normalization   scales   of  the  boundary   layer   analysis,  which    wavenumber of the fastest growing mode is once more governed by
+     give18,23qs    ðkSÞ1=3 in the large-D0 limit and D0   q s 1=7 ðkSÞ2=7 in     the scaling kM   S  1=7.
+    the small-D0 limit. Outside of this range, the effect of qs is negligible and        The spatial proﬁle of the eigenmodes obtained in this regime, in
+    scalings [(17) and (18)] of the purely resistive regime are recovered.         which qs explicitly affects the eigenvalues, perfectly agrees with its
+        Using the same argument described in Sec. V to estimate the    approximated analytical form provided in Ref. 18 for jx=qsj    1. In
+   growth rate of the fastest growing mode, we obtain from Eqs. (28) and     dimensional units and in the notation of the present article, Eq. (74) of
+    (29) the following scalings:                                                  Ref. 18 reads
+                 8
+                                                               1=4                                             S                               cM    q5=8                                                                                   s                                                                                                                             ð                                                                                                                                                        1 Þ1=2                                                                                                           2c1                                                                                                             csA S                                                                                                                 qs                 >><           Warm                            Resistive                                                                1=8                                                                                                                                                                                                           ;   (31)                                                                  (30)       Jzðx=aÞ ¼   w001ðx=aÞ ’                                                 q1=16                                             S                              kM                                                                                   s                                                                             p                                                                  þ                                                                                                               ðx=aÞ2                                                                                                                 csAS  1                  Regime                                                                                           a  k2q2s
+                                                           3=4                                  q                                                                  1=2:                                              S                 >>:                             dM                                                                                   s
+                                                                              as the following correspondence between the variables of the afore-
+   These are conﬁrmed by numerical results. Figure 4 shows the scalings    mentioned reference and the ones we use here in the slab-geometry
+    of cM (left frame) and kM (right frame) vs the different parameters.     limit  holds:   ^s ¼ 1  (we  have  arbitrarily  chosen  the  magnetic
+    Here, again, two limit regions can be recognized where scalings (25)     shear parameter  ^s of the tokamak to be equal to unity in the
+   and (30), respectively, hold. In the top-left frame of Fig. 4, we see that,     slab geometry approximation), e ¼ S  1, m ¼ ka, l ¼ 1 (isothermal
+   when S   106, the scaling of cM / q5=8s   agrees with Eq. (30) for all      limit), ge¼ 1 (uniform equilibrium density), sb¼ðkqsÞ2; z2q ¼1=ðkqsÞ2;
+   chosen values of qs. For the values of S   106, we recognize a threshold                                                                               z2R ¼  csAS=ðkaÞ2; z2A ¼  ðcsAÞ  2,      and       z2j ¼ðgez2Rz2AÞ1=2    value for the ion sound Larmor radius ~qs above which we recover the
+    semi-collisional regime of Eq. (30). When qs < ~qs, the scaling of cM    ¼ðcsAkaÞ  1=2S1=2. In Fig. 5, the spatial proﬁle of (31) is compared to
+   becomes independent of qs. In the bottom left frame of Fig. 4, when     that numerically obtained from the eigenmode w1 in the  interval
+   S > ~S, we recover the scaling cM   S  1=4 of Eq. (30) (see, e.g., the blue       qs  x   qs for the same set of parameters of the center-bottom frame
+    line in the bottom-left frame of Fig. 4, where we can identify ~S ¼ 107     of Fig. 3; here, d’3  10  4.
+    for qs ¼ 10  2). The second limit regime (purely resistive) governed by           Finally, the scalings of Eq. (30) can be generalized to an arbitrary
+    Eq. (25) corresponds to cM   S  3=7 and is observed when S < ~S (see     equilibrium proﬁle. Proceeding as before, we obtain
+    again,  e.g., the blue  line in the bottom-left frame of  Fig. 4 for
+                                                   8                                                                                                                                                                                    2þ4p                                                                                                                                                                                    2þp   ¼        10                 2).               In                  the                        right                        frame                                  of                                        Fig.                                               4,                               we                                             recognize                                                      the                                               same                                                                    features    qs                                                                                                                                                                                    2þ7p
+                                                                                                                                                                                     2þ7p;                                                                                                               S                                                                                                                                                                                                                    s                                                                                         cM   q    as      above.             Here,                  a threshold                               value                                      of                                      the                                       Lundquist                                          number                                                                                                   ~S for                                                             each
+                                                                                                                                                                                                                 1                                                   >>><                                                      Warm                                                                                                     Resistive                                                                                                                                                                                                                          2
+                                                                                                                                                                                    2þ7p                                                                                                                                         (32)                   is                    visible.                     For                              larger                                  values                                         of                                                    S,                                            the                                       wavenumber                                                               of                                                               the                                                                               fast-    value          of qs                                                                                         q                                                                                                                                                                                     2þ7p;                                                                                                               S                                                                                                                                                                                                                    s                                                                   Regime                                                                                               D0   k  p                                                                                              for limk!0                                                                                                                                                                                      2þ5p                                                                                                                                                                                                                            4p                                            S  1=8                                                           of                                                            the                                                  warm-    est       growing            mode                         follows                                the                                       scaling                                 kM                                                                                                                                                                                      2þ7p
+                                                                                         q                                                                                                                                                                                       2þ7p:                                                                                                                S                                                                                                                                                                                                                    s                                                   >>>: kMdM     resistive regime given by Eq. (30), while below this threshold value, the
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-8
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 11 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+                                                                                        FIG. 5. Perturbed current density proﬁles normalized to their maximum value, com-
+                                                                                    pared in the   qs   x   qs interval: the blue curve represents the current density
+                                                                                              numerically computed with the eigensolver, while the red one is obtained using Eq.
+                                                                                                         (31), formally valid for jxj    qs. Here, the inner layer width is d ’ 3   10  4.
+
+                                                                                 VII. WARM-INERTIAL REGIME (qs; de)
+                                                                            This regime differs from the previous one in that a ﬁnite electron
+                                                                                      inertia replaces a ﬁnite resistivity as the mechanism that allows recon-
+                                                                          nection by violating the ideal Lagrangian invariance of w. We, then,
+                                                                assume R  1 ¼ S  1 ¼ 0 in Eqs. (3) and (4), and the coefﬁcients of
+                                                                         Eq. (5) become a ¼ @x2@2    k2; d ¼ 1 þ k2d2e   d2e @x2@2 ; l1 ¼ l4
+                                        ¼ 0; l2 ¼ kq2s w00a   kF00; l3 ¼ kw00a    ikw0000 .
+                                                                                     Scalings of the growth rate in this regime have been ﬁrst obtained
+                                                                 by Porcelli27 and had been provided for the layer width d by Zocco
+                                                              and Schekochihin.23 For the fastest growing mode, they had been ﬁrst
+                                                                          numerically obtained by Comisso et al.50 for the same equilibrium (6)
+                                                         we consider here, and they had been generalized to different equilibria
+                                                                              in Ref. 29.
+                                                               As mentioned in Sec. VI, scalings in this regime mirror those of
+                                                                           the warm-resistive case previous the substitution S  1 ! cd2e.
+                                                                            In the regime where both de and qs contribute, which is delimited
+                                                                 by the condition qs   de, we rewrite below all the relevant scalings,
+                                                                     whereas we present in Fig. 6 the numerical results for the small- and
+                                                                                large-D0 regimes, only, since the fastest growing mode with p ¼ 2 has
+                                                                   been already studied,50
+                                                                                      cLD   kq2=3s  d1=3e   ;   dLD  q s 1=3 d4=3e   ;           (33)
+                                                                                            cSD   kD0qsde;   dSD   D0d2e;               (34)
+                                                     8            1þ2p  2þp
+                                                                                                                                                                                                                     3p     3p
+                                                                                                        d                                                                                                                                                                                             e   ;                                                                                          cM   q s
+                                                         Warm   Inertial                                                     >>>><                                                                                                                                                                                                                    1                                                                                                                                                                                                                         2
+                                                                                                                                                                                                                    3p   3p         (35)                                                                                                                                                                                                  ;                                                                                                                                                                                                                         s                                                                                                       d e
+
+                                                                                                                                                      1=3                                                                                                                                       d4=3                                                                     Regime for limk!0 D0   k  p >>>>: kMdM  qq                                                                                                                                                                                                                          s                                                                                                                                                                                               e   :
+                                                                         Note, in the large-D0 limit, the localization of the reconnecting layer in
+                                                                      a scale dLD smaller than de because of qs > de and, in the small-D0
+                                                                                           limit, the independence of dSD from qs.
+                                                                                                          It is well known, however, that for de     qs, the purely inertial
+                                                                                                                  (i.e., cold collisionless) regime is entered. Its scalings in the large- and
+                                                                            small-D0 limits have been provided in Refs. 27 and 56 and in Refs. 16,
+                                                                                19, and 56, respectively,
+     FIG. 4. Scaling laws of the fastest growing mode (D0d    1) in the warm-resistive
+     regime (Sec. VI).                                                                           cLD   kde;   dLD    de;                  (36)
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                           27, 102106-9
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 12 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+     FIG. 6. Scaling laws in the warm-inertial regime of Sec. VII (blue dots are numerically obtained values): growth rates c are displayed in the two upper panels, and reconnecting
+      layer widths d are displayed in the two lower panels. Labels LD and SD correspond to the large-D0 and small-D0 limits, respectively.
+
+                     cSD   kðD0Þ2d3e;   dSD   D0d2e:              (37)     material) time derivative of w results to be zero (u ! u   q2s U).
+                                                         More in general, both qs-corrections to the E  B velocity, as they are
+        Again, we do not present here the numerical results of this case,     derived in the dBz    ðjBperpj=B0Þ2 limit, and the J  B term in Ohm’s
+    as they have been already addressed elsewhere,29,56 but we note that    law of Hall-MHD model do not allow, alone, reconnection (see, e.g.,
+   we found the condition de    qs delimiting the validity of (36) and     Ref. 57). After redeﬁnition of the ﬂuid velocity, both terms can be
+    (37) to be numerically satisﬁed already for de=qs   0:1.                  indeed  re-absorbed  into a  null  Lie-derivative  of Bðx; tÞ, which
+        In this cold, collisionless case, the fastest growing mode in a large                                                                             expresses the impediment of magnetic reconnection.7
+    aspect ratio current sheet has been ﬁrst considered in Ref. 33, where
+    the scaling cM    d3=2e   has been numerically obtained for the equilib-     VIII. INERTIAL-RESISTIVE REGIME (de; S  1)
+   rium w0 ¼ cos ðxÞ. This agrees with the more general estimates given                                           1
+    in Ref. 29,                                                                In this regime, where R  ¼ qs ¼ 0, the coefﬁcients of Eq. 5
+
+                                                                                                                  @x2                                                                                                                     @2    k2;  d ¼ 1 þ k2d2e   d2e @x2@2 ;  l1 ¼ S 1a;                   8           1þp                 become a ¼
+                                                               ¼                                                                                         kw0                                                                                                                                               0.                                              l2 ¼                                                      l3 ¼                                                                      l4                                                                                    kF00;                                                          0a    ikw000                                                                                                                                    0 , and                                                                                          p ;                                  cM   d e
+                                                                        Three                                                                                        regions                                                                                                  in                                                                                          parameter                                                                                                            spaces                                                                                                       can                                                                                                           be                                                                                                                                 identiﬁed,                                                                                                                       depending                  Cold   Inertial  >>><                                                                                        1
+                                                                  (38)                 Regime ðd2e    q2s Þ                                                            on the relative magnitude of cd2e and S  1. These three regions can be                                  kM   d e;p
+                                                                                classiﬁed as two asymptotic regimes, in which resistivity or electron                    for limk!0 D0   k  p                   >>>: dM    de;
+                                                                                           inertia, respectively, dominate, and an intermediate region at the inter-
+   which have been veriﬁed also for a Harris pinch equilibrium29 and,     section of these two regimes.
+    here, for equilibrium (6) (cf. Sec. VIII).                                The existence of these three regions, and in particular of a param-
+          Finally, Fig. 7 evidences the formal equivalence of de and S  1 by     eter range in which both de and S  1 contribute to the growth rate
+   showing the practically identical shape of the eigenfunctions obtained    when cd2e   S  1, had been already noted in the pioneering numerical
+   when inertia and resistivity, respectively, are the only non-ideal mech-     study of Ref. 33 although speciﬁc scalings have been there provided for
+   anisms at play and when the values are chosen so that cd2e ¼ S  1. We     the cd2e    S  1 limit only.
+     recall instead that qs, like R  1, is per se not sufﬁcient to regularize the        The scalings in the two asymptotic regimes are easily obtained.
+    singularity that, in ideal MHD, would develop at the neutral line since        The ﬁrst regime, valid for cd2e    S  1, can be so identiﬁed as
+    qs (or R  1) does not violate the topological invariance of magnetic ﬁeld     purely resistive. This has been already discussed and summarized with
+    lines in ideal MHD, as they are dragged by the ﬂow: although, as     Eqs. (17), (18), and (23): in this case, the inertia-related terms in Eq.
+    de ¼ S  1 ¼ 0, qs appears in front of a source term in the equation for     (1) can be neglected with respect to the resistivity contribution.
+    the Lagrangian invariance of w, it can be re-absorbed in a redeﬁnition        The second one, valid in the opposite limit cd2e    S  1, is the
+    of the ﬂuid stream function with respect to which the total  (i.e.,      cold-inertial regime of Sec. VII.
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-10
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 13 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+                                                                             region) by focusing ﬁrst on the scalings of the fastest growing mode,
+                                                                                  for which the wave-vector is ﬁxed by the non-ideal parameters.
+                                                                               Figure 8 displays the results of a set of numerical integrations per-
+                                                                 formed by varying both de and S  1 and by selecting the corresponding
+                                                                                          fastest growing mode in a formally continuous spectrum of unstable
+                                                                   modes. The dependence of cM and kM on de and on S  1 is displayed in
+                                                                           the top and bottom frames, respectively. For each line, the transition
+                                                                from one asymptotic regime to the other, occurring when cd2e   S  1,
+                                                                                                     is quite evident. In each frame, the dashed line evidences the scaling
+                                                                   dependence on the dominant parameter of the mostly inertial (38) or
+                                                                      mostly resistive regime (25).
+
+                                                                            IX. DISCUSSION
+
+                                                                The main results presented in Sec. V–VII are summarized in
+                                                                       Table  I, where we have reported only the scalings for the regimes
+                                                                 where both non-ideal parameters each time involved contribute. We
+                                                                                         recall that only the scalings of the fastest growing mode depend explic-
+                                                                                                    itly on the analytical form of the perturbed magnetic equilibrium but
+                                                                      not those of the small- and large-D0 limits. For the scalings of the fast-
+                                                                                       est growing mode, we have indicated also the values that can be
+                                                                             extrapolated for an equilibrium for which p ¼ 1 when D0ðkÞ   k  p for
+                                                                  k    1, according to the criterion discussed in Ref. 29 and previously
+                                                                                       recalled; in the present numerical study, we have veriﬁed only the case
+                                                                p ¼ 2 of equilibrium (6). Different types of equilibria and their corre-
+                                                                    sponding algebraic scaling in terms of k for k   1 are reported in
+                                                                       Table II.
+                                                                     While the scalings of the  viscous-resistive regime had been
+                                                                             already analytically obtained and numerically veriﬁed by previous
+                                                                              authors, also for the fastest growing mode, a different choice of the
+                                                                     magnetic equilibrium had been made, which corresponds to the p ¼ 1
+                                                                             case (cf. Sec. V). The scalings of the warm-resistive regimes were
+     FIG. 7. Eigenmode proﬁles of w (upper panel) and u (lower panel) obtained for a      instead available only for the growth rates and in the small- and large-
+     case in which de (blue curve) and S  1 (red curve) are the only non-zero non-ideal     D0 limits (Sec. VI). In the inertial-resistive regime (Sec. VIII), for which
+     parameters. The values of the parameters have been chosen so that cd2e ’ S  1;    no power law scaling can be measured in the narrow parameter region
+     the blue and red curves are practically superimposable.                                                                              in which both resistivity and electron inertia contribute, a numerical
+                                                                        scan spanning the two asymptotic regimes at the best of our knowl-
+       The intermediate parameter range is deﬁned by the constraint
+                                                                     edge had never been performed before.
+    cd2e   S  1. We note that the scalings for tearing modes in the presence        The warm resistive scaling, once combined with those of the
+    of both electron inertia and resistivity can be deduced by considering,
+                                                                           warm-inertial regime in the tearing and inertial-kink limits and for the
+    for example, the scalings (36) and (37) of the cold inertial case and by
+                            2                                                              fastest growing mode (see Sec. VI–VII), can provide, for example, a
+    rescaling56 d2e ! ^de    d2e þ S 1=c. For the growth rates, this leads to     correction to the estimate previously done in Ref. 59, about the possi-
+    the implicit relations
+                                                                                 ble onset of a secondary inertial tearing on the current sheet generated
+                              1 !1=2                                1 !3=2            by a primary resistive internal kink mode (for example, in a tokamak,                    S                           S
+       cLD   k  d2e þ             ;   cSD   kðD0Þ2  d2e þ             ;    (39)     during the sawtooth crash in Kadomtsev scenario). In this case, the
+                     cLD                            cSD               embedded current sheet condition60 must be kept into account to eval-
+                                                                           uate the scalings (see also Ref. 61).
+   which are useful to interpret the results in the transition region.                                                                          Moreover, while in the present work we have carried out the lin-
+        Using for c the scalings [(36) and (37)] of the collisionless tearing                                                                             ear analysis assuming a static equilibrium, the question of how a thin
+   modes or the scalings [(17) and (18)] of the purely resistive case, it is                                                                            current sheet of a given aspect ratio L/a is produced is pertinent to
+    possible to reformulate the condition of transition between the two                                                                                  assess what happens in a given context.
+    asymptotic regimes in terms of the wave-vector as                                                                                                            If one assumes that the current sheet is generated by an underly-
+             8          3   1                                ing dynamical process whose characteristic timescale  is sproc,  it  is                                                      e S    ðD0d    1Þ;          Inertial   resistive < k   d                                                                      important to compare this timescale with the growth time of all the                               1                                        (40)
+                                                    5 S  1  ðD0d    1Þ:              unstable modes permitted at a given sheet aspect ratio.         range cd2e   S  : kðD0Þ2   d e
+                                                                                                            If the process timescale is sufﬁciently long, one expects that the
+        In a numerical scan of the parameter space, it is easier to identify     current sheet bifurcates to a state with a magnetic island determined
+    the three regions (i.e., the two asymptotic regimes and the transition    by the characteristics of the ﬁrst mode that becomes unstable. On the
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-11
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 14 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+     FIG. 8. Scaling laws of the fastest growing mode occurring for D0d   1 in the inertial-resistive regime. The dashed green lines of the upper frames indicate the scaling of the
+     purely collisionless regime (38), while the black ones in the lower frames indicate the scalings of the purely resistive regime (25).
+
+
+    other hand, if the underlying process is fast enough that sproc is smaller        Assume also that the current J0 in the sheet scales like B0=a (i.e.,
+    than the growth times of all the unstable modes permitted at a given      Bcs    B0). One has, therefore, to take into account that, as the sheet
+    aspect ratio, then one expects that the process of producing thinner     shrinks, a gets smaller and s0, which in this speciﬁc case can be written
+   and thinner sheets can go on until this condition is violated. An exam-     as s0    ða=LÞ~sA, also gets smaller.
+    ple occurs when sproc is Alfvenic, as discussed in the example below,        Of course, the linear analysis on a static equilibrium would be
+    for a mechanism leading to thin sheets exhibiting both ranges of the     applicable only if the unstable modes satisﬁed csproc     1, which here
+    unstable spectrum.                                            means cs0   csA     1. However, since only modes with cs0   1 can
+                                                                     be destabilized if the aspect ratio is not large enough, a critical condition
+                                                                                of transition corresponding to cs0   1 can be determined by performing   A. A case of current sheet evolution
+                                                                      a stability analysis on a sequence of static current sheets ordered according
+        Consider a (typically turbulent) plasma characterized by eddies     to the increasing values of L/a. It is in the sense that below we mean the
+    of size L, ﬂuid velocity vf, and magnetic ﬁeld B0. Assume energy equi-     application of the linear estimates to the rapidly evolving current sheet.
+    partition, such that vf    vA, where vA is the Alfven velocity associated        As the inverse aspect ratio grows, more and more modes
+    with the ﬁeld B0. One can, then, consider a process by which current    become unstable, initially in the small D0 range. Of these, the fast-
+    sheets are produced as the magnetic ﬁeld is advected by the plasma     est growth is associated with the smallest possible wave-number,
+   motion on a timescale sproc of the order of the eddy turnover time    which is k   1=L. This process goes on until the condition D0d   1
+     sf    L=vf , which is also of the order of the Alfven time ~sA   L=vA      is met for this mode.
+    (the symbol “~sA,” here,  is to mark the difference with respect to        At this point, it is necessary to make an assumption about
+   sA ¼ a=vA previously introduced).                                     the dependence of D0 on k and a. Let us assume, for example,
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-12
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 15 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+   TABLE I. Asymptotic scalings of resistive reduced-MHD tearing modes in the presence of viscosity and electron temperature and of collisionless modes in the presence of elec-
+     tron temperature. The bottom line refers to the scaling of the critical aspect ratio ða=LÞcrit discussed in Sec. IX A.
+
+                 Viscous-resistive: ðR  1; S 1Þ   (Sec. V)      Warm-resistive: ðqs; S 1Þ   (Sec. VI)      Warm-inertial: ðqs; deÞ   (Sec. VII)
+
+
+                                                                                                                                                                                                                2                                                                                                                                                                                                                    1
+                                                                                                                                             7                             kq   cLD                      k23R13S  23                                k 67q47sS  1                                                                                                                                                                                            3sd3e
+                                                                                                                                                                                                                    4
+   dLD                    k  13R  16S  16                              k  47qs 5                                                                                                                                          7 S  47                          qs 1                                                                                                                                                                                                                3 d3e
+                                                                                                                                                3                                kD0qsde    cSD                     k13D0R 16S  56                                ðkD0Þ23q 23sS  1
+                                                                                                                                            3 S  23                               D0d2e   dSD                     k  13R  16S  16                             k  23D013qs 2
+                 D0   ðkaÞ  1          D0   ðkaÞ  2          D0   ðkaÞ  1         D0   ðkaÞ  2         D0   ðkaÞ  1         D0   ðkaÞ  2
+                                                                                                                                                        5
+                                                                                                                         3            q                                                                                                                                                 8sS  1   cM          R14S  34            R27S  57             q 23sS  1                                                                                                                                                              4                 qsde            q 56sd3e2
+                                                                                                                    1                                                                                                                                                        1
+                                                                                       7           q                                                                                                              9sS  2                                                                                                                         9            q16s                                                                                 S  18            q13sd3e2            q 16sd3e1   kM              ðR  12S  12 Þ1                                                4              ðR  12S  12 Þ1
+                                                                                                                     7                                                                                                                                                                                                  4                                                                                                                                                                                                                                  1                                                                                                                                                                                                                                      4
+                                                                                       7           qs                                                                                                                     9 S  49           qs 3                                                                                                                                                         4 S  12           qs 1                                                                                                                                                                                               3 d3e                                                                                                qs                                                                                                                                                                                                                                  3 d3e   dM              ðR  12S  12 Þ1                                                4              ðR  12S  12 Þ2
+                                                                                                                                                                                                  1                                                                                                                                                                                                                                 1                                                                                                                                                                                                                                      4     a              R 16S    12           R 10S1      12           q s 1                                                                                                                    3 S    16           q s 1                                                                                                                                                        3 S    152           qs 1                                                                                                                                                                                              3 de                                                                                                                                                                                                  3           q s                                                                                                                                                                                                                                 3 d e 15
+    L   crit
+
+    the scaling D0   ðka2Þ  1, which is what one gets for the Harris       One can, thus, evaluate that the wavenumber kM of the fastest
+   pinch at small k [the argument can be generalized to different    growing mode scales now as
+   power-law scalings,29 among which equilibrium (6)—see next and
+                                                                                                                                          5=4
+   Table II, at the end].                                                                                                     1=4 L
+                                                                       kML   S L                ;                   (42)      One ﬁnds eventually that the maximally growing mode appears                                   a
+    in the spectrum at k   1=L when a=L   S L 1=5 , where SL ¼ L2=
+                                                              and the maximum growth rate cM scales as    ðgm~sAÞ is the Lundquist number evaluated with the large scale param-
+     eters. The corresponding layer width is d   LS L 2=5 , and the maximum                                                       3=2
+                                                                                                                                  1=2 L
+   growth rate is such that                                                                      cM~sA   S L                :                  (43)
+                                                                                              a
+                                    c~sA   SL 1=5 :                       (41)    The critical aspect ratio, when cM    1=~sA, is, therefore, reached when
+  We note that the growth rate is still smaller than the characteristic rate                         L
+                                                                                                                           S1=3L   :                      (44)    at which the current sheet shrinks (by assumption,    ~s A 1 ). Therefore,                           a   crit
+    the shrinking process can continue producing modes in the lower
+   wave-number portion of the spectrum, which is now in the large D0     This is the smallest possible aspect ratio compatible with the stability
+    range. “Producing” is here meant in the sense that the aspect ratio     condition. Below this value, the current sheet would be destroyed by a
+   grows up to values, which, in a static current sheet, would allow the    mode growing at a faster rate than the one at which the sheet is
+    destabilization of large D0 modes.                                      produced.
+
+
+   TABLE II. Equilibrium proﬁles and related expression of D0ðkaÞ (both with a bibliographical reference about where the former had been ﬁrst used for tearing mode analysis and
+    about where a formula for the second has been provided) and the corresponding scaling of D0ðkaÞ with respect to ka for ka     1. In this table, dimensional units have been
+     reintroduced.
+
+   w0ðx=aÞ                       B0yðx=aÞ ¼  dw0=dx      Ref.                 D0ðkaÞ                    Ref.     lim D0   ðkaÞ  p    p
+                                                                                                                  ka!0
+    Bcsa ln jcoshðx=aÞj                  Bcstanhðx=aÞ            28                 1                            13           2           1
+                                                                      2      ka
+                                                                         ka                                 ka
+  8                 8                                 0   for  x    a          13             ð1   kaÞ   ka tanhðkaÞ          13           2           1     0   for  x    a  <              <                                2ðkaÞ
+      Bcsðx=aÞ for  a < x   a         Bcs for  a < x   a                   ka   ð1   kaÞtanhðkaÞ                    ka
+  : 0   for  x > a       : 0   for  x > a
+    Bcsa cos ðx=aÞ                           Bcs sin ðx=aÞ            31   q ﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃ    p q ﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃ         58           8           2
+                                                             2  1   ðkaÞ2 tan     1   ðkaÞ2
+                                                                             2                              pðkaÞ2
+                                    0        Bcsa                             tanhðx=aÞ            25                                               1          25           15          2                                                                               ðkaÞ4 þ 2ðkaÞ2 þ 15                                              Bcs   2cosh2ðx=aÞ                                        cosh2ðx=aÞ                  2@   q ﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃﬃ A                      ðkaÞ2
+                                                                                ðkaÞ2  4 þ ðkaÞ2
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-13
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 16 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+                                          8                 2þ4p       The corresponding critical                             wave-number                                                      scales as                                                                                                                                                          1þ3p                                                                                                                                                                                            p                                                                                                                                                                           1þ2p                                                                             L
+                                                                                                                                                                     1þ3p;                                                                         R 1þ3pS                                                                                       c M                                                                                    a                                                                  (45)                                             S1=6L   ;                               ðkMLÞcrit                                                                                                                                                          2þ3p
+                                                                                                                                                          1þ3p                                          >>>>>>>>>><
+                                                                                                                 ðR  1=2S   1=2 Þ 1þ3p;             (46)   which gives a measure of the size of the smaller structures produced                    k M    L                                  1                                                                                    a   when          the              sheet                         is                      destroyed,                             a quantity                                            that                                                can,                                                    in principle,                                                         be                                                    com-
+                                                                                                                                                            1þ2p
+                                                                                                                                                                                                                  p                                                                                                                                                            1þ3p    pared         with               observations.                                                                              L
+                                                                                                                   ðR  1=2S   1=2 Þ 1þ3p:        Although                   in                     the                           different                                 context of                                           the                                               forced                                                      evolution                                                                  of a                                                                          sin-                                                                            d M                                          >>>>>>>>>>:                                                                                    a
+    gle current sheet shrinking at an Alfvenic rate, conditions (44) and
+    (45) had been already proven numerically by Tenerani et al.62 to pro-    The critical scalings (44) and (45) so read
+    vide the threshold condition for the disruption of the evolving current
+                                                                                                                                                                                                          p                                                                                                                                                                              1þp                                                                                                                                                                                     p     1    sheet. The results (44) and (45) are indeed formally coincident with                 L                                                                                                                                                                               2þ4p;                                                                      R   2þ4pS                                                                                                                                                                                           2 ¼ P   2þ4pS                                                                                                                                         (47)
+    the scalings of the ideal tearing regime,49 introduced by Pucci and                   a   crit
+    Velli in terms of an asymptotic threshold condition on the aspect ratio                                                                                                                                                               1þp   1=2:                 (48)                                                                                                        ðkMLÞcrit  R   2þ4pS    of a microscopically thin current sheet, at which a resistive tearing
+   would be allowed to develop over Alfvenic time scales: for larger     This result can be specialized: for p ¼ 1, it corresponds to both the
+    asymptotic scalings, super-Alfvenic modes63–65 with cM~sA gm!1! 1     Harris-pinch equilibrium w0 ¼ a ln jcoshðx=aÞj and the piece-wise
+                                                                           equilibrium deﬁned by w0ðxÞ ¼ x=a in the interval  a < x   a and   would be, in principle, admitted.
+                                                                 by w0 ¼ 0 for x    a and x> a (Ref. 13). For p ¼ 2, it corresponds to       The choice of Velli and coworkers for this name was moti-
+                                                                           the case of Eq. (6) and the case of the equilibrium w0ðxÞ ¼ a sin ðx=aÞ    vated by the independence from SL of the growth rate cIT, which is
+                                                                            1             (Ref. 58),
+    numerically estimated as the limit toward which cMðS L Þ con-
+                                                                                        is    verges, while the critical aspect ratio condition (44) for ðL=aÞcrit                                                                   L    ½ p¼1               1    1    L    ½ p¼2               1    1                                                                               1
+   imposed to be satisﬁed as increasingly smaller values of S L  are                    R  6S 2;           R   10S 2;      (49)
+                                                                         a   crit                a   crit    chosen. Although this notion of “ideal tearing” has been shown in
+    Ref. 29 to go in principle beyond the Alfv enic case and to be gener-    The scalings of cM in Eq. (46) and the critical condition of Eqs.
+    alizable to any reconnection regime  (i.e., regardless of the non-     (47)–(49) specialized to the p ¼ 1 case had been ﬁrst obtained numeri-
+    ideal effect at play and of the “reference” time scales that can be      cally by Tenerani et al. in Ref. 2.
+   non-Alfv enic), here we want to stress that the critical conditions of      A current sheet with an aspect ratio (asymptotically) larger than
+    Eqs. (44) and (45) have been obtained in the well precise context of     that indicated above is met, for example, in the case of a Sweet–Parker
+    a current sheet formation mechanism and that is the latter that     type steady-reconnection assumption on the current sheet aspect ratio.
+   deﬁnes and ﬁxes the “timescale of reference,” sproc, of the system.     In the purely resistive case, it corresponds to L=a    S1=2L   . Its applica-
+    In principle, sproc does not coincide with sA (or with the character-     tion to the evaluation of the fastest growing mode in the purely resis-
+     istic inverse frequency of the linear stable modes of the system). It      tive regime gives63,64 cM    S1=4L   : in the literature, this has been often
+     is also important to keep in mind that the result is dependent on     referenced to as the plasmoid instability regime.64,65 In the viscous-
+    speciﬁc assumptions about the dependence of the current density      resistive case, the corresponding assumption has been discussed in
+   and of D0, on the width of the sheet, and on the wavenumber (see     Ref. 66 (see also Ref. 67).
+    also Ref. 61 for further discussions).                                    Analogous results are obtained in the warm-resistive regime of
+                                                                                   Sec. VI. Equations (32), re-scaled to L, become
+                                           8                 6þ12p
+                                                                                                                                                                     2þ4p                                                                                                                                                              2þ7p                                                                                                                                                                        2þp                                                                               L                                                                                                                                                                     2þ7p   B.      Critical             scalings                       in                      the                              viscous-resistive,                                                                                                      S   2þ7p;                                                                                 qs                                                                                         cM                                                                                      a   warm-resistive,               and                      warm-inertial                                regimes
+                                                                                                                                                             5þ7p
+                                                                                                                                                                                                1                                           >>>>>>>>>><       The critical                      scalings                              [(44)                            and                                        (45)] can                                           be of course generalized                                                                                                                                                                                                          2                                                                               L   2þ7p                                                                                                                                                                     2þ7p
+    to any reconnection regime, similarly to what was shown29 to be possi-                      kM        q s   S   2þ7p;                (50)                                                                                      a
+    ble        for           the ideal                    tearing                              case.                                Let                                 us do                                               this in                                                the                                                 regimes                                                            discussed                                                                       in                                                                                                                                                               4þ8p
+                                                                                                                                                                        2þ5p                                                                                                                                                               2þ7p                                                                                                                                                                                                              4p                                                                               L    Sec.       V–VII.            From                    a                          practical                               point                                        of                                          view,                                                                    it                                                                is                                                    sufﬁcient                                                             to consider
+                                                                                                                                                                        2þ7p S   2þ7p:                                                                                  q s                                                                              dM                                           >>>>>>>>>>:    the        scalings                 of the                           fastest                           growing                               modes                                                that                                      we                                                 have                                                        provided                                                                       as                                                                                      a
+    written by normalizing lengths to a and magnetic ﬁelds to B0 and to
+                                                                         Here, the critical aspect ratio and fastest growing mode read    rewrite them as normalized to L. Let us then label with an apex “ ” the
+
+                                                                                                                                                                    2þp    dimensionless quantities referred in this way to L. For the kind of                      L                   13                                                                                                                                                                                               s  S 3ð2þ4pÞ;                  (51)   problem discussed above, ~sA ¼ s A is, thus, the characteristic time of                        a   crit  q
+    the process governing the current sheet evolution and the  limit
+                                                                                                                                                                                                     p  1                                                                                                                                                                                               1
+    cM   Oð1Þ must be posed for consistency with the linear analysis.                                                                                                                                                                                               3 S 2ð3þ4pÞ:                                                                                                                                         (52)                                                                                                         ðkMLÞcrit  q s
+    This provides an asymptotic scaling of the critical aspect ratio ðL=aÞcrit
+    with the non-ideal parameters involved.                           As it happens in the warm-collisionless case,29 the equilibrium choice
+        In the viscous-resistive regime of Sec. V, we, thus, rewrite Eq.     does not affect the scaling dependence of the critical aspect ratio on qs.
+    (22) as                                                           For p ¼ 1 and p ¼ 2, Eq. (51) specializes to
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-14
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 17 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+
+                                                                                           1                                                                             aspect ratio evolves over an Alfvenic timescale: critical scalings of the              L    ½ p¼1           13    1    L    ½ p¼2                                                                                           3    2
+                    qs  S 6;           q s  S 15:        (53)     smallest observable aspect ratio have been so obtained, which depend               a   crit              a   crit
+                                                            on the equilibrium proﬁle and, in each reconnection regime, are for-
+    Also note that for p ¼ 1, the critical wave vector does not depend on     mally coincident with those of the geometrical threshold for the transi-
+     resistivity.                                                                 tion to the recently proposed ideal tearing49 asymptotic limit. Finally,
+        For completeness we ﬁnally write the critical scalings already     while discussing numerical details of the ﬁnite-difference eigensolver
+    evaluated in Ref. 29 for the warm-inertial regime,                           that we have developed on purpose, we have addressed the role played
+           8                 1þ2p                               by ill-conditioning in seeking a compromise between the convergence
+                                                              1þ2p                                                                   2þp                                                                 p                          L                                                                               of                                                                              the solver,                                                                                         the                                                                                          accuracy                                                                                                           of                                                                                                         the stencil, the non-uniformity of the
+                                                                                 3p ;                             qs                                                                         3p de                        c M                                                                       numerical                                                                                                   grid,                                                                           and                                                                                 machine                                                                                                                precision.                            a
+                                                     1þp           >>>>>>><
+                          L     p      3p1     3p2                    (54)             It is our hope that the organic presentation of the scalings here
+                             q                                                              may                                                                     ﬁnd                                                                                         use in                                                                                              a                                                                                            broad                                                                                                      range                                                                                                                        of applications,                                                                                                                            ranging                                                                                                                    from                                                                       s d e   ;                            discussed                  M                            a
+                                                             1                                                                  4                                                                           the                                                                                         linear                                                                          benchmarks                                                                                                        of                                                                                                numerical                                                                                                          codes                                                                                                                         to                                                                                                                          the interpretation                                                                                                                                                   of
+                                                                  3                                                            :           >>>>>>>: dk                                                             3 de                  M   q s                                                                       numerical                                                                       and                                                                                       experimental                                                                                                                      results                                                                                                                 in tokamak                                                                                                                          physics                                                                                                          and                                                                                                                                         in studies
+                                                                               of turbulent reconnection, both in the slab RMHD limit with no Hall
+   The critical aspect ratio and fastest growing mode are
+                                                                  term and in the low-b reduced Hall-MHD regime. Moreover, this
+                     L                   13      3ð1þ2pÞ2þp                       work represents a ﬁrst step toward a systematic multiparametric
+                           q s  de         ;                 (55)     numerical analysis of tearing modes in which more than two non-
+                       a   crit
+                                                                                    ideal parameters simultaneously contribute.
+                                                                      1       p  1
+                            ðkMLÞcrit   qs   3 d e  3þ4p ;                  (56)
+                                          ACKNOWLEDGMENTS
+   and for p ¼ 1 and p ¼ 2, the critical radii read
+                                               We thank Erwan Deriaz (CNRS) for having suggested us the
+
+                                                          1                                                                                           1                                                                                                  4                 general form of the non-uniform grid proﬁle Eq. (B1) and for useful             L    ½ p¼1           13                                                          3    L    ½ p¼2                                                                                           3      15                   qs  d e   ;           q s  de    :       (57)
+              a   crit               a   crit                              discussions about numerical convergence  issues and Francesco
+                                                                    Pegoraro  (Universit a  di  Pisa)  for  insightful comments on the
+   These results perfectly mirror those of the warm-resistive case accord-
+                                        1                                    1            original manuscript. We also wish to thank the “Maison de  la
+    ing to the correspondence S $ cd2e, which here reads S $ d2e     simulation Lorraine”  for  partial time  allocation on the  cluster
+    since the critical radii above are the same as of the ideal tearing,
+                                                                     Explor (Project No. 2019M4XXX0978). This work was carried out
+    cM ¼ cIT   Oð1Þ.                                                                        within the framework of the French Federation for Magnetic Fusion
+       The critical scalings we have written in the three regimes are
+                                                                           Studies (FR-FCM) and of the Eurofusion consortium and received
+   summarized in the last line of Table I.
+                                                                     funding from  the Euratom  research and  training programme
+           It should be noted that it is left open the question of whether val-
+                                                                2014–2018 and 2019–2020 under grant agreement No. 633053
+    ues of p different from 1 and 2 are admitted for different magnetic
+                                               (WPEDU fundings obtained through FR-FCM AAP 2017–2019
+    equilibrium proﬁles with a single resonant point. The change in the
+                                                                        “Evolution of current sheets in low-collision plasmas,” in particular,    regime indicated by Eqs. (52) and (56) when p < 1 suggests us to
+                                                                            are gratefully acknowledged). The views and opinions expressed    exclude the possibility of fractional values smaller than unity.
+                                                                         herein  do  not  necessarily  reﬂect  those  of  the  European
+   X. SUMMARY AND CONCLUSIONS                          Commission.
+     We have presented and discussed numerical results about the
+    scalings of tearing modes in a slab geometry for different couples of
+                                           APPENDIX A: A TTH-ORDER ACCURATE FINITE
+    non-ideal parameters, simultaneously contributing to RMHD equa-
+                                             DIFFERENCE STENCIL FOR THE NTH DERIVATIVE    tions. The wavelength limits corresponding to the small-D0, fastest
+                                     ON A NON-UNIFORM GRID   growing mode and large-D0 limits have been all addressed. Although
+    the scalings of all growth rates in the small- and large-D0 limits were                                                                           In the  eigenesolver,  derivatives  are numerically computed
+    already available from boundary layer analysis, to the best of our                                                                        using the standard compact difference method.68 Here, we present
+    knowledge, such estimates had not been numerically tested, before, in                                                                      a general, explicit form for a non-uniform approximation of the nth
+     all the regimes considered here. The present study contributes to the                                                                               derivative on a non-uniform grid by using a centered stencil with
+    subject by complementing a systematic numerical veriﬁcation with                                                                  Nt points and accuracy up to order t ¼ Nt   n. It reads
+    the scalings of the reconnecting layer width, d, not always available in
+    the pre-existing literature and by providing the scaling of the fastest                                                      Nt2 1                                                                                         @nf  X   growing modes for a particular choice of the magnetic equilibrium               ¼        aiþmfiþm þ eðtthÞ:           (A1)
+                                                                                                                                                                                       1    proﬁle. In most reconnection regimes, the latter were not previously                   @xn   i   m¼  Nt2
+    available or had been provided for different magnetic equilibrium
+    choices. Comparison of all results conﬁrms the general heuristic esti-    Note that, even though the stencils we are considering are cen-
+   mates proposed in a previous work, which we have here re-considered     tered (and therefore, Nt is an odd number), they are, in general,
+   and extended to all the regimes addressed. Implications of this analysis    not symmetric because of the non-uniformity of the grid (see
+   have been, then, discussed for an example of current sheet whose    Appendix B).
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-15
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 18 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+                                          0                                                 1                                                                                                                          Nt                                                                                                                                           Nt  1  Nt       !        Coefﬁcients aiþm are evaluated by following the standard com-                               Y   Y Y
+    pact difference approach, using Taylor expansion. For the points to           det½ At ¼ @         hiþl A                ½ hi6k    hi6l
+    the left and to the right of the center of the stencil, xi, we ﬁnd,                          l¼  Ns;l6¼0        k¼1 l¼kþ1
+    respectively,                                                                                                       Nt  Nt       !                               YY
+                                                                                                                                                         ½ hiþk þ hi   l    ;                   (A6)
+                                 NtX1 hli   j @mf      hNti   j @Nt                                             k¼1 l¼1
+                                  fi   j ¼                                        f            (A2)                                                                                     i;                      m¼0 m! @xm   i   Nt! @xNt                                                                     with   now expressing the standard algebraic product. From Eqs.
+                         NpX1      hmiþj @mf    h Npiþj @Np                   (A2) and (A3), we can, then, rewrite the local truncation error of
+                      fiþj ¼     ð  1Þm      þ               f         (A3)     the scheme of tth ¼ ð Nt  nÞth order,                                                                                          i:                   m¼0      m! @xm   i   Np! @xNp                                                        2                3
+   Using Eqs. (A2) and (A3) combined with (A1), we obtain a system      XNt   XNt            1 @Ntf                                                                                                                  et ¼ 4                                                                                                      hNtiþjaiþj                                                                                                                     hNti  jai   j 5                                                                                                                     Nt! @xNt  i:     (A7)    of Nt equations for the coefﬁcients ai6m, with 1  m   ðNt   1Þ=2.                                                                                                          j¼1                                                                                                                           j¼1
+  We write it as
+    0                    1                       It should be noted that in Eq. (A7), the number of multiplications
+                                                                                            1                     of ill-conditioned terms like hi6k    hi6l increases with the sought              hiþNt2                             1         hiþ1      hi  1           hi  Nt2    B                    C                 accuracy t of the scheme: this provides a source of rounding-error,    B                    C           h2                                                                                           1 C    B                 iþNt2 1                         h2iþ1    h2i  1         h2i  Nt2                          C               which eventually forces to reduce the machine-epsilon  (i.e., to    B    B                    C                  increase the precision of number representation). Notice that this is                          C    B    B     .         .         .           .         .           .                          C               an unavoidable drawback of ﬁnite-difference schemes, which must    B         ..                   ..                  ..                      ..                   ..                      ..  C    B                    C                be “payed” in order to overcome ill-conditioning problems, when    B                    C    B             hJ                                                                                           1 C                          C                 higher order stencils are used.    B                 iþNt2 1                             hJiþ1     hJi  1           hJi  Nt2    B                    C                     Previous formulas can be used to compute the coefﬁcients of    B                    C    B     .         .         .           .         .           .  C               compact schemes for an arbitrary derivative with arbitrary accuracy.    B         ..                   ..                  ..                      ..                   ..                      ..  C    B                    C              As an explicit example, we can consider a fourth order accurate                          C    B                    1                                                               1                                                                                    stencil                                                                                                        (t                                             ¼ 4)                                                                                               for the ﬁrst                                                                                                           derivative                                                                                                         (n ¼ 1)                                                                                                           such                                                                                                                                   that                                                                                                                                                                                              it has                                                                                                                       been                          A    @ hNt                                                                                           1                             1        hNtiþ1 1   hNti  1 1          hNti  Nt                 iþNt2                                                                                         2                                                                   used                                                                                     for                                                                                  the                                                                                numerical                                                                                                      calculations                                                                                                            discussed                                                                                                                          in                                                                                                                        the                                                                                                                           present                                                                                                                                                                    article.
+                 |ﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ{zﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ}                                                                     Using these values, whence Nt ¼ t þ n ¼ 5, Eqs. (A1), (A2),                                                                      ½ At
+       0                                          1 1  0 0 1                             and (A3) read, respectively,                       aiþNt2
+       B     C  B C                                                     @f  X2                      ð4                                                     ¼                                                                                                        aiþmfiþm þ e  Þ;             (A8)                  C       B                B                                        1  1 C             C                  C                                           @x   i       B  aiþNt2                B 0                                                                             m¼  2       B     C  B C             C                  C       B                B                               0             C                  C       B                B                                                                                                                          4  hl                                                                                                              h5                                                                                                                        @lf                                                                                                                      @5f                                                                                                                                                                                                                                i   j                                                                                                                                                                                                                                                          i   j                            X             C                  C       B                B                                                                                                                                                                    fi   j ¼             C                  C       B                B                                                                                                                                                                                                                                               i                                                                                                                                                                                                   i;           (A9)                                                                                                          @xl                                                                                                        @x5                                                                                                                                                            l!                                                                                                                              5!                               0             C                  C       B                B                                                                                                                  l¼0       B     C ¼ B C ;                      (A4)             C                  C       B                B             C                B J!                                      1  J  1                  C                X4         hliþj @lf     h5iþj @5f       B aiþNt2       B     C  B C                                                                    fiþj ¼     ð  1Þl     þ                 (A10)       B     C  B C                                                                                                     l!  @xl   i    5! @x5  i:       B     C  B 0 C                                                                l¼0       B     C  B C       B     C  B C       B     C  B 0 C                                This leads to a linear system of Nt ¼ 5 equations: to the following       B     C  B C       @     A  @ A                                      linear system,
+                       ai  Nt2                                          1         0                    0             1 0  1  0 1                         |ﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ{zﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ}    |ﬄﬄ{zﬄﬄ}                                           hiþ2   hiþ1     hi  1     hi  2       aiþ2       1
+                                                   C                                                        C                                                            C                         a                b                    B                                                     B                                                          B                                                   C                                                        C                                                            C                                     B h2iþ2  h2iþ1   h2i  1    h2i  2                                                     B aiþ1                                                          B 0   where “  ” stands here for the matrix product. Naming  ½ ~Aj  the    B             C B  C ¼ B C ;   (A11)                                                            C                                     B                                                     B                                                          B                                                                                                                                                1 C                                                                                                iþ2  h3iþ1    h3i  1    h3i  2 C                                                   A                                                        A                                                            A                                     @ h3                                                     @ ai                                                          @ 0    matrix that results from replacing the column j in ½At  with vector
+    b, the coefﬁcients ai6j can be found, for example, by using Cramer’s           h4iþ2  h4iþ1   h4i  1    h4i  2         ai  2       0
+                                                                                                                                                                               |ﬄﬄﬄﬄﬄ{zﬄﬄﬄﬄﬄ}                                                                                                                                                                |ﬄﬄ{zﬄﬄ}   method as follows:                                                                                                       |ﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ{zﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ}                                                                                                                                      a                                                                                                                                                     b                                                                                                                                                                                                           ½A4
+                        h  i                      Nt  1
+                                                                                2                     we must add the equation for ai ¼   ðai  2 þ ai  2 þ aiþ1 þ aiþ2 Þ, as                        det  ~Aj    X
+                    ai6j ¼                                   a0 ¼                                                              aiþj:        (A5)       it is given by the second of Eq. (A5). Applying Eq. (A6), one ﬁnds                         det ½ At
+                                                j¼  Nt2 1;j6¼0
+                                                                           det ½ A4 ¼ hiþ2hiþ1hi 1hi  2 ð hiþ2 þ hi  2 Þ ðhiþ1 þ hi  2 Þ
+   Above, the index j runs over j ¼ 1; 2; ::; ðNt   1Þ=2. The determi-                   ðhi  1    hi  2 Þð hiþ2 þ hi  1 Þ ðhiþ1 þ hi  1 Þðhiþ1   hiþ2 Þ :
+   nant of ½At can be computed using the fact that At is a matrix of
+                                                                                                                       (A12)
+   Vandermonde-type. After some algebra, we can write a general
+   formula for calculating the determinant of a stencil matrix of size     Finally, using (A6) and (A12) in the ﬁrst of (A5), we explicitly
+     t    t,                                                                obtain the sought coefﬁcients as follows:
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-16
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 19 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+                                 hiþ1hi 1hi  2                          must be respected, where Ki ð hi  4; …; hiþ4 Þ is a polynomial function
+         aiþ2 ¼                                                                  ;    (A13)
+                 hiþ2 ðhiþ2 þ hi  2 Þðhiþ2 þ hi  1 Þðhiþ1   hiþ2 Þ                 of the mesh spacings hi  4; …; hiþ4 [cf. Eqs. (A7) and (A13)–(A16)].
+                                                                           In order to ﬁnd a quantitative threshold on hj, we could under-
+                                  hiþ2hi 1hi  2                                                                          estimate   Ki ðhi  4; …; hiþ4 Þ   by   means   of   the   function                                                                                         ;    (A14)         aiþ1 ¼
+                 hiþ1 ðhiþ1 þ hi  2 Þðhiþ1 þ hi  1 Þðhiþ1   hiþ2 Þ         K i ðminmfhiþmgÞ obtained by calculating Ki ðhi  4; …; hiþ4 Þ  after
+                                                                                 substituting, at the varying of m, each hiþm with minmfhiþmg ¼ h  .
+                                hiþ2hiþ1hi  2
+           ai  1 ¼                                                                  ;    (A15)    The numerical value of the latter can be, thus, computed by ﬁnding
+                   hi  1 ðhiþ2 þ hi  1 Þðhiþ1 þ hi  1 Þðhi  1    hi  2 Þ                                                                          the minimum of K i ðh Þ imposing
+                                 hiþ2hiþ1hi  1
+           ai  2 ¼                                                                  :    (A16)                    @K i ðh Þ
+                   hi  2 ðhiþ2 þ hi  2 Þðhiþ1 þ hi  2 Þðhi  1    hi  2 Þ                            ¼ 0:                     (B5)
+                                                                              @h
+
+                                                                          This gives us a restrictive lower threshold on the smallest value  APPENDIX B: NON-UNIFORM GRID AND MACHINE
+                                                                              of hj on the grid, which is compatible with a given machine epsilon  PRECISION
+                                                                                               ep. If this is not the case, the machine precision must be increased
+       The non-uniform grid with a ﬁne spacing around x ¼ 0 is gen-       (i.e., ep must be decreased).
+    erated by applying the function                                           In the present version of the code, however, we have proceeded
+                       "         b   #                           in a somehow more “empirical” way, although not optimized,
+                                    2jx i j                                thanks to previous knowledge of relevant parameters in similar
+                          xi      þ b                        non-uniform grid numerical solutions of the eigenvalue problem:                                   Lx
+                               xi ¼                                  (B1)      ﬁrst, a set of parameters has been ﬁxed and has been checked to
+                               1 þ b                                                                         grant convergence of the estimation of d for a certain machine epsi-
+    to a uniform grid of spacing h  centered around x0 ¼ 0 and     lon and for some relatively large values of the non-ideal parameters.
+   deﬁned by xi ¼ ih  , where i ¼  Nx=2; …; Nx=2, with Nx the num-    For example: Nx ¼ 1400, Lx ¼ 4p b ¼ 4, and b ¼ 10  6  for  epr
+    ber of sub-intervals in the interval ½  Lx=2; Lx=2 . The choice of the   ’ 10  36 (quadruple precision) and S  1 ¼ 10  6; qs=a ¼ 5   10  2,
+    real parameters b > 0 and b > 0 allows us to control the degree of     in the warm-resistive case. Then, when the non-ideal parameters
+    non-uniformity, which increases as b increases and/or b decreases.     are decreased, an outer loop makes b and b change in order to
+   The generic spacing hi is indeed given in terms of the uniform    reﬁne the non-uniform grid, while an inner loop checks the conver-
+   mesh size Lx=Nx by the relation                                    gence by numerical calculation of a fourth order derivative (approx-
+             h               i                                    imated with a fourth order accurate stencil) of a test-function for
+            Lx  ð 2ji þ 1jNx Þb þ b þ i ð2Nx Þb  ji þ 1jb    jijb             which an exact analytical solution is known. If convergence is not
+        hi ¼                                                                            :   (B2)     granted with respect to a certain threshold error that we have cho-          Nx                  1 þ b
+                                                                                sen, the machine epsilon is decreased for that set of b and b until
+    Notice that small values of hi can lead to truncation errors compa-    convergence is measured.
+    rable to or smaller than the machine epsilon for a given precision.
+    Therefore, in order to avoid ill-conditioning problems related to   DATA AVAILABILITY
+    the subtraction of too close numbers, both the parameters b and b
+                                                                The data that support the ﬁndings of this study are available
+    for a ﬁxed machine precision ep and the machine precision itself                                                                          within the article.
+   must be made to vary at the varying non-ideal parameters allowing
+    reconnection once the number of grid points Nx þ 1 is ﬁxed: on
+                                              REFERENCES
+    the one hand, the smallest hj must be small enough to allow a sufﬁ-
+    cient resolution of the reconnecting layer width d; on the other        1K. Takeda, O. Agullo, S. Benkadda, A. Sen, N. Bian, and X. Garbet, “Nonlinear
+   hand, hj=a must be larger than the machine epsilon.                             viscoresistive dynamics of the m¼1 tearing  instability,” Phys. Plasmas 15,
+                                                                              022502 (2008).
+       Lower constraints on hj=a are indeed posed by rounding errors       2A. Tenerani, A. F. Rappazzo, M. Velli, and F. Pucci, “The tearing mode insta-
+    of the order of the machine precision: by taking into account the          bility of thin current sheets: The transition to fast reconnection in presence of
+    implicit rounding error of truncated numbers given by epr (e.g., in         viscosity,” Astrophys. J. 801, 145 (2015).
+    decimal single precision pr ! s; es ¼ 5   10  7), Eq. (A1) for n ¼ 2      3H. R. Strauss, “Nonlinear three-dimensional magnetohydrodynamics of non-
+   and Nt ¼ 9 should be rewritten as                                                     circular tokamaks,” Phys. Rev. 19, 134 (1976).
+                                                                             4H. R.  Strauss, “Dynamics  of high-b tokamaks,” Phys. Rev. 20, 1354
+                   @2f  Xm¼4                                                     (1977).             ¼     aiþm fiþm þ epr þ e7th:          (B3)      5D. Grasso, F. Pegoraro, F. Porcelli, and F. Califano, “Hamiltonian magnetic
+                @x2   i   m¼  4                                                     reconnection,” Plasma Phys. Controlled Fusion 41, 1497–1515 (1999).
+                                                                                      6T. J. Schep, F. Pegoraro, and B. N. Kuvshinov, “Generalized two-ﬂuid theory of
+     It follows that the condition                                                     nonlinear magnetic structures,” Phys. Plasmas 1, 2843–2852 (1994).
+                                                                                 7D. Del Sarto, F. Califano, and F. Pegoraro, “Electron parallel compressibility in
+                                                                                           the                                                                                             nonlinear                                                                                               development                                                                                                                                of                                                                                                                    two-dimensional                                                                                                                           magnetohydrodynamic               @2f  Xm¼4              Xm¼4                                                                                           reconnection,”                                                                                   Mod.                                                                                                            Phys. Lett. B                                                                                                                               20,                                                                                                             931–961 (2006).                                                      aiþmepr      (B4)                             aiþmfmj   e ði 7th Þ þ
+             @x2  xi  m¼  4              m¼  4                          8X. Wang and A. Batthacharjee, “Nonlinear dynamics of the m ¼ 1 instability
+                                                                      |ﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ{zﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄﬄ}                 and fast sawtooth collapse in high temperature plasmas,” Phys. Rev. Lett. 70,
+                                                         Ki ðhi 4;…;hiþ4 Þ                      1627 (1993).
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-17
+
+Published under license by AIP Publishing
+
+===== PDF PAGE 20 =====
+ Physics of Plasmas                                                  ARTICLE         scitation.org/journal/php
+
+
+
+
+      9R. G. Kleva, J. F. Drake, and F. L. Waelbroeck, “Fast reconnection in high tem-     41M. Velli and A. W. Hood, “Resistive tearing in line-tied magnetic ﬁelds: Slab
+       perature plasmas,” Phys. Plasmas 2, 23 (1995).                                     geometry,” Sol. Phys. 119, 107–124 (1989).
+     10R. Fitzpatrick and F. Porcelli, “Collisionless magnetic reconnection with arbi-     42K.  Shibata and  S. Tanuma,  “Plasmoid-induced-reconnection and  fractal
+       trary guide ﬁeld,” Phys. Plasmas 11, 4713 (2004).                                     reconnection,” Earth Planets Space 53, 473–482 (2001).
+     11N. H. Bian and D. Tsiklauri, “Compressible hall magnetohydrodynamics in a      43R. G. Giovanelli, “A theory of chromospheric ﬂares,” Nature 158, 81 (1946).
+      strong magnetic ﬁeld,” Phys. Plasmas 16, 064503 (2009).                             44F. Hoyle, Some Recent Researches in Solar Physics (Cambrdige University Press,
+     12A. Hasegawa and C. Uberoi, “The Alfven Wave,” Report No. DOE/TIC-11197,       Cambridge, UK, 1949).
+      Technical Information Center, United State Department of Energy, Springﬁeld,       45J. W. Dungey, Cosmic Electrodynamics (Cambrdige University Press, 1958).
+     VA, 1982.                                                                  46G. Einaudi and F. Rubini, “Resistive instabilities in a ﬂowing plasma. II. Effects
+    13H. P. Furth, J. Killeen, and M. N. Rosenbluth, “Finite-resistivity instabilities of a        of viscosity,” Phys. Fluids B 1, 2224 (1989).
+      sheet pinch,” Phys. Fluids 6, 459–484 (1963).                                        47L. Ofman, X. L. Chen, and P. J. Morrison, “Resistive tearing mode instability
+     14B. Coppi, R. Galvao, R. Pellat, M. Rosenbluth, and P. Rutherford, “Resistive       with shear ﬂow and viscosity,” Phys. Plasmas B 3, 1346 (1991).
+       internal kink modes,” Soviet Journal of Plasma Physics 2, 961–966 (1976).          48N. H. Bian and G. Vekstein, “Energetic of forced magnetic reconnection in a
+    15G. Ara, B. Basu, B. Coppi, G. Laval, M. N. Rosenbluth, and B. V. Waddell,         visco-resistive plasma,” Phys. Plasmas 12, 072902 (2005).
+      “Magnetic reconnection and m ¼ 1 oscillations in current carrying plasmas,”      49F. Pucci and M. Velli, “Reconnection of quasi-singular current sheets: The
+     Ann. Phys. 112, 443–476 (1978).                                                          “ideal” tearing mode,” Astrophys. J. Lett. 780, L19 (2014).
+     16B. Coppi, “‘Inertial’ instabilities in plasmas,” Phys. Lett. 11, 226–228 (1964).         50L. Comisso, D. Grasso, F. L. Waelbroeck, and D. Borgogno, “Gyro-induced
+     17F. Pegoraro, F. Porcelli, and T. J. Schep, “Internal kink modes in the ion-kinetic         acceleration of magnetic reconnection,” Phys. Plasmas 20, 092118 (2013).
+      regime,” Phys. Fluids B 1, 364–374 (1989).                                               51F. Pegoraro and T. J. Schep, “Low-frequency modes with high toroidal mode
+     18F. Pegoraro and T. J. Schep, “Theory of resistive modes in the ballooning repre-       numbers: A general formulation,” Phys. Fluids 24, 478 (1981).
+       sentation,” Plasma Phys. Controlled Fusion 28, 647–667 (1986).                 52W. G. Hammett, W. Dorland, and F. W. Perkins, “Fluid models of phase mix-
+      19J. F. Drake and Y. C. Lee, “Kinetic theory of tearing instabilities,” Phys. Fluids B         ing, Landau damping, and nonlinear gyrokinetic dynamics,” Phys. Fluids B 4,
+      20, 1341 (1977).                                                            2052 (1992).
+    20P. Holoborodko, “Advanpix multiprecision computing tool for MATLAB,”      53F. L. Waelbroeck, R. D. Hazeltine, and P. J. Morrison, “A Hamiltonian electro-
+      https://www.advanpix.com (2012).                                              magnetic gyroﬂuid model,” Phys. Plasmas 16, 032109 (2009).
+     21G. H. Golub and C.  F. Van Loan, Matrix Computations (John Hopkins      54E. Tassi, P. J. Morrison, F. L. Waelbroeck, and D. Grasso, “Hamiltonian formu-
+      University Press, 1996).                                                                   lation and analysis of a collisionless ﬂuid reconnection model,” Plasma Phys.
+     22F.  Porcelli,  “Viscous  resistive  magnetic  reconnection,”  Phys.  Fluids  30,        Controlled Fusion 50, 085014 (2008).
+      1734–1742 (1987).                                                         55D. Del Sarto, C. Marchetto, F. Pegoraro, and F. Califano, “Finite Larmor radius
+    23A. Zocco and A. A. Schekochihin, “Fast linear growth of collisionless double         effects in the nonlinear dynamics of  collisionless magnetic reconnection,”
+       tearing modes in a cylindrical plasma,” Phys. Plasmas 18, 102309 (2011).            Plasma Phys. Controlled Fusion 53, 035008 (2011).
+    24H. P. Furth, P. H. Rutherford, and H. Selberg, “Tearing mode in the cylindrical     56M. Ottaviani and F. Porcelli, “Fast nonlinear magnetic reconnection,” Phys.
+      tokamak,” Phys. Fluids 16, 1054 (1973).                                         Plasmas 2, 4104 (1995).
+     25F. Porcelli, D. Borgogno, F. Califano, D. Grasso, M. Ottaviani, and F. Pegoraro,      57F. Pegoraro, D. Borgogno, F. Califano, E. Echkina, D. Grasso, T. Liseikina, and
+      “Recent  advances  in  collisionless  magnetic  reconnection,” Plasma  Phys.         F. Porcelli, “Developments in the theory of collisionless reconnection in conﬁg-
+      Controlled Fusion 44, B389–B405 (2002).                                             urations with a strong guide ﬁeld,” Nonlinear Proc. Geophys. 11, 567 (2004).
+    26D. Grasso, R. J. Hastie, F. Porcelli, and C. Tebaldi, “Critical D0 for stability of     58M. Ottaviani and F. Porcelli, “Nonlinear collisionless magnetic reconnection,”
+       viscoresistive tearing modes,” Phys. Plasmas 15, 072113 (2008).                       Phys. Rev. Lett. 71, 3802 (1993).
+     27F. Porcelli, “Collisionless m¼1 tearing mode,” Phys. Rev. Lett. 66, 425 (1991).       59D. Del Sarto and M. Ottaviani, “Secondary fast reconnecting instability in the
+    28E. G. Harris, “On a plasma sheath separating regions of oppositely directed       sawtooth crash,” Phys. Plasmas 24, 012102 (2017).
+      magnetic ﬁeld,” Il Nuovo Cimento 23, 115–121 (1962).                           60P. A. Cassak and J. F. Drake, “The impact of microscopic magnetic reconnec-
+    29D. Del Sarto, F. Pucci, A. Tenerani, and M. Velli, “‘Ideal’ tearing and the transi-        tion on pre-ﬂare energy storage,” Astrophys. J. Lett. 707, L158 (2009).
+       tion to fast reconnection in the weakly collisional MHD and EMHD regimes,”      61D. Del Sarto, M. Ottaviani, F. Pucci, A. Tenerani, and M. Velli, “Spontaneous
+          J.  Geophys.  Res.  121,  1857–1873,  https://doi.org/10.1002/2015JA021975       magnetic reconnection of thin current sheets,” in Comptes-Rendus de la 21e
+       (2016).                                                                         Rencontre du Non Lin eaire, Paris 2018, edited by E. Falcon, M. Lefranc, F.
+    30F. Pucci, M. Velli, A. Tenerani, and D. Del Sarto, “Onset of fast “ideal” tearing      P etreluis,  and  C.-T.  Pham  (Universit e   Paris  Diderot,  Non-Lin eaire
+       in thin current sheets: Dependence on the equilibrium current proﬁle,” Phys.        Publications, Paris, France, 2018), Vol. 21, pp. 13–18.
+      Plasmas 25, 032113 (2018).                                                   62A. Tenerani, M. Velli, A. F. Rappazzo, and F. Pucci, “Magnetic reconnection:
+    31M. A. Cross and G. Van Hoven, “Magnetic and gravitational energy release by        Recursive current sheet collapse triggered by ‘ideal’ tearing,” Astrophys. J. Lett.
+       resistive instabilities,” Phys. Rev. A 4, 2347 (1971).                                   813, L32 (2015).
+    32G. Van Hoven and M. A. Cross, “Resistive instability of a sheet pinch,” Phys.      63T. Tajima and K. Shibata, Plasma Astrophysics (Addison-Wesley, 1997), p. 229.
+       Fluids 14, 1141 (1971).                                                     64N. Loureiro, A. Schekochihin, and S. Cowley, “Instability of current sheets and
+    33G. Van Hoven and M. A. Cross, “Inertial magnetic ﬁeld reconnection and mag-       formation of plasmoid chains,” Phys. Plasmas 14, 100703 (2007).
+       netospheric substorms,” Phys. Rev. Lett. 30, 642 (1973).                          65A. Bhattacharjee, Y.-M. Huang, H. Yang, and B. Rogers, “Fast reconnection in
+    34G. Van Hoven and M. A. Cross, “Energy release by magnetic tearing: The non-       high-lundquist-number  plasmas  due  to  the  plasmoid  instability,”  Phys.
+       linear limit,” Phys. Rev. A 7, 1347 (1973).                                        Plasmas 16, 112102 (2009).
+     35J. W.  Dungey, “Some  researches  in  cosmic  magnetism,”  Ph.D.  thesis      66L. Comisso and D.  Grasso,  “Visco-resistive  plasmoid  instability,”  Phys.
+      (Cambridge University, Cambridge, UK, 1950).                                   Plasmas 23, 032111 (2016).
+     36J. W. Dungey, “Conditions for the occurrence of electrical discharges in astro-     67A. Tenerani, M. Velli, A. F. Rappazzo, and F. Pucci, “‘Ideally’ unstable current
+       physical systems,” London Edinburgh Dublin Philos. Mag. 29, 752–738 (1953).         sheets and the triggering of fast magnetic reconnection,” J. Plasma Phys. 82,
+    37B. Coppi, G. Laval, and R. Pellat, “Dynamics of the geomagnetic tail,” Phys.       535820501 (2016).
+      Rev. Lett. 16, 1207 (1966).                                                          68S. K. Lele, “Compact ﬁnite difference schemes with spectral-like resolution,”
+     38J. H. Piddington, “A theory of auroras and the ring current,” J. Atmos. Sol.-            J. Comp. Phys. 103, 16–42 (1992).
+       Terr. Phys. 29, 87–105 (1967).                                               69D. Hoffman, Numerical methods for scientists and engineers (CRC Press –
+    39B. Coppi and A. B. Friedland, “Processes of magnetic-energy conversion and        Taylor & Francis Group, Boca Raton, FL, 2001).
+       solar ﬂares,” Astrophys. J. 169, 379 (1971).                                    70G. P. Zank and W. H. Matthaeus, “The equations of reduced magneto-
+    40E. R. Priest, “Current sheet models of solar ﬂares,” Sol. Phys. 47, 41–75 (1976).        hydrodynamics,” J. Plasma Phys. 48, 85 (1992).
+
+
+
+
+
+Phys. Plasmas 27, 102106 (2020); doi: 10.1063/5.0022133                                                                                                          27, 102106-18
+
+Published under license by AIP Publishing

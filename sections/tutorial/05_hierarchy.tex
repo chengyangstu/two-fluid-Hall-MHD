@@ -1,0 +1,49 @@
+\input{sections/tutorial/05_twofluid_to_hall}
+
+\subsection{无量纲化跟算：先变导数，再变系数}
+写$\vct x=L_0\tilde{\vct x}$、$t=t_0\tilde t$、$\B=B_0\tilde\B$、$\vel=\VA\tilde\vel$、$n=n_0\tilde n$。于是
+\begin{equation}
+ \grad=L_0^{-1}\tilde\grad,\quad
+ \partial_t={\VA\over L_0}\partial_{\tilde t},\quad
+ \J={B_0\over\mu_0L_0}\tilde{\J},\quad
+ \mathsf P={B_0^2\over\mu_0}\tilde{\mathsf P}.
+\end{equation}
+例如电子压力电场除以$E_0=\VA B_0$：
+\begin{equation}
+ {(\grad\cdot\mathsf P_e)/(en)\over\VA B_0}
+ ={B_0\over\mu_0en_0L_0\VA}
+ {\tilde\grad\cdot\tilde{\mathsf P}_e\over\tilde n}
+ ={d_i\over L_0}
+ {\tilde\grad\cdot\tilde{\mathsf P}_e\over\tilde n}.
+\end{equation}
+Hall和压力项在这一压强单位下带相同系数；若改用$n_0T_{e0}$作压力单位，压力系数还会带上$\beta_e/2$。两种写法可以相同，前提是压强变量的单位也随之改变。
+
+电子惯性则有
+\begin{equation}
+ {(m_e/e)(\VA^2/L_0)\over\VA B_0}
+ ={m_e\VA\over eB_0L_0}
+ ={m_e\over m_i}{d_i\over L_0},
+\end{equation}
+其中用了$\VA=\Omega_{ci}d_i$。它与把电流代入后出现的$d_e^2/L_0^2$不矛盾，后者还使用了电子漂移速度及其空间梯度的标度。
+
+\subsection{一个完整数值例：先用尺度判断该学哪套模型}
+以下是专为练习选取的均匀上游参数，不对应某篇论文的测量：
+\begin{equation}
+ n_0=1\,{\rm cm^{-3}}=10^6\,{\rm m^{-3}},\quad
+ B_0=20\,{\rm nT},\quad T_e=100\,{\rm eV},\quad
+ L_0=1000\,{\rm km},
+\end{equation}
+离子为质子，质量比取真实值约1836。代入SI公式可得
+\begin{align}
+ \VA&\simeq436\,{\rm km\,s^{-1}},&
+ t_0&\simeq2.29\,{\rm s},\\
+ d_i&\simeq228\,{\rm km},&
+ d_e&\simeq5.31\,{\rm km},\\
+ \lambda_{De}&\simeq74.3\,{\rm m},&
+ \rho_{\rm sound}&\simeq51.1\,{\rm km},\\
+ \beta_e&\simeq0.101,&
+ (\VA/c)^2&\simeq2.12\times10^{-6}.
+\end{align}
+所以在$L_0$尺度，电荷分离与位移电流的上述估计都很小；但$d_i/L_0\simeq0.228$，不能认为Hall作用必然微弱。若另取$S=10^4$，单层SP估计$\delta_{\rm SP}=10\,{\rm km}$，已远小于$d_i$，说明纯电阻MHD层的假设需要重新检查。
+
+这里$B_0$就是所定义的上游场。若加上远大于它的导引场，回旋频率和声回旋半径应按相应磁化场重新计算，不能把同一张数值表直接沿用。该例训练的是“先查排序，再选择方程”，不是仅凭$d_i$一个数就完成模型选择。

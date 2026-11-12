@@ -1,0 +1,1656 @@
+
+===== PDF PAGE 1 =====
+          Two-Fluid Magnetohydrodynamic Simulations of Relativistic
+                          Magnetic Reconnection
+
+                                        Seiji Zenitani, Michael Hesse, and Alex Klimas
+
+         NASA Goddard Space Flight Center, Greenbelt, MD 20771; Seiji.Zenitani-1@nasa.gov
+
+
+                           ABSTRACT2009
+
+
+             We investigate the large-scale evolution of a relativistic magnetic reconnectionApr
+                   in an electron–positron pair plasma by a relativistic two-ﬂuid magnetohydrody-
+24          namic (MHD) code. We introduce an interspecies friction force as an eﬀective
+                    resistivity to dissipate magnetic ﬁelds. We demonstrate that magnetic reconnec-
+                  tion successfully occurs in our two-ﬂuid system, and that it involves Petschek-type
+                 bifurcated current layers in a later stage. We further observe a quasi-steady evo-
+                  lution thanks to an open boundary condition, and ﬁnd that the Petschek-type
+                  structure is stable over the long time period. Simulation results and theoreti-
+                   cal analyses exhibit that the Petschek outﬂow channel becomes narrower when
+                 the reconnection inﬂow contains more magnetic energy, as previously claimed.[astro-ph.HE]
+                Meanwhile, we ﬁnd that the reconnection rate goes up to ∼1 in extreme cases,
+               which is faster than previously thought. The role of the resistivity, implications
+                   for reconnection models in the magnetically dominated limit, and relevance to
+                   kinetic reconnection works are discussed.
+
+
+                  Subject headings: magnetic ﬁelds — relativity — Magnetohydrodynamics: MHD
+        — plasmas
+
+
+
+                                            1. INTRODUCTIONarXiv:0902.2074v2
+
+              Magnetic reconnection in collisionless or collisional plasmas is the driver of explosive
+            events in space and astroplasmas. By breaking the magnetic ﬁeld topology, it rapidly re-
+             leases the magnetic energy into plasma kinetic energy in a short timescale, and therefore it
+            explains particle acceleration or bursty emission signatures in these sites. On the Sun, it is
+           widely recognized that magnetic reconnection drives solar ﬂare or coronal mass ejections (see
+          Aschwanden (2006) for review). Theoretical models have long been established (Sweet 1958;
+           Parker 1957; Petschek 1964), and a series of MHD simulations make a signiﬁcant success to
+           understand ﬂare-type events (e.g., Chen & Shibata (2000); Yokoyama & Shibata (2001)).
+
+===== PDF PAGE 2 =====
+                                      – 2 –
+
+
+    Magnetic reconnection is considered in a wide variety of high-energy astrophysical con-
+texts too. For example, soft gamma repeaters (SGRs) and anomalous X-ray pulsars (AXPs)
+are now best described by a “magnetar” model (Duncan & Thompson 1992; Woods &
+Thompson 2006), a neutron star with superstrong magnetic ﬁelds up to 1014 −1015G. In
+analogy to the Sun, ﬂares on and around the magnetar (Thompson & Duncan 1995, 2001;
+Lyutikov 2003, 2006) are considered as driving mechanism of bursty events, in relativistic
+electron–positron environments.  Such ﬂares, or magnetic reconnection events, should be
+strongly inﬂuenced by the relativistic eﬀects, because the ultra strong magnetic ﬁeld boosts
+the Alfv´en speed up to the light speed.
+
+   The pulsar environments are also inﬂuenced by relativistic plasmas and the strong mag-
+netic ﬁelds (∼1012G) of the neutron star.  Recent time-dependent simulations of pulsar
+magnetospheres (Komissarov 2006; Bucciantini et al. 2006; Spitkovsky 2006) suggested that
+the magnetic reconnection near the Y point, where the outmost closed ﬁeld lines intersect the
+equatorial current sheet, is of critically importance, while these models cannot deal with local
+reconnection physics. Outside the magnetosphere, reconnection processes in the “striped”
+current sheets are considered to dissipate magnetic energy inside the relativistic plasma out-
+ﬂow (pulsar winds; Michel (1982, 1994); Coroniti (1990); Lyubarsky & Kirk (2001); Kirk
+& Skjæraasen (2003)) and its termination shock (Lyubarsky 2003).  Furthermore, active
+galactic nuclei (di Matteo 1998; Birk et al. 2001), extragalactic jets (Lesch & Birk 1998),
+gamma-ray burst (GRB) outﬂows (Drenkhahn 2002; Drenkhahn & Spruit 2002), and po-
+tentially the black hole ergosphere (Koide & Arai 2008) may be inﬂuenced by the magnetic
+reconnection in the relativistic regime.  Indeed, there is a high demand for modeling the
+magnetic reconnection in these relativistic environments.
+
+    However, the relativistic theory of a magnetic reconnection is not yet well established.
+Blackman & Field (1994) extended the steady state reconnection models into the relativistic
+regime, based on a relativistic extension of Ohm’s law (Blackman & Field 1993). Assum-
+ing uniform proper density, they argued that the Lorentz boost may enhance the energy
+conversion rate both in Sweet–Parker and in Petschek reconnections. In the Sweet–Parker
+regime, Lyutikov & Uzdensky (2003) further examined this idea and claimed that reconnec-
+tion outﬂow may be super-Alfv`enic. On the other hand, Lyubarsky (2005) pointed out that
+the reconnection will not be fast because the relativistic gas pressure increases the outﬂow
+inertia. Recently, the authors discussed a two-ﬂuid description and we showed that the in-
+compressibility assumption is invalid for relativistic outﬂow (Zenitani & Hesse 2008b). In
+the Petschek regime, in which the reconnection involves a bifurcated slow-shock structure,
+Lyubarsky (2005) argued that the reconnection would not be an eﬃcient energy converter
+because the slow-shock angle becomes narrower.
+
+===== PDF PAGE 3 =====
+                                      – 3 –
+
+
+    Meanwhile, there has been a remarkable progress on the kinetic-scale behaviors of rela-
+tivistic magnetic reconnection, by self-consistent particle-in-cell (PIC) simulations. Zenitani
+& Hoshino (2001) demonstrated that powerful DC acceleration occurs around the reconnect-
+ing X-type region. This and the relevant particle acceleration generate nonthermal plasma
+distributions on a larger scale (Jaroschek et al. 2004; Zenitani & Hoshino 2007; Bessho &
+Bhattacharjee 2007; Karlick´y 2008), and particle acceleration may be enhanced in a com-
+pressed pulsar–wind conﬁguration (Lyubarsky & Liverts 2008). In the orthogonal plane, the
+current-driven drift kink instabilities are of importance (Zenitani & Hoshino 2005a, 2007),
+because they grow faster and may interfere with the magnetic reconnection. Due to a wide
+variety of such plasma instabilities the reconnection current sheet exhibits complex evolution
+in three dimensions (Jaroschek et al. 2004; Zenitani & Hoshino 2005b, 2008). Furthermore,
+it was recently pointed out that kinetic eﬀects are important not only in the critical re-
+connecting region (Hesse & Zenitani 2007), but also in the reconnection outﬂow region as
+an anisotropy-driven Weibel-type instability (Zenitani & Hesse 2008a). However, these PIC
+simulations typically deal with the spatial domain of several hundreds of the plasma inertial
+length (c/ωp) in two or three dimensions. The large-scale evolution of relativistic reconnec-
+tion systems is still an open problem.
+
+    In order to study large-scale properties of a relativistic magnetic reconnection beyond
+these kinetic scales, and in order to investigate larger scale astrophysical problems which
+contain relativistic magnetic reconnection such as magnetar ﬂares and global pulsar mag-
+netospheres, we need a relativistic extension of magnetohydrodynamic (MHD) codes (see
+Mart´ı & M¨uller (2003) for review). However, relativistic hydrodynamic codes are diﬃcult
+to develop, because of the complexity of the equation system.  In particular, these codes
+typically use an inverse transformation from the conserved variables in the lab frame to the
+primitive variables in the proper frame. This can be calculated by solving quartic equations,
+or by using iterative methods (e.g. Duncan & Hughes (1994)). Such inverse conversion is
+further complicated in the ideal MHD cases (Koide et al. 1996; Komissarov 1999; Del Zanna
+et al. 2003; Noble et al. 2006). Overcoming these diﬃculties, there has been a remarkable
+progress both in relativistic magnetohydrodynamic (RMHD) codes and in general relativistic
+magnetohydrodynamic (GRMHD) codes (Koide et al. 1999; Gammie et al. 2003; Mizuno et
+al. 2006).
+
+    To deal with the magnetic reconnection problems, one has to incorporate “resistive”
+eﬀects into the RMHD equations. Otherwise, only the numerical resistivity plays a role to
+dissipate magnetic ﬁelds. The ﬁrst resistive RMHD work was done by Watanabe & Yokoyama
+(2006), by using a spatially limited resistivity. Although their system size is very small (416
+× 200), they successfully presented a Petschek-type reconnection in a mildly relativistic
+regime. Komissarov (2007) also developed the upwind scheme for resistive RMHD, which
+
+===== PDF PAGE 4 =====
+                                      – 4 –
+
+
+may be applicable to the reconnection problem. These resistive RMHD studies are based on
+a simple form of time-stationary Ohm’s law (Blackman & Field 1993).
+
+    In the present paper, we investigate large-scale properties of a relativistic magnetic re-
+connection in an electron–positron pair plasma by means of two-ﬂuid RMHD simulations. In
+contrast to the conventional RMHD models, we introduce a relativistic two-ﬂuid approxima-
+tion for the ﬁrst time to our knowledge, so that we can describe the physics in more detail.
+An interspecies friction term is introduced in the momentum equations, which works as an
+eﬀective resistivity. By using a spatially limited resistivity proﬁle, we successfully reproduce
+a magnetic reconnection. We also note that we carry out larger scale simulations, directly
+solving equations to restore the primitive variables.
+
+    This paper is organized as follows.  In Section 2, we describe our simulation model.
+Mathematical procedures are also presented in the appendix chapters.  In Section 3, we
+overview the system evolution in detail, and present parameter dependences. Especially, we
+analyze the structure of bifurcated Petschek-type current layers in depth. We also demon-
+strate that the system evolution highly depends on the resistivity model. In Section 4, we
+discuss the characteristics of the two-ﬂuid approach and implications for the reconnection in
+the magnetically dominated limit. The last section Section 5 contains the summary.
+
+
+
+                             2.  SIMULATION MODEL
+
+   We employ a relativistic two-ﬂuid model of electrons and positrons. The electron motion
+and positron motion are considered separately. The continuity equation, the momentum
+equation, and the energy equation of relativistic positron ﬂuid, and Maxwell equations are as
+follows. In addition, we introduced an interspecies friction term to the momentum equation,
+which is proportional to the relative motion of electrons and positrons.
+
+               ∂Np      ∂
+               =     = −∇· (npup)                                      (1)                   ∂t      ∂tγpnp
+             ∂mp      ∂  γpwpup         wpupup
+               =         = −∇·      + δijpp
+                   ∂t       ∂t     c2                   c2
+                                         vp
+                        +γpnpqp(E +  × B) −τfrNpNe(vp −ve)                 (2)
+                                             c
+              ∂Kp      ∂
+               =      γ2pwp −pp −Npmc2
+                   ∂t       ∂t
+               = −∇· (γpwpup −npmc2up) + γpnpqp(vp · E)                (3)
+            ∂B
+               = −c∇× E                                                   (4)
+                   ∂t
+
+===== PDF PAGE 5 =====
+                                      – 5 –
+
+
+             ∂E
+               = c∇× B −4π X qsnsus                                   (5)
+                   ∂t
+                                                     s=p,e
+
+In these equations, the subscript s denotes the species (“p” for positrons, and “e” for elec-
+trons), N is the lab-frame density, γ is the Lorentz factor, n is the proper density, u = γv
+is the ﬂuid 4-velocity, m is the momentum density, w is the speciﬁc enthalpy, δij  is the
+Kronecker delta, p is the proper isotropic pressure, qp = −qe is the positron/electron charge,
+τfr is the coeﬃcient for an inter-species friction, and K is the kinetic energy density (energy
+density without the rest mass energy). The enthalpy w is deﬁned in the following way:
+
+             w = e + p = nmc2 + [Γ/(Γ −1)]p = hnmc2,                        (6)
+
+where e is the internal energy, Γ = 4/3 is the speciﬁc heat, and h is the dimensionless speciﬁc
+enthalpy.
+
+   We solve the equations by using modiﬁed Lax–Wendroﬀscheme. To restore the primitive
+variables (n, p, γ, u) from the conservative variables N, m, and K, we use the following
+quartic relation for ¯u = |u|/c
+
+                          f(¯u) =  G2(E2 −M 2)¯u4 −2GMD¯u3
+                                h                         i                   + G2E2 −D2 −2GM 2(G −1)  ¯u2
+
+                    −2DM(G −1)¯u −(G −1)2M 2 = 0                     (7)
+
+where D = Nmc2, M = |m|c, E = K + D, and G = Γ/(Γ −1). We algebraically solve this
+equation by decomposing the quartic equation into the product of two quadratic equations.
+See Appendices A and B for details. We stop the simulation when we ﬁnd multiple possible
+solutions or when the solution is physically invalid (e.g., negative density). We added small
+artiﬁcial viscosity to the code, which works when the ﬂuid 4-velocity has a strong shear so
+that it reduces a numerical oscillation near discontinuities.
+
+   We study the system evolution in the two-dimensional x-z plane. We choose the follow-
+ing relativistic Harris model as an initial conﬁguration:
+
+           B =  B0 tanh(z/L) ˆx                                            (8)
+            E =  ηeffj                                                       (9)
+                     j =  2qpn0u0 cosh−2(z/L) ˆy = X qsnsus(z)                  (10)
+                                                                   s=p,e
+                     ns =  n0 cosh−2(z/L) + nin                                    (11)
+                       ps =  p0 cosh−2(z/L) + pin                                     (12)
+
+===== PDF PAGE 6 =====
+                                      – 6 –
+
+
+where L is the typical half-thickness of the current sheet. In the electric ﬁeld, ηeff = (τfr/q2p)
+is an eﬀective resistivity, and u0 stands for the initial positron drift to carry the current.
+We also consider uniform background plasmas whose density and pressure are nin and pin,
+respectively. In this work, the plasma pressure in the Harris sheet is set to p0 = n0mc2. The
+background pressure is set to pin = ninmc2 unless stated otherwise.
+
+    In the case of two-dimensional antiparallel reconnection, we already know that positron
+motion and electron motion are the same in the x-z plane and the opposite in the y-direction.
+Therefore, we assume the following symmetric motion upx = uex, upy = −uey, upz = uez,
+np = ne, pp = pe so that we can reduce the computational cost. Consequently, the current
+has only the y-component and jx = jz = 0, and we can neglect three components of the
+electromagnetic ﬁeld, Ex = Ez = By = 0. The assumption also justiﬁes that we do not
+consider the interspecies energy transfer in equation 3, because we assume such a symmetric
+model. In PIC simulations, one characteristic process to generate the charge separation is the
+Weibel instability (Zenitani & Hesse 2008a), driven by an anisotropy in plasma distribution
+function; however, such a small-scale kinetic eﬀect is out of scope of this ﬂuid paper. In a
+MHD-scale, charge neutrality is plausible. By assumption, we do not need to deal with the
+Poisson equations ∇· E = 4π Ps(qsγsns) in this system.
+
+   We introduce a spatially localized resistivity by controlling the interspecies friction force.
+Its proﬁle is set in the following way:
+                        √
+                             τfr = τ0 + τ1 cosh−2[  x2 + z2/(2L)],                         (13)
+
+where the background value τ0 is equivalent to the Reynolds number S = 3000, and localized
+value τ1 is equivalent to S = 30. In addition, a magnetic ﬁeld perturbation is added to the
+initial model to quickly trigger a magnetic reconnection. It is deﬁned by the following vector
+potential:
+                       δAy = 2LB1 exp[−(x2 + z2)/(2L)2],                        (14)
+
+where B1 = 0.03B0 is the typical peak amplitude of the perturbed ﬁeld.
+
+   The boundaries are located at x = ±Lx and z = ±Lz, and the reconnection is considered
+around the origin. Boundary conditions for the ﬂuid properties, the electric ﬁeld, and the
+tangential magnetic ﬁeld are set to open: ∂/∂x = 0 at the x-boundaries (outﬂow boundaries)
+and ∂/∂z = 0 at the z-boundaries (inﬂow boundaries).  The normal component of the
+magnetic ﬁeld is set so that it satisﬁes ∇· B = 0 at the boundaries. The system size
+(2Lx ×2Lz) is presented in Table 1 in the unit of L. The thickness is typically resolved by 20
+grids (L = 20∆g). This grid size is selected so that it is comparable to the kinetic scale of a
+typical gyroradius ∆g ∼(mc2/qpB0) = 0.05L (Equations (15) and (16) in Zenitani & Hoshino
+(2007)).  In this equilibrium, the electron inertia length is c/ωp = [mc2/(4πγβn0q2p)]1/2 ≃
+
+===== PDF PAGE 7 =====
+                                      – 7 –
+
+
+uz[n0mc2/p0]1/2 = 0.1, based on the reference density n0. The time step is set to ∆t =
+0.2(∆g/c) = 0.01 τc, where τc = L/c is the light transit time.  It is suﬃciently small,
+(qpB0/hmc)∆t ∼0.04 ≪2π, with respect to the ﬂuid bulk motion.
+
+   Our code is originally developed from the CANS code, a collection of hydrodynamic and
+MHD codes, which has been extensively used in Japanese solar and astrophysical community.
+The code is massively parallelized by MPI.
+
+   We carry out various simulation runs with diﬀerent parameters. The list of simulation
+runs is presented in Table 1. The parameter σm is the magnetization parameter, which
+stands for the ratio of the magnetic energy ﬂow to the rest mass energy ﬂow,
+
+                                  B20
+                        σm = 4πm(2γ2n)c2.                                 (15)
+
+Another parameter σε is the exact ratio of the magnetic energy ﬂow to the plasma energy
+ﬂow, which contains relativistic pressure eﬀect
+
+                                 B20
+                                   σε = 4π(2γ2w).                                   (16)
+
+The Alfv´en speed cA in the relativistic regime can be written as follows:
+
+                  r  σε
+                                 cA =               .                                    (17)
+                                       1 + σε
+
+The subscript in (σm,in, σε,in and cA,in) stands for the upstream values, based on the initial
+inﬂow properties (e.g. nin, pin). Later we often use σε,in as a measure of the upstream energy
+composition. In Table 1, run U3 employs the uniform resistivity model without the τ1 term
+in equation 13. Runs S3, M3 and XL3 are done in diﬀerent resolutions.
+
+    Before visiting the simulation results, let us clarify the role of a newly introduced friction
+term. From the positron momentum equation (Equation 2), we obtain the following relation:
+
+                    vp
+       E +   × B
+                      c
+                     1                         h          =        npmp(up · ∇)hpup + mphpup[∇· (npup)]
+                    γpnpqp
+                         ∂                                        i   τfrNpNe
+               +∇pp + ∂tγpmpnphpup +  γpnpqp (vp −ve)
+               mp  ∂                   1        τfrNpNe
+          =      + vp · ∇ hpup +      ∇pp +         (vp −ve).
+                       qp  ∂t                 γpnpqp        γpnpqp
+
+===== PDF PAGE 8 =====
+                                      – 8 –
+
+
+We consider Ohm’s law in the y direction. Dropping ∂/∂y and considering symmetric electron
+properties, we obtain
+
+                              mp h∂(hpupy)      ∂(hpupy)                 Ey + (vp × B)y =         + vpx
+                             c               qp     ∂t         ∂x
+                                             ∂(hpupy) i                                      +vpz      + ηeffjy.                     (18)
+                                          ∂z
+
+Thus, the ﬂuid inertial eﬀect, the momentum advection, and the interspecies friction term
+work as an eﬀective resistivity. In our two-ﬂuid model, this interspecies resistivity plays an
+essential role to sustain the magnetic reconnection. Around the reconnecting X-point, the
+Lorentz term is negligible because B ∼0 and vx, vz ∼0, the advection terms usually vanish
+by symmetry, and the inertial terms do not work in the quasi-steady condition (∂/∂t ∼0).
+Therefore, the interspecies resistivity sustains the reconnection electric ﬁeld Ey ∼ηeffjy.
+Note that the reconnection cannot go on without the reconnection electric ﬁeld Ey. We do
+not assume any speciﬁc mechanism as the interspecies friction term. In a collisional regime,
+it should be equivalent to the collisional term; however, we do not know the true form of the
+relativistic collisional term, which often relies on empirical functions (e.g., Section 7 in Clare
+& Strottman (1986)). In a collisionless regime, it is known that the oﬀ-diagonal part of the
+pressure tensor sustains the reconnection electric ﬁeld (Hesse & Zenitani 2007) in the kinetic
+simulations. Although its physical meaning is not yet well established, the oﬀ-diagonal part
+of the pressure tensor contains several kinetic eﬀects such as the escaping convection of the
+accelerating particles, or the inertial eﬀect of thermal plasma populations. The purpose of
+the interspecies resistivity is to represent these kinetic eﬀects in the ﬂuid approximation, for
+the purpose of larger scale modeling.
+
+
+
+                            3.  SIMULATION RESULTS
+
+                               3.1.  Evolution overview
+
+    In this section, we overview the system evolution of our reference run (run L3) in detail.
+Due to the trigger ﬁeld, magnetic reconnection occurs around the center of the simulation
+domain. Plasma outﬂows start to travel into the ±x directions from the center, while inﬂows
+come from the ±z directions. The panels in Figure 1 show various physical properties at
+t/τc = 75 in the normalized unit: the plasma proper density n, the plasma 4-velocity ux,
+the electric current jy = 2qpnuy, and the reconnection electric ﬁeld Ey. Since reconnection
+outﬂows eject a lot of plasmas, we see dense plasma islands (plasmoids) around x/L ∼±25-
+30 (Figure 1a). The reconnection outﬂow jets become very fast, up to ux ∼3.28c (Figure
+1b). The ux proﬁle shows a characteristic crab claw structure in the plasmoid region, because
+
+===== PDF PAGE 9 =====
+                                      – 9 –
+
+
+
+
+
+Fig. 1.—  Snapshots of run L3 at t/τc = 75 in the x-z two-dimensional plane.  (a) The
+plasma proper density n/n0, (b) the x-component of the 4-velocity of the plasma ﬂow ux/c,
+(c) the out-of-plane electric current jy/j0, and (d) reconnection electric ﬁeld Ey/B0. The
+solid lines show magnetic ﬁeld lines.
+
+===== PDF PAGE 10 =====
+                                     – 10 –
+
+
+the dense current sheet plasmas exist around the neutral plane (z ∼0). We also see weak
+reverse ﬂows around x/L ∼±20 after plasmoid passing. In the reconnecting region, there
+is a thin central current layer, and its peak current is 2.5 times larger than the initial state
+(Figure 1c).  Similar enhancement is often seen in classical nonrelativistic models. There
+are rather complicated current structures inside the plasmoids. At this stage the out-of-
+plane electric ﬁeld (or the reconnection electric ﬁeld) is well developed (Figure 1d). The
+typical amplitude is Ey/B0 ∼0.1 over the reconnection region.  In addition, the electric
+ﬁeld is enhanced Ey/B0 ∼0.6 around x/L ∼±20-25, where reconnected magnetic ﬂux Bz
+is accumulated. The energy and momentum of these enhanced ﬁelds are converted to those
+of the downstream plasmas. We also note that this pileup region plays an interesting role
+as particle accelerator (Jaroschek et al. 2004; Zenitani & Hoshino 2007).  In general, the
+magnetic topology, electric ﬁeld properties, and spatial distribution of plasma properties are
+suﬃciently consistent with previous reconnection studies by PIC or MHD simulations. The
+system evolution is similar to the Sweet–Parker reconnection which features a single current
+sheet, although the reconnection grows fast.
+
+    After the initial phase, the reconnection continues and plasmoids travel into the ±x-
+directions. The top two panels in Figure 2 show late-time snapshots at t/τc = 200. At this
+stage, plasmoids start to reach the outﬂow boundaries, as we see in the ux proﬁle (Fig. 2a).
+Note that the entire domain is presented in the x direction. The fastest ﬂows ux ∼3.5c
+are found at x/L ∼±90 along the outﬂow line, where the outﬂow channels are connected
+to the plasmoids. An important feature is found in the electric current proﬁle (Figure
+2b). From the central X-type region to the downstream region, the current layers are now
+bifurcated. The bifurcation starts around x/L = ±40 at t/τc = 100-125. We think these
+current layers are a signature of the Petschek-type steady reconnection, which enables faster
+energy conversion, and we analyze their structure in a later section (see 3.3). Interestingly,
+we see weak “reverse currents” between the two current layers. The current structures inside
+the plasmoids become further complicated, including the interaction with boundaries.
+
+    Since we employ the open boundary condition, plasmoids and reconnection outﬂows pass
+through the x-boundaries. Since plasmas and magnetic ﬁeld lines are continuously supplied
+from the inﬂow open boundaries at z = ±Lz, the reconnection still continues, and therefore
+the system evolves further. Importantly, the system grows into a steady state reconnection
+structure after the plasmoids have left. The bottom two panels in Figure 2 show the snapshots
+of a very late stage at t/τc = 400. Now the outﬂow channels (Figure 2c) between Petschek-
+type current layers (Figure 2d) are found all over the x direction. The distance between the
+two current layers is ∼2.5-3L at the outﬂow boundary (x/L = Lx = 120). Thus, the slope
+angle of the current layer is very small, compared to a typical slow-shock angle of θ ∼0.1 in
+nonrelativistic Petschek reconnection. The magnetic ﬁeld line structure is very smooth over
+
+===== PDF PAGE 11 =====
+                                     – 11 –
+
+
+
+
+
+Fig. 2.—  Large-scale snapshots of run L3 in the x-z two-dimensional plane. (a) The x-
+component of the plasma 4-velocity ux/c at t/τc = 200, (b) the out-of-plane current jy/j0 at
+t/τc = 200, (c) the x-component of the plasma 4-velocity ux/c at t/τc = 400, and (d) the
+out-of-plane current jy/j0 at t/τc = 400. The black lines show the magnetic ﬁeld lines. We
+later discuss the properties along the white line (x/L = 100) in panel (d) in Section 3.3.
+
+===== PDF PAGE 12 =====
+                                     – 12 –
+
+
+the entire simulation domain. We ﬁnd that these current layers remain stable for a relatively
+long time.
+
+    Next, we investigate the structures of the outﬂow region in more detail. Figure 3 presents
+the temporal evolution of physical properties along the outﬂow line (z = 0) in the normalized
+units. We compare the three nonsteady stages (t/τc = 75, 150, 200) in black lines, and the
+late-time steady stage (t/τc = 400) in red. The vertical magnetic ﬁeld Bz (Figure 3a) is a
+reconnected component of magnetic ﬁeld lines. It is zero at the X-point, and it remains at
+constant level of ∼0.1B0 inside the outﬂow channel. Strong peaks are the pileup regions,
+where the reconnected ﬁeld lines are piled up in front of the dense plasmas. As discussed,
+the electric ﬁelds are also enhanced there. Such a powerful magnetic pileup and the relevant
+motional electric ﬁelds are signatures of fast magnetic reconnection. The pileup is so strong
+that several discontinuities appear near the pileup regions. For example, at the upstream
+side of the pileup region, the outﬂow speed ux becomes very fast but it suddenly drops
+(Figure 3b). On the other hand, there is a strong jump in Bz at the downstream side of the
+pileup region, although the velocity jump is not so clear. We think they are the tangential
+discontinuity or a weak shock (the downstream one) and the relevant reverse fast shock (the
+upstream one). In the later stages (t/τc ≳150), the system starts to suﬀer from numerical
+noises in the downstream side of the plasmoids, as seen in the velocity proﬁle or in the density
+proﬁle (Figure 3d). These noises go away as plasmoids pass through the outﬂow boundaries.
+Importantly, we ﬁnd that the out-of-plane 4-velocity uy is not negligible over the relatively
+large region |x/L| ≲20 (Figure 3c). Since uy is coupled with in-plane components ux and uz,
+this immediately implies that the conventional one-ﬂuid MHD approximation breaks down
+and that the two-ﬂuid approximation is essential there. At t/τc = 200, uy becomes negative
+around x/L ∼80-90. This stands for the negative current between the Petschek-type current
+layers. The bottom panel (Figure 3e) shows the plasma temperature T = p/nmc2. It is very
+large at the reconnecting X-point, and also (T ∼2nmc2) inside the outﬂow channel. The
+typical Lorentz factors in the outﬂow region are γ ∼2.4 ± 0.2 (t/τc = 200) and 2.1 ± 0.1
+(t/τc = 400), They are comparable with an Alfv´enic value (1 + σε,in)1/2 = 2.2.
+
+     It is important that the late-time proﬁles at t/τc = 400 (indicated by the red lines in
+Figure 3) are quite similar to the earlier proﬁles. This tells us that the late-time structure
+(Figures 2c and 2d) is a very good prediction of the steady state proﬁle. We still see a
+numerical noise around x/L ∼60-70. This is because this outﬂow channel is located in the
+downstream side of the shock-type region. As discussed, the outﬂow channel is located at
+the downstream side of the two current layers.
+
+    Next, we visit the physical properties along the inﬂow line (x = 0). From Figure 4a we
+know that the reconnection starts to consume the antiparallel magnetic ﬁeld Bx, but it goes
+
+===== PDF PAGE 13 =====
+                                     – 13 –
+
+
+
+
+                   2
+                                                                                        t =  75
+                     1.5                                                t = 150
+            Bz                                                       t = 200
+                   1                                                t = 400
+                  (a)
+                     0.5
+
+                   0
+
+                    0         20         40         60         80        100        120
+
+
+
+                   3
+                     2.5
+            Ux  2
+                  (b) 1.5
+                   1
+                     0.5
+                   0
+                    0         20         40         60         80        100        120
+
+
+
+                   1
+            Uy 0.5
+                  (c)
+                   0
+
+                     -0.5
+
+                    0         20         40         60         80        100        120
+
+                   4
+
+
+                   3
+
+
+                   2                                          Density
+                  (d)  1
+
+
+                   0
+                    0         20         40         60         80        100        120
+
+                   5
+
+                   4
+
+                   3
+
+                   2                                                                   Temperature
+                  (e)  1
+
+                   0
+                    0         20         40         60         80        100        120
+                                            Outﬂow position (x/L)
+
+
+Fig. 3.— Temporal evolution of physical properties along the outﬂow line (z = 0) in run L3.
+(a) The vertical magnetic ﬁeld Bz/B0, (b) the outﬂow component of the positron 4-velocity
+ux/c, (c) the out-of-plane component of the positron 4-velocity uy/c, (d) the normalized
+plasma number density γn/n0, and (e) the normalized plasma temperature p/(nmc2).
+
+===== PDF PAGE 14 =====
+                                     – 14 –
+
+
+
+
+
+         1
+                                           t =  75
+         0.5                        t = 200   Bx                                           t = 400         0
+    (a)
+        -0.5
+
+          -1
+
+         0.2 -60       -40       -20       0       20       40       60
+       0.15
+   Ey         0.1
+    (b) 0.05
+         0
+
+            -60       -40       -20       0       20       40       60         0.2
+
+         0.1
+   Vz
+         0
+    (c)        -0.1
+
+        -0.2
+            -60       -40       -20       0       20       40       60
+                                 Inﬂow position (z/L)
+
+
+Fig. 4.— Temporal evolution of physical properties along the inﬂow line (x = 0) in run L3.
+(a) The antiparallel magnetic ﬁeld Bx/B0, (b) the reconnection electric ﬁeld Ey/B0, and (c)
+the inﬂow positron velocity vz/c.
+
+===== PDF PAGE 15 =====
+                                     – 15 –
+
+
+down to an asymptotic level of Bx ∼±0.74B0 due to the open boundary condition. The
+ﬁeld reversal is localized in the narrow region around z ∼0. The reconnection electric ﬁeld
+Ey grows as the system evolves (Figure 4b). At the later stages, it becomes constant over the
+simulation domain. This tells us that our open-boundary condition works excellently. Also,
+plasma inﬂow remains at the constant level around the center (Figure 4c). This us tells that
+the reconnection constantly goes on, consuming outside plasmas and magnetic ﬁelds at the
+constant rate.
+
+   The amplitude of the reconnection electric ﬁeld
+
+                                        r(t) = Ey/B0                                    (19)
+
+at the X-point is one of the most important parameters in a magnetic reconnection. This
+measures how fast the system transports the magnetic ﬂux into the X-point, or how fast
+the reconnection consumes the upstream magnetic energy.  It is often referred as the “re-
+connection rate” in various normalized form. Following convention, we used the following
+reconnection rate, because reconnection outﬂow speed is often approximated by the upstream
+Alfv´en speed:
+
+                                       cEy
+                                              ¯r(t) = cA,in′|Bx,in′|.                                 (20)
+
+Here the subscript in′ denotes the inﬂow properties measured at z/L = 20.  The time
+evolution of r(t) and ¯r(t) is presented in Figure 5. In addition to the reference run L3, two
+other runs M3 and XL3 (similar runs with diﬀerence resolutions) are overplotted in order to
+check the convergence of the simulation: three are in excellent agreement. The normalized
+rate ¯r(t) is larger than the raw rate r(t), mainly because the inﬂow magnetic ﬁeld Bx,in′
+decreases over time (Figure 4a). We see that both the rates remain stable throughout the
+system evolution. Indeed, the normalized rate remains constant: ¯r(t) ∼0.14.
+
+   The other quantity r∗(t) is the time derivative of the accumulated magnetic ﬂux along
+the inﬂow line
+                                   r∗(t) = −d Z Lz Bx dz                                (21)
+                                          dt  0
+
+Because of the discrete sampling time, the calculated value is rather crude, but is useful
+enough to validate the simulation results.  In the early stage, both r(t) and r∗(t) are in
+excellent agreement. They do not agree after t/τc > 80, because the magnetic ﬂux enters
+from the open inﬂow boundaries. During t/τc ∼340-400, r∗(t) exhibits strange behavior.
+We conﬁrmed that this is a boundary eﬀect.  Since plasmoid passes through the outﬂow
+boundaries around t/τc ∼200-250, perturbation travels from there as a light wave or a
+
+===== PDF PAGE 16 =====
+                                     – 16 –
+
+
+fast Alfv´en wave. The waves from the two outﬂow boundaries arrived at the center of the
+inﬂow boundaries. Since two waves carry outward energy ﬂux, the incoming magnetic ﬂux
+temporally slows down, but the system adjusts itself and it goes back to the quasi-steady
+state after t/τc > 400. Note that the ﬁnal asymptotic value r∗(t) = 0 indicates the steady
+evolution.
+
+       0.2
+
+                                     r(t)
+     0.15
+     Rates
+                                            r(t)       0.1
+
+
+     0.05            Reconnection
+       0                    r*(t)
+
+
+          0      100     200     300     400     500     600
+
+                                 Light Transit Time (L/c)
+
+
+Fig. 5.—  Time evolution of the reconnection rates in runs L3 (solid lines), M3 (dashed
+lines), and XL3 (gray thick lines). The raw reconnection rate r(t) = Ey/B0 at the X-point,
+the normalized reconnection rate ¯r(t) = cEy/[cA,in′Bx,in′], and the ﬂux consumption rate
+r∗(t) are presented.
+
+
+
+
+
+                                  3.2.  Case studies
+
+    In this section, we compare various simulation runs, focusing on the composition of
+the typical upstream energy ﬂow σε,in. As presented in Table 1, this parameter is mainly
+controlled by the upstream plasma density nin/n0. The magnetically dominated cases of
+σε,in ≫1 (“high-σ” runs) are of strong astrophysical interest, while plasma-dominated cases
+of σε,in < 1 (low-σ runs) can be compared with nonrelativistic reconnection studies.
+
+===== PDF PAGE 17 =====
+                                     – 17 –
+
+
+       0.4
+                           L9
+
+
+       0.3                 L8       rate
+
+
+                             L7
+       0.2
+                                        L6                                                       L4
+                                               L5                    Reconnection                                                              L3
+     (a) 0.1             L2
+                                                                L1
+
+       0
+         0       50      100     150      200     250     300
+                                  Light Transit Time (L/c)
+
+       0.7
+
+                        L9
+       0.6
+       Rate
+       0.5
+       Rec.                     L8
+       0.4
+                            L7
+       0.3                                        L6             L4
+                                               L5       L2
+       0.2                                                    L3                Normalized
+     (b)       0.1
+                                                                L1
+       0
+         0       50      100     150     200      250     300
+                                  Light Transit Time (L/c)
+
+
+
+Fig. 6.— Temporal evolution of the reconnection electric ﬁeld (reconnection rate) at the
+X-point; (a) the raw reconnection rate r(t) = Ey/B0 and (b) the normalized reconnection
+rate ¯r(t) = cEy/[cA,in′Bx,in′]. The reference run L3 is presented in thick lines. The dotted
+lines contain negative mass density.
+
+===== PDF PAGE 18 =====
+                                     – 18 –
+
+
+    Figure 6 presents the reconnection rate r(t) and the normalized reconnection rate ¯r(t)
+for simulation runs L1-L9 in Table 1.  Generally speaking, the lower-σ runs L1-L5 last
+relatively long time. Their time duration t/τc ∼200-300 is related to the plasmoid collisions.
+Therefore, the system has enough time to evolve to the Petschek-type reconnection, and we
+recognize Petschek-type current layers in these runs. We will visit the physical property of
+typical low-σ run (run L1) later in this section. Run L4 is the cold inﬂow counterpart of run
+L3; it uses the same parameters as run L3, except for the upstream plasma pressure.
+
+   The higher-σ runs L6-L9 become unstable, and they stop before t/τc ≲100. The numer-
+ical problem occurs around the plasmoids in the reconnection outﬂow front. As discussed
+in Section 3.1, there are discontinuities both in the upstream and the downstream of the
+magnetic pileup region. Since our numerical scheme (Lax–Wendroﬀscheme) is not ideal for
+shocks, we suﬀer from numerical noise at these discontinuities. Since the magnetic energy
+dominates the plasma energy in these runs, even small noises in the electromagnetic ﬁelds
+become crucial to ﬂuid properties, and then the physically valid solution often collapses.
+In the dotted line region, we continue simulations even though we observe small negative
+mass in the edge of the plasma outﬂow, until our equation solver fails to ﬁnd the mathe-
+matical solution. Since the numerical error occurs near the plasmoid, we think they show
+the right evolution for a while (20 ∼30τc), until the unphysical information comes back to
+the X-point. We ﬁnd that the normalized rate ¯r(t) (Figure 6b) is a better measure of the
+reconnection evolution, because it looks reasonably ﬂat in higher-σ runs. However, we will
+only consider the times prior to the occurrence of negative density.
+
+   As a general trend, we ﬁnd that the reconnection rate becomes higher as the inﬂow
+density goes down, or as the parameter σε,in increases. Figure 7 also shows the maximum
+reconnection rate ¯r(t) in the simulation runs, as a function of the initial upstream σε,in
+parameter.  In the limit of σε,in < 1, the reconnection rate is asymptotic to ∼0.1.  This
+is consistent with many studies on the nonrelativistic Petschek reconnection, whose the
+reconnection rate is known to be ∼0.1. On the other hand, the rate constantly increases as
+the parameter σε,in increases. It is striking that the reconnection rate becomes closer to ∼1,
+because the rate of one is the upper limit of magnetic dissipation.
+
+   We brieﬂy visit the global properties of low-σ runs. Top two panels in Figure 8 presents
+the late time snapshots at t/τc = 295 in run L1. Compared with the other higher-σ runs,
+the system evolution is rather slower due to the slow reconnection outﬂow. The typical
+outﬂow speed ∼0.5c (0.57c at maximum) is consistent with the original upstream Alfv´en
+speed of 0.594c. In the current proﬁle (Figure 8b), we ﬁnd Petschek-type current layers and
+the angle between current layers look wider than the reference run L3. Another current layer
+surrounding the plasmoid is very clear, too. These signatures are well observed in plasmoid
+
+===== PDF PAGE 19 =====
+                                     – 19 –
+
+
+
+
+
+      1
+
+      Rate                                          L9
+      Rec.
+                          L3
+                                   L4             L1
+      0.1               Normalized
+
+
+
+        0.1           1            10          100
+                      Sigma parameter
+
+
+Fig. 7.— Dependence of the maximum reconnection rate ¯r(t), as a function of the initial
+upstream parameter σε,in.
+
+===== PDF PAGE 20 =====
+                                     – 20 –
+
+
+
+
+
+Fig. 8.—  Top two panels:  large-scale snapshots of run L1 at t/τc = 295.  (a) The x-
+component of the plasma 4-velocity ux/c, and (b) the out-of-plane current jy/j0. Bottom
+two panels: snapshots of run L8 at t/τc = 90. (c) The x-component of the inﬂow plasma
+4-velocity ux/c, and (d) the out-of-plane current jy/j0.
+
+===== PDF PAGE 21 =====
+                                     – 21 –
+
+
+in nonrelativistic ion-electron plasmas. Unfortunately, we do not obtain long-term steady
+proﬁle after the boundary collision, because the run stops immediately after this stage.
+
+   The bottom two panels in Figure 8 show snapshots of the second most extreme case,
+run L8. In the outﬂow proﬁle (Figure 8c), we see that the outﬂow channel is narrower than
+the slower counterparts. At the edge of the Sweet–Parker outﬂow jets, the outﬂow 4-velocity
+becomes further relativistic, ux/c ∼±8.6, and the maximum Lorentz factor in the system
+is up to ∼9. The current structure remains in a single current (Figure 8d) at least at this
+stage. In the very thin current layer, there are small seeds of secondary tearing islands (e.g.
+a bright spot at x/L ∼−20 in the current proﬁle; Figure 8d).
+
+
+
+
+
+Fig. 9.— Snapshots of run L9 at t/τc = 80. (a) The reconnection electric ﬁeld Ey/B0. The
+white contour line indicates the region where the Lorentz invariant (E2 −B2) is positive. (b)
+The z-component of inﬂow 4-velocity uz/c.
+
+===== PDF PAGE 22 =====
+                                     – 22 –
+
+
+    Furthermore, the most extreme case (run L9) shows an interesting evolution. Panels
+in Figure 9 show characteristic properties at t/τc = 80, just before we meet an unphysi-
+cal solution at t/τc = 80.8. Figure 9a shows the reconnection electric ﬁeld. Importantly,
+its amplitude is Ey/B0 ∼0.35-0.5. We indicate the “electric-dominant” region where the
+Lorentz invariant (E2 −B2) is positive with the white line. We generally observe such
+an electric-dominant region at the closer vicinity of the X-point, because the reconnection
+electric ﬁeld Ey remains ﬁnite, while the magnetic ﬁeld |B| becomes zero at the X-point.
+However, such an electric-dominant region is usually conﬁned in a very narrow region of the
+center of the reconnecting current sheet. For example, in run L8, such a region is very thin
+around the neutral plane, −0.5 < z/L < 0.5. However, in run L9, the electric ﬁeld Ey be-
+comes so strong that it even dominates the magnetic ﬁeld in a relatively large spatial region
+of −24 < x/L < 24, −6 < z/L < 6. In response to a strong electric ﬁeld, we also ﬁnd a
+super fast reconnection inﬂow (Figure 9b). The maximum momentum is up to |uz|/c ∼6.7,
+and the maximum inﬂow velocity is up to |vz|/c ∼0.936. Also, as seen in Figure 9b, the re-
+connecting current layer becomes thicker 1-2L, while in other cases the central current layer
+always becomes thin ≲0.5L. Since the plasma temperature becomes hot 5-10mc2 along the
+current sheet, the kinetic scale increases by a factor of 5-10 and then it is comparable to the
+initial sheet thickness L. Therefore, we may have to consider kinetic eﬀects beyond the ﬂuid
+approximation. Indeed, an eﬀective resistivity based on the kinetic eﬀects is a long-standing
+problem in reconnection physics (e.g., Hesse et al. (1999)).
+
+    Regarding the energy conversion rates, we noticed that the magnetic pileup regions
+are also important in the relativistic runs. As σ increases, the pileup ﬁelds become more
+strong, and then more energy is delivered to the downstream Harris sheet plasmas there.
+On the other hand, in the current sheets and in the Petschek-type current layers, the energy
+conversion rate seems to be proportional to the reconnection rate. However, unfortunately,
+we do not have suﬃcient simulation results to discuss energy conversion in the high-σ regime,
+which is of strong astrophysical interest.
+
+
+
+                          3.3.  Petschek-type current layer
+
+   One of the most characteristic features of the late-time evolution of reconnection is
+the bifurcated Petschek-type current layers. We observe such current layers in runs L1-L5.
+In this section, we study how these current layers are inﬂuenced by the upstream energy
+composition σε,in. In the relativistic Petschek reconnection, Lyubarsky (2005) examined the
+RMHD jump conditions across the slow shocks, and he found that the slow-shock angle
+becomes narrow when σm,in ≫1. We examine our simulation results based on a similar
+
+===== PDF PAGE 23 =====
+                                     – 23 –
+
+
+theory.  Since Lyubarsky (2005)’s original work employs single-ﬂuid RMHD model and it
+neglects the inﬂow plasma pressure, ﬁrst, we construct complete jump conditions which
+contains both two-ﬂuid eﬀects and the inﬂow pressure.
+
+     z
+
+         z'                   B
+                    x'                               m'
+
+                              x
+
+               c     m
+
+
+Fig. 10.— Rotated coordinate for the Petschek current layer. The thick black line stands
+for the current layer. The two angles θc and θm are relevant to the current layer and the
+upstream magnetic ﬁeld line, respectively. The angle θ′m is the ﬁeld line angle in the rotated
+frame.
+
+
+    Let us consider a rotated coordinate based on the Petschek current layer (or the slow
+shock surface in Lyubarsky (2005)). The new x′z′ coordinate is tilted from the simulation
+coordinate xz by the angle of θc as shown in Figure 10. The angles θm and θ′m are the
+upstream ﬁeld line angles from the simulation frame and the rotated frame, respectively.
+Since the electric ﬁeld is almost uniform over these regions in our simulation, we assume
+that the electric ﬁeld Ey is constant. The relativistic stable conditions across the current
+layer are as follows:
+
+                            h                 i                             2γwuz′ −c     = 0                              (22)                                   4πEyBx′
+                          h2wu2z′      B2x′ i                      + 2p +   = 0                              (23)
+                                       c2         8π
+                                              i                             h2wux′uz′ −Bx′Bz′                              = 0                              (24)
+                                        c2       4π
+
+===== PDF PAGE 24 =====
+                                     – 24 –
+
+
+                                h             i                                       vx′Bz′ −vz′Bx′ = 0                              (25)
+
+                                          h    i                                                nuz′ = 0                              (26)
+
+                                          h   i                                               Bz′ = 0,                              (27)
+
+where the brackets stand for the jump condition in the z′ direction. We employ the as-
+sumption of vx′u = 0, Bx′d = 0, where u and d denote the upstream and the downstream
+properties. We conﬁrmed that these assumption are fair, especially Bx′d = 0. Then, equation
+25 yields
+                          Ey = −vz′u Bx′u = vx′d Bz′.                            (28)
+                                          c          c
+From equations 22 and 28,
+                              B2x′u                            2γ2uwu +        vz′u = 2γdwduz′d.                         (29)
+                                 4π
+From equation 24,
+                           −Bx′uBz′ = 2wdux′duz′d .                            (30)
+                               4π            c2
+Eliminating Bz′ with equation 28,
+                          B2x′u                                     vz′u   = 2γdwduz′d(vx′d )2.                           (31)
+                              4π                c
+From equations 29 and 31, we obtain
+                         (vx′d )2 =    B2x′u/4π   =   σε,u cos2 θ′m    ,                  (32)
+                         c      2γ2uwu + B2x′u/4π   1 + σε,u cos2 θ′m
+where we set σε,u = B2u/[4π(2γ2uwu)]. We also obtain
+
+                                            m    .                  (33)                         (vz′u )2 =    B2z′/4π   =   σε,u sin2 θ′
+                         c      2γ2uwu + B2x′u/4π   1 + σε,u cos2 θ′m
+Then, we discuss the angles in the limit of σε,u ≫1. Approximating vz′u = −c tan θ′m and
+wd = 4pd, equations 23 and 29 can be modiﬁed as follows:
+                         B2u            8γ2dpdv2z′d                                       cos2 θ′m =       + 2pd                     (34)                            8π                   c2
+
+                                u                  −cB2 cos θ′m sin θ′m =  8γ2dpdvz′d.                           (35)
+                        4π
+We immediately obtain
+                                 B2u
+                                   pd =       cos2 θ′m                                (36)
+                                    16π
+                                   γd =  √σε,u cos θ′m                                (37)
+                                                c tan θ′m
+                                         vz′d = −                                          (38)
+                                                 2σε,u cos2 θ′m
+
+===== PDF PAGE 25 =====
+                                     – 25 –
+
+
+It is reasonable that the outﬂow Lorentz factor is similar to that of upstream Alfv´en speed,
+p1 + σε,u. Considering that the outﬂow travels toward the +x direction, we ﬁnd
+
+                                        θc ∼θ′m/(2σε,u).                                   (39)
+
+This means that the Petschek outﬂow channel becomes narrower and narrower, as the up-
+stream ﬂow is more and more magnetically dominated.
+
+    In our simulation, we observe the Petschek-type current structures in runs L1-L5. In
+the other runs, as discussed, we could not solve the late-time evolution because of the
+numerical problems. In runs L1-L5, we measured the angle of the Petschek current layers in
+the following way. Near the current layer, we assume the inclined coordinate assuming an
+arbitrary angle θc like Figure 10. Then, across the current layer, we look at the relativistic
+jump conditions across the z′ direction (eqs. 22-27).
+
+    Figure 11 shows one example, physical properties across the current layers at x/L = 100
+at t/τc = 400, as indicated by the white line in Figure 2d. In this case, the oblique frame
+properties are calculated by using an angle θc = 0.125, and the opposite rotation is applied to
+the properties of the lower half and the upper half. We note that the neutral plane is slightly
+oﬀ-center (z/L ∼−0.15) in this very late stage because of the open boundary conditions. In
+the dense plasma region between the two current peaks, we observe fast reconnection outﬂow
+vx′ ∼0.9c (Figure 11). We also observe noises in the properties near the center and the ﬂux
+properties in the current layers; however, we think that they are suﬃcient for the purpose
+of this study.
+
+    Varying θc with ∆θc = 0.025, we ﬁnd out the best angle, which minimizes the variation
+of the above variables. Among them, the energy ﬂux and the tangential momentum ﬂux
+(Equations. 22 and 24; Figure 11c) in the outﬂow region and in the current layers are very
+sensitive, and so they give a reasonable estimate of θc. We can also conﬁrmed that the
+obtained angles are consistent with the topological structure, because the distance between
+the current peaks is ∼2.4 and the location is x/L = 100. We repeat this procedure at various
+points along the well-developed current layers, where the structure is not inﬂuenced by the
+backward plasma ﬂow around the plasmoids. Repeating the analyses at various time steps,
+we obtain the typical θc angle for the speciﬁc run.
+
+    Figure 12 compares the obtained angles by the above analysis in runs L1–L5. The
+dashed line shows the current layer angle θc. The typical ﬁeld line angle θm is also measured
+in the upstream side of the current layers, and they are presented in the solid line. We ﬁnd
+that the angle θc becomes narrower as the inﬂow parameter σε,in increases. On the other
+hand, the ﬁeld line angle θm shows the opposite trend. Considering that the reconnection
+rate increases as σε,in increases, it is quite reasonable that θm increases. We expect that
+
+===== PDF PAGE 26 =====
+                                     – 26 –
+
+
+    (a)   1            density
+                          v_x'
+                          v_z'
+          0.5
+
+
+         0
+
+
+             -4              -2           0            2            4
+
+    (b)   2                           j_y
+                        B_x'
+         1
+                        B_z'
+
+         0
+
+
+           -1
+             -4              -2           0            2            4
+
+         2
+    (c)                       pressure
+          1.5           energy ﬂux
+
+         1
+
+          0.5
+
+         0
+             -4              -2           0            2            4
+                     Inﬂow position (z/L)
+
+
+Fig. 11.— Physical properties across the Petschek-type current layers at x/L = 100 at
+t/τc = 400. (a) Normalized plasma density γn/n0, tangential plasma velocity vx′/c, normal
+plasma velocity vz′/c, (b) the out-of-plane electric current jy/j0, tangential magnetic ﬁeld
+Bx′/B0, normal magnetic ﬁeld Bz′/B0 (eq.  27), (c) total pressure (eq.  23; normalized by
+B20/8π), and energy ﬂow (eq. 22; normalized by cB20/8π).
+
+===== PDF PAGE 27 =====
+                                     – 27 –
+
+
+
+
+
+            m
+
+       0.1
+                           m'
+       Angle               2o
+
+
+     0.01                      c
+
+
+
+
+         0       2       4       6       8       10
+                       Sigma parameter
+
+
+
+Fig. 12.— Petschek angle analysis. The magnetic ﬁeld line angle θm (solid line), the current
+layer angle θc (dashed line), and the estimated magnetic ﬁeld line angle θ′m/2σε,in (dotted
+line) are presented as a function of the initial parameter σε,in.
+
+===== PDF PAGE 28 =====
+                                     – 28 –
+
+
+the angle is eventually asymptotic to θm ∼π/4. The dotted line in Figure 12 shows the
+theoretical angle. It is estimated by substituting σε,u ∼σε,in in equation 39. In the present
+parameter range, we ﬁnd an excellent agreement between two shock angles θc and θ′m/(2σε,in)
+(the dotted line in Figure 12). Although we discuss stable current layers in mildly relativistic
+runs, we expect that the theory shows good agreement in the higher-σ regime, where the
+theory was originally designed.
+
+
+
+                            3.4.  Uniform resistivity case
+
+    In order to study the role of the resistivity, we also carried out another simulation run
+with a uniform resistivity (run U3 in Table 1). The parameters are the same as those of
+run L3, but the resistivity is uniformly set.  Its eﬀective Reynolds number is RM = 3000.
+Compared with run L3, the system evolves slower primary due to the low resistivity at the
+reconnecting X-point. The top three panels in Figure 13 present the late-time evolution of
+run U3, at t/τc = 200 and 300. Figure 13d shows the properties along the outﬂow line at
+t/τc = 300. At t/τc = 200, the reconnection outﬂow is still only half way to the boundaries.
+The reconnecting current sheet contains several secondary structures. We think that this is
+due to the slower evolution of the system. There is suﬃcient time for secondary structures
+to grow. The biggest plasmoids reach the boundaries around t/τc = 300. Now we observe
+a formation of multiple big islands inside the reconnecting current sheet. As wee see in
+the proﬁles in Figure 13d, multiple magnetic reconnections take place and expel outﬂows
+between these islands. The outﬂow 4-velocity reaches ux/c ∼3 at various local points, and
+the global ﬂow speed seems to be ux/c ∼1–2. The density spikes in Figure 13d are identical
+to the O-points, magnetic nulls at the center of plasmoids. Although the out-of-plane ﬂow is
+very small, uy/c ≪1, these high-density plasmas carry the electric current inside the O-type
+regions (Figure 13c). On the other hand, around several regions between the islands, we
+see that the out-of-plane 4-velocity is enhanced, uy/c ∼1 or 1.5 (Figure 13d). They are
+related to thin current sheets between plasmoid islands. The plasma temperature is typically
+p/nmc2 ∼2 in the outﬂow region, and it becomes very high p/nmc2 ∼4–5 around the O-
+points. The simulation continues until t/τc ∼345 shortly after the plasmoids completely
+went through the boundaries.
+
+   When the plasmoid islands appear, its typical timescale seems to be tens of τc, and it
+is faster than an estimated timescale of the resistive tearing mode, R3/5M  or hR3/5M ∼O(102).
+We think that the island formation is enhanced by the two-ﬂuid eﬀect, which was introduced
+in our simulation. Since our Ohm’s law (eq. 18) contains the ﬂuid inertial term ∂t(hpupy),
+the tearing mode can grow more explosively than the classical resistive MHD case. If we use
+
+===== PDF PAGE 29 =====
+                                     – 29 –
+
+
+
+
+
+            (d)
+                3
+
+                2
+
+                1
+
+                0
+
+                    -1
+                  0         20         40        60         80        100       120
+                                         Outﬂow position (z/L)                  U_x
+                                                                         U_y
+                                                                                          Density
+
+
+Fig. 13.—  Large-scale snapshots of run U3: (a) the x-component of the plasma 4-velocity
+ux/c at t/τc = 200, (b) the x-component of the plasma 4-velocity ux/c at t/τc = 300, and (c)
+the out-of-plane current jy/j0 at t/τc = 300. The black lines show magnetic ﬁeld lines. (d)
+The outﬂow 4-velocity ux/c, the out-of-plane 4-velocity uy/c, and the plasma density γn/n0
+at t/τc = 300, along the right half of the outﬂow line (z = 0).
+
+===== PDF PAGE 30 =====
+                                     – 30 –
+
+
+the speciﬁc condition of uy ∼1, the timescale of the relativistic collisionless tearing mode
+(Zelenyi & Krasnoselskikh 1979) is O(10), too.
+
+    Although the system evolution is slower than the reference run L3, we note that the
+reconnection still remains fast, at least during this simulation run, and it may be related
+to island formation.  If we discuss the global structure by ﬁltering out the local plasmoid
+islands, the average plasma inﬂow speed is vy ∼0.1c, and the reconnection electric ﬁeld
+is Ey ∼0.1B0. This may be an interesting hint to discuss the problem of a fast magnetic
+reconnection.
+
+
+
+                                  4.  DISCUSSION
+
+     First, let us brieﬂy compare our results with the one-ﬂuid work by Watanabe & Yokoyama
+(2006) (here referred as WY06). They employ an relativistic Ohm’s law
+
+                              v
+                  E +  × B = (η/γ′)j,                              (40)
+                                        c
+where γ′ is the Lorentz factor of the one-ﬂuid MHD motion. Our Ohm’s equation (eq. 18)
+diﬀers in the following two ways. First, since our equation contains the ﬂuid inertial term, by
+deﬁnition our model describes better physics. Second, we do not consider the factor of 1/γ′.
+However, we consider ﬁnite resistivity only near the X-point, where γ′ is close to the unity.
+The fastest run in WY06 is directly equivalent to our reference run L3. The reconnection
+geometry looks similar. However, we ﬁnd various minor diﬀerences. The maximum outﬂow
+4-velocity is ux/c ∼2.2–2.3 in WY06, while we often observe faster value (ux/c > 3) (e.g.,
+Figure 3b). This is quite probably due to the two-ﬂuid eﬀect and the grid condition. Since
+we also deal with the out-of-plane motion uy, the Lorentz factor can be larger even when it
+contains a contribution from vy. Also, WY06 employed nonuniform grids, and then physical
+quantities in the distant outﬂow region are often averaged in the larger computational cells.
+Regarding the structure of the Petschek-type reconnection, WY06 implied that their shock
+angle becomes narrower in the relativistic regime like Lyubarsky (2005) predicted. Taking
+the inﬂow pressure into account, we clariﬁed that a modiﬁed Lyubarsky (2005) theory well
+explain the simulation results (Figure 12). Our angle is narrower than that of WY06. This is
+probably because the isotropic plasma pressure is usually overemphasized in one-ﬂuid model,
+and because the amplitude of the eﬀective resistivity may be diﬀerent.
+
+   We obtained several implications for relativistic reconnection models. Although we do
+not obtain a steady state Sweet–Parker reconnection, in all our runs, the early evolutions
+of main reconnection runs will be good hints to understand relativistic Sweet–Parker recon-
+nection. For example, in run L3, along the outﬂow line, we found that plasma temperature
+
+===== PDF PAGE 31 =====
+                                     – 31 –
+
+
+becomes very high (e.g., Figure 3e).  Consequently, the relativistic enthalpy substantially
+increases, ∆w ∼4n∆T > nmc2 in the outﬂow region.  Therefore, the relativistic recon-
+nection model cannot neglect the relativistic gas pressure in the outﬂow region (Lyubarsky
+2005; Zenitani & Hesse 2008b). In the Petschek reconnection regime, we observed that the
+bifurcated current layers and their angle becomes narrower and narrower as the inﬂow be-
+comes more and more magnetically dominated. With minor modiﬁcation, this trend is well
+consistent with the argument proposed by Lyubarsky (2005).
+
+   The ultrarelativistic limit of σε,in ≫1 is of strong astrophysical interests. Our parameter
+study suggested that the reconnection rate is asymptotic to its upper limit of ∼1 in that
+regime. Indeed, in the most extreme case (run L9), we observe fast reconnection with super
+fast inﬂow. We expect that reconnection is super fast in the high-σ regime. Such a fast
+reconnection rate implies that the separatrix angle will be wide open—asymptotic to 45◦in
+the steady stage. In fact, our mildly relativistic runs show the magnetic ﬁeld line angle θm
+constantly increases (e.g., Figure 12) in the Petschek-type steady regime.  In a sense this
+is reasonable, because there are less current carrier in such a regime. When the separatrix
+becomes open, the ﬁeld reversal current for the reconnected ﬁelds ±Bz partially cancel the
+ﬁeld reversal current for the antiparallel ﬁelds ±Bx, therefore the system needs less electric
+current. We do not know whether or not the bifurcated Petschek-type solution exists in the
+high-σ regime. Since the current layer becomes too ﬂat and the central diﬀusion region tends
+to expand, the reconnection current sheet may remain in a single thick current layer for a
+long time.
+
+   We think that an important feature of the reconnection in the high-σ regime is the
+shortage of the current carrier. As the authors discussed through PIC simulation and the
+two-ﬂuid theory (Zenitani & Hesse 2008b), when reconnection environment is magnetically
+dominated and runs out of current carriers, the displacement current induces the strong
+electric ﬁeld. It leads to a faster reconnection rate and the expansion of the central Sweet–
+Parker region. From MHD viewpoint, it means the enhancement of the eﬀective resistivity;
+however, we note that the conventional single-ﬂuid RMHD simulations have no explicit upper
+limit of plasma currents. Due to the enhancement of the reconnection ﬁeld, we ﬁnd a large
+electric-dominated region in run L9, where the ﬁeld is electrically dominated, (E2 −B2) > 0,
+around the X-type region.  Plasmas are no longer magnetized there, and then powerful
+DC acceleration will occur (Zenitani & Hoshino 2001). Therefore, we expect that the high-σ
+reconnection is a favorable source of nonthermal particles acceleration. Long-term evolution,
+theoretical modeling, and particle acceleration in the high-σ regime will be left for future
+work.
+
+    In this work, we mainly use the energy-based magnetization parameter σε,in, because it
+
+===== PDF PAGE 32 =====
+                                     – 32 –
+
+
+seems to be a better measure of reconnection property than the conventional magnetization
+parameter σm,in. In fact, as long as we surveyed (Sections 3.2 and 3.3), run L4 with lower
+pressure resembles run L5 rather than run L3. However, we still observe minor diﬀerences,
+and the running out of the current carrier should be controlled by σm. So, we conclude that
+both two magnetization parameters σε,in and σm,in are important.
+
+   We also demonstrated that the spatial proﬁle of the resistivity has great inﬂuence on the
+system evolution. As recognized in many works in the nonrelativistic regime, the spatially
+localized resistivity leads to the Petschek-like reconnection with bifurcated current layers
+(e.g., Ugai & Tsuda (1977); Scholer (1989)). On the other hand, the uniform resistivity
+case exhibits a single current layer with secondary islands. Considering that the governing
+equations are almost the same outside the localized resistivity point,  it is impressive to
+see such a contrast. The dependence on the amplitude of the resistivity ηeff, the spatial
+proﬁle, and the other physical models, will be left for future work. Regarding the outﬂow
+structure, at present PIC simulations of the relativistic magnetic reconnection exhibit a
+laminar outﬂow without islands or with small minor islands in a main reconnection region
+(Zenitani & Hoshino 2001, 2007; Jaroschek et al. 2004; Zenitani & Hesse 2008a,b). On the
+other hand, in the nonrelativistic regime, Daughton & Karimabadi (2007) demonstrated a
+very interesting result by using a large-scale PIC simulation. They showed that reconnection
+outﬂow is highly inﬂuenced by a continuous formation of secondary islands, and its global
+picture looks similar to our uniform resistivity run (Figure 13b). We do not know whether
+the relativistic reconnection is inﬂuenced by such continuous island formation, it is worth
+investigating by using a larger relativistic PIC simulation. We also observe small islands in
+higher-σ runs, and so the island formation may also be controlled by the upstream parameters
+(σm,in and σε,in).
+
+   On the viewpoint of numerical accuracy, we conﬁrmed that our primitive variable solver
+is suﬃciently accurate.  In Appendix A (Figure 14), the numerical error of our solver is
+presented. In our range of interest (|u|/c ≲101 and p/nmc2 ≲10), the relative errors in the
+restored primitive variables are very small, ∼O(10−15). Therefore, the worst estimate of the
+accumulated error would be still negligible, 101 × 10−14 · (400τc/∆t) < 10−8. On the other
+hand, in order to further explore the higher-σ conditions, we have to improve the numerical
+scheme. At present, the modiﬁed Lax–Wendroﬀscheme seems to be the bottle neck.  It is
+not ideal to describe shocks, while the discontinuities around the magnetic pileup regions
+are always diﬃcult to solve in a nonsteady stage of reconnection. We plan to employ a more
+stable scheme such as HLL schemes (Mizuno et al. 2006; Mignone et al. 2009) in order to
+study long-term evolution in the high-σ regime.
+
+     Finally, let us discuss potential targets beyond this work. A straightforward extension
+
+===== PDF PAGE 33 =====
+                                     – 33 –
+
+
+will be magnetic reconnection with the out-of-plane magnetic ﬁeld (By or the “guide ﬁeld”).
+In is already known that PIC simulations with the guide ﬁeld exhibit global charge separation
+in a reconnection region, and so the neutral one-ﬂuid approximation already breaks down
+(Zenitani & Hoshino 2008). Therefore we have to solve the positron and electron evolution
+separately without the symmetric assumption. In the Petschek regime, Lyubarsky (2005)
+claimed that (1) the relativistic magnetic reconnection involves rotational discontinuities as
+well as slow shocks, and that (2) the compressed guide ﬁeld ﬂux inside the outﬂow channel is
+the main energy carrier in the magnetically dominated regime. These properties are worth
+checking in future simulations. In three dimensions, it is known that the reconnection current
+sheet is unstable to the relativistic drift kink instability, which arises from the counter-
+streaming two-ﬂuid motion of positron ﬂuids and electron ﬂuids (Zenitani & Hoshino 2005a,
+2007; Pritchett et al. 1996; Daughton 1999). These three-dimensional evolutions should be
+carefully compared with PIC simulations, so that we can study the larger problems such as
+magnetar ﬂares and global pulsar magnetospheres by using a relativistic two-ﬂuid model. Of
+course, it is critically important to establish an improved (theoretical or empirical) resistivity
+model, which highly aﬀects the system evolution.
+
+
+
+                                   5. SUMMARY
+
+   We carried out relativistic two-ﬂuid MHD simulation of a magnetic reconnection in an
+electron–positron pair plasma. The interspecies friction term works as an eﬀective resistiv-
+ity, and then we successfully demonstrated the large-scale evolution of relativistic magnetic
+reconnection. The system evolves from a Sweet–Parker-like fast reconnection to a Petschek-
+like reconnection with bifurcated current layers. Open boundary conditions enable us to
+observe long-term evolutions, and we ﬁnd a Petschek structure, which is quite stable. As
+Lyubarsky (2005) predicted, the current layer angle becomes substantially narrower when
+the reconnection inﬂow is more magnetically dominated. Meanwhile, we ﬁnd that the recon-
+nection rate goes up to ∼1 in extreme cases, which implies that eﬃcient particle acceleration
+occurs in the electric-dominated region. In addition, we demonstrate that the system evolu-
+tion is controlled by the resistivity model. We emphasize that the large-scale reconnection
+problems are investigated with a two-ﬂuid RMHD model. Beyond the single-ﬂuid RMHD
+approximation, multiﬂuid models will be good alternatives to study astrophysical plasma
+problems which involve magnetic dissipation.
+
+
+   The authors are grateful to N. Watanabe, R. Yoshitake, and M. Kuznetsova for helpful
+comments. The authors thank the anonymous referee for his/her constructive comments
+which helped them to improve the manuscript. This research was supported by the NASA
+
+===== PDF PAGE 34 =====
+                                     – 34 –
+
+
+Center for Computational Sciences, and NASA’s MMS SMART mission.  S. Z. gratefully
+acknowledges support from NASA’s postdoctoral program.
+
+
+Table 1: List of Simulation runs
+ Name  Domain Size  Grid Points  c∆t/∆g  nin/n0  pin/p0   σm,in   σε,in   cA,in/c
+  S3      80 × 40     1200 × 600     0.3       0.1      1.0     20     4    0.894
+  M3    240 × 120   3600 × 1800     0.3       0.1      1.0     20     4    0.894
+  L1    240 × 120   4800 × 2400     0.2       1.0      1.0     2     0.4   0.535
+  L2    240 × 120   4800 × 2400     0.2       0.3      1.0    6.67   1.33   0.816
+  L3    240 × 120   4800 × 2400     0.2       0.1      1.0     20     4    0.894
+  L4    240 × 120   4800 × 2400     0.2       0.1      0.3     20    9.1   0.953
+  L5    240 × 120   4800 × 2400     0.2      0.05     1.0     40     8    0.949
+  L6    240 × 120   4800 × 2400     0.2      0.03     1.0    66.7   13.3   0.964
+  L7    240 × 120   4800 × 2400     0.2      0.02     1.0    100    20    0.976
+  L8    240 × 120   4800 × 2400     0.2      0.01     1.0    200    40    0.988
+  L9    240 × 120   4800 × 2400     0.2     0.005     1.0    400    80    0.994
+  U3    240 × 120   4800 × 2400     0.2       0.1      1.0     20     4    0.894   *uniform resistiv
+ XL3    240 × 120   9600 × 4800     0.2       0.1      1.0     20     4    0.894
+
+
+
+
+                   A.  Obtaining primitive variables
+
+   The rest energy density D, the momentum density m, and the energy density E are
+related to the primitive variables in the following way:
+
+                  D = γnmc2                                (A1)
+              m =  [γ(e + p)u]/c2                          (A2)
+                             E =  γ2(e + p) −p.                          (A3)
+
+For convenience, we introduce M = |m|c and ¯u = |u|/c. We consider the case of M > 0,
+because we immediately know ¯u = 0 when M = 0. Approximating the enthalpy (e + p) =
+nmc2 + Gp by G = Γ/(Γ −1), equations A2 and A3 become
+
+          M =  γ(nmc2 + Gp)¯u = (D + γGp)¯u                      (A4)
+                   E =  γ2(nmc2 + Gp) −p = γD + (γ2G −1)p               (A5)
+
+From equations A4 and A5, we can eliminate p in the following way:
+
+                  (γ2G −1)M −γG¯uE = (γ2G −1)D¯u −γ2G¯uD               (A6)
+
+===== PDF PAGE 35 =====
+                                     – 35 –
+
+
+                            γG¯uE = (γ2G −1)M + D¯u.                       (A7)
+
+Squaring equation A7 and substituting γ2 = 1 + ¯u2, we obtain
+
+                            h                               h            i    h          i2G2(E2 −M 2)¯u4 −2GMD¯u3 + G2E2 −2GM 2(G −1) −D2i ¯u2 − 2D(G −1)M  ¯u − (G −1)M  = 0(A8
+
+We solve this equation to obtain the physically valid solution. Other primitive variables are
+easily obtained by using the solution ¯u. When the ﬁrst coeﬃcient (E2 −M 2) is negative
+we immediately stop the simulation, because such situation is physically invalid. We also
+checked the other conditions D > 0 and (E −D) > 0.
+
+   The behavior of our primitive variable solver is characterized by two parameters, the
+relativistic bulk ﬂow ¯u and the relativistic temperature p/nmc2. We benchmarked the nu-
+merical accuracy of our solver, and Figure 14 shows the results as a function of the two
+parameters. We can see that the quartic solution ¯u is accurate even in the ultrarelativistic
+regime of ¯u ∼105. The pressure p is least reliable in the limit of p ≪nmc2 and ¯u ≫1. This
+is because the pressure is enclosed in the enthalpy term w = e + p = n[mc2 + G(p/nmc2)],
+but the ﬂuid macro properties are insensitive to p in such cases. The error in n shows the
+same trend as that of ¯u.
+
+
+        (a) Error : u                                                     (b) Error : p
+                                                   10-15     10-10    10-5                                                              10-15    10-10    10-5
+                  4                                                              4
+
+                  2                                                 100              2                                                 100
+
+                                                                                10-5                                                                          10-5
+                  0                                                              0
+                                                                                 10-10                                                                           10-10
+
+                                                                                                    -2                                                          10-15                     -2                                                          10-15                          log10(p/nmc2)                                             log10(p/nmc2)
+
+                     -4                                                                             -4
+
+                       -6      -4      -2     0     2     4     6                                -6      -4      -2     0     2     4     6
+
+                                 log10(u/c)                                                     log10(u/c)
+
+
+Fig.  14.—  Numerical accuracy of our primitive variable solver.  Relative errors in the
+restored (a) ¯u and (b) p are presented as a function of ¯u and p/nmc2.
+
+
+
+
+
+                          B.  Brown Method
+
+   We solve the quartic equations by using a simpliﬁed version of the Brown method
+(Nunohiro & Hirano 2003). Consider the following quartic equation:
+
+                           u4 + c3u3 + c2u2 + c1u + c0 = 0                        (B1)
+
+===== PDF PAGE 36 =====
+                                     – 36 –
+
+
+where cn is the nth-order coeﬃcient. When we apply eq. A8 to eq. B1, we ﬁnd that the
+coeﬃcients cn are all real, and that c0 < 0. In addition to two solutions (u1, u2), eq. B1 has
+one real negative solution (u3 < 0) and one real positive solution (0 < u4). The ﬁrst two
+(u1, u2) are usually complex conjugates, and the real positive one u4 is the physically valid
+solution that we are looking for. Let us consider the following two equations:
+
+                         (u −u1)(u −u2) =  u2 + a1u + a0                     (B2)
+                         (u −u3)(u −u4) =  u2 + b1u + b0.                     (B3)
+
+Examining the properties of bn and cn, we know that an ∈R and that a0 > 0 and b0 < 0.
+Therefore the quartic equation (eq. A8) can be decomposed into two quadratic equations
+with real coeﬃcients. The relations between an, bn, and cn are as follows:
+
+                                                        c3 =  a1 + b1
+                                                                 c2 =  a1b1 + a0 + b0                                                                             (B4)
+                                        c1 =  a0b1 + a1b0
+                                                                 c0 =  a0b0.
+
+We further deﬁne v := (a1 −b1), w := (a0 +b0), x := (a0 −b0). Using v, w, x, we rewrite these
+equations
+                 4c2 =  c23 −v2 + 4w
+                                                     4c1 =  2c3w −2xv                           (B5)
+                 4c0 =  w2 −x2.
+
+We obtain the following relation:
+
+                   x2v2 = (c3w −2c1)2 = (w2 −4c0)(4w −4c2 + c23)                 (B6)
+
+and then
+
+              w3 −c2w2 + (c1c3 −4c0)w + [c0(4c2 −c23) −c21] = 0.               (B7)
+
+We solve this third-order equation to obtain w, paying attention to the numerical accuracy
+(Nunohiro et al. 1996). Usually, we obtain two complex solutions and the one real solution
+in Equation B7, and so we employ the sole real solution w. When we ﬁnd three real solutions
+in Equation B7, we may have multiple choices for u, because Equation B2 also has two real
+solutions instead of complex conjugates.
+   By using this w, we obtain x = +√w2 −4c0. Here we choose a positive square root,
+because we know that a0 > 0, b0 < 0. The last variable v can be obtained from eq. B5
+accordingly. By using w, x, v, and c3, we obtain an and bn, and then we obtain u4 as a
+positive root of eq. B3.
+
+===== PDF PAGE 37 =====
+                                     – 37 –
+
+
+      If we employed the standard Ferrari’s method to solve the quartic equations, we should
+use Cardano’s transformation, ¯u := u′ −c3/4, in order to eliminate the third-order coeﬃcient
+c3. Then, the inverse transformation of ¯u often causes the cancellation of signiﬁcant digits
+when the solution is very small, ¯u ∼0. On the other hand, by using Brown method, we
+are not so inﬂuenced by the cancellation of signiﬁcant digits when the solution is very small,
+¯u ∼0.
+
+
+
+                     REFERENCES
+
+M. J. Aschwanden 2006, Physics of the Solar Corona: An Introduction with Problems and
+       Solutions (2nd Edition; Berlin: Springer), Chapter 10
+
+G. T. Birk, A. R. Crusius-W¨atzel and H. Lesch 2001, Astrophys. J. , 559, 96
+
+N. Bessho and A. Bhattacharjee 2007, Phys. Plasmas , 14, 056503
+
+E. G. Blackman and G. B. Field 1993, Phys. Rev. Lett. , 71, 3481
+
+E. G. Blackman and G. B. Field 1994, Phys. Rev. Lett. , 72, 494
+
+N. Bucciantini, T. A. Thompson, J. Arons, E. Quataert and L. Del Zanna 2006, Monthly
+       Notices of the RAS , 368, 1717
+
+P. F. Chen and K. Shibata 2000, Astrophys. J. , 545, 524
+
+R. B. Clare and D. Strottman 1986, Physics Reports, 141, 177
+
+F. V. Coroniti 1990, Astrophys. J. , 349, 538
+
+W. Daughton 1999, Phys. Plasmas , 6, 1329
+
+W. Daughton and H. Karimabadi 2007, Phys. Plasmas , 14, 072303
+
+L. Del Zanna, N. Bucciantini and P. Londrillo 2003, Astron. Astrophys. 400, 397
+
+T. di Matteo 1998, Monthly Notices of the RAS , 299, L15
+
+G. Drenkhahn 2002, Astron. Astrophys. , 387, 714
+
+G. Drenkhahn and H. C. Spruit 2002, Astron. Astrophys. , 391, 1141
+
+G. C. Duncan and P. A. Hughes 1994, Astrophys. J. , 436, 119
+
+R. C. Duncan and C. Thompson 1992, Astrophys. J. , 392, L9
+
+===== PDF PAGE 38 =====
+                                     – 38 –
+
+
+C. F. Gammie, J. C. McKinney and G. T´oth 2003, Astrophys. J. , 589, 444
+
+M. Hesse, K. Schindler, J. Birn and M. Kuznetsova 1999, Phys. Plasmas , 6, 1781
+
+M. Hesse and S. Zenitani 2007, Phys. Plasmas , 14, 112102
+
+C. H. Jaroschek, R. A. Treumann, H. Lesch and M. Scholer 2004, Phys. Plasmas , 11, 1151
+
+M. Karlick´y 2008, Astrophys. J. , 674, 1211
+
+J. G. Kirk and O. Skjæraasen 2003, Astrophys. J. , 591, 366
+
+S. Koide and K. Arai 2008, Astrophys. J. , 682, 1124
+
+S. Koide, K. Nishikawa and R. L. Mutel 1996, Astrophys. J. , 463, L71
+
+S. Koide, K. Shibata, and T. Kudoh 1999, Astrophys. J. , 525, 727
+
+S. S. Komissarov 1999, Monthly Notices of the RAS , 303, 343
+
+S. S. Komissarov 2006, Monthly Notices of the RAS , 367, 19
+
+S. S. Komissarov 2007, Monthly Notices of the RAS , 382, 995
+
+H. Lesch and G. T. Birk 1998, ApJ, 499, 167
+
+Y. Lyubarsky 2003, Monthly Notices of the RAS , 345, 153
+
+Y. Lyubarsky 2005, Monthly Notices of the RAS , 358, 113
+
+Y. Lyubarsky and J. G. Kirk 2001, ApJ, 547, 437
+
+Y. Lyubarsky and M. Liverts 2008, Astrophys. J. , 682, 1436
+
+M. Lyutikov 2003, Monthly Notices of the RAS , 346, 540
+
+M. Lyutikov 2006, Monthly Notices of the RAS , 367, 1594
+
+M. Lyutikov and D. Uzdensky 2003, Astrophys. J. , 589, 893
+
+J. M. Mart´ı and E. M¨uller 2003, Living Reviews in Relativity, 6, 7
+
+F. C. Michel 1982, Rev. Mod. Phys., 54, 1
+
+F. C. Michel 1994, Astrophys. J. , 431, 397
+
+A. Mignone, M. Ugliano and G. Bodo, Monthly Notices of the RAS , 393, 1141
+
+===== PDF PAGE 39 =====
+                                     – 39 –
+
+
+Y. Mizuno, K. I. Nishikawa, S. Koide, P. Hardee, and G. J. Fishman 2006, submitted to
+     ApJS (astro-ph/0609004)
+
+S. C. Noble, C. F. Gammie, J. C. McKinney and L. Del Zanna 2006, Astrophys. J. , 641,
+      626
+
+E. Nunohiro and S. Hirano 2003, Transactions of the Japan Society for Industrial and Applied
+      Mathematics, 13, 159
+
+E. Nunohiro, M. Suga and S. Hirano 1996, Transactions of the Japan Society for Industrial
+      and Applied Mathematics, 6, 173
+
+E. N. Parker 1957, J. Geophys. Res. , 62, 509
+
+H. E. Petschek 1964, “Magnetic Field Annihilation” in AAS/NASA Symposium on the
+      Physics of Solar Flares, W. N. Ness, Ed. (NASA, Washington, DC, 1964), p. 425
+
+P. L. Pritchett, F. V. Coroniti and V. K. Decyk 1996, J. Geophys. Res. , 101, 27413
+
+M. Scholer 1989, J. Geophys. Res. , 94, 8805
+
+A. Spitkovsky 2006, Astrophys. J. , 648, 51
+
+P. A. Sweet 1958, in IAU Symp. 6, Electromagnetic Phenomena in Cosmical Physics, ed. B.
+      Lehnert (New York: Cambridge Univ. Press), 123
+
+C. Thompson and R. C. Duncan 1995, Monthly Notices of the RAS , 275, 255
+
+C. Thompson and R. C. Duncan 2001, Astrophys. J. , 561, 980
+
+M. Ugai and T. Tsuda 1977, J. Plasma Physics, 17, 337
+
+N. Watanabe and T. Yokoyama 2006, Astrophys. J. , 647, L123 (WY06)
+
+P. M. Woods and C. Thompson 2006, in Compact stellar X-ray sources, ed. by W. Lewin &
+     M. van der Klis (Cambridge University Press), 547
+
+T. Yokoyama and S. Shibata 2001, Astrophys. J. , 549, 1160
+
+L. M. Zelenyi and V. V. Krasnoselskikh 1979, Astronomicheskii Zhurnal, 56, 819
+
+S. Zenitani and M. Hesse 2008a, Phys. Plasmas , 15, 022101
+
+S. Zenitani and M. Hesse 2008b, Astrophys. J. , 684, 1477
+
+===== PDF PAGE 40 =====
+                                     – 40 –
+
+
+S. Zenitani and M. Hoshino 2001, Astrophys. J. , 562, L63
+
+S. Zenitani and M. Hoshino 2005a, Astrophys. J. , 618, L111
+
+S. Zenitani and M. Hoshino 2005b, Phys. Rev. Lett. , 95, 095001
+
+S. Zenitani and M. Hoshino 2007, Astrophys. J. , 670, 702
+
+S. Zenitani and M. Hoshino 2008, Astrophys. J. , 677, 531
+
+
+
+
+
+    This preprint was prepared with the AAS LATEX macros v5.2.

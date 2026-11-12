@@ -1,0 +1,1146 @@
+Draft version August 5, 2024
+Typeset using LATEX default style in AASTeX631
+Electron-only reconnection and ion heating in 3D3V hybrid-Vlasov plasma turbulence
+C. Granier,1 S. S. Cerri,2 and F. Jenko1
+1Max Planck Institute for Plasma Physics, Boltzmannstraße 2, 85748 Garching, Germany
+2Universit´e Cˆote d’Azur, Observatoire de la Cˆote d’Azur, CNRS, Laboratoire J.L. Lagrange,
+Boulevard de l’Observatoire, CS 34229, 06304 Nice Cedex 4
+ABSTRACT
+We perform 3D3V hybrid-Vlasov simulations of turbulence with quasi-isotropic, compressible injec-
+tion near ion scales to mimic the Earth’s magnetosheath plasma, and investigate the novel electron-only
+reconnection, recently observed by the NASA’s MMS mission, and its impact on ion heating. Retain-
+ing electron inertia in the generalized Ohm’s law enables collisionless magnetic reconnection. Spectral
+analysis shows a shift from kinetic Alfv´en waves (KAW) to inertial kinetic Alfv´en (IKAW) and inertial
+whistler waves (IWW) near electron scales. To distinguish the roles of inertial scale and gyroradius (di
+and ρi), three ion beta (βi = 0.25, 1, 4) values are studied. Ion-electron decoupling increases with βi,
+as ions become less mobile when the injection scale is closer to ρi than di, highlighting the role of ρi in
+achieving an electron magnetohydrodynamic (EMHD) regime at sub-ion scales. This regime promotes
+electron-only reconnection in turbulence with small-scale injection at βi ≳1. We observe significant ion
+heating even at large βi, with Qi/ϵ ≈69%, 91%, 96% at βi = 0.25, 1, 4 respectively. While ion heating
+is anisotropic at βi ≤1 (Ti,⊥> Ti,∥), it is marginally anisotropic at βi > 1 (Ti,⊥≳Ti,∥). Our results
+show ion turbulent heating in collisionless plasmas is sensitive to the separation between injection
+scales (λinj) and ρi, βi, and finite-k∥effects, necessitating further investigation for accurate modeling.
+These findings have implications for other collisionless astrophysical environments, like high-β plasmas
+in intracluster medium, where processes such as micro-instabilities or shocks may inject energy near
+ion-kinetic scales.
+Keywords: Plasma Turbulence — Kinetic Simulations — Magnetic Reconnection — Ion Heating
+1. INTRODUCTION
+Turbulence and magnetic reconnection are fundamental and ubiquitous processes in space and astrophysical plasmas.
+The former naturally arises from phenomena that release free energy in the system such as, for instance, large-scale
+shear flows, shocks, and other plasma instabilities triggered by supernovae explosions, jets, accretion processes, and
+winds (e.g., Quataert and Gruzinov 1999; Schekochihin and Cowley 2006; Brandenburg and Lazarian 2013; Bruno
+and Carbone 2013).
+This fluctuations’ energy is usually injected at large (“fluid”) scales and then is nonlinearly
+transferred towards smaller and smaller scales, until dissipation into heat and non-thermal particles is achieved at the
+characteristic microscopic (“kinetic”) scales of the plasma (i.e., the Larmor radius and/or the inertial length of the
+particle species). Magnetic reconnection, on the other hand, is a micro-scale process that changes the magnetic-field
+connectivity of energetically unfavorable configurations by releasing excess magnetic energy (e.g., into bulk flows, waves,
+and non-thermal particles), and can affect a wide range of scales (e.g., Zweibel and Yamada 2009; Pucci et al. 2020).
+Reconnection is indeed an intrinsic element of plasma turbulence, as the latter naturally develops tearing-unstable
+current sheets on a wide range of scales along its cascade, and current-sheet reconnection can convert magnetic energy
+into fluctuations and structures that feed back into the turbulent cascade (e.g., Carbone et al. 1990; Huang and
+Bhattacharjee 2016; Cerri and Califano 2017; Franci et al. 2017; Loureiro and Boldyrev 2017; Mallet et al. 2017; Pucci
+et al. 2017; Comisso et al. 2018; Dong et al. 2018, 2022; Papini et al. 2019; Borgogno et al. 2022; Cerri et al. 2022).
+Traditionally, in collisionless magnetic reconnection, a multiscale structure emerges, featuring a small electron dif-
+fusion region (EDR) within a larger ion diffusion region (IDR). In the diffusion regions, the frozen-in condition, which
+implies a strong coupling between the magnetic field and the plasma, is broken due to non-ideal effects. In the IDR,
+only ions demagnetize due to the Hall effect, while electrons remain frozen. Ion-scale bidirectional jets pointing away
+arXiv:2405.16686v2  [physics.plasm-ph]  2 Aug 2024
+
+2
+from the reconnection point (called “X-point”) indeed emerge from this region (Birn et al. 2001; Hesse et al. 2001).
+Recent studies, however, have unveiled a novel and intriguing phenomenon known as ”electron-only reconnection,”
+revealing a unique form of reconnection, in the absence of ion jets. Electron-only reconnection refers to reconnection
+events where the current density is dominantly carried by electrons alone. This distinctive form of reconnection has
+been observed in the turbulent Earth’s magnetosheath (Phan et al. 2018; Stawarz et al. 2019; Stawarz et al. 2022), at
+the magnetopause (Huang et al. 2021), and in the magnetotail (Wang et al. 2020). In particular, the high-resolution
+measurements from NASA’s Magnetospheric Multiscale (MMS) mission have provided a unique opportunity to inves-
+tigate electron scale reconnection in greater detail, revealing new features that expand the traditional understanding
+of reconnection in collisionless plasmas.
+Numerical and theoretical studies have played an important role in understanding this phenomenon.
+Some 2D
+Particle-in-Cell (PIC) simulations have suggested that when the current sheet’s length is less than approximately 10di,
+ions fail to couple to the newly reconnected field lines, leading to the absence of ion jets (Sharma Pyakurel et al. 2019).
+Additionally, 2D simulations of decaying turbulence, in which the initial injection scale of fluctuations was varied,
+showed that larger injection scales result in ion-coupled reconnection, while shorter injection scales favor electron-only
+reconnection (Califano et al. 2020; Arr´o, G. et al. 2020; Franci et al. 2022). This finding aligns with in-situ observations
+by MMS, which have further reinforced this notion. In the observations reported in Stawarz et al. (2022), indeed,
+when the correlation length of turbulence is less than 20di, there is a trend toward thinner current sheets and the
+possibility of faster electron jets. Additionally, Betar and Del Sarto (2023) study draws comparisons between the
+Electron Magnetohydrodynamics (EMHD) regime and the defining features of the electron-only reconnection. The
+study reveals that certain aspects of such reconnection regime can be accurately described by EMHD equations, which
+is valid on scales ℓ/di < 1. The role of the ion gyroradius scale has only been recently investigated in the 2D particle-in-
+cell simulations conducted by Guan et al. (2023). They observed that as the ion gyroradius ρi increases, ion response
+weakens, enhancing reconnection rates. Notably, electron-only reconnection occurs when ρi matches the simulation
+domain size in both strong and weak guide field scenarios. In our study, we aim to investigate the role of ρi by covering
+cases where ρi < di and ρi > di.
+It is worth noting that the majority of studies on electron-only reconnection have been conducted in a 2D frame-
+work, potentially overlooking several crucial properties compared to the more realistic three-dimensional (3D) scenar-
+ios (Howes 2015). In this work, we employ the hybrid-Vlasov-Maxwell (HVM) code (Valentini et al. 2007) to perform
+3D simulations of plasma turbulence with different ion plasma beta, βi = 0.25, 1, 4 (βi is the ratio between the ion
+thermal pressure and the magnetic pressure) and finite electron-inertia effects (with a reduced ion-to-electron mass
+ratio mi/me = 100). Adopting a generalized Ohm’s law with electron inertia terms indeed enables to capture the
+EMHD regime at electron scales and to provide a physical mechanism to drive collisionless magnetic reconnection (e.g.,
+Califano et al. 2020). Moreover, by varying the ion beta, these simulations allow to disentangle the possible different
+role of the ion inertial length di and ion Larmor radius ρi, and so to further explore the most-favorable regime in
+which electron-only reconnection can occur in 3D kinetic turbulence. Despite the much greater computational cost
+in comparison to a particle-in-cell (PIC) formulation, the grid-based Vlasov approach offers the distinct advantage of
+significantly reducing numerical noise at the smallest scales of the simulation (which are the relevant ones to study
+the electron-only reconnection regime).
+The remainder of the paper is organized as follows. In Section 2, we describe the hybrid-kinetic model that is
+employed in this work (§2.1) and the setup of our numerical simulations (§2.2), detailing the motivation of our
+choice (§2.3) and explicitly mention also the intrinsic limitations of this study (§2.4). The simulations’ results are
+analyzed in Section 3. After characterizing the global properties of turbulent fluctuations (§3.1), we turn our attention
+to magnetic reconnection in 3D (§3.2) and to the distinctive signatures of electron-only reconnection events (§3.3).
+Finally, we focus on analysing the turbulent heating of the ions and the inferred ion-to-electron heating ratio (§3.4).
+In Section 4, we summarize the results and discuss their implications.
+2. NUMERICAL DATA SET
+2.1. Hybrid-Vlasov Model
+In this work we employ the so-called hybrid-Vlasov–Maxwell (HVM) code (Valentini et al. 2007).The hybrid-kinetic
+approximation assumes a quasi-neutral plasma (ni = ne ≡n) where fully kinetic ions are coupled to an electron fluid
+through a generalized Ohm’s law (e.g., Winske 1985). The quasi-neutrality assumption neglects charge separation,
+thus constraining this model to phenomena characterized by frequencies lower than the electron plasma frequency.
+
+3
+The evolution of the ion distribution function, denoted as f(x, v, t), follows the Vlasov equation:
+∂tf + v · ∇f + e
+mi
+
+E + v
+c × B
+
+· ∇vf = 0,
+(1)
+while the magnetic field, B, evolves accordingly to Faraday’s law of induction,
+∂tB = −c∇× E.
+(2)
+The ions are coupled to the electron fluid through a generalized Ohm’s law that provides the electric field E,
+ 1 −d2
+e∇2
+E = −ui
+c × B + J × B
+enc
++ ∇Pe
+en
++ 4πd2
+e
+c2 ∇·
+
+uiJ + Jui −JJ
+en
+
+,
+(3)
+where de represents the electron inertial length, n is the number density, and ui and ue ≡ui −J/n denote the proton
+and electron fluid velocities, respectively. Ion’s fluid quantities are computed as velocity space moments of f, i.e.,
+n =
+R
+d3vf and ui = n−1 R
+d3v vf. The current density J is derived from the magnetic field using Amp`ere’s law in
+the non-relativstic limit ω/kc ≪1 (i.e., without displacement current), J =
+c
+4π∇× B. Finally, for the purpose of
+this work, we adopt a simple isothermal closure for the electron pressure, namely Pe = nT0e. The effect of different
+electron closures (see, e.g., Finelli et al. 2021), will be investigated in the future.
+The generalized Ohm’s law (3) includes electron-inertia effects, represented by the terms proportional to d2
+e. Electron
+inertia serves as a physical mechanism capable of driving magnetic reconnection in the collisionless regime, as it can
+break the frozen in condition. Moreover, a finite electron mass introduces the characteristic length scale de which
+marks a change in the plasma dynamics and can thus produce another spectral break at k⊥de ∼1 in the spectra of
+collisionless turbulent fluctuations. The d2
+e∇2E term on the left-hand side of (3) comes from the time derivative of the
+current in the generalized Ohm’s law by using Amp`ere’s and Faraday’s laws, and eventually neglecting ∇· E due to
+quasi-neutrality, i.e., ∂J/∂t =
+c
+4π∇× (∂B/∂t) = −c2
+4π∇× ∇× E ≈c2
+4π∇2E. We mention that this approach differs
+from that employed in Mu˜noz et al. (2023), where electron inertia is directly integrated into the generalized Ohm’s
+law without this approximation.
+2.2. Simulations setup
+The initial background plasma configuration consists of a stationary, spatially homogeneous Maxwellian ion-electron
+distribution corresponding to a uniform plasma density n0 = 1, and a reduced mass ratio mi/me = 100. This plasma
+in embedded in a uniform magnetic field B0 = B0 ˆz, with B0 = 1 (in the following parallel (∥) and perpendicular (⊥)
+directions will be defined with respect to this background field, unless specified otherwise). We consider three different
+initial ion plasma beta values, namely βi = 0.25, βi = 1, and βi = 4. The temperature ratio τ = T0i/T0e is chosen
+to be τ = 2.5 for βi = 0.25, τ = 10 for βi = 1, and τ = 40 for βi = 4. These values of τ correspond to βe = 0.1,
+which ensures that the electron Larmor radius ρe is sufficiently smaller than de, thus justifying the choice to neglect
+finite-Larmor-radius (FLR) corrections while including finite-inertia effects in our electron model. In fact, the scale at
+which kρe ∼1 would correspond to kdi ∼31, which is within the range of scale that is affected by numerical dissipation
+(see below and, e.g., Fig 2). The simulation box is a cube of size L = 6πdi discretized by means of 2563 grid points,
+corresponding to a wavenumber range 0.3 ≲kdi ≲43. Numerical filters are employed to remove fluctuation energy
+only at the smallest scales of the simulation (Lele 1992). In velocity space, we cover the range [−7vth,i, 7vth,i] for the
+case βi = 0.25 and the range [−5vth,i, 5vth,i] for the βi = 1 and βi = 4 cases, and we employ a uniformly distributed
+grid of 513 points for the βi = 1 case and 573 points for the βi = 0.25 and βi = 4 cases. The above background is
+perturbed by adding isotropic 3D magnetic fluctuations δB = δB⊥+ δB∥ˆz in the wavenumber range 0.3 ≲kdi ≲1
+and with root-mean-square (rms) amplitude δBrms,0/B0 ≃0.5 (magnetic perturbations are initialized through a vector
+potential δA, i.e., δB = ∇× δA, thus ensuring the solenoidal character of the magnetic field, ∇· δB = 0).
+2.3. Connection of our setup with observations and previous turbulent simulations of electron-only reconnection
+Injecting both parallel and perpendicular magnetic fluctuations with non-negligible amplitude (δB/B ∼0.5), and
+doing so up to scales near the ion inertial length (19 di < λinj < 6 di), aims at qualitatively reproducing the typical
+conditions past the Earth’s bow shock, in the magnetosheath. In this environment, turbulence is indeed significantly
+compressible and characterized by fluctuations with large amplitudes and short correlation lengths (i.e., 0.5 ≲δB/B ≲
+
+4
+Figure 1. 3D rendering of the magnitude of δB (left column), E′ = E + ue × B (center column), and J = ∇× B (right
+column), at the turbulent peak activity for βi = 0.25 (top row), βi = 1 (middle row), and βi = 4 (bottom row).
+1.5 and λc ∼10 di, respectively; see, e.g., Chen and Boldyrev 2017; Stawarz et al. 2019). This is also consistent
+with the results of previous 2.5D turbulence studies which found that the transition from standard to electron-only
+reconnection occurs as fluctuations are injected up to scales close to the ion inertial scale (namely, λinj ∼10 di; Califano
+et al. 2020). The choice of the βe < βi regime is also meant to reproduce the typical conditions found in the Earth’s
+magnetosheath (Chen and Boldyrev 2017). In this work, we extend the above-mentioned previous turbulence studies
+on electron-only reconnection (e.g., Califano et al. 2020; Vega et al. 2020) from the 2.5D to the 3D geometry. Moreover,
+we explore different values for the ion beta (viz., βi = 0.25, 1, 4), in order to possibly disentangle the different role of
+the two ion-kinetic scales, ρi and di, compared to the injection lengthscale λinj in the development of (i) the electron-
+MHD dynamics in 3D turbulence with (moderate) guide field, and of (ii) the consequent occurrence of electron-only
+reconnection events.
+
+5
+2.4. Caveats, limitations, and future improvements
+From the model point of view, the hybrid-kinetic approximation adopted for the current simulations clearly neglects
+several electrons’ kinetic physics, such as electron finite-Larmor-radius (eFLR) effects and electron Landau damping
+(eLD), while still retaining electron-inertia effects. This limits this study to regimes with low electron beta, βe ≪1,
+so that the electron gyro-radius ρe is sufficiently smaller than the electron inertial length de (e.g., βe = 0.1 in our
+simulations; see Section 2.2). While this regime seems to be suitable for electron-only reconnection in the Earth’s
+magnetosheath (e.g., Chen and Boldyrev 2017; Stawarz et al. 2019), it could be of interest to explore also the βe ≳1
+regime in the context of other astrophysical environments. Nonetheless, in the context of the observed regimes for
+electron-only reconnection, the hybrid-kinetic model still offers a suitable compromise between a computationally much
+more expensive full-kinetic approach and keeping the whole ion-kinetic physics (and associated heating processes) that
+would not be included in other, less computationally demanding, reduced-kinetic models such as, for instance, gyro-
+kinetics. Furthermore, the hybrid-kinetic approach is partially justified by the idea that across the ion scales and in
+the sub-ion range of scales above the electron Larmor radius, electron-heating processes (e.g., eLD) are negligible with
+respect to other ion-heating mechanisms. While this may not be entirely true when comparing eLD with ion Landau
+damping (iLD) in a moderately collisional gyrokinetic plasma (e.g., Told et al. 2015), it seems to be well justified when
+stochastic heating and cyclotron damping are taken into account, since they all largely dominate over iLD in the ions’
+turbulent heating (e.g., see Arzamasskiy et al. 2019; Cerri et al. 2021; Arzamasskiy et al. 2023, and references therein).
+Finally, a way to partially overcome this caveat is to include, still within a hybrid-kinetic description, more refined
+electron models with, for instance, anisotropic electron pressure and Landau-fluid closures accounting for eLD (e.g.,
+Finelli et al. 2021).
+From the numeric point of view, our simulations are limited by computational capabilities and available resources.
+This affects the maximum size of the simulation domain, its small-scale resolution, and the need to adopt a reduced
+mass ratio (i.e., in our simulations, depending on the ion beta parameter βi, this is a six-dimensional phase-space
+domain of maximum sizes Lj = 6πdi and |vj| ≤7 vth,i (with j = x, y, z) discretized with up to 2563 × 573 grid points,
+respectively, and adopting a mass ratio mi/me = 100; see Section 2.2). Considering a realistic mass ratio could affect
+the reconnection rates in the simulations. Specifically, in the EMHD regime, the linear growth rate for marginally
+unstable tearing modes is proportional to (me/mi) (Bulanov et al. (1992)), resulting in a slower reconnection rate if
+more realistic mass ratio values were considered. On the other hand, the larger scale separation would allow for better
+decoupling of the species dynamics, potentially highlighting clearer electron-only reconnection events. Ideally, one
+would like to slightly increase both the simulation box and, possibly, consider also the case of an anisotropic domain
+L∥> L⊥to further explore the role of different kinjdi, kinjρi, and k∥,inj/k⊥,inj; the role of a mean field by varying
+δBinj/B0 is also something that needs to be explored in the future. Achieving better resolutions will also allow to
+further extend the sub-ion range with more realistic mass ratios and to better describe the sub-electron-scale dynamics
+involved in electron-only reconnection. However, these improvements cannot be reached at the present time and will
+have to await significantly better computational resources. Nevertheless, the present work still represents the first
+attempt to extend previous studies of electron-only reconnection in hybrid-kinetic plasma turbulence from 2.5D to 3D,
+and with different ion-beta regimes (namely, βi = 0.25, 1, 4).
+3. RESULTS
+We let the initial condition described in Section 2.2 freely decay into a turbulent state. Fully developed turbulence,
+denoted by a peak in the rms current density Jrms
+∥
+(not shown), is achieved at t ≈14 Ω−1
+c,i for the case βi = 0.25, at
+t ≈11 Ω−1
+c,i for the case βi = 1 and at t ≈13 Ω−1
+c,i for the case βi = 4. Throughout the fully developed turbulent state,
+the rms of magnetic-field fluctuations remain roughly stable at a level δBrms/B0 ≈0.3 (not shown). In Figure 1 we
+show a three-dimensional rendering of the magnetic-field-fluctuation modulus |δB| (left column), of the modulus of
+the electric field in the electron frame |E′| = |E + ue × B| (center column), and of the current-density modulus |J|
+(right column) at the time of the peak for the three simulations, βi = 0.25 (top row), βi = 1 (middle row), and βi = 4
+(bottom row).
+3.1. Spectral properties
+It is instructive to first focus our attention on the spectral properties of fluctuations. This will help to clarify which
+type of turbulence develops in our simulations, and if there are differences related to a specific β regime.
+
+6
+Figure 2. Spectra of electromagnetic fluctuations versus k⊥for βi = 0.25 (panel (a)), βi = 1 (panel (b)) and βi = 4 (panel (c))
+averaged around the turbulent peak activity. Relevant slopes are also given as a reference.
+In Figure 2, we show the reduced (i.e., k∥-averaged) power spectrum of electromagnetic fluctuations, δB⊥, δB∥, δE⊥,
+and δE∥, versus the perpendicular wavevector k⊥, time-averaged around the peak activity of turbulence. We remind
+the reader that here the perpendicular direction is defined with respect to B0 rather than to a local-in-scale mean field
+⟨B⟩k, i.e., k⊥= (k2
+x +k2
+y)1/2. While this should not affect significantly the fluctuations’ properties in the perpendicular
+direction for our level of fluctuations in the quasi-steady state, we notice that it would affect more significantly their
+properties in the parallel direction (i.e., the properties inferred using kz instead of a local k∥). For this reason, the
+following analysis will focus only on k⊥spectra. Furthermore, due to the limited box size of the simulations and of
+the initial condition, we cannot really draw conclusions about the spectrum above ion scales, so our focus will be on
+sub-ion scales (k⊥di > 1).
+In all βi regimes, the sub-ion-scale spectrum of B⊥fluctuations consistently exhibits a ∝k−8/3
+⊥
+range above the
+electron scales (i.e., in the wavevector interval 1 ≲k⊥di ≲6.5). This slope, which is in agreement with previous 3D
+kinetic simulations of sub-ion-scale turbulence (e.g., Told et al. 2015; Cerri et al. 2017b; Franci et al. 2018; Groˇselj
+et al. 2018; Roytershteyn et al. 2019) and with solar-wind/magnetosheath observations (e.g., Alexandrova et al. 2009,
+2013; Sahraoui et al. 2009, 2020; Kiyani et al. 2015; Chen and Boldyrev 2017; Stawarz et al. 2019), can be explained
+in terms of intermittency corrections to a cascade of KAW-like fluctuations (Boldyrev and Perez 2012). Across and
+below electron scales, 0.7 ≲k⊥de ≲2 (corresponding to the range 6.5 ≲k⊥di ≲20), the δB⊥spectrum steepens
+and becomes qualitatively consistent with a ∝k−11/3
+⊥
+power law. It is interesting to note that this steepening occurs
+slightly above the k⊥de ≈1 scale. The spectrum of δB∥follows qualitatively that of δB⊥, being slightly shallower
+at k⊥di < 7 (roughly consistent with a −7/3 slope). This slight discrepancy in the spectral slope is related to the
+fact that δB2
+∥< δB2
+⊥at larger scales, while the power in the two magnetic-field components will eventually reach
+equipartition at sub-electron scales (see the analysis of magnetic compressibility in Figure 3 and associated discussion
+below). The electric-field spectrum at sub-ion scales initially exhibits a shallow power law, ∝k−2/3
+⊥
+, that steepens as
+it approaches k⊥de ∼1 (roughly ∝k−5/3
+⊥
+), before eventually being exponentially dissipated by numerical filters. The
+−5/3 slope appearing roughly in the same range where the magnetic-field spectrum steepens to −11/3 is consistent
+with a transition to either inertial kinetic-Alfv´en-wave (IKAW) or inertial whistler-wave (IWW) turbulence (Chen and
+Boldyrev 2017; Roytershteyn et al. 2019). We remind the reader that the scaling for IKAW and IWW fluctuations are
+valid in the limit of negligible eFLR corrections (see, e.g., also Passot et al. 2017, 2018), which is consistent with the
+hybrid-kinetic approximation that we are employing. Moreover, the choice βe = 0.1 ensures that eFLR effects would
+be anyway confined to the dissipation range of our simulations (see Section 2.2). Therefore, within the range of scales
+that is being investigated here, we would not expect significant deviations from our results even if a full-kinetic model
+was to be employed (see, e.g., Roytershteyn et al. 2019). It would be interesting to investigate finite-k⊥ρe effects on
+this type of cascade, but this is out of the scope of this work and would require a model beyond the basic hybrid-kinetic
+one that is adopted here (see discussion in Section 2.4). Since the electromagnetic spectrum alone cannot distinguish
+between these two possible regimes, and in general there is virtually no difference between the spectra in Figure 2 at
+sub-ion scales for different βi, it is necessary to look also at other quantities.
+In order to further assess the small-scale behaviour of turbulent fluctuations, in Figure 3 we report the scale-
+dependent magnetic compressibility, δB2
+∥/δB2
+⊥(left panel), and the spectrum of density fluctuations (right panel) for
+the three simulations.
+
+7
+Figure 3. Left: scale-dependent magnetic compressibility, δB2
+∥/δB2
+⊥, for the three simulations (see legend). The dashed curves
+of the corresponding colors represent the analytical prediction given in (4) for different βi, while the horizontal red dashed line
+corresponds to the approximated (scale- and βi-independent) prediction for whistler fluctuations given in (5). Right: spectrum
+of density fluctuations versus k⊥di.
+A transition between KAW and IKAW regimes at sub-ion scales (and for τ = Ti/Te ≫1) would reflect in the
+scale-dependent magnetic compressibility following the relation (Chen and Boldyrev 2017)
+δB2
+∥
+δB2
+⊥
+=
+1 + k2
+⊥d2
+e
+1 + 2
+βi + k2
+⊥d2e
+,
+(4)
+which shows that such ratio increases from its scale-independent value δB2
+∥/δB2
+⊥= 1/(1 + 2/βi) typical of standard
+KAW fluctuations due to finite-k⊥de effects in the IKAW regime (see βi-dependent dashed lines in the left panel of
+Figure 3). In calculating the theoretical curves with equation (4), we used the value of βi measured at the time chosen
+to plot the magnetic compressibility. This transition can be attributed to a shift in the dominant drift mechanism in
+the perpendicular plan. On the other hand, the magnetic compressibilty in the IWW regime is βi-independent and
+given by (Chen and Boldyrev 2017)
+δB2
+∥
+δB2
+⊥
+=
+1 + k2
+∥d2
+i + k2
+⊥d2
+e
+k2
+∥d2
+i
+≈1 ,
+(5)
+where the last approximation is valid for sub-ion-scale fluctuations with k2
+∥d2
+i ≫k2
+⊥d2
+e ∼1 (i.e., for fluctuations
+that are not extremely oblique, k∥/k⊥≫(me/mi)1/2, and with perpendicular wavelength in the electron-scale range,
+k⊥de ∼1). This scale-independent approximation for the whistler magnetic compressibility is indeed appropriate for
+the wavenumber range of our simulations. Moreover, since a cascade of IKAW fluctuations becomes progressively less
+anisotropic (following a relation k∥∝k5/3
+⊥; Chen and Boldyrev 2017), it is possible that when a cascade of very oblique
+KAW fluctuations turns to the IKAW regime, its anisotropy may get reduced enough to further transition to IWW
+turbulence. From the behaviour of the magnetic compressibility in the left panel of Figure 3, this seems to be the case
+for our simulations.
+For the case βi = 0.25, the magnetic compressibility aligns with KAW/IKAW relation (4) in the region 1 ≲k⊥di ≲8
+and increases towards unity more rapidly than what expected for IKAW fluctuations for k⊥de ≳1, possibly denoting
+a (partial) transition to IWW turbulence at electron scales. A similar qualitative behaviour is observed also for the
+other two simulations, βi = 1 and βi = 4, although the reduced difference between the scale-dependent IKAW curves
+for these βi values and the scale-independent IWW prediction (5) makes this distinction less clear. However, this
+behaviour becomes more clear if we consider the spectrum of density fluctuations (right panel in Figure 3). In fact,
+in the KAW/IKAW regime, density fluctuations are related to the parallel magnetic-field fluctuations by the relation
+(δB∥/B0)2 = (β2
+i /4)(δn/n0)2 and thus they cannot be neglected (δn/n0 ≲1 is finite). On the other hand, in whistler
+turbulence (and, in general, in the EMHD regime, for which ions’ response is negligible) the density fluctuations are
+negligibly small, δn/n0 ≪1. In our simulations the density spectrum indeed drops dramatically at sub-ion scales,
+especially at βi = 4 (blue curve in the right panel of Figure 3). This behaviour supports the idea that the ions’ response
+is more negligible (and thus the EMHD regime is more easily achieved at sub-ion scales) when the energy is injected
+close to the ion Larmor radius ρi rather than to the ion inertial length di. As a result, we expect that the electron-only
+reconnection regime is more easily achieved in our βi = 4 simulation, and, in general, in high-βi turbulence.
+
+8
+Figure 4. Spectra of perpendicular solid lines and parallel (dot-dashed lines) electron (gold) and ion (purple) velocities for
+βi = 0.25 (panel (a)), βi = 1 (panel (b)) and βi = 4 (panel (c)).
+The scale-dependent species’ response at small scales is addressed in Figure 4, where we report the spectra of
+the parallel and perpendicular ion and electron flows. Consistently with results from previous 2.5D hybrid-kinetic
+simulations (Cerri et al. 2017a), also our 3D simulations clearly show that the ion flow dramatically drops at k⊥ρi ≳3,
+after which electron flows dominate the sub-ion-scale dynamics. This means that as the ion beta increases from βi = 1/4
+to βi = 4 (and thus does the ratio between the ion Larmor radius and the ion inertial length, from ρi/di = 1/2 to
+ρi/di = 2), a larger portion of the sub-ion range in our simulations lacks of ion response. As far as the reconnection
+regime is concerned, for the βi = 4 case this will likely reflect into more prominent electron-only reconnection events
+where electron outflows are not being accompanied by ion outflows (i.e., a reconnection region with an EDR and no
+IDR). It is crucial to point out that it is the presence of a non-negligible guide field (for example, δBrms/B0 ≃0.3 as
+in our case), that makes this transition depending on the ion gyroscale ρi (rather than on di).
+3.2. Identification of 3D reconnection events
+Detecting reconnection events in 3D poses a challenging task. In this study, we make use of four specific signatures
+to effectively identify these events within our simulations.
+The first and arguably the most reliable indicator for detecting reconnection in 3D space is the presence of an
+important magnetic-field-aligned electric field within an active reconnection regions. To identify EDR, an established
+criterion is to examine areas where the component of the electric field parallel to the reconnecting plane, in the
+electron-fluid frame, is nonzero: E′
+∥RP = E∥RP + (ue × B)∥RP ̸= 0 (Daughton et al. 2006; Fujimoto and Machida 2006;
+Mu˜noz et al. 2023). (Here, we denoted quantities parallel to the reconnection plane with the symbol ”∥RP”. We
+recall that, in the rest of the paper, the symbol “∥” means parallel to the mean-field direction, B0 = B0 ˆz.) In this
+work, although the current appears to predominantly form small structures in the xy plane and the magnetic flux
+ropes seem more elongated along the z direction (see the 3D rendering in Fig 1), we do not rule out the possibility
+of field lines reconnecting in a plane inclined relative to the xy plane. Consequently, we look for regions where the
+total magnitude of E′ = E + ue × B becomes significant, (in particular, for our simulations we find that a threshold
+|E′| ≥0.6 provides a reliable criterion for this purpose). A second indicator of magnetic reconnection is the presence
+of field-aligned current sheets, which leads us to check the parallel current density J∥. A third essential signature of
+reconnection is the reversal of the magnetic field components in the reconnection plane. A fourth distinctive feature
+of a reconnection event is the presence of inflows and outflows directed toward and outward the reconnection point,
+respectively. Ideally, to identify electron-only reconnection sites, we aim to observe cases characterized by the absence
+of ion outflows, meaning a reconnection event occurring without an IDR. Still, electron outflows from an EDR will be
+present in any type of reconnection site.
+To provide an estimate of the current sheet dimensions across the three different simulations, we measured their
+widths and lengths (see, e.g., Sisti et al. 2021, and refereces therein for a discussion of different methods). For the
+width, we fitted a Gaussian profile along the x or y direction that passes through the maximum current value in a
+z-plane where the current reaches its peak. The width is then defined as the Full Width at Half Maximum (FWHM)
+of the Gaussian. Once the width is determined, the length of the current sheet is defined as twice the distance between
+the position where the maximum current value is attained and the position where the current reaches the FWHM
+value of the Gaussian, corresponding to the edge of the current sheet along its length. The simulations for βi = 0.25
+and βi = 1 (cases for which ρi ≤di) appear to yield similar results concerning the the geometry of current sheets. For
+these simulations, current sheets have lengths of approximately LCS ∼3.2di with a width of δCS ∼0.4di = 4de. On
+the other hand, in the βi = 4 regime (for which ρi > di), the current sheets appear to always be thinner and shorter
+
+9
+Figure 5. Reconnection event for βi = 4, at t = 9.2 Ω−1
+c,i . The blue arrows are magnetic field lines (lower magnitude in blue,
+larger magnitude in white). The yellow arrows are streamlines of the velocity (normalized by the Alfv´en speed) field, for the
+electron (left panel) and the ions (right panel).
+with respect to the two lower-βi cases, namely LCS ∼1.81di ∼3.6ρi and δCS ∼0.2di ∼0.4ρi = 2de. This seems to
+be in line with a picture where the overall size of the kinetic-scale current sheets are determined by the largest of the
+ion scale λi,max ∼max(di, ρi), i.e., LCS ∼3–4 λi,max and δCS ∼0.4 λi,max, and their aspect ratio that is almost always
+consistent with a sort of limiting value LCS/δCS < 10. This aligns with a recent analysis of electron-only tearing mode
+conducted by Mallet (2020), which shows a transition from the ion-coupled regime to a the electron-only reconnection
+regime when the aspect ratio of current sheet is below 10 and the thickness of the current sheet is below the ion-sound
+Larmor radius, ρs.
+Then, what matters for the occurrence of electron-only reconnection is how much the ions can couple with the
+dynamics of these current sheets, which indeed is determined by how their Larmor radius ρi compare with the current-
+sheet sizes. As a result, we expect to find that ions decouple from the electron fluid and kinetic-scale current sheets
+more easily at high βi. Clearly, the properties of kinetic-scale current sheets highlighted above may be affected by the
+reduced mass ratio mi/me = 100 employed in our simulations, as well as to the limited box size and span in plasma
+beta (see discussion in Section 2.4). A systematic and more detailed study of these current-sheets’ properties requires
+larger 3D kinetic simulations able to explore more realistic mass ratios and a wider spread in βi, which is beyond the
+scope of this work and will have to await better computational capabilities. Nevertheless, the properties of kinetic-scale
+current sheets observed in our simulations seem to be qualitatively consistent with previous kinetic simulations and
+in-situ observations (e.g., Stawarz et al. 2019; Stawarz et al. 2022; Vega et al. 2023).
+3.3. Electron-only reconnection events
+We now focus on the properties of electron-only reconnection events, corresponding to cases of reconnection where no
+ion outflows are observed. Figure 5 shows a 3D visualization of a reconnection event in a sub-domain of the simulation
+with βi = 4. The white and blue arrows on both panels are magnetic field lines. The left panel shows streamlines of
+the electron velocity field, while the right panel shows those of ions at the same location. A first observation is that
+the presence of electron outflows are clearly visible, whereas ions just freely stream through the entire reconnection
+zone without being affected by it. A second observation is that the electron outflow is predominantly oriented in the
+plane perpendicular to the ambient magnetic field. This last characteristic has indeed been observed in each identified
+electron-only reconnection event. For βi = 0.25, the electron outflow extends over a distance ℓoutf ∼0.7di. In the
+βi = 4 case, the electron outflow is much more extended, with ℓoutf ∼1.5di. In the βi = 4 case, we also notice that
+the decoupling between ion and electron velocities exists also outside the reconnection zone due to the generally less
+responsive ions over the entire sub-domain (since we are looking at scales below their Larmor radius ℓ/ρi ≲1). In
+some cases, the outflow can be very asymmetric and predominantly in a single direction.
+For each βi, we look at different quantities using one-dimensional cuts passing through a reconnecting kinetic-scale
+current sheet (i.e., a current sheet whose sizes are that of a typical site where electron-only reconnection is expected to
+take place). Similarly to what is done in Califano et al. (2020), these cuts are meant to represent the trajectories of two
+
+10
+Figure 6. Various quantities at a reconnection site, in the simulation with βi = 0.25. Top row, from left to right: magnitude
+of the electric field |E′|, current density J∥, absolute difference between perpendicular ion and electron velocities |ue,⊥−ui,⊥|.
+Bottom row, left and right: Ion and electron velocities (ux, uy, uz) along the paths C1 and C2 respectively.
+Figure 7. Same quantities as in Figure 6, for the simulation with βi = 1.
+virtual spacecrafts passing through these kinetic-scale current sheets. Looking at these virtual trajectories, hereafter
+dubbed C1 and C2, provides a helpful comparison with what is observed from in-situ measurements of electron-only
+reconnection (e.g., Phan et al. 2018). For each simulation, we present two-dimensional contours of the non-ideal part
+of the electric field |E′|, of the current density J∥, and of the difference between the perpendicular ion and electron
+velocities |ue,⊥−ui,⊥| in a sub-domain encompassing the selected reconnection region. Additionally, we display one-
+dimensional plots of the components ux, uy, uz for ions and electrons along the trajectories C1 and C2 to which we
+add two vertical black lines representing the boundaries of the identified reconnection region.
+Figure 6 illustrates the case βi = 0.25. In this case, the absolute values of the species’ velocities are overall larger
+than in the βi = 1 and βi = 4 cases (cf. also the spectra in Figure 4; we recall that these flow values are in units
+of the background Alfv´en speed, vA,0 = B0/√4πmin0). In the reconnection region, there is only a slight decoupling
+between the species along the background magnetic field direction, with a difference of ∆uz ∼0.12 between the ion and
+electron velocity. The decoupling for the x and y components is less important, with ∆ux ∼∆uy ∼0.06. Nevertheless,
+kinetic-scale current sheets in this low-βi regime seem to retain a certain coupling with the ion dynamics.
+Figure 7 shows the case with βi = 1. The decoupling between the ux and uy components of both species in the
+reconnection region is more pronounced, with ∆ux ∼∆uy ∼0.07 and a clear acceleration of electrons, symptomatic
+of electron-only reconnection is visible. Outside, yet close to, the reconnection region, there are also small fluctuations
+
+11
+Figure 8.
+Same quantities as in Figure 6, for the simulation with βi = 4.
+of the electron velocities. However, as one moves away from the current sheet, the velocities of both species become
+nearly identical. For βi = 4 (Figure 8), both species appear to be slower overall, but there is a clear decoupling of
+the ions and electrons throughout the entire domain, with electrons generally being faster. In particular, the ion flow
+is clearly not affected by the presence of the reconnection region. The velocity difference in the reconnection zone is
+comparable to the previous cases, with ∆ux ∼∆uy ∼∆uz ∼0.05.
+Overall, we observe a decoupling between ions and electrons at sub-ion scales – and thus the occurrence of electron-
+only reconnection – that is more prominent at larger βi. Since λinj/di is fixed in our setup (λinj being the typical
+injection scale of turbulent fluctuations), our simulations support the idea that the occurrence of the electron-only
+reconnection regime is more sensitive to the separation between the injection scale λinj and the ion Larmor radius ρi,
+rather than between λinj and the ion inertial length di.
+3.4. Ion turbulent heating
+Let us now focus on the turbulent heating of ions, i.e., how the energy of turbulent electromagnetic fluctuations
+(characterized in Section 3.1) is converted into ion thermal energy along their cascade towards smaller scales.
+We start by analyzing the change in ion temperature parallel and perpendicular to the local magnetic-field direction
+b = B/|B|, i.e., Ti,∥= (Πi : bb)/n = (Πi,ijbibj)/n and Ti,⊥= (Πi : σ)/n = (Πi,ijσij)/n, where Πi is the ion
+pressure tensor and σij = (δij −bibj)/2 is the projector onto the plane perpendicular to B (δij is the Kronecker delta).
+This information will provide helpful in supporting the interpretation of the ion-heating mechanisms that are likely
+operating in our HVM simulations at different βi.
+In the left plot of Figure 9, we show the time evolution of the box-averaged Ti,⊥and Ti,∥(normalized to the initial
+isotropic ion temperature Ti0) in our HVM simulations with initial ion beta βi = 0.25 (black curves), βi = 1 (green
+curves), βi = 4 (blue curves). One can notice that the temperature increase is anisotropic, preferentially heating the
+ions in the direction perpendicular to the magnetic field (i.e. Ti,⊥> Ti,∥), and that this tendency is more pronounced
+as the βi decreases. This trend is confirmed also by local estimates, as shown in the right plot of Figure 9, where we
+report a cumulative distribution of the values in a parameter space described by ion-temperature anisotropy, Ti,⊥/Ti,∥,
+and parallel ion beta, βi,∥= 8πnTi,∥/B2, that are occurring in our HVM simulations for the interval of time around
+the turbulent peak activity: βi = 0.25 (left distribution), βi = 1 (center distribution), and βi = 4 (right distribution).
+In that anisotropy-beta plane, we also draw solid lines representing the same thresholds for proton-anisotropy driven
+instabilities (with a maximum growth rate of γmax = 10−2Ω−1
+c,i ) that were used in Finelli et al. (2021). In particular,
+the ion-cyclotron instability (iCI) threshold is from Lazar and Poedts (2014), the mirror instability (MI) curve is from
+Maruca et al. (2012), while the thresholds for parallel and oblique firehose instabilities are from Astfalk and Jenko
+(2016). This type of representation for the plasma distribution is widely used in solar-wind turbulence studies (e.g.,
+Hellinger et al. 2006; Matteini et al. 2007; Bale et al. 2009; Chen et al. 2016; Maruca et al. 2018; Bandyopadhyay
+et al. 2022). One can appreciate that in Ti,⊥/Ti,∥the plasma distribution exhibit a larger spread as the βi decreases:
+this is likely the result of anisotropy driven instabilities (and especially of the iCI, for our setup) in bounding these
+
+12
+Figure 9. Left: time evolution of parallel and perpendicular ion temperatures, Ti,⊥/Ti0 (dashed lines) and Ti,∥/Ti0 (dotted
+lines), where Ti0 is the initial (isotropic) temperature of the ions, in our HVM simulations with different initial βi (see legend).
+Right: Histogram of the (βi,∥, Ti,⊥/Ti,∥) values occurring in the simulation domain and over a time interval around the peak
+turbulent activity for HVM runs with βi = 0.25 (left distribution), βi = 1 (center distribution), and βi = 4 (right distribution);
+different histograms have been normalized so that their maximum values coincide. Solid lines represent the thresholds with
+a maximum growth rate γmax = 10−2Ω−1
+c,i for various proton-anisotropy driven instabilities (from Fig.5 in Finelli et al. 2021):
+mirror instability (MI, dark violet line), ion-cyclotron instability (iCI, red line), parallel firehose instability (PFI, orange line),
+and oblique firehose instability (OFI, pink line).
+distributions to Ti,⊥/Ti,∥values that are within a marginally stable region (which indeed gets narrower as βi,∥increases).
+The associated spread in βi,∥is likely related to the heating (or cooling) parallel to the magnetic field, as well as to local
+density fluctuations and variation of magnetic-field strength (mainly associated to δB∥fluctuations). In particular,
+despite the relatively narrow anisotropy spread, even the simulation with initial βi = 4 exhibit a large spread in βi,∥.
+This, combined with the fact that the parallel heating is comparable to the perpendicular one for the βi = 4 simulation
+(Figure 9, left panel) and that this regime shows significant magnetic compressibility (cf. Figure 3, left panel), can be
+interpreted as a signature of transit-time damping (TTD) mediated by the magnetic-mirror force (Barnes 1966) being
+a relevant process in our βi = 4 run.
+In order to estimate the turbulent heating rate for the ions, we use the following procedure. Since the initial condition
+consists of only magnetic-field fluctuations (cf Section 2.2), this represent the injected fluctuation energy that will
+cascade towards smaller scales. Therefore, we compare the decrease in magnetic energy, |∆Emag| = |Emag(t)−Emag(0)|,
+where Emag = ⟨δB2⟩/2, with the simultaneous increase in ion thermal energy, ∆Eth,i = Eth,i(t) −Eth,i(0), where
+Eth,i = ⟨tr[Πi]⟩/2 and tr[Πi] is the trace of the ion pressure tensor. The ratio between these two quantities is then used
+as a proxy for the ratio between the ion-heating rate Qi and the cascading rate ε, namely, ∆Eth,i/|∆Emag| ≈Qi/ε.
+Moreover, we use this proxy to also provide an estimate of the ion-to-electron heating ratio, i.e., by computing the ratio
+Qi/Qe ≃Qi/(ε −Qi) ≈(∆Eth,i/|∆Emag|)[1 −(∆Eth,i/|∆Emag|)]−1. As done in previous hybrid-kinetic studies (e.g.,
+Arzamasskiy et al. 2019; Cerri et al. 2021; Arzamasskiy et al. 2023; Squire et al. 2022), by using this approximation
+we implicitly assume that while the injected energy (consisting of only δB fluctuations, in our setup) cascades towards
+smaller scale (represented by the decrease in Emag), a fraction of it will be converted into ion heating across and
+below the ion scales (consisting in the increase of Eth,i), while all the rest will be eventually dissipated into electron
+heating only at the the electron scales (represented by all the energy that is not accounted for in Eth,i, which is
+eventually dissipated by numerical filters in our hybrid-kinetic simulations). This approach to estimate the ion heating
+is intimately related to the hybrid-kinetic approximation itself, i.e., to the assumption that electron kinetic effects
+(and thus significant electron heating) can be neglected at ion scales, assumed to be much larger than the electron
+gyroradius scale. We also caution that, in general, the crude heating-rate estimate outlined above would neglect some
+residual energy that can be left in the bulk flows of the two species (e.g., see Fig.1 in Cerri and Camporeale 2020).
+However, these bulk-flow contributions are negligible in our simulations, since the amount of energy channeled into ion
+flows is strongly suppressed at sub-ion scales (especially for the βi ≥1 cases; cf. spectra in Figure 4) and, despite the
+fact that our setup favours a large amount of small-scale jets associated to electron-only reconnection, the electron-flow
+energy involves a factor me/mi ≪1 compared to the ion-flow energy, thus making this channel also negligible.
+
+13
+Figure 10. Left: time evolution of ∆Eth,i/|∆Emag| ≈Qi/ε in our simulations with different initial βi regimes (see legend).
+Right: Inferred ion-to-electron heating ratio Qi/Qe versus the initial ion beta βi from our HVM simulations with injection
+of compressive fluctuations (δB∦= 0) at kinjdi ∼1 (red circles). For comparison, we also report the heating ratio obtained
+with Pegasus++ simulations of Alfv´enic turbulence (δB∥= 0) continuously driven at scales k⊥,injρi ∼0.1–0.2 (black squares;
+from Fig. 15(a) of Arzamasskiy et al. 2023), the ratio Qi/Qe inferred from a 3D PIC simulation of freely decaying compressive
+fluctuations with δB/B ∼1 injected up to kinjdi ∼1 in a βi = βe = 0.25 plasma (green triangle; original simulation from
+Roytershteyn et al. (2015), corresponding heating ratio reported in Table 1 of Roy et al. (2022)), as well as the ion-to-electron
+heating measured by MMS in the Earth’s magnetosheath (orange triangles; from Fig. 6 of Roy et al. 2022). Two curves obtained
+with the fitting formula for Qi/Qe based on hybrid-gyrokinetic simulations (eq.(14) of Kawazura et al. 2020) are also plotted: a
+curve adopting parameters corresponding to our setup, i.e., Te/Ti = βe/βi = 0.1/βi and an estimated ratio of compressible-to-
+incompressible injection power Pcompr/PAW ≈1/3 (yellow dashed line; to be compared with red circles), as well as a curve for
+the Pegasus++ setup, i.e., Te/Ti = 1 and Pcompr/PAW = 0 (grey dashed line; to be compared with black squares).
+The time evolution of the ratio ∆Eth,i/|∆Emag| is shown in Figure 10 (left panel), and develops a plateau when the
+simulations achieve the peak turbulent activity, denoting a saturation of the ion turbulent heating; the ion heating
+Qi/ε for a given simulation is estimated by averaging ∆Eth,i/|∆Emag| over this quasi-steady phase. From these curves
+it is evident that a larger fraction of the cascading magnetic energy is converted into ion heating as βi increases,
+namely from Qi/ε ≃69% at βi = 0.25, to Qi/ε ≃91% at βi = 1 and Qi/ε ≃96% at βi = 4. The percentage of
+ion turbulent heating in our βi = 0.25 case is consistent with the trend obtained by previous hybrid-PIC simulations
+at low βi (obtaining Qi/ε ≈75% at βi = 0.3 and Qi/ε ≈40% at βi ≈0.1; see Arzamasskiy et al. 2019; Cerri et al.
+2021). On the other hand, we observe a larger ion heating in our βi ≥1 cases, when compared to previous results
+obtained with hybrid-PIC simulations in the same βi regimes (obtaining Qi/ε ≈80% at βi = 1 and Qi/ε ≈85%
+at βi = 4; see Arzamasskiy et al. 2019; Arzamasskiy et al. 2023). The trend of ion-to-electron heating ratio Qi/Qe
+versus βi that has been estimated with our 3D hybrid-Vlasov simulations of freely decaying turbulence is reported
+in the right panel of Figure 10 (red circles), where it is compared with some previous results from 3D simulations
+and in-situ observations that are reported in the literature. In particular, we include the heating ratio estimated
+via 3D hybrid-PIC simulations of continuously driven Alfv´enic turbulence (black squares; from Arzamasskiy et al.
+2019; Cerri et al. 2021; Arzamasskiy et al. 2023), as well as the ratio inferred from a 3D full-PIC simulation of
+freely decaying turbulence with large-amplitude injection of compressive fluctuations at ion scales (gree triangle; from
+Roytershteyn et al. 2015; Roy et al. 2022). The different behavior between HVM and Pegasus++ results at βi ≥1,
+is mainly related to the difference in the injection scales and, to a certain extent, to a different nature and amplitude
+of fluctuations that are injected in these two set of simulations. In fact, with respect to our setup, the hybrid-PIC
+simulations continuously drive smaller-amplitude and more anisotropic, purely Alfv´enic fluctuations at scales larger
+than the ion gyroradius scale (viz., transverse magnetic and velocity fluctuations, δB∥= δui,∥= 0, are driven at
+scales up to kmax
+⊥,injρi ∼0.1–0.2 and with k∥,inj/k⊥,inj ∼0.1–0.5, achieving δB⊥,rms/B0 ∼δui⊥,rms/vA ∼0.1–0.5 in the
+quasi-stationary state; some of these parameters vary significantly among different βi regimes). On the other hand,
+our HVM simulations initialize large-amplitude, quasi-isotropic, compressive magnetic-field fluctuations that freely
+decay into a fully developed turbulent state (viz., only magnetic-field fluctuations with δB∦= 0 are initialized with
+δBrms,0/B0 ∼0.5 and at scales up to kmax
+inj di ∼1, then decaying to a level δBrms/B0 ∼0.3 around peak turbulent
+activity). In that context, the heating ratio that we obtain at βi = 0.25 seems to align well with the result obtained
+
+14
+by a 3D full-PIC simulation with the same ion beta in which compressive fluctuations of amplitude δB/B ∼1 were
+injected up to kmax
+inj di ∼1 (Roytershteyn et al. 2015; Roy et al. 2022). The slightly lower value of Qi/Qe observed in
+the PIC run is likely due to a combination of two factors. One is the fact that the PIC simulation adopts an electron
+beta of βe = 0.25, which is larger than the βe = 0.1 used in our setup, and the other is that the authors employ an
+even smaller reduced mass ratio of mi/me = 50 (while we use mi/me = 100). These two effects combine to reduce
+significantly the separation of scales between ρi and ρe in the PIC simulation (namely, ρi/ρe ≈7, while ρi/ρe ≈16
+in our setup), thus enabling non-negligible electron heating close to the ion scales and therefore reducing the ion-to-
+electron heating ratio with respect to what is estimated with our simulations. As outlined in Section 2.3, our choice of
+injection properties and plasma parameters is motivated by several observations in the Earth’s magnetosheath, past
+the bow shock; and in general, it can be relevant for those space and astrophysical environments where several plasma
+instabilities may concur in directly injecting fluctuations’ energy close to the ion scales. To better quantify this aspect
+in the context of the present study, the right panel of Figure 10 also includes the ion-to-electron heating ratio measured
+in-situ by the MMS mission within the Earth’s magnetosheath (orange triangles; from Roy et al. 2022). Comparing
+these Qi/Qe measurements from MMS with our HVM results, one can see that there is a qualitative agreement between
+the trend of the two set of data and, in particular, a more quantitative agreement at large ion beta, βi ∼4 (where
+the HVM simulations better match the Earth’s magnetosheath conditions). We also mention that, interestingly, MMS
+measurements of Qi/Qe in the βi ∼1 regime seem to be in line with the heating ratio associated to purely Alfv´enic
+turbulence obtained with hybrid-PIC simulations (Arzamasskiy et al. 2019). This latter observation, together with
+the fact that MMS measurements agree with the results from our simulation at βi ∼4, potentially calls for a more
+detailed analysis and classification of the various MMS intervals used in Roy et al. (2022), which, at a given βi, may
+be dominated by turbulent fluctuations of different nature. In addition to the above, we mention also the work of
+Roy et al. (2024), where they studied the local heating of a reconnecting current sheet, showing more electron than
+ion heating occurring in electron-only reconnection sites, i.e., Qi < Qe. The discrepancy between such heating ratio
+and the results obtained from our simulations and from MMS measurements (Roy et al. 2022), for which Qi > Qe,
+can be understood in terms of the simulated scales. In fact, to estimate Qi/Qe, Roy et al. (2024) only considered the
+local reconnection sites, which are electron-scale structures where the ions are almost undisturbed. As a result, their
+set up does not account for the ion heating occurring in the turbulent fluctuations that are populating the volume
+outside the very small-scale electron-only reconnection sites. Our simulations suggest that triggering electron-only
+reconnection in a larger-scale turbulent system requires injecting fluctuations at scales comparable to ρi, leading to
+significant ion heating (e.g., stochastic heating), which eventually dominates over the very local electron heating due
+to electron-only reconnection. Finally, for completeness, we also include two lines obtained with the fitting formula
+for Qi/Qe based on hybrid-gyrokinetic simulations (gyrokinetic ions and fluid electrons; see eq.(14) of Kawazura et al.
+2020); the yellow dashed line (to be compared with red circles) represents the prediction obtained adopting plasma
+parameters corresponding to our setup, i.e., Te/Ti = βe/βi = 0.1/βi and a ratio of compressible-to-incompressible
+injection power that in our simulations has been estimated to be Pcompr/PAW ≈1/3, while the grey dashed line (to be
+compared with black squares) represents the prediction for the heating ratio in purely Alfv´enic turbulence pertaining
+to the hyrbid-PIC simulations, i.e., Te/Ti = 1 and Pcompr/PAW = 0. When comparing predictions for Qi/Qe based on
+hybrid-gyrokinetics with the corresponding results from hybrid-kinetic simulations (yellow dashed line vs red circles,
+and grey dashed line vs black squares), one can see that the former almost always underestimate the heating ratio by
+an order of magnitude or more, depending on the case; the only exception to this behaviour being the case of purely
+Alfv´enic turbulence, where the predictions overestimate the simulation results by nearly an order of magnitude at
+high βi. The reason for the discrepancy between the analytical predictions and the results from hybrid-kinetic (and
+full-kinetic) simulations and MMS measurements is due to the fact that the model by Kawazura et al. (2020) is based
+on the gyrokinetic ordering (see, e.g., Schekochihin et al. 2009) which only retains a limited number of ion-heating
+mechanisms, namely the parallel heating associated to ion-Landau damping (iLD) and transit-time damping (TTD;
+Barnes 1966) as collisionless damping mechanism for the fluctuations (plus finite-collisionality heating arising from
+nonlinear phase mixing). Therefore, by neglecting perpendicular ion-heating mechanisms such as stochastic heating
+and cyclotron heating, the hybrid-gyrokinetic model will inevitably underestimate Qi with respect to a hybrid-kinetic
+model (especially at βi ≲1).
+To summarize, our results thus suggest that, as βi increases, a larger fraction of turbulent energy is channeled
+into ion heating when fluctuations are excited close to the ion scales—and that this happens despite a sub-ion-scale
+dynamics that is better described by the EMHD regime at larger βi, and the consequent prevalence of electron-only
+
+15
+reconnection events. Moreover, such ion heating is strongly anisotropic with respect to the (local) direction of the
+magnetic field at βi ≤1 (occurring mostly in the perpendicular direction, Ti,⊥≫Ti,∥), while it is only moderately
+anisotropic for βi = 4 (viz., Ti,⊥≳Ti,∥). The strongly anisotropic heating at βi ≲1 can be interpreted as the result two
+dominant perpendicular-heating processes: ion stochastic heating (iSH) and ion cyclotron heating (iCH). In fact, iSH is
+strongly sensitive to the magnetic-fluctuation amplitude at the ion gyro-scale δBρ/B (see discussion in §4 of Cerri et al.
+2021, and references therein), and injecting fluctuations with amplitudes δB/B ∼0.3 at k⊥di ∼1 can significantly
+enhance this mechanism. On the other hand, injecting fluctuations with non-negligible k∥di wavevectors, also produces
+favourable conditions for iCH to occur (e.g., Hollweg and Isenberg 2002, and references therein). The less-aniostropic
+heating in our βi = 4 simulation can instead be explained by the enhancement of both ion-cyclotron heating in the
+perpendicular direction (again, because of finte-k∥effects; ion stochastic heating is instead suppressed at large βi, see
+Chandran et al. 2010; Cerri et al. 2021) and transit-time damping (TTD; Barnes 1966) in the parallel direction. In
+fact, TTD damping is mediated by the magnetic-mirror force and our simulations exhibit an increasingly important
+magnetic compressibility at sub-ion scales as βi increases (Figure 3, left panel). We also note that, although gyrokinetics
+operates in a completely different regime than the one investigated here, a larger parallel heating of ions due to TTD
+of compressive fluctuations is consistent with heating models based on hybrid-gyrokinetic simulations (Kawazura et al.
+2020); and that also ion Landau damping (iLD) of KAW/IKAW fluctuations contributes to parallel ion heating in all
+HVM simulations, being more important at larger βi (e.g., see Howes 2010; Kunz et al. 2018; Kawazura et al. 2020).
+4. CONCLUSIONS
+In this paper, we focused on two main objectives. Firstly, we examined how the occurrence of electron-only recon-
+nection can be triggered in kinetic-range turbulence. This unique form of reconnection is characterized by an outflow
+predominantly carried by electrons alone and has been recently observed in various regions in the near-Earth’s environ-
+ment suach as the magnetosheath (Phan et al. 2018; Stawarz et al. 2019; Stawarz et al. 2022), the magnetopause (Huang
+et al. 2021), and in the magnetotail (Wang et al. 2020). Secondly, we explored how turbulence conditions that favour
+the emergence of electron-only reconnection impact the turbulent heating of ions. To that end, we conducted 3D
+hybrid-Vlasov simulations of sub-ion-scale plasma turbulence with quasi-isotropic, compressible injection close to the
+ion scales. The fully kinetic ions are coupled to fluid electrons through a generalized Ohm’s law in which electron iner-
+tia terms provides the physical mechanism for collisionless magnetic reconnection. We have considered three different
+ion beta values, βi = 0.25, 1, 4, and ion-to-electron temperature ratios τ = T0i/T0e = 2.5, 10, 40, respectively. This
+enable use to probe regimes where ρi < di, ρi = di, and ρi > di, respectively, and further disentangle the role of the ion
+Larmor radius scale ρi with respect to the ion inertial length di. Moreover, the values of τ > 1 are such that de > ρe
+always holds. These simulations are initialized by injecting fluctuations with δBrms/B0 ∼0.5 close the ion inertial
+scale, within the range 0.33 ≲kinjdi ≲1 (i.e., 19 ≲λinj/di ≲6). Our work follows on that of Califano et al. (2020)
+in 2.5D and the initialization reflects conditions similar to those found in the magnetosheath, where ions are typically
+hotter than electrons, τ > 1, and the correlation length of the turbulence exhibiting amplitudes δB/B ∼0.5–1 is
+estimated to be less than 20di (Chen and Boldyrev 2017; Stawarz et al. 2022).
+When turbulence is fully developed, the B⊥spectrum exhibits a ∝k−8/3
+⊥
+scaling at scales d−1
+i
+≲k⊥< d−1
+e , as
+predicted by intermittency corrected kinetic-Alfv´en wave (KAW) turbulence (Boldyrev and Perez 2012) and also
+observed in 3D kinetic simulations (e.g., Cerri et al. 2019, and references therein). At smaller scales, starting slightly
+above k⊥de ≈1, the B⊥spectrum steepens to k−11/3
+⊥
+, compatible with inertial kinetic-Alfv´en wave (IKAW) and inertial
+whistler wave (IWW) turbulence (Chen and Boldyrev 2017). These spectral slopes are found to be consistent over
+the range of βi values that we have investigated. Analysis of the scale-dependent magnetic compressibility, δB2
+∥/δB2
+⊥,
+indeed reveals a transition from KAW to IKAW and, subsequently, to IWW type of fluctuations as the energy cascades
+across k⊥de ∼1. In the KAW/IKAW regime, density fluctuations are significant, while in whistler turbulence (and
+EMHD regime), they become negligible.
+Our simulations show a drop in the density spectrum at sub-ion scales
+particularly pronounced for βi = 4. This suggests a more negligible ions’ response and a more effective transition into
+the EMHD regime at sub-ion scales for larger βi, which in turn represents the premise to efficiently develop electron-
+only reconnection events. The velocity spectra show a noticeable decoupling between ions and electrons, which is
+indeed more prominent as βi increases, with less energy being transferred to the small scales of both parallel and
+perpendicular ion velocities. This decoupling arises due to ions becoming less mobile, thus inhibiting the formation of
+ion outflows during reconnection events, while electron outflows persist within an electron dissipation region (EDR).
+
+16
+In our setup, ion heating turns out to be significantly anisotropic at βi ≤1, with ions preferentially gaining thermal
+energy perpendicular to the magnetic-field direction (i.e., Ti,⊥> Ti,∥), while it becomes only marginally anisotropic
+for βi = 4 (i.e., Ti,⊥≳Ti,∥).
+This is the result of ion stochastic heating (iSH) and ion cyclotron heating (iCH)
+both being the dominant heating processes at βi ≲1 (these mechanisms induce only perpendicular heating, while
+ion Landau damping (iLD) that would provide parallel heating is a subdominant process in low-βi turbulence; see,
+e.g., Arzamasskiy et al. 2019; Cerri et al. 2021). At βi = 4, instead, a comparable role of iSH/iCH and transtit-time
+damping (TTD; which is driven by the enhanced magnetic compressibility, δB2
+∥/δB2
+⊥, of sub-ion-scale fluctuations at
+larger βi) provide significant heating both perpendicular and parallel to the magnetic-field direction, respectively. This
+βi-dependent anisotropic heating is found to be also consistent with the ion-cyclotron instability (iCI) possibly playing
+a relevant role in confining the plasma temperature anisotropy Ti,⊥/Ti,∥within values that belong to a marginally
+stable range for that instability.
+Our results also show that a larger fraction of cascading magnetic energy converts into ion heating as βi increases.
+Specifically, at βi = 0.25, 1, and 4, we observe Qi/ε ≈69%, 91%, and 96%, respectively. For βi = 0.25, the ion heating
+estimated from our simulation is consistent with previous results obtained by hybrid-PIC simulations of anisotropic
+Alfv´enic turbulence at βi < 1 (Arzamasskiy et al. 2019; Cerri et al. 2021) as well as with full-PIC simulations of large-
+amplitude, compressive turbulence with small-scale injection (Roytershteyn et al. 2015; Roy et al. 2022). However, for
+βi ≥1, we observe an enhanced ion heating with respect to previous simulations of Alfv´enic turbulence in the same
+βi regimes (Arzamasskiy et al. 2019; Arzamasskiy et al. 2023). This emphasize the strong sensitivity of ion heating
+in collisionless space and astrophysical plasmas to the separation between injection scales λinj and the ion gyroradius
+ρi, with a possibly weaker dependence on the separation between λinj and di (i.e., while our simulations all have a
+fixed separation of scales in terms of di that is smaller than the one employed in hybrid-PIC simulations, the scale
+separation with respect to ρi in our βi = 0.25 simulation is similar to the one employed in these previous simulations
+and we indeed find an ion heating compatible with them). This separation of scales, as well as finite-k∥effects, can thus
+strongly affect how the ion-to-electron heating ratio, Qi/Qe, depends on the ion plasma beta, βi (see, e.g., discussion
+in Howes 2024). Interestingly, our ion-to-electron heating ratio for βi = 4 is in good agreement with the Qi/Qe inferred
+from MMS measurements within the Earth’s magnetosheath in the same range of ion plasma beta (Roy et al. 2022),
+further validating the applicability of our simulation results to such environment and, in general, to the high-βi regime.
+Overall, the present study provides new insights for understanding how electron-only reconnection can emerge in
+fully turbulent, collisionless plasmas such as the Earth’s magnetosheath and the bow shock transition region, where
+small scale current sheets decoupled from the ion dynamics have been discovered (and are now routinely observed)
+by MMS. In particular, we have disentangled the role of ion micro-scales, showing that the relevant parameter to
+trigger electron-only reconnection is the separation between the injection scales and the ion gyroradius ρi (rather than
+the ion inertial length di). Moreover, the results regarding ion turbulent heating also have implications for other
+collisionless astrophysical environments where various plasma processes, like micro-instabilities or shocks, could inject
+energy directly near the ion-kinetic scales. This is likely the case, for instance, in high-β plasmas such as those found
+in the intracluster medium (ICM) of galaxy clusters.
+The authors warmly acknowledge constructive comments from the anonymous referee that helped to improve the
+quality of the manuscript. We also kindly acknowledge comments and references received from R. Bandyopadhyay,
+following our posting of the original manuscript to arXiv. Computations were performed on the HPC system Raven at
+the Max Planck Computing and Data Facility. S.S.C. is supported by the French government, through the UCAJEDI
+Investments in the Future project managed by the National Research Agency (ANR) with the reference number
+ANR-15-IDEX-01, and by the ANR grant “MiCRO” with the reference number ANR-23-CE31-0016.
+1
+2
+3
+4
+5
+6
+REFERENCES
+Alexandrova, O., Chen, C. H. K., Sorriso-Valvo, L.,
+Horbury, T. S., and Bale, S. D. (2013). Solar Wind
+Turbulence and the Role of Ion Instabilities. SSRv,
+178:101–139.
+Alexandrova, O., Saur, J., Lacombe, C., Mangeney, A.,
+Mitchell, J., Schwartz, S. J., and Robert, P. (2009).
+Universality of Solar-Wind Turbulent Spectrum from
+MHD to Electron Scales. PhRvL, 103(16):165003.
+
+17
+Arr´o, G., Califano, F., and Lapenta, G. (2020). Statistical
+properties of turbulent fluctuations associated with
+electron-only magnetic reconnection. A&A, 642:A45.
+Arzamasskiy, L., Kunz, M. W., Chandran, B. D. G., and
+Quataert, E. (2019). Hybrid-kinetic Simulations of Ion
+Heating in Alfv´enic Turbulence. ApJ, 879(1):53.
+Arzamasskiy, L., Kunz, M. W., Squire, J., Quataert, E.,
+and Schekochihin, A. A. (2023). Kinetic turbulence in
+collisionless high-β plasmas. Phys. Rev. X, 13:021014.
+Astfalk, P. and Jenko, F. (2016). Parallel and oblique
+firehose instability thresholds for bi-kappa distributed
+protons. Journal of Geophysical Research (Space
+Physics), 121(4):2842–2852.
+Bale, S. D., Kasper, J. C., Howes, G. G., Quataert, E.,
+Salem, C., and Sundkvist, D. (2009). Magnetic
+Fluctuation Power Near Proton Temperature Anisotropy
+Instability Thresholds in the Solar Wind. PhRvL,
+103(21):211101.
+Bandyopadhyay, R., Qudsi, R. A., Gary, S. P., Matthaeus,
+W. H., Parashar, T. N., Maruca, B. A., Roytershteyn, V.,
+Chasapis, A., Giles, B. L., Gershman, D. J., Pollock,
+C. J., Russell, C. T., Strangeway, R. J., Torbert, R. B.,
+Moore, T. E., and Burch, J. L. (2022). Interplay of
+turbulence and proton-microinstability growth in space
+plasmas. Physics of Plasmas, 29(10):102107.
+Barnes, A. (1966). Collisionless Damping of Hydromagnetic
+Waves. Physics of Fluids, 9(8):1483–1495.
+Betar, H. and Del Sarto, D. (2023). Asymptotic scalings of
+fluid, incompressible “electron-only” reconnection
+instabilities: Electron-magnetohydrodynamics tearing
+modes. Physics of Plasmas, 30(7):072111.
+Birn, J., Drake, J. F., Shay, M. A., Rogers, B. N., Denton,
+R. E., Hesse, M., Kuznetsova, M., Ma, Z. W.,
+Bhattacharjee, A., Otto, A., and Pritchett, P. L. (2001).
+Geospace environmental modeling (gem) magnetic
+reconnection challenge. Journal of Geophysical Research:
+Space Physics, 106(A3):3715–3719.
+Boldyrev, S. and Perez, J. C. (2012). Spectrum of
+Kinetic-Alfv´en Turbulence. ApJL, 758:L44.
+Borgogno, D., Grasso, D., Achilli, B., Rom´e, M., and
+Comisso, L. (2022). Coexistence of Plasmoid and
+Kelvin-Helmholtz Instabilities in Collisionless Plasma
+Turbulence. ApJ, 929(1):62.
+Brandenburg, A. and Lazarian, A. (2013). Astrophysical
+Hydromagnetic Turbulence. SSRv, 178(2-4):163–200.
+Bruno, R. and Carbone, V. (2013). The Solar Wind as a
+Turbulence Laboratory. LRSP, 10.
+Bulanov, S. V., Pegoraro, F., and Sakharov, A. S. (1992).
+Magnetic reconnection in electron
+magnetohydrodynamics. , 4:2499–2508.
+Califano, F., Cerri, S. S., Faganello, M., Laveder, D., Sisti,
+M., and Kunz, M. W. (2020). Electron-only reconnection
+in plasma turbulence. , 8:317.
+Carbone, V., Veltri, P., and Mangeney, A. (1990).
+Coherent structure formation and magnetic field line
+reconnection in magnetohydrodynamic turbulence. ,
+2:1487–1496.
+Cerri, S. S., Arzamasskiy, L., and Kunz, M. W. (2021). On
+Stochastic Heating and Its Phase-space Signatures in
+Low-beta Kinetic Turbulence. ApJ, 916(2):120.
+Cerri, S. S. and Califano, F. (2017). Reconnection and
+small-scale fields in 2D-3V hybrid-kinetic driven
+turbulence simulations. , 19(2):025007.
+Cerri, S. S. and Camporeale, E. (2020). Space-filter
+techniques for quasi-neutral hybrid-kinetic models.
+Physics of Plasmas, 27(8):082102.
+Cerri, S. S., Franci, L., Califano, F., Landi, S., and
+Hellinger, P. (2017a). Plasma turbulence at ion scales: a
+comparison between particle in cell and Eulerian
+hybrid-kinetic approaches. J. Phys. (Paris),
+83(2):705830202.
+Cerri, S. S., Groˇselj, D., and Franci, L. (2019). Kinetic
+plasma turbulence: recent insights and open questions
+from 3D3V simulations. , 6:64.
+Cerri, S. S., Passot, T., Laveder, D., Sulem, P. L., and
+Kunz, M. W. (2022). Turbulent Regimes in Collisions of
+3D Alfv´en-wave Packets. ApJ, 939(1):36.
+Cerri, S. S., Servidio, S., and Califano, F. (2017b). Kinetic
+Cascade in Solar-wind Turbulence: 3D3V Hybrid-kinetic
+Simulations with Electron Inertia. ApJL, 846:L18.
+Chandran, B. D. G., Li, B., Rogers, B. N., Quataert, E.,
+and Germaschewski, K. (2010). Perpendicular Ion
+Heating by Low-frequency Alfv´en-wave Turbulence in the
+Solar Wind. ApJ, 720(1):503–515.
+Chen, C. H. K. and Boldyrev, S. (2017). Nature of Kinetic
+Scale Turbulence in the Earth’s Magnetosheath. ApJ,
+842:122.
+Chen, C. H. K., Matteini, L., Schekochihin, A. A., Stevens,
+M. L., Salem, C. S., Maruca, B. A., Kunz, M. W., and
+Bale, S. D. (2016). Multi-species Measurements of the
+Firehose and Mirror Instability Thresholds in the Solar
+Wind. ApJL, 825(2):L26.
+Comisso, L., Huang, Y.-M., Lingam, M., Hirvijoki, E., and
+Bhattacharjee, A. (2018). Magnetohydrodynamic
+Turbulence in the Plasmoid-mediated Regime. ApJ,
+854:103.
+Daughton, W., Scudder, J., and Karimabadi, H. (2006).
+Fully kinetic simulations of undriven magnetic
+reconnection with open boundary conditions. Physics of
+Plasmas, 13(7):072101.
+
+18
+Dong, C., Wang, L., Huang, Y.-M., Comisso, L., and
+Bhattacharjee, A. (2018). Role of the Plasmoid
+Instability in Magnetohydrodynamic Turbulence.
+PhRvL, 121(16):165101.
+Dong, C., Wang, L., Huang, Y.-M., Comisso, L.,
+Sandstrom, T. A., and Bhattacharjee, A. (2022).
+Reconnection-driven energy cascade in
+magnetohydrodynamic turbulence. Science Advances,
+8(49):eabn7627.
+Finelli, F., Cerri, S. S., Califano, F., Pucci, F., Laveder, D.,
+Lapenta, G., and Passot, T. (2021). Bridging hybrid-
+and full-kinetic models with Landau-fluid electrons. I. 2D
+magnetic reconnection. A&A, 653:A156.
+Franci, L., Cerri, S. S., Califano, F., Landi, S., Papini, E.,
+Verdini, A., Matteini, L., Jenko, F., and Hellinger, P.
+(2017). Magnetic Reconnection as a Driver for a
+Sub-ion-scale Cascade in Plasma Turbulence. ApJL,
+850:L16.
+Franci, L., Landi, S., Verdini, A., Matteini, L., and
+Hellinger, P. (2018). Solar wind turbulent cascade from
+mhd to sub-ion scales: Large-size 3d hybrid
+particle-in-cell simulations. ApJ, 853(1):26.
+Franci, L., Papini, E., Micera, A., Lapenta, G., Hellinger,
+P., Sarto, D. D., Burgess, D., and Landi, S. (2022).
+Anisotropic electron heating in turbulence-driven
+magnetic reconnection in the near-sun solar wind. The
+Astrophysical Journal, 936(1):27.
+Fujimoto, K. and Machida, S. (2006). A generation
+mechanism of electrostatic waves and subsequent electron
+heating in the plasma sheet–lobe boundary region during
+magnetic reconnection. Journal of Geophysical Research:
+Space Physics, 111(A9).
+Groˇselj, D., Mallet, A., Loureiro, N. F., and Jenko, F.
+(2018). Fully Kinetic Simulation of 3D Kinetic Alfv´en
+Turbulence. PhRvL, 120(10):105101.
+Guan, Y., Lu, Q., Lu, S., Huang, K., and Wang, R. (2023).
+Reconnection rate and transition from ion-coupled to
+electron-only reconnection. The Astrophysical Journal,
+958(2):172.
+Hellinger, P., Tr´avn´ıˇcek, P., Kasper, J. C., and Lazarus,
+A. J. (2006). Solar wind proton temperature anisotropy:
+Linear theory and WIND/SWE observations. Geophys.
+Res. Lett., 33:L09101.
+Hesse, M., Kuznetsova, M., and Birn, J. (2001).
+Particle-in-cell simulations of three-dimensional
+collisionless magnetic reconnection. Journal of
+Geophysical Research: Space Physics,
+106(A12):29831–29841.
+Hollweg, J. V. and Isenberg, P. A. (2002). Generation of
+the fast solar wind: A review with emphasis on the
+resonant cyclotron interaction. Journal of Geophysical
+Research (Space Physics), 107(A7):1147.
+Howes, G. G. (2010). A prescription for the turbulent
+heating of astrophysical plasmas. MNRAS,
+409(1):L104–L108.
+Howes, G. G. (2015). The inherently three-dimensional
+nature of magnetized plasma turbulence. Journal of
+Plasma Physics, 81(2):325810203.
+Howes, G. G. (2024). The Fundamental Parameters of
+Astrophysical Plasma Turbulence and its Dissipation:
+Nonrelativistic Limit. arXiv e-prints, page
+arXiv:2402.12829.
+Huang, S. Y., Xiong, Q. Y., Song, L. F., Nan, J., Yuan,
+Z. G., Jiang, K., Deng, X. H., and Yu, L. (2021).
+Electron-only reconnection in an ion-scale current sheet
+at the magnetopause. The Astrophysical Journal,
+922(1):54.
+Huang, Y.-M. and Bhattacharjee, A. (2016). Turbulent
+Magnetohydrodynamic Reconnection Mediated by the
+Plasmoid Instability. ApJ, 818:20.
+Kawazura, Y., Schekochihin, A. A., Barnes, M., TenBarge,
+J. M., Tong, Y., Klein, K. G., and Dorland, W. (2020).
+Ion versus Electron Heating in Compressively Driven
+Astrophysical Gyrokinetic Turbulence. Physical Review
+X, 10(4):041050.
+Kiyani, K. H., Osman, K. T., and Chapman, S. C. (2015).
+Dissipation and heating in solar wind turbulence: from
+the macro to the micro and back again. RSPTA,
+373(2041):20140155–20140155.
+Kunz, M. W., Abel, I. G., Klein, K. G., and Schekochihin,
+A. A. (2018). Astrophysical gyrokinetics: turbulence in
+pressure-anisotropic plasmas at ion scales and beyond.
+J. Phys. (Paris), 84(2):715840201.
+Lazar, M. and Poedts, S. (2014). Instability of the parallel
+electromagnetic modes in Kappa distributed plasmas - II.
+Electromagnetic ion-cyclotron modes. MNRAS,
+437(1):641–648.
+Lele, S. K. (1992). Compact Finite Difference Schemes
+with Spectral-like Resolution. JChPh, 103:16–42.
+Loureiro, N. L. and Boldyrev, S. (2017). Collisionless
+reconnection in magnetohydrodynamic and kinetic
+turbulence. ApJ, 850(2):182.
+Mallet, A. (2020). The onset of electron-only reconnection.
+Journal of Plasma Physics, 86(3):905860301.
+Mallet, A., Schekochihin, A. A., and Chandran, B. D. G.
+(2017). Disruption of Alfv´enic turbulence by magnetic
+reconnection in a collisionless plasma. JPlPh,
+83(6):905830609.
+
+19
+Maruca, B. A., Chasapis, A., Gary, S. P., Bandyopadhyay,
+R., Chhiber, R., Parashar, T. N., Matthaeus, W. H.,
+Shay, M. A., Burch, J. L., Moore, T. E., Pollock, C. J.,
+Giles, B. J., Paterson, W. R., Dorelli, J., Gershman,
+D. J., Torbert, R. B., Russell, C. T., and Strangeway,
+R. J. (2018). MMS Observations of Beta-dependent
+Constraints on Ion Temperature Anisotropy in Earth’s
+Magnetosheath. ApJ, 866(1):25.
+Maruca, B. A., Kasper, J. C., and Gary, S. P. (2012).
+Instability-driven Limits on Helium Temperature
+Anisotropy in the Solar Wind: Observations and Linear
+Vlasov Analysis. ApJ, 748(2):137.
+Matteini, L., Landi, S., Hellinger, P., Pantellini, F.,
+Maksimovic, M., Velli, M., Goldstein, B. E., and Marsch,
+E. (2007). Evolution of the solar wind proton
+temperature anisotropy from 0.3 to 2.5 AU.
+Geophys. Res. Lett., 34(20):L20105.
+Mu˜noz, P. A., Jain, N., Farzalipour Tabriz, M., Rampp, M.,
+and B¨uchner, J. (2023). Electron inertia effects in 3D
+hybrid-kinetic collisionless plasma turbulence. Physics of
+Plasmas, 30(9):092302.
+Papini, E., Franci, L., Landi, S., Verdini, A., Matteini, L.,
+and Hellinger, P. (2019). Can Hall
+Magnetohydrodynamics Explain Plasma Turbulence at
+Sub-ion Scales? ApJ, 870:52.
+Passot, T., Sulem, P. L., and Tassi, E. (2017).
+Electron-scale reduced fluid models with gyroviscous
+effects. Journal of Plasma Physics, 83(4):715830402.
+Passot, T., Sulem, P. L., and Tassi, E. (2018). Gyrofluid
+modeling and phenomenology of low-βe Alfv´en wave
+turbulence. Physics of Plasma, 25(4):042107.
+Phan, T. D., Eastwood, J. P., Shay, M. A., Drake, J. F.,
+Sonnerup, B. U. ¨O., Fujimoto, M., Cassak, P. A.,
+Øieroset, M., Burch, J. L., Torbert, R. B., Rager, A. C.,
+Dorelli, J. C., Gershman, D. J., Pollock, C., Pyakurel,
+P. S., Haggerty, C. C., Khotyaintsev, Y., Lavraud, B.,
+Saito, Y., Oka, M., Ergun, R. E., Retino, A., Le Contel,
+O., Argall, M. R., Giles, B. L., Moore, T. E., Wilder,
+F. D., Strangeway, R. J., Russell, C. T., Lindqvist, P. A.,
+and Magnes, W. (2018). Electron magnetic reconnection
+without ion coupling in Earth’s turbulent
+magnetosheath. Nature, 557:202–206.
+Pucci, F., Servidio, S., Sorriso-Valvo, L., Olshevsky, V.,
+Matthaeus, W. H., Malara, F., Goldman, M. V.,
+Newman, D. L., and Lapenta, G. (2017). Properties of
+Turbulence in the Reconnection Exhaust: Numerical
+Simulations Compared with Observations. ApJ,
+841(1):60.
+Pucci, F., Velli, M., Shi, C., Singh, K. A. P., Tenerani, A.,
+Alladio, F., Ambrosino, F., Buratti, P., Fox, W.,
+Jara-Almonte, J., Ji, H., Yamada, M., Yoo, J., Okamura,
+S., Ergun, R., Hoilijoki, S., and Schwartz, S. (2020).
+Onset of fast magnetic reconnection and particle
+energization in laboratory and space plasmas. Journal of
+Plasma Physics, 86(6):535860601.
+Quataert, E. and Gruzinov, A. (1999). Turbulence and
+Particle Heating in Advection-dominated Accretion
+Flows. ApJ, 520:248–255.
+Roy, S., Bandyopadhyay, R., Matthaeus, W. H., and
+Pyakurel, P. S. (2024). Energy dissipation in
+electron-only reconnection. The Astrophysical Journal,
+964(1):44.
+Roy, S., Bandyopadhyay, R., Yang, Y., Parashar, T. N.,
+Matthaeus, W. H., Adhikari, S., Roytershteyn, V.,
+Chasapis, A., Li, H., Gershman, D. J., Giles, B. L., and
+Burch, J. L. (2022). Turbulent energy transfer and
+proton–electron heating in collisionless plasmas. The
+Astrophysical Journal, 941(2):137.
+Roytershteyn, V., Boldyrev, S., Delzanno, G. L., Chen, C.
+H. K., Groˇselj, D., and Loureiro, N. F. (2019).
+Numerical Study of Inertial Kinetic-Alfv´en Turbulence.
+ApJ, 870(2):103.
+Roytershteyn, V., Karimabadi, H., and Roberts, A. (2015).
+Generation of magnetic holes in fully kinetic simulations
+of collisionless turbulence. Philosophical Transactions of
+the Royal Society of London Series A,
+373(2041):20140151–20140151.
+Sahraoui, F., Goldstein, M. L., Robert, P., and
+Khotyaintsev, Y. V. (2009). Evidence of a Cascade and
+Dissipation of Solar-Wind Turbulence at the Electron
+Gyroscale. PhRvL, 102(23):231102.
+Sahraoui, F., Hadid, L., and Huang, S. (2020).
+Magnetohydrodynamic and kinetic scale turbulence in
+the near-Earth space plasmas: a (short) biased review.
+RvMPP, 4(1):4.
+Schekochihin, A. A. and Cowley, S. C. (2006). Turbulence,
+magnetic fields, and plasma physics in clusters of
+galaxies. Physics of Plasma, 13(5):056501–056501.
+Schekochihin, A. A., Cowley, S. C., Dorland, W., Hammett,
+G. W., Howes, G. G., Quataert, E., and Tatsuno, T.
+(2009). Astrophysical Gyrokinetics: Kinetic and Fluid
+Turbulent Cascades in Magnetized Weakly Collisional
+Plasmas. ApJS, 182:310–377.
+
+20
+Sharma Pyakurel, P., Shay, M. A., Phan, T. D., Matthaeus,
+W. H., Drake, J. F., TenBarge, J. M., Haggerty, C. C.,
+Klein, K. G., Cassak, P. A., Parashar, T. N., Swisdak,
+M., and Chasapis, A. (2019). Transition from
+ion-coupled to electron-only reconnection: Basic physics
+and implications for plasma turbulence. Physics of
+Plasmas, 26(8):082307.
+Sisti, M., Fadanelli, S., Cerri, S. S., Faganello, M., Califano,
+F., and Agullo, O. (2021). Characterizing current
+structures in 3D hybrid-kinetic simulations of plasma
+turbulence. A&A, 655:A107.
+Squire, J., Meyrand, R., Kunz, M. W., Arzamasskiy, L.,
+Schekochihin, A. A., and Quataert, E. (2022).
+High-frequency heating of the solar wind triggered by
+low-frequency turbulence. Nature Astronomy.
+Stawarz, J. E., Eastwood, J. P., Phan, T. D., Gingell, I. L.,
+Pyakurel, P. S., Shay, M. A., Robertson, S. L., Russell,
+C. T., and Le Contel, O. (2022). Turbulence-driven
+magnetic reconnection and the magnetic correlation
+length: Observations from Magnetospheric Multiscale in
+Earth’s magnetosheath. Physics of Plasmas,
+29(1):012302.
+Stawarz, J. E., Eastwood, J. P., Phan, T. D., Gingell, I. L.,
+Shay, M. A., Burch, J. L., Ergun, R. E., Giles, B. L.,
+Gershman, D. J., Le Contel, O., Lindqvist, P. A., Russell,
+C. T., Strangeway, R. J., Torbert, R. B., Argall, M. R.,
+Fischer, D., Magnes, W., and Franci, L. (2019).
+Properties of the Turbulence Associated with
+Electron-only Magnetic Reconnection in Earth’s
+Magnetosheath. ApJL, 877(2):L37.
+Told, D., Jenko, F., TenBarge, J. M., Howes, G. G., and
+Hammett, G. W. (2015). Multiscale Nature of the
+Dissipation Range in Gyrokinetic Simulations of Alfv´enic
+Turbulence. PhRvL, 115(2):025003.
+Valentini, F., Tr´avn´ıˇcek, P., Califano, F., Hellinger, P., and
+Mangeney, A. (2007). A hybrid-Vlasov model based on
+the current advance method for the simulation of
+collisionless magnetized plasma. JChPh, 225:753–770.
+Vega, C., Roytershteyn, V., Delzanno, G. L., and Boldyrev,
+S. (2020). Electron-only Reconnection in Kinetic-Alfv´en
+Turbulence. ApJL, 893(1):L10.
+Vega, C., Roytershteyn, V., Delzanno, G. L., and Boldyrev,
+S. (2023). Electron-scale current sheets and energy
+dissipation in 3D kinetic-scale plasma turbulence with
+low electron beta. MNRAS, 524(1):1343–1351.
+Wang, R., Lu, Q., Lu, S., Russell, C. T., Burch, J. L.,
+Gershman, D. J., Gonzalez, W., and Wang, S. (2020).
+Physical implication of two types of reconnection electron
+diffusion regions with and without ion-coupling in the
+magnetotail current sheet. Geophysical Research Letters,
+47(21):e2020GL088761. e2020GL088761 2020GL088761.
+Winske, D. (1985). Hybrid simulation codes with
+application to shocks and upstream waves. Space Sci.
+Rev., 42:53–66.
+Zweibel, E. G. and Yamada, M. (2009). Magnetic
+Reconnection in Astrophysical and Laboratory Plasmas.
+ARA&A, 47(1):291–332.

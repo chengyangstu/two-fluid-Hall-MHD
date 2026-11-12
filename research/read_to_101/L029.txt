@@ -1,0 +1,858 @@
+=== PHYSICAL PAGE 1/5 ===
+Los Alamos National Laboratory, an affirmative action/equal opportunity employer, is operated by the University of California for the U.S. Department of  
+Energy under contract W-7405-ENG-36. By acceptance of this article, the publisher recognizes that the U.S. Government retains a nonexclusive, royalty- 
+free license to publish or reproduce the published form of this contribution, or to allow others to do so, for U.S. Government purposes. Los Alamos National 
+Laboratory requests that the publisher identify this article as work performed under the auspices of the U.S. Department of Energy. Los Alamos National Laboratory 
+strongly supports academic freedom and a researcher's right to publish; as an institution, however, the Laboratory does not endorse the  
+viewpoint of a publication or guarantee its technical correctness. 
+FORM 836 (10/96) 
+ 
+LA-UR-01-2484 
+Approved for public release;  
+distribution is unlimited. 
+Title: 
+Hybrid and Hall-MHD Simulations of Collisionless 
+Reconnection: Effects of Plasma Pressure Tensor
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Author(s): 
+Lin Yin, Dan Winske, S. Peter Gary, and 
+Joachim Birn  
+Submitted to: 
+ 
+ 
+ 
+ 
+http://lib-www.lanl.gov/la-pubs/00796071.pdf 
+ 
+
+
+=== PHYSICAL PAGE 2/5 ===
+Proceedings of ISSS-6 (2001): 1–4 c
+ Copernicus Gesellschaft 2001
+ISSS–6
+Hybrid and Hall-MHD Simulations of Collisionless Reconnection:
+Effects of Plasma Pressure Tensor
+Lin Yin1, Dan Winske1, S. Peter Gary2, and Joachim Birn2
+1Applied Physics Division, Los Alamos National Laboratory, Los Alamos, New Mexico, USA
+2Space and Atmospheric Sciences, Los Alamos National Laboratory, Los Alamos, New Mexico, USA
+Abstract. In this study we performed two-dimensional hy-
+brid (particle ions, massless ﬂuid electrons) and Hall-MHD
+simulations of collisionless reconnection in a thin current
+sheet. Both calculations include the full electron pressure
+tensor (instead of a localized resistivity) in the generalized
+Ohm’s law to initiate reconnection, and in both an initial per-
+turbation to the Harris equilibrium is applied. First, electron
+dynamics from the two calculations are compared, and we
+ﬁnd overall agreement between the two calculations in both
+the reconnection rate and the global conﬁguration. To ad-
+dress the issue of how kinetic treatment for the ions affects
+the reconnection dynamics, we compared the ﬂuid-ion dy-
+namics from the Hall-MHD calculation to the particle-ion
+dynamics obtained from the hybrid simulation. The com-
+parison demonstrates that off-diagonal elements of the ion
+pressure tensor are important in correctly modeling the ion
+out-of-plane momentum transport from the X point. It is
+shown that these effects can be modeled efﬁciently using a
+particle Hall-MHD simulation method in which particle ions
+are used in a predictor/corrector to implement the ion gyro-
+radius corrections. We also investigate the micro- macro-
+scale coupling in the magnetotail dynamics by using a new
+integrated approach in which particle Hall-MHD calculations
+are embedded inside a MHD simulation. Initial results of the
+embedded simulation concerning current sheet thinning and
+reconnection dynamics are discussed.
+1
+Introduction
+Fast magnetic reconnection, or the rapid change of magnetic
+topology and release of magnetic energy, is a fundamental
+and ubiquitous process in plasma physics. It arises in many
+plasma phenomena, for example, solar ﬂares, the dynamics
+of the Earth’s magnetotail during a geomagnetic substorm,
+and disruptions in laboratory fusion experiments. During fast
+reconnection, the magnetic ﬁeld self-annihilates in regions
+Correspondence to: lyin@lanl.gov
+where the ﬁeld reverses direction, and the stored magnetic
+energy is released explosively and is converted to particle
+acceleration and heating. Although initiated in a localized
+region near a topological X point, reconnection dramatically
+changes the ﬁeld conﬁguration and the particle orbits on a
+large-scale and is an important plasma transport process.
+In order for reconnection to occur, a dissipative electric
+ﬁeld near the X point is required. An expression for the elec-
+tric ﬁeld, the generalized Ohm’s law, is obtained from the
+electron momentum equation:
+E
+=
+v
+i
+
+B
++
+1
+en
+e
+(J
+
+B
+r
+
+P
+e
+)
+m
+e
+e
+dv
+e
+dt
++
+
+J
+:
+The ﬁrst term is the ideal MHD approximation, in which ions
+and electrons are frozen into and convect together with the
+magnetic ﬂux. However, at the ion inertial length scale near
+the X point, the Hall term (the second term) becomes impor-
+tant. Combining the ﬁrst and second terms yields
+v
+e
+
+B.
+This means that electrons are magnetized and are convect-
+ing with the magnetic ﬁeld, while ions are unmagnetized.
+Thus, at the ion inertial length scale near the X point, ion and
+electron motions decouple. Since the magnetic ﬁeld vanishes
+at the X point, these terms containing the magnetic ﬁeld do
+not contribute to the reconnection electric ﬁeld. The dissipa-
+tive electric ﬁeld near the X point required for reconnection
+is provided by the divergence of the electron pressure ten-
+sor at the ion inertial length scale (Hesse and Winske, 1994;
+Kuznetsova et al., 2000), or by the electron inertia at the
+electron inertial scale (Drake et al., 1997; Biskamp et al.,
+1997; Shay et al., 2001). It has been concluded from hybrid
+and full particle simulations that the electron pressure ten-
+sor contribution to the reconnection electric ﬁeld dominates
+the electron inertia contribution (Hesse and Winske, 1998;
+Kuznetsova et al., 2000; Pritchett, 2001). In a collisionless
+plasma, resistivity from particle-particle collisions is absent,
+and anomalous resistivity arising from wave-particle colli-
+sions is inadequate, thus the last resistive term can be ne-
+glected. Nevertheless, the resistive term has been used as a
+simpliﬁed model to replace the electron pressure tensor term
+
+
+=== PHYSICAL PAGE 3/5 ===
+2
+Yin et al.: Hybrid and Hall-MHD Simulations of Collisionless Reconnection
+or the electron inertia term.
+Various plasma simulation methods, e.g., full-particle (ki-
+netic ions and electrons), hybrid (kinetic ions, ﬂuid elec-
+trons), two-ﬂuid Hall-MHD, and resistive MHD have been
+employed in studying reconnection dynamics near the X point,
+for example, in the recent Geospace Environment Model-
+ing (GEM) reconnection challenge studies (Birn et al., 2001;
+Hesse et al., 2001; Kuznetsova et al., 2001; Ma and Bhat-
+tacharjee, 2001; Pritchett, 2001; Shay et al., 2001). An im-
+portant result of the GEM study and subsequent research is
+that the Hall current is essential to the reconnection dynamics
+and that the reconnection rate is independent of the mecha-
+nism, that is, the divergence of the electron pressure tensor,
+electron inertia, or resistivity, that provides the dissipative
+electric ﬁeld near the X point.
+In the present work, collisionless reconnection in a thin
+current sheet is further studied using two-dimensional hybrid
+and Hall-MHD simulations. Both calculations include the
+full electron pressure tensor in the generalized Ohm’s law to
+initiate reconnection. We neglect resistivity and electron in-
+ertia in this work, so the last two terms in Ohm’s law vanish.
+The time-varying full electron pressure tensor
+P
+e is com-
+puted based on the following equation (Hesse and Winske,
+1994):
+@
+P
+e
+@
+t
+=
+v
+e
+
+r
+P
+e
+P
+e
+r
+
+v
+e
+P
+e
+
+r
+v
+e
+(P
+e
+
+rv
+e
+)
+T
+
+e
+
+(P
+e
+p1)
+:
+In this expression,
+
+e is the electron gyrofrequency, the su-
+perscript
+T is the transpose of the matrix, and
+p
+=
+1
+3
+T
+r(P
+e
+).
+The last term on the right-hand side of this equation repre-
+sents the reduction of the nongyrotropic (off-diagonal) ele-
+ments of the electron pressure tensor and the isotropization
+of the three diagonal elements, and
+ is a parameter corre-
+sponding to a gyrotropization/isotropizationtime of the order
+of electron cyclotron time.
+The Hall-MHD code was developed with numerical meth-
+ods similar to those used in conventional hybrid codes
+(Winske and Quest, 1988; Hesse and Winske, 1994) so that
+direct comparison of the results of the two codes could more
+easily be carried out. Spatial grid quantities in both codes are
+deﬁned on the same set of staggered ﬁnite-difference meshes,
+where the magnetic ﬁeld components are deﬁned at the cen-
+ters of the squares and all other quantities are deﬁned at the
+squares’ vertices. The time differencing follows a conven-
+tional staggered leapfrog method. In the hybrid simulation,
+E and
+B are advanced in time with a predictor-corrector
+scheme (Winske and Quest, 1986). In the Hall-MHD code
+the magnetic ﬁeld
+B is advanced in time using a fourth-order
+Runge-Kutta scheme with subcycling (Winske and Quest,
+1988). In each time step used to advance the ﬂuid moments
+(velocity, density, and pressure), ﬁve to ten substeps are used,
+typically, to update the ﬁelds.
+In our Hall-MHD code a
+smoothing routine is used instead of the conventionalsecond-
+order viscosity (i.e.,
+
+
+r
+2
+v); a sixth order hyperviscous
+dissipation,
+
+
+(r
+6
+x
++
+r
+6
+y
+)B, is employed in the mag-
+netic ﬁeld equation to damp out ﬂuctuations on very short
+spatial scales,
+The simulations are performed in the (x,
+y) plane in which
+^
+x is the direction normal to the sheet and
+^
+y is along the sheet.
+Both calculations employ an initial perturbation to the Harris
+equilibrium
+B
+y
+=
+B
+o
+tanhf[x
+l
+x
+=2]=g, where
+l
+x is the
+width of the simulation domain and
+ is the half-thickness of
+the current sheet. The perturbed normal magnetic ﬁeld
+B
+x
+
+sinf2
+[y
+l
+y
+=2]=l
+y
+g
+exp
+f[x
+l
+x
+=2]
+2
+=
+2
+g, where
+l
+y is the
+length of the simulation domain, ensures the system evolves
+into a nonlinear stage quickly. The boundary conditions are
+periodic on the
+y-boundaries; on the
+x-boundaries the ve-
+locity and ﬁeld components transverse to the local magnetic
+ﬁeld vanish. The hybrid calculation includes uniform back-
+ground ions whose temperature is the same as the sheet ions.
+The lobe plasma beta is 0.2,
+T
+i
+=T
+e
+=
+5 initially. We use
+
+=
+0:4 for a
+10
+
+10
+(c=!
+pi
+)
+2 domain with
+128
+
+128 grids,
+and
+
+=
+0:8 for a
+20
+
+20
+(c=!
+pi
+)
+2 domain with
+256
+
+256
+grids.
+2
+Electron Dynamics
+As in the GEM reconnection challenge studies, we ﬁnd over-
+all agreement between the two calculations in the reconnec-
+tion rate, the global conﬁguration of the currents and the
+ﬁelds, and the properties of the electron pressure (Yin et al.,
+2001a). Here we use our Hall-MHD simulation results to
+demonstrate the scale separations from Ohm’s law. In Fig-
+ure 1, the in-plane magnetic ﬁeld lines are overlaid on the
+color contours of the electric ﬁeld
+E
+z (E
+z have positive val-
+ues in the red regions and negative values in the blue regions).
+The scale size of the localized region at the X point where
+the off-diagonal terms of the electron pressure tensor contri-
+bution
+(@
+P
+e
+xz
+=@
+x
++
+@
+P
+e
+yz
+=@
+y
+) peaks in the
+^
+z direction is
+indicated by the top panel. As a comparison, the spatial struc-
+ture of the
+E
+z from the Hall term
+(1=en)(J
+x
+
+B
+y
+J
+y
+
+B
+x
+)
+is depicted in the middle panel. It shows that while the elec-
+tron pressure tensor effect is important at the X point, in the
+surrounding regions the magnetic ﬁeld strength becomes ﬁ-
+nite, and the Hall term provides the dominant contribution to
+E
+z. Since the
+z component of the Hall term is related to the
+disparities in the ion and electron
+x and
+y velocities, the red
+region surrounding the X point in the middle panel indicates
+the region where the electron ﬂow leads the ion ﬂow and the
+current is carried by the electrons; in contrast, in the blue re-
+gions at the center of the sheet extending toward the O points
+the ion outﬂow leads that of the electrons and the ions be-
+come the current carriers. Other outer regions where the ion
+dynamics contribute are shown in the bottom panel, in which
+the color-coded magnitude of
+(v
+i
+
+B
+) is plotted.
+Results of this study show that in addition to providing the
+reconnection electric ﬁeld at the X point the divergence of the
+electron pressure tensor leads to in-plane electric ﬁelds that
+exert drag forces on the ions as they enter and exit the near-
+X-point region. The in-plane electric ﬁelds are enhanced in
+regions of small transverse scale along the edge of the sheet,
+
+
+=== PHYSICAL PAGE 4/5 ===
+Yin et al.: Hybrid and Hall-MHD Simulations of Collisionless Reconnection
+3
+0
+5
+10
+15
+20
+0
+5
+10
+15
+20
+x
+0
+5
+10
+15
+20
+0
+5
+10
+15
+20
+x
+0
+5
+10
+15
+20
+y
+0
+5
+10
+15
+20
+x
+Fig. 1. Individual contributions to the
+E
+z electric ﬁeld from a Hall-
+MHD run (t
+
+ci
+=
+30): (top panel)
+E
+z
+
+(1=en)(@
+P
+e
+xz
+=@
+x
++
+@
+P
+e
+yz
+=@
+y
+), (middle)
+E
+z
+
+(1=en)(J
+x
+
+B
+y
+J
+y
+
+B
+x
+), and
+(bottom)
+E
+z
+
+(v
+i
+
+B
+). The minimum and maximum values
+for the top, middle, and bottom panels are (-0.022, 0.050), (-0.024,
+0.030), and (-0.015, 0.041), respectively.
+and the resulting narrow electron current layers are demon-
+strated clearly.
+3
+Ion Dynamics and Particle Hall-MHD Simulation
+Comparison of the ion dynamics from the two types of sim-
+ulations reveals that while the ion density and ion in-plane
+velocities
+v
+x and
+v
+y from the two calculations are in general
+agreement, the spatial conﬁguration of the out-of-plane ion
+velocity
+v
+z shows a signiﬁcant difference. The global struc-
+ture of
+v
+z from the hybrid simulation indicates a reduction
+of the ion
+z-momentum at the X point as reconnection pro-
+ceeds. In contrast, the spatial conﬁguration of
+v
+z from the
+Hall-MHD run remains peaked at the X point at the end of
+the run. This difference is clearly seen by comparing the top
+panel (v
+z from the hybrid run) to the middle panel (v
+z from
+the Hall-MHD run) in Figure 2. The lack of
+z-momentum
+transport in the Hall run is due to the absence of the ion gyro-
+orbits. In the reconnection ﬁeld
+E
+z the ions at the X point are
+accelerated and gain
+z-momentum. As the ions move out of
+the X point, they gyrate in the reconnection
+B
+x ﬁeld with
+an average gyro-radius of several
+c=!
+pi and with their gyro-
+motion slow compared to their bounce motion between the
+two lobes. These ions undergo Speiser-like motion and con-
+tribute to a slanted component in the (v
+y,
+v
+z) ion distribution.
+These non-gyrotropic ion distributions are found in our hy-
+brid simulation in the central region of the sheet away from
+the X point but within a few ion inertial lengths from the X
+point. This results in a ﬁnite off-diagonal term
+P
+i
+yz of the
+ion pressure tensor in these regions.
+In the Hall-MHD code ion dynamics are described by the
+ion momentum equation with a scalar ion pressure
+P
+i. We
+modify the ion momentum equation to include the ion pres-
+sure tensor
+P
+i term to model ion gyro-radius effects:
+nm
+i
+@
+v
+i
+@
+t
+=
+nm
+i
+(v
+i
+
+r)
+v
+i
+r
+
+P
+i
+r
+
+P
+e
++
+J
+
+B
+c
+:
+The second term on the right has a component in the
+z direc-
+tion which is
+(@
+P
+i
+yz
+=@
+y
++
+@
+P
+i
+xz
+=@
+x). It affects the ion
+out-of-plane momentum balance.
+Ion gyro-radius corrections are introduced in our Hall-MHD
+code using particle ions in a predictor/corrector manner to
+implement the ion gyro-radius corrections and to model cor-
+rectly the
+z momentum transport (Yin et al., 2001b). In the
+Hall-MHD code, ions that are in initial pressure equilibrium
+with the ﬁelds are loaded and advanced in the Hall-MHD
+ﬁelds at every time step. For each ion species (i.e., the sheet
+ions and the background ions), its pressure tensor is deﬁned
+in the center of mass frame
+P
+o
+s
+=
+m
+s
+Z
+[v
+h
+v
+o
+i]
+[v
+hv
+o
+i]f
+s
+(v
+)d
+3
+v
+;
+where
+hv
+o
+i
+=
+P
+m
+s
+n
+s
+hv
+s
+i=
+P
+m
+s
+n
+s is the center of mass
+velocity. The
+P
+i
+yz and
+P
+i
+xz moments are weighted from the
+two species contributions and are accumulated onto the grid
+at every time step. These terms are used to modiﬁed the the
+ion momentum equation to include the ion gyro-radius ef-
+fects. The corrected
+z momentum is then used to compute
+the ﬁelds at the next time step. The spatial structures of the
+P
+i
+yz and
+P
+i
+xz obtained from the ion particles pushed in the
+Hall-MHD ﬁelds are in agreement with those from our hy-
+brid simulations, and they are consistent with full particle
+results (Cai et al., 1994).
+The bottom panel in Figure 2 shows
+v
+z from the parti-
+cle Hall-MHD simulation. The ion gyro-radius correction
+allows the
+z momentum transport from the X point, and the
+v
+z panel from the particle Hall-MHD run is consistent with
+that of the hybrid run shown in the top panel. Since ions con-
+trol the overall reconnection dynamics, this correction affects
+the reconnection rate. The particle Hall-MHD run is shown
+to improve the average reconnection rate compared with the
+hybrid result. We found that the improvement the particle
+Hall-MHD simulation made is primarily due to the
+P
+i
+yz cor-
+rection.
+
+
+=== PHYSICAL PAGE 5/5 ===
+4
+Yin et al.: Hybrid and Hall-MHD Simulations of Collisionless Reconnection
+Hybrid   vz   t = 20
+0
+2
+4
+6
+8
+10
+0
+2
+4
+6
+8
+10
+x
+Hall-MHD   vz   t = 20
+0
+2
+4
+6
+8
+10
+0
+2
+4
+6
+8
+10
+x
+Particle Hall-MHD     vz     t = 20
+0
+2
+4
+6
+8
+10
+y
+0
+2
+4
+6
+8
+10
+x
+Fig. 2. The global conﬁguration of the out-of-plane ion velocity
+from the hybrid simulation (top panel), the Hall-MHD simulation
+with scalar ion pressure (middle), and the particle Hall-MHD simu-
+lation (bottom).
+4
+Embedding of Particle Hall-MHD Calculations Within
+a MHD Simulation
+We have shown that the essential small-scale physics and
+ion kinetic effects of reconnection can be modeled through
+this particle Hall-MHD simulation. This simulation method
+includes the full electron pressure tensor in the generalized
+Ohm’s law to initiate reconnection and uses particle ions to
+implement the ion gyro-radius corrections and to model cor-
+rectly the
+z momentum transport. The particle Hall-MHD
+simulation method presented in this work can be implemented
+in ﬂuid models of magnetotail reconnection to improve the ﬁ-
+delity of the model in describing small-scale and ion kinetic
+processes near the X point. We investigate the micro- macro-
+scale coupling in the magnetotail dynamics by using a new
+integrated approach in which particle Hall-MHD calculations
+are embedded inside a MHD simulation in the region near the
+X point. The MHD solution provides appropriate boundary
+conditions for the electric and magnetic ﬁelds as well as par-
+ticle ﬂuxes on the boundaries. The Hall-MHD code then runs
+on the inner region with an appropriately reduced time step
+and then provide revised boundary data for the MHD code at
+the next MHD time step. Initial results of the embedded sim-
+ulation concerning current sheet thinning and reconnection
+dynamics are discussed.
+Acknowledgements. This research was performed under the aus-
+pices of the U.S. Department of Energy and was supported in part
+by the National Aeronautics and Space Administration, the Sun-
+Earth Connection Theory Program. L. Y. gratefully acknowledges
+support provided by a Los Alamos National Laboratory, Director’s
+Postdoctoral Fellowship.
+References
+Birn, J., et al., Geospace Environment Modeling (GEM) magnetic
+reconnection challenge, J. Geophys. Res., 106, 3715, 2001.
+Biskamp, D., Schwarz, E., and Drake, J. F., Two-ﬂuid theory of col-
+lisionless magnetic reconnection, Phys. Plasmas, 4, 1002, 1997.
+Cai, H. J., Ding, D. Q., and Lee, L. C., Momentum transport near a
+magnetic X line in collisionless reconnection, J. Geophys. Res.,
+99, 35, 1994.
+Drake, J. F., Biskamp, D., and Zeiler, A., Breakup of the elec-
+tron current layer during 3-D collisionless magnetic reconnec-
+tion, Geophys. Res. Lett., 24, 2921, 1997.
+Hesse, M. and Winske, D., Hybrid simulations of collisionless re-
+connection in current sheets, J. Geophys. Res., 99, 11177, 1994.
+Hesse, M. and Winske, D., Electron dissipation in collisionless
+magnetic reconnection, J. Geophys. Res., 103, 26,479, 1998.
+Hesse, M., Birn, J., and Kuznetsova, M., Collisionless magnetic re-
+connection: Electron processes and transport modeling, J. Geo-
+phys. Res., 106, 3721, 2001.
+Kuznetsova, M. M., Hesse, M., and Winske, D., Toward a transport
+model of collisionless magnetic reconnection, J. Geophys. Res.,
+105, 7601, 2000.
+Kuznetsova, M. M., Hesse, M., and Winske, D., Collisionless re-
+connection supported by nongyrotropic pressure effects in hybrid
+and particle simulations, J. Geophys. Res., 106, 3799, 2001.
+Ma, Z. W. and Bhattacharjee, A., Hall magnetohydrodynamic re-
+connection: The Geospace Environment Modeling challenge, J.
+Geophys. Res., 106, 3773, 2001.
+Pritchett, P. L., Geospace Environment Modeling magnetic recon-
+nection challenge: Simulations with a full particle electromag-
+netic code, J. Geophys. Res., 106, 3783, 2001.
+Shay, M. A., Drake, J. F., Rogers, B. N., and Denton, R. E., Alfv´enic
+collisionless magnetic reconnection and the Hall term, J. Geo-
+phys. Res., 106, 3759, 2001.
+Winske, D. and Quest, K. B., Electromagnetic ion beam instabil-
+ities: Comparison of one- and two-dimensional simulations, J.
+Geophys. Res., 91, 8789, 1986.
+Winske, D. and Quest, K. B., Magnetic ﬁeld and density ﬂuctua-
+tions at perpendicular supercritical collisionless shocks, J. Geo-
+phys. Res., 93, 9681, 1988.
+Yin, L., Winske, D., Gary, S. P., and Birn, J., Hybrid and Hall-
+MHD simulations of collisionless reconnection: Dynamics of the
+electron pressure tensor, J. Geophys. Res., in press, 2001a.
+Yin, L., Winske, D., Gary, S. P., and Birn, J., Particle Hall-MHD
+simulation of collisionless reconnection: Ion gyro-radius correc-
+tion, Geophys. Res. Lett., in press, 2001b.

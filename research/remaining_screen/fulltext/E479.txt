@@ -1,0 +1,1478 @@
+
+===== PDF PAGE 1 =====
+          Draft version June 8, 2018
+             Preprint typeset using LATEX style emulateapj v. 08/13/06
+
+
+
+
+         NUMERICAL TESTS OF FAST RECONNECTION IN WEAKLY STOCHASTIC MAGNETIC FIELDS
+                                               Grzegorz Kowal
+                      Department of Astronomy, University of Wisconsin, 475 North Charter Street, Madison, WI 53706, USA and
+                                Astronomical Observatory, Jagiellonian University, Orla 171, 30-244 Krak´ow, POLAND
+                                                    and
+                                                     A. Lazarian
+                       Department of Astronomy, University of Wisconsin, 475 North Charter Street, Madison, WI 53706, USA
+                                                    and
+                                                        E. T. Vishniac2009          Department of Physics and Astronomy, McMaster University, 1280 Main Street West, Hamilton, ON L8S 4M1, CANADA
+                                                    and
+                                              K. Otmianowska-MazurApr                                Astronomical Observatory, Jagiellonian University, Orla 171, 30-244 Krak´ow, POLAND
+30                                                        Draft version June 8, 2018
+                                      ABSTRACT
+            We study the eﬀects of turbulence on magnetic reconnection using three-dimensional direct numeri-
+                   cal simulations. This is the ﬁrst attempt to test a model of fast magnetic reconnection in the presence
+                   of weak turbulence proposed by Lazarian & Vishniac (1999). This model predicts that weak turbu-
+                   lence, which is generically present in most of astrophysical systems, enhances the rate of reconnection
+              by reducing the transverse scale for reconnection events and by allowing many independent ﬂux recon-
+                 nection events to occur simultaneously. As a result the reconnection speed becomes independent of
+             Ohmic resistivity and is determined by the magnetic ﬁeld wandering induced by turbulence. We test
+                 the dependence of the reconnection speed on turbulent power, the energy injection scale and resistivity.
+           We study the reconnection model with the open and experiment with the outﬂow boundary condi-
+                  tions and discuss the advantages and drawbacks of various setups. To test our results, we also perform[astro-ph.GA]
+                 simulations of turbulence with the same outﬂow boundaries but without a large scale ﬁeld reversal,
+                thus without large scale reconnection. To quantify the reconnection speed we use both an intuitive
+                 deﬁnition, i.e.  the speed of the reconnected ﬂux inﬂow, as well as a more sophisticated deﬁnition
+               based on a formally derived analytical expression. Our results conﬁrm the predictions of the Lazarian
+          & Vishniac model. In particular, we ﬁnd that the reconnection speed is proportional to the square
+                 root of the injected power, as predicted by the model. The dependence on the injection scale for some
+                   of our models is a bit weaker than expected, i.e. l3/4inj , compared to the predicted linear dependence
+              on the injection scale, which may require some reﬁnement of the model or may be due to the eﬀects
+                    like ﬁnite size of the excitation region, which are not a part of the model. The reconnection speed was
+               found to depend on the expected rate of magnetic ﬁeld wandering and not on the magnitude of the
+                guide ﬁeld. In our models, we see no dependence on the guide ﬁeld when its strength is comparable
+                 to the reconnected component. More importantly, while in the absence of turbulence we successfully
+                reproduce the Sweet-Parker scaling of reconnection, in the presence of turbulence we do not observe
+               any dependence on Ohmic resistivity, conﬁrming that the reconnection of weakly stochastic ﬁeld is
+                    fast. We also do not observe a dependence on anomalous resistivity, which suggests that the presencearXiv:0903.2052v3
+                   of anomalous eﬀects, e.g. Hall MHD eﬀects, may be irrelevant for astrophysical systems with weakly
+                  stochastic magnetic ﬁelds.
+                 Subject headings: galaxies: magnetic ﬁelds — physical processes: MHD — physical processes: turbu-
+                                    lence — methods: numerical
+
+                                  1. INTRODUCTION                      advected with the ﬂow, which is frequently referred to in
+                                                                   the literature as the ”frozen in” condition for the plasma          Magnetic ﬁelds play a key role in astrophysical pro-
+                                                                          (see Moﬀat 1978).         cesses such as star formation, the transport and accel-
+                                                  Do we expect the frozen in condition to be violated         eration of cosmic rays, accretion disks, solar phenom-
+                                                                          in typical astrophysical conditions? The answer to this         ena, etc. (Crutcher 1999; Beck 2002; Schlickeiser 2004;
+                                                                   question is a qualiﬁed yes.  Indeed, most astrophysical        Elmegreen & Scalo 2004). Typically magnetic diﬀusion
+                                                         ﬂows are chaotic; when adjacent parcels of ﬂuids do not            is very slow on astrophysical scales, so to a good ap-
+                                                      move in the same direction, the frozen-in magnetic ﬁelds        proximation we can treat magnetic ﬁelds as being purely
+                                                         become tangled. This can be easily visualized by view-
+           Electronic address: kowal@astro.wisc.edu                          ing magnetic ﬁelds lines as threads moving with the ﬂuid.
+           Electronic address: lazarian@astro.wisc.edu                When the distance between magnetic bundles of diﬀer-
+           Electronic address: ethan@mcmaster.ca
+                                                                    ent direction becomes small, the ﬁnite resistivity of ﬂuids           Electronic address: otmian@astro.wisc.edu
+
+===== PDF PAGE 2 =====
+ 2                            KOWAL ET AL.
+
+starts to be important. In a generic situation of 3D ﬂows,     What are the conditions that can make magnetic re-
+the bundles of magnetic ﬁelds come into contact with     connection fast? Does it rely on special initial or bound-
+their neighbors at an angle of the order unity. Over the     ary conditions for the ﬂow, or does it require particular
+small scales at which ﬂuid resistivity is important, mag-    plasma eﬀects?  These are burning astrophysical ques-
+netic ﬁeld lines change their topology, or reconnect. How-      tions, which,  for example, deﬁne the extent that we
+ever, once magnetic ﬁeld energies become large, bending     can rely on numerical simulations of magnetized ﬂuids
+magnetic ﬁelds on small scales requires energies much     as models of astrophysical phenomena. To understand
+larger than the turbulent energies on that scale. The     processes of magnetic ﬁeld generation associated with
+magnetic ﬁeld lines become stiﬀ, even in the presence of    dynamos, the dynamics of the interstellar medium and
+strong turbulence, and the scales associated with con-     accretion disks, or other related phenomena,  it is im-
+tact between regions with very diﬀerent magnetic ﬁelds     portant to understand magnetic reconnection. In most
+become large.                                                   cases, astrophysical reconnection is diﬃcult to observe,
+ What  is the  resulting reconnection speed?   This     with the notable exception of solar ﬂares (see Sturrock
+is a  vital  question  for many  areas  of  astrophysics     1966; Masuda et al. 1994) and gamma ray bursts (see
+(see Biskamp 2000; Priest & Forbes 2000; Bhattacharjee    Galama et al. 1998). This sometimes creates an illusion
+2004; Zweibel & Yamada 2009). A ﬁrst guess could be     that the importance of reconnection is limited to those
+that magnetic reconnection is generically slow in astro-     selected phenomena.
+physical circumstances. There is a large disparity in the    A famous model of magnetic reconnection was sug-
+scales involved. The scale of the magnetic ﬂux bundle     gested by Parker (1957) and Sweet (1958).  Unfortu-
+is astronomically large.  The microphysical scale over     nately, this model, usually referred to as Sweet-Parker
+which the Ohmic dissipation is important is relatively     reconnection, provides very slow reconnection speeds. In
+small.  In this case the crossing magnetic bundles will      this model the reconnection rate is inversely proportional
+create ubiquitous unresolved intersections or ”knots” in     to the square root of the Lundquist number. This very
+the ﬂuid. Magnetic tension that arises from those inter-     slow speed comes from a geometrical constraint. The
+sections as the magnetic bundles press against each other     current sheet dividing two magnetized regions must be
+should dramatically change the properties of magnetized     very thin in order for Ohmic resistivity to be important,
+ﬂuids1.  This would be devastating news for most nu-     but the plasma trapped in the current sheet must follow
+merical MHD simulations, as numerical diﬀusion in the     the local magnetic ﬁeld lines in order to escape. A narrow
+simulations is high and magnetic bundles in simulations     current sheet implies a highly restricted outﬂow. Natu-
+easily reconnect.                                                      rally, if the Lundquist number is large, e.g. S = 1016,
+  To understand                the diﬀerence                           between                                        astrophysical                                                            re-     the                                                           Sweet-Parker reconnection speed, VSP ≈VAS−1/2,connection          and the                  one in numerical                                        simulations,                                              one                                                                                is negligible.
+should recall that the dimensionless combination that       Fast reconnection has been  investigated  for many
+controls the reconnection rate  is the Lundquist num-     decades (see Biskamp 2000; Priest & Forbes 2000, for re-
+ber2, deﬁned as S = LVA/η, where L is the length of     views). In 1964 Petschek introduced the ﬁrst fast mag-
+the reconnection layer (see Figure 1, upper panel), VA is     netic reconnection model (see Petschek 1964). He pro-
+the Alfv´en velocity, and η is Ohmic diﬀusivity. Because     posed that extended magnetic bundles come into contact
+of huge astrophysical sizes L involved, the astrophysi-     over a tiny area determined by the Ohmic diﬀusivity.
+cal Lundquist numbers are huge, e.g. for the ISM they     This conﬁguration, called an X-point conﬁguration, dif-
+are about 1016, while present-day MHD simulations cor-      fers dramatically from the expected generic conﬁguration
+respond to S < 104. As the numerical eﬀorts scale as    when magnetic bundles try to press their way through
+L4x, where Lx is the size of the box, it is not feasible at     each other.  Thus the ﬁrst introduction of this model
+present and will not be feasible in the foreseeable future     raised questions of dynamical self-consistency. An X-
+to have simulations with the suﬃciently high Lundquist     point conﬁguration has to persist in the face of compres-
+numbers.  Incidentally, this also presents a problem for      sive bulk forces.  However, numerical simulations have
+numerical simulations of magnetic reconnection unless    shown that an initial X-point conﬁguration of magnetic
+one has theoretically-derived scaling relations to test.     ﬁeld reconnection is unstable in the MHD limit for small
+Even with the limited resolution, numerical simulations     values of the Ohmic diﬀusivity (Biskamp 1996) and the
+are a good tool to study scaling relations, the point that     magnetic ﬁeld will relax to a Sweet-Parker conﬁguration.
+has been proved by successful numerical studies of MHD    The physical explanation for this eﬀect is simple. In the
+turbulence.                                              Petschek model shocks are required in order to maintain
+  Due to huge values of astrophysical Lundquist num-     the geometry of the X-point. These shocks must persist
+bers, any rate of reconnection that depends on S is ex-    and be supported by the ﬂows driven by fast reconnec-
+tremely slow3.  Fast reconnection is reconnection that      tion. The simulations showed that the shocks fade away
+does not depend on resistivity.                         and the contact region spontaneously increases.
+                                                 More recently there has been progress in understand-
+  1 Don Cox (private communication) refers to this state of en-                                                            ing the role of collisionless modes in stabilizing X-point
+tangled magnetic ﬁelds as astrophysical Jello or astrophysical felt,
+to reﬂect the peculiar non-ﬂuid properties of the hypothetical sub-     reconnection. In particular, simulations using Hall MHD
+stance.                                                 have produced stable X-point reconnection (Shay et al.
+  2 The magnetic Reynolds number, which is the ratio of the mag-     1998, 2004).  This was the ﬁrst numerical demonstra-
+netic ﬁeld decay time to the eddy turnover time, is deﬁned using     tion of fast reconnection, which raised the hope in astro-
+the injection velocity vl as a characteristic speed instead of the                                                             physical community that the problem of astrophysicalAlfv´en speed VA, which is taken in the Lundquist number.
+  3 The exception is the case when the dependence on S is loga-     reconnection can be solved. There is continuing discus-
+rithmic.
+
+===== PDF PAGE 3 =====
+                  RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                        3
+
+sion of whether this kind of fast reconnection persists at     nection, it does not prove that the model is viable.
+scales substantially larger than the ion inertial scale (see      Numerical simulations have provided the main test-
+Bhattacharjee et al. 2003) with a number of numerical     ing ground for collisionless X-point reconnection. These
+studies (Wang et al. 2001; Smith et al. 2004; Fitzpatrick     simulations are typically performed in 2D with peri-
+2004) yielding reconnection rates that are not fast, but     odic boundary conditions and cannot be continued for
+depend on resistivity. More importantly, one may also     longer than one dynamical time.  This approach is in-
+wonder to what extent Petscheck-type collisionless recon-     appropriate for stochastic reconnection where the goal is
+nection solves the problem of describing magnetic ﬁeld     to obtain a stationary reconnection rate averaged over
+dynamics in astrophysical settings. Apart from the issue    many dynamical times. For this reason we have followed
+of how natural it is to produce conditions that lead to    Daughton et al. (2006) in using open outﬂow boundary
+Petscheck reconnection, one should note that the require-     conditions. Moreover, the LV99 model of reconnection
+ment that the upper limit on the collision rate required       is intrinsically three dimensional. A simpliﬁcation, how-
+by this process is extremely restrictive.  For instance,     ever, arises from the fact that LV99 predicts that fast re-
+estimates in Yamada (2007) show that the scale of the     connection takes place in the MHD approximation, mak-
+reconnection current sheet should not exceed approxi-     ing plasma eﬀects irrelevant.
+mately 40 electron mean free paths. This is not satisﬁed       In this paper we describe the choice of boundary condi-
+in many astrophysical environments including the inter-     tions as well as an appropriate measure of reconnection.
+stellar medium (Yamada 2007).                             Indeed, while the rate of reconnection can be trivially
+ What happens in a collisional medium?  Is reconnec-    measured in the case of laminar magnetic ﬁelds, addi-
+tion in the interstellar medium slow? The latter, as men-     tional care is required in the estimation of the reconnec-
+tioned above, would have catastrophic implications for     tion rate in the presence of a stochastic magnetic ﬁeld.
+the entire current crop of MHD simulations of interstel-       In §2 we review the LV99 model of reconnection and
+lar processes.                                                            its theoretical predictions. In §3 we describe in detail the  Nearly simultaneously with the discovery of collision-     numerical model we have built and studied in this paper.
+less X-point reconnection, a model of magnetic recon-     In §4 we present methods used throughout the paper tonection in the presence of a weakly stochastic magnetic    measure the reconnection rate and we introduce a new,
+ﬁeld was proposed by Lazarian & Vishniac (1999, hence-    more general, method of estimating the reconnection rate
+forth LV99). They claimed that the laminar magnetic    which includes all processes contributing to the change of
+ﬁelds considered in both Petscheck and Sweet-Parker re-     magnetic ﬂux. In §5 we present an extensive descriptionconnection models are exceptional in astrophysics. If we      of results obtained from studying our numeric model,
+consider the interstellar medium as an example, a so-    which we discuss later in §6. In §7 we set forth our maincalled ”Big Power Law in the Sky” indicates the presence     conclusions.
+of turbulence on scales from tens of parsecs to thousands                  2. LAZARIAN-VISHNIAC (1999) MODEL
+of kilometers (Armstrong et al. 1995).  Thus, the fact
+                                        We begin by reviewing the  basic  features  of thethat reconnection may be slow in a collisional ﬂuid with
+                                                              stochastic reconnection model in Lazarian & Vishniaclaminar ﬁeld lines does not necessarily imply that recon-
+                                                              (1999). This model might be seen as a generalization ofnection is generically slow. The model in LV99 predicted
+                                                          the Sweet-Parker model (see Fig. 1) for the case of turbu-extended current sheets and wide outﬂows limited by the
+                                                                 lent ﬁelds. Like the Sweet-Parker model it deals with andiﬀusive spread of magnetic ﬁeld lines.  In the limit of
+                                                        extremely generic conﬁguration, which should arise nat-very weak turbulence or very large resistivities the model
+                                                               urally as magnetic ﬂux tubes try to make their way oneconverges to the Sweet-Parker model.
+                                                      through another. This avoids the problems related to the  For many years the quantitative predictions of the
+                                                            preservation of outﬂow conditions which plague attemptsstochastic reconnection model in LV99 have not been
+                                                             to explain magnetic reconnection via Petscheck-type so-tested explicitly. There is some implicit evidence in the
+                                                                  lutions. For example, if the outﬂow of reconnected ﬂuxfavor of this model, e.g.  observations of the thick re-
+                                                  and entrained matter is temporarily impeded through aconnection current outﬂow regions observed in the So-
+                                                         ﬂuctuation in the outﬂow, reconnection will slow down,lar ﬂares (Ciaravella & Raymond 2008).  Such outﬂow
+                                                      but will not permanently change its nature.regions are incompatible with Petscheck reconnection.
+                                                The  essential diﬀerence between  the Sweet-ParkerThis is suggestive, but falls far short of constituting a
+                                                   model and the model in LV99 is that while in the Sweet-deﬁnitive proof of the LV99 model.
+                                                       Parker model the outﬂow  is limited by microphysical  It is, in general, extremely diﬃcult to use analytic tools
+                                              Ohmic diﬀusivity, in the LV99 model the large-scale mag-to test turbulent processes.  However, Eyink & Aluie
+                                                                netic ﬁeld wandering determines the thickness of outﬂow.(2006) have studied the necessary conditions for recon-
+                                                       For extremely weak turbulence, when the range of mag-nection in a turbulent conducting medium in the limit of
+                                                                netic ﬁeld wandering becomes smaller than the width ofinﬁnitesimal resistivity. They list three separate neces-
+sary conditions, and prove that the ﬂux conservation can     the Sweet-Parker layer LS−1/2, the reconnection rate re-
+be violated at an instant of time for an arbitrarily small     duces to the Sweet-Parker rate4.
+scale, if at least one of the conditions is satisﬁed. The one        4                                                                     For the sake of simplicity, we do not raise here issues related to
+that concerns us here is that there must be overlapping      the stability of the Sweet-Parker current sheet. Estimates in LV99
+vortex and current sheets in the ﬂuid. This is trivially      suggest that laminar current sheets subject to tearing instabilities
+satisﬁed if turbulent eddies on all scales give rise to cur-     have reconnection rates which are just a bit faster than in the
+rent sheets with inﬂow/outﬂow properties of the kind we      original Sweet-Parker model. These instabilities may, however, be
+                                                                 important for increasing the 3D stochasticity of magnetic ﬁeld lines
+study here.  While this shows that the LV99 model is     and thus initiating fast reconnection.  In this paper we do not
+consistent with the physical requirements for fast recon-      address this eﬀect either.
+
+===== PDF PAGE 4 =====
+ 4                            KOWAL ET AL.
+
+                                                                   later fundamental works  (e.g. Montgomery & Turner
+                                                           1981; Shebalin et al. 1983; Higdon 1984, see also book
+                                                   by Biskamp 2003).  A model  for  realistic compress-
+                                                                     ible ﬂuids may be constructed on the  basis  of the
+                                                          (Goldreich & Sridhar 1995, henceforth GS95) model of
+                                                           incompressible turbulence5. Reasonable alternatives are
+                                                        expected to have only marginal impact on the nature
+                                                                  of ﬁeld line stochasticity (see also Cho & Vishniac 2000;
+                                               Maron & Goldreich 2001; Lithwick & Goldreich 2001;
+                                             Cho et al. 2002; Cho & Lazarian 2002, 2003), provided
+                                                          that the GS95 scalings are generalized to include the
+                                                            case of weak MHD turbulence. The equations in LV99
+                                                            reﬂect the fact that when the turbulence is injected at
+                                                               subAlfv´enic velocities, the cascading is initially weak and
+                                                          the perturbations can be reasonably well represented by
+                                                      a collection of Alfv´en waves undergoing occasional inter-
+                                                                actions. However, the strength of the non-linear interac-
+                                                               tions increases as the perpendicular scale decreases and
+                                                            at the scale l⊥= l(vl/VA)2 the cascade becomes strong,
+                                                                                    i.e. with the GS95 critical balance between motions at
+                                                                  parallel and perpendicular scales l⊥/v⊥≈l/VA satisﬁed.
+                                               The corresponding velocity at l⊥is v⊥∼VA(vl/VA)2                                                    where vl  is the velocity at which strong turbulence is
+                                                         being injected.  For vl         this scale may be small  Fig. 1.— Upper plot: Sweet-Parker model of reconnection. The              ≪VAoutﬂow is limited to a thin width δ, which is determined by Ohmic    and the ﬁeld wandering induced by the turbulence is re-
+diﬀusivity. The other scale is an astrophysical scale L ≫δ. Mag-     duced6. The characteristics of the strong turbulent cas-
+netic ﬁeld lines are assumed to be laminar. Middle plot: Turbulent     cade dominate transport phenomena and predictions of
+reconnection model that accounts for the stochasticity of magnetic     reconnection speeds. In contrast the weak turbulent cas-
+ﬁeld lines. The stochasticity introduced by turbulence is weak and
+the direction of the mean ﬁeld is clearly deﬁned. The outﬂow is     cade has very little eﬀect on ﬁeld line stochasticity, since
+limited by the diﬀusion of magnetic ﬁeld lines, which depends on     in this regime motions are largely periodic.
+macroscopic ﬁeld line wandering rather than on microscales deter-      The modiﬁcation of the global constraint induced by
+mined by resistivity. Low plot: An individual small scale reconnec-                                                  mass conservation in the presence of a stochastic mag-tion region. The reconnection over small patches of magnetic ﬁeld
+determines the local reconnection rate. The global reconnection     netic ﬁeld component is self-evident.  Instead of being
+rate is substantially larger as many independent patches reconnect     squeezed from a layer whose width  is determined by
+simultaneously. Conservatively, the LV99 model assumes that the    Ohmic diﬀusion, the plasma diﬀuses through a much
+small scale events happen at a slow Sweet-Parker rate. Following
+Lazarian et al. (2004).                                       broader layer, δ ∼⟨y2⟩1/2 (see Fig. 1), determined by                                                          the diﬀusion of magnetic ﬁeld lines. This suggests an up-
+  LV99 consider the case of a large scale, well-ordered                                                         per limit on the reconnection speed of                            .magnetic ﬁeld, of the kind that is normally used as a                          ∼VA ⟨y2⟩1/2/L                                                       This will be the actual speed of reconnection  if the
+starting point for discussions of reconnection.  In the                                                            progress of reconnection in the current sheet does not
+presence of turbulence we anticipate that the ﬁeld will
+                                                     impose a smaller limit. The value of       can be deter-have some small scale ‘wandering’.On any given scale the                                          ⟨y2⟩1/2                                                  mined once a particular model of turbulence is adopted,
+typical angle by which ﬁeld lines diﬀer from their neigh-
+                                                      but it is obvious from the very beginning that this value
+bors is φ ≪1, and this angle persists for a distance along       is determined by ﬁeld wandering rather than Ohmic dif-the ﬁeld lines λ∥with a correlation distance λ⊥across                                                                 fusion.
+ﬁeld lines (see Fig. 1).                                                            Following Lazarian et al. (2004, hereafter LVC04) we
+  LV99 suggested that the presence of a random mag-                                                     can generalize this upper limit to include the whole range
+netic ﬁeld component substantially enhances the recon-                                                                  of scales between the large scale eddy size and the current
+nection rate, leading to fast reconnection. There are two                                                            sheet thickness. Consider two points initially separated
+phenomena mainly responsible for this:
+                                                                           5 The exact scalings of the MHD turbulence are still subject
+                                                                       to debate and diﬀerent corrections to the original GS95 scalings   • only a small fraction of any magnetic ﬁeld line is      subject to direct Ohmic annihilation. The fraction     have been proposed to account for dynamical alignment, polariza-
+      of magnetic energy that goes directly into heating      tion intermittency and non-locality of the cascade (see Boldyrev
+     the ﬂuid drops down to zero as the ﬂuid resistivity      2005, 2006; Beresnyak & Lazarian 2006, 2008b; Gogoberidze 2007).
+                                                                However, calculations in LV99 show that reconnection rates are
+      vanishes, and                                               only weakly dependent on the exact model of turbulence. Subtle
+                                                                reﬁnements of the scalings that are currently debated can only be
+         presence                    of                    turbulence                                enables many                                          magnetic                                                                               of marginal                                                                                   signiﬁcance                                                                                                          for this                                                                                                     paper.                                                                                                       For the                                                                                                                     sake                                                                                                                                           of simplic-   • the                                                          we adopt                                                                                         in what follows                                                                                                the original                                                                                     GS95                                                                                                                                 scaling.                                                                                 We                                                                                                                                         also do     ﬁeld            lines to                   enter                        the reconnection                                      zone                                               simulta-        ity,
+      neously.                                                   not consider imbalanced MHD turbulence (see Lithwick et al. 2007;
+                                                          Chandran 2008; Beresnyak & Lazarian 2008a, 2009), although for
+                                                                     the modest degrees of imbalance between the turbulent energy
+  In order to do  quantitative estimates one has to     ﬂuxes moving in the opposite directions, we do not expect sub-
+adopt a model of MHD turbulence.  Attempt to con-       stantial changes in our results
+struct such a model can be traced back to Iroshnikov        6 These comments ignore the compressible modes, but their role
+(1963) and Kraichnan (1965) papers  as  well  as  to      in ﬁeld wandering is marginal anyhow (LV99).
+
+===== PDF PAGE 5 =====
+                  RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                        5
+
+by the thickness of the current sheet. Translating both     obtained:
+                                                            "points along the ﬁeld lines we can deﬁne their rms separa-                                 1/2       1/2#        2
+                                                      L                                                                                                                                         l           vltion as a function of distance along the ﬁeld lines, δ(λ∥).                                                                                                                                              ,                                                                                                                                                                            ,     (3)                                                                   Vrec = VA min
+This gives an upper limit on the local reconnection speed                                        l      L      VA
+which         is just                        However,                                   the large                                                 scale                                                     cur-           ∼(δ/λ∥)VA.                                                    where  l and vl are the energy injection scale and tur-rent     sheet          contains              many such                             reconnection                                             regions,                                               each
+involving the reconnection of independent ﬁeld lines. In     bulent velocity at this scale respectively. Note that the
+order to estimate the global reconnection rate we need     combination VA(vl/VA)2 is the velocity vtrans, i.e.  the
+to multiply each local reconnection rate with the number     velocity at which the cascade transfers to the strong
+of simultaneous reconnection events happening on that     regime. This reﬂects the importance of strong turbulence
+scale. Taking L/λ∥as our best estimate we get a global      for magnetic ﬁeld wandering and magnetic reconnection.
+limit of                                         The term (L/l)1/2 reﬂects the random walk which takes
+                          δ(λ∥) L                          place for L < l Evidently, the goal of our paper is to test
+                                                        formula (3).               Vrec ≤min   λ∥  λ∥ VA   ,            (1)
+                                                      There are several important characteristic features of
+which should be evaluated for all λ∥between the length     Eq. (3).  First, and most important, there is no depen-
+of the current sheet and the length of an individual piece     dence on resistivity.  Second, in general we expect re-
+of the current sheet such that translation along that     connection to be fast since in most cases the parameter
+piece will increase the rms separation by the thickness     ratios that enter the expression, i.e.  the length of the
+of the current sheet. As long as we are in the regime     reconnection layer L divided by the injection scale l, and
+of strong turbulence this expression has a rather sim-     the injection velocity vl divided by the Alfv´en velocity
+ple form. Each eddy scatters ﬁeld lines by roughly its    VA are of order unity.  Finally, we note that in partic-
+own width, so an eddy of parallel length λ∥will have a     ular situations when turbulence is extremely weak the
+                                                                   speed may                                                                         be small.                       With this                                          in mind Eq. (1)     reconnectioncorresponding δ ∼λ⊥(λ∥).                                                      Given the limited                                                                        dynamical                                                                                    range of the simulations,becomes                     "                            #
+                                               we are forced to inject turbulent energy on scales less
+                    λ⊥L
+                 Vrec ≤min   λ2∥ VA   .              (2)     thaninjectionL. Also,powerit isP.easierThe topowercontrolin thenot turbulentvl, but thecascadeenergy
+                                                                                is P                                                                                  which                                                                                                     reﬂects                                                                                                        the                                                                                                                         fact                                                                      turb(VA/l) or                                                                                 v4l /(lVA),                                         ∼v2At its minimum Eq. (2) for GS95 model provides Vrec <     that                                                               the                                                                   turbulence                                                                                                           is weak                                                                                        at the                                                                                                      injection                                                                                                                scale                                                                                                                                                                    l (see
+VA, which is a natural limit of the reconnection speed     LV99). Using this in Eq.  (3) we get
+and not a constraint.  In the Goldreich-Sridhar model
+of turbulence λ∥∝λ2/3⊥, so the minimum value of this                           Vrec ∼lP 1/2,                   (4)
+expression corresponds to the largest scales. (Once λ∥                                                     which is the prediction we will test here. In what follows
+exceeds the scale of the largest eddies we change models
+                                               we refer to the injection power and scale using Pinj andto a random walk with a ﬁxed step size.)
+                                                                            linj, respectively.  This should make it clear why we are insensitive to
+the exact model of strong turbulence used in our calcu-                           3. NUMERICAL SETUP
+lation. In order to get a diﬀerent answer we would need
+                                                                                              3.1. Governing Equations
+          or less, which                                 is not                             supported                                   by                                      any of                                                  the     ⊥λ∥∝λ1/2                                        We  use  a  higher-order  shock-capturing Godunov-available         numerical                    evidence.                    On                                 the other                                         hand,                                       how
+one models the weak turbulence does have an impact on     type  scheme  based on  the  essentially non  oscilla-
+the reconnection rate, since it will deﬁne the length of     tory (ENO)  spacial reconstruction and Runge-Kutta
+the largest scale eddies. Also, the presence of strong vis-    (RK) time integration (see Londrillo & Del Zanna 2000;
+cous damping can complicate our argument, by creating     Del Zanna et al 2003, e.g.) to solve isothermal non-ideal
+a laminar ﬁeld line regime on very small scales and reduc-   MHD equations,
+ing δ far below its value in the strong turbulent regime.                                                                           ∂ρ
+This point is discussed at length in LVC04 where it was                        +   (ρv)= 0, (5)                                                                                        ∂t  ∇·argued that in some of the colder and denser phases of
+the interstellar medium we should expect a reduction in       ∂ρv                B2                                       +    ρvv +  a2ρ +      I   BB = f,  (6)the reconnection speed by an order of magnitude or more.         ∂t   ∇·             8π  −14π
+The numerical work presented here includes only a min-                           ∂A
+imal amount of viscosity, so testing these arguments is                           + E= 0, (7)
+                                                                                             ∂tbeyond the scope of this paper.
+  The basic hypothesis of LV99 is that the the speed of    where ρ and v are plasma density and velocity, respec-
+magnetic reconnection in the presence of 3D stochastic-      tively, A is the vector potential, E = −v × B + η j is the
+ity of magnetic ﬁeld lines is given by the most stringent      electric ﬁeld, B ≡∇×A is the magnetic ﬁeld, j = ∇×Bconstraint imposed by the bottleneck condition expressed       is the current density, a is the isothermal speed of sound,
+in Eq. (1) 7. With the GS95 model of turbulence LV99     η is the resistivity coeﬃcient, and f represents the forcing
+                                                         term. We used Harten-Lax-van Leer (HLL, Harten et al.
+  7 In LV99 other processes that can impede reconnection were
+found to be less restrictive. For instance, the tangle of reconnec-     assuming that it constitutes the real bottleneck in reconnection
+tion ﬁeld lines crossing the current sheet will need to reconnect      events, and then analyzing each ﬂux element reconnection as part
+repeatedly before individual ﬂux elements can leave the current       of a self-similar system of such events. This turns out not to impede
+sheet behind. The rate at which this occurs can be estimated by      reconnection.
+
+===== PDF PAGE 6 =====
+ 6                            KOWAL ET AL.
+
+                                                            projection of the magnetic topology on the XZ plane
+                                                     shows that the lines in the upper region (solid lines in
+                                                          the right panel of Fig. 3) and in the lower region (dashed
+                                                                     lines) create an angle α determined by the strength of
+                                                          the shared component B0z. Once the incoming magnetic
+                                                                     lines enter the diﬀusion region, they are reconnected and
+                                                          the product of this process is ejected along X direction
+                                                       with a speed Vout (see Fig. 2 and the left panel of Fig. 3).
+                                                Our initial magnetic ﬁeld is a Harris current sheet of
+                                                          the form Bx(x, y, z) = B0x tanh(y/θ) initialized using the
+                                                      magnetic vector potential Az(x, y, z) = ln | cosh(y/θ)|.                                                          In addition, we use a uniform guide ﬁeld Bz(x, y, z) =
+                                                    B0z = const. The initial setup is completed by setting
+                                                          the density proﬁle from the condition of the uniform to-
+                                                                     tal (thermal plus magnetic) pressure pT (t = 0, x, y, z) = Fig. 2.— Schematic 3D visualization of the reconnection problem
+setup.  Upper and lower parts of the domain contain incoming     const and setting the initial velocity to zero everywhere.
+oppositely directed magnetic ﬁeld lines (black and grey solid lines,       In  order  to  initiate  magnetic  reconnection  we
+respectively). The inﬂow bends the lines toward the center where    add a small  initial perturbation  of  vector  potential
+they enter the diﬀusion region.  In the diﬀusion region the lines     δAz(x, y, z) = δB0x cos(2πx)              to the initialreconnect and their product (dashed lines) is ejected along the X                                                                                    exp[−(y/d)2]direction.                                                 conﬁguration of Az(t = 0, x, y, z). Parameters δB0x and
+                                                    d describe the strength of the initial perturbation and1983) and HLLD Riemann solvers (Mignone 2007) for
+                                                             thickness of the perturbed region, respectively.solving the isothermal MHD equations. These schemes
+                                        We use dimensionless equations, so that the strengthhave widely diﬀerent dissipation properties. The HLL
+                                                                  of the magnetic ﬁeld is expressed in terms of the Alfv´ensolver was initially developed for solving Euler equations
+                                                                velocity (deﬁned by the antiparallel component of mag-and later adopted for solution of general set of time de-
+                                                                netic ﬁeld) and the unperturbed density ρ0 = 1.  Allpendent diﬀerential equations by averaging the Riemann
+                                                           other velocities are expressed as fractions of the ﬁducialfan over a region bound by the minimum and maximum
+                                                                 Alfv´en speed. The length of the box in X direction de-local characteristic speeds.  In this way one intermedi-
+                                                       ﬁnes the unit of distance and time is measured in unitsate state was constructed. The HLLD Riemann solver
+                                                                  of Lx/VA.  Initially, we set the strength of antiparalleltakes into account the discontinuities resulting from the
+                                                      magnetic ﬁeld component B0x to 1.0 and we vary thepresence of magnetic ﬁeld as well, separating this inter-
+                                                         guide ﬁeld B0z between 0.0 and 1.0, which correspondsmediate state into multiple intermediate states, resolving
+                                                             to the range of angle α       90◦). For a particular rune.g. Alfv´en waves with much less dissipation. In this pa-                        ∈(0◦,                                               we use B0z = 4.0, which corresponds to α       Theper we are considering the quasi-incompressible regime,                                      ≈152◦.                                                       speed of sound is set to 4.0 to suppress compressibilitywhere most of energy is transported by Alfv´en waves,
+                                                                in the system. In order to study the importance of resis-therefore the application of the HLLD solver seems to be
+                                                                    tivity in the reconnection process we vary the resistivitya better choice. We incorporated the ﬁeld interpolated
+                                                        coeﬃcient ηu between values 5 10−4 and 5 10−3 whichconstrained transport (CT) scheme based on a staggered                                                         ·                   ·                                                            are expressed in the dimensionless units. In the modelsmesh (see Londrillo & Del Zanna 2000) into the integra-
+                                                    where we include anomalous eﬀects, we vary the anoma-tion of the induction equation (Eq. 7) to maintain the
+                                                              lous resistivity coeﬃcient ηa between 0.0 and 2  10−3.  B = 0 constraint numerically.                                                                                                                          ·∇·                                            The parameters describing the initial perturbation are  Some selected simulations that we perform include
+                                                                 set to δB0x = 0.05 and d = 0.1.anomalous resistivity modeled as
+                                                                                              3.3. Boundary Conditions
+         η = ηu + ηa     |j|    H     |j|     ,        (8)                              jcrit −1        jcrit                Our numerical model of LV99 reconnection evolves in
+                                                      a box with dimensions Lx = Lz = 1 and Ly = 2 with
+where ηu and ηa describe uniform and anomalous resis-     resolution 256x512x256. It is extended in the Y direction
+tivity coeﬃcients, respectively, jcrit is the critical level     in order to move the inﬂow boundaries far from the injec-
+of the absolute value of current density above which the                                                              tion region. This minimizes the inﬂuence of the injected
+anomalous eﬀects start to work, and H is a step function.                                                          turbulence on the inﬂow.
+However, for most of our simulations ηa = 0.            We use three diﬀerent types of boundary conditions
+                                                                in our models, each of them set along diﬀerent direc-
+      3.2. Model Description and Initial Conditions                                                                   tion: outﬂow boundary conditions along X direction, in-
+  Figures 2 and 3 show a 3D visualization and 2D pro-    ﬂow boundary conditions along Y direction and periodic
+jections of the reconnection problem setup. The domain    boundary conditions along Z direction.
+contains two regions of oppositely directed magnetic ﬁeld     We tested diﬀerent types of open boundary conditions,
+lines (see Fig. 2 and the left panel of Fig. 3). The incom-     including perfectly permeable wave-type boundary con-
+ing lines (solid lines in Fig. 2) are bent by the inﬂow Vin      ditions derived from the linearized MHD equations sim-
+and enter the diﬀusion region. The diﬀusion region is      ilar to the method of characteristics (Hedstrom 1979),
+characterized by the longitudinal scale ∆and its thick-    which seem to be the right choice.  However, they are
+ness δ (see the left panel of Fig. 3). The diﬀusion region     expensive since they require to track the linear MHD
+extends along the full Z direction of the system. The in-    waves crossing the boundaries and they have a relatively
+coming magnetic lines are not perfectly antiparallel. The     small advantage over the simple ”zero-gradient” bound-
+
+===== PDF PAGE 7 =====
+                  RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                        7
+
+
+
+
+
+ Fig. 3.— 3D magnetic ﬁeld conﬁguration in the studied problem projected on the XY (left) and XZ (right) planes. Left: XY projection
+of the magnetic ﬁeld lines. The grey area describes the diﬀusion region where the incoming ﬁeld lines reconnect. The longitudinal and
+transverse scales of the diﬀusion region are described by the parameters ∆and δ, respectively. Bz represents the direction of the guide ﬁeld
+with respect to the plane of projection. We use inﬂow and outﬂow boundary conditions at X and Y directions, respectively. Right: XZ
+projection of the magnetic ﬁeld lines as seen from the top. Solid and dashed lines show the incoming ﬁeld lines from the upper and lower
+parts of the domain, respectively. We see that the oppositely directed ﬁeld lines are not perfectly antiparallel but they create an angle α
+determined by the strength of the shared component Bz. The Z boundary conditions are open or periodic, depending on the model.
+
+ary conditions in the application to our models, which we       In the treatment of vector potential A at the bound-
+found the simplest and most robust for our purposes. In     ary we set its components transverse to the considered
+this type of open boundary conditions we set the normal    boundary using the ﬁrst order extrapolation, while the
+derivatives of the ﬂuid variables (density and momen-    normal derivative of the normal component  is set to
+tum) to zero. This guarantees that all waves generated     zero.  In this way the normal derivatives of transverse
+in the system are free to leave the box without signiﬁcant    components of magnetic ﬁeld are zero, while the normal
+reﬂections. In the presence of turbulence, however, this    component of magnetic ﬁeld is calculated from the zero-
+type of boundary does not enforce a constant mean value     divergence condition ∇· B = 0.of density at the inﬂow boundary, which can result in a      This approach prevents from the generation of diver-
+small loss of the total mass in the system. We will show     gence of B at the boundaries, however, it creates a small
+later that the total mass loss is very small and does not    jump of the ﬂuxes in the momentum equation across
+inﬂuence our results.                                      the boundary resulting from the presence of non-zero
+  As   for  the  vector  potential,  we  have  tested     terms (−Bx, By, Bz) ∂xBx at the X outﬂow boundary
+Daughton’s approach for open boundary conditions (see    and (Bx, −By, Bz) ∂yBy at the Y inﬂow boundary.  InDaughton et al. 2006) in which the authors solved the     order to justify the importance of these terms we have
+properly set wave equations for each component. How-     estimated directly from our models the velocity incre-
+ever, this approach was limited to the 2.5 dimensional    ment they produce at each time step. In models with the
+case and its extension to the full 3D case requires a sig-     strongest turbulence the magnitudes of these terms were
+niﬁcant increase of complexity and, in our opinion, re-      of order of 10−6 and 10−8 of VA at the X and Y bound-
+sults in an unacceptably expensive method. Moreover,      aries, respectively, signifying their negligible importance
+since Daughton et al. (2006) studied the problem of re-     in the presence of strong inﬂow and outﬂow which are of
+connection using a kinetic approach, they used the speed     order of Alfv´en speed in our models.
+of light to evolve traveling electromagnetic waves.  In      There is another constrain on the boundary conditions
+the MHD approximation, this would imply a very large     applying to the induction equations resulting from its
+reduction in the time step, since the stability of the     non-ideality, i.e. the presence of resistive term and the
+scheme depends on the Courant-Friedrichs-Lewy (CFL,     treatment of current density j at the boundaries. When
+Courant et al. 1928) condition, which in turn depends on    we set normal derivatives of transverse components of
+the maximum speed in the system. This issue excluded     magnetic ﬁeld to zero, we violate the continuity of cur-
+this kind of approach from our consideration.                rent density. In the ideal case, η = 0, the resistivity term
+  In the end we decided to use the simplest approach.       is unimportant even if the current density is not contin-
+We evolve the induction equation for the vector poten-     uous. However, once we introduce a non-zero resistivity
+tial A based on a staggered mesh, which means that the     coeﬃcient, the resistive term ηj in the induction equation
+vector potential components are located in the edge cen-    becomes discontinuous at the boundary and we introduce
+ters, i.e. Ax(i, j + 1/2, k + 1/2), Ay(i + 1/2, j, k + 1/2),     a jump of electromotive force E = v × B −ηj across theand Az(i + 1/2, j + 1/2, k), where (i, j, k) describes the     boundary. For example, considering the Z component of
+cell center position. Thus, using the method described     electromotive force Ez = vxBy −vyBx −η (∂xBy −∂yBx)
+in Londrillo & Del Zanna (2000) we calculate magnetic    we obtain a jump of Ez across the X boundary equal to
+                                                                                   z                                                                                         z = η∂xBdy, where indices d (domain)ﬁeld components located at the interface centers, Bx(i +    ∆xEz =  Eb                                                −Ed1/2, j, k), By(i, j + 1/2, k), and Bz(i, j, k + 1/2). These    and b (boundary) stand for the limit values from the
+locations of collocation points for the vector potential      left and right sides of the considered boundary, respec-
+completed by a CT integration of the induction equa-      tively. This results in a constant generation of By at the
+tion guarantees the divergence-free evolution of magnetic    boundary  if the second derivative ∂2xBy  is not zero at
+ﬁeld.                                                      that location. One way to remove this undesired eﬀect is
+
+===== PDF PAGE 8 =====
+ 8                            KOWAL ET AL.
+
+by setting the second order normal derivative of the ﬁeld     only.
+components to zero. However, there is no straightforward       In particular, the total amount of power input from
+way to do this since it introduces another constraint on     the forcing can be set to balance a desired dissipation at
+the boundary values and requires complex and expen-     a statistically stationary state. In order to contribute to
+sive methods. We use another way of diminishing the     the input power in the discrete equations from the force-
+importance of resistive terms and current density jump     force correlation only, the force is determined so that the
+at the boundary. Instead of modifying the boundary con-     velocity-force correlation vanishes for each Fourier mode.
+ditions, we introduce a zone of decaying resistivity close    The procedure of reducing the velocity-force correlation
+to the boundary. This means that the resistivity is con-       is described in Alvelius (1999).
+stant in most of the computational domain. Only in a     We drive turbulence in a subvolume of the domain.
+thin zone near the boundary, the value of resistivity ηu    The size of the subvolume is determined by two scales,
+decays down to a very small value, which is estimated to     the radius rd on the XZ plane around the center of the
+be around the numerical resistivity ηn of our code.  In    domain and the height hd describing the thickness of the
+our models we adopt the value of ηn = 3 · 10−4. Nat-     driving region from the midplane. In this way we avoidurally, by introducing such resistivity we do not change     driving turbulence at the boundary and reduce the inﬂu-
+the reconnection speeds.  There are two advantages to     ence of driving on the inﬂow or outﬂow. All models are
+this approach.  First, the outﬂow in our models is not     evolved without turbulence for several dynamical times
+constrained by the jump of resistive terms growing with     in order to allow the system to achieve laminar stationary
+the increasing value of resistivity ηu, and is determined     reconnection. Then, at a given time tb we start driving
+solely by the evolution in the central part of the domain,     turbulence, increasing its amplitude to the desired level,
+where the resistivity is constant and uniform. Second, we      until time te. In this way we let the system to adjust to
+control the importance of numerical eﬀects by introduc-     a new state. From time te the turbulence is driven with
+ing a small, but larger than numerical resistivity value     the full power Pinj.
+of ηn at the boundary. The validation of this method is     On the right hand side of Eq. (6), the forcing is repre-
+presented in §5.2.4.                                        sented by a function f = ρa, where ρ is local density and  The above boundary conditions represent open bound-    a is random acceleration calculated using the method
+aries, which adjust during the evolution of the system.     described above.
+This means that we do not set ﬁxed values of the ﬂuid     We do not set the viscosity coeﬃcient explicitly in our
+and magnetic variables and do not drive the ﬂow at the     models. The scale at which the dissipation starts to be
+boundaries in order to achieve a stationary reconnection     important is deﬁned by the numerical diﬀusivity of the
+process in the system.                                    scheme. The ENO-type schemes are considered relatively
+                                                      low diﬀusion (see Liu & Osher  1998; Levy et al. 1999,
+                   3.4. Model of Turbulence                                                                          e.g.). The numerical diﬀusion depends not only on the
+  In our models we drive turbulence using a method de-     adopted numerical scheme but also on the “smoothness”
+scribed by Alvelius (1999). The forcing is implemented      of the solution, so it changes locally in the system. In
+in spectral space where it is concentrated around a wave     addition,  it is also a time-varying quantity.  All these
+vector kinj corresponding to the injection scale linj. We     problems make its estimation diﬃcult and incompara-
+perturb a number Nf  of discrete Fourier components     ble between diﬀerent applications.  However, the dissi-
+of velocity in a shell extending from kinj −∆kinj to     pation scales can be estimated approximately from thekinj + ∆kinj with a Gaussian proﬁle of the half width     velocity spectra. Supported by our studies of turbulence
+kc and the peak amplitude ˜vf at the injection scale (see     (see Kowal et al 2007; Kowal & Lazarian 2007) where
+Tab. 1 for exact values in all models).  In all models    we used similar code, we estimated the dissipation scale
+kc = 0.4. Since we can control the scale of injection, the     kν ≈30 for the resolution of models presented here.power input is introduced into the ﬂow at an arbitrary
+                                                                                           3.5. Table of Simulated Modelsscale. The amplitude of driving is solely determined by
+its power Pinj, the number of driven Fourier components       In Table 1 we list parameters of all the models pre-
+and the time step of driving ∆tf, which in2 all our mod-     sented in this paper.  We divided them into several
+els is equal to 10−5. The parameters describing our forc-     groups. In each group we calculated models in order to
+ing do not change during the evolution of the system.     study the dependence of the reconnection rate on a char-
+Because we perturb discrete number Nf of Fourier com-      acteristic parameter of turbulence or resistivity. We have
+ponents which depends on the injection scale kinj and     studied the dependence of reconnection on the power
+the thickness of perturbed shell ∆kinj, the amplitude ˜vf      of turbulence (models ”PD”), injection scale (models
+varies with the injection scale in order to keep the same     ”SD”), uniform resistivity (models ”RD”), anomalous re-
+power input Pinj.  In our models  ˜vf  is always a small      sistivity (models ”AD”), and dependence on the guide
+fraction of Alfv´en speed (see Tab. 1).                       ﬁeld (models ”BD”).
+  The randomness in time makes the force neutral in     Among all parameters of the model we list those which
+the sense that it does not directly correlate with any of     vary, i.e.  the strength of guide ﬁeld B0z, the uniform
+the time scales of the turbulent ﬂow, and it also deter-    and anomalous resistivities, ηu and ηa, respectively, the
+mines the power input solely by the force-force correla-    power of turbulence Pinj and its injection scale kinj with
+tion. This means that it is possible to generate diﬀerent     the half-thickness of the injection shell ∆kinj, the num-
+desirable turbulence states, such as axisymmetric turbu-     ber of perturbed Fourier components of velocity Nf and
+lence, where the degree of anisotropy of the forcing can     the amplitude of perturbation ˜vf at the injection scale.
+be chosen a priori through the forcing parameters. In the     In addition, we include some of the most important
+models presented in this paper we use isotropic forcing     parameters obtained from the simulations, such as the
+
+===== PDF PAGE 9 =====
+                  RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                        9
+
+
+                                        TABLE 1
+                                                       List of models.
+
+          Name  B0z  ηu [10−3]  ηa [10−3]   Pinj   kinj  ∆kinj  Nf       ˜vf      vl (t=12)    ˜VA   β ≡p/pmag
+
+          PD    0.1       1.0         0.0       0.1    8      0.5    96   0.0015     0.031     1.05       31.7
+                        0.1       1.0         0.0       0.2    8      0.5    96   0.0022     0.041     1.05       31.7
+                        0.1       1.0         0.0       0.5    8      0.5    96   0.0035     0.051     1.05       31.7
+                        0.1       1.0         0.0       1.0    8      0.5    96   0.0049     0.065     1.05       31.7
+                        0.1       1.0         0.0       2.0    8      0.5    96   0.0069     0.084     1.05       31.7
+                        1.0       1.0         0.0       0.1    8      0.5    96   0.0015     0.042     1.41       16.0
+                        1.0       1.0         0.0       0.2    8      0.5    96   0.0022     0.043     1.41       16.0
+                        1.0       1.0         0.0       0.5    8      0.5    96   0.0035     0.056     1.41       16.0
+                        1.0       1.0         0.0       1.0    8      0.5    96   0.0049     0.071     1.41       16.0
+                        1.0       1.0         0.0       2.0    8      0.5    96   0.0069     0.083     1.41       16.0
+           SD     0.1       1.0         0.0       1.0    5      0.5    24   0.0028     0.092     1.05       31.7
+                        0.1       1.0         0.0       1.0    8      0.5    96   0.0049     0.063     1.05       31.7
+                        0.1       1.0         0.0       1.0    12     1.0    48   0.0018     0.059     1.05       31.7
+                        0.1       1.0         0.0       1.0    16     1.0    96   0.0049     0.035     1.05       31.7
+                        0.1       1.0         0.0       1.0    25     1.0    265   0.0014     0.030     1.05       31.7
+                        1.0       1.0         0.0       1.0    5      0.5    24   0.0028     0.092     1.41       16.0
+                        1.0       1.0         0.0       1.0    8      0.5    96   0.0049     0.068     1.41       16.0
+                        1.0       1.0         0.0       1.0    12     1.0    48   0.0018     0.059     1.41       16.0
+                        1.0       1.0         0.0       1.0    16     1.0    96   0.0049     0.034     1.41       16.0
+                        1.0       1.0         0.0       1.0    25     1.0    265   0.0014     0.027     1.41       16.0
+         RD    0.1       0.5         0.0       1.0    8      0.5    96   0.0049     0.066     1.05       31.7
+                        0.1       1.0         0.0       1.0    8      0.5    96   0.0049     0.065     1.05       31.7
+                        0.1       2.0         0.0       1.0    8      0.5    96   0.0049     0.067     1.05       31.7
+                        0.1       4.0         0.0       1.0    8      0.5    96   0.0049     0.066     1.05       31.7
+                        0.1       5.0         0.0       1.0    8      0.5    96   0.0049     0.065     1.05       31.7
+                        1.0       1.0         0.0       1.0    8      0.5    96   0.0049     0.068     1.41       16.0
+                        1.0       2.0         0.0       1.0    8      0.5    96   0.0049     0.067     1.41       16.0
+                        1.0       4.0         0.0       1.0    8      0.5    96   0.0049     0.067     1.41       16.0
+         AD    0.2       0.5         0.0       0.5    5      0.5    24   0.0020     0.051     1.10       30.8
+                        0.2       0.5         0.5       0.5    5      0.5    24   0.0020     0.051     1.10       30.8
+                        0.2       0.5         1.0       0.5    5      0.5    24   0.0020     0.051     1.10       30.8
+                        0.2       0.5         2.0       0.5    5      0.5    24   0.0020     0.051     1.10       30.8
+         BD    0.1       1.0         0.0       1.0    8      0.5    96   0.0049     0.065     1.05       31.7
+                        0.5       1.0         0.0       1.0    8      0.5    96   0.0049     0.066     1.22       25.6
+                        1.0       1.0         0.0       1.0    8      0.5    96   0.0049     0.068     1.41       16.0
+                        4.0       1.0         0.0       1.0    8      0.5    96   0.0049     0.067     2.24       1.9
+
+
+peak amplitude at the injection scale vl obtained from     the HLLD and HLL schemes, respectively. Here, the dif-
+the spectra of velocity at the ﬁnal time of simulation     ference of numerical resistivity between both resolutions                 p
+(t=12.0), the total Alfv´en speed ˜VA =  (B20x + B20z) /ρ0      for the HLLD solver is insigniﬁcant, justifying the con-
+and the plasma beta parameter β = p/pmag. Note that     vergence of the solution, while the HLL scheme behaves
+the Alfv´en speed VA =          deﬁned by the strength     rather poorly showing an increase of numerical dissipa-                    |B0x|/√ρ0of the antiparallel component                                  of magnetic ﬁeld  is the     tion by over 75% with respect to the model with smaller
+same for all models and equals 1.0.                          grid size. Thus all our models presented here were calcu-
+  All models presented in this section were calculated     lated using the HLLD scheme if not indicated otherwise.
+
+                                                                                       4. RECONNECTION RATE MEASUREwith the grid size ∆x ≈0.004 corresponding to theresolution 256x512x256. In the process of constructing
+our numerical model we have performed number of tests     We measure the reconnection rate by averaging the
+for convergence of numerical solution during the Sweet-    inﬂow velocity Vin divided by the Alfv´en speed VA over
+Parker stage. These studies indicated that the conver-     the inﬂow boundaries, i.e.
+gence  is reached for both HLL and HLLD solvers at                 Z                  !
+this resolution, but the HLL scheme characterizes by                 1           vy                                                                    dxdz                                              ,a much higher numerical dissipation. This is expected      ⟨Vin/VA⟩= 2        VA y=ymin −vyVA y=ymax
+since the HLL solver smooths out the rotational discon-                   S
+                                                                                                                     (9)tinuities resulting from the presence of magnetic ﬁeld.
+                                                    where S deﬁnes the area of the XZ inﬂow boundaries.
+As will will show in § 5.1, the numerical resistivity in     Since we have two XZ boundaries, located at y = yminthe models calculated with the HLLD scheme has the
+                                                  and y = ymax, we need to take half of the resulting inte-
+value of about 6.1·10−4. The convergence studies signify      gral. This measure works well for laminar reconnection,that the same models calculated using the HLL scheme
+                                               when the system is perfectly stable and where the timewith the same resolution reveal a higher numerical re-
+                                                               derivative of the magnetic ﬂux is zero. In the presence
+sistivity of order of 8.7 · 10−4, which is over 40% larger      of turbulence, however, this time derivative can ﬂuctuatethan ηnum in the HLLD scheme for the same grid size
+                                                            or the turbulence in the center of the box could aﬀect the
+∆x ≈0.004. For models with lower resolution where the    ﬂow of the plasma. In this way we would get a ﬂow of
+grid size ∆x ≈0.008 we obtained values of the numerical     magnetic ﬂux without the presence of reconnection. In
+                           numresistivity ηhlldnum ≈6.6 · 10−4 and ηhll                              ≈1.12 · 10−3 for     order to include all eﬀects contributing to the change of
+
+===== PDF PAGE 10 =====
+ 10                            KOWAL ET AL.
+
+
+
+
+
+                                                                     Fig. 5.— Evolution of the total mass M, and kinetic and mag-
+                                                                           netic energies, Ekin and Emag, respectively, during the Sweet-
+  Fig. 4.— Schematic 3D visualization of the reconnection rate      Parker stage. The kinetic energy Ekin has been ampliﬁed by a
+evaluation. A+ and A−areas are deﬁned by the sign of Bx com-      factor of 100 to visualize its evolution more clearly. The resistivity
+ponent.                                                                   in this model is set to ηu = 10−3 and the guide ﬁeld B0z = 0.1.
+magnetic ﬂux, we deﬁne a new more general measure of      The electric ﬁeld v×B−ηj can be further divided into
+the reconnection rate.                                an advection term v×Bxˆx, a shear term v×(Byˆy + Bzˆz),
+ We start by considering a conserved quantity; the mag-    and a resistive term −ηj.  With this in mind the linenetic ﬂux Φ. First, we consider the ﬂux contained within     integral can be rewritten as
+                                                  I               I
+a plane inside the simulation volume (see Fig. 4). If ˆx is
+the direction of the reconnecting ﬁeld, then we start by           sign (Bx) E · dl =   |Bx| (v⊥× ˆx) · dl         (14)
+considering the time derivative of the net ﬂux of Bx. It                I                       I
+is             I        I                         +   sign (Bx) vx (ˆx × B⊥) · dl−   ηj · dl.
+       ∂tΦ = −  E · dl =   (v × B −ηj) · dl     (10)                                                         This new reconnection measure contains the time
+  This equation is not exactly satisﬁed in our simula-     derivative of the absolute value of Bx, and a number
+tions unless we allow for numerical resistivity. This dis-      of boundary terms, such as advection of Bx across the
+crepancy can be used to derive an independent measure    boundary and the boundary integral of the resistive term
+of the eﬀective resistivity of the code, which is roughly      ηj. The additional terms include all processes contribut-
+consistent with value derived from the speed of laminar     ing the time change of |Bx|. In particular, they can havereconnection. Now we split the area of integration into     non-zero values.
+two pieces, A+ and A−, deﬁned by the sign of Bx (see                                 5. RESULTS
+Fig. 4). Instead of adding two areas we subtract them,
+i.e.                       Z                             In this section we describe the results obtained from
+                                                       our three dimensional simulations of magnetic reconnec-
+          ∂tΦ+ −∂tΦ−= ∂t   |Bx|dA,         (11)     tion in the presence of turbulence. First, we investigate
+                                                        Sweet-Parker reconnection, the stage before we inject
+which we can write explicitly in terms of line integrals                                                            turbulence. A full understanding of this stage is required
+around A+ and A−                                                                in order to perform further analysis of reconnection in the     Z         I         I
+                                                          presence of turbulence.
+                                                   (12)    ∂t   |Bx|dA =            E · dl+ −  E · dl−                                                                                          5.1. Sweet-Parker Reconnection               I                              Z
+         =   sign(Bx)E · dl +  2E · dliface,         As we described in §3.2, Sweet-Parker reconnection de-                                                            velops in our models as a result of an initial vector poten-
+where liface is the line separating A+ and A−(see Fig. 4).      tial perturbation. In order to reliably study the inﬂuence
+The last term describes the mutual annihilation of posi-      of turbulence on the evolution of such systems, we need
+tive and negative Bx along the line separating them and     to reach the stationary Sweet-Parker reconnection before
+by deﬁnition, this is the reconnection rate.  Note that    we start injecting energy.
+this includes the motion of already reconnected ﬂux lines       Figure 5 shows the evolution of total mass, kinetic and
+through the plane of integration.  Rather than try to     magnetic energies until we start injecting the turbulence
+calculate it numerically, we deﬁne the interface term as       (i.e. t = 7). All quantities, after some initial adaptation,
+                                                          reach                                                             almost                                                                       constant                                                                                         values.                                                           We remind                                                                                                     the                                                                                                                reader,               where                                          is                                 the asymptotic                                                abso-−2Vrec|Bx,∞|Lz,                       |Bx,∞|                                                          that the                                                             system                                                                             evolves in                                                                                   the presence                                                                                                            of open                                                                                          boundarylute                                   is the                             width                                           of the box.                                 We     value of Bx,               and Lz
+can then calculate the other terms which do not involve     conditions, which do not guarantee perfect conservation
+trying to ﬁnd the interface and the parallel component      of mass and total energy. Nevertheless, conservation of
+of the electric ﬁeld. The end result, which is the new     these quantities is well satisﬁed during the Sweet-Parker
+measure of reconnection rate, is                             stage in our models.
+                 I                Z               The reconnection rate, shown in Figure 6 (solid thick
+            1
+  Vrec =              sign(Bx)E  dl                           line representing the new reconnection rate measure),                                                       ·  −∂t   |Bx|dA         also conﬁrms that we have reached a stationary state.        2|Bx,∞|Lz                                                   (13)      Initially, the reconnection rate Vrec grows until time
+
+===== PDF PAGE 11 =====
+                 RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                       11
+
+
+
+
+
+ Fig. 6.— Evolution of the reconnection rates, ⟨Vin/VA⟩(old) and
+Vrec (new), for the same model as in Fig. 5. The reconnection rate
+grows initially until it reaches the stationary solution. Note, that
+both reconnection measures coincide during the later evolution.
+t ≈1.0, when it reaches a maximum value of ≈0.05.Later on, it drops a bit approaching a value of 0.04. Dur-
+ing the last period of about three Alfv´en time units, the
+change of the reconnection rate is very small. We assume
+that these conditions guarantee a nearly steady state evo-
+lution of the system. In this plot we also show the evo-
+lution of old reconnection measure ⟨Vin/VA⟩which donot include time variation of the ﬂux. We see, that after
+the initial discrepancy they coincide and show the same
+value of reconnection speed.
+  In order to check the reliability of our code, we estimate
+characteristic parameters of the laminar reconnection,
+such as thickness of current sheet δ, and the inﬂow and
+outﬂow speeds, Vin and Vout, respectively (see Fig. 7),
+from the proﬁles of the absolute value of current density
+
+                                                                      Fig. 7.— Estimates of the current sheet thickness δ (top), the|j| along the Y direction and the proﬁles of vx and vy
+along the X and Y directions, respectively. We compare     inﬂow (middle) and outﬂow (bottom) speeds Vin and Vout, re-
+these estimates to the values obtained from the equations      spectively at the time t = 7 for the model with ηu = 10−3 and
+describing Sweet-Parker model. We limit this procedure     B0z = 0.1.
+to one model with a resolution of 256x512x256, uniform
+resistivity ηu = 10−3 and shared component of magnetic     merical model exhibits Sweet-Parker reconnection during
+ﬁeld B0z = 0.1. We analyze the snapshot obtained at     the stationary phase.
+the time t = 7 before we start introducing turbulence.         Before presenting our results in the presence of turbu-
+  First, using the Ohmic dissipation formula Vin =      lence, we describe the topology of the ﬂow and magnetic
+η/δ we estimate the total resistivity coeﬃcient includ-     ﬁeld in the laminar case.  In Figure 10 we present the
+ing the numerical contribution. We obtain a value of     velocity and magnetic ﬁeld conﬁguration of the steady
+η = ηu + ηnum = Vinδ ≈1.64 · 10−3.  It indicates that      state.  In the left panel we show the topology of thethe numerical resistivity ηnum has a value of about 60%     velocity ﬁeld as textures. The brightness of texture cor-
+of the explicit uniform resistivity. We use this value     responds to the amplitude of the ﬁeld, while the tex-
+of resistivity in the subsequent estimates.  Next, using     ture itself shows the direction of the ﬁeld lines.  The
+mass conservation, VinL = Voutδ (Parker 1957; Sweet     topology of the velocity ﬁeld is mainly characterized by
+1958), we estimate the outﬂow speed Vout. Since the size     strong outﬂow regions along the midplane. This outﬂow
+of our box along X direction is L = 1.0, this gives a       is produced by the constant reconnection process at the
+value of Vout ≈0.394, which agrees well with the value     diﬀusion region near the center and the ejection of theVout = 0.395 obtained from the proﬁle of vx. Since we     reconnected magnetic ﬂux through the left and right X
+already know the characteristic parameters Vout, L, and     boundaries. The system is in a steady state when the
+η, we can estimate the Lundquist number S ≡LVout/η     ﬂux, which reconnects, is counterbalanced by the incom-for our models.  Substituting estimated Vout, L, and η     ing unreconnected ﬂux. The inﬂow is much slower than
+we obtain a value of S ≈236. As expected, our nu-     the outﬂow, but its direction is still apparent in the leftmerical models are far from the conditions observed in     plot of Figure 10.
+typical astrophysical objects where S ∼1010 −1020.      The topology of the magnetic ﬁeld is shown in the mid-Nevertheless, we can still use them to determine their     dle panel of Figure 10. We recognize the antiparallel con-
+dependence on the characteristics of the environment.     ﬁguration of the magnetic lines with uniform strength
+From Vout and S we can estimate the Sweet-Parker re-     out of the midplane region. Near the midplane, the hor-
+connection rate Vrec = VoutS−1/2, which gives a value of     izontal magnetic lines are reconnected generating the Y
+∼0.0251, matching almost perfectly the value of Vin ﬁt    component, which is ejected by a strong outﬂow. In addi-from the model. These estimates indicate, that our nu-      tion, we show the absolute value of current density in the
+
+===== PDF PAGE 12 =====
+ 12                            KOWAL ET AL.
+
+
+
+
+
+  Fig. 8.— Evolution of total mass M, and kinetic and magnetic       Fig. 9.— Evolution of the reconnection rates, ⟨Vin/VA⟩(old) and
+energies, Ekin and Emag, respectively for the stage with turbu-      Vrec (new), for the same model as in Fig. 5. In this plot we present
+lence. The kinetic energy Ekin is not ampliﬁed in this plot. Two      the measured rates of the Sweet-Parker reconnection Vrec,SP and
+dotted vertical lines bound the period of gradually increasing tur-      during the presence of turbulence, Vrec,LV . Symbol δVrec,LV  is
+bulence. The resistivity in this model is set to η = 10−3 and the      the time variance. ∆Vrec,LV  is the estimated uncertainty of the
+shared component of magnetic ﬁeld B0z = 0.1.                       measure.
+right panel of Figure 10. We see an elongated diﬀusion
+region in the middle of the box, where the reconnection       In Figure 9 we also show how we measure the rates
+                                                          Sweet-Parker                                                                           reconnection                                                                                 and                                                                                 LV99 model                                                                                              Vrec,SPprocess        takes               place.                The maximum                                            not ex-      of                                        of  |⃗j| does                                                                                                            . Because                                                                           the reconnection                                                                                                   rates                                                                                             ﬂuctuate                                                                                                                     in the                                                               Vrec,LVceed a value              of                25. Evidently                            our boundary                                             conditions
+allow for physically realistic inﬂow and outﬂow around a     presence of turbulence we also measure their time vari-
+central current sheet.                                    ance δVrec,LV using standard deviation. In addition to
+                                                          the time variance of Vrec, we measure their errors by
+                   5.2. Eﬀects of Turbulence                      splitting the averaging region into two subregions and
+                                                                  after averaging the rates V1rec and V2rec over each sub-      5.2.1. Evolution in the Presence of Turbulence
+                                                            region (see Fig. 9), we take the absolute value of their
+  The essential               part of our studies                                   covers                                         the                                              eﬀects of                                                          diﬀerence                                                                                      This                                                                                                diﬀerence                                                                                                                    corre-                                                              ∆Vrec                                            = V1rec                                                                            −V2rec.turbulence         on reconnection.                      Our goal                                was                                           to achieve                                                a                                                      sponds to                                                                    the error                                                                                                                           i.e.  it                                                                                                                              is diﬀerent                                                                                             from                                                                                                               zero                                                                                        of Vrec,
+stationary state of Sweet-Parker reconnection, described        if the rate is not constant in time. In all further anal-
+in the previous subsection, and then introduce turbulence      ysis and presented plots of dependencies we use values
+                                                         estimated in this way.at a given injection scale linj ∝k−1inj, gradually increasingits strength to the desired amplitude corresponding to a       Before we discuss the main results obtained in these
+turbulent power Pinj. We inject turbulence in a region     studies, we present and describe the conﬁguration and
+surrounding the midplane and extending to the distance     topology of the velocity and magnetic ﬁelds in the pres-
+of around one quarter of the size of the box. This, natu-     ence of turbulence.  In Figure 11 we show examples of
+rally, limits the injection scale to kf ≲3. The transition    XY-cuts (upper row) and XZ-cuts (lower row) through
+period, during which we increase the strength of turbu-     the box of the velocity (left panel) and magnetic ﬁeld
+lence has a length of one Alfv´enic time unit in all models     (middle panel) topologies with the  intensities  corre-
+and in the presented model starts at t = 6. This means     sponding respectively to the amplitude of perpendicular
+that from t = 7 we inject turbulence with the maximum    components of velocity and magnetic ﬁeld to a normal
+power Pinj.                                                 vector deﬁning the plotted plane.
+  In Figure 8 we present an example of the evolution of      The ﬁrst noticeable diﬀerence compared to the Sweet-
+total mass, and kinetic and magnetic energies in a model     Parker conﬁguration is a signiﬁcant change of the velocity
+with Pin = 1.0, kf = 8, and ηu = 10−3. We inject    and magnetic ﬁeld topologies. Velocity has a very com-
+turbulence, gradually increasing its strength from t = 6     plex and mixed structure near the midplane, since we
+to t = 7. This period is marked by two dotted vertical     constantly inject turbulence in this region (see the left
+lines in Figure 8. We see an increase of kinetic energy     panel in Fig. 11). Although the structure is very com-
+during this period due to the injection and after t = 7 all     plex, most of the velocity ﬂuctuations are perpendicular
+quantities saturate and do not vary much. This means     to the mean magnetic ﬁeld. This is because we are in the
+that even in the presence of turbulence and with open     nearly incompressible regime of turbulence (large plasma
+boundary conditions our system conserves total mass and     β, see Tab. 1) and most of the ﬂuctuations propagate as
+energy relatively well.                                          Alfv´en waves along the mean magnetic ﬁeld. Slow and
+  In Figure 9 we show the evolution of reconnection rates      fast waves, whose strengths are signiﬁcantly reduced, are
+⟨Vin/VA⟩and more advanced Vrec, both described in §4.     allowed to propagate in directions perpendicular to theIn this plot we recognize an increase of both rates during    mean ﬁeld as well. As a result most of the turbulent ki-
+the introduction of turbulence. After the initial period     netic energy leaves the box along the magnetic lines. We
+between t = 6 and t = 8, during which the system is     observe, however, the eﬃcient bending of magnetic lines
+adjusting to the new state, we see that both measures     at the midplane (see the upper middle plot in Fig. 11).
+coincide and even though they are ﬂuctuating, they reach     This is not result of a driving, but result of reconnection.
+a stationary state characterized by faster reconnection.     In general the interface between positively and negatively
+A more detailed comparison of the simple and advanced     directed magnetic lines is much more complex than in the
+reconnection rate measures is presented in §5.4.             case of Sweet-Parker reconnection. This complexity fa-
+
+===== PDF PAGE 13 =====
+                 RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                       13
+
+
+
+
+
+ Fig. 10.— Topology and strength of the velocity ﬁeld (left panel) and magnetic ﬁeld (middle panel) during the Sweet-Parker reconnection
+at t = 7. The strength is calculated from the components of V and B perpendicular to the normal vector of the XY-plane. In the right
+panel we show the absolute value of current density |⃗j| overlapped with the magnetic vectors. The images show the XY-cut through the
+domain at Z = 0 at time t = 7 for a model with B0z = 0.1, ηu = 10−3, ηa = 0.0, and the resolution 256x512x256.
+
+
+
+
+
+  Fig. 11.— Topology and strength of the velocity ﬁeld (left panel) and magnetic ﬁeld (middle panel) in the presence of fully developed
+turbulence at time t = 12. In the right panel we show distribution of the absolute value of current density | ⃗J| overlapped with the magnetic
+vectors. The images show the XY-cut (upper row) and XZ-cut (lower row) of the domain at the midplane of the computational box.
+Turbulence is injected with power Pinj = 1 at scale kinj = 8. Magnetic ﬁeld reversals observed are due to magnetic reconnection rather
+than driving of turbulence, which is subAlfv´enic.
+
+===== PDF PAGE 14 =====
+ 14                            KOWAL ET AL.
+
+vors creation of enhanced current density regions, where    becomes ﬂatter. For a weak guide ﬁeld the dependence
+the local reconnection works faster since the current den-       is ﬂatter from the very beginning and is better ﬁt by
+sity    reaches            higher                   values (see                            the right                                     panel of                                                                                   inj .  This diﬀerence requires further investiga-                                                 Fig. 11).     Vrec ∼l3/4Since    we observe                 multiple                         reconnection                                      events                                        happening                                                                   tion.
+at the same time (compare the right panel of Fig. 11 to                                        We see several possible sources for the discrepancy. For
+the Sweet-Parker case in Fig. 10), the total reconnection                                                               instance, the existence of a turbulent inverse cascade can
+rate should be signiﬁcantly enhanced.                                                     modify the eﬀective linj. In addition, reconnection can
+                                                                also modify the characteristics of turbulence, such as the
+         5.2.2. Dependence on Turbulence Strength                                                    power spectrum and anisotropy. We shall study this is-
+ We ran several models (models PD in Tab. 1) with     sue elsewhere, but within this work get satisﬁed with the
+varying powers of turbulence. All other parameters were     qualitative agreement of the predictions and the numer-
+kept the same, allowing us to estimate the dependence      ical simulations.
+of the reconnection rate Vrec on the power of injected
+turbulence Pinj.                                                                      5.2.4. Dependence on Resistivity
+  Figure 12 (left panel) shows the evolution of reconnec-
+tion speed in models with turbulent power Pinj varying       In the  global constraint on the reconnection  rate
+in range by more than one order of magnitude, from 0.1     (Eq. 3) derived in LV99, there  is no explicit depen-
+to 2.0. The evolution of Vrec reaches stationarity in a rel-     dence on the resistivity.  In order to test this, we per-
+atively short period, about one Alfv´en time unit, as es-    formed another set of models (RD in Tab. 1) in which
+timated from the plot. We averaged Vrec from t = 8.2 to    we change the uniform resistivity ηu only. We expect
+t = 12. From this plot we see that the reconnection rates     that in these models we should see at early times the
+are relatively stable. In the right panel of Figure 12 we     theoretical dependence of the Sweet-Parker reconnection
+                                                                         u  ), and at late times, after we intro-plot the averaged reconnection speed over the strength of     rate (Vrec,SP ∼η1/2turbulence. Filled symbols represent the averaged recon-     duce turbulence, a complete lack of any dependence on
+nection rate in the presence of turbulence. Open symbols      resistivity.
+represent the reconnection rate during the Sweet-Parker       In the left panel of Figure 14 we show the evolution
+process, i.e.  without turbulence. The error bars show      of the reconnection rate for a subset of RD models with
+the time variance of Vrec. The size of symbols indicates    B0z = 0.1 and with ηu varying from 5 · 10−4 to 5 · 10−3.the uncertainty in our estimate of the reconnection speed     In this plot we can recognize a strong dependence of
+∆Vrec,LV normalized to the uncertainty in the reconnec-     the Sweet-Parker reconnection on the uniform resistiv-
+tion speed during the Sweet-Parker evolution ∆Vrec,SP       ity, while in the presence of turbulence the reconnec-
+using formula size =  2.0 −ln ∆Vrec,LV / ln ∆Vrec,SP .     tion speed, even though it ﬂuctuates, reaches roughlyMeaning that if ∆Vrec,LV  is of order of ∆Vrec,SP their     the same level for all models.  This indicates that, as
+symbols have the same size.                                expected, there is little or no dependence of the recon-
+  Fitting a power law to the calculated points indicates     nection rate on resistivity in the presence of turbulence.
+                                                            In the                                                                         right panel                                                                                         of Figure                                                                                14                                                                         we                                                                                show reconnection                                                      1/2 , as                                                          injthat the reconnection speed Vrec scales as ∼P                                                               rates                                                              obtained                                                                  from the                                                                                            set RD                                                                                                      of                                                                                    models                                                                                               with a weakexpected from the LV99 prediction (see Eq. 4).
+                                                  and strong guide ﬁelds, B0z = 0.1 and B0z = 1.0, re-
+            5.2.3. Dependence on Injection Scale                spectively. The open symbols show the rates of laminar
+                                                          reconnection Vrec,SP . They follow precisely the theoreti-
+ We performed similar studies to determine the depen-
+                                                                 cal relation Vrec,SP    u   . Evolving the models furtherdence of the reconnection speed Vrec on the scale at which                    ∼η1/2                                                                in the presence of turbulence allowed us to test the de-we inject turbulence, linj. Keeping the same power of
+                                                     pendence of the reconnection rates on resistivity in theturbulence for all models SD (see Tab. 1) we inject tur-
+                                                          presence of turbulence. We plot these results using ﬁlledbulence at several scales, from kinj = 5 to kinj = 25. At
+                                                         symbols. We see that there is virtually no dependence onthe upper end of this range the turbulence barely broad-
+                                                              ηu. Moreover, we see that this property does not dependens the Sweet-Parker current sheet. At the lower end the
+                                                   on the strength of B0z.turbulent eddies are barely contained within the volume
+                                                      These results were obtained in models with a decay-within which we excite turbulent motions.
+                                                            ing zone of resistivity near the X boundary. In order to  In Figure 13 (left panel) we present the results for this
+                                                              exhibit the importance of properly treating the resistiveseries of models. From the plot we clearly see a strong de-
+                                                       terms at the outﬂow boundary conditions we show inpendence of the reconnection rate on the injection scale.
+                                                         Figure 15 values obtained in models with regular openAfter the injection of turbulence, models with smaller
+                                                   boundary conditions without a zone of decaying resis-power injection scales reach smaller values of the recon-
+                                                                         tivity. Here, the open circles show the rates of laminarnection rate Vrec. In the model with the largest injection
+                                                          reconnection with no turbulence. We clearly see a grow-scale kinj = 5, reconnection is 5 times faster than the
+                                                            ing departure of these results from the theoretical pre-Sweet-Parker rate.  After averaging over time, we plot
+                                                                           u   (solid line) for models with largethe dependence of Vrec on the injection scale in the right     diction, Vrec,SP ∼η1/2
+plot of Figure 13.                                           values of uniform resistivity.  For ηu ≳2 · 10−3, lami-  The prediction of LV99 model is that the reconnec-     nar reconnection seems to be insensitive to the value of
+tion rate should scale as ∼linj. In the case of a strong      resistivity.  This eﬀect is purely numerical and causedguide ﬁeld we see that this relation is observed for small    by improper handling of boundary conditions when the
+injection scales. However, when linj is comparable with      resistive term in the induction equation starts to domi-
+length of the volume of driven turbulence the dependence     nate. Open diamonds in Figure 15 show the correspond-
+
+===== PDF PAGE 15 =====
+                 RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                       15
+
+
+
+
+
+  Fig. 12.— Left: Time evolution of the reconnection speed Vrec for models PD (see Table 1) with diﬀerent powers of turbulence Pinj
+(see legend). Right: The dependence of the reconnection speed Vrec on Pinj. Error bars represent the time variance of Vrec. The size of
+symbols corresponds to the error of Vrec (the way we calculate errors is described in §5.2).
+
+
+
+
+
+ Fig. 13.— Left: Time evolution of the reconnection speed Vrec for models SD (see Table 1) with diﬀerent injection scale linj (see legend).
+Right: The dependence of the reconnection speed Vrec on linj. Error bars and the size of symbols have the same meaning as in Fig. 12.
+
+
+
+
+
+ Fig. 14.— Left: Time evolution of the reconnection speed Vrec for models RD (see Table 1) with diﬀerent resistivity coeﬃcients ηu (see
+legend). Right: The dependence of the reconnection rate Vrec on the uniform resistivity ηu. The solid line shows the theoretical dependence
+in Sweet-Parker model, Vrec,SP ∼η1/2u   . Open symbols show Sweet-Parker reconnection rate for diﬀerent models.  Filled symbols show
+reconnection rates Vrec in the presence of turbulence. Dashed line shows the mean value of reconnection rate averaged over all models
+during the turbulence stage (all ﬁlled symbols). Error bars show the measure of time variance of Vrec.
+
+===== PDF PAGE 16 =====
+ 16                            KOWAL ET AL.
+                                                                      sistivity ηu = 5 · 10−4 and the critical current density                                                                             jcrit = 25.0 but with the anomalous resistivity parame-
+                                                                  ter ηa varying between 0.0 and 2 · 10−3 (see models AD                                                                in Tab. 1). In Figure 16 we plot the dependence of the
+                                                          reconnection rate on the anomalous resistivity parame-
+                                                                  ter ηa. We see that also the reconnection speed Vrec is
+                                                                 insensitive to the value of ηa to within the variations of
+                                                          the reconnection rate in each model (see the error bars).
+                                                            In this section we shown that the results of our resis-
+                                                                    tivity studies agree with the LV99 model and indicate
+                                                   no sensitivity to Ohmic resistivity in the presence of tur-
+                                                            bulence.  This is important for two reasons.  First,  it
+                                                         supports the stochastic reconnection model proposed in
+                                                    LV99. Second, it gives reason to believe that simulations
+                                                                  of reconnection and MHD turbulence in astrophysical ob-
+                                                                    jects can be successfully applied to real objects, despite
+  Fig. 15.— Dependence of the reconnection rate Vrec on the     the enormous diﬀerence between the magnetic Reynolds
+uniform resistivity ηu without the decaying resistivity zone. The    numbers that can be simulated and the values that ac-
+solid line shows the theoretical dependence in Sweet-Parker model,     tually obtain in stars, accretion disks, and galaxies.
+Vrec,SP ∼η1/2u   . Open circles show Sweet-Parker reconnection rate
+for diﬀerent models. Open diamonds show reconnection rates Vrec                        5.3. Role of the Guide Field
+in the presence of turbulence. Filled symbols show values corrected
+by the factor calculated from the theoretical dependence (see text).      The robustness of the LV99 model is determined by
+                                                                            its application to any conﬁguration of the reconnecting
+                                                                ﬁeld. Usually textbooks describe the Sweet-Parker model
+                                                            as having opossitely directed ﬁeld lines, which undergo
+                                                          the reconnection process in the diﬀusion region and are
+                                                               perfectly antiparallel, since this model is strictly two di-
+                                                          mensional. This situation is very particular. In reality,
+                                                       even in the absence of turbulence, magnetic ﬁeld lines can
+                                                             enter the diﬀusion region at diﬀerent angles α (see right
+                                                         panel of Fig. 3), or in other words, an uniform component
+                                                                  parallel to the reconnecting ﬁeld could be present. This
+                                                  component is called a guide ﬁeld and in our simulations
+                                                                                is determined by the value of B0z.
+                                                             Direct simulations of the LV99 model with a strong
+                                                         guide ﬁeld  of order  of the reconnecting component
+                                                           strength encounter problems when the Z boundaries are
+                                                         open.  In our picture, the simulation domain is a box
+                                                 embedded in a large scale conﬁguration of magnetic ﬁeld
+                                                    around the interface of two volumes characterized by the
+                                                           diﬀerent direction of magnetic lines. In this picture, mag-  Fig. 16.— Dependence of the reconnection rate Vrec on the
+anomalous resistivity ηa. Two horizontal lines show the mean re-     netic lines crossing our domain extend to inﬁnity. This
+connection rate averaged over all plotted models during the Sweet-    means that any force acting on a ﬁeld line in the domain
+Parker stage and in the presence of turbulence (dotted and dashed      will feel the tension of that line, so the general conﬁgura-
+lines, respectively). The critical value of the current density jcrit
+is set to 25.0 in all models plotted here.                            tion of the ﬁeld line will not change. It only encounters
+                                                      a small local perturbation. When the open boundary
+                                                            conditions are applied, the force acting on a magnetic
+ing rates for models with turbulence. Even though ini-                                                                     line is not bounded by the magnetic tension anymore,
+tially, for smaller values of resistivity, the reconnection                                                  and in the presence of shear ﬂows generated by turbu-
+rate seems to be independent of ηu, later on, when the      lence, magnetic line ends attached to the boundaries can
+resistivity is larger, it starts to decay with ηu. The prob-      slip along them changing the global topology of mag-
+lem of boundaries aﬀects the turbulent case as well.                                                                netic ﬁeld. Moreover, the change of direction of the ﬁeld
+ We can test our ability to compensate for the aﬀect                                                         transforms Bz into Bx component, which suppresses the
+of large resistivity on the boundary conditions using the                                                    inﬂow of fresh unreconnected ﬂux. This is an artiﬁcial
+                                                  and undesirable situation.theoretical dependence Vrec,SP ∼η1/2.  If we calculate
+correction factors by taking the ratio of η1/2/Vrec,SP ,      There are two solutions to this problem.  First, we
+we can use these coeﬃcients to correct reconnection rate    can construct a special type of open boundary condi-
+during the turbulent stage. The result is plotted with      tions, which ﬁxes magnetic lines at some distance far
+the ﬁlled symbols. The relation signiﬁes virtually no de-    from the box. Then, at the boundary, we would have to
+pendence of the Vrec on η.                                  extrapolate the magnetic ﬁeld lines and calculate the re-
+  In addition to the uniform resistivity dependence, we     quired tension from this condition. This approach, how-
+have studied the dependence on anomalous eﬀects as     ever, seems to be complex and requires additional condi-
+well. The results of these studies are presented in Fig-     tions assumed a priori at the boundaries. Thus, we have
+ure 16 and show four models with the same uniform re-     chosen another approach by applying periodic boundary
+
+===== PDF PAGE 17 =====
+                 RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                       17
+
+
+
+
+
+                                                                      Fig. 18.— Dependence of the reconnection rate Vrec on the
+                                                                      strength of the guide ﬁeld B0z.
+
+                                                          that reconnection will work with similar eﬃciency for
+                                                   any conﬁguration of magnetic ﬁeld in which the lines of
+                                                          the magnetic ﬁeld enter the diﬀusion region at diﬀerent
+                                                               angles. The studied models with 0.1 ≤B0z ≤1.0 cover                                                        range of α from 0◦to 90◦. For a given power input a
+                                                                larger guide ﬁeld is expected to correspond to a smaller
+                                                amount of ﬁeld wandering and therefore a smaller recon-
+  Fig. 17.— Demonstration of the importance of boundary con-     nection speed (see the model with B0z = 4.0 correspond-
+                       Upper:dition      along             Z-direction.                            Comparison                                                   of two models                                                       with                                                               We,                                                                              however,                                                                              do not                                                                                                       see                                                                                            a prominent                                                            ing to α ≈152◦).the   same         conditions                  but diﬀerent                                types                                           of Z boundaries                                                             for a weak                                                     dependence                                                             on the                                                                          shared                                                                         component                                                                                                            of                                                                                           magnetic                                                                                                                     ﬁeld,
+B0z. Lower: Comparison of two models with the same conditions                                                     which calls for further studies of the eﬀects of the strongbut diﬀerent types of Z boundaries for a strong B0z.
+                                                         guide ﬁeld.
+conditions along the Z direction. This is much simpler
+                                                                                 5.4. Comparison of the Old and New Measuresand does not limit our model, i.e.  it does not inﬂuence
+the inﬂow and outﬂow of the magnetic ﬂux.                   In Figure 19 we show a comparison of the reconnec-
+  In Figure 17 we show the comparison of Vrec for models     tion rate obtained using the old and new measures as a
+with a weak (top) and strong (bottom) guide ﬁelds B0z.     function of the power of turbulence (left plot) and the
+Each plot contains two otherwise identical models, but     injection scale (right plot). In the case of the turbulent
+one with open boundaries along Z direction and another    power dependence we used two diﬀerent sets of models
+with periodic boundaries. As we see, in the case of weak      for each method.  For the old method of Vrec estima-
+B0z there is no diﬀerence if we apply open or periodic     tion the guide ﬁeld Bz = 0.2, and the uniform resistivity
+boundaries.  In both models, mean values of reconnec-     η = 5 · 10−4. The guide ﬁeld in new models is set to 0.1.tion speed during the presence of turbulence are almost    The injection scales are kinj = 5 and 8, for the old and
+identical (see black and grey dashed lines in top panel of    new models, respectively. Dashed line shows the LV99
+                                                                                           2 .                                                                            TFig. 17). However, once we start increasing the strength    dependence Vrec ∼Vof the guide ﬁeld, our choice of the boundary conditions      The old measure models were calculated with a more
+starts to be important. In the case of open boundaries     dissipative scheme based on the HLL solver instead of
+along the Z direction, the mean reconnection rate is sup-    HLLD, with a higher value of numerical resistivity. Dur-
+pressed by the strong turbulent shear of Bz, which is     ing the Sweet-Parker stage we note some diﬀerence in the
+clearly seen in the bottom plot of Figure 17. Applying     values of reconnection rate between two sets of models
+periodic boundaries along the Z direction we can restore     resulting from the diﬀerent values of uniform resistivity
+the fast reconnection rate, but the system needs more     ηu in the models and other parameters, and diﬀerent type
+time to adjust to a steady state. This is caused by the      of schemes used to evolve the numerical models. After
+fact that after starting injection of turbulence, part of the     the injection of turbulence, as we shown in Figures 14
+injected kinetic energy is converted into magnetic energy,    and 16, during the stage of the presence of turbulence,
+thus the relaxation of the system takes place more slowly     the reconnection rate is insensitive to the value of resis-
+than in the case of weak Bz. This demonstration shows      tivity. In Figure 19 we see that both relations, using the
+that the choice of applied boundary conditions along the     old and new methods, show the same dependence, even
+Z direction is important and has a crucial inﬂuence on    though they were ﬁtted to two diﬀerent sets of models.
+the reconnection rate, at least in the case of strong mag-     This means that the reconnection rate dependence on
+netic guide ﬁeld.                                          the injected power is not sensitive to the strength of the
+  In Figure 18 we show four models (set BD in Tab. 1)     guide ﬁeld Bz, the injection scale or the value of uniform
+with diﬀerent strengths of the guide ﬁeld B0z. This plot      resistivity and the numerical diﬀusivity of the method
+shows that the reconnection speed is comparable over     used in solving the MHD equations.
+a broad range of B0z (and the angle α), which means       In the right plot of Figure 19 we see a comparison of the
+
+===== PDF PAGE 18 =====
+ 18                            KOWAL ET AL.
+
+
+
+
+
+  Fig. 19.— Comparison of the old and new reconnection rate estimates. In the left plot we show the dependence of the reconnection
+rate Vrec on the power of turbulence Pinj (diamonds) using both methods. The corresponding Sweet-Parker rates, without the presence
+of turbulence, are shown using x-symbols. In the right plot we show the dependence of the reconnection rate Vrec on the injection scale
+linj (diamonds). Again, the Sweet-Parker rates are shown using x-symbols.
+
+old and new measures of Vrec as a function of the injec-
+tion scale linj. Similar to the dependence on the power
+of turbulence, this dependence does not change and in
+                          inj . This conﬁrms again that theboth cases is Vrec ∼l3/4
+dependence of the reconnection rate Vrec on the proper-
+ties of the turbulence do not change its character. The
+only diﬀerence seen in both relations is the amplitude of
+the reconnection rate.  This diﬀerence comes from the
+fact, that in the old measure models we used weaker tur-
+bulence (Pinj = 0.5 vs. Pinj = 1.0). Another diﬀerence
+could result from the fact that we include more terms in
+the elaboration of the new reconnection rate, such as the
+boundary shear, the boundary resistive terms, the time
+
+                                                              models with the same set of parameters, Pinj = 1.0, kf = 8, B0z =derivative of the absolute value of |Bx|. These terms can        Fig. 20.— Comparison of the reconnection rate Vrec for twohave non-zero time averages, although we expect them                                                                                 0.1, ηu = 10−3, but diﬀerent initial conﬁgurations of magnetic
+to have at least stationary values.                                  ﬁeld: reversed Bx (grey) and uniform Bx (black). Both models
+  The results showed here conﬁrms that the new and old     were run with the same resolution 128x256x128.
+methods of estimating the reconnection rate reveal the
+                                                                  of our numerical model and the methods of reconnectionsame dependence on the power of turbulence and injec-
+                                                              rate estimation we present below a comparison of two
+tion scale. It signiﬁes that the old measure ⟨Vin/VA⟩and    models with the same set of parameters, but with diﬀer-new one Vrec are both adequate in determining the speed
+                                                           ent initial conﬁgurations of magnetic ﬁeld, namely, oneof reconnection and more importantly, that they measure
+                                                       with the antiparallel Bx as used in all numerical modelsprecisely the reconnection rate in our system excluding
+                                                          presented here and another with the uniform Bx where isall other processes, which could contribute to the plasma
+                                                   no laminar reconnection before we start injecting turbu-ﬂow, but not to the reconnection process itself.  It is
+                                                                  lence. From the latter model one would obviously expectalso important that these results are independent of the
+                                                          the lack of reconnection and zero reconnection rate Vrec.numerical scheme or the initial conditions.
+                                                            In Figure 20 we show the evolution of reconnection
+                                                              rate Vrec for two models with the same set of parame-
+                 5.5. Non-Reconnection Case                                                                      ters, Pinj = 1.0, kinj = 8, B0z = 0.1, and ηu = 10−3.
+  The results presented so far indicate an agreement with    Models were started from diﬀerent initial conﬁgurations
+the LV99 model. We see that the presence of turbulence      of magnetic ﬁeld. The initial conﬁguration of B in the
+near current sheets enhances reconnection signiﬁcantly.     ﬁrst model is taken from the steady-state laminar recon-
+However, since our testing is limited to numerical mod-     nection of Sweet-Parker type.  In the second model we
+els, which have explicitly deﬁned boundaries, our results     set uniform magnetic ﬁeld Bx = 1.0 initially.  Starting
+may be sensitive to interactions between turbulence and     the evolution from these conditions we inject turbulence
+the boundary conditions implemented in the numerical     in the same way in both models, increasing its strength
+model. These interactions could stimulate a ﬂow through     gradually through the period of one Alfv´enic time unit.
+the box resulting in a false, non-zero reconnection rate    Then, turbulence is injected with the power of constant
+without the presence of reconnection itself.  Moreover,     value of Pint = 1.0.
+the measures of reconnection rate that we applied here       Figure 20 shows a clear diﬀerence between the recon-
+may indicate the existence of other processes contribut-     nection rates in both models, i.e., in the case of initial
+ing to the plasma ﬂow and related to the turbulence itself     Sweet-Parker conﬁguration further evolution of Vrec  is
+rather than reconnection. In order to test the reliability     similar to the results presented in the previous sections.
+
+===== PDF PAGE 19 =====
+                 RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                       19
+
+The reconnection rate grows from a value corresponding     in fractal reconnection taking place on very small scales.
+to the Sweet-Parker rate of about 0.02 to higher val-    Waelbroeck (1989) considered not the tearing mode, but
+ues when it saturates at time t ≈1.4 at the level of     the resistive kink mode to accelerate reconnection.
+Vrec ≈0.07. Comparing this to the evolution of Vrec in     We do  not  expect  either  tearing  or  kink modesthe model with the initial uniform ﬁeld we see only small     to allow us  to evade the  constraints on the  global
+ﬂuctuations of reconnection rate around zero, what indi-    plasma ﬂow that leads to slow reconnection speeds9.
+cates the absence of global reconnection in the system.     The eﬀects  of tearing modes may be important  for
+  Results presented in this subsection indicate essentially     the initiation of turbulence in the situation when the
+a lack of reconnection in the case of uniform initial ﬁeld,      initial  conﬁguration  is  laminar  (see  Dahlburg et al.
+what means that the enhancement of reconnection rate     1992;  Dahlburg & Karpen   1994;  Dahlburg   1997;
+in the LV99 model is resulting from an inﬂuence of tur-     Ferraro & Rogers  2004;  Lazarian & Vishniac  2008).
+bulence on the laminar reconnection process and not a   We plan to study this eﬀect elsewhere. However, once
+result of turbulence itself.                                  turbulence  is  initiated  reconnection  should  proceed
+                                                         independently  of the tearing mode.   Straus’ idea  is
+                         6. DISCUSSION                           closely related to recent attempts to explain the exis-
+                                                           tence of the observed thick reconnection region in the
+        6.1. Relation to Other Studies of Turbulent                                                          context of numerical models of collisionless reconnec-
+                      Reconnection                                                              tion (Ciaravella & Raymond 2008) and predictions of
+  Our simulations presented in this paper test the LV99     particle acceleration within these regions (Drake et al.
+model of reconnection. At the same time, the notion that     2006a).  Here we do not appeal to collisionless eﬀects,
+magnetic ﬁeld stochasticity might aﬀect current sheet     but demonstrate both thick reconnection regions and
+structures is not unprecedented. For instance, some pa-      fast reconnection in the presence of turbulence.
+pers have concentrated on the eﬀects that turbulence in-      The    closest    study    to    ours   was   done
+duces on the microphysical level. In particular, Speiser    by    Matthaeus & Lamkin    (1985)     (see     also
+(1970) showed that in collisionless plasmas the electron    Matthaeus & Lamkin  1986).   The  authors  studied
+collision time should be replaced with the electron reten-    2D magnetic reconnection in the presence of external
+tion time in the current sheet. Also Jacobson & Moses     turbulence.   An  enhancement  of  the  reconnection
+(1984) proposed that the current diﬀusivity should be     rate was reported, but the numerical setup precluded
+modiﬁed to include the diﬀusion of electrons across the     the calculation  of a long term average reconnection
+mean ﬁeld due to small scale stochasticity. Our simula-      rate.  A more recent study along the approach  in
+tions are performed at the MHD level and do not take    Matthaeus & Lamkin  (1985)  is one  in Watson et al.
+these eﬀects into account8.                                   (2007), where the eﬀects of small scale turbulence on 2D
+  ”Hyper-resistivity”           (Strauss          1986;     reconnection were studied and no signiﬁcant eﬀects of
+Bhattacharjee & Hameiri                         1986;     turbulence on reconnection were reported for the setup
+Hameiri & Bhattacharjee   1987;  Diamond & Malkov     chosen by the authors. The major diﬀerences from the
+2003) is a more subtle attempt to derive fast reconnec-     present study stem from the fact that we test a 3D
+tion from turbulence within the context of mean-ﬁeld    model of reconnection, as the LV99 depends on eﬀects,
+resistive MHD.The form of the parallel  electric ﬁeld      e.g.  ﬁeld wandering, that happen only in 3D. Thus
+can be derived from magnetic  helicity  conservation.     within the present study we do not address the question
+Integrating by parts one obtains a term which looks      of what is happening to 2D reconnection in the presence
+like an eﬀective resistivity proportional to the magnetic      of turbulence, appealing instead to the 3D nature of
+helicity current. There are several assumptions implicit     astrophysical reality (see more in §6.4).in this derivation. The most important objection to this        Finally, we would like to stress that our calculations do
+approach is that by adopting a mean-ﬁeld approxima-     not attempt to validate the concept of turbulent diﬀusiv-
+tion, one is already assuming some sort of small-scale      ity frequently employed in the mean ﬁeld dynamo (see
+smearing eﬀect, equivalent to fast reconnection.  Fur-    Moﬀat 1978; Blackman & Field 2008). This concept ap-
+thermore, the integration by parts involves assuming a     peals to the alleged ability of hydrodynamic motions to
+large scale magnetic helicity ﬂux through the boundaries    mix magnetic lines on very small scales, as if the magnetic
+of the exact form required to drive fast reconnection.As     ﬁeld were a passive scalar. Naturally, this assumption is
+we are not aware of any attempts to test the idea of    wrong for any astrophysical ﬁeld of dynamical impor-
+”hyper-resistivity” numerically, we shall not discuss this     tance. In our calculations, on the contrary, the magnetic
+concept further.                                           ﬁeld energy exceeds the kinetic energy and thus, the tur-
+  Strauss (1988) examined the enhancement of recon-     bulence is weak.  Instead of mixing magnetic lines, as
+nection through the eﬀect of tearing mode instabilities     in the case of ”magnetic turbulent diﬀusivity” creating
+within current sheets. However, the resulting reconnec-     reversals of magnetic ﬁelds on the smallest scales, our
+tion speed enhancement is roughly what one would ex-
+                                                                           9 Sometimes the growth rate of the resistive modes is erroneouslypect based simply on the broadening of the current sheets
+                                                                       identiﬁed with the reconnection speeds. This does not account for
+due to internal mixing.  Shibata & Tanuma (2001) ex-      the global outﬂow of the matter constraint that should be satisﬁed
+tended the concept suggesting that tearing may result       for reconnection of magnetic ﬁeld. When this is done, the results
+                                                                       are diﬀerent. For instance, LV99 equated the shearing rates arising
+  8 These eﬀects will usually be small compared to eﬀect of a broad     from the global outﬂow and the rate of the tearing mode growth at
+outﬂow zone containing both plasma and ejected shared magnetic      the scale of the reconnection region. They obtained the reconnec-
+ﬂux. Moreover, while both of these eﬀects will aﬀect reconnection      tion speed VAR3/10m    , which was faster than the Sweet-Parker rate,
+rates, they are not suﬃcient to produce reconnection speeds com-     but incredibly slow for most astrophysical systems.
+parable to the Alfv´en speed in most astrophysical environments.
+
+===== PDF PAGE 20 =====
+ 20                            KOWAL ET AL.
+
+driving is only able to induce wandering of the magnetic     as well as formation of Petscheck-type ”X-points” in 2D
+ﬁeld lines within a well-deﬁned mean direction of the     turbulence.
+magnetic ﬁeld.                                     As we mentioned earlier, LV99 appeals to ”Y-points”
+  In general, it is important not to confuse stochastic    and heating does play a role in it. Our simulations are
+reconnection with the  ill motivated concept of turbu-     also isothermal. Kim & Diamond (2001) showed that the
+lent diﬀusivity.  For instance, Kim & Diamond (2001)     transport of magnetic ﬂux is not enhanced to the recon-
+addressed the problem of stochastic reconnection by cal-     nection zone. At the same time, ﬁeld wandering is the es-
+culating the turbulent diﬀusion rate for magnetic ﬂux      sential feature of 3D reconnection, which is absent in the
+inside a current sheet.  They obtained similar turbu-    2D case. In our forthcoming paper (Kulpa-Dybel et al.
+lent diﬀusion rates for both two dimensional and reduced     2009) we shall demonstrate the diﬀerence of 2D and 3D
+three dimensional MHD (2D with the Z-components of     reconnection using direct numerical simulations10.
+velocity and magnetic ﬁeld). In both cases the presence
+                                                                           6.3. Reconnection in collisionless and collisional plasmaof turbulence had a negligible eﬀect on the ﬂux trans-
+port. The authors pointed out that this would prevent     The LV99 model of reconnection is applicable to the
+the anomalous transport of magnetic ﬂux within the cur-      collisional medium. For instance, it is applicable to the
+rent sheet and concluded that both 2D and 3D stochas-      interstellar medium (known to be both turbulent and
+tic reconnection proceed at the Sweet-Parker rate, even     magnetized), for which one cannot apply the Hall-MHD
+if the individual small scale reconnection events happen     reconnection (Yamada 2007). This is a relieving news for
+quickly, which apparently contradicts our calculations in     the interstellar medium, star formation and Solar simula-
+the paper.                                                     tions (Ostriker et al. 2001; McKee & Ostriker 2007), as
+ We would like to stress that the turbulent diﬀusion     numerical reconnection in MHD codes is fast. Note, that
+rates within the current sheet are irrelevant to the pro-     the requirement of being collisionless in terms of mag-
+cess of stochastic reconnection (see discussion in LVC04).     netic reconnection is diﬀerent from the usual use of the
+The basic claim in LV99 is that the realistic magnetic    term in astrophysics. For instance, for the diﬀuse ISM
+ﬁeld topologies allow multiple connections between the     the collisionallity parameter is ωcτe, where ωc is cyclotron
+current sheet and the exterior environment, which would     frequency of electrons and τe is the collisional time for an
+persist even if the stochastic magnetic ﬁeld lines are sta-     electron. However, for Hall-MHD reconnection to be ap-
+tionary (”frozen in time”) before reconnection happens.     plicable the criterion is diﬀerent. It is required that the
+This leads to global outﬂow constraints which are weak     Sweet-Parker current sheet δSP width be less than the
+and do not depend on the properties of the current sheet.     ion inertial length di. Thus the ”reconnection criterion
+In particular, the analysis in LV99 assumed that the cur-      for media to be collisionless” is (L/di)1/2/(ωcτe) < 1,
+rent sheet thickness is determined purely by Ohmic dissi-    which presents a much severe constraint on the possible
+pation and that turbulent diﬀusion of the magnetic ﬁeld     rate of collisions. As a result, magnetic reconnection hap-
+is negligible inside and outside of the current sheet.         pens mediated by the Hall-MHD only if the extend of the
+                                                          contact region L (see Fig. 1) does not exceed 1012 cm.               6.2. 2D versus 3D reconnection
+                                                     Magnetic ﬁelds in the ISM should interact over much
+  The fact that our study is in 3D is essential, as the     larger scales.
+LV99 model is intrinsically three dimensional. The gen-       Astrophysical environments  also  contain media  to
+eral picture is of tangled ﬁeld lines, with reconnection    which the Hall-MHD reconnection is applicable, e.g. So-
+taking place via a series of ”Y-points” or modiﬁed Sweet-      lar corona, interplanetary medium.  Is LV99 model ap-
+Parker sheets distributed in some fractal way throughout     plicable to such environments? The answer is positive if
+the turbulence. A large scale Sweet-Parker sheet will be     the level of turbulence is high enough.  Indeed, the re-
+replaced by a more fractured surface, but the current     connection on microscales can happen fast, i.e.  in the
+sheets will occupy a vanishingly small fraction of the to-    Hall-MHD fashion. However, this may not change the
+tal volume and the ﬁeld reversal will remain relatively     global reconnection rate. Indeed, the LV99 model shows
+well localized. The model predicts that the reconnection     that even with relatively slow Sweet-Parker reconnection
+speed would be approximately equal to the strong tur-     at microscales the global reconnection is limited not by
+bulent velocity with a modest dependence on the ratio    Ohmic resistivity, but the rate of magnetic ﬁeld wonder-
+of the eddy length to the current sheet length.  There      ing. In fact, anomalous resistivity that we use in some
+should be no dependence on resistivity. The major re-      of our numerical runs is a proxy for the Hall-MHD eﬀect
+sults contained in our ﬁgures showing the dependence of    on reconnection and we do not see any dependence of
+the reconnection speed on resistivity, input power and     the reconnection rate on the anomalous resistivity (see
+input scale agree with the quantitative predictions of the     Fig. 16). We believe that the Hall-MHD local recon-
+LV99 model. We are not aware of any competing models     nection of magnetic ﬁelds is taking place interplanetary
+to compare our simulations with.                       medium, which is being tested by local in-situ measure-
+  In the absence of quantitative model to be tested, simu-     ments, while the global reconnection rates are determined
+lations aimed at studying reconnection speed have been    by magnetic ﬁeld wandering as prescribed in LV99. Fu-
+done in 2D. This allowed to achieve higher resolutions     ture dedicated numerical experiments and space mea-
+(compared to that contemporary available in 3D) but     surements should test this idea.
+substantially constrained magnetic ﬁeld dynamics. For
+instance, the 2D study in Matthaeus & Lamkin (1986)               6.4. Reconnection in Partially Ionized Gas
+stresses the importance of turbulence for modifying the
+character of magnetic reconnection and speciﬁes heat-         10 To our best knowledge no quantitative predictions are cur-
+ing and transport as the eﬀect of particular signiﬁcance,      rently available for the 2D reconnection.
+
+===== PDF PAGE 21 =====
+                 RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                       21
+
+  The LV99 model of reconnection deals with either fully     allowed by the standard ambipolar diﬀusion scenario (see
+ionized plasma or with plasmas where the neutrals con-     Tassis & Mouschovias 2005a,b).  Shu et al. (2007) pro-
+stitute less than 10% of species. For higher percentage     posed a mechanism that required eﬃcient reconnection
+of the neutrals, the MHD-type turbulent cascade is trun-      of magnetic loops based on the “hyper-resistivity” con-
+cated by the viscosity of neutrals. How does reconnection     cept. As we discussed earlier, this concept is not self-
+happen in a partially ionized gas?                            consistent and is therefore problematic.  Fast magnetic
+ A partially ionized plasma ﬁlls a substantial volume     reconnection in the partially ionized gas could serve a
+within our galaxy and the earlier stages of star forma-     similar purpose.
+tion take place in a largely neutral medium. This mo-
+                                                                            6.5. The Current Simulations and Remaining Problemstivates our study of the eﬀect of neutrals on reconnec-
+tion. The role of ion-neutral collisions is not trivial. On       In this paper we have performed extensive numerical
+one hand, they may truncate the turbulent cascade, re-     testing of the LV99 model of magnetic reconnection. A
+ducing the small scale stochasticity and decreasing the     advantage of this model is that it is very generic and
+reconnection speed. On the other hand, the ability of     does not appeal to any particular plasma eﬀects and/or
+neutrals to diﬀuse perpendicular to the magnetic lines      initial boundary conditions. In many respects, it is a nat-
+allows for a broader particle outﬂow and enhances re-     ural generalization of the Sweet-Parker model to the case
+connection rates.                                  when turbulence is present. It does not require the cur-
+  Reconnection in partially ionized gases before the in-     rent sheet to open up, as is required in the Petscheck re-
+troduction of the LV99 model looked hopelessly slow.     connection model. The only requirement is the presence
+For instance, in Vishniac & Lazarian (1999, henceforth      of ﬁeld line wandering, which is a well documented aspect
+VL99) we studied the diﬀusion of neutrals far from      of magnetic turbulence (see LVC04 and ref. therein).
+the reconnection zone assuming the anti-parallel mag-     Our results indicate that the reconnection speed in-
+netic lines. The ambipolar reconnection rates obtained     creases in the presence of weak turbulence in a manner
+in VL99, although large compared to the Sweet-Parker     consistent with the LV99 predictions. In particular, the
+model, are insuﬃcient either for fast dynamo models or     reconnection speed Vrec (Eq. 3) shows a strong depen-
+for the ejection of magnetic ﬂux prior to star formation.     dence on the characteristics of the turbulence, such as
+In fact, the increase in the reconnection speed stemmed     the rate of energy dissipation and the scale of injection.
+entirely from the compression of ions in the current sheet,      It is very important that we observe no explicit depen-
+with the consequent enhancement of both recombination     dence on the ﬂuid resistivity, which is the requirement
+and ohmic dissipation.This eﬀect is small unless the re-      for fast magnetic reconnection in astrophysical environ-
+connecting magnetic ﬁeld lines are almost exactly anti-     ments.
+parallel (VL99, see also Heitsch & Zweibel 2003a,b).Any      To make progress in simulating the weakly stochastic
+dynamically signiﬁcant shared ﬁeld component will pre-     reconnection, we had to develop a new numerical set up,
+vent noticeable plasma compression in the current sheet,    which included both driving turbulence over a part of the
+and lead to speeds practically indistinguishable from the     box, inﬂow conditions for the incoming ﬂux and outﬂow
+standard Sweet-Parker result. Since generic reconnection     conditions for the reconnected ﬂux. This enabled us to
+regions will have a shared ﬁeld component of the same     study both the transitional regimes of reconnection and
+order as the reversing component, the implication is that     the steady state one. In comparison, simulations in the
+reconnection and ambipolar diﬀusion do not change re-     periodic box would not be instructive, as stochastic re-
+connection speeds signiﬁcantly.                            connection is dynamic and does not reach a stationary
+ LCV04 presented a model of turbulence in a partially     state in one crossing time.
+ionized gas. This model agrees well with numerical sim-       In addition, we have developed a new way of measur-
+ulations         available                 as the                         limiting                                case                                which                                      can be char-                                                            ing the reconnected                                                                  ﬂux                                                                                                         4).                                                                                       This was                                                                                                       required                                                                                                                as                                                                                          (see §acterized        by one ﬂuid                    with                         a high                                Prandtl                                   number                                                       (see     worries                                                             were associated                                                                             with                                                                                      the                                                                                       accuracy                                                                                                                 of                                                                                                      the ”intu-
+Cho & Lazarian 2002, 2003). Using this model LVC04      itive measure”, which is the rate with which the unrecon-
+described ﬁeld wandering, which is the core of the LV99     nected ﬂux enters the computational box at the inﬂow
+model of reconnection. They showed that the magnetic     boundaries.  Potentially, the ”intuitive measure” could
+reconnection proceeds fast, both in the diﬀuse interstel-     overestimate the reconnected ﬂux  if the unreconnected
+lar and molecular cloud partially ionized gas.              magnetic lines escape through the leaky outﬂow bound-
+  In the paper above we employed one-ﬂuid code and      aries of the computation box. The new measure accounts
+therefore we could not test the predictions in LVC04.      for such a loss of magnetic ﬂux.
+However, LVC04 model at its core is based on the ideas      To our satisfaction, we found that the new and old
+presented in LV99. Therefore, our successful testing of     measures provide consistent results both in the case of
+LV99 model provides us with optimism in relation to the    no turbulence and with turbulence, which means that the
+LVC04 model. The latter should be tested with a two     eﬀect of the outﬂow of unreconnected ﬁeld was subdom-
+ﬂuid code capitalizing on our present experience with     inant for the situations when the magnetic ﬂuxes were
+the boundary conditions, turbulent driving and the ways     intersecting at an appreciable angle.  For the limiting
+of measuring of reconnection rate obtained in this pa-     case, however, when the large scale reconnection was ab-
+per. Needless to say, the numerical conﬁrmation of fast      sent, i.e. when the corresponding angle between the two
+reconnection in partially ionized gas would open wide     ﬂuxes was zero and without turbulence magnetic ﬁelds
+prospects for quantifying processes taking place in molec-     were all parallel, the ”intuitive measure” was a non-zero
+ular clouds, including the enigmatic processes of star for-     value, while the new measure of reconnection gave zero
+mation. For instance, Shu et al. (2006) showed that mag-     reconnection rate. This shows the new measure is more
+netic ﬁeld is removed from star-forming cores faster than      reliable.
+
+===== PDF PAGE 22 =====
+ 22                            KOWAL ET AL.
+
+  Our results conﬁrm that the reconnection of magnetic     per Rm < 103), the results provide good testing of the
+ﬁeld in the presence of turbulence  is independent of     relations derived by LV99. The strong dependence of Vrec
+Ohmic resistivity, allowing for fast reconnection. In ad-    on the injection scale, when scaled to the real conditions
+dition, we showed that the reconnection rate does not      of the interstellar medium, shows a dramatic enhance-
+depend on the anomalous resistivity, which proves that    ment of the reconnection speed, even in the situation of
+the LV99 model of reconnection is also applicable to colli-    an almost perfectly frozen magnetic ﬁeld in the medium.
+sionless plasmas and may dominate reconnection in such     This allows for fast reconnection with the characteristic
+systems if the level of turbulence is eﬃciently high. Note,     time comparable to one Alfv´en time unit.
+that according to Lazarian & Vishniac (2008) turbulence
+in a system may be successfully generated by the re-
+                                                                                       6.6. Implications of the LV99 Modellease of magnetic energy through reconnection.Thus, we
+anticipate that the initial reconnection in a collisionless      Reconnection is one of the most fundamental processes
+plasma may be induced through the Hall reconnection,     involving magnetic ﬁelds in conducting ﬂuids or plasmas.
+but later the resulting MHD turbulence will determine     Therefore, the identiﬁcation of a robust process responsi-
+the reconnection rate.                                         ble for reconnection has many astrophysically important
+  Apart from the prediction in LV99 that the reconnec-     consequences. Below we shall mention a few selected im-
+tion rate should be independent of resistivity, we have     plications of the successful validation of the LV99 model.
+also tested the quantitative scalings of the reconnection       Following Zweibel & Yamada (2009) we note that so-
+rates presented in LV99. In particular, we tested the de-      lar ﬂares inspired much of the earlier research on recon-
+pendence of the reconnection rate on the turbulent injec-     nection (see Pneuman 1981; Bastian et al. 1998; Hudson
+tion power. Our numerical results conﬁrm the LV99 pre-     2008).  As the plasma involved  is substantially rar-
+                  2 which,                         as we explained earlier, trans-     eﬁed, the restrictive conditions for the collisionless re-                            ldiction Vrec ∼V                     1/2                                                                       are                                                                             satisﬁed                                                                                          in this                                                                                               particular                                                                                                environment.                      inj  (see Eq. 4).                          connectionlates into Vrec ∼P                                                     Cassak et al.                                                                       (2005)                                                                                 stated                                                                                     that                                                                                                 bistable Hall                                                                                                       reconnec- We do not expect to see the dependencies of the re-
+                                                              tion can be important in this case. Stochastic reconnec-connection rate on viscosity until the Prandtl number is
+                                                                   tion, as we discuss below, provides an alternative expla-less than unity since the cascade can proceed to scales
+                                                             nation.smaller than the current sheet thickness aﬀecting the rate
+                                                             Indeed, an important prediction of the LV99 model isof local reconnection. This is the case we are studying
+                                                              related to the reconnection instability that arises in thehere. For large Prandtl numbers the reconnection may
+                                                               situation when the initial structure of the ﬂux prior to re-be suppressed as magnetic ﬁeld becomes more laminar at
+                                                         connection is laminar. Reconnection at the Sweet-Parkersuﬃciently large scales. However, two main factors of the
+                                                              rate is negligible. This allows magnetic ﬂux to accumu-LV99 model contributing to the enhancement of the re-
+                                                                       late. However, when the degree of stochasticity exceedsconnection rate in the presence of turbulence are that the
+                                                      a threshold value, the reconnection itself should exciteturbulence allows for multiple reconnection events act-
+                                                 more turbulence, creating a positive feedback resultinging simultaneously and secondly, the turbulence should
+                                                                in a ﬂare (see Lazarian & Vishniac 2008). The instabil-broaden the outﬂow region to the widths correspond-
+                                                                     ity is a generic property of laminar ﬁeld reconnection ining to the scales much larger than the dissipation scale
+                                                     both collisionless and collisional environments. Referringand comparable to the injection scale allowing to remove
+                                                             to the Sun, one may speculate that the diﬀerence betweenmore reconnected ﬂux. While the ﬁrst factor could be af-
+                                                         gradual and eruptive ﬂares arises from the original statefected by the large viscosity, the second is still valid if the
+                                                                  of magnetic ﬁeld prior to the ﬂare. In the case when theinjection scale is much larger than the dissipation scale.
+                                                      magnetic ﬁeld is suﬃciently turbulent the accumulationThe case when the eﬀective Prandtl numbers are larger
+                                                                  of magnetic ﬂux does not happen and the ﬂare is gradual.than unity due to the presence of neutrals is discussed in
+                                                                 Similarly, the observed spatial spread of energy releaseLazarian et al. (2004). We plan to study the dependence
+                                                         during solar ﬂares may be due to the spread of the re-on the Prandtl number in our next publication.
+                                                          gion of turbulent ﬁelds once reconnection is initiated at  The LV99 model predicts that the reconnection speed
+                                                     one place. Further research is necessary for testing these
+should grow with the injection scale as Vrec ∼linj. How-      ideas.ever, some of our numerical tests show a weaker depen-
+                                                            In the Sweet-Parker model reconnection can accelerate
+                    inj .  The origin of this discrepancy is     charged particles, e.g. due to the electric ﬁeld in the re-dence, Vrec ∼l3/4
+unclear. Our model of how weak isotropic turbulence     connection region (see Litvinenko 2003). However, the
+evolves cascades into strong turbulence may be too naive.     speed of Sweet-Parker reconnection is negligible for most
+In particular, the approximation that the parallel wave-     astrophysical environments, thus the transfer of energy
+length  is unchanged during this process may be sim-    from the magnetic ﬁeld to particles is absolutely negligi-
+plistic.  In addition, we may simply not have suﬃcient      ble, if reconnection follows the Sweet-Parker predictions.
+dynamic range between the dimensions of the subvol-        It  is interesting to notice that the ﬁrst-order Fermi
+ume where turbulence is excited and the thickness of the     acceleration process is intrinsic to the LV99 model of
+Sweet-Parker layer. Corrections at either end could re-     reconnection.  Consider a particle entrained on a re-
+sult in the appearance of a shallower dependence on the     connected magnetic ﬁeld line (see Fig.1).  This parti-
+driving scale. The true nature of this discrepancy should      cle may bounce back and forth between magnetic mir-
+be explored in future work.                                   rors formed by oppositely directed magnetic ﬂuxes mov-
+  Even though these numerical simulations allow us to     ing towards each other with the velocity VR.  Each
+study reconnection in the presence of turbulence for a    bounce will increase the energy of a particle in a way
+limited range of magnetic Reynolds numbers (in this pa-     consistent with the requirements of the ﬁrst-order Fermi
+
+===== PDF PAGE 23 =====
+                 RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                       23
+
+process11 (de Gouveia dal Pino & Lazarian 2001, 2003,       In this paper we have considered reconnection for weak
+2005; Lazarian 2006). This is in contrast to the second-   MHD turbulence. What would happen if the turbulence
+order Fermi acceleration that is frequently discussed in       is strong, i.e. when the injection of turbulent energy hap-
+terms of accelerating particles by turbulence generated     pens with superAlfv´enic velocities? In this situation we
+by reconnection (La Rosa et al. 2006).                     expect the turbulent cascade to proceed initially in a way
+ An  interesting property  of  this acceleration mech-     similar to ordinary hydrodynamics with strong hydrody-
+anism  is that  it  is  potentially  testable  observation-    namic motions easily bending magnetic ﬁeld lines. How-
+ally, since the resulting spectrum of accelerated par-     ever, at some small scale we expect the magnetic ﬁeld
+ticles  is  diﬀerent from  that  arising from a  shock.     to be dynamically important and resist bending. Our
+de Gouveia dal Pino & Lazarian (2001, 2005) used this     reconnection results should be applicable to turbulence
+mechanism of particle acceleration to explain the syn-     starting at this scale.
+chrotron power-law spectrum arising from the ﬂares of      The successful numerical testing of the turbulent re-
+the microquasar GRS 1915+105. The mechanism is sim-     connection model presented in this paper appeals for
+ilar to the acceleration mechanism that was discussed    more studies in this direction.  It is important to stress
+later by Drake et al. (2006b). Drake et al. (2006b) con-     that, unlike brute force simulations, we were able to test
+sidered the acceleration of electrons and, similarly, to the     the LV99 model of three dimensional reconnection giving
+Matthaeus et al. (1984), assumed that the acceleration     support to the idea that we could reliably extend our re-
+happens within 2D contracting loops.                          sults to much higher Lundquist numbers. The problems
+  To enable sustainable dynamo action and, for exam-      for future studies cover the importance of compressibility
+ple, generate a galactic magnetic ﬁeld, it is necessary to     in this type of reconnection, since a substantialfraction of
+reconnect and rearrange magnetic ﬂux on a scale simi-     observed interstellar medium is supersonic. Another in-
+lar to a galactic disc thickness within roughly a galactic     teresting question is the ability of turbulent reconnection
+eddy turnover time (∼108 years). This implies that re-     to self-sustaining or to generate turbulence by itself12.connection must occur at a substantial fraction of the    These are problems we hope to address in the future.
+Alfv´en velocity. The preceding arguments indicate that
+such reconnection velocities should be attainable  if we                                7. SUMMARY
+allow for a realistic magnetic ﬁeld structure, one that in-                                                            In this article we put to the test the LV99 model of
+cludes both random and regular ﬁelds (see Hanasz et al.                                                          reconnection by investigating the inﬂuence of weak tur-
+2004, e.g.). This does solve one part of the problem of                                                         bulence on the reconnection process using 3D numerical
+dynamo. The other part is related to magnetic helicity                                                              simulations. The turbulence is weak in the sense that
+conservation (see Vishniac et al. 2003).                                                          the injection velocities are less than the Alfv´en speed
+  Interestingly enough, while  earlier on we criticized                                                  and the magnetic ﬁeld direction is only weakly perturbed
+the concept of turbulent diﬀusivity as  ill founded, we                                                   by turbulence.  It is strong in the sense of producing a
+should mention that the robust reconnection of turbulent                                                            strongly nonlinear cascade of energy. In our study we ex-
+ﬁelds can allow parcels of magnetized ﬂuid to move be-                                                       perimented with diﬀerent boundary conditions and with
+ing less constrained by the surrounding magnetic ﬁelds.                                                           diﬀerent ways of measuring the reconnection speed. We
+This allows matter and heat to transfer with the rates                                                        analyzed the dependence of the reconnection speed on
+determined by a simple turbulent diﬀusion coeﬃcient                                                          the turbulence injection power, on the injection scale, as
+∼vturblturb which for typical parameters of plasma in     well as on Ohmic and anomalous resistivity. We foundgalaxy clusters exceed the rates of thermal diﬀusion of                                                                that:
+electrons Lazarian (2006). An important distinction re-
+mains however.  Reconnection happens in thin current
+                                                            Turbulence in 3D drastically changes the topologysheets, involving a negligible fraction of the magnetic                                                         •                                                                        of the magnetic ﬁeld near the interface of oppo-ﬁeld.  Unlike a large eﬀective resistivity, fast reconnec-
+                                                                            sitely directed magnetic ﬁeld lines. These changestion cannot violate magnetic helicity conservation.
+                                                                  include the fragmentation of the current sheet, fa-  Finally, LV99 showed that fast reconnection of stochas-
+                                                                voring multiple simultaneous reconnection events,tic magnetic ﬁeld makes the models of strong MHD tur-
+                                                                 as well as a substantial increase in the thickness ofbulence self-consistent.  Indeed, critical balance in the
+                                                               the outﬂow of reconnected magnetic ﬂux and mat-GS95 model requires the existence of eddy-type motions
+                                                                              ter.perpendicular to the magnetic ﬁeld.  In the absence of
+reconnection this would result in unresolved knots that
+should drain energy from the cascade. The estimates in        • The intuitive measure of reconnection deﬁned asLV99 showed that the rates of reconnection predicted by          the inﬂow of magnetic ﬁeld velocity corresponds
+the model are suﬃcient to resolve magnetic knots within            well, in the condition of stationary reconnection,
+one period.                                                       to a more rigorously deﬁned reconnection measure
+                                                                that we introduced. The two measures show the
+                       6.7. Final Remarks                       same dependencies of Vrec on the power Pinj and
+                                                                      injection scale linj of the turbulence, regarding the
+  11                                                             diﬀerent scheme used to solve MHD equations and     Another way of understanding the acceleration of energetic
+particles in the reconnection process above is to take into account           diﬀerent sets of initial parameters.
+that the length of magnetic ﬁeld lines is decreasing during recon-
+nection. As a result, the physical volume of the energetic particles         12 While, as we argued earlier, turbulence is a natural state of
+entrained on the ﬁeld lines is shrinking. Thus, due to Louiville the-     most of the astrophysical ﬂuids, it is important to know whether
+orem, their momentum should increase to preserve the constancy      the reconnection is determined by the preexisting level of turbu-
+of the phase volume.                                                        lence, or it can get self-accelerated.
+
+===== PDF PAGE 24 =====
+ 24                            KOWAL ET AL.
+
+   • The reconnection rate is determined by the thick-           are irrelevant in determining reconnection speeds.      ness of the outﬂow region. For large scale turbu-
+      lence, the reconnection rate depends on the ampli-                                                   The strength of the guide ﬁeld does not change re-     tude of ﬂuctuations and injection scale as Vrec          •                                                               connection rates for similar rates of turbulent en-        1/2      2                     ∼
+                          l which corresponds to LV99 predictions.          ergy injection. Thus fast reconnection is possible    Pinj ∼V
+                                                                         for generic conﬁgurations when magnetic bundles
+    The reconnection rate grows with the turbulence                                                                       intersect each other at arbitrary angles.   •      injection scale, which qualitatively corresponds to
+     the LV99 predictions. However, in some cases the
+      rate of growth is better approximated by Vrec ∼
+       l3/4inj  scaling rather than Vrec ∼linj predicted in      The research of GK and AL is supported by the Center
+     LV99. The diﬀerence may stem from details of the
+                                                                   for Magnetic Self-Organization in Laboratory and Astro-
+       initial weak cascade of energy, or from limitations
+                                                             physical Plasmas and NSF Grants ATM-06-48699 and
+      in the dynamic range available for study.
+                                                     AST-08-08118. The work of ETV is supported by the
+                                                         National                                                                     Science                                                                and                                                                              Engineering                                                                                       Research                                                                                                  Council                                                                                                                             of                     in                      the                          presence                                        of weak                                           turbulence   • Reconnection                                                    Canada. Part                                                                                 of this                                                                   work                                                                        was made                                                                                                   possible by                                                                                                       the facil-       is not sensitive                      to                   Ohmic                                      resistivity,                                      which                                                    corre-
+     sponds to the LV99 prediction that the reconnec-      ities of the Shared Hierarchical Academic Research Com-
+      tion of weakly stochastic magnetic ﬁelds are gener-     puting Network (SHARCNET:www.sharcnet.ca).  This
+      ically fast.                                            research also was supported by the National Science
+                                                      Foundation project TG-AST090078 through TeraGrid
+   • The introduction of anomalous resistivity does not     resources provided by Texas Advanced Computing Cen-     change the rate of reconnection of a weakly stochas-      ter (TACC:www.tacc.utexas.edu).  We would  like to
+       tic ﬁeld either, which supports the assertion in    thank Mel Goldstein, Paul Cassak,  Bill Matthaeus,
+    LV99 that in the presence of magnetic ﬁeld stochas-     Dmitri Uzdenski, Ellen Zweibel and Masaaki Yamada
+       ticity, which is generic for most of astrophysical en-      for fruitful discussions. Helpful suggestions of the anony-
+     vironments, plasma eﬀects, e.g. collisionless eﬀects,    mous referee are acknowledged.
+
+                                       REFERENCES
+
+Alvelius, K. 1999, Physics of Fluids, 11, 1880                        Del Zanna, L., Bucciantini, N., & Londrillo, P. 2003, A&A, 400,
+Armstrong, J. W., Rickett, B. J., & Spangler, S. R. 1995, ApJ, 443,       397
+  209                                                       Diamond, P. H., & Malkov, M. 2003, Physics of Plasmas, 10, 2322
+Bastian, T. S., Benz, A. O., & Gary, D. E. 1998, ARA&A, 36, 131      Drake, J. F., Swisdak, M., Che, H., & Shay, M. A. 2006a, Nature,
+Beck, R.  2002,  in ASP  Conf.  Ser.  275,  Disks  of  Galaxies:        443, 553
+  Kinematics, Dynamics and Perturbations, ed. E. Athanassoula,      Drake, J. F., Swisdak, M., Schoeﬄer, K. M., Rogers, B. N., &
+  A. Bosma, & R. Mujica (San Francisco, CA:ASP), 331                Kobayashi, S. 2006b, Geophys. Res. Lett., 33, 13105
+Beresnyak, A., & Lazarian, A. 2006, ApJ, 640, L175                  Elmegreen, B. G., & Scalo, J. 2004, ARA&A, 42, 211
+Beresnyak, A., & Lazarian, A. 2008a, ApJ, 682, 1070                  Eyink, G. L., & Aluie, H. 2006, Physica D Nonlinear Phenomena,
+Beresnyak, A., & Lazarian, A. 2008b, arXiv:0812.0812                    223, 82
+Beresnyak, A., & Lazarian, A. 2009, ApJ, submitted                    Ferraro, N. M., & Rogers, B. N. 2004, Physics of Plasmas, 11, 4382
+Bhattacharjee, A., & Hameiri, E. 1986, Physical Review Letters,      Fitzpatrick, R. 2004, Physics of Plasmas, 11, 937
+  57, 206                                                    Galama, T. J., et al. 1998, Nature, 395, 670
+Bhattacharjee, A., Ma, Z. W., & Wang, X. 2003, in Turbulence and      Goldreich, P., & Sridhar, S. 1995, ApJ438, 763, (GS95)
+  Magnetic Fields in Astrophysics, Lecture Notes in Physics, 614,      Gogoberidze, G. 2007, Physics of Plasmas, 14, 2, 2304
+  351                                                          de Gouveia dal Pino, E., & Lazarian, A. 2001, ApJ, 560, 358
+Bhattacharjee, A. 2004, ARA&A, 42, 365                           de   Gouveia   dal   Pino,   E.,  &   Lazarian,   A.   2003,
+Biskamp, D. 1996, Ap&SS, 242, 165                                    arXiv:astro-ph/0307054
+Biskamp, D. 2000, Magnetic Reconnection in Plasmas (Cambridge,     de Gouveia dal Pino, E., & Lazarian, A. 2005, A&A, 441, 845
+  UK:Cambridge University Press)                                  Hameiri, E., & Bhattacharjee, A. 1987, Physics of Fluids, 30, 1743
+Biskamp, D. 2003, Magnetohydrodynamic Turbulence (Cambridge,     Hanasz, M., Kowal, G., Otmianowska-Mazur, K., & Lesch, H. 2004,
+  UK:Cambridge University Press)                                 ApJ, 605, L33
+Blackman, E. G., & Field, G. B. 2008, MNRAS, 386, 1481             Harten, A., Lax, P. D., & van Leer, B. 1983, SIAM Rev. 25, 35
+Boldyrev, S. 2005, ApJ, 626, L37                                  Hedstrom, G. W. 1979, Journal of Computational Physics, 30, 222
+Boldyrev, S. 2006, Phys. Rev. Lett., 96, 11, 5002                       Heitsch, F., & Zweibel, E. G. 2003a, ApJ, 583, 229
+Cassak, P. A., Shay, M. A., & Drake, J. F. 2005, Phys. Rev. Lett.,      Heitsch, F., & Zweibel, E. G. 2003b, ApJ, 590, 291
+  95, 23, 5002                                                    Higdon, J. C. 1984, ApJ, 285, 109
+Chandran, B. D. G. 2008, ApJ, 685, 646                           Hudson, H. S. 2008, Heliophysics II. Energy Conversion Processes,
+Cho, J., & Vishniac, E. 2000, ApJ, 539, 273                               ed. C. J. Schrijver & G. L. Siscoe
+Cho, J., Lazarian, A., & Vishniac, E. T. 2002, ApJ, 564, 291           Iroshnikov, P. S. 1963, AZh, 40, 742
+Cho, J., & Lazarian, A. 2002, Phys. Rev. Lett., 88, 24, 5001           Jacobson, A. R., & Moses, R. W. 1984, Phys. Rev. A, 29, 3335
+Cho, J., & Lazarian, A. 2003, MNRAS, 345, 325                   Kim, E.-J., & Diamond, P. H. 2001, ApJ, 556, 1052
+Ciaravella, A., & Raymond, J. C. 2008, ApJ, 686, 1372               Kowal, G., Lazarian, A., & Beresnyak, A. 2007, ApJ, 658, 423
+Courant, R., Friedrichs, K., & Lewy, H., 1928, Mathematische     Kowal, G., & Lazarian, A. 2007, ApJ, 666, L69
+  Annalen, 100, 32                                                Kraichnan, R. H. 1965, Physics of Fluids, 8, 1385
+Crutcher, R. M. 1999, ApJ, 520, 706                                Kulpa-Dybel, K., Otmianowska-Mazur, K., Kowal, G., Lazarian,
+Daughton, W., Scudder, J., & Karimabadi, H. 2006, Physics of        A., Vishniac, E. T., 2009, in prep.
+  Plasmas, 13, 2101                                        La Rosa, T. N., Shore, S. N., Joseph, T., Lazio, W., & Kassim,
+Dahlburg, R. B., Antiochos, S. K., & Zang, T. A. 1992, Physics of       N. E. 2006, Journal of Physics Conference Series, 54, 10
+  Fluids B, 4, 3902                                                   Lazarian, A., & Vishniac, E. T. 1999, ApJ, 517, 700, (LV99)
+Dahburg, R. B. & Karpen, T. 1994, ApJ, 434, 766                     Lazarian, A., Vishniac, E. T., & Cho, J. 2004, ApJ, 603, 180,
+Dahlburg, R. B. 1997, Journal of Plasma Physics, 57, 35               (LVC04)
+
+===== PDF PAGE 25 =====
+                 RECONNECTION OF WEAKLY STOCHASTIC B-FIELD                       25
+
+
+Lazarian, A. 2006, Astronomische Nachrichten, 327, 609                 Schlickeiser, R. 2004, Physics of Plasmas, 11, 5532
+Lazarian, A., & Vishniac, E. T. 2008, in Revista Mexicana de      Shay, M. A., Drake, J. F., Denton, R. E., & Biskamp, D. 1998,
+  Astronom´ıa y Astrof´ısica Conf. Ser., in press, (arXiv:0812.2019)         J. Geophys. Res., 103, 9165
+Levy, D., Puppo, G., & Russo, G. 1999, Mathematical Modelling      Shay, M. A., Drake, J. F., & Swisdak, M. M. 2004, Physics of
+  and Numerical Analysis, 33, 547                                    Plasmas, 11, 2199
+Lithwick, Y., & Goldreich, P. 2001, ApJ, 562, 279                      Shebalin,  J. V., Matthaeus, W. H., & Montgomery, D. 1983,
+Lithwick, Y., Goldreich, P., & Sridhar, S. 2007, ApJ, 655, 269            Journal of Plasma Physics, 29, 525
+Litvinenko, Y. E. 2003, Sol. Phys., 216, 189                            Shibata, K., & Tanuma, S. 2001, Earth, Planets, and Space, 53,
+Liu, X.-D., & Osher, S. 1998, Journal of Computational Physics,       473
+  141, 1                                                           Shu, F. H., Galli, D., Lizano, S., & Cai, M. 2006, ApJ, 647, 382
+Londrillo, P., & Del Zanna, L. 2000, ApJ, 530, 508                    Shu, F. H., Galli, D., Lizano, S., Glassgold, A. E., & Diamond,
+Maron, J., & Goldreich, P. 2001, ApJ, 554, 1175                          P. H. 2007, ApJ, 665, 525
+Masuda, S., Kosugi, T., Hara, H., Tsuneta, S., & Ogawara, Y. 1994,      Smith, D., Ghosh, S., Dmitruk, P., & Matthaeus, W. H. 2004,
+  Nature, 371, 495                                                 Geophys. Res. Lett., 31, L02805
+Matthaeus, W. H., Ambrosiano, J. J., & Goldstein, M. L. 1984,      Speiser, T. W. 1970, Planet. Space Sci., 18, 613
+  Phys. Rev. Lett., 53, 1449                                            Strauss, H. R. 1986, Physics of Fluids, 29, 3668
+Matthaeus, W. H., & Lamkin, S. L. 1985, Physics of Fluids, 28,      Strauss, H. R. 1988, ApJ, 326, 412
+  303                                                                 Sturrock, P. A. 1966, Nature, 211, 695
+Matthaeus, W. H., & Lamkin, S. L. 1986, Physics of Fluids, 29,      Sweet, P. A. 1958, Conf. Proc. IAU Symposium 6, Electromagnetic
+  2513                                                    Phenomena in Cosmical Physics, ed. B. Lehnert, (Cambridge,
+McKee, C. F., & Ostriker, E. C. 2007, ARA&A, 45, 565               UK:Cambridge University Press), 123
+Mignone, A. 2007, Journal of Computational Physics, 225, 1427         Tassis, K., & Mouschovias, T. C. 2005a, ApJ, 618, 769
+Moﬀat, H. K. 1978, Magnetic Field Generation in Electrically      Tassis, K., & Mouschovias, T. C. 2005b, ApJ, 618, 783
+  conducting  Fluids, (London, UK/New York, NY:Cambridge      Vishniac, E. T., & Lazarian, A. 1999, ApJ, 511, 193, (VL99)
+  University Press)                                                   Vishniac, E. T., Lazarian, A., & Cho, J. 2003, Turbulence and
+Montgomery, D., & Turner, L. 1981, Physics of Fluids, 24, 825          Magnetic Fields in Astrophysics, Lecture Notes in Physics, 614,
+Ostriker, E. C., Stone, J. M., & Gammie, C. F., 2001, ApJ, 546,       376
+  980                                                         Watson, P. G., Oughton, S., & Craig, I. J. D. 2007, Physics of
+Parker, E. N. 1957, J. Geophys. Res., 62, 509                          Plasmas, 14, 032301
+Petschek, H. E. 1964, in Conf. Proc. of the AAS-NASA Symposium,      Waelbroeck, F. L. 1989, Physics of Fluids B, 1, 2372
+  Physics of Solar Flares, ed. W. H. Hess, (Washington, DC:NASA     Wang, X., Bhattacharjee, A., & Ma, Z. 2001, Phys. Rev. Lett., 87,
+  Science and Technical Information Division), 425                    265003
+Pneuman, G. W. 1981, in Solar Flare Magnetohydrodynamics,     Yamada, M. 2007, Physics of Plasmas, 14, 5, 8102
+  ed. E. R. Priest, (New York, NY:Gordon and Breach Science      Zweibel, E., & Yamada, M. 2009, ARA&A, in press
+  Publishers), 379
+Priest, E., & Forbes, T. 2000, Magnetic Reconnection, (Cambridge,
+  UK:Cambridge University Press)

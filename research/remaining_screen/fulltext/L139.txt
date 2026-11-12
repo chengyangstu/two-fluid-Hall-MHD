@@ -1,0 +1,585 @@
+
+===== PDF PAGE 1 =====
+                                 Proceedings of Symposia in Applied Mathematics
+
+
+
+
+
+                        Collisionless Magnetic Reconnection in a Five-Moment2008                            Two-Fluid Electron-Positron Plasma
+
+                                       E.A. Johnson and J.A. RossmanithDec
+3
+                                 Abstract. We simulate magnetic reconnection in electron-positron (pair) plasma
+                                       using a collisionless two-ﬂuid model with isotropic pressure. In this model the
+                                               resistive, Hall, and electrokinetic pressure terms are absent from the curl of
+                               Ohm’s law, leaving the inertial term alone to provide for magnetic reconnec-
+                                             tion. Our simulations suggest that for pair plasma simulated with isotropic
+                                        pressure fast reconnection does not occur without the aid of suﬃcient (numer-
+                                               ical) diﬀusion. We contrast this result with simulations and published results
+                                    showing fast reconnection for collisionless two-ﬂuid plasma with isotropic pres-
+                                         sures and non-canceling mass-to-charge ratios, where Hall eﬀects are present
+                                 and numerical diﬀusion is small, and with published PIC studies of pair plasma[math.NA]
+                                   which observe fast reconnection and attribute it to nonisotropic pressure.
+
+
+
+
+                                                         1. Introduction
+
+                     An important issue of controversy in the magnetic reconnection community
+                                   is the minimal conditions required for fast magnetic reconnection to occur in a
+                       plasma and the minimal modeling requirements to resolve it [7]. The ﬁrst attempt
+                          to model reconnection was carried out by Sweet [9] and Parker [6], who used a
+                              resistive magnetohydrodynamic (MHD) model. Their approach was only successful
+                            in modeling a slow form of reconnection and not the much faster reconnection that
+                                   is observed in laboratory and space plasma.
+                       The Geospace Environmental Modeling (GEM) Reconnection Challenge prob-arXiv:0812.0305v2                      lem was introduced in [3] and studied with a variety of models to identify the es-
+                             sential physics required to model collisionless magnetic reconnection. This original
+               GEM article concluded that all models that include the Hall term in the general-
+                           ized Ohm’s law produced essentially indistinguishable rates of reconnection. The
+                         only other model in their study that admitted fast reconnection was MHD with
+                           large anomalous (e.g., current-dependent) resistivity, although as expected it did
+                        not exhibit the quadrupole out-of-plane magnetic ﬁeld pattern that appears to
+                           characterize models which incorporate the Hall term.
+
+
+                                2000 Mathematics Subject Classiﬁcation. Primary 65M60, 65Z05.
+                           Key words and phrases. Magnetic reconnection, plasma physics, discontinuous Galerkin.
+                                This work is supported in part by NSF Grant DMS-0711885 and a Graduate Fellowship from
+                              the Wisconsin Space Grant Consortium.
+
+
+                                                                                          ⃝0000c      (copyright holder)
+
+                                                                          1
+
+===== PDF PAGE 2 =====
+2                         E.A. JOHNSON AND J.A. ROSSMANITH
+
+
+    Since inclusion of Hall eﬀects had been identiﬁed as the critical ingredient to
+admit fast reconnection, Bessho and Bhattacharjee studied electron-positron plas-
+mas, for which the Hall term is zero[1, 2]. Their particle-in-cell (PIC) simulations
+of the GEM problem (with the mass ratio reset from 25 to 1) exhibited fast recon-
+nection for temperature ratios of 5 and 1. They found that the structure of the
+reconnection region still shows an X-point, although as expected the out-of-plane
+magnetic ﬁeld does not show the quadrupole structure that appears in models that
+incorporate Hall term eﬀects.
+    This prompted us to ask if it is possible to get fast reconnection if the Hall term
+is absent and the pressures are modeled as isotropic. Therefore we chose to study
+reconnection in an electron-positron plasma using a two-ﬂuid model with isotropic
+pressure.
+
+                              2. Physical models
+
+    2.1. Particle-in-cell description. Plasma consists of charged particles in-
+teracting with the electromagnetic ﬁeld. In the absence of gravity and quantum-
+mechanical eﬀects the particles of a plasma satisfy Maxwell’s equations and the
+Lorentz force to govern particle motion:
+       ∂tB = −∇× E,                  ∇· B = 0,
+       ∂tE = c2∇× B −J/ǫ0,             ∇· E = σ/ǫ0,
+                 qp
+          dt˜vp =                  E(xp) + vp × B(xp)  ,         dtxp = vp,           mp
+    X             X
+      J =    Sp(xp)qpvp,                     σ =    Sp(xp)qp;
+               p                                                 p
+
+here B is magnetic ﬁeld, E is electric ﬁeld, c is the speed of light, ǫ0 is electric
+permittivity, p is particle index, xp(t) is particle position, ˜vp(t) = γpvp is (proper)
+particle velocity, where γ = 1−(v/c)2 −1/2 ≈1 is the Lorentz factor, qp is particle
+charge, mp is particle mass, σ is charge density, J is current density, and Sp(x−xp)is particle charge distribution (e.g., a unit impulse function).
+     Particle-in-cell (PIC) codes model plasma by attempting to evolve in a mixed
+Eulerian-Lagrangian framework: particles are treated in a Lagrangian way, while
+the electromagnetic ﬁeld sits on an Eulerian computational mesh.
+
+    2.2. Boltzmann description. The Boltzmann model replaces the particles
+with particle (probability) density functions fs(x, ˜v, t) of space, velocity, and time,
+for each species s. The Boltzmann equation asserts conservation (or balance) of
+particles in phase space:
+                              1        qs
+              ∂tfs + ∇x · (vfs) + rg ∇˜v · ms (E + v × B)fs = Cs;
+here ˜v = γv ≈v is (proper) velocity in phase space, and Cs is a collision operator
+which is a function of {˜v 7→fp(t, x, ˜v)}p, where p ranges over all species. The colli-
+sionless Boltzmann equation (alias Vlasov equation) asserts that Cs = 0. Maxwell’s
+equations are coupled to the Boltzmann equation by the relations
+                   Z                         Z      X         X
+            J =       fsqsv,             σ =        fsqs.
+                        v                              v
+                          s                                      s
+
+===== PDF PAGE 3 =====
+             TWO-FLUID MODEL OF ELECTRON-POSITRON PLASMA                3
+
+    2.3. Two-ﬂuid model. Multiplying the Boltzmann equation by powers of
+velocity and integrating over velocity space yields ﬂuid equations.  Generic two-
+ﬂuid equations for a two-species plasma are:
+(2.1)
+                                                
+      ρi                  ρiui                 0                   0
+     ρe                ρeue                 0                   0
+    ρiui             ρiuiui + Pi        σiE + Ji  B           Ri∂t     +               =       ×   +                                      ,   ρeue   ∇·     ρeueue + Pe       σeE + Je  B          Re                              ×                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     + ui  Pi + qi                     Ji E                                                Ri  ui + QR,i + Qi      Ei           uiEi         ·                                 ·                         ·
+     Ee          ueEe + ue · Pe + qe         Je · E       Re · ue + QR,e + Qe
+            (cB)        E         0             (cB)      0(2.2)      ∂t     + c  ∇×    =               , and       =             .         E             (cB)             ∇·  E      σ/ǫ0            −∇×         −J/ǫ0
+The variables are deﬁned as follows:  i and e are ion and electron species indices;
+for species s ∈{i, e}, qs = ±e is particle charge, ms is particle mass, ns is particle
+number density, ρs = msns is mass density, σs = qsns is charge density, Js = usσs
+is current density, Ps is the pressure tensor, Es is gas-dynamic energy, qs is the
+heat ﬂux, Ri = −Re denotes the interspecies drag force on the ions, QR,s denotes
+heating due to friction (drag), and Qi = −Qe denotes the interspecies thermal heattransfer to the ions.
+
+    2.4. Collisionless isotropic closure. To close the system we must posit
+constitutive relations for the nonevolved quantities.  In a collisionless model we
+neglect the terms that come from the collision operator: qs, Rs, QR,s, and Qs. In
+an isotropic model we assume that the pressure tensor is a scalar pressure times
+the identity tensor: Ps = psI; this leads to the constitutive relation  = (3/2)ps +         1                                                        Esρsu2s/2.
+
+    2.5. Ohm’s law. Multiplying the momentum equations of each species by its
+charge to mass ratio and summing gives a balance law for net current. Invoking the
+assumption of quasineutrality (σ ≈0) and solving this law for electric ﬁeld givesthe generalized Ohm’s law,
+                   E = B × u + E′,
+where u is the mass-averaged ﬂuid velocity and where the electric ﬁeld in the frame
+of reference of the ﬂuid is the sum of four terms:
+      E′ =  η · J                                           (resistance)
+                 ˜mi       +   −˜me J B                             (Hall term)                ρ   ×
+             1
+       + ρ∇· (˜mePi −˜miPe)                        (pressure term)
+                 ˜mi ˜me                         ˜me       +       ∂tJ +    uJ + Ju +   −˜mi JJ    (inertial term).               ρ       ∇·              ρ
+
+     1
+    We remark that our collisionless model with isotropic pressure seems not to correspond to
+any general physical regime of plasma (although it may apply to particular conﬁgurations). A
+model is considered to be physical if it agrees with a physical regime in some physical limit. We
+assume an isotropic pressure tensor yet no resistivity, but for an electron-positron plasma the time
+scale over which particles thermalize is the same as the time scale over which resistive drag force
+seeks to equilibrate the velocities of the two species.
+
+===== PDF PAGE 4 =====
+4                         E.A. JOHNSON AND J.A. ROSSMANITH
+
+Here we adopt the convenction that ˜ms := ms/e, and we have assumed that the
+electrical resistance Ri ˜mi+˜mi ˜me˜me equals η · J (where η  is the resistivity), a simple
+function of the drift velocity, i.e., of the current.
+    Ideal MHD assumes that E′ = 0, and resistive MHD assumes that E′ = η · J.
+    Substituting Ohm’s law into Faraday’s law ∂tB + ∇× E = 0 yields ∂tB + ∇·
+(uB + Bu) = ∇× E′, which implies that the ﬂux of2 B through a surface convected
+by u can only change if the curl of E′ is nonzero.
+    In an electron-positron plasma the masses of ions and electrons are identical
+and the Hall term vanishes. Also, if pressure is isotropic and density varies slowly,
+then the curl of the pressure term is zero. In the collisionless two-ﬂuid model the
+resistivity is zero. So for our two-ﬂuid model reconnection could only happen by
+means of the inertial term (or numerical diﬀusion).
+
+                    3. The ﬁve-moment two-ﬂuid model
+
+   The collisionless two-ﬂuid equations we solved were
+                                      
+                    ρi               ρiui                0
+                 ρiui          ρiuiui + pi I      σi(E + ui × B)
+                               ui  + pi            σiui E              ∂t    Ei  +           Ei     =                 ·             ,                  ρe    ∇·      ρeue                0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ρeueue + pe I                                         σe(E + ue  B)               ρeue                                   ×
+                  Ee          ue Ee + pe          σeue · E
+    B                            0      ψ      B      0    ∂t   +  ∇× E+χ∇ψ   =              , ∂t   + χc2∇·  =             .
+    E   −c2∇× B+χc2∇φ    −J/ǫ     φ    χ∇· E     χσ/ǫ
+These equations were studied extensively by Shumlak and Loverich [8] and Hakim,
+Shumlak, and Loverich [5]. A version of this model with anisotropic pressure was
+also considered by Hakim [4].
+    This system is identical in apearance with the two-ﬂuid system (2.1)–(2.2) if
+the correction potentials ψ and φ, which we have added for numerical divergence
+cleaning purposes, are zero. These equations imply a wave equation that propagates
+the divergence constraint error at the speed cχ.3 We select χ = 1.05.
+   We nondimensionalized this system by choosing typical values of magnetic ﬁeld
+B0, (ion) number density n0, particle charge q0 = e, and combined particle mass
+m0 = mi + me. This implies a choice (1) of characteristic time scale ω−1g  := q0B0m0  ,
+where ωg is the cyclotron frequency of a typical particle, (2) of characteristic velocity
+vA := √µ0m0n0B0     , a typical Alfv´en speed, where µ0 := (c2ǫ0)−1 is the permeability
+of magnetic ﬁeld and (3) straightforwardly of all other quantities. Replacing every
+
+
+     2    We remark that if there exists a velocity ﬁeld v for which ∂tB + ∇× (B × v) = 0, then
+magnetic ﬂux is convected by v and the topology of magnetic ﬁeld lines cannot change.  In
+particular, if we merely add the Hall term to the ideal Ohm’s law, then ∂tB + ∇× (B × (u +
+me−˜˜    mi J × B)), i.e., the magnetic ﬁeld is essentially carried by the electrons. Hall-mediated fast   ρ
+reconnection requires a small amount of resistivity as well.
+     3
+     To see this ﬁrst take the divergence of Maxwell’s evolutions equations. Then either (1)
+take the time derivative of Maxwell’s constraint equations to eliminate the electromagnetic ﬁeld
+and get a wave equation for the correction potentials, or (2) eliminate the correction potentials by
+taking the time derivative of the divergence of Maxwell’s evolution equations and the Laplacian
+of the constraint equations to eliminate the correction potentials and get a wave equation for the
+divergence constraint error.
+
+===== PDF PAGE 5 =====
+             TWO-FLUID MODEL OF ELECTRON-POSITRON PLASMA                5
+
+quantity X with nondimensional representation ˆXX0 gives a system governing the
+ˆX values with exactly the same appearance, except that 1/ˆǫ = ˆc2. We drop hats.
+
+            4. GEM magnetic reconnection challenge problem
+
+   With the exception that our nondimensionalized light speed is 10 rather than
+their value of 20, our settings are equivalent to those of [1], which reﬂect the
+settings and conventions of the original GEM problem [3]. To map our SI-like
+nondimensionalization onto their Gaussian-like nondimensionalization, rescale the
+                                                         4π E.electromagnetic ﬁeld by BGEM = √4πB and EGEM = √c
+
+    4.1. Computational domain. The computational domain is the rectangular
+domain [−Lx/2, Lx/2]× [−Ly/2, Ly/2], where Lx = 8π and Ly = 4π. The problemis symmetric under reﬂection across either the horizontal or vertical axis.
+
+    4.2. Boundary conditions. The domain is periodic in the x-axis. The bound-
+aries perpendicular to the y-axis are thermally insulating conducting wall bound-
+aries. A conducting wall boundary is a solid wall boundary (with slip boundary
+conditions in the case of ideal plasma) for the ﬂuid variables, and the electric ﬁeld
+at the boundary has no component parallel to the boundary. We also assume that
+magnetic ﬁeld runs parallel to and so does not penetrate the boundary (this follows
+from Ohm’s law of ideal MHD, but we assume it holds generally).4
+
+    4.3. Model Parameters. We carried out simulations for the following choices
+of the GEM model parameters:
+
+        (1)      mi/me = 25,       Ti/Te = 5          (original GEM),
+        (2)      mi/me = 1,        Ti/Te = 5,       and
+        (3)      mi/me = 1,        Ti/Te = 1.
+
+    4.4. Initial conditions. The initial conditions are a perturbed Harris sheet
+equilibrium. The unperturbed equilibrium is given by
+                                              B20
+       B(y) = B0 tanh(y/λ)ex,                      p(y) =     n(y),
+                                                      2n0
+                                                          Te       ni(y) = ne(y) = n0(1/5 + sech2(y/λ)),       pe(y) =         p(y),
+                                                               Ti + Te
+                                                                 Ti
+      E = 0,                                     pi(y) =         p(y).
+                                                               Ti + Te
+On top of this the magnetic ﬁeld is perturbed by
+                  δB = −ez × ∇(ψ), where
+                    ψ(x, y) = ψ0 cos(2πx/Lx) cos(πy/Ly).
+
+In the GEM problem the initial condition constants are
+
+       λ = 0.5,       B0 = 1,        n0 = 1,        ψ0 = B0/10.
+
+   4We remark that with the symmetries of the GEM problem at the conducting wall boundary
+may also be regarded as a symmetry conditions for a periodic boundary if the solution on the
+entire domain is reﬂected across its bottom boundary and negated, allowing the GEM problem to
+be solved on a doubled domain with periodic boundaries and inﬁnitely smooth initial conditions.
+
+===== PDF PAGE 6 =====
+6                         E.A. JOHNSON AND J.A. ROSSMANITH
+
+
+                    5. Properties of the GEM problem
+
+    5.1. Reconnected ﬂux. In deﬁning and discussing magnetic ﬂux we restrict
+ourselves to the ﬁrst quadrant of the domain, referring to it as if it were the entire
+domain.
+   The ideal MHD model implies the frozen-in ﬂux condition, which says that
+magnetic ﬂux is convected with the ﬂuid. The boundary conditions and symme-
+tries of the problem dictate that at the boundaries ﬂuid can only move parallel to
+the boundaries and that the in-plane ﬂuid velocity at the corners must be zero.
+Therefore, the frozen-in ﬂux condition would say that the ﬂux through any bound-
+ary must remain constant.
+    In fact, for models which permit reconnection, the frozen-in ﬂux condition
+breaks down near the X-point, allowing magnetic ﬁeld to diﬀuse and allowing ﬁeld
+lines to break and reconnect so that they pass through the horizontal axis. We
+therefore deﬁne magnetic reconnection to be the loss of magnetic ﬂux through the
+vertical axis into the ﬁrst quadrant:
+
+Deﬁnition 5.1. The reconnected ﬂux Frecon is deﬁned by
+                Z ymax
+            Fleft(t) :=                    B1 dy,          Frecon(t) := Fleft(0) −Fleft(t).                        0
+Proposition 5.1. The rate of reconnection is minus the value of the out-of-plane
+component of the electric ﬁeld at the origin (i.e. the X-point). 5
+
+   Proof.
+                           Z ymax         Z ymax
+   dtFrecon(t) = −dtFleft(t)  = −  0    ∂tB1 dy =  0    ∂yE3 dy  = −E3(0),
+since E3 is zero at the conducting wall.                       □
+
+    5.2. Reﬂectional symmetries. The GEM problem has reﬂectional symme-
+try across the horizontal and vertical axes. We impose this symmetry by restricting
+our computations to the ﬁrst quadrant. 6 At the origin, symmetries across the hor-
+izontal and vertical axes mean that vectors have only an out-of-plane component
+and pseudovectors must be zero.
+
+    5.3. Reductions in Ohm’s law at the origin. Symmetries at the origin
+reduce Ohm’s law to:
+                 1
+      E3 =ηJ3 + ρ(˜me(∂x1Pi,1,3 + ∂x2Pi,2,3) −˜mi(∂x1Pe,1,3 + ∂x2Pe,2,3))
+                  ˜mi ˜me                               ˜me        +        ∂tJ3 +    u +     J +   −˜mi     J                ρ        J3∇·    u3∇·       ρ   J3∇·
+If we neglect resistivity, oﬀ-diagonal pressure components, and assume that the ﬂow
+of charge and mass toward or away from the origin is small, then this becomes
+                                         ˜me
+                 −dtFrecon = E3 ≈˜miρ  ∂tJ3 ≈˜mi ˜me∂t(J3/ρ),
+i.e., the value of −˜mi ˜meJ3/ρ at the origin will tend to track with Frecon.
+     5      This conﬁrms the theoretical fact that an MHD model which only includes the B × u and
+Hall terms in Ohm’s law cannot give fast reconnection, since both these terms must vanish at the
+origin.
+     6
+      In simulations which incorporate the entire domain symmetry is often lost due to compu-
+tational noise and the inherent instability of the problem.
+
+===== PDF PAGE 7 =====
+             TWO-FLUID MODEL OF ELECTRON-POSITRON PLASMA                7
+
+
+                                  6. Results
+
+    Following the precedent of [8],  [4], and  [5], we carried out simulations of
+the GEM problem using a third-order shock-capturing Runge-Kutta Discontinu-
+ous Galerkin solver for a collisionless two-ﬂuid model with isotropic pressure for
+each species. (We enforced the divergence cleaning for the magnetic ﬁeld but not
+for the electric ﬁeld.) We carried out simulations on a quarter domain (hence
+enforcing symmetry) for mesh sizes of 32 × 16, 64 × 32, and 128 × 64.    For the low mesh resolution we seemed to observe fast reconnection in the
+electron-positron plasma (based on the pattern of magnetic ﬁeld lines and the rates
+of reconnection), but not for high resolutions. We hypothesize that the electron
+inertial term coupled with suﬃcient (numerical) resistivity is suﬃcient to yield fast
+reconnection. In future studies we hope to explicitly introduce collisional (diﬀusive)
+terms (rather than relying on numerical diﬀusion) and explore whether we can show
+convergence to fast reconnection for resistive isotropic two-ﬂuid plasma.
+                                                                       R t
+                                                                                      0 E3   We plotted reconnected ﬂux, −˜mi ˜meJ3/ρ, and a crude calculation of -
+(the cumulative sum of −E3 evaluated at integer times) for all three combina-
+tions of mass ratio and temperature ratio. Our plots indicate that −˜mi ˜meJ3/ρonly tracked with reconnected ﬂux for the high-resolution simulations of electron-
+positron plasma up until the time when a large magnetic island formed around the
+origin. (These were the plots where fast reconnection did not occur.)
+
+                            References
+
+ [1] N. Bessho, A. Bhattacharjee. Collisionless reconnection in an electron-positron plasma. Phys-
+     ical Review Letters, 95, 245001 (2005).
+ [2]       N. Bessho, A. Bhattacharjee. Fast collisionless reconnection in electron-positron plas-
+    mas. Physics of Plasmas, 14, 056503 (2007).
+ [3] J. Birn, J.F. Drake, M.A. Shay, B.N. Rogers, R.E. Denton, M. Hesse, M. Kuznetsova, Z.W.
+    Ma, A. Bhattacharjee, A. Otto, and P.L. Pritchett. Geospace environmental modeling (GEM)
+    magnetic reconnection challenge. Journal of Geophysical Research – Space Physics, 106:3715–
+     3719, 2001.
+ [4] A.H. Hakim. Extended MHD modelling with the ten-moment equations. J. Fusion Energy,
+     27:36–43, 2008.
+ [5] A. Hakim, J. Loverich, and U. Shumlak. A high-resolution wave propagation scheme for ideal
+    two-ﬂuid plasma equations. J. Comp. Phys., 219:418–442, 2006.
+ [6] E.N. Parker. Sweet’s mechanism for merging magnetic ﬁelds in conducting ﬂuids. J. Geophys.
+     Res., 62:509–520, 1957.
+ [7] E. Priest and T. Forbes. Magnetic Reconnection: MHD Theory and Applications. Cambridge
+     University Press, 2007.
+ [8] U. Shumlak and J. Loverich. Approximate Riemann solver for the two-ﬂuid plasma model.
+     J. Comp. Phys., 187:620–638, 2003.
+ [9] P.A. Sweet. The neutral point theory of solar ﬂares. In Electromagnetic Phenomena in Cos-
+    mical Plasmas, pages 123–134. Cambridge University Press, 1958.
+
+    Department of Mathematics, University of Wisconsin, Madison WI 53717
+    E-mail address: ejohnson@math.wisc.edu
+
+    Department of Mathematics, University of Wisconsin, Madison WI 53717
+    E-mail address: rossmani@math.wisc.edu
+
+===== PDF PAGE 8 =====
+8                         E.A. JOHNSON AND J.A. ROSSMANITH
+
+                      Reconnection for mi/me=1, Ti/Te=1 (mx=32, my=16)
+                                                                                      7
+                                                                                                        6.5
+                                                                                      6
+                                                                                                        5.5
+                                                                                      5
+                           reconnected flux                                                           4.5
+                             time integral of (−E3)                                                                                      4                         change in −J3/rho
+                                   flux exiting right wall                                                       3.5
+                                   flux entering left wall                                              3
+                                   flux of central island
+                                   flux of other islands                                                        2.5
+                       mass density                                                   2
+                                                                                                        1.5
+                                                                                      1
+                                                                                                        0.5
+                                                                                      0
+
+                     0      5     10     15     20     25     30     35     40     45     50
+
+                      Reconnection for mi/me=1, Ti/Te=1 (mx=64, my=32)
+                                                                                      7
+                                                                                                        6.5
+                                                                                      6
+                                                                                                        5.5
+                                                                                      5
+                           reconnected flux                                                           4.5
+                             time integral of (−E3)                                                                                      4                         change in −J3/rho
+                                   flux exiting right wall                                                       3.5
+                                   flux entering left wall                                              3
+                                   flux of central island
+                                   flux of other islands                                                        2.5
+                       mass density                                                   2
+                                                                                                        1.5
+                                                                                      1
+                                                                                                        0.5
+                                                                                      0
+
+                     0          5         10         15         20         25         30
+
+                     Reconnection for mi/me=1, Ti/Te=1 (mx=128, my=64)
+                                                                                      7
+                                                                                                        6.5
+                                                                                      6
+                                                                                                        5.5
+                                                                                      5
+                           reconnected flux                                                           4.5
+                             time integral of (−E3)                                                                                      4                         change in −J3/rho
+                                   flux exiting right wall                                                       3.5
+                                   flux entering left wall                                              3
+                                   flux of central island
+                                   flux of other islands                                                        2.5
+                       mass density                                                   2
+                                                                                                        1.5
+                                                                                      1
+                                                                                                        0.5
+                                                                                      0
+
+                     0          5         10         15         20         25         30
+
+
+      Figure 1. Three plots attempting to show convergence of reconnec-
+         tion data for electron-positron plasma with equal initial temperatures.
+        Reconnection is suppressed for ﬁner mesh resolution but fast reconnec-
+         tion occurs for coarse mesh resolution. We conjecture that numerical
+        diﬀusion coupled with the ion inertial term is suﬃcient to admit fast re-
+         connection. The appearance of a large central magnetic island beginning
+        around time 15 is curious.
+
+===== PDF PAGE 9 =====
+      TWO-FLUID MODEL OF ELECTRON-POSITRON PLASMA                9
+
+              Reconnection for mi/me=1, Ti/Te=5 (mx=32, my=16)
+                                                                              7
+                                                                                             6.5
+                                                                              6
+                                                                                             5.5
+                                                                              5
+                  reconnected flux                                                           4.5
+                   time integral of (−E3)                                                                              4                change in −J3/rho
+                       flux exiting right wall                                                       3.5
+                       flux entering left wall                                              3
+                       flux of central island
+                       flux of other islands                                                        2.5
+               mass density                                                   2
+                                                                                             1.5
+                                                                              1
+                                                                                             0.5
+                                                                              0
+
+            0      5     10     15     20     25     30     35     40     45     50
+
+              Reconnection for mi/me=1, Ti/Te=5 (mx=64, my=32)
+                                                                              7
+                                                                                             6.5
+                                                                              6
+                                                                                             5.5
+                                                                              5
+                  reconnected flux                                                           4.5
+                   time integral of (−E3)                                                                              4                change in −J3/rho
+                       flux exiting right wall                                                       3.5
+                       flux entering left wall                                              3
+                       flux of central island
+                       flux of other islands                                                        2.5
+               mass density                                                   2
+                                                                                             1.5
+                                                                              1
+                                                                                             0.5
+                                                                              0
+
+            0          5         10         15         20         25         30
+
+              Reconnection for mi/me=1, Ti/Te=5 (mx=128, my=64)
+                                                                              7
+                                                                                             6.5
+                                                                              6
+                                                                                             5.5
+                                                                              5
+                  reconnected flux                                                           4.5
+                   time integral of (−E3)                                                                              4                change in −J3/rho
+                       flux exiting right wall                                                       3.5
+                       flux entering left wall                                              3
+                       flux of central island
+                       flux of other islands                                                        2.5
+               mass density                                                   2
+                                                                                             1.5
+                                                                              1
+                                                                                             0.5
+                                                                              0
+
+            0          5         10         15         20         25         30
+
+
+Figure 2. Convergence study of reconnection for electron-positron
+plasma with initial temperature ratio of 5. The reconnection rate would
+appear to decrease with decreasing numerical diﬀusion. Only for the
+ﬁnest mesh does a central magnetic island form.
+
+===== PDF PAGE 10 =====
+10                        E.A. JOHNSON AND J.A. ROSSMANITH
+
+                     Reconnection for mi/me=25, Ti/Te=5 (mx=32, my=16)
+                                                                                      7
+                                                                                                        6.5
+                                                                                      6
+                                                                                                        5.5
+                                                                                      5
+                           reconnected flux                                                           4.5
+                             time integral of (−E3)                                                                                      4                         change in −J3/rho
+                                   flux exiting right wall                                                       3.5
+                                   flux entering left wall                                              3
+                                   flux of central island
+                                   flux of other islands                                                        2.5
+                       mass density                                                   2
+                                                                                                        1.5
+                                                                                      1
+                                                                                                        0.5
+                                                                                      0
+
+                     0      5     10     15     20     25     30     35     40     45     50
+
+                     Reconnection for mi/me=25, Ti/Te=5 (mx=64, my=32)
+                                                                                      7
+                                                                                                        6.5
+                                                                                      6
+                                                                                                        5.5
+                                                                                      5
+                           reconnected flux                                                           4.5
+                             time integral of (−E3)                                                                                      4                         change in −J3/rho
+                                   flux exiting right wall                                                       3.5
+                                   flux entering left wall                                              3
+                                   flux of central island
+                                   flux of other islands                                                        2.5
+                       mass density                                                   2
+                                                                                                        1.5
+                                                                                      1
+                                                                                                        0.5
+                                                                                      0
+
+                     0       5       10      15      20      25      30      35      40
+
+                    Reconnection for mi/me=25, Ti/Te=5 (mx=128, my=64)
+                                                                                      7
+                                                                                                        6.5
+                                                                                      6
+                                                                                                        5.5
+                                                                                      5
+                           reconnected flux                                                           4.5
+                             time integral of (−E3)                                                                                      4                         change in −J3/rho
+                                   flux exiting right wall                                                       3.5
+                                   flux entering left wall                                              3
+                                   flux of central island
+                                   flux of other islands                                                        2.5
+                       mass density                                                   2
+                                                                                                        1.5
+                                                                                      1
+                                                                                                        0.5
+                                                                                      0
+
+                     0        5        10       15       20       25       30       35
+
+
+      Figure 3. Convergence study of reconnection for electron-positron
+        plasma with mass ratio of 25 and initial temperature ratio of 5. Fast re-
+        connection occurs for both coarse and ﬁne mesh resolutions. The anoma-
+         lously early cessation of reconnection in the simulation at intermediate
+         resolution is evidently related to the appearance of a large central mag-
+         netic island beginning around time 20.

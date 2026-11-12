@@ -1,0 +1,2680 @@
+
+===== PDF PAGE 1 =====
+           High-order two-ﬂuid plasma solver for direct numerical simulations of plasma ﬂows
+
+          with full transport phenomena
+
+                   Z. Li1, a) and D. Livescu2, b)
+
+                 1)Department of Engineering, Texas A&M University-Corpus Christi,
+
+                Corpus Christi, Texas 78412, USA
+
+                 2)CCS-2, Los Alamos National Laboratory, Los Alamos, New Mexico 87545,
+2018         USA
+
+
+              The two-ﬂuid plasma equations for a single ion species, with full transport terms,Dec
+28              including temperature and magnetic ﬁeld dependent ion and electron viscous stresses
+               and heat ﬂuxes, frictional drag force, and ohmic heating term have been implemented
+
+                    in the CFDNS code and solved by using sixth-order non-dissipative compact ﬁnite
+
+                  diﬀerences for plasma ﬂows in several diﬀerent regimes. In order to be able to fully
+
+                    resolve all the dynamically relevant time and length scales, while maintaining compu-
+
+                    tational feasibility, the assumptions of inﬁnite speed of light and negligible electron
+
+                    inertia have been made.  Non-dimensional analysis of the two-ﬂuid plasma equa-
+
+                    tions shows that, by varying the characteristic/background number density, length
+
+                     scale, temperature, and magnetic strength, the corresponding Hall, resistive, and[physics.plasm-ph]
+                    ideal magnetohydrodynamics (MHD) equations can be recovered as limiting cases.
+
+              The accuracy and robustness of this two-ﬂuid plasma solver in handling plasma ﬂows
+
+                    in diﬀerent regimes have been validated against four canonical problems: Alfven and
+
+                   whistler dispersion relations, electromagnetic plasma shock, and magnetic reconnec-
+
+                     tion. For all test cases, by using physical dissipation and diﬀusion, with negligible
+
+                  numerical dissipation/diﬀusion, fully converged Direct Numerical Simulations (DNS)-
+
+                      like solutions are obtained when the ion Reynolds number based on grid size is smaller
+
+                 than a threshold value which is about 2.3 in this study. For the magnetic reconnectionarXiv:1812.11237v1
+                 problem, the results show that the magnetic ﬂux saturation time and value converge
+
+               when the ion and magnetic Reynolds numbers are large enough. Thus, the DNS-like
+
+                    results become relevant to practical problems with much larger Reynolds numbers.
+
+
+
+
+              a)Electronic mail: zhaorui.li@tamucc.edu
+              b)Electronic mail: livescu@lanl.gov.
+
+
+                                                 1
+
+===== PDF PAGE 2 =====
+I. INTRODUCTION
+
+
+   Plasma, by far the most abundant form of ordinary matter in the universe, has been
+
+the subject of study in many disciplines, particularly in fusion1–3, space physics4–6, indus-
+
+trial applications7–9, astrophysics10–12, and so on. Aside from full ab initio descriptions13–15,
+
+for many applications, a reasonable level of accuracy for plasma ﬂows calculations can be
+
+achieved by using kinetic theory and the distribution functions that characterize each parti-
+
+cle component16. The evolution of the distribution functions is governed by the Boltzmann
+
+equation17. However, for turbulent ﬂows, solving the six-dimensional Boltzmann equation
+
+coupled with Maxwells equations for the electromagnetic ﬁeld is prohibitively expensive, due
+
+to the broad range of scales that need to be captured. Using the continuum approximation,
+
+when possible, becomes computationally necessary for the description of turbulent plasma
+
+ﬂows because the governing equations solved in the ﬂuid model are three-dimensional. As-
+
+suming quasi-local thermal equilibrium (i.e. small departures from Maxwellian distribution
+
+function) within each of the components, the ﬂuid equations describing plasma dynamics
+
+can be obtained by taking appropriate moments of Boltzmann equation and averaging over
+
+velocity space for each of the components18,19.
+
+   For single component plasmas, i.e. consisting of electrons and a single ion component,
+
+starting from the equations for the ion and electron distribution functions, Braginskii 17
+
+derived a two-ﬂuid hydrodynamic model for separate ion and electron ﬂuids by using the
+
+Chapman-Enskog expansion with two-term Sonine polynomial solutions. In the Braginskii
+
+two-ﬂuid model, the transport terms include the magnetic ﬁeld impact on viscous stress
+
+tensor, heat ﬂux, and frictional drag force, with diﬀerent formulations along and perpen-
+
+dicular to the magnetic ﬁeld. In contrast to single ion component case, plasma equations
+
+containing multiple ion species involve additional transport phenomena such as baro- and
+
+electro-diﬀusion20–22. Although this is a very active area of research23–26, there are still many
+
+open questions, especially on how to treat mixtures with magnetic ﬁeld dependent transport
+
+properties.
+
+   According to the H-theorem of Boltzmann18,27, if the distribution function changes only
+
+by virtue of collisions, any arbitrary distribution will approach a Maxwellian. Therefore, the
+
+Braginskii two-ﬂuid plasma model17 can describe well plasma ﬂows in which the characteris-
+
+tic time scale is much larger than the collision time, i.e. t0 ≫τs, and the characteristic length
+
+                                      2
+
+===== PDF PAGE 3 =====
+scale is much larger than the distance traversed by particles between collisions (e.g. particle
+
+mean-free-path), i.e. L0 ≫λmfp. One of such applications is the study of hydrodynamic
+
+instabilities between the hot spot and the colder surrounding plasma during the Inertial
+
+Conﬁnement Fusion (ICF) coasting/deceleration stage . For the DT plasma in the early de-
+
+celeration stage, the primary parameters of interests found in the literature28,29, i.e. reference
+
+number density n0 ∼1030m-3, temperature T0 ∼2.5keV, acceleration g ∼1.0 × 1014m/s2,
+
+and hot-spot radius Rhs ≈55µm, lead to τRT/τi ≈250 ≫1 and Rhs/λmfp ≈150 ≫1. Here,
+τRT = p1/(Akg) is the classical single-mode Rayleigh-Taylor instability (RTI) growth time
+
+and τi is the ion collision time. The deﬁnitions of Atwood number, A, and wavenumber, k,
+
+can be found in Ref.30. Similarly, by using the typical plasma scales for the late deceleration
+
+stage31,32, one obtains τRT/τi ≈500 ≫1 and Rhs/λmfp ≈320 ≫1.
+
+   Unfortunately, magnetized plasmas encountered in nature, including space and astro-
+
+physical plasmas, are mostly collisionless, and the typical collision time and mean-free-path
+
+in such ﬂows can be comparable to or even larger than certain characteristic time and length
+
+scales of the ﬂow. For example, according to the primary parameters given in Refs.33,34, the
+
+particle mean-free-path in solar ﬂare/corona is much larger than the length-scale of recon-
+
+necting current sheet, i.e. λmfp ≈1.0 × 105m ≫δ ∼10m. Therefore, the quasi-Maxwellian
+
+distribution (or quasi-local thermal equilibrium) assumption does not seem guaranteed in
+
+such regimes.  Theoretically, the highly collisionless magnetic reconnection can only be
+
+rigorously described by using collisionless kinetic models (e.g. Vlasov-Maxwell system of
+
+equations) in which both ion and electron kinetic-scale features are included35. However,
+
+in fact, the ﬂuid model can still describe fairly well some strongly magnetized, collisionless
+
+plasma dynamics1,36, which is largely due to the following two justiﬁcations. First, a strong
+
+magnetic ﬁeld can play the role of collisions by forcing particles to gyrate in a Larmor or-
+
+bit that is smaller than the mean free path by a factor of ωceτe17,36, where ωce is electron
+cyclotron frequency and τe is the electron collision time1. The other argument is that, even
+
+though the real distribution function in collisionless plasmas may signiﬁcantly deviate from
+
+Maxwellian distribution, the ﬂuid equations derived based on the quasi-Maxwellian assump-
+
+tion may approach the physical solution when the range of ﬂuid scales is very broad. This
+
+argument is similar to the mixing transition37 often invoked in ﬂuid turbulence to justify
+
+the relevance of ﬁnite Reynolds number simulations to practical problems with much larger
+
+range of scales38. A more rigorous statement of the argument is that the ﬂow develops an
+
+
+                                      3
+
+===== PDF PAGE 4 =====
+inertial range, where the energy cascade is local39 and not inﬂuenced by the viscosity, except
+
+through the magnitude of the mean dissipation. From this point of view, it is tempting to
+
+assume that numerical dissipation in Euler equations simulations can act in a similar way
+
+and allow the development of an inertial range, so that the numerical solution is close to
+
+the physical solution when the grid is ﬁne enough. However, developing a power law range
+
+in the spectrum is not proof of the emergence of an inertial range40 and proving cascade
+
+locality in the presence of numerical viscosity/diﬀusion may be impossible in general. In a
+
+broader sense, mixing transition may be extended to certain non-turbulent ﬂows to mean
+
+convergence of the results with respect to the Reynolds number.  In other instances, the
+
+concept of separation of scales can also be used to justify the relevance of ﬂuid simulations
+
+to practical applications. For example, when the shock wave thickness is much smaller than
+
+the ﬂows scales, the results become independent of the shock proﬁle.  In this case, even
+
+though the Navier-Stokes description breaks around strong shocks, it can still accurately
+
+predict the shock-turbulence interaction41. While the mixing transition has not been explic-
+
+itly explored for plasma ﬂows, it has implicitly been assumed for example by showing that
+
+two-ﬂuid plasma (including Hall-MHD) equations can successfully predict the fast recon-
+
+nection rate in collisionless magnetic reconnection6,42–45. Here, we further address this issue
+
+by considering the convergence of magnetic reconnection results as the ion and magnetic
+
+Reynolds numbers are increased.
+
+   Single-ﬂuid magnetohydrodynamics (MHD) has been successfully used for studying large-
+
+scale plasma ﬂows in a wide range of problems46–51. However, single-ﬂuid MHD fails to de-
+
+scribe plasma phenomena that happen on a length scale comparable to or smaller than the
+
+ion skin depth, i.e. when L0 ≤λi = c/ωpi, where c is the speed of light in vacuum and ωpi
+
+is ion plasma frequency. When applied to the magnetic reconnection problem, ideal MHD
+
+cannot predict the reconnection due to its ﬂux-frozen-in limitation, while resistive MHD pre-
+
+dicts a growth rate much lower than observations6. This is because two-ﬂuid eﬀects become
+
+important at length scales below λi as the ions and electrons motions start to decouple. By
+
+including the Hall current in the governing equations and electron pressure contribution to
+
+the total pressure, Hall-MHD equations52 account for some two-ﬂuid eﬀects and have been
+
+successful in capturing the rapid magnetic reconnection process6,43,44,53. Nevertheless, Hall-
+
+MHD equations are not as general as the Braginskii two-ﬂuid plasma model. For example,
+
+to close the Hall-MHD equations, some studies neglect the electron pressure altogether54–56,
+
+
+                                      4
+
+===== PDF PAGE 5 =====
+while others assume identical ion and electron temperatures34,57. In addition, when viscous
+
+eﬀects were included in Hall-MHD equations34,55, again these were less general than those
+
+in the Braginskii two-ﬂuid plasma model.
+
+   In many practical problems, electron and ion temperatures are diﬀerent. For example,
+
+the ion temperature in the Saturnian magnetosphere near Titans orbit is normally higher
+
+than the electron temperature; while in Titans ionosphere, the electron temperature is dom-
+
+inant over the ion temperature58. The two-ﬂuid plasma model17,46,59,60 can solve many of
+
+the problems encountered in single-ﬂuid MHD and Hall-MHD formulations by consider-
+
+ing separate ion and electron set of equations.  Nevertheless, previous applications of the
+
+two-ﬂuid model59–61 did not include plasma transport terms and relied on the numerical dis-
+
+sipation/diﬀusion to obtain stable solutions; such solutions can obviously become corrupted
+
+by numerical artifacts and generally might misrepresent the physical transport.
+
+   Previous studies of plasma ﬂows with physical transport phenomena such as thermal
+
+diﬀusion include simulations with Flash62,63, Hydra64,65, and Miranda29,66,67 codes. In these
+
+codes, the transport coeﬃcients for thermal diﬀusion were calculated by using the Lee-
+
+More model68. However, Flash and Hydra codes solve the inviscid ﬂuid equations and only
+
+Miranda explicitly considers viscous and diﬀusive eﬀects69. In particular, the MIRANDA
+
+code uses a very similar high-order numerical scheme as the CFDNS code, with negligible
+
+numerical dissipation; however, this is accompanied by a high order ﬁlter to remove high
+
+frequency oscillations. No ﬁltering is used with the CFDNS code. As far as we know,
+
+the magnetic ﬁeld impact on the transport phenomena perpendicular to the magnetic ﬁeld
+
+has not been considered in previous two-ﬂuid plasma ﬂow simulations.  Nevertheless, the
+
+presence of a strong magnetic ﬁeld reduces the distance traveled by particle during collision.
+
+As a result, depending on the magnetic strength, the plasma transport coeﬃcients in the
+
+directions perpendicular to the magnetic ﬁeld may become signiﬁcant small, so that the
+
+associated ﬂuxes become strongly anisotropic. As argued above, there are many situations,
+
+e.g. when a mixing transition exists, where the exact form of the physical transport is
+
+not important, provided that the energy transfer among scales of motion remains local.
+
+Nevertheless, such transition and the role of anisotropic transport have not been explored
+
+for many of the practical situations of interest.
+
+  The objective of this study is to present an accurate two-ﬂuid plasma solver with a sin-
+
+gle ion component that can simulate magnetized plasma ﬂows in a range of applications,
+
+
+                                      5
+
+===== PDF PAGE 6 =====
+with a special focus on collisional dominated transport for low-Z fully ionized nondegener-
+
+ate plasmas, in regimes where the results might be sensitive to the exact formulation of the
+
+transport terms.  All plasma transport terms such as the temperature and magnetic ﬁeld
+
+dependent ion and electron viscous stresses and heat ﬂuxes, frictional drag force, and ohmic
+
+heating are included in the two-ﬂuid plasma solver. To obtain fully-resolved Direct Numer-
+
+ical Simulations (DNS)-like solutions, the two-ﬂuid plasma equations are solved by using
+
+sixth-order non-dissipative compact ﬁnite diﬀerences70 at suﬃciently ﬁne grid resolutions.
+
+In this study, to maintain computational feasibility, the inﬁnite speed of light and negligible
+
+electron inertia assumptions are made to eliminate severe time-step limitations. These two
+
+assumptions can be well justiﬁed for problems such as ICF coasting stage, where ion ther-
+
+mal velocity is non-relativistic, VTi/c ∼O  10-3  , and mi/me ∼5 × 103. The length scale
+
+limitation imposed by using these two assumptions, L0 ≫(rLe, λe), where rLe is electron
+
+Larmor radius and λe is electron skin depth, is also satisﬁed in many other practical prob-
+
+lems. While the primary target applications for the new solver are plasma ﬂows which can
+
+be described with collisional transport terms, the test problems considered are widely used
+
+in the literature and have been addressed primarily using ideal equations solvers; the numer-
+
+ical treatment of such equations requires numerical dissipation/diﬀusion for regularization.
+
+Our new solver yields smooths solutions without any numerical dissipation/diﬀusion and
+
+can recover inviscid analytical solutions for suﬃciently high Reynolds numbers.
+
+
+
+   In general, the Braginskii transport coeﬃcients become inaccurate for degenerate partially
+
+ionized plasmas or high-Z materials68. However, more general formulations do not include
+
+full directional dependence of the physical transport with respect to the magnetic ﬁeld.
+
+A separate objective of this study is to form the basis of future estimations of anisotropic
+
+transport importance and explore the existence of a mixing transition in various applications.
+
+
+
+  The paper is organized as follows:  in Section II, the derivations of reduced two-ﬂuid
+
+plasma equations from the Braginskiis full two-ﬂuid plasma model, together with an analysis
+
+of their ranges of applicability, are discussed in details. A non-dimensional analysis of the
+
+reduced two-ﬂuid plasma equations is conducted in Section III. The accuracy and robustness
+
+of the two-ﬂuid plasma solver are highlighted, in Section IV, against a series of canonical
+
+problems. Finally, the main conclusions are provided in Section V.
+
+
+                                      6
+
+===== PDF PAGE 7 =====
+II. MATHEMATICAL FORMULATION
+
+
+  The macroscopic description of plasma in ﬂuid theory can be obtained by taking appro-
+
+priate moments of Boltzmann equation and averaging over velocity space for each of the
+
+components in plasma. When using the Chapman-Enskog expansion18,19, the zeroth-order
+
+distribution function for each species, fs0 , is chosen to be a Maxwellian, which assumes a
+
+local thermal equilibrium within each of the components. By considering the eﬀects that
+
+produce small deviations from equilibrium, Braginskii17 derived a set of two-ﬂuid plasma
+
+transport equations and constitutive relations for all transport terms. On the other hand,
+
+ignoring those eﬀects leads to a set of Euler-type two-ﬂuid plasma equations in which all
+
+transport phenomena are absent59,60. Such equations develop singularities in ﬁnite time and
+
+need to be regularized by the numerical algorithm.
+
+
+
+A.  Braginskii’s two-ﬂuid plasma model
+
+
+   For a simple fully ionized plasma, the continuity, momentum, and internal energy trans-
+
+port equations for species s (s = i for ion and s = e for electron) are given below as17:
+
+              ∂ρs
+           + ∇· (ρsus) = 0,                                                     (1)
+               ∂t
+        ∂(ρsus)                                     qsρs
+          + ∇· (ρsusus) = −∇ps −∇· πs +    (E + us × B) + Rs + ρsg,      (2)
+           ∂t                            ms
+         ∂(ρses)
+          + ∇· (ρsesus) = −ps∇· us −∇· qs + πs : ∇us + Qs,                  (3)
+           ∂t
+
+where the primary variables are species density, ρs, velocity, us, and speciﬁc internal energy,
+
+es.  In this study, ideal gas equation of state (EOS) is assumed for simplicity.  There-
+
+fore, the species pressure can be expressed as ps = (γ −1) ρses = nskBTs, in which γ
+
+and kB are speciﬁc heat and Boltzmann constant, while ns = ρs/ms and Ts are species
+
+number density and temperature, respectively. ms and qs are mass and charge of par-
+
+ticle s.  The ion and electron charges are  qi = Ze and qe = −e, in which e  is the
+
+constant elementary charge. The formulations for plasma transport terms in the above
+
+equations, including species viscous stress, πs, heat ﬂux, qs, frictional drag force, Rs,
+and collision generated heat, Qs, can be found in Appendix A and Ref.17.  The accu-
+
+racy of Braginskii transport coeeﬃcients for the domain of applicability has been con-
+
+ﬁrmed by comparing with the transport coeﬃcients predicted by using Ab Initio Molecular
+
+
+                                      7
+
+===== PDF PAGE 8 =====
+Dynamics (AIMD)71,72.  For example, for the DT hot-spot in ICF with number density
+
+ne ∼1031m-3 and temperature Te ∼10.0 keV, the electron thermal conductivity calculated
+by using Braginskii model (see Appendix A for full deﬁnitions) is κTe = nek2BTeτe/me =
+         √              h                                  i(nek2BTe/me) × 6  2π3/2ε20 √me (kBTe)3/2 / (lnΛe4Zne) ≈5.15 × 109 Wm−1K−1  which is
+very close to the AIMD prediction72, i.e. κe = 5.05 × 109 Wm−1K−1  .
+
+  As discussed before, the Braginskii two-ﬂuid plasma model is derived for the collision-
+
+dominated plasma ﬂows in which the characteristic time and length scales are much larger
+
+than the collision time and particle mean-free-path, i.e. t0 ≫τs and L0 ≫λmfp. In addition,
+
+the Brangiskii transport coeﬃcients become inaccurate for degenerate partially ionized or
+
+high-Z plasmas68.  Thus, the results presented here apply to fully ionized nondegenerate
+
+single low-Z ion component collisional plasmas, or plasma ﬂows where a mixing transition
+
+has occurred.
+
+  The evolutions of electric ﬁeld, E, and magnetic ﬁeld, B, are governed by the Maxwell
+
+equations as given below:
+
+                              1 ∂E
+                       = ∇× B −µ0J,                                (4)
+                                      c2 ∂t
+                       ∂B
+                       = −∇× E,                                     (5)
+                                  ∂t
+                                              ρc
+                      ∇· E =     ,                                           (6)
+                                              ε0
+                      ∇· B = 0,                                             (7)
+
+where µ0 and ε0 are the permeability and permittivity of free space, respectively, and are
+related to the speed of light in vacuum, c, as c = (µ0ε0)−1/2.  In the above equations,
+
+the formulations for current density, J, and local charge density, ρc, are J = P qsnsus =
+
+e (Zniui −neue) and ρc = P qsns = e (Zni −ne), respectively.  It is worth pointing out
+
+that, for closing the governing equations, one only needs solve two of the Maxwell equations
+
+and the other two equations (e.g.  Eqs.(6)-(7)) are just restatements of the closed set of
+
+governing equations.  For example, by multiplying continuity equation (1) by qs/ms and
+
+then taking summation over ion (s = i) and electron (s = e) species, one obtains:
+
+                                   ∂ρc
+                       + ∇· J = 0.                                   (8)
+                                   ∂t
+
+Furthermore, by taking the divergence of Amperes equation (4) and then subtracting it from
+
+equation (8), it yields:
+                             ∂
+                            (∇· E −ρc/ε0) = 0.                                (9)
+                                ∂t
+
+                                      8
+
+===== PDF PAGE 9 =====
+Obviously, the Gauss equation (6) is just a restatement of the consequence (i.e. Eq. (9))
+
+of solving continuity equation (1) and Ampere equation (4). In this study, we would like
+
+to call equation (6) a diagnostic equation instead of a redundant equation. This is because
+
+that, after applying the two assumptions discussed in the following subsections, the electric
+
+ﬁeld is calculated from the generalized Ohms law (13) instead of the Ampere equation (4),
+
+and equation (8) is reduced to a quasi-neutrality condition. As a result, equation (9) is no
+
+longer rigorously guaranteed to be satisﬁed when solving the ﬁnal governing equations given
+
+in section II D. Therefore, in this study, we solve equation (6) as a diagnostic tool to monitor
+
+the importance of the numerical integration errors. By following the same procedure, one
+
+can also conclude that, mathematically, the magnetic ﬁeld remains divergence free if it is
+
+initially divergence free.
+
+
+
+B.  Inﬁnite speed of light assumption
+
+
+   In this study, the severe time-step restrictions57 (e.g. ∆t ≤CFL ∆x/c and ∆t ≤0.1/ωpe,
+
+where CFL is the Courant-Frederic-Levi constant, ∆x is the mesh size, and ωpe is electron
+
+plasma frequency) caused by high frequency electromagnetic waves are eliminated by using
+
+the inﬁnite speed of light assumption, i.e., (∂E/∂t) /c2 ≈0, which reduces the Amperes
+
+equation (4) to:
+                                      1
+                            J =  ∇× B.                                  (10)
+                                       µ0
+   Consequently, this assumption restricts the calculations to plasma ﬂows with nonrelativis-
+
+tic thermal velocity, VTs = pkBTs/ms ≪c, and to electromagnetic waves with phase speed,
+Vp = ω/k ≪c (see also Ref.46). Furthermore, by replacing equation (10) into equation (8),
+
+one obtains:
+                                      ∂ρc
+                          = 0,                                     (11)
+                                       ∂t
+
+which indicates that the quasi-neutrality condition (ρc = 0) is maintained at all times if the
+
+initial plasma ﬂow is charge free. Consistently, the number densities and mass densities of
+
+ions and electrons become dependent, i.e. ne = Zni and ρe = Z (me/mi) ρi, which eliminates
+
+the need to solve the continuity equation (1) for electrons and relates the ion and electron
+
+velocities via the current density as,
+
+                                           1
+                               ue = ui −          J.                              (12)
+                                        eZni
+
+                                      9
+
+===== PDF PAGE 10 =====
+  The quasi-neutrality condition limits our interests to plasma phenomena whose character-
+
+istic frequency is much smaller than the electron plasma frequency, ω ≪ωpe = pnee2/ε0me,
+
+and characteristic length is much larger than the Debye length, L0 ≫λDe = VTe/ωpe (see
+
+also Ref.46).
+
+
+
+
+C.  Negligible electron inertia assumption
+
+
+  The second assumption made in this study is negligible electron inertia in the electron
+
+momentum equation (2). This assumption is justiﬁed as the right hand side of the electron
+
+momentum equation is the same order as that of the ion momentum equation, but the
+
+advection part is the order me/mi compared to the corresponding part of the ion momentum
+
+equation. Then, after applying the relation between ion and electron velocities (equation
+
+12), one can obtain the generalized Ohms law as:
+
+              mi                       me
+      E =        −∇pe −∇· πe + Re + Z       ρig + J × B −ui × B,      (13)
+               eZρi                        mi
+
+
+where Biermann battery, viscous, resistive, acceleration, and Hall eﬀects are all included.
+
+Recent kinetic simulations20 show that the Biermann battery term appearing in equation
+
+(13) is the physical source of strong, self-generated electric ﬁelds observed in ICF plasma73.
+
+The rest of the terms, in particular, the Hall term and the last term in equation (13) are
+
+also indispensable in maintaining the constant charge condition (i.e. Eq. 11).
+
+   Negligible electron inertia implies that the electron ﬂow has an inﬁnite fast response
+
+time on the time scales of interest. Therefore, the characteristic time scale of interest must
+
+be larger than electron plasma frequency and electron cyclotron frequency,  i.e., 1/ω ≫
+
+(1/ωpe, 1/ωce), which further relaxes the time-step restriction on 0.1/ωce57. Consistently, the
+
+characteristic length scale of interest must be longer than the Debye length, the electron
+
+Larmor radius, and/or electron skin depth, i.e. L0 ≫(λDe, rLe, and/or λe), where rLe =
+VTe/ωce, λe = VA/ωce = c/ωpe, and VA = B/√µ0nimi is the ion Alfven velocity. The iniﬁnite
+
+speed of light assumption further reduces the above condition to L0 ≫(rLe and/or λe), since
+
+λe/λDe = c/VTe ≫1.
+
+   After replacing the electric ﬁeld, E, in the momentum equation (2) for ions using equation
+
+(13) and then applying the quasi-neutrality condition, a modiﬁed expression for the ion
+
+
+                                      10
+
+===== PDF PAGE 11 =====
+momentum equation can be written as:
+
+   ∂(ρiui)
+      + ∇· (ρiuiui) = −∇(pi + pe) −∇· (πi + πe) + (Re + Ri) + J × B + ρig.   (14)
+     ∂t
+
+
+D.  Final two-ﬂuid plasma equations
+
+
+   Finally, the two-ﬂuid plasma transport equations considered in this study are the dimen-
+
+sional ion continuity equation, ion momentum equation, ion and electron internal energy
+
+equations, and Faradays law, and are summarized below as:
+
+                 ∂ρi
+            + ∇· (ρiui) = 0,                                                (15)
+                 ∂t
+           ∂(ρiui)
+           + ∇· (ρiuiui) = −∇(pi + pe) −∇· (πi + πe) + J × B + ρig,       (16)
+             ∂t
+            ∂(ρiei)
+           + ∇· (ρieiui) = −pi∇· ui −∇· qi + πi : ∇ui + Q∆,               (17)
+              ∂t
+           ∂(ρiee)                mi
+           + ∇· (ρieeue) =        [−pe∇· ue −∇· qe + πe : ∇ue+
+             ∂t               Zme
+                               mi
+                                  Re · J −Q∆   ,                           (18)
+                                  eZρi
+                   ∂B
+                   = −∇× E,                                         (19)
+                            ∂t
+
+where the currently density, J, electron velocity, ue, and electric ﬁeld, E, are calculated
+
+from formulations (10), (12) and (13), respectively. The ion/electron pressures, ps, and
+
+temperatures, Ts, are related through the ideal gas EOS as described in section(II A).
+
+  As a result of inﬁnite speed of light and negligible electron inertia assumptions, the consis-
+
+tency of quasi-neutrality condition (ρc ≈0) in the ﬁnal two-ﬂuid plasma equations must be
+
+checked numerically by examining the value of charge density, ρc, calculated from equation
+
+(6). In other words, the divergence of the electric ﬁeld, E, calculated from the generalized
+
+Ohms law equation (13) must be suﬃciently small to maintain the quasi-neutrality condi-
+
+tion. The numerical results obtained for all test cases conﬁrm the quasi-neutrality condition
+
+and two sample results are presented in Appendix B.
+
+
+
+III.  NON-DIMENSIONAL ANALYSIS
+
+
+   In order to assess the importance of Hall and Biermann battery eﬀects, resistivity, vis-
+
+cous stress, and heat ﬂux to plasma ﬂows in diﬀerent regimes, as well as characterize special
+
+
+                                      11
+
+===== PDF PAGE 12 =====
+limiting cases, in this section a non-dimensional analysis of the two-ﬂuid plasma equations
+
+is provided. In order to compare diﬀerent applications, the characteristic scales that can be
+
+varied in practical problems of interests including temperature, number density, characteris-
+
+tic length scale, and magnetic ﬁeld strength are chosen as the primary reference quantities.
+
+
+
+A.  Non-dimensional two-ﬂuid plasma equations
+
+
+  We choose the characteristic number density, n0, length scale, L0, temperature, T0, mag-
+
+netic ﬁeld strength, B0, and external acceleration, g0, as the primary reference quantities
+
+and use them to construct scales for other variables like ion mass density, ρ0 = n0mi, ion
+
+                                                                                                       0 andAlfven velocity, VA0 = B0/√µ0n0mi, plasma pressure, p0 = n0kBT0, a time scale, L0/VA,
+
+so on. With these choices, the non-dimensional two-ﬂuid plasma equations become:
+
+            ∂ρ∗i
+                                               i u∗i ) = 0,                                                   (20)         ∂t∗+ ∇∗· (ρ∗
+      ∂(ρ∗i u∗i )                                           1
+         + ∇∗· (ρ∗i u∗i u∗i ) = −β∇∗(p∗i + p∗e) + J∗× B∗−        π∗i −         ∂t∗                                       Rei∇∗·
+                               1           1
+                                                                                              i g∗,                              (21)                          Ree∇∗· π∗                                                         e + Fr2ρ∗
+      ∂(ρ∗i e∗i )                                           1         + ∇∗· (ρ∗i e∗i u∗i ) = −βp∗i ∇∗· u∗i −β     q∗i +          i  : ∇∗u∗i +          ∂t∗                            Rei∇∗·     Reiπ∗
+                               mi
+                         3Z      βω0eiQ∗∆,                                  (22)
+                            me
+      ∂(ρ∗i e∗e)                 mi                 mi   β
+         + ∇∗· (ρ∗i e∗eu∗e) =        −βp∗e∇∗· u∗e −               q∗Te−          ∂t∗               Zme               me  Ree∇∗·
+                               1              1
+                                                    e : ∇∗u∗e +                                        R∗u · J∗ −3ω0eiβQ∗∆+                            Reeπ∗                                    Rem
+                            mi
+                                                  ˆλiβ (−∇∗· q∗ue + R∗T · J∗) ,                   (23)
+                          me
+                    ∂B∗
+                 ∂t∗= −∇∗× E∗,                                          (24)
+                                1                     1
+                 E∗= ˆλi   J∗× B∗−β∇∗p∗e −        π∗e + Zβρ∗i R∗T+                                    ρ∗i                 Ree∇∗·
+                        Zme    1          1
+                                                                                      i g∗ +                                           R∗u −u∗i × B∗,            (25)                             mi   Fr2ρ∗                                       Rem
+                                     1
+                         u∗e = u∗i −ˆλi   J∗,                                        (26)
+                                         ρ∗i
+                  J∗= ∇∗× B∗.                                           (27)
+
+
+where the superposed asterisk refers to the dimensionless variable and the non-dimensional
+
+
+                                      12
+
+===== PDF PAGE 13 =====
+parameters are the ion inertial scale or skin depth,
+
+                                           ˆλi = c/ ω0piL0 = mi/ (ZeL0 √µ0ρ0) ,                       (28)
+
+ion and electron reference Reynolds (or viscous Lundquist) numbers,
+
+                                Rei = ρ0VAL0/µ00         i ,                                (29)
+
+                              Ree =  µ0i /µ0e  Rei,                               (30)
+
+
+plasma beta,
+
+                           β = n0kBT0/ B20/µ0  ,                              (31)
+
+magnetic Reynolds (or resistive Lundquist) number,
+
+                         Rem = µ0VAL0/η0,0                                      (32)
+
+
+Froude number,
+
+                          Fr = VA/0 p g0L0,                                (33)
+
+the collision frequency,
+
+                               ω0ei = L0/ VAτ0 e0  .                                (34)
+
+In the above non-dimensional parameters, η0 =   mi  ×  me    is the background resis-                                                          eZρ0         eτ0e
+tivity, and the formulations for other reference variables are ion plasma frequency, ω0pi =
+Zepn0/ (ε0mi), ion viscosity, µ0i = n0kBT0τ i0 , electron viscosity, µ0e = Zn0kBT0τ e0 , ion
+                    0    h                                 icollision time, τ i =  12π3/2ε20 √mi (kBT0)3/2 / (lnΛe4Z4n0)  , and electron collision time,
+    √  0    h                                   iτ e =  6  2π3/2ε20 √me (kBT0)3/2 / (lnΛe4Z2n0)  . The Coulomb logarithm (lnΛ) variation
+
+is described in Appendix A.
+
+   In addition, by using the relations, rLe/rLi = λe/λi = pme/mi, we can summarize
+
+the range of applicability for the two assumptions made in this study in term of the non-
+dimensional ion length scales as:  ˆλi ≪ pmi/me and/or ˆrLi ≪ pmi/me depending on the
+
+local magnetic ﬁeld strength. Thus, in magnetic dominant regime (e.g. low plasma β), the
+fact that ˆrLi/ˆλi = √β < 1 yields ˆλi ≪ pmi/me. On the other hand, in plasma dominant
+regime (e.g. large plasma β), the applicability condition becomes ˆrLi ≪ p mi/me.
+
+                                      13
+
+===== PDF PAGE 14 =====
+B.  Single-ﬂuid limiting equations
+
+
+   In order to demonstrate the limiting cases of the two-ﬂuid plasma equations solved in
+
+this study, the non-dimensional single-ﬂuid plasma equations for ion-electron mixture density
+ρ∗= ρ∗i + ρ∗e, velocity, u∗= (ρ∗i u∗i + ρ∗eu∗e) /ρ∗, and pressure, p∗= p∗i + p∗e, are derived from
+
+the two-ﬂuid plasma equations and given below:
+
+            ∂ρ∗
+         ∂t∗+ ∇∗· (ρ∗u∗) = 0,                                                   (35)
+      ∂(ρ∗u∗)                                     1
+         + ∇∗· (ρ∗u∗u∗) = −β∇∗p∗+ J∗× B∗−        π∗i −         ∂t∗                                  Rei∇∗·
+                               1           1
+                          Ree∇∗· π∗                                                         e + Fr2ρ∗g∗,                              (36)
+      1    ∂p∗                                                     ˆλi         p∗e                J∗              ∇∗· (p∗u∗) = −p∗∇∗· u∗+           + ˆλip∗e∇∗·    +    γ −1  ∂t∗+                         γ −1∇∗·  ρ∗J∗               ρ∗
+                                1              1         mi  1
+                                                                                                             i +                                                                                Te −                             R∗u · J∗−  Rei∇∗· q∗                        βRem                                               me Ree∇∗· q∗
+                              1   1             1
+                                                                            i  : ∇∗u∗i +        e : ∇∗u∗e +                          β  Reiπ∗        Reeπ∗
+                                     Zˆλi (−∇∗· q∗ue + R∗T · J∗) .                          (37)
+
+Equation (35) is obtained by applying the relations ρ∗e/ρ∗i = Zme/mi, ρ∗= ρ∗i + ρ∗e, u∗=
+(ρ∗i u∗i + ρ∗eu∗e) /ρ∗, and equations (26) and (27) into equation (20). Similarly, by using the
+above ion-electron mixture variables deﬁnitions (including p∗= p∗i + p∗e) and equation (26),
+
+one can obtain equation (36) from the ion momentum equation (21) under the negligible
+electron inertia assumption. Finally, using the non-dimensional EOS, ρ∗se∗s = β/ (γ −1) p∗s,
+
+the ion-electron mixture variables deﬁnitions, negligible electron inertia assumption, and
+
+equation (26), equation (37) is obtained by taking summation of ion and electron energy
+
+equations (22) and (23).
+
+   In addition, the generalized Ohms law is rewritten as:
+
+                         1           β         1           1
+                                                                 e +                                                                                                      e +      E∗+ u∗× B∗= ˆλi ρ∗J∗× B∗−ˆλi ρ∗∇∗p∗                                          R∗u −ˆλi ρ∗Ree∇∗· π∗                                      Rem
+                          Z me
+                       ZˆλiβR∗T + ˆλi        g∗.                                     (38)
+                                Fr2 mi
+
+Equation (38) is obtained by replacing the ion-electron mixture variables and equation (26)
+into equation (25). The Faradays law for the non-dimensional magnetic ﬁeld, B∗, and the
+reduced Amperes law for current density, J∗, remain unchanged as equations (24) and (27),
+
+respectively.
+
+
+                                      14
+
+===== PDF PAGE 15 =====
+  The ion velocity u∗i and electron velocity u∗e can be obtained by using the relations
+ρ∗e/ρ∗i = Zme/mi, ρ∗= ρ∗i +ρ∗e, u∗= (ρ∗i u∗i + ρ∗eu∗e) /ρ∗, and the deﬁnition of current density
+under quasi-neutrality condition (26) and then are used to calculate the viscous stresses, π∗e
+and π∗i , appearing in the single-ﬂuid equations (36), (37) and (38).
+
+   Written as above, the equations are unclosed, as the ion and electron temperatures and
+
+densities can not be independently determined.  For plasma ﬂows with identical ion and
+electron temperatures (i.e. Ti∗ = Te∗ ), the ion and electron temperatures become the same
+as the mixture temperature, T ∗, which can be obtained from the total pressure, p∗, by using
+the EOS. In addition, the electron pressure can be obtained via the relation p∗e = Zp∗i =
+p∗/ (1 + 1/Z). In this case, the single-ﬂuid plasma equations, including all transport terms,
+
+are closed.
+
+  As demonstrated in Appendix C, the conventional Hall, resistive, and ideal MHD equa-
+
+tions can be recovered from the above single-ﬂuid plasma equations, as limiting cases, in
+
+regimes where the non-dimensional parameters satisfy the corresponding conditions de-
+
+scribed below:
+
+
+   • The conventional Hall-MHD equations can be recovered in regimes where Rei, Ree →
+    ∞, Fr →∞, q∗ue →0, and R∗T →0 (q∗ue and R∗T are always ignored in the Hall-MHD
+      equations and are only considered in Braginskii two-ﬂuid model17).
+
+   • Resistive MHD equations can be recovered in regimes where ˆλi →0 (and/or ˆrLi →0),
+
+      Rei, Ree →∞, and Fr →∞.
+
+   • Ideal MHD equations can be recovered in regimes where ˆλi →0 (and/or ˆrLi →0),
+      Rei, Ree →∞, Fr →∞, and Rem →∞.
+
+
+The Hall-MHD equations can sometimes be classiﬁed as a two-ﬂuid model because of the
+
+inclusion of the Hall term and electron pressure gradient. However, similar like the discussion
+
+made above, due to the presence of the electron pressure, the Hall-MHD equations are not
+
+closed. In practice, to close the Hall-MHD equations, some studies54–56 simply neglect the
+electron pressure, while others34,57 assume identical ion and electron temperatures (Ti∗ = Te∗ )
+and obtain the electron pressure as p∗e = Zp∗i = p∗/ (1 + 1/Z).
+
+  The viscous terms vanish from the single-ﬂuid equations in the limit of inﬁnite Reynolds
+
+numbers only for non-turbulent ﬂows.  This restricts the domain of applicability of the
+
+
+                                      15
+
+===== PDF PAGE 16 =====
+limiting cases above, unless models for subgrid or turbulence transport are added to the
+
+equations. In some recent studies34,55, viscous eﬀects are included in the Hall-MHD equations
+
+for regimes where Rei is not suﬃciently large. However, the formulations for the viscous
+
+terms are more or less ad-hoc. Some studies55, model the viscous stress term by using
+
+ion-electron mixture velocity, u∗, with standard formulation for compressible ideal gas, i.e.
+∇∗· π∗= ∇∗2u∗+ (1/3)∇∗∇∗· u∗instead of the detailed plasma formulations for π∗i and π∗e
+
+given in Appendix A. In addition, the viscous contribution was only added to the momentum
+
+equations.
+
+   In the next section, numerical simulations will be conducted for a series of canonical
+
+problems to highlight the accuracy and robustness of the two-ﬂuid plasma solver in handling
+
+plasma ﬂows in diﬀerent regimes.
+
+
+
+IV.  TEST CASES
+
+
+  The dimensional two-ﬂuid plasma equation with full transport terms described in section
+
+II D have been implemented in the petascale CFDNS code41,74,75 and solved by using sixth-
+
+order non-dissipative compact ﬁnite diﬀerences70,75 for four canonical problems: Alfven and
+
+whistler dispersion relations, electromagnetic plasma shock, and magnetic reconnection. For
+
+these cases, ion and electron temperatures are the same, i.e. Ti = Te. Therefore, the collision
+
+generated heat for ion energy equation, Qi (Q∆), vanishes while the collision generated heat
+
+for electron energy equation, Qe, reduces to the ohmic heating term shown as the fourth term
+
+in the RHS of equation (18). Therefore, the two-ﬂuid plasma equations solved in these test
+
+cases are mathematically equivalent to the single-ﬂuid plasma equations described in section
+
+III B which can be viewed as the general or full Hall-MHD equations (therefore more general
+
+than the conventional Hall-MHD equations used in previous studies and explained in Ap-
+
+pendix C 1) including all plasma transport terms. The identical temperature simpliﬁcation
+
+further eliminates the need to solve the ion energy equation (17).
+
+   For the test cases considered in this study, the initial conditions for all primary variables
+
+(non-dimensional) are identical to those given in the references mentioned below. The val-
+ues of the non-dimensional parameters, i.e., ˆλi, Rei and Rem, are calculated based on the
+
+characteristic number density, n0, length scale, L0, temperature, T0, and magnetic strength,
+
+B0, and chosen to match previous studies and/or certain practical applications, with the
+
+                                      16
+
+===== PDF PAGE 17 =====
+requirement that the simulations remain well-resolved.
+
+
+
+A.  Alfven and whistler dispersion relations
+
+
+  The ﬁrst two test cases used to test the accuracy of the newly developed two-ﬂuid plasma
+
+solver are the dispersion relations for Alfven and whistler waves.  These are two plasma
+
+phenomena often observed in diﬀerent space ﬂow regimes4,76–78. The frequency and length
+
+scales for Alfven waves satisfy the relations ω ≪ωci and L0 ≫c/ωpi = λi79.  Therefore,
+Alfven waves become ideal MHD waves when the local Rei and Rem values are suﬃciently
+
+high. The basic frequency and length scales for whistler waves are in the ranges of ωci ≪
+ω ≪ωce and λe ≪L0 ≪λi77,79. Therefore, whistler waves are a Hall-MHD phenomenon.
+
+  By linearizing the ideal MHD and Hall-MHD equations about the equilibrium and as-
+
+suming plane wave solutions of the form exp (ik∗x∗−iω∗t∗), one obtains the Alfven and
+
+whistler dispersion relations:
+
+                     ω∗= k∗   for Alfven waves,                          (39)
+
+                        ω∗2 −k∗2 2 = ω∗2k∗4   for Whistler waves,                    (40)
+
+where k∗= 2πm/L∗x is the wavenumber, m is the integer mode, and ω∗is the wave frequency.
+
+The initial conditions are:
+
+     ρ∗i = 1,    u∗i = 0,           v∗i = −δ∗cos (k∗x∗) ,    w∗i = δ∗sin (k∗x∗) ,
+     p∗i = 1,   B∗x = 1,       B∗y = δ∗v∗p cos (k∗x∗) ,   B∗z = −δ∗v∗p sin (k∗x∗) ,
+
+where v∗p is the phase velocity which can be calculated from linear equations (39) and (40).
+The simulations are conducted over a periodic domain with size L∗x = 9.6 and number of grid
+
+points NX = 384. Therefore, for the simulations conducted in this study, the largest wave
+
+resolution is 192 points per wavelength for the minimum mode (i.e. m = 2). For the case
+
+using the maximum mode (i.e. m = 30), the wave resolution becomes 12.8 (= 384/30) points
+
+per wavelength. The initial perturbation amplitude δ∗= 10-5 was used in all simulations.
+
+   Because Alfven waves are believed to be the main mechanism for heating the solar corona4,
+
+the characteristic number density, n0, length scale, L0, temperature, T0, and magnetic
+strength, B0, are chosen as the typical values for solar corona/ﬂares33,34.  These charac-
+teristic values are L0 ∼107m, n0 ∼1015m−3, T0 = 100eV and B0 ∼0.01T, which leads to
+
+                                      17
+
+===== PDF PAGE 18 =====
+ˆλi ∼1.0 × 10−6, Rem ∼2.0 × 1013, and Rei ∼1.0 × 104. Fig. 1(a) shows that the CFDNS
+
+results calculated using the two-ﬂuid plasma equations in the global solar corona regime are
+
+in excellent agreement with the analytical linear stability theory (LST) predictions for ideal
+
+MHD over a wide range of modes, m.
+
+
+
+                                                                       Whistler Wave     20    (a)         Alfven Wave                                                 400   (b)                                                                           I  1.0e-6                          I  1.0
+
+ )                )
+ ( 15             (                                                 300
+
+
+     10                                                 200      frequency                                                                                                                                               frequency
+
+                                    LST   wave  5                                                            wave 100                             LST
+                                CFDNS
+                                                                        CFDNS
+
+      0                                            0
+       0     5    10    15    20    25    30         0     5    10    15    20    25    30
+               mode ( m )                       mode ( m )
+
+
+FIG. 1. Comparison of analytical Alfven and whistler dispersion relations (LST) with numerical
+
+solutions calculated by using the two-ﬂuid plasma solver (CFDNS) in (a) ideal MHD regime and
+
+(b)Hall-MHD regime.
+
+
+
+  The whistler waves found in solar corona/ﬂares are related to the fast, collisionless mag-
+
+netic reconnection that occurs on the length-scales comparable with the ion skin-depth78,80.
+
+The ion-skin depth estimated using the typical parameter values of solar corona/ﬂare pa-
+
+rameters shown above is similar to the one provided in Ref.34, i.e.  λi ≈10m. However,
+
+the viscous eﬀects estimated using the closures described in Ref.17 and Appendix A are
+
+probably not accurate at this scale, which is smaller than the mean free path for the so-
+
+lar corona/ﬂares33,34. Developing closures applicable to collisionless systems is diﬃcult81.
+
+Therefore, to be able to perform simulations relevant to the whistler wave dispersion rela-
+
+tion, yet maintain the correspondence to the solar corona/ﬂares parameters, we still use the
+
+above parameters, but decrease the reference temperature T0 to obtain high enough values
+of Rei ≈4.0 × 103 and Rem ≈1.0 × 104. Again, as shown in Fig. 1(b), the CFDNS results
+
+calculated using the two-ﬂuid plasma equations perfectly match the analytical solution given
+
+by Eq. (40).
+
+
+                                      18
+
+===== PDF PAGE 19 =====
+B.  Electromagnetic plasma shock
+
+
+  The presence of plasma shocks is also often observed in space and fusion applications.
+
+For example, the interaction of the solar wind with the Earth magnetosphere leads to the
+
+formation of a bow shock upstream of the magnetopause82,83. The electromagnetic plasma
+
+shock simulated here is an extension of the single-ﬂuid, inviscid Brio-Wu shock84 to the
+
+two-ﬂuid plasma model. The initial values for the non-dimensional primary variables are:
+
+                                                ρ∗i        1.0                              ρ∗i       0.125
+          u∗i        0.0                            u∗i        0.0
+           v∗i        0.0                              v∗i        0.0
+         w∗i       0.0                        w∗i        0.0
+         =        For x∗≤0.5    and      =         For x∗> 0.5
+           p∗i        0.5                               p∗i       0.05
+        B∗x      0.75                      B∗x       0.75
+        B∗y       1.0                      B∗y      −1.0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+        B∗z       0.0                      B∗z        0.0
+
+and Dirichlet boundary conditions are implemented at the shock-tube boundaries.
+
+  Most  (if not  all) previous numerical studies  of the bow  shock48,51,85 and Brio-Wu
+
+shock61,84,86 ignore the viscous and heat ﬂux terms and fully rely on the numerical dis-
+
+sipation introduced by shock-capturing schemes to regularize the equations around sharp
+
+discontinuities. On the contrary, by including full plasma transport terms, one should be
+
+able to resolve the shocks by using high-order non-dissipative numerical schemes at suﬃ-
+
+ciently high grid resolution. Therefore, in this test case, we choose the characteristic number
+
+density, n0 ∼107m−3, length scale, L0 ∼1011m, and magnetic strength, B0 ∼10 nT, as
+the typical values found in solar wind51,79,85, and vary T0 to obtain a range of substantial
+high, but still aﬀordable Reynolds numbers. These reference scales give ˆλi ∼1.0 × 10−6 and
+Rem ∼1012, therefore, both Hall eﬀect and magnetic resistivity become negligible.
+
+   Fig. 2 shows that, without the need to explicitly turn oﬀthe corresponding terms from the
+
+governing equations, the ideal MHD results including the slow compound wave (SM), contact
+
+discontinuity (CD), and slow shock (SS) are obtained from the two-ﬂuid plasma solver for
+
+ﬂows with large enough Reynolds numbers. With the presence of physical viscosity, the
+
+shock wave is no longer zero-thickness.  Instead, the value of shock thickness depends on
+
+the local Reynold number.  Therefore, all shock structures can be fully resolved by using
+
+
+                                      19
+
+===== PDF PAGE 20 =====
+         1                                               1
+
+                 SM
+         0.8        FR                                     0.8
+
+
+         0.6                                                       0.6
+                       CD                  *                           P
+         0.4                                                       0.4
+
+
+         0.2                    SS                    0.2
+                            FR
+         0                                               0
+          0         0.25  x* 0.5        0.75        1       0         0.25   x* 0.5        0.75        1
+                                                                   0.8
+         1
+
+                                                                   0.6
+
+         0.5
+                                                                   0.4
+
+
+         0                                                       0.2
+   By*                          u*
+                                                          0
+         -0.5
+
+                                                                        -0.2
+
+           -1
+                                                                        -0.4
+          0         0.25  x* 0.5        0.75        1       0         0.25   x* 0.5        0.75        1
+
+
+
+FIG. 2. CFDNS results calculated by using two-ﬂuid plasma equations for plasma shock with
+
+normalized ion skin depth, ˆλi = 1.0 × 10−6, magnetic Reynolds number, Rem ∼1.0 × 1012, and
+
+ion viscous Reynolds number, Rei = 6.3 × 103.
+
+
+high-order non-dissipative numerical schemes provided the grid resolutions are suﬃciently
+
+high. Of course, by increasing viscosity or decreasing the Reynolds number, the proﬁles for
+
+all variables become smoother and, therefore, can easily be resolved at lower grid resolutions.
+
+   In this study, grid convergence tests have been conducted for all plasma shock cases to
+
+guarantee that computational results presented are free of numerical error. As indicated in
+
+Fig. 3, fully resolved DNS-like solutions are obtained at all ion viscous Reynolds number
+
+when the ion grid Reynolds number, Re∆= Rei/NX, is smaller than a threshold value,
+
+which is 2.3 for our 6th order compact ﬁnite diﬀerences solver.
+
+  By using the ﬁnest grid solutions as the exact results, i.e. NX = 40960 for Rei = 6.3×103
+
+and NX = 122880 for Rei = 2.3 × 104, Fig. 4 shows that the grid convergence rates are
+
+
+                                      20
+
+===== PDF PAGE 21 =====
+     1                                       (a)         1                                     (b)
+
+
+    0.8                                                       0.8
+
+
+    0.6                                                       0.6
+*                                 *
+    0.4                                                       0.4
+                                                                  NX=10240                  NX=3200
+    0.2            NX=5120                                0.2           NX=20480
+                  NX=10240                                        NX=40960
+     0                                               0      0         0.25        0.5        0.75        1        0         0.25        0.5        0.75        1
+             x*                              x*
+
+
+FIG. 3. Fully converged CFDNS results for plasma shocks at two ion viscous Reynolds numbers
+
+(a) Rei = 6.3 × 103 and (b) Rei = 2.3 × 104.
+
+
+ˆn = 6.14 for Rei = 6.3 × 103 case and ˆn = 6.08 for Rei = 2.3 × 104 cases. Both values
+
+are very close to the theoretical limit of sixth-order compact ﬁnite diﬀerences scheme. This
+
+shows that the high-order two-ﬂuid plasma solver results are free of the spurious behavior
+
+commonly found in high-order shock-capturing schemes results, like the modiﬁcation of
+
+
+
+   10 -2                                      10 -4
+           (a)           -3                                                   (b)
+   10
+           -4                                      10 -5
+   10
+
+
+                                                                                                 -6) 10 -5               )10
+(L     -6                              (L
+   10
+
+                                                                                                 -7
+           -7                                                                                       error10 error 10
+           -8                           CFDNS                                  CFDNS
+   10                                                                                      -8
+                                            n=6.0       10                                   n=6.0
+   10 -9
+
+   10 -10  -5                                 -4                                 -3   10 -9
+     10               10              10                                  5.0E-05     1.0E-04
+            x*                               x*
+
+
+FIG. 4. The comparison of grid convergence rates calculated by two-ﬂuid plasma solver for plasma
+
+shock at two ion viscous Reynolds numbers (a) Rei = 6.3 × 103 and (b) Rei = 2.3 × 104 with the
+
+theoretical limit of sixth-order compact scheme (n = 6).
+
+
+                                      21
+
+===== PDF PAGE 22 =====
+discontinuity location87.  Secondly, the CFDNS results maintain nearly 6-order accuracy
+
+across the discontinuities, while the convergence rate of most shock-capturing schemes drops
+
+to ﬁrst-order accuracy near discontinuities88.
+
+
+
+C.  Magnetic reconnection
+
+
+  The last test case considered in this study is the collisionless magnetic reconnection, a
+
+rapid rearrangement of magnetic ﬁeld topology and release of free magnetic energy. It is of
+
+particular importance to the dynamic evolution of the solar corona/ﬂares4,78, the magneto-
+
+sphere89,90, and thermonuclear fusion91,92. Previous studies6,43,44,53,80 conﬁrm that the fast
+
+magnetic reconnection occurs on a length scale comparable to ion skin depth and is mainly
+
+contributed by the Hall term.
+
+  Though extensive computational work has been done on the magnetic reconnection prob-
+
+lem, simulations of magnetic reconnection with explicit viscous and thermal diﬀusion eﬀects
+
+are rare. In addition, instead of a dynamically changing property, the resistivity in most
+
+previous studies43,56 was simply chosen as a constant value. The justiﬁcation for the absence
+
+of physical plasma transport terms is partially because the rapid magnetic reconnection is
+
+collisionless, therefore, the closures for transport terms based on Chapman-Enskog expan-
+
+sion in small mean-free-path17 become inappropriate, while developing closures applicable to
+
+collisionless systems is diﬃcult81. In turn, most widely used plasma solvers use dissipative
+
+shock-capturing techniques and rely on numerical dissipation instead of physical transport
+
+terms to regularize the equations. In general, in such approaches the numerical dissipation
+
+is related to the mesh size and the simulations do not converge as the mesh size is increased.
+
+Therefore, it seems impossible for such plasma ﬂow solvers to produce fully resolved DNS-like
+
+solutions.
+
+   In this study, we choose the characteristic number density and length scale as the typical
+
+values found in solar ﬂare reconnection34, i.e. L0 ∼10m and n0 ∼1015m−3, which leads to
+ˆλi = 1.0. We demonstrate that physical transport can be used to obtain mesh converged
+
+solutions with negligible numerical dissipation. Moreover, as the viscous Reynolds number is
+
+increased, the solutions tend to converge and predict the colisionless magnetic reconnection
+
+results. We vary the reference temperature, T0, and magnetic strength, B0, to generate a
+wide range of viscous Reynolds number, Rei, and magnetic Reynolds number, Rem, values.
+
+                                      22
+
+===== PDF PAGE 23 =====
+The range of Rem values is chosen to include values used in previous studies, i.e. Rem =
+100 ∼350 and Rem = 200 employed by Ma43 and Toth56, respectively.
+
+   Similar to previous studies, the initial conditions for the non-dimensional primary vari-
+
+ables are:
+
+                                                             ρ∗i                      1/5 + sech2 (2x∗)
+             u∗i                                 0.0
+              v∗i                                 0.0
+           w∗i                                 0.0
+           =
+               p∗i                     1/5 + sech2 (2x∗) /4
+          B∗x           2π/10L∗y × sin 2πy∗/L∗y × cos (πx∗/L∗x)
+          B∗y      tanh (2x∗) −(π/10L∗x) × cos 2πy∗/L∗y × sin (πx∗/L∗x)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+          B∗z                                 0.0
+
+The perfectly conducting wall boundary condition is applied in the vertical direction (x∗)
+
+and the periodic boundary condition is implemented in the horizontal direction (y∗). The
+simulations are conducted in a two-dimensional domain with L∗x = 12.8 and L∗x = 25.6.
+
+   Figs. 5 and 6 show that the two-ﬂuid non-dissipative plasma solver (i.e. CFDNS) with
+
+temperature and magnetic ﬁeld dependent transport (ion/electron viscous stress, heat ﬂux,
+
+frictional drag force, and magnetic resistivity) can successfully reveal the whole magnetic
+
+reconnection process. For example, Fig. 5 indicates that, during the reconnection process,
+
+
+
+
+
+FIG. 5. The temporal variations of density contours during magnetic reconnection with Rem ≈112
+
+and Rei ≈426.
+
+
+                                      23
+
+===== PDF PAGE 24 =====
+FIG. 6. The temporal variations of magnetic streamlines during magnetic reconnection with Rem ≈
+
+112 and Rei ≈426.
+
+
+the high-density sheet is stretched and ﬁnally broken up into two ligaments, which further
+
+shrink to increase the high density values. In comparison to previous two-ﬂuid plasma results
+
+without transport terms57, the CFDNS results remain perfectly symmetric, which indicates
+
+the high accuracy of the two-ﬂuid plasma solver in handling this challenging plasma ﬂow.
+
+Fig. 6 clearly shows that, as the reconnection takes place, the magnetic streamlines tend to
+
+bend from horizontal direction to vertical direction and the intensity of vertical component,
+
+Bx, increases dramatically. This corresponds to a rapid increase of reconnection ﬂux and an
+
+eruptive release of magnetically stored energy to heat the plasma.
+
+  The temperature contours shown in Fig. 7 further conﬁrm the rapid conversion of mag-
+
+netic energy into particle energy. As the reconnection takes place, both temperature and
+
+velocities (not shown) increase signiﬁcantly due to the rapid conversion of magnetic energy
+
+into thermal and kinetic energies. In the solar corona, this phenomenon is thought to give
+
+rise to solar ﬂares and drive the outﬂow of the solar wind4.  Consistently, the rapid in-
+
+crease of temperature causes a dramatic increase of heat ﬂux and viscous dissipation, since
+
+κ ∝T 5/2 and µs ∝T 5/2, as well as a large decrease of magnetic resistivity, since η ∝T −3/2.
+
+The presence of thermal diﬀusion is then absolutely necessary to prevent unphysically high
+
+temperatures to be generated at the reconnection points. Previous studies without physical
+
+thermal diﬀusion had to rely on the numerical diﬀusion introduced by dissipative numerical
+
+schemes to damp this eﬀect. The eﬀect of numerical diﬀusion is hard quantify due to the
+
+
+                                      24
+
+===== PDF PAGE 25 =====
+higher order nonlinearities usually present in the associated terms (if such can be explicitly
+
+evaluated at all). In addition, diﬀerent numerical schemes have diﬀerent truncation errors,
+
+so numerical diﬀusion is diﬃcult to generalize across various codes. Thus, numerical results
+
+relying on numerical diﬀusion to regularize the equations should be regarded with caution.
+
+  A grid convergence test has been conducted for the magnetic reconnection problem and
+
+the reconnection ﬂuxes calculated using the two-ﬂuid plasma solver are converged at a
+
+moderate grid resolution (e.g.  256 × 512) for Rei = 426 and Rem = 112, as shown in
+
+Fig. 8(a). By using the ﬁnest grid (e.g. 768 × 1536) results as the exact solutions, one can
+
+calculate the numerical error on coarser grids. The results are shown in Fig. 8(b). The
+
+grid convergence rate estimated from the last two point is ˆn = 6.58, which is fairly close
+
+to the theoretical limit of sixth-order compact scheme.  Fully converged DNS-like results
+
+can also be observed at cases with higher viscous Reynolds provided the grid resolution is
+
+suﬃciently large. For example, the CFDNS results for the case with initial ion Reynolds
+
+number Rei = 1029 (not shown) are fully converged at grid resolution 384 × 768. In this
+
+test case, the threshold value for fully converged DNS-like results is around Re∆≈2.6. In
+
+addition to the reconnection ﬂux proﬁle, the 2D contours of vertical velocity and spanwise
+
+current density shown in Fig. 9 further conﬁrm that the CFDNS results presented here are
+
+indeed fully converged DNS-like solutions.
+
+
+
+
+
+FIG. 7. The temporal variations of magnetic streamlines during magnetic reconnection with Rem ≈
+
+112 and Rei ≈426.
+
+
+                                      25
+
+===== PDF PAGE 26 =====
+   Finally, to examine the eﬀects of the plasma transport terms and convergence of the
+
+results with the Reynolds number, we have conducted a series of simulations for a range of
+
+Rei and Rem values. First, as observed in Fig. 10(a), viscosity has a slight delay eﬀect on the
+
+reconnection time, as Rei is increased from 124 to 850. However, for all viscous Reynolds
+
+numbers, Rei, the magnetic ﬂux saturates to the same non-dimensional value of around 4.0
+
+at a non-dimensional time close to 40.0. These values are consistent with those reported in
+
+Refs.6,43. In addition, the time variations of the reconnection ﬂux quickly converge at Rei
+
+values above ∼400. For Rei = 426, Fig. 10(b) shows that the magnetic ﬂux also converges
+
+as the magnetic Reynolds number, is increased to Rem = 890.
+
+  Based on this convergence, we assess that the results obtained with Rei = 426 and
+
+Rem = 890 fully represent the collisionless reconnection process for the number density and
+
+length scale shown above, representative of solar ﬂare reconnection.  In addition, due to
+
+the robustness of the saturation ﬂux value and time to the viscosity value, the results are
+
+also very similar to numerical results relying on numerical dissipation for regularization.
+
+On the other hand, resistivity has a larger eﬀect than viscosity at moderate Rem values
+
+(Fig. 10b), in particular on the reconnection time. Lower resistivity or large Rem values
+
+
+                                         10 -3
+    4   (a)                                           (b)
+
+                   R1: 192 384
+                                         10                   R2: 256 512 Flux 3                                                                                  -4                  )
+                           2                   R3: 384 768
+    2                                                                                                                                 error(L
+                                         10 -5                            CFDNS    Reconnection 1                                                                                          n=6.0
+
+
+    0                                     10 -6
+      0        10       20       30       40        2.5E-02           5.0E-02    7.5E-02 1.0E-01
+                    time                             x*
+
+
+
+FIG. 8.  (a) Temporal variation of reconnection ﬂux at diﬀerent resolutions and (b) comparison
+
+of grid convergence rate for the two-ﬂuid plasma solver results (ˆn = 6.58) against the theoretical
+
+limit of the sixth-order compact ﬁnite diﬀerence scheme. The simulations were conducted with
+
+Rem ≈112 and Rei ≈426.
+
+
+                                      26
+
+===== PDF PAGE 27 =====
+FIG. 9. The contours of vertical velocity, Vx, and spanwise current density, |Jz|, with diﬀerent
+
+resolutions for Rem ≈112 and Rei ≈426.
+
+   4  (a)         Rem0=112                     4   (b)           Re0=426I
+
+                                         I                                             Rem0=58                  Re0=124
+                                                                 Rem0=112                                                    3 Flux 3             Re0=212I                                                      Flux
+                                         I                                              Rem0=224                  Re0=426
+                                         I                                              Rem0=448
+   2             Re0=850                             2
+                                                                 Rem0=890   Reconnection                                                                                                                                                                                                                                                          Reconnection
+   1                                               1
+
+
+
+   0                                               0
+     0         10        20        30        40      0         10        20        30        40
+                       time                                            time
+
+
+
+FIG. 10. The temporal variations of reconnection ﬂux for diﬀerent viscosities and magnetic resis-
+
+tivities.
+
+
+lead to an earlier reconnection and slightly larger saturation ﬂux values. The reconnection
+
+time and saturation ﬂux value for the case Rem = 224 shown in Fig. 10(b) are very close
+to those predicted by previous Hall-MHD simulations56 with Rem = 200.  However, due
+
+to the larger potential eﬀect of the numerical regularization scheme regarding resistivity,
+
+
+                                      27
+
+===== PDF PAGE 28 =====
+predictions using the ideal (inviscid and perfect conductivity) two-ﬂuid plasma model (e.g.
+
+Ref.45), need to be evaluated with more caution. However, again, the convergence of the
+
+results as Rei and Rem are increased, explains why previous studies using relatively low Rem
+
+values, in comparison to the extremely high Rem values found in practice, are still useful in
+
+predicting the magnetic reconnection phenomena occurring in space.
+
+
+
+V. CONCLUSION
+
+
+   In this study, to be able to generate high-order fully converged DNS-like solutions for
+
+plasma ﬂow problems, we have implemented the Braginskii two-ﬂuid plasma model with
+
+full plasma transport terms, including temperature and magnetic ﬁeld dependent ion and
+
+electron viscous stresses and heat ﬂuxes, frictional drag force, and ohmic heating term, in
+
+the CFDNS code, using sixth-order non-dissipative compact ﬁnite diﬀerences with negligible
+
+numerical dissipation/diﬀusion. To maintain computational feasibility, while also solving all
+
+the dynamically relevant time and length scales, the inﬁnite speed of light and negligible
+
+electron inertia assumptions have been used.
+
+  The range of applicability of the resulting two-ﬂuid plasma equations is discussed in
+
+detail.  This was achieved by using a non-dimensional analysis of the equations, which
+
+highlights the relevant non-dimensional parameters.  These parameters are cast in terms
+
+of characteristic scales found in practical problems of interests, including the characteris-
+
+tic number density, n0, length cle L0, temperature, T0, and magnetic strength, B0. The
+
+non-dimensional parameters can be used to estimate the relative contributions of Hall and
+
+Biermann battery eﬀects, resistivity, viscous stress, and heat ﬂux in diﬀerent regimes. In
+
+the appropriate limits, the two-ﬂuid plasma equations recover the conventional MHD (i.e.
+
+ideal, resistive, and Hall) equations.  First, the corresponding non-dimensional single ﬂuid
+
+equations for the mixture velocity, density, pressure and temperature are derived. Then, (i)
+conventional Hall-MHD equations can be recovered in regimes where 0 ≪ˆλi ≪ pmi/me
+(and/or 0 ≪ˆrLi ≪ pmi/me), Rei, Ree →∞, and Fr →∞; (ii) Resistive MHD equations
+can be recovered in regimes where ˆλi →0 (and/or ˆrLi →0), Fr →∞, and Rei, Ree →∞,
+
+but Rem has a ﬁnite value; and (iii) Ideal MHD equations are recovered in regimes when
+
+in addition Rem →∞. The single ﬂuid, as well as the conventional Hall-MHD equations,
+
+are unclosed due to the explicit presence of the electron pressure. Several choices for closing
+
+
+                                      28
+
+===== PDF PAGE 29 =====
+these equations in previous studies are discussed. In contrast, the two-ﬂuid plasma equations
+
+are more general and do not need additional assumptions.
+
+  The two-ﬂuid solver was demonstrated against four canonical problems, to conﬁrm its
+
+accuracy and robustness in handling plasma ﬂows in diﬀerent regimes.  These test cases
+
+include the Alfven and whistler waves for parameter values relevant to solar corona, the
+
+electromagnetic Brio-Wu plasma shock84 with parameter values relevant to the bow shock
+
+caused by the interaction between solar wind and earths magnetosphere, and the fast mag-
+
+netic reconnection in solar ﬂares.  All physical transport terms are retained for the four
+
+test cases, and the convergence with respect to the viscous and magnetic Reynolds numbers
+
+was discussed, in addition to proving grid convergence of the results. For both Alfven and
+
+whistler dispersion relations the numerical results are in excellent agreement with the analyt-
+
+ical or linear stability theory (LST) predictions for corresponding ideal MHD and Hall-MHD
+
+equations over a wide range of wavenumbers. Because of the inclusion of physical viscosity
+
+in the two-ﬂuid plasma solver, all plasma shock characteristics can be fully resolved at all
+
+Reynolds numbers, provided the grid resolution is suﬃciently high. This means that the
+
+the ion grid Reynolds number, Re∆= Rei/NX needs to be smaller than a threshold value,
+
+which for the plasma shock test case is around 2.3. Near the sharp gradients in the plasma
+
+shock problem, in contrast to the ﬁrst-order convergence rate commonly found in studies
+
+using shock-capturing schemes, the grid convergence rate calculated here is in the range
+
+of ˆn ∼6.08 −6.14 which is very close to the theoretical value of the sixth-order compact
+
+scheme.
+
+   For the last test case, the CFDNS results successfully demonstrate, using the two-ﬂuid
+
+plasma model, the fast magnetic reconnection process occurring under solar ﬂare conditions.
+
+The magnetic ﬂux saturation time and value predicted here are in good agreement with those
+
+reported in previous studies under similar conditions. The systematic examination of Rei
+
+and Rem eﬀects on the magnetic reconnection reveals that the results are converged for
+the largest values used in this study, Rei = 426 and Rem = 890.  This implies that the
+
+results are relevant to practical problems with much larger Reynolds numbers. The viscous
+
+eﬀects are relatively small for Rei ∼100 −400, so that coarse resolution simulation results
+
+using numerical dissipation to regularize the equations are likely close to the high Reynolds
+
+number results. On the other hand, the reconnection ﬂux saturation value and time are
+
+more sensitive to changes in Rem. The CFDNS results with Rem ∼200 are close to those
+
+                                      29
+
+===== PDF PAGE 30 =====
+reported in previous studies, but the results become converged at much higher magnetic
+
+Reynolds number values (Rem > 800). These results are particularly useful in evaluating
+
+the diﬀerent approximations used in plasma solvers (e.g. with/without viscosity, heat ﬂux,
+
+resistivity, etc.).
+
+   In general, the Braginskii transport coeﬃcients become inaccurate for degenerate and/or
+
+partially ionized plasmas. However, more general formulations do not include full directional
+
+dependence of the physical transport with respect to the magnetic ﬁeld or are less accurate
+
+for low-Z materials. Future simulations will address the importance of anisotropic transport,
+
+diﬀerences with more accurate models where available (e.g.  for higher-Z materials), and
+
+further explore the existence of a mixing transition in various applications.
+
+
+
+
+ACKNOWLEDGMENTS
+
+
+   This work was made possible in part by funding from the LDRD program at Los Alamos
+
+National Laboratory through project number 20150568ER. Z. Li was supported by Los
+
+Alamos National Laboratory, under Grant No. 430461. Los Alamos National Laboratory is
+
+operated by Triad National Security, LLC, for the National Nuclear Security Administra-
+
+tion of U.S. Department of Energy (Contract No. 89233218CNA000001). Computational
+
+resources were provided by the Los Alamos National Laboratory Institutional Computing
+
+Program and the High Performance Computing Center at Texas A&M University-Corpus
+
+Christi.
+
+
+
+
+Appendix A: Plasma Transport Term Formulations
+
+
+   For completeness, the formulations for all transport terms, mostly following Ref.17, as
+
+well as details of their implementation are given below.
+
+
+
+1.  Viscous stress tensors, πs
+
+
+   In general, three major steps are needed for calculating the viscous stress.  First, the
+
+strain rate tensor, Ws, is calculated in the ﬁxed Cartesian coordinate system,{e1, e2, e3},
+
+                                      30
+
+===== PDF PAGE 31 =====
+as:
+               Ws = − ∇us + (∇us)T −2 (∇· us) I                   (A1)
+                                               3
+
+where I is the second-order identity tensor.
+
+  The next step is to restate the strain rate tensor, Ws, into a moving coordinate system
+aligned with the magnetic ﬁeld, {e ′1, e ′2, e ′3}, in which e ′3 = B/|B| denotes the unity vector
+
+in the direction of magnetic ﬁeld, as given below:
+
+
+
+                                                                                              ′
+              W s = QTWsQ.                            (A2)
+
+The transformation matrix, Q, is deﬁned by:
+
+
+                               ′                    ′       
+                    −B2   −B1B”3   B”1
+               Q =  B1′   −B2B”′   3   B”2                       (A3)
+
+                                                                                                       ′                  ′                                                                                                                                                                                       0  B1B”1 + B2B”2 B”3
+
+where Bi′ = Bi/pB21 + B22 and B”i = Bi/pB21 + B22 + B23. The viscous stress in the new
+
+coordinate system can then be calculated as:
+
+
+
+
+
+                                  ′                                    ′                  ′                                  ′                  ′                          ′
+          π 11,s = −1  0 W 11,s + W 22,s −1  1 W 11,s −W 22,s −µs3W 12,s ,        (A4)                   2µs                 2µs
+                                  ′                ′                            ′     1                ′                  ′
+                                                    3 W 11,s −W 22,s   ,                      (A5)          π 12,s = π 21,s = −µs1W 12,s + 2µs
+                                  ′                ′                            ′                       ′
+          π 13,s = π 31,s = −µs2W 13,s −µs4W 23,s ,                                (A6)
+
+                                  ′                                    ′                  ′                                  ′                  ′                          ′
+          π 22,s = −1  0 W 11,s + W 22,s −1  1 W 22,s −W 11,s + µs3W 12,s ,        (A7)                   2µs                 2µs
+                                  ′                ′                            ′                       ′
+          π 23,s = π 32,s = −µs2W 23,s + µs4W 13,s ,                                (A8)
+
+                                  ′                            ′
+          π 33,s = −µs0W 33,s ,                                                (A9)
+
+where µsj, j = 1, .., 4, are the ion and electron viscosity coeﬃcients which are mainly functions
+of temperature, Ts, and number density, ns. For ions, one has µi0 = (2.23/2.33) nikBTiτi,
+µi2 = nikBTiτi (1.2x2 + 2.23) /∆, µi4 = nikBTiτix (x2 + 2.38) /∆, where x = ωciτi and ∆=
+x4+4.03x2+2.33. The coeﬃcients µi1 and µi3 can be obtained by replacing x by 2x in the for-
+mulations for µi2 and µi4, respectively. Here, τi = 12π3/2ε20 √mi (kBTi)3/2 / (lnΛe4Z4ni) is the
+
+ion collision time and ωci = Ze|B|/mi is the ion cyclotron frequency. For electrons, one has
+µe0 = (8.50/11.6) nekBTeτe, µe2 = nekBTeτe (2.05x2 + 8.50) /∆, µe4 = −nekBTeτex (x2 + 7.91) /∆,
+where x = ωceτe and ∆= x4 + 13.8x2 + 11.6. Similarly, the coeﬃcients µe1 and µe3 can be
+
+                                      31
+
+===== PDF PAGE 32 =====
+obtained by replacing x by 2x in the formulations for µe2 and µe4, respectively.  Here,
+   √
+τe = 6  2π3/2ε20 √me (kBTe)3/2 / (lnΛe4Zne) is the electron collision time and ωce = e|B|/me
+
+is the electron cyclotron frequency.
+
+   In this study, the Coulomb logarithm formula, lnΛ, is adopted from Ref.93 and its ex-
+
+pression in Gaussian units is given below:
+
+         
+                −ln P5k=1 akgk   ,                  if  g = (Ze)2/kBλeffTe ⩽1                            lnΛ =                                                          (A10)                            b0 + b1ln(g) + b2ln2(g)
+                  2 ×                                     ,   if  g = (Ze)2/kBλeffTe > 1                         1 + b3g + b4g2
+
+The numerical values of the constant coeﬃcients a1, a2, ..., a5, b0, ..., b4 can be found in Ref.93.
+
+The eﬀective screening length λeff can be estimated as:
+
+
+                                                           −1/2
+                                            1
+                                 λeff = λe  1 +                                  (A11)
+                                         1 + 3Γ
+
+where λe = [kBTe/(4πZ2e2ne)]1/2, Γ = (Ze)2/ˆaikBTe, and ˆai = (3/4πne)1/3.
+   Finally, the viscous stress tensor, πs, can be obtained by restating π s′ back into the ﬁxed
+
+coordinate system, {e1, e2, e3}, as shown below:
+
+
+
+                                                                                                                ′
+                                      πs = Qπ sQT                             (A12)
+
+
+   For the special case without magnetic ﬁeld, i.e. B = 0, the viscous stress tensor can be
+
+calculated directly by using the following formulation,
+
+                                       πs = µs0Ws                              (A13)
+
+
+  Another special situation is when the magnetic ﬁeld is aligned with the ﬁxed coordinate
+
+system, i.e. B1 = B2 = 0 and B3 ̸= 0. In this case, the transformation matrix, Q, is reduced
+
+to the second-order identity tensor I. Therefore, no coordinate transformation is needed and
+
+the viscous stress tensor can be calculated by using equations (A4)-(A9) directly.
+
+
+2.  Heat Flux, qs
+
+
+  The ion heat ﬂux, qi, is caused by temperature gradient only and can be expressed as:
+
+            nik2BTiτi  "          η 1x2′  + η 0′              η”1x2 + η”0         #   qi = −             η0∇∥Ti +           ∇⊥Ti −x           (h × ∇Ti)   ,   (A14)
+            mi            ∆          ∆
+
+
+                                      32
+
+===== PDF PAGE 33 =====
+where h = B/|B| represents a unity vector in the direction of local magnetic ﬁeld and
+
+the symbols ∥and ⊥on any vector denote its component in the parallel or perpendicular
+
+direction to the magnetic ﬁeld, B, respectively. For example, ∇∥Ti = h (h · ∇Ti) and ∇⊥Ti =
+
+h × (∇Ti × h) = ∇Ti −∇∥Ti. The non-dimensional variables x and ∆follow the deﬁnitions
+
+above.
+
+  On the contrary, the electron heat ﬂux, qe, is caused by both temperature gradient and
+
+the relative velocity between ion and electron, (ui −ue) or current density, J, and can be
+
+written as qe = qTe + que. The two parts are formulated as:
+              nek2BTeτe  "          γ1x2′  + γ0′             γ”1x2 + γ”0         #    qTe = −             γ0∇∥Te +          ∇⊥Te −x           (h × ∇Te) ,(A15)
+             me            ∆           ∆
+
+             "                         ′                ′                      #                                    x β”1x2 + β”0
+                                                    (h × J)   .             (A16)                                             0 J⊥+    que = −kBTe  β0J∥+  β1x2 + β
+              e         ∆         ∆
+
+The numerical values of the constant coeﬃcients, η0, γ0, β0, γ0,′  etc., can be found in Ref.17.
+
+
+3.  Frictional drag force, Rs
+
+
+   Similar to the electron heat ﬂux, qe, the frictional drag force between ions and electrons,
+
+Rei (or Re), also has two diﬀerent contributions:
+
+
+           me               "               1x2′  + α0′          α”1x2 + α”0       #     Ru =       α0J∥+  1 −α      J⊥−x           (h × J)   ,      (A17)
+                 eτe           ∆         ∆
+
+                 "                                ′                ′                          #                            β1x2 + β0        x β”1x2 + β”0
+     RT = −(nekB) β0∇∥Te +           ∇⊥Te +             (h × ∇Te)   . (A18)
+                     ∆           ∆
+
+Ru is the classical momentum frictional force caused by the velocity diﬀerence between ions
+
+and electrons, while the thermal frictional force, RT, is produced by the electron temperature
+
+gradient.
+
+
+4.  Collision generated heat, Qs
+
+
+   Following the approximations made in Refs.17,54, the ion and electron collision generated
+
+heat terms are written as:
+
+                              me    ne
+                      Qi = Q∆= 3            kB (Te −Ti)                  (A19)
+                                mi     τe
+
+                                      33
+
+===== PDF PAGE 34 =====
+                         Qe = Re · (ui −ue) −Q∆                       (A20)
+
+The expression Ru · (ui −ue) is the general ohmic heating term.
+
+  We note here that the Braginskii coeﬃcients are consistently derived using two-term
+
+Sonine polynomial solutions of the Boltzmann equation. The electron conductivity model
+
+presented in Ref.68 reduces to the Braginskii model for fully ionized nondegenerate plasmas,
+
+but retains a higher precision for the numerical coeﬃcients due a diﬀerent treatment of the
+
+Sonine polynomial solution. Thus, most of the coeﬃcients appearing in the heat ﬂux and
+
+frictional drag force Braginskii formulas are about 8% diﬀerent than the exact values. On the
+
+other hand, Ref.68 does not include electron-electron scattering, which ads a non-negligible
+
+contribution for low-Z materials, where the model overestimates the conductivity. For con-
+
+sistency with the other transport formulas and to consider the full directional dependence of
+
+the transport, here, we use the Braginskii formulation for the heat ﬂux and frictional drag
+
+force and will address the diﬀerences compared to Ref.68 formulation elsewhere.
+
+
+
+Appendix B: Quasi-neutrality condition
+
+
+  As discussed in the Section II D, an indication of the accuracy of the numerical integration
+
+is that the charge density, ρc, evaluated from the divergence of electric ﬁeld, E, remains
+
+suﬃciently small at all the times. For all test cases discussed in this paper, the maximum
+
+normalized charge density in the computational domain, |ρc|max = |ε0∇·E/ (eZni) |max, was
+
+monitored throughout the simulation times.
+
+   Fig. 11 shows |ρc|max variation for the 1D plasma shock and 2D magnetic reconnection
+
+problems.  Both cases exhibit suﬃciently small values to conclude that the simulations
+
+conducted in this study satisfy the quasi-neutrality condition.
+
+
+
+Appendix C: Single-ﬂuid limiting equations
+
+
+  The single-ﬂuid plasma equations (35)-(38) described in Section III B are derived from
+
+the non-dimensional two-ﬂuid plasma equations (20)-(27) by using the ion-electron mixture
+
+deﬁnitions, inﬁnite speed of light, and negligible electron inertia assumptions. The Hall term,
+
+electron pressure term, and all plasma transport terms are retained in the single-ﬂuid plasma
+
+equations, which can be viewed as full Hall-MHD equations, in contrast to the conventional
+
+
+                                      34
+
+===== PDF PAGE 35 =====
+Hall-MHD equations where the viscous, heat ﬂux and acceleration terms are neglected. As
+
+shown in this Appendix, the conventional Hall, resistive, and ideal MHD equations can be
+
+recovered from the general single-ﬂuid equations (35)-(38) as limiting cases.
+
+
+
+
+1.  The conventional Hall-MHD equations
+
+   In regimes where Rei, Ree →∞, q∗ue →0, and R∗T →0, and assuming that the gradients
+
+stay ﬁnite, the single-ﬂuid equations (35)-(38) given in Section III B reduce to:
+
+
+            ∂ρ∗
+         ∂t∗+ ∇∗· (ρ∗u∗) = 0,                                             (C1)
+      ∂(ρ∗u∗)
+         + ∇∗· (ρ∗u∗u∗) = −β∇∗p∗+ J∗× B∗,                             (C2)
+         ∂t∗
+      1    ∂p∗                                                     ˆλi         p∗e                J∗              ∇∗· (p∗u∗) = −p∗∇∗· u∗+           + ˆλip∗e∇∗·    +    γ −1  ∂t∗+                         γ −1∇∗·  ρ∗J∗               ρ∗
+                                1
+                             R∗u · J∗                                   (C3)
+                        βRem
+                    ∂B∗
+                 ∂t∗= −∇∗× E∗,                                     (C4)
+                                1           β         1
+                                                R∗u               (C5)                                                                           e +          E∗+ u∗× B∗= ˆλi ρ∗J∗× B∗−ˆλi ρ∗∇∗p∗                                           Rem
+                  J∗= ∇∗× B∗.                                      (C6)
+
+
+
+  3.0E-10                                               1.0E-05
+            ( a )                                                  ( b )
+
+
+
+  2.0E-10
+ |max
+                                                        5.0E-06
+c
+|                                                    |max  1.0E-10
+                        c
+                 |
+
+
+
+ 0.0E+00                                            0.0E+00
+         0            0.05            0.1           0.15        0        10        20        30        40
+                         time                                               time
+
+
+
+FIG. 11. The temporal variations of maximum normalized charge density for (a) plasma shock and
+
+(b) magnetic reconnection cases.
+
+
+                                      35
+
+===== PDF PAGE 36 =====
+Equations (C1)-(C6) are the conventional Hall-MHD equations52,54 in which Ru is function
+of current density, J∗, as shown in Appendix A 3 and βRemR∗1    u · J∗∝ βRemJ∗·1      J∗represents
+the resistive eﬀects. The q∗ue and R∗T terms have been never been considered in previous
+
+derivations of Hall-MHD equations. For the tests considered in this study, these two terms
+
+are negligible. In the presence of turbulence, it is assumed that viscous dissipation does not
+
+vanish in the inﬁnite Reynolds number limit, so that the domain of applicability of equations
+
+(C1)-(C6) relates to non-turbulent ﬂows, unless they are used in the context of turbulence
+
+modeling with added subgrid or turbulent transport models.
+
+   Written as above, the conventional Hall-MHD equations are not closed, due to the pres-
+ence of the electron pressure, p∗e, which cannot be estimated from the rest of the variables.
+In practice, to close the equations, some studies54–56 simply neglect the electron pressure,
+while others34,57 assume identical ion and electron temperatures, Ti∗ = Te∗ .  In the latter
+case, the electron pressure becomes p∗e = Zp∗i = p∗/ (1 + 1/Z).
+
+
+
+2.  The resistive MHD equations
+
+   In regimes where ˆλi →0 (and/or ˆrLi →0), Rei, Ree →∞, and Fr →∞, the single-ﬂuid
+
+equations (35)-(38) reduce to:
+
+                        ∂ρ∗
+                  ∂t∗+ ∇∗· (ρ∗u∗) = 0,                                 (C7)
+                 ∂(ρ∗u∗)
+                + ∇∗· (ρ∗u∗u∗) = −β∇∗p∗+ J∗× B∗,                  (C8)
+                      ∂t∗
+                 1    ∂p∗                              1
+                       ∇∗· (p∗u∗) = −p∗∇∗· u∗+     R∗u · J∗           (C9)               γ −1  ∂t∗+                     βRem
+                             ∂B∗
+                         ∂t∗= −∇∗× E∗,                        (C10)
+                                          1
+                  E∗+ u∗× B∗=    R∗u,                          (C11)
+                                 Rem
+                          J∗= ∇∗× B∗                          (C12)
+
+
+Equations (C7)-(C12) are the non-dimensional resistive MHD equations46,54. Obviously, the
+
+resistive HMD equations are closed without the need of explicitly assuming identical ion
+and electron temperatures (Ti∗ = Te∗ ). As before, Ru is function of current density, J∗.
+
+Again, neglecting the viscous contributions in the inﬁnite Reynolds number limit, generally
+
+precludes the use of equations (C7)-(C12) for turbulent ﬂow calculations.
+
+
+                                      36
+
+===== PDF PAGE 37 =====
+3.  The ideal MHD equations
+
+
+    If in addition, Rem →∞, the resistive MHD equations (C7)-(C12) can be further reduced
+
+to the ideal-MHD equations46,54 given below:
+                           ∂ρ∗
+                     ∂t∗+ ∇∗· (ρ∗u∗) = 0,                             (C13)
+                    ∂(ρ∗u∗)
+                  + ∇∗· (ρ∗u∗u∗) = −β∇∗p∗+ J∗× B∗,              (C14)
+                         ∂t∗
+                    1    ∂p∗
+                          ∇∗· (p∗u∗) = −p∗∇∗· u∗,                     (C15)                  γ −1  ∂t∗+
+                                ∂B∗
+                            ∂t∗= −∇∗× E∗,                     (C16)
+                    E∗+ u∗× B∗= 0,                             (C17)
+
+                             J∗= ∇∗× B∗.                       (C18)
+
+
+
+REFERENCES
+
+
+ 1F. F. Chen, Introduction to Plasma Physics and Controlled fusion (Plenum Press, New
+
+ York and London, 1984).
+
+ 2S. Nakai and H. Takabe, “Principles of inertial conﬁnement fusion - physics of implosion
+
+ and the concept of inertial fusion energy,” Rep. Prog. Phys. 59, 1071–1131 (1996).
+
+ 3S. Pfalzner, An introduction to Inertial Conﬁnement Fusion (CRC Press, 2006).
+
+ 4E. R. Priest, Solar Magnetohydrodynamics  (Spring, 1983).
+
+ 5M. B. Kallenrode, Space Physics (Springer-Verlag, 1998).
+
+ 6J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton, M. Hesse, M. Kuznetsova,
+
+  Z. W. Ma, A. Bhattacharjee, A. Otto,  and P. L. Pritchett, “Geospace Environmental
+
+  Modeling (GEM) magnetic reconnection challenge,” J. Geophys. Res. 106, 3715–3720
+
+  (2001).
+
+ 7M. I. Boulos, “Thermal plasma processing,” IEEE T. Plasma Sci. 19, 1078–1089 (1991).
+
+ 8J. Y. Jeong, S. E. Babayan, V. J. Tu, J. Park, I. Henins, R. F. Hicks, and G. S. Selwyn,
+
+  “Etching materials with an atmospheric-pressure plasma jet,” Plasma Sources Sci. Technol.
+
+  7, 282–285 (1998).
+
+ 9E. Gomez, D. A. Rani, C. R. Cheeseman, D. Deegan, M. Wise,  and A. R. Boccaccini,
+
+ “Thermal plasma technology for the treatment of wastes: A critical review,” J. Hazard
+
+  Mater. 161, 614–626 (2009).
+
+
+                                      37
+
+===== PDF PAGE 38 =====
+10S. A. Kaplan and V. N. Tsytovich, Plasma Astrophysics (Pergamon Press, 1973).
+
+11S. Orlando, F. Bocchino, F. Reale, G. Peres, and O. Petruk, “On the origin asymmetries
+
+  in bilateral supernova remnants,” Astronomy and Astrophysics 470, 927–939 (2007).
+
+12E. G. Zweibel and M. Yamada, “Magnetic reconnection in astrophysical and laboratory
+
+  plasmas,” Ann Rev Astron. Astrophys. 47, 291–332 (2009).
+
+13W. Kohn and L. J. Sham, “Self-Consistent Equations Including Exchange and Correlation
+
+  Eﬀects,” Phys. Rev. 140, A1133 (1965).
+
+14S. X. Hu, L. A. Collins, V. N. Goncharov, J. D. Kress, R. L. McCrory, and S. Skupsky,
+
+  “First-principles investigations on ionization and thermal conductivity of polystyrene for
+
+  inertial conﬁnement fusion applications,” Phys. Plasmas 23, 042704 (2016).
+
+15Y. H. Ding, A. J. White, S. X. Hu, O. Certik, and L. A. Collins, “Ab Initio studies on the
+
+  stopping power of warm dense mater with time-dependent orbital-free density functional
+
+  theory,” Phys. Rev. Lett 121, 145001 (2018).
+
+16D. C. Montgomery and D. A. Tidman, Plasma Kinetic Theory (McGraw-Hill Press, 1964).
+
+17S. Braginskii, “Transport processes in a plasma,” Rev. Plasma Phys. 1, 205–311 (1965).
+
+18S. Chapman and T. G. Cowling, The Mathematical Theory of Non-Uniform Gases (Cam-
+
+  bridge University Press, 1970).
+
+19C. Cercignani, The Boltzmann Equation and its Applications (New-York: Springer-Verlag,
+
+  1988).
+
+20P. Amendt, S. C. Wilks, C. Bellei, C. K. Li,  and R. D. Petrasso, “The potential role
+
+  of electric ﬁelds and plasma barodiﬀusion on the inertial conﬁnement fusion databasea,”
+
+  Phys. Plasmas 18, 056308 (2011).
+
+21G. Kagan and X. Z. Tang, “Electro-diﬀusion in a plasma with two ion species,” Phys.
+
+ Plasmas 19, 082709 (2012).
+
+22L. Yin, B. J. Albright, W. Taitano, E. L. Vold, L. Chacon, and A. N. Simakov, “Plasma
+
+  kinetic eﬀects on interfacial mix,” Phys. Plasmas 23, 112302 (2016).
+
+23A. N. Simakov and K. Molvig, “Electron transport in a collisional plasma with multiple
+
+  ion species,” Phys. Plasmas 21, 024503 (2014).
+
+24A. N. Simakov and K. Molvig, “Hydrodynamic description of an unmagnetized plasma
+
+  with multiple ion species. ii.two and three ion species plasmas,” Phys. Plasmas 23, 032116
+
+  (2016).
+
+
+
+
+                                      38
+
+===== PDF PAGE 39 =====
+25E. L. Vold, R. M. Rauenzahn, C. H. Aldrich, K. Molvig, A. N. Simakov, and B. M. Haines,
+
+ “Plasma transport in an eulerian amr code,” Phys. Plasmas 24, 042702 (2017).
+
+26E. L. Vold, L. Yin, W. Taitano, K. Molvig,  and B. J. Albright, “Diﬀusion-driven ﬂuid
+
+ dynamics in ideal gases and plasmas,” Phys. Plasmas 25, 062102 (2018).
+
+27A. Sommerfeld, Thermodynamics and Statistical Mechanics  (Academic Press, 1964).
+
+28S. Gerashchenko and D. Livescu, “Viscous eﬀects on the Rayleigh-Taylor instability with
+
+  background temperature gradient,” Phys. Plasmas 23, 072121 (2016).
+
+29C. R. Weber, D. S. Clark, A. W. Cook, L. E. Busby,  and H. F. Robey, “Inhibition of
+
+  turbulence in inertial-conﬁnement-fusion hot spots by viscous dissipation,” Phys. Rev. E
+
+  89, 053106 (2014).
+
+30T. Wei and D. Livescu, “Late-time quadratic growth in single-mode Rayleigh-Taylor in-
+
+  stability,” Phys. Rev. E 86, 046405 (2012).
+
+31R. Betti, M. Umansky, V. Lobatchev, V. N. Goncharov,  and R. L. McCrory, “Hot-
+
+  spot dynamics and deceleration-phase Rayleigh-Taylor instability of imploding inertial
+
+ conﬁnement fusion capsules,” Phys. Plasmas 8, 5257–5267 (2001).
+
+32M. J. Edwards, J. D. Lindl, B. K. Spears, S. V. Weber, L. J. Atherton, D. L. Bleuel,
+
+ D. K. Bradley, D. A. Callahan, C. J. Cerjan, D. Clark, G. W. Collins, and et al., “The
+
+  experimental plan for cryogenic layered target implosions on the National Ignition Facility-
+
+ The inertia conﬁnement approach to fusion,” Phys. Plasmas 18, 051003 (2011).
+
+33E. N. Parker, “Magnetic neutral sheet in evolving ﬁelds-part two-formation of the solar
+
+  corona,” Astrophys. J 264, 642–647 (1983).
+
+34P. K. Browning, A. Stanier, G. Ashworth, K. G. McClements,  and V. S. Lukin, “Self-
+
+  organization during spherical torus formation by ﬂux rope merging in the mega ampere
+
+  spherical tokamak,” Plasma Phys. Control. Fusion 56, 064009 (2014).
+
+35W. Daughton, V. Roytershteyn, H. Karimabadi, L. Yin, B. J. Albright, B. Bergen, and
+
+ K. J. Bower, “Role of electron physics in the development of turbulent magnetic reconnec-
+
+  tion in collisionless plasmas,” Nature Phys. 7, 539–542 (2011).
+
+36R. Fitzpatrick, Plasma Physics: An Introduction (CRC Press, 2014).
+
+37P. Dimotakis, “The mixing transition in turbulent ﬂows,” J. Fluid Mech. 409, 69–98
+
+  (2000).
+
+38A. W. Cook, W. H. Cabot, and P. L. Miller, “The mixing transition in Rayleigh-Taylor
+
+  instability,” J. Fluid Mech. 511, 333–362 (2004).
+
+
+                                      39
+
+===== PDF PAGE 40 =====
+39G. L. Eyink, “Locality of turbulent cascades,” Phys. D 207, 91–116 (2005).
+
+40D. Zhao and H. Aluie, “Inviscid criterion for decomposing scales,” Phys. Rev. Fluids 3,
+
+  054603 (2018).
+
+41J. Ryu and D. Livescu, “Turbulence structure behind the shock in canonical shock-vortical
+
+  turbulence interaction,” J. Fluid Mech. 756, R1 (2014).
+
+42D. Biskam, E. Schwarz,  and J. F. Drake, “Two-ﬂuid theory of collisionless magnetic
+
+  reconnection,” Phys. Plasmas 4, 1002 (1997).
+
+43Z. W. Ma and A. Bhattacharjee, “Hall magnetohydrodynamic reconnection: The Geospace
+
+ Environment Modeling challenge,” J. Geophys. Res. 106, 3773–3782 (2001).
+
+44M. A. Shay, J. F. Drake, and B. N. Rogers, “Alfvenic collisionless magnetic reconnection
+
+ and the Hall term,” J. Geophys. Res. 106, 3759–3772 (2001).
+
+45A. Hakim, J. Loverich, and U. Shumlak, “A high resolution wave propagation scheme for
+
+  ideal Two-Fluid plasma equations,” J. Comp. Phys. 219, 418–442 (2006).
+
+46J. P. Freidberg, “Ideal magetohydrodynamic theory of magnetic fusion systems,” Rev.
+
+ Mod. Phys. 54, 801–903 (1982).
+
+47T. Ogino, “A three-dimensional MHD simulation of the interaction of the solar wind with
+
+  the Earths magnetosphere: The generation of ﬁeld-aligned currents,” J. Geophys. Res. 91,
+
+  6791–6806 (1986).
+
+48T. I. Gombosi, K. G. Powell, and D. L. De Zeeuw, “Axisymmetric modeling of cometary
+
+ mass loading on an adaptively reﬁned grid: MHD results,” J. Geophys. Res. 99, 21525
+
+  (1994).
+
+49Z. Miki, J. A. Linker, D. D. Schnack, R. Lionello, and A. Tarditi, “Magnetohydrodynamic
+
+  modeling of the global solar corona,” Phys. Plasmas 6, 2217–2224 (1999).
+
+50C. P. T. Groth, D. L. De Zeeuw, T.  I. Gombosi,  and K. G. Powell, “Global three-
+
+  dimensional MHD simulation of a space weather event: CME formation, interplanetary
+
+  propagation, and interaction with the magnetosphere,” J. Geophys. Res. 105, 25053–25078
+
+  (2000).
+
+51J. F. Chapman, I. H. Cairns, J. G. Lyon,  and C. R. Boshuizen, “MHD simulations of
+
+  Earth’s bow shock: Interplanetary magnetic ﬁeld orientation eﬀects on shape and posi-
+
+  tion,” J. Geophys. Res. 109, A04215 (2004).
+
+52J. D. Huba, “Hall Magnetohydrodynamics - A Tutorial,” in Space Plasma Simulation,
+
+  Lecture Notes in Physics, Berlin Springer Verlag, Vol. 615, edited by J. B¨uchner, C. Dum,
+
+
+                                      40
+
+===== PDF PAGE 41 =====
+ and M. Scholer (2003) pp. 166–192.
+
+53A. Otto, “Geospace Environmental Modeling (GEM) Magnetic Reconnection Challenge:
+
+ MHD and Hall MHD constant and current dependent resistivity models,” J. Geophys. Res.
+
+  106, 3751–3757 (2001).
+
+54J. D. Callen, Fundamentals of Plasma Physics (University of Wisconsin, 2006).
+
+55P. Dmitruk and W. H. Mattaeus, “Structure of the electromagnetic ﬁeld in the three-
+
+  dimensional Hall magnetyohydrodynamic turbulence,” Phys. Plasmas 13, 0423073 (2006).
+
+56G. Toth, Y. Ma,  and T. I. Gombosi, “Hall magnetohydrodynamics on Block-adaptive
+
+  grids,” J. Comp. Phys. 227, 6967–6984 (2008).
+
+57B. Srinivasan and U. Shumlak, “Analytical and computational study of the ideal full
+
+  two-ﬂuid plasma model and asymptotic approximations for Hall-magnetohydrodynamics,”
+
+  Phys. Plasmas 18, 092113 (2011).
+
+58Y. J. Ma, C. T. Russell, A. F. Nagy, G. Toth, M. K. Dougherty, A. Wellbrock, A. J.
+
+  Coates, P. Garnier, J. E. Wahlund, T. E. Cravens, M. S. Richard, and F. J. Crary, “The
+
+  importance of thermal electron heating in Titans ionoshpere: Comparision with Cassini
+
+ T34 ﬂyby,” J. Geophys. Res. 116, A10213 (2011).
+
+59U. Shumlak and J. Loverich, “Approximate Riemann solver for the two-ﬂuid plasma
+
+  model,” J. Comp. Phys. 187, 620–638 (2003).
+
+60D. Bond, V. Wheatly, R. Samtaney, and D. I. Pullin, “RichtmyerMeshkov instability of a
+
+  thermal interface in a two-ﬂuid plasma,” J. Fluid Mech. 833, 332–363 (2017).
+
+61J. Loverich, A. Hakim,  and U. Shumlak, “A Discontinuous Galerkin Method for Ideal
+
+  Two-Fluid Plasma Equations,” Commun. Comput. Phys. 9, 240–268 (2011).
+
+62A. Dubey, K. Antypas, M. K. Ganapathy, L. B. Reid, K. Riley, D. Sheeler, A. Siegel,
+
+ and K. Weide, “Extensible component based architecture for ﬂash, a massively parallel,
+
+  multiphysics simulation code,” Parallel Computing 35, 512–522 (2009).
+
+63P. Tzeferacos, M. Fatenejad, N. Flocke, C. Graziani, G. Gregori, D. Lamb, D. Lee, J. Mei-
+
+  necke, A. Scopatz,  and K. Weide, “Flash mhd simulations of experiments that study
+
+  shock-generated magnetic ﬁelds,” High Energy Density Physics 17, 24 (2015).
+
+64M. M. Marinak, S. W. Hann, T. R. Dittrich, R. E. Tipton, and G. B. Zimmerman, “A
+
+  comparison of three-dimensional multimode hydrodynamic instability growth on various
+
+  national ignition facility capsule designs with hydra simulations,” Phys. Plasmas 5, 1125–
+
+  1132 (1998).
+
+
+                                      41
+
+===== PDF PAGE 42 =====
+65M. M. Marinak, G. D. Kerbel, N. A. Gentile, O. Jones, D. Munro, S. Pollaine, T. R.
+
+  Dittrich,  and S. W. Hann, “Three-dimensional hydra simulations of national ignition
+
+  facility targets,” Phys. Plasmas 8, 2275–2280 (2001).
+
+66A. W. Cook, “Artiﬁcial ﬂuid properties for large-eddy simulation of compressible turbulent
+
+  mixing,” Phys. Fluids 19, 055103 (2007).
+
+67C. R. Weber, D. S. Clark, A. W. Cook, D. C. Eder, S. W. Haan, B. A. Hammel, D. E.
+
+  Hinkel, O. S. Jones, M. M. Marinak, J. L. Milovich, P. K. Patel, H. F. Robey, J. D.
+
+  Salmonson, S. M. Sepke, and C. A. Thomas, “Three-dimensional hydrodynamics of the
+
+  deceleration stage in inertial conﬁnement fusion,” Phys. Plasmas 22, 032702 (2015).
+
+68Y. T. Lee and R. M. More, “An electron conductivity model for dense plasmas,” Phys.
+
+  Fluids 27, 1273–1286 (1984).
+
+69M. S. Murillo, “Viscosity estimates of liquid metals and warm dense matter using the
+
+ yukawa reference system,” High Energy Density Physics 4, 49–57 (2008).
+
+70S. K. Lele, “Compact Finite Diﬀerence Schemes with Spectral-like Resolution,” J. Comp.
+
+  Phys. 103, 16–42 (1992).
+
+71L. Burakovsky, C. Ticknor, J. D. Kress, and L. A. Collins, “Transport properties of lithium
+
+  hydride at extreme conditions from orbital-free molecular dynamics,” Phys. Rev. E 87,
+
+  023104 (2013).
+
+72S. X. Hu, L. A. Collins, T. R. Boehly, J. D. Kress, V. N. Goncharov, and S. Skupsky, “First-
+
+  principles thermal conductivity of warm-dense deuterium plasmas for inertial conﬁnement
+
+  fusion applications,” Phys. Rev. E 89, 043105 (2014).
+
+73J. R. Rygg, F. H. Sguin, C. K. Li, J. A. Frenje, M. J.-E. Manuel, R. D. Petrasso, R. Betti,
+
+  J. A. Delettrez, O. V. Gotchev, J. P. Knauer, D. D. Meyerhofer, F. J. Marshall, C. Stoeckl,
+
+ and W. Theobald, “Proton radiography of inertial fusion implosions,” Science 319, 1223–
+
+  1225 (2008).
+
+74D. Livescu, J. Mohd-Yusof, M. R. Petersen,  and J. W. Grove, “CFDNS: A computer
+
+  code for direct numerical simulation of turbulent ﬂows,” Tech. Rep. (Los Alamos National
+
+  Laboratory, 2009) lA-CC-09-100.
+
+75M. R. Petersen and D. Livescu, “Forcing for statistically stationary compressible isotropic
+
+  turbulence,” Phys. Fluids 22, 116101 (2010).
+
+76S. Tomczyk, S. W. Mcintosh, S. L. Keil, P. G. Judge, D. H. S. T Schad, and J. Edmondson,
+
+  “Alfven waves in the Solar Corona,” Science 317, 1192–1196 (2007).
+
+
+                                      42
+
+===== PDF PAGE 43 =====
+77R. L. Stenzel, “Whistler waves in space and laboratory plasmas,” J. Geophys. Res. 104,
+
+  14379–14396 (1999).
+
+78P. A. Cassak and M. A. Shay, “Magnetic Reconnection for Coronal Conditions: Recon-
+
+  nection Rates, Secondary Islands and Onset,” Space Sci. Rev. 172, 283–302 (2012).
+
+79S. M. Bellan, Fundamentals of Plasma Physics (Cambridge University Press, 2006).
+
+80M. E. Mandt, R. E. Denton, and J. F. Drake, “Transition to whistler mediated magnetic
+
+  reconnection,” Geophys. Res. Lett. 21, 73–76 (1994).
+
+81L. Wang, A. H. Hakim, A. Bhattacharjee, and K. Germaschewski, “Comparison of multi-
+
+  ﬂuid moment models with particle-in-cell simulations of collisionless magnetic reconnec-
+
+  tion,” Phys. Plasmas 22, 012108 (2015).
+
+82W. Shen and D. M., “Magnetohydrodynamic theory for the interaction of interplane-
+
+  tary double-shock ensemble with the Earths bow shock,” J. Geophys. Res. 77, 4627–4644
+
+  (1972).
+
+83M. Peredo, J. A. Slavin, E. Mazur,  and S. A. Curtis, “Three-dimensional position and
+
+  shape of the bow shock and their variation with Alfvenic, sonic and magnetosonic Mach
+
+ numbers and interplanetary magnetic ﬁeld orientation,” J. Geophys. Res. 100, 7907–7916
+
+  (1995).
+
+84M. Brio and C. C. Wu, “An upwind diﬀerencing scheme for the equations of ideal magne-
+
+  tohydrodynamics,” J. Comp. Phys. 75, 400–422 (1988).
+
+85L. Mejnertsen, J. P. Eastwood, H. Hietala, S. J. Schwartz, and J. P. Chittenden, “Global
+
+ MHD simulations of the Earths bow shock shape and motion under variable Solar wind
+
+  conditions,” J. Geophys. Res. 123, 259–271 (2018).
+
+86G. S. Jiang and C. C. Wu, “A high-order WENO ﬁnite diﬀerent scheme for the equations
+
+  of ideal magnetohydrodynamics,” J. Comp. Phys. 150, 561–594 (1999).
+
+87H. C. Yee, D. V. Kotov, W. Wang, and C. W. Shu, “Spurious behavior of shock-capturing
+
+ methods by the fractional step approach: problems containing stiﬀsource and discontinu-
+
+  ities,” J. Comp. Phys. 241, 266–291 (2013).
+
+88J. A. Greenough and W. J. Rider, “A quantitative comparison of numerical methods for
+
+  the compressible Euler equations: ﬁfth-order WENO and piecewise-linear Godunov,” J.
+
+ Comp. Phys. 196, 259–281 (2004).
+
+89T. Nagai, I. Shinohara, M. Fujimoto, M. Hoshino, Y. Saito, S. Machida, and T. Mukai,
+
+  “Geotail observation of the Hall current system: evidence of magnetic reconnection in the
+
+
+                                      43
+
+===== PDF PAGE 44 =====
+  magnetotail,” J. Geophys. Res. 106, 25929–25949 (2001).
+
+90X. H. Deng and H. Matsumoto, “Rapid magnetic reconnection in the Earths magneto-
+
+  sphere mediated by whistler waves,” Nature 410, 557–560 (2001).
+
+91J. A. Wesson, “Sawtooth reconnection,” Nucl. Fusion 30, 2545 (1990).
+
+92P. K. Browning, S. Cardnell, M. Evans, A. F., V. S. Lukin, K. G. McClements,  and
+
+ A. Stainer, “Two-ﬂuid and magnetodydrodynamic modelling of magnetic reconnection in
+
+  the MAST of magnetic reconnection in the MAST spherical tokamak and the solar corona,”
+
+ Plasma Phys. Control. Fusion 58, 015041 (2016).
+
+93L. G. Stanton and M. S. Murillo, “Ion transport in high-energy-density matter,” Phys.
+
+  Rev. E 93, 043202 (2016).
+
+
+
+
+
+                                      44

@@ -1,0 +1,1296 @@
+Secondary Electron-Only Reconnection Driven by Large Scale Ion-Coupled
+Reconnection and Electron Kelvin-Helmholtz Instabilities in Hybrid Simulations of
+Solar Wind Turbulence
+Joaqu´ın Espinoza-Troni,1 Giuseppe Arr`o,2 Francesco Califano,3 Julia E. Stawarz,4 and Pablo S. Moya1
+1Departamento de F´ısica, Facultad de Ciencias, Universidad de Chile, Santiago, Chile∗
+2Department of Physics, University of Wisconsin-Madison, Madison, WI 53706, USA
+3Dipartimento di Fisica “E. Fermi”, Universit`a di Pisa, Pisa, Italy
+4School of Engineering, Physics, and Mathematics,
+Northumbria University, Newcastle upon Tyne, NE1 8ST, UK
+Electron-only reconnection (EREC) is a magnetic reconnection regime occurring within subion-
+scale current sheets (CSs), exhibiting only electron jets, without any ion outflows. EREC has been
+first observed in the Earth’s magnetosheath, where its occurrence is linked to the small correlation
+length of magnetic fluctuations, limiting the growth of CSs to very large scales.
+On the other
+hand, the development of EREC in open systems with large magnetic correlation lengths, such as
+the solar wind (SW), remains an open question. To address this problem, we employ a large-scale
+2D hybrid simulation with finite electron inertia, investigating the development of EREC driven
+by turbulence. By injecting energy at very large scales, we allow EREC to develop spontaneously
+due to the turbulent cascade, without any external small-scale forcing or imposed constraints on
+the turbulence correlation length. We find that EREC develops in our simulation via two distinct
+turbulence-driven mechanisms: (1) secondary EREC induced by the interaction of plasmoids in
+the outflows of large-scale ion-coupled reconnection; (2) EREC directly driven at subion scales by
+the electron Kelvin-Helmholtz instability in small-scale velocity shears. Furthermore, we perform
+a statistical analysis of CSs using the machine-learning clustering algorithm HDBSCAN, showing
+that subion-scale CSs capable of hosting EREC are dominant in our simulation. Our results suggest
+that EREC could occur even in large-scale space and astrophysical systems, like the SW, driven by
+secondary turbulent processes, potentially playing a key role in dissipating energy at kinetic scales.
+I.
+INTRODUCTION
+Magnetic reconnection is a process that occurs in mag-
+netized plasmas, altering the magnetic field topology,
+typically converting magnetic energy into plasma kinetic
+and internal energies [see e.g. 1, for a review]. On top of
+being the driver of several extreme space and astrophysi-
+cal phenomena [2, 3], reconnection is also a fundamental
+element of turbulence [4]. Plasma turbulence naturally
+produces intermittent current sheets (CSs) where mag-
+netic reconnection occurs [5], supporting the energy cas-
+cade [6, 7], and dissipation [8–10]. Typically, turbulence-
+driven reconnection occurs in small electron-scale diffu-
+sion regions embedded within larger ion-scale CSs [see 11,
+and references therein]. In this case, both ions and elec-
+trons are accelerated by reconnection, producing fast di-
+vergent bidirectional jets flowing out of the reconnection
+region, as observed in CSs within the turbulent solar wind
+(SW) [12, 13]. In addition to the standard reconnection
+scenario, Magnetospheric Multiscale (MMS) [14] obser-
+vations in the Earth’s turbulent magnetosheath have re-
+vealed peculiar reconnection events where only electrons
+appear to be accelerated.
+These unusual reconnection
+events occur in electron-scale CSs, where only electron
+jets are observed, with no accompanying ion outflows
+[15].
+This novel reconnection regime has been named
+∗joaquinun@gmail.com
+“electron-only reconnection” (EREC), to distinguish it
+from standard “ion-coupled reconnection” (IREC).
+The observation of EREC events in the Earth’s magne-
+tosheath raises the question of how turbulence can pro-
+duce electron-scale CSs, bypassing ion scales. This is a
+nontrivial problem since turbulence typically involves a
+continuous energy transfer from magnetohydrodynamic
+to kinetic scales, and turbulent fluctuations should cou-
+ple to ions first, before reaching electron scales. Numeri-
+cal studies suggest that the dynamics of reconnection in
+turbulence is determined by the correlation length of tur-
+bulent fluctuations, which typically corresponds to the
+energy-injection scale [16]. Specifically, when energy is
+injected at scales of about 10 di or less (with di being
+the ion inertial length), ions decouple from the magnetic
+field dynamics, and reconnection is driven only by elec-
+trons, while for larger injection scales, turbulence induces
+IREC [17–19]. This scenario is consistent with the occur-
+rence of EREC in the Earth’s magnetosheath, where the
+correlation length of turbulent fluctuations ranges from
+approximately 10 di in the dayside, to about 40 di in the
+flanks [20, 21]. In this environment, observations show
+a tendency for EREC to dominate over IREC in regions
+with smaller correlation lengths [20, 22]. Nonetheless, it
+remains unclear whether EREC can also develop in en-
+vironments such as the SW, where the correlation length
+of turbulence can reach hundreds or even thousands of di
+[23]. Numerical [24] and observational [25] studies have
+shown that large-scale magnetotail reconnection drives
+secondary EREC in its turbulent outflows, and similar
+arXiv:2605.11139v1  [physics.space-ph]  11 May 2026
+
+2
+mechanisms may also be at play in the SW, driven by
+local IREC events [26, 27], or by shear flow instabilities
+[28–30], producing subion scale structures. Furthermore,
+recent studies have highlighted the role of EREC in dis-
+tributing the dissipated magnetic energy between ion and
+electrons in turbulent environments [31]. Hence, under-
+standing the occurrence of EREC in turbulent systems
+with large correlation lengths, such as the SW, is relevant
+to comprehend the nature of non-linear interactions at ki-
+netic scales, the energy partition between species, and the
+broader role of reconnection as a collisionless dissipation
+mechanism within these specific environments.
+In this work, we use a large-scale high-resolution 2D
+Hybrid Vlasov-Maxwell simulation of plasma turbulence
+to investigate the spontaneous development of EREC in
+a SW-like environment. Unlike previous work, we initial-
+ize turbulence by injecting energy at scales much larger
+than ion scales, ensuring that EREC events develop
+naturally as a consequence of the large-scale turbulent
+cascade, without the need to force turbulence directly
+near ion scales.
+We identify two distinct turbulence-
+driven mechanisms that spontaneously produce EREC
+from large-scale fluctuations in our simulation.
+In the
+first mechanism, turbulence creates large-scale elongated
+CSs in which IREC occurs, producing ion-scale plas-
+moid chains; these plasmoids are advected in the out-
+flows of IREC events, where they interact and merge,
+triggering small-scale EREC events. In the second mech-
+anism, the large-scale turbulent dynamics first produce
+thin, elongated electron-velocity shears that are unsta-
+ble to the electron Kelvin-Helmholtz instability (EKHI);
+subsequently, EKHI-generated subion-scale electron vor-
+tices locally bend magnetic field lines, inducing EREC.
+We find that the two mechanisms described above are
+ubiquitous in the simulation and might contribute to the
+production of EREC events in the turbulent SW. Fur-
+thermore, to assess the global occurrence and relevance
+of EREC in our simulations, we complement our study
+with a statistical analysis of CSs using the HDBSCAN
+clustering algorithm. We find that the vast majority of
+CSs produced by turbulence in our simulation have thick-
+nesses smaller than di and are associated with significant
+energy conversion, possibly due to EREC. These results
+highlight that EREC is a common feature of plasma tur-
+bulence, not only in relatively small systems such as the
+Earth’s magnetosheath, but also in the large-scale tur-
+bulent SW.
+II.
+SIMULATION SETUP
+Our simulation was performed using the Eulerian Hy-
+brid Vlasov-Maxwell code [32], with kinetic ions and
+finite-mass fluid electrons.
+The electron dynamics are
+encoded in the generalized Ohm’s law
+E −d2
+e
+n ∇2E = −(ui × B) + 1
+n (J × B) −1
+n∇Pe+
++d2
+e
+n ∇·
+
+uiJ + Jui −JJ
+n
+
+,
+(1)
+where E and B are the electric and magnetic fields, J=
+∇× B, ui and n are the ion fluid velocity and density
+(quasi-neutrality is assumed), Pe is the electron pressure,
+and de is the electron inertial length. Electron inertia
+effects included in our hybrid model allow electrons to
+demagnetize at scales of order de, despite the absence of
+electron kinetic effects [32, 33].
+We consider a 2D square periodic domain of size L =
+100 π di, sampled by a uniform grid with 30722 points.
+Velocity space is sampled by a cubic uniform mesh with
+513 points, ranging from −5 vth,i to 5 vth,i in each direc-
+tion (with vth,i being the initial ion thermal speed). Ions
+are initially Maxwellian, with uniform density n0, zero
+mean velocity, and isotropic temperature Ti.
+The ion
+beta is βi =1 and electrons are isothermal with tempera-
+ture Te. The ion-to-electron mass and temperature ratios
+are mi/me = 100 and Ti/Te = 1. Turbulence is freely-
+decaying, initialized by adding random-phase, isotropic
+magnetic perturbations to a uniform out-of-plane guide
+field B0 = B0ˆz.
+Magnetic fluctuations have wavenum-
+bers k uniformly distributed in the range 1 ⩽k/k0 ⩽6
+(with k0 =2π/L), and root mean square (rms) amplitude
+δBrms/B0 ≃0.28.
+This initialization implies an injec-
+tion scale of about 50 di, much larger than ion scales.
+This choice for the injection scale allows us to consider
+a turbulent system that is large enough as compared to
+the Earth’s magnetosheath, but still far from a realis-
+tic SW size, which is currently impossible to reproduce
+with kinetic codes. The chosen parameters are designed
+to represent typical SW conditions [23]. The simulation
+time step is dt = 0.01 Ω−1
+i
+(with Ωi the ion cyclotron
+frequency). We employ a numerical filter to smooth elec-
+tromagnetic fluctuations on scales of order the grid step
+size, improving numerical stability. Additional informa-
+tion are provided in Arr`o et al. [34].
+III.
+RESULTS
+A.
+Secondary Electron-Only reconnection
+Produced by Large Scale Ion-Coupled Reconnection
+In this subsection, we analyze the development of a sec-
+ondary EREC event within the outflow of a large-scale
+IREC site in our simulation of SW turbulence. We high-
+light and discuss the properties and signatures of both
+reconnection regimes, which behave differently due to the
+different scales involved.
+Figure 1 illustrates the temporal evolution of the out-
+of-plane current density, Jz, in a sub-region of the simu-
+lation box. Jz is shown as shaded isocontours and is nor-
+
+3
+FIG. 1. Panels (a)-(e): shaded isocontours of the out-of-plane current density Jz (normalized to J0 = en0cA,0) over a sub-
+region of the simulation box at times t Ωi ∈[252.4, 272.4, 292.4, 320.7, 360.7], with black dashed lines representing in-plane
+magnetic field lines. The green and black squares in panels (d) and (e) indicate the regions where IREC and EREC take place,
+respectively.
+malized to J0 = en0cA,0, where e is the proton charge and
+cA,0 = B0/√4πmin0 is the initial Alfv´en speed, while
+black dashed lines indicate the in-plane magnetic field.
+This normalization for Jz will be used throughout the
+whole paper.
+The different panels progressively follow
+the evolution of a CS as it undergoes reconnection. This
+CS, whose initial length is between 40 di and 50 di, as
+seen in Fig.
+1(a), forms spontaneously because of the
+large-scale turbulent dynamics. By t = 272.4 Ω−1
+i , Fig.
+1(b), the CS becomes unstable and reconnects, forming
+three plasmoids. It is well-known that CSs are prone to
+the linear tearing instability [35–38], leading to reconnec-
+tion, with the consequent formation of plasmoid chains
+[39, 40], playing a significant role in plasma turbulence
+[41, 42]. As the instability proceeds and enters the non-
+linear stage, plasmoids grow bigger and saturate, as seen
+in Fig.
+1(c), at t = 292.4Ω−1
+i , where plasmoids have
+reached a size ranging between 5 di and 10 di. Panel (d),
+at t = 320.7 Ω−1
+i , shows that a main X-point has de-
+veloped between the two upper plasmoids, where IREC
+occurs, as we will show later. The lower plasmoids, sit-
+uated in the IREC outflow, are pushed one against the
+other by the reconnection jet. A new reconnecting CS
+with length smaller than 2di forms between two lower
+plasmoids, as seen in Fig. 1(e) and by the black box,
+at t = 360.7 Ω−1
+i . As we will show later, this secondary
+CS hosts an EREC event, whose outflow is orthogonal
+to the initial magnetic shear of the primary large-scale
+IREC CS.
+We now analyze and characterize the two IREC and
+EREC sites identified above, highlighted in Figures 1(d)
+and 1(e), marked by the green and black squares en-
+closing them.
+Hereafter, we refer to the green square
+(20 di × 21 di) as the “large-scale reconnection region”
+and the black square (6 di × 7 di) as the “small-scale re-
+connection region”. Panels (a) of Figures 2 and 3 show
+Jz isocontours for the large-scale and small-scale regions,
+respectively. Black lines represent the in-plane magnetic
+field, and a black dot denotes the X-point. The 1D cuts,
+indicated by yellow arrows in panels (a)-(c) of both fig-
+ures, are aligned to the outflow of their respective re-
+connection sites. This outflow direction is defined as the
+eigenvector associated with the minimum eigenvalue of
+the magnetic-flux function’s Hessian matrix at the X-
+point [4].
+The distinction between IREC and EREC is often re-
+lated to the scale of the reconnecting magnetic structures.
+Sharma Pyakurel et al. [16] studied this transition in lam-
+inar reconnection by varying the simulation domain size
+(which is considered equivalent to the size of magnetic
+islands in turbulence) and showed a gradual transition
+from EREC to IREC as the size increased from ∼4di
+to ∼40di.
+According to their study, the domain size
+is a critical factor determining whether IREC or EREC
+occurs, because achieving a fully frozen-in ion exhaust,
+with ion flows comparable to the Alfv´en speed, requires
+an exhaust width of at least several di.
+In our turbulence simulation, we estimate the maxi-
+mum width of the exhaust along the direction normal
+to the CS to be the width of the plasmoids involved
+in the reconnection process. For the large-scale region,
+the exhaust width is ∼5-10di (Fig.
+2a), while for
+the small-scale region, it is less than ∼2di (Fig. 3a).
+Sharma Pyakurel et al. [16] found that the smallest dis-
+cernible ion jet requires an exhaust width of at least
+∼2di, and fully ion-coupled reconnection requires ∼8di.
+Consistent with this picture, we expect the large-scale
+region to couple with ions, driving IREC. In contrast,
+the small-scale region should exhibit EREC, as ions are
+likely decoupled from the small-scale dynamics of elec-
+trons and the magnetic fields. To verify this hypothesis,
+we first analyze the large-scale reconnection region and
+then compare it to the small-scale reconnection region.
+To identify reconnection signatures, we use 1D cuts
+
+4
+FIG. 2. Analysis of the large-scale reconnection region at t = 320.7Ω−1
+i
+(green square in Fig. 1d). Panels (a)-(c): Shaded
+isocontours where the yellow arrow indicates the direction of the 1D cut along the exhaust. (a) Out-of-plane current density
+Jz (normalized to J0) with in-plane magnetic field lines (black dashed lines). (b)-(c) Outflow-directed electron (u′
+e,out) and
+ion (u′
+i,out) fluid velocities in the X-point frame. Panels (d)-(f): Profiles along the 1D cut defined by the yellow arrow. (d)
+Out-of-plane electric field in the electron frame (Rez = Ez + (ue × B)z, red) and ion frame (Riz = Ez + (ui × B)z, blue), in
+units of B0cA0/c. (e) Outflow-directed velocities for electrons (u′
+e,out, red), ions (u′
+i,out, blue), and the E × B drift (black) in
+the X-point frame. (f) Electron-frame dissipation measure De = J · Re = J · (E + ue × B), normalized to cA,0J0B0/c. The
+yellow and gray shaded areas highlight the EDR and IDR, respectively.
+
+5
+FIG. 3. Analysis of the small-scale reconnection region at t = 360.7Ω−1
+i
+(black square in Fig. 1e). Panels (a)-(c): Shaded
+isocontours where the yellow arrow indicates the direction of the 1D cut along the exhaust. (a) Out-of-plane current density
+Jz (normalized to J0) with in-plane magnetic field lines (black dashed lines). (b)-(c) Outflow-directed electron (u′
+e,out) and
+ion (u′
+i,out) fluid velocities in the X-point frame. Panels (d)-(f): Profiles along the 1D cut defined by the yellow arrow. (d)
+Out-of-plane electric field in the electron frame (Rez = Ez + (ue × B)z, red) and ion frame (Riz = Ez + (ui × B)z, blue), in
+units of B0cA0/c. (e) Outflow-directed velocities for electrons (u′
+e,out, red), ions (u′
+i,out, blue), and the E × B drift (black) in
+the X-point frame. (f) Electron-frame dissipation measure De = J · Re = J · (E + ue × B), normalized to cA,0J0B0/c. The
+yellow shaded area highlights the EDR.
+
+6
+(indicated by yellow arrows).
+Panels (d) of Figures 2
+and 3 show the out-of-plane electric field in the frame of
+the ions and electrons, respectively: Ri = E + (ui × B)
+(blue) and Re = E + (ue × B) (red), in units of B0cA0/c
+(with ui, with ue being the ion and electron fluid ve-
+locities). Breaking the magnetic flux frozen-in condition
+for a species α (to allow the disruption of the magnetic
+field lines topology) requires ∇× Rα ̸= 0 [33]. In our 2D
+case (where ∂/∂z = 0), only the out-of-plane component
+Rαz is relevant for breaking the in-plane flux conservation
+[43]. Localized regions in both Riz and Rez are apparent
+in the structure and, thus, the Electron Diffusion Region
+(EDR) and Ion Diffusion Region (IDR) are found where
+∇Rez ̸= 0 and ∇Riz ̸= 0, respectively.
+1.
+Ion coupled reconnection site
+We first analyze the large-scale reconnection region
+(Fig. 2). Panel (b) shows the outflow-directed compo-
+nents of the electron (u′
+e,out) and ion (u′
+i,out) fluid ve-
+locities, respectively, in the frame of the X-point. The
+yellow arrow indicates the direction of the cut. These
+velocities are normalized to the inflow Alfv´en veloc-
+ity cAi,in = Bin/√4πminin (details in Appendix A).
+The black streamlines in panels (b) and (c) represent
+the in-plane electron and ion fluid velocities in the X-
+point frame.
+The X-point velocity itself, uX, is the
+E × B drift velocity evaluated at the X-point, i.e. uX =
+E × B/|B|2
+X-point. Thus, the velocities in the X-point
+frame are u′
+e = ue−uX and u′
+i = ui−uX (Hereafter, ′ de-
+notes the X-point frame and the subscript ”out” denotes
+the outflow-directed component).
+In the large-scale reconnection site, clear ion jets flow
+out of the reconnection region, strongly correlated with
+the magnetic field geometry (Fig. 2c). These ion outflows
+are accompanied by super-Alfv´enic electron jets flowing
+out of the X-point (Fig. 2b). These are classic signatures
+of IREC [44], implying that ions become magnetized in
+the outflows and are expelled from the reconnection re-
+gion together with the reconnected magnetic field lines,
+following the electrons, which are magnetized and ex-
+pelled earlier.
+In the large-scale reconnection case (Fig. 2d), Rez is
+non-constant only in a narrow region of width ∼2di
+around the X-point, the EDR (yellow shaded area). Out-
+side the EDR, Rez is non-zero but constant, meaning
+that the magnetic flux is frozen to the electrons, even if
+the electron slippage condition (Rez = 0) is not satisfied
+[33, 45]. Riz is enhanced near the X-point (where ions
+are demagnetized) but decays to zero far away (where
+ions are frozen-in). This behavior defines the IDR (gray
+shaded area), which has a width of ∼6di.
+Panel (e) of Fig. 2 shows the outflow-directed veloci-
+ties u′
+e,out (red), u′
+i,out (blue), and the E×B drift (black)
+in the X-point frame along the 1D cut. Velocities are in
+units of both the inflow ion and electron Alfv´en speeds
+cAi,in and cAe,in = (me/mi)1/2cAi,in. The large-scale re-
+connection site shows super-Alfv´enic electron jets near
+the X-point (∼2cAi,in) in conjunction with the standard
+Alfv´enic ion jets [44]. Electron jets slow down to match
+the E × B drift velocity, defining an exhaust length of
+∼9di. Notably, electron jets have velocities below the
+electron Alfv´en speed.
+This is consistent with recent
+EREC studies [46, 47], showing that charge separation
+between demagnetized ions and accelerated electrons cre-
+ates a Hall electric field that decelerates the electrons,
+preventing them from reaching cAe,in, and keeping the
+reconnection rate cEz < 0.1BincAe,in.
+Panel (f) of Fig. 2 shows the electron-frame dissipa-
+tion measure De = J · Re = J · (E + ue × B) (the “Zen-
+itani measure” [48, 49]) along the 1D cut, in units of
+cA0J0B0/c. De quantifies the rate of magnetic-to-plasma
+energy conversion in the electron frame. The large-scale
+reconnection region shows enhanced energy conversion
+centered at the X-point, as expected for standard IREC.
+2.
+Electron-only reconnection site
+We now proceed to analyze the small-scale reconnec-
+tion region in comparison with the standard IREC case.
+Figure 3 presents this analysis using the same format as
+Fig. 2. Similarly to the large-scale reconnection case,
+the small-scale site exhibits a super-Alfv´enic electron jet
+flowing out of the X-point (Fig. 3b). However, the ion
+dynamics differ substantially. In contrast to the large-
+scale region, the small-scale reconnection site shows no
+ion jets correlated to the electron outflow (Fig. 3c), and
+ion streamlines (in black) follow a flow pattern which is
+not correlated to magnetic field lines. With an exhaust
+width smaller than 2di, reconnection occurs in a region
+too small for ions to be magnetized and coupled to the re-
+connection process. As shown in the 1D cut of Fig. 3(d),
+Riz is not constant along the entire exhaust, indicating
+that ions are never coupled to the magnetic field in this
+small-scale reconnection event, which is a clear signature
+of EREC [46].
+Figure 3e shows that, like in the large-scale reconnec-
+tion case, electron jets are super-Alfv´enic near the X-
+point (with maximum speed ∼5cAi,in), but do not exceed
+the electron Alfv´en speed due to the decelerating Hall
+electric field.
+However, the standard Alfv´enic ion jets
+are absent. Regarding dissipation (Fig. 3f), the small-
+scale region shows a positive peak at the X-point, flanked
+by two symmetric negative minima (region of plasma-
+to-magnetic energy transfer). The peak dissipation rate
+here (De ∼0.01) is about one order of magnitude higher
+than in the large-scale region (De ∼0.001).
+Because
+ions are decoupled in EREC, magnetic flux can flow more
+rapidly, leading to a higher reconnection rate and signif-
+icant dissipation near the X-point.
+The analysis of the properties of reconnection sites in-
+dicates that the large- and small-scale reconnection re-
+gions are consistent with IREC and EREC, respectively.
+We have shown that cross-scale interactions can produce
+
+7
+secondary EREC in the IREC outflow. Therefore, the
+process we have described represents a possible mecha-
+nism for the spontaneous formation of EREC in the tur-
+bulent SW, without the need for an external small-scale
+energy injection or a short correlation length (in contrast
+to what happens in the Earth’s magnetosheath).
+B.
+Electron-Only reconnection Produced by the
+Electron Kelvin-Helmholtz instability
+In this subsection, we discuss another mechanism for
+the spontaneous formation of EREC sites in our large-
+scale turbulence simulation. Unlike the process described
+in the previous section, this mechanism does not require
+a precursor large-scale IREC site; EREC develops di-
+rectly due to the dynamics of electron-scale shear flows
+produced by turbulent dynamics.
+Figure 4 illustrates the temporal evolution of a sub-
+region of the simulation box.
+The first row shows
+Jz (shaded isocontours) with in-plane magnetic field
+lines (black dashed).
+The second row shows the out-
+of-plane low-pass-filtered electron vorticity magnitude,
+|(∇× ⟨ue⟩)z|, normalized to cA0/di.
+Here, ⟨⟩denotes
+a spatial Gaussian low-pass filter with a width of di,
+chosen to highlight electron vortices while suppressing
+smaller-scale in-plane currents associated with reconnec-
+tion. Black streamlines in the second row represent ue
+in the frame of the bulk plasma velocity u = (meue +
+miui)/(me + mi). The figure shows the formation of a
+plasmoid chain in which magnetic field lines wrap around
+near-ion-scale electron vortices. In the following, we show
+that interactions among these plasmoids produce EREC.
+At t = 497.1Ω−1
+i
+(early stage), plasmoids have not yet
+formed, but magnetic field lines are beginning to bend
+(Fig.
+4a).
+This region exhibits strong electron veloc-
+ity shears, evidenced by enhanced electron vorticity (Fig.
+4d). By t = 519.6Ω−1
+i , electron vortices begin to emerge
+(Fig. 4e). These structures are near-ion-scale (i.e., with
+wavelength λ ∼di), a regime well-described by electron
+magnetohydrodynamics (EMHD) [36].
+In this regime,
+ions are demagnetized and follow separate dynamics from
+the electrons, which remain coupled to the magnetic field.
+Consequently, the frozen-in magnetic flux wraps around
+the electron vortices, driving the formation of plasmoids
+(Fig. 4b). By t = 543.5Ω−1
+i , plasmoids are fully formed
+(Fig. 4c), creating a chain of reconnection X-points. No-
+tably, each plasmoid is embedded within an electron vor-
+tex (Fig. 4f).
+The disruption of the velocity shear into electron vor-
+tices is qualitatively consistent with the development of
+the Electron Kelvin-Helmholtz Instability (EKHI). This
+instability has been studied extensively in cold EMHD
+[50–54] and in fully kinetic simulations and satellite ob-
+servations of magnetic reconnection [55–59], where it dis-
+rupts electron velocity shears in diffusion regions and sec-
+ondary reconnection outflows. The EKHI has previously
+been shown to contribute to generating other types of ki-
+netic scale structures in turbulent plasma, such as subion
+scale magnetic holes [29]. Using an EMHD model, Gaur
+et al. [53] demonstrated that whistler waves can suppress
+the EKHI. Flow perturbations from the EKHI distort
+the magnetic field into a sheared configuration, exciting
+whistler oscillations via the restoring magnetic tension
+force. These oscillations extract energy from the velocity
+shear, stabilizing the flow. Therefore, for the EKHI to
+develop in a velocity shear with thickness l, the EKHI
+characteristic growth rate γ ∼∆ue,L/l must exceed the
+frequency of whistler waves propagating parallel to the
+shear flow ω = Ωe,Lk2d2
+e/(1 + k2d2
+e)[29, 56]. Here, ∆ue,L
+is the jump in the electron velocity across the shear, and
+Ωe,L is the electron cyclotron frequency based on the
+shear-aligned magnetic field. By imposing that γ must
+be larger than ω for the EKHI to be able to get excited,
+the instability criterion is obtained:
+∆ue,L > VKH(k) :=
+ l
+de
+
+cAe,L
+k2d2
+e
+1 + k2d2e
+,
+(2)
+where cAe,L = deΩe,L is the shear-aligned electron Alfv´en
+speed, and k is the wavenumber of the unstable mode.
+For a shear width l ∼de we recover the result of Arr`o
+et al. [29], and by also considering fluctuations with k ∼
+d−1
+e
+, Eq. (2) gives the criterion ∆ue,L > cAe,L/2 used
+by Fermo et al. [56].
+To confirm that the observed instability is quantita-
+tively consistent with the EKHI, we perform a local sta-
+bility analysis immediately prior to the formation of elec-
+tron vortices. For this, we perform a transversal 1D cut
+through the electron velocity shear region (at t = 497.1,
+white arrow in figure 4d). Figure 5a shows the shear-
+aligned electron velocity ue,L (blue, normalized to cA0)
+in the frame of the bulk velocity uL, and the threshold
+velocity VKH (orange) from Eq. (2). The shear-aligned
+direction is defined as ˆl = ˆn × ˆz, where ˆn is the di-
+rection of the 1D cut (white arrow in Fig.
+4d).
+The
+velocity jump, ∆(ue,L −uL) ∼cA0 (indicated by the
+dashed line), and the shear thickness, l ∼di, are cal-
+culated as the distance between the points of maximum
+and minimum velocity across the shear, i.e., the distance
+between the highlighted blue dots in the figure. Since
+the plasma is inhomogeneous, VKH is calculated using
+the local shear-aligned magnetic field and density. We
+estimate the wavenumber k = 2π/λ from the size λ of
+the fully developed vortices. Figure 5b shows the fast-
+Fourier-transform (FFT) of ue,L −uL across the vortex
+chain (white arrow in Fig. 4f). The spectrum peaks at
+kde ∼0.14, corresponding to a near-ion-scale vortex size
+λ ∼4.4di.
+Figure 5a shows that prior to vortex for-
+mation, ∆(ue,L −uL) significantly exceeds VKH.
+This
+confirms that the region is unstable to the EKHI, sup-
+porting our conclusion that turbulence-driven electron
+velocity shears drive the formation of electron vortices
+and subsequent reconnection sites.
+Finally, we characterize the nature of these reconnec-
+tion sites in their developed stage (t = 543.5Ω−1
+i ) by ana-
+lyzing the region marked by the black square (5di × 5di)
+
+8
+FIG. 4. Temporal evolution of the EKHI-induced EREC events for times t = 497.1Ω−1
+i
+(first column), t = 519.6Ω−1
+i
+(second
+column) and t = 543.5Ω−1
+i
+(third column). Panels (a)-(c): Shaded isocontours of the out-of-plane current density Jz (normalized
+to J0) with in-plane magnetic field lines (black shaded). Panels (d)-(f): Shaded isocontours of the out-of-plane low-pass-filtered
+electron vorticity magnitude |(∇× ⟨ue⟩)z| (normalized to cA0/di), with black streamlines representing the in-plane electron
+velocity ue in the frame of the bulk plasma velocity u = (meue + miui)/(me + mi).
+FIG. 5. (a) Shear-aligned electron velocity in the frame of the bulk velocity ue,L −uL (blue, normalized to cA0), the local
+threshold velocity VKH (orange) evaluated at k = 0.14d−1
+e
+and the velocity jump ∆(ue,L −uL) (black dashed line). (b) FFT of
+ue,L −uL across the white arrow of Fig. 4f, which crosses the vortex chain. The red dashed horizontal line passes through the
+peak wavenumber at kde ∼0.14.
+
+9
+FIG. 6. Analysis of one of the reconnection sites (black square in Fig. 4c) embedded in the electron vortices at t = 543.5Ω−1
+i
+.
+Panels (a)-(c): Shaded isocontours where the yellow arrow indicates the direction of the 1D cut along the exhaust. (a) Out-of-
+plane current density Jz (normalized to J0) with in-plane magnetic field lines (black dashed). (b)-(c) Outflow-directed electron
+(u′
+e,out) and ion (u′
+i,out) fluid velocities in the X-point frame. Panels (d)-(f): Profiles along the 1D cut defined by the yellow
+arrow. (d) Out-of-plane electric field in the electron frame (Rez = Ez + (ue × B)z, red) and ion frame (Riz = Ez + (ui × B)z,
+blue), in units of B0cA0/c. (e) Outflow-directed velocities for electrons (u′
+e,out, red), ions (u′
+i,out, blue), and the E × B drift
+(black) in the X-point frame. (f) Electron-frame dissipation measure De = J·Re = J·(E + ue × B), normalized to cA0J0B0/c.
+The yellow shaded area highlights the EDR.
+
+10
+in Fig.
+4c.
+Figure 6 presents this analysis using the
+same format and normalization as the previous subsec-
+tion. The plasmoids involved have a width of ∼di (Fig.
+6a); thus, consistently with Sharma Pyakurel et al. [16],
+we expect this region to exhibit EREC. Indeed, we ob-
+serve super-Alfv´enic electron jets (Fig. 6b) but no cor-
+related ion jets (Fig. 6c), indicating that ions are decou-
+pled from the magnetic field. Although the surrounding
+vortices strongly distort the electron jets (as shown by
+the electron streamlines in Fig.
+6b), the evolution of
+the magnetic field topology between t = 497.1Ω−1
+i
+and
+t = 543.5Ω−1
+i
+(Fig. 4a,c) reveals clear signatures of mag-
+netic reconnection.
+The 1D cut analysis (yellow arrow) further confirms
+the EREC nature of the event. The EDR has a width
+of ∼2di (non-constant Rez, Fig. 6d), while Riz varies
+along the entire region, meaning that ions are demagne-
+tized. The electron outflow velocity is ∼0.1cAe,in (Fig.
+6e), which is typical for EREC, as discussed previously
+[46, 47, 60]. Interestingly, the electron-frame dissipation
+measure De (Fig.
+6f) is an order of magnitude lower
+than in the secondary EREC case analyzed in the pre-
+vious subsection. The lower dissipation is likely due to
+the reconnection site being embedded within an EKHI-
+driven vortex. As the Kelvin-Helmholtz mode extracts
+energy from the shear to drive the instability, less mag-
+netic energy may be available to energize the plasma via
+reconnection.
+In summary, our analysis confirms that the reconnec-
+tion sites within the train of near-ion-scale plasmoids
+(Fig.
+4c) are EREC events driven by the EKHI. Our
+results demonstrate that the EKHI offers an additional
+pathway through which EREC events can be excited
+within a large-scale turbulent cascade.
+We argue that
+a mixture of secondary instabilities, such as those illus-
+trated in Sections III A and III B, can generate EREC
+events within turbulent plasmas, such as the SW, with
+correlation lengths much larger than the ion scales.
+IV.
+STATISTICAL ANALYSIS
+In this section, we perform a statistical analysis of the
+CSs generated by the turbulence. By cataloging these
+structures from the smallest to the largest scales and
+identifying their mean properties, we extract statistical
+information regarding the composition of CSs and their
+impact on energy conversion.
+This global perspective
+complements the local analysis of specific reconnection
+sites presented in previous sections.
+To achieve this,
+we employ HDBSCAN [61], a hierarchical density-based
+clustering algorithm, to identify individual CSs, follow-
+ing an approach similar to Sisti et al. [62], Lapenta et al.
+[63].
+HDBSCAN is an extension of DBSCAN [64, 65]. While
+DBSCAN groups tightly packed points in high-density
+regions based on a fixed distance threshold, HDBSCAN
+eliminates the need to manually select this parameter.
+Instead, HDBSCAN generates a cluster hierarchy and
+selects significant clusters based on their robustness.
+Initializing HDBSCAN requires two parameters:
+a
+minimum cluster size and a parameter p that specifies the
+number of nearest neighbors (including the point itself)
+to consider when computing the local density of points
+on the simulation grid. We set the minimum cluster size
+to the number of grid points contained within a circle
+of diameter 1 di; consequently, structures with an area
+smaller than πd2
+i /4 are considered “noise” in the jargon
+of clustering algorithms, and thus ignored. We choose
+p = 5, corresponding to the number of points contained
+within a circle of radius equal to the physical grid step in
+our simulation. To select the grid points to be grouped
+into clusters by HDBSCAN, we apply a threshold to the
+out-of-plane current density magnitude, selecting points
+where |Jz| > 3σ(Jz), where σ(Jz) is the standard devi-
+ation of Jz over the entire simulation box.
+Given the
+2D geometry considered here, we use Jz because it is the
+quantity most representative of magnetic reconnection.
+Figure 7a displays the in-plane magnetic field lines at
+t = 534.6Ω−1
+i , with identified clusters highlighted in var-
+ious colors (colors are reused cyclically and serve only to
+distinguish adjacent clusters). At this time, when turbu-
+lence is fully developed, HDBSCAN identifies 516 clus-
+ters, each one corresponding to a CS, ranging in length
+from a few di to several di. In contrast, at earlier times
+when the turbulent cascade has not yet reached all scales
+(e.g., t = 320.7Ω−1
+i ; see Appendix B), fewer and larger
+CSs are detected (143 sheets).
+Figure 7b shows the
+shaded isocontours of the normalized out-of-plane cur-
+rent density |Jz|/σ(Jz). A comparison between panels
+(a) and (b) reveals good agreement between the clusters
+selected by HDBSCAN and the CSs identifiable by eye,
+validating the algorithm’s performance.
+To characterize the morphology of each CS, we define
+its “center” rc = (xc, yc) as the current-weighted centroid
+rc = P
+i ri|Jz(ri)|/ P
+i |Jz(ri)|, where ri = (xi, yi) are
+the coordinates of the i-th point in the cluster. We define
+the CS thickness δ and length Λ as twice the square roots
+of the eigenvalues of the variance matrix
+M =
+P
+i(ri −rc)(ri −rc)|Jz(ri)|
+P
+i |Jz(ri)|
+,
+(3)
+associating the minimum and maximum eigenvalues to δ
+and Λ, respectively. Figure 8a presents the histogram of
+CS thicknesses. The distribution is dominated by thin
+and short structures; specifically, ∼69% of CSs exhibit
+both a thickness δ < 1 di and a length Λ < 5di (not
+shown). Although this method does not distinguish be-
+tween active reconnection sites and simple CSs, we expect
+EREC events to be predominantly located within subion
+scale sheets (δ < di).
+Figure 8b shows a scatter plot of the aspect ratio Λ/δ
+versus δ (log-log scale) for each CS. Each circle in the
+plot represents a cluster and is colored by the electron-
+frame dissipation measure averaged over all points in the
+cluster, De, normalized to the global standard devia-
+
+11
+FIG. 7. Analysis of HDBSCAN clusters at time t = 534.6Ω−1
+i
+. Panel (a): In-plane magnetic field lines (black) with identified
+clusters highlighted in various colors. Panel (b): Shaded isocontours of the normalized out-of-plane current density |Jz|/σ(Jz).
+FIG. 8. Analysis of statistical properties of the HDBSCAN CS clusters at time t = 534.6Ω−1
+i
+. Panel (a): Histogram of CSs
+thicknesses δ/di. Panel (b): Scatter plot of the aspect ratio Λ/δ versus δ (in log-log scale) for each CS, with points colored by
+their mean De/σ(De). Points with |De/σ(De)| < 1 are shown in white.
+tion σ(De) calculated over the whole simulation domain.
+Points with |De/σ(De)| < 1 are shown in white.
+We
+observe that as δ decreases, the aspect ratio increases.
+The linear regression yields a slope of −0.61 with a Pear-
+son correlation coefficient of −0.62, indicating a mod-
+erate correlation. This trend simply implies that thin-
+ner, smaller-scale structures tend to be relatively more
+elongated. Finally, we find that ∼50.2% of CSs exhibit
+|De/σ(De)| > 1 (Fig. 8b), suggesting these are highly
+active structures with intense energy conversion. How-
+ever, it is important to note that De is both positive and
+negative, resulting in a mean normalized dissipation over
+all sheets of ∼0.02.
+
+12
+V.
+DISCUSSION AND CONCLUSIONS
+In this work, we have investigated the spontaneous for-
+mation of EREC using a 2D Hybrid Vlasov-Maxwell sim-
+ulation of plasma turbulence, initialized with parameters
+consistent with typical SW conditions. While EREC is
+commonly observed in Earth’s magnetosheath, where the
+turbulence correlation length is constrained to be near
+ion scales by bow shock driving mechanisms, its forma-
+tion in the SW, with a large correlation length, remains
+an open question. In contrast to previous numerical in-
+vestigations, our results show that turbulent dynamics
+can naturally and spontaneously generate EREC events
+without the need to inject directly at small scales.
+We have identified and characterized two distinct
+mechanisms driving EREC that are associated with the
+secondary instability of large-scale turbulent structures.
+The first mechanism involves cross-scale interactions, in
+which large-scale IREC events produce secondary plas-
+moids interacting within the IREC outflows, creating
+small-scale secondary CSs hosting EREC. This process
+highlights how standard IREC can drive the develop-
+ment of small-scale EREC. In the second mechanism,
+turbulence drives the formation of subion-scale electron-
+velocity shears that are unstable to EKHI, leading to
+electron vortices. These frozen-in electron vortices wrap
+the magnetic field, creating a chain of near-ion-scale plas-
+moids that host EREC. This mechanism demonstrates
+the importance of velocity shears in generating small-
+scale EREC events within turbulent environments.
+The signatures of the EREC sites we have detected
+are consistent with typical observations, showing super-
+Alfv´enic electron jets and decoupled ions. In particular,
+the secondary EREC produced by the large-scale IREC
+event exhibits a magnetic field dissipation rate that is
+one order of magnitude larger than the dissipation rate
+induced by the primary IREC, consistent with the faster
+reconnection rate expected for EREC due to ion demag-
+netization. In contrast, the EKHI-driven EREC exhibits
+lower dissipation rates, comparable to those of IREC.
+This difference suggests that part of the magnetic en-
+ergy available in the larger-scale magnetic configuration
+is instead dissipated by the EKHI, resulting in a weaker
+magnetic-field dissipation rate within the EDR.
+To assess the global relevance of local EREC events,
+we performed a statistical analysis of CSs using the ma-
+chine learning tool HDBSCAN, a hierarchical density-
+based clustering algorithm.
+Our analysis reveals that
+the turbulent domain is dominated by thin and short
+structures: approximately 69% of the identified CSs have
+thicknesses below the ion inertial length (δ < di) and
+lengths below 5di, which should be conducive to EREC
+if they undergo magnetic reconnection. Furthermore, we
+find that small-scale CSs are characterized by intense lo-
+cal magnetic-to-plasma energy conversion (both positive
+and negative). This suggests that EREC events could
+play an important role in dissipating energy at small ki-
+netic scales, even in large-scale systems such as the SW.
+This work provides a clear demonstration of several
+secondary instabilities in 2D that can generate EREC,
+even within systems with larger magnetic correlation
+lengths. Effects such as these are expected to operate
+even in fully 3D systems, and their analysis provides im-
+portant groundwork for studying the spontaneous gener-
+ation of EREC in the SW, which captures most of the
+key physics involved in the process. However, a natural
+extension to this work will be to investigate the role of
+EREC in 3D turbulence. In 3D systems, magnetic islands
+correspond to flux ropes, which can interact in complex
+ways that are not possible in 2D setups, and additional
+secondary instabilities may be present that may provide
+additional avenues for the generation of EREC events
+or alter the reconnection dynamics. Another extension
+of our work would be to include electron kinetic effects,
+which could eventually affect the turbulent cascade at
+subion scales [66, 67]. We plan to extend our results us-
+ing 2D and 3D fully kinetic simulations in future works.
+In conclusion, our findings suggest that EREC is not
+strictly confined to environments with small magnetic
+correlation lengths, such as the Earth’s magnetosheath.
+EREC may be a natural and emergent feature of fully
+developed plasma turbulence even in systems with large
+correlation lengths, such as the SW. The occurrence of
+EREC in the SW may be relevant to understanding the
+nature of non-linear interactions at kinetic scales and the
+role of reconnection in the dissipation of turbulent fluc-
+tuations. Given the current lack of in situ measurements
+with sufficiently small-scale resolution to unambiguously
+resolve EREC in the SW, our results demonstrate the ne-
+cessity of future high-resolution measurements tailored to
+the solar wind environment in order to resolve essential
+physics related to the dissipation of turbulence in large
+astrophysical plasma environments. Ultimately, these re-
+sults underscore the possible implications of EREC as a
+collisionless mechanism for local magnetic-to-plasma en-
+ergy conversion at kinetic scales, highlighting the funda-
+mental role of turbulence-driven cross-scale interactions
+in the dynamics of the SW and other collisionless space
+plasmas.
+ACKNOWLEDGMENTS
+J. E.-T. acknowledges the support of ANID, Chile,
+through National Doctoral Scholarship No.
+21231291.
+P.S.M. thanks Fondecyt-Chile grant No. 1240281. Nu-
+merical simulations and data analysis have been per-
+formed on Marconi and Galileo100 at CINECA (Italy),
+under the ISCRA initiative.
+Portions of this research
+were supported by the International Space Science Insti-
+tute (ISSI) in Bern, through the ISSI International Team
+project 24-612: Excitation and Dissipation of Kinetic-
+Scale Fluctuations in Space Plasmas.
+J.E.S. is sup-
+ported by the Royal Society University Research Fellow-
+ship URF\R\251029.
+
+13
+Appendix A: Calculation of inflow Alfv´en velocity and inflow density
+In this appendix, we describe the calculation of the inflow Alfv´en velocity, cAi,in = Bin/√4πminin, used to normalize
+the reconnection outflow velocities in Figures 2, 3, and 6. Here, Bin and nin denote the magnitude of the inflow
+magnetic field and the inflow density, respectively. To quantify these parameters, we analyze a 1D cut along the
+inflow direction, defined as the eigenvector associated with the largest eigenvalue of the Hessian of the magnetic flux
+function at the X-point. The IREC and EREC cut lengths are set to ∼12di and ∼2di, respectively, to appropriately
+match the width of the reconnection exhaust in both cases. Bin is calculated as the average of the local magnetic field
+maxima found on both sides of the X-point (s=0), as illustrated in Figure 9. The inflow density nin is defined as the
+mean density along this 1D cut. As shown in Figure 10, nin remains close to the initial background density, n0.
+FIG. 9. Normalized in-plane magnetic field magnitude,
+p
+B2x + B2y/B0, along a 1D cut through the inflow direction crossing
+the X-point for: (a) the IREC event at t = 360.7Ω−1
+i
+(Fig. 2); (b) the secondary EREC event at t = 360.7Ω−1
+i
+(Fig. 3); and
+(c) the EKHI-driven EREC event at t = 543.5Ω−1
+i
+(Fig. 6). The green dots mark the local maxima for s > 0 and s < 0, while
+the blue line represents the average between these two maxima, defining Bin/B0.
+FIG. 10. Normalized density, n/n0, along a 1D cut through the inflow direction crossing the X-point for: (a) the IREC event
+at t = 360.7Ω−1
+i
+(Fig. 2); (b) the EREC event at t = 360.7Ω−1
+i
+(Fig. 3); and (c) the EREC event at t = 543.5Ω−1
+i
+(Fig. 6).
+The blue line represents the mean value along the cut, defining nin/n0.
+
+14
+Appendix B: Current sheet identification at early times
+Figure 11 displays the in-plane magnetic field lines at t = 320.7Ω−1
+i , with identified clusters highlighted in various
+colors. At this time, the turbulent cascade has not yet fully developed and therefore does not reach very small scales.
+Consequently, HDBSCAN identifies a total of 143 clusters, demonstrating that at earlier times, CSs are fewer in
+number and larger in scale, as compared to the fully developed turbulent state where 516 CSs are detected.
+FIG. 11. Analysis of HDBSCAN clusters at time t = 320.7Ω−1
+i
+. Panel (a): In-plane magnetic field lines (black) with identified
+clusters highlighted in various colors. Panel (b): Shaded isocontours of the normalized out-of-plane current density |Jz|/σ(Jz).
+
+15
+[1] D. Biskamp, Magnetic Reconnection in Plasmas, Cam-
+bridge Monographs on Plasma Physics (Cambridge Uni-
+versity Press, 2000).
+[2] E. G. Zweibel and M. Yamada, Magnetic reconnection in
+astrophysical and laboratory plasmas, Annual review of
+astronomy and astrophysics 47, 291 (2009).
+[3] M. Yamada, R. Kulsrud, and H. Ji, Magnetic reconnec-
+tion, Reviews of modern physics 82, 603 (2010).
+[4] S. Servidio, W. Matthaeus, M. Shay, P. Cassak, and
+P. Dmitruk, Magnetic reconnection in two-dimensional
+magnetohydrodynamic turbulence, Physical review let-
+ters 102, 115003 (2009).
+[5] V.
+Zhdankin,
+D.
+A.
+Uzdensky,
+J.
+C.
+Perez,
+and
+S.
+Boldyrev,
+Statistical
+analysis
+of
+current
+sheets
+in three-dimensional magnetohydrodynamic turbulence,
+The Astrophysical Journal 771, 124 (2013).
+[6] L. Franci, S. S. Cerri, F. Califano, S. Landi, E. Papini,
+A. Verdini, L. Matteini, F. Jenko, and P. Hellinger, Mag-
+netic reconnection as a driver for a sub-ion-scale cascade
+in plasma turbulence, The Astrophysical Journal Letters
+850, L16 (2017).
+[7] S. S. Cerri and F. Califano, Reconnection and small-scale
+fields in 2d-3v hybrid-kinetic driven turbulence simula-
+tions, New Journal of Physics 19, 025007 (2017).
+[8] D. Sundkvist, A. Retin`o, A. Vaivads, and S. D. Bale,
+Dissipation in turbulent plasma due to reconnection in
+thin current sheets, Physical review letters 99, 025004
+(2007).
+[9] S. Servidio, F. Valentini, F. Califano, and P. Veltri, Lo-
+cal kinetic effects in two-dimensional plasma turbulence,
+Physical review letters 108, 045001 (2012).
+[10] L. Franci, E. Papini, A. Micera, G. Lapenta, P. Hellinger,
+D. Del Sarto, D. Burgess, and S. Landi, Anisotropic elec-
+tron heating in turbulence-driven magnetic reconnection
+in the near-sun solar wind, The Astrophysical Journal
+936, 27 (2022).
+[11] E. G. Zweibel and M. Yamada, Perspectives on mag-
+netic reconnection, Proceedings of the Royal Society A:
+Mathematical, Physical and Engineering Sciences 472,
+20160479 (2016).
+[12] J. Gosling, R. M. Skoug, D. McComas, and C. Smith,
+Direct evidence for magnetic reconnection in the solar
+wind near 1 au, Journal of Geophysical Research: Space
+Physics 110 (2005).
+[13] S. Eriksson, M. Swisdak, J. M. Weygand, A. Mallet, D. L.
+Newman, G. Lapenta, L. B. Wilson III, D. L. Turner, and
+B. Larsen, Characteristics of multi-scale current sheets
+in the solar wind at 1 au associated with magnetic re-
+connection and the case for a heliospheric current sheet
+avalanche, The Astrophysical Journal 933, 181 (2022).
+[14] J. Burch, T. Moore, R. Torbert, and B.-h. Giles, Mag-
+netospheric multiscale overview and science objectives,
+Space Science Reviews 199, 5 (2016).
+[15] T. Phan, J. P. Eastwood, M. Shay, J. Drake, B. ¨O. Son-
+nerup, M. Fujimoto, P. Cassak, M. Øieroset, J. Burch,
+R. Torbert, et al., Electron magnetic reconnection with-
+out ion coupling in earth’s turbulent magnetosheath, Na-
+ture 557, 202 (2018).
+[16] P. Sharma Pyakurel, M. A. Shay, T. D. Phan, W. H.
+Matthaeus, J. F. Drake, J. M. TenBarge, C. C. Haggerty,
+K. G. Klein, P. A. Cassak, T. N. Parashar, M. Swis-
+dak, and A. Chasapis, Transition from ion-coupled to
+electron-only reconnection: Basic physics and implica-
+tions for plasma turbulence, Physics of Plasmas 26,
+082307 (2019).
+[17] F. Califano, S. S. Cerri, M. Faganello, D. Laveder,
+M. Sisti, and M. W. Kunz, Electron-only reconnection
+in plasma turbulence, Frontiers in Physics 8, 317 (2020).
+[18] G. Arr`o, F. Califano, and G. Lapenta, Statistical prop-
+erties of turbulent fluctuations associated with electron-
+only magnetic reconnection, Astronomy & Astrophysics
+642, A45 (2020).
+[19] C. Granier, S. S. Cerri, and F. Jenko, Electron-only re-
+connection and ion heating in 3d3v hybrid-vlasov plasma
+turbulence, The Astrophysical Journal 974, 11 (2024).
+[20] J. Stawarz, J. Eastwood, T. Phan, I. Gingell, P. Pyakurel,
+M. Shay, S. Robertson, C. Russell, and O. Le Contel,
+Turbulence-driven magnetic reconnection and the mag-
+netic correlation length:
+Observations from magneto-
+spheric multiscale in earth’s magnetosheath, Physics of
+Plasmas 29 (2022).
+[21] G. Lapenta, J. Berchem, M. El-Alaoui, R. Walker, H. Ar-
+avindakshan, N. Reisinger, F. Pucci, G. Arr`o, and F. Bac-
+chini, A lagrangian-frame technique for investigating
+plasma turbulence in complex underlying system-scale
+structures, Fundamental Plasma Physics , 100099 (2025).
+[22] J. E. Stawarz, J. P. Eastwood, T. Phan, I. Gingell,
+M. Shay, J. Burch, R. Ergun, B. Giles, D. Gershman,
+O. Le Contel, et al., Properties of the turbulence associ-
+ated with electron-only magnetic reconnection in earth’s
+magnetosheath, The Astrophysical journal letters 877,
+L37 (2019).
+[23] R.
+Bandyopadhyay,
+L.
+Sorriso-Valvo,
+A.
+Chasapis,
+P. Hellinger, W. H. Matthaeus, A. Verdini, S. Landi,
+L. Franci, L. Matteini, B. L. Giles, et al., In situ ob-
+servation of hall magnetohydrodynamic cascade in space
+plasma, Physical review letters 124, 225101 (2020).
+[24] G. Lapenta, S. Markidis, M. V. Goldman, and D. L.
+Newman, Secondary reconnection sites in reconnection-
+generated flux ropes and reconnection fronts, Nature
+Physics 11, 690 (2015).
+[25] M. Zhou, H. Man, X. Deng, Y. Pang, Y. Khotyaint-
+sev, G. Lapenta, Y. Yi, Z. Zhong, and W. Ma, Obser-
+vations of secondary magnetic reconnection in the turbu-
+lent reconnection outflow, Geophysical Research Letters
+48, e2020GL091215 (2021).
+[26] Z. Zhong, M. Zhou, X. Deng, L. Song, D. B. Graham,
+R. Tang, H. Man, Y. Pang, Y. V. Khotyaintsev, and
+B. Giles, Three-dimensional electron-scale magnetic re-
+connection in earth’s magnetosphere, Geophysical Re-
+search Letters 48, 2020GL090946 (2021).
+[27] G. Lapenta, M. Goldman, D. L. Newman, and S. Eriks-
+son, Formation and reconnection of electron scale current
+layers in the turbulent outflows of a primary reconnection
+site, The Astrophysical Journal 940, 187 (2022).
+[28] H.
+Karimabadi,
+V.
+Roytershteyn,
+M.
+Wan,
+W.
+Matthaeus,
+W.
+Daughton,
+P.
+Wu,
+M.
+Shay,
+B. Loring, J. Borovsky, E. Leonardis, et al., Coherent
+structures,
+intermittent
+turbulence,
+and
+dissipation
+in high-temperature plasmas, Physics of Plasmas 20
+(2013).
+
+16
+[29] G. Arr`o, F. Pucci, F. Califano, M. E. Innocenti, and
+G. Lapenta, Generation of subion scale magnetic holes
+from electron shear flow instabilities in plasma turbu-
+lence, The Astrophysical Journal 958, 11 (2023).
+[30] J. Espinoza-Troni, G. Arr`o, F. A. Asenjo, and P. S.
+Moya, Electron-scale magnetic holes generation driven
+by whistler-to-bernstein mode conversion in fully kinetic
+plasma turbulence, The Astrophysical Journal 986, 228
+(2025).
+[31] J. E. Stawarz, P. A. Mu˜noz, N. Bessho, R. Bandyopad-
+hyay, T. K. M. Nakamura, S. Eriksson, D. B. Graham,
+J. B¨uchner, A. Chasapis, J. F. Drake, M. A. Shay, R. E.
+Ergun, H. Hasegawa, Y. V. Khotyaintsev, M. Swisdak,
+and F. D. Wilder, The interplay between collisionless
+magnetic reconnection and turbulence, Space Science Re-
+views 220, 90 (2024).
+[32] F. Valentini, P. Tr´avn´ıˇcek, F. Califano, P. Hellinger, and
+A. Mangeney, A hybrid-vlasov model based on the cur-
+rent advance method for the simulation of collisionless
+magnetized plasma, Journal of Computational Physics
+225, 753 (2007).
+[33] M. V. Goldman, D. L. Newman, and G. Lapenta, What
+can we learn about magnetotail reconnection from 2d
+pic harris-sheet simulations?, Space Science Reviews 199,
+651 (2016).
+[34] G. Arr`o, F. Califano, F. Pucci, T. Karlsson, and H. Li,
+Large-scale linear magnetic holes with magnetic mirror
+properties in hybrid simulations of solar wind turbulence,
+The Astrophysical Journal Letters 970, L6 (2024).
+[35] H. P. Furth, J. Killeen, and M. N. Rosenbluth, Finite-
+resistivity instabilities of a sheet pinch, The Physics of
+Fluids 6, 459 (1963).
+[36] S. V. Bulanov, F. Pegoraro, and A. S. Sakharov, Mag-
+netic reconnection in electron magnetohydrodynamics,
+Physics of Fluids B: Plasma Physics 4, 2499 (1992).
+[37] Q. Chen, A. Otto, and L. C. Lee, Tearing instability,
+kelvin-helmholtz instability, and magnetic reconnection,
+Journal of Geophysical Research: Space Physics 102, 151
+(1997).
+[38] D. A. Uzdensky and N. F. Loureiro, Magnetic reconnec-
+tion onset via disruption of a forming current sheet by the
+tearing instability, Phys. Rev. Lett. 116, 105003 (2016).
+[39] N. Loureiro, A. A. Schekochihin, and S. C. Cowley, Insta-
+bility of current sheets and formation of plasmoid chains,
+Physics of Plasmas 14 (2007).
+[40] D.
+Uzdensky,
+N.
+Loureiro,
+and
+A.
+Schekochihin,
+Fast magnetic reconnection in the plasmoid-dominated
+regime, Physical review letters 105, 235002 (2010).
+[41] J. Walker, S. Boldyrev, and N. F. Loureiro, Influence of
+tearing instability on magnetohydrodynamic turbulence,
+Phys. Rev. E 98, 033209 (2018).
+[42] S. Boldyrev and N. F. Loureiro, Calculations in the the-
+ory of tearing instability, Journal of Physics: Conference
+Series 1100, 012003 (2018).
+[43] F. Califano, S. S. Cerri, M. Faganello, D. Laveder,
+M. Sisti, and M. W. Kunz, Electron-only reconnection
+in plasma turbulence, Frontiers in Physics Volume 8 -
+2020, 10.3389/fphy.2020.00317 (2020).
+[44] L. C. Lee and K. H. Lee, Fluid and kinetic aspects of mag-
+netic reconnection and some related magnetospheric phe-
+nomena, Reviews of Modern Plasma Physics 4, 9 (2020).
+[45] K. Schindler, M. Hesse, and J. Birn, Magnetic field-
+aligned electric potentials in nonideal plasma flows, As-
+trophysical Journal, Part 1 (ISSN 0004-637X), vol. 380,
+Oct. 10, 1991, p. 293-301. Research supported by DFG,
+DOE, and NASA. 380, 293 (1991).
+[46] Y. Guan, Q. Lu, S. Lu, Y. Shu, and R. Wang, Role of ion
+dynamics in electron-only magnetic reconnection, Geo-
+physical Research Letters 51, e2024GL110787 (2024),
+e2024GL110787 2024GL110787.
+[47] Y.-H. Liu, P. Pyakurel, X. Li, M. Hesse, N. Bessho,
+K. Genestreti, and S. B. Thapa, An analytical model of
+“electron-only” magnetic reconnection rates, Communi-
+cations Physics 8, 128 (2025).
+[48] S. Zenitani, M. Hesse, A. Klimas, and M. Kuznetsova,
+New measure of the dissipation region in collision-
+less magnetic reconnection, Physical review letters 106,
+195003 (2011).
+[49] Y. Yang, S. Adhikari, and W. H. Matthaeus, Electron
+dissipation and electromagnetic work, Journal of Geo-
+physical Research: Space Physics 129, e2024JA033105
+(2024), e2024JA033105 2024JA033105.
+[50] A. Das, N. Jain, P. Kaw, and S. Sengupta, Sausage in-
+stabilities in the electron current layer and its role in the
+concept of fast ignition, Nuclear Fusion 44, 98 (2003).
+[51] N. Jain, A. Das, P. Kaw, and S. Sengupta, Nonlinear
+electron magnetohydrodynamic simulations of sausage-
+like instability of current channels, Physics of Plasmas
+10, 29 (2003).
+[52] N. Jain, A. Das, and P. Kaw, Kink instability in electron
+magnetohydrodynamics, Physics of Plasmas 11, 4390
+(2004).
+[53] G. Gaur, S. Sundar, S. K. Yadav, A. Das, P. Kaw, and
+S. Sharma, Role of natural length and time scales on
+shear driven two-dimensional electron magnetohydrody-
+namic instability, Physics of Plasmas 16, 072310 (2009).
+[54] G. Gaur and A. Das, Linear and nonlinear studies
+of velocity shear driven three dimensional electron-
+magnetohydrodynamics instability, Physics of Plasmas
+19, 072103 (2012).
+[55] P. L. Pritchett and F. S. Mozer, Asymmetric magnetic
+reconnection in the presence of a guide field, Journal of
+Geophysical Research: Space Physics 114 (2009).
+[56] R. L. Fermo, J. F. Drake, and M. Swisdak, Secondary
+magnetic islands generated by the kelvin-helmholtz in-
+stability in a reconnecting current sheet, Phys. Rev. Lett.
+108, 255005 (2012).
+[57] C. Huang, Q. Lu, F. Guo, M. Wu, A. Du, and S. Wang,
+Magnetic islands formed due to the kelvin-helmholtz in-
+stability in the outflow region of collisionless magnetic
+reconnection, Geophysical Research Letters 42, 7282
+(2015).
+[58] Z. H. Zhong, R. X. Tang, M. Zhou, X. H. Deng, Y. Pang,
+W. R. Paterson, B. L. Giles, J. L. Burch, R. B. Tobert,
+R. E. Ergun, Y. V. Khotyaintsev, and P.-A. Lindquist,
+Evidence for secondary flux rope generated by the elec-
+tron kelvin-helmholtz instability in a magnetic recon-
+nection diffusion region, Phys. Rev. Lett. 120, 075101
+(2018).
+[59] Z. H. Zhong, M. Zhou, Y.-H. Liu, X. H. Deng, R. X.
+Tang, D. B. Graham, L. J. Song, H. Y. Man, Y. Pang,
+and Y. V. Khotyaintsev, Stacked electron diffusion re-
+gions and electron kelvin–helmholtz vortices within the
+ion diffusion region of collisionless magnetic reconnection,
+The Astrophysical Journal Letters 926, L27 (2022).
+[60] J. Ren, G. Arr`o, M. E. Innocenti, and G. Lapenta,
+Anisotropic heating and parallel heat flux in electron-
+only magnetic reconnection with intense guide fields,
+
+17
+Journal of Plasma Physics 91, E105 (2025).
+[61] R. J. G. B. Campello, D. Moulavi, and J. Sander,
+Density-based clustering based on hierarchical density es-
+timates, in Advances in Knowledge Discovery and Data
+Mining, edited by J. Pei, V. S. Tseng, L. Cao, H. Motoda,
+and G. Xu (Springer Berlin Heidelberg, Berlin, Heidel-
+berg, 2013) pp. 160–172.
+[62] M. Sisti, F. Finelli, G. Pedrazzi, M. Faganello, F. Cali-
+fano, and F. D. Ponti, Detecting reconnection events in
+kinetic vlasov hybrid simulations using clustering tech-
+niques, The Astrophysical Journal 908, 107 (2021).
+[63] G. Lapenta, M. Goldman, D. L. Newman, and S. Eriks-
+son, Formation and reconnection of electron scale current
+layers in the turbulent outflows of a primary reconnection
+site, The Astrophysical Journal 940, 187 (2022).
+[64] M. Ester, H.-P. Kriegel, J. Sander, and X. Xu, A
+Density-Based Algorithm for Discovering Clusters in
+Large Spatial Databases with Noise, in Second Inter-
+national Conference on Knowledge Discovery and Data
+Mining (KDD’96). Proceedings of a conference held Au-
+gust 2-4, edited by D. W. Pfitzner and J. K. Salmon
+(1996) pp. 226–331.
+[65] E. Schubert, J. Sander, M. Ester, H. P. Kriegel, and
+X. Xu, Dbscan revisited, revisited: Why and how you
+should (still) use dbscan, ACM Trans. Database Syst.
+42, 10.1145/3068335 (2017).
+[66] W. H. Matthaeus, Y. Yang, M. Wan, T. N. Parashar,
+R. Bandyopadhyay, A. Chasapis, O. Pezzi, and F. Valen-
+tini, Pathways to dissipation in weakly collisional plas-
+mas, The Astrophysical Journal 891, 101 (2020).
+[67] G. Arr`o, F. Califano, and G. Lapenta, Spectral proper-
+ties and energy transfer at kinetic scales in collisionless
+plasma turbulence, Astronomy & Astrophysics 668, A33
+(2022).

@@ -1,0 +1,1923 @@
+Extended MHD Modeling of Tearing-Driven Magnetic Relaxation
+J. P. Sauppe1, 2, a) and C. R. Sovinec1, 3, b)
+1)Center for Plasma Theory and Computation, 1500 Engineering Drive, Madison, WI 53706,
+USA
+2)Department of Physics, University of Wisconsin-Madison, 1150 University Avenue, Madison, WI 53706,
+USA
+3)Department of Engineering-Physics, University of Wisconsin-Madison, 1500 Engineering Drive, Madison,
+WI 53706, USA
+Discrete relaxation events in reversed-ﬁeld pinch relevant conﬁgurations are investigated numerically with
+nonlinear extended magnetohydrodynamic modeling, including the Hall term in Ohm’s law and ﬁrst-order
+ion ﬁnite Larmor radius eﬀects. Results show variability among relaxation events, where the Hall dynamo
+eﬀect may help or impede the MHD dynamo eﬀect in relaxing the parallel current density proﬁle. The com-
+petitive behavior arises from multi-helicity conditions where the dominant magnetic ﬂuctuation is relatively
+small. The resulting changes in parallel current density and parallel ﬂow are aligned in the core, consis-
+tent with experimental observations. Analysis of simulation results also conﬁrms that force density from
+ﬂuctuation-induced Reynolds stress arises subsequent to the drive from ﬂuctuation-induced Lorentz force
+density. Transport of momentum density is found to be dominated by the ﬂuctuation-induced Maxwell stress
+over most of the cross section with viscous and gyroviscous contributions being large in the edge region. The
+ﬁndings resolve a discrepancy with respect to the relative orientation of current density and ﬂow relaxation,
+which had not been realized or investigated in Ref. [King et. al. Phys. Plasmas 19, 055905 (2012)], where
+only the magnitude of ﬂow relaxation is actually consistent with experimental results.
+I.
+INTRODUCTION
+Magnetic self-organization in the reversed-ﬁeld pinch1
+(RFP) occurs in discrete relaxation events as a result
+of the nonlinear interaction of magnetohydrodynamic
+(MHD) ﬂuctuations.
+Parallel current is preferentially
+driven in the core due to the magnetic winding of the
+RFP. The driven current proﬁle provides a large source
+of free energy for core-resonant m = 1 tearing modes,2
+resistive instabilities that bend and reconnect magnetic
+ﬁeld lines. These tearing modes saturate nonlinearly by
+coupling to edge resonant m = 0 modes and by redis-
+tributing the parallel current density through dynamo
+electric ﬁelds that result from correlated plasma ﬂuctu-
+ations.
+In driven plasma pinch conﬁgurations like the
+RFP, relaxation often occurs quasi-periodically as the
+inductive drive and resistive diﬀusion gradually rebuild
+the peaked current density proﬁle.3 Measurements on
+the Madison Symmetric Torus4 (MST) RFP also show
+changes in the plasma momentum density proﬁle as an-
+other result of the discrete current relaxation events.5,6
+The coupling of current relaxation and momentum evo-
+lution is not predicted with the single-ﬂuid MHD model,
+but extended MHD eﬀects provide at least a qualitative
+description of this coupling.
+Here, we examine how plasma ﬂuctuations redistribute
+parallel current density and parallel ﬂow during discrete
+relaxation events in single- and two-ﬂuid numerical mod-
+els of relaxation dynamics with and without ion gyrovis-
+cosity, a ﬁrst-order ion ﬁnite Larmor radius (FLR) ef-
+a)Presently at Los Alamos National Laboratory, Los Alamos, NM
+87545, USA; Electronic mail: jpsauppe@lanl.gov
+b)Electronic mail: csovinec@wisc.edu
+fect.
+Our primary goal is to understand the coupling
+between the current density and plasma ﬂow during re-
+laxation.
+This eﬀort builds on previous numerical re-
+sults which demonstrate changes in plasma ﬂow associ-
+ated with current relaxation within an extended MHD
+model.7 Our computations are run with greater dissipa-
+tion than those in Ref. 7, allowing simulation through
+multiple discrete relaxation events with three diﬀerent
+models. Importantly, we ﬁnd substantial diﬀerences be-
+tween the dynamo electric ﬁelds during the initial relax-
+ation event and subsequent events in our computations
+with extended MHD eﬀects. The diﬀerences have signif-
+icant implications for the coupling of current relaxation
+and ﬂow evolution. Additionally, changes in axial and
+angular plasma momentum are observed with two-ﬂuid
+models, and we diagnose both the source and the causes
+of the resulting radial transport.
+Early analytical work identiﬁed the possibility of dy-
+namo electric ﬁelds from correlated ﬂuctuations of ve-
+locity and magnetic ﬁeld, what is known as the single-
+ﬂuid MHD dynamo, −
+D
+˜V × ˜B
+E
+.8 Helically symmetric
+MHD computations and comparison to Kadomtsev’s saw-
+tooth model clariﬁed the nonlinear dynamics of isolated,
+tearing-driven magnetic islands in RFP conﬁgurations.9
+Subsequent studies highlight the importance of the MHD
+dynamo in quasi-linear analysis10 and in 3D nonlinear
+computations.11 The characteristic reversed-ﬁeld state
+can be described by ﬂuctuation-induced turbulence12 and
+by reconnection of a magnetic island associated with an
+edge-resonant tearing mode that is driven nonlinearly by
+the core-resonant modes.13 Other numerical studies high-
+light the importance of nonlinear interaction and ﬁnd
+that the redistribution of current is mediated via three-
+wave coupling between core-resonant and edge-resonant
+tearing modes.14,15
+
+2
+Experimental measurements on MST substantiate the
+ﬂuctuation-induced MHD dynamo during relaxation.
+Correlation of probe-measured magnetic and electro-
+static ﬂuctuations shows MHD dynamo activity of suf-
+ﬁcient strength to sustain edge parallel current in early
+MST discharges.16 Edge magnetic ﬁeld ﬂuctuations cor-
+related with chordal spectroscopic measurements of ve-
+locity ﬂuctuations also indicate signiﬁcant contributions
+from the single-ﬂuid MHD dynamo in the core.17 Opti-
+cal probe measurements ﬁnd that the substantial con-
+tributions to MHD dynamo in the edge vanish near the
+reversal surface,18 and this suggests the existence of an
+additional dynamo mechanism.
+The possibility of non-MHD dynamo eﬀects is evident
+when examining the generalized Ohm’s law:
+E = −V × B + ηJ + Λe
+J × B
+ne
+−∇pe
+ne + me
+ne2
+∂J
+∂t
+
+.
+(1)
+Here, the marker Λe is inserted to indicate where two-
+ﬂuid eﬀects enter the generalized Ohm’s law; Λe = 0
+for single-ﬂuid MHD while Λe = 1 for two-ﬂuid mod-
+els. The Hall dynamo is identiﬁed as the result of corre-
+lated ﬂuctuations of current density and magnetic ﬁeld,
+D
+˜J × ˜B
+E
+/ ⟨n⟩e.19 Nonlinear computations utilizing this
+extended MHD Ohm’s law ﬁnd signiﬁcant contributions
+from both MHD dynamo and Hall dynamo in single-
+helicity20 and multi-helicity7 conditions.
+Correlated ﬂuctuations of density and electron temper-
+ature gradients may provide an additional dynamo elec-
+tric ﬁeld,21 but this eﬀect is found to be negligible in the
+computations presented here. The electron inertia term
+provides a resonance condition for the whistler wave at
+the electron cyclotron frequency, and it is included here
+to limit the range of temporal scales as spatial resolu-
+tion is increased.22 It also allows collisionless reconnec-
+tion when the tearing layer approaches the electron skin
+depth,23,24 but this is not measured to be signiﬁcant in
+our computations.
+Measurements on MST ﬁnd that the Hall dynamo
+is negligible compared to the MHD dynamo near the
+plasma edge.25 However, signiﬁcant contributions to Hall
+dynamo electric ﬁeld from the core-resonant tearing
+mode are identiﬁed using laser Faraday rotation, and the
+contributions are interpreted as being localized near the
+resonant surface.26,27 More recent probe measurements
+near the plasma edge ﬁnd Hall dynamo electric ﬁeld that
+is large near the reversal surface,6 where MHD dynamo
+is observed to vanish.18 Development of a deep insertion
+probe allows a radial reconstruction of the Hall dynamo
+electric ﬁeld across a much larger portion of the outer
+radius, and recent results indicate that the Hall dynamo
+electric ﬁeld has regions of greater magnitude at smaller
+radii.28
+Correlated ﬂuctuations of current density and mag-
+netic ﬁeld also appear in the plasma momentum equa-
+tion,
+min∂V
+∂t = −minV · ∇V + J × B −∇p −∇· Πi, (2)
+as a Lorentz force density, and two-ﬂuid eﬀects naturally
+couple the current and momentum evolution.
+Experi-
+mental measurements of the Hall dynamo and associated
+Lorentz force density near the edge during relaxation
+ﬁnd it is nearly balanced by the ﬂuid response through
+the force density from Reynolds stress.6 However, signiﬁ-
+cant changes in plasma momentum density parallel to the
+large-scale magnetic ﬁeld are observed at the discrete re-
+laxation events. The changes are in the direction of the
+Lorentz force density, as might be expected for a system
+where magnetic energy density dominates.
+A previous computational study demonstrates the two-
+ﬂuid coupling of current and ﬂow evolution during re-
+laxation, and it reproduces the balancing between the
+ﬂuctuation-induced Lorentz force density and ﬂuid re-
+sponse with net changes in plasma ﬂow in the direction
+of Lorentz force density.7 In Ref. 7 the current density is
+parallel to the magnetic ﬁeld, J·B > 0, and the change in
+parallel current density and the change in parallel ﬂow in
+the core are in opposite directions during the examined
+relaxation events. However, standard operation of MST
+has J · B < 0, and the experimental results of Ref. 6 ﬁnd
+that relaxation-induced changes in parallel current den-
+sity and parallel ﬂow in the core are in the same direction.
+This is observed to hold in ensemble-averaged experimen-
+tal results, regardless of the sign of J · B. As described
+in Sec. III D, reversing the sign of J · B in the compu-
+tations still results in the relaxation-induced change in
+parallel current density opposing the relaxation-induced
+change in parallel ﬂow during the ﬁrst relaxation event
+of a simulation.
+Momentum
+transport
+through
+ﬂuctuation-induced
+Lorentz force density is not restricted to two-ﬂuid mod-
+els.
+Although
+D
+˜J × ˜B
+E
+vanishes for linear, resistive-
+MHD tearing modes of stationary equilibria as a result of
+the phases between ˜J and ˜B,29 the phase relations may
+be altered by several mechanisms, such as two-ﬂuid ef-
+fects, nonlinear coupling, or background ﬂow shear. Pre-
+vious computational work examined momentum trans-
+port in a single-ﬂuid MHD model with a sheared back-
+ground ﬂow.30,31 Linear and nonlinear single-mode com-
+putations ﬁnd momentum transport from
+D
+˜J × ˜B
+E
+that
+is radially localized and acts to reduce the ﬂow shear
+around the tearing mode resonance. Multi-mode compu-
+tations demonstrate radial broadening and enhancement
+of the momentum transport from the ﬂuctuation-induced
+Lorentz force density as a result of the nonlinear inter-
+actions of multiple tearing modes. However, ﬂuctuation-
+induced Reynolds stress remains relatively small in the
+conditions considered, and this is attributed to viscous
+damping.
+The remainder of the paper is organized as follows. In
+Sec. II, we introduce the extended MHD models used
+
+3
+here and describe the initial and boundary conditions for
+our computations. Computational results are presented
+in Sec. III, and we focus primarily on the dynamo elec-
+tric ﬁelds, plasma ﬂow evolution, and changes in total
+axial and angular momentum during relaxation. A brief
+discussion and concluding remarks are given in Sec. IV.
+II.
+EXTENDED MHD MODEL
+A.
+Modeling
+We investigate plasma relaxation dynamics numeri-
+cally with the NIMROD code, which is used to solve ex-
+tended MHD systems of equations.22,32 The magnetic
+ﬁeld is advanced using Faraday’s law without displace-
+ment current, as appropriate for the low-frequency dy-
+namics under investigation here,
+∂B
+∂t = −∇× E + κ∇(∇· B) ,
+(3)
+and the electric ﬁeld is given by Eq. (1). A divergence
+cleaning term is needed in the magnetic ﬁeld advance,
+as the NIMROD representation does not satisfy ∇· B = 0
+identically.32 However, Ref. 33 shows that the residual
+numerical error does not appreciably aﬀect the compu-
+tations presented here.
+When solving Eq. (2) for ﬂow velocity, the anisotropic
+stress tensor in our computations consists of a simple
+viscous term and the Braginskii gyroviscous term:
+Πi ≡Πiso + ΛiΠgyr.
+(4)
+Here, the marker Λi is used to indicate where ion FLR
+eﬀects enter the system; Λi = 0 when they are ex-
+cluded and Λi = 1 when they are included.
+The col-
+lisional viscosity is modeled as Πiso = νminW, where
+W = ∇V + (∇V)T −2
+3I (∇· V). Ion FLR eﬀects enter
+the system at the same order as the extended MHD ef-
+fects in Ohm’s law if the ions are not cold, and they can
+be included to ﬁrst order via the Braginskii ion gyrovis-
+cous stress tensor,34
+Πgyr = mipi
+4e|B|
+h
+ˆb × W ·
+
+I + 3ˆbˆb
+
+−
+
+I + 3ˆbˆb
+
+· W × ˆb
+i
+(5)
+where ˆb ≡B/|B|.
+The continuity equation includes a small artiﬁcial dif-
+fusion for numerical stability,
+∂n
+∂t = −∇· (nV) + ∇· (Dn∇n) ,
+(6)
+but it does not signiﬁcantly aﬀect the dynamics of inter-
+est here. We model the electrons and ions as being at
+ﬁxed fractions of a single temperature, Ti = fTiT and
+Te = (1 −fTi) T, where fTi represents the ion temper-
+ature fraction. Detailed thermal transport modeling is
+beyond the scope of this work, so viscous and Ohmic
+heating are neglected in the temperature advance,
+n∂T
+∂t = −nV · ∇T −nT (Γ −1) ∇· V + ∇· (χn∇T) ,
+(7)
+and a simple isotropic thermal conduction is used.
+We approximate the RFP geometry as a periodic cylin-
+der with minor radius a, axial length L = 2πR, and as-
+pect ratio R/a = 3, which roughly matches MST. NIMROD
+utilizes a spectral-element expansion32 for two spatial di-
+rections and a Fourier representation in the third periodic
+direction. Here, the spectral elements are used for the ra-
+dial (r) and axial (z) directions, and periodic boundary
+conditions are imposed in the axial direction to yield a
+topologically toroidal domain. Regularity conditions are
+enforced at r = 0, and the boundary conditions enforced
+at r = a are discussed in Sec. II B. The r−z plane is dis-
+cretized with a rectangular grid consisting of uniformly
+spaced elements in the radial and axial directions, with
+basis functions of ﬁxed polynomial degree within each el-
+ement. All computations reported here have a 120 × 64
+(radial×axial) mesh of biquintic ﬁnite elements.
+Con-
+vergence has been ascertained, in part, by comparison
+to computations run with bicubic elements for the same
+conditions, as discussed in greater detail in Appendix A
+of Ref. 33. With biquintic polynomials in each element,
+there are 64 × 5 = 320 axial grid points, so crudely we
+expect to be able to represent axial (toroidal) Fourier
+modes up to n = 160. As will be seen shortly, this al-
+lows a suﬃciently broad n spectrum to be resolved in our
+computations. A ﬁnite Fourier series is used to represent
+the azimuthal (poloidal) angle (θ), and the computations
+here use 6 harmonics, 0 ≤m ≤5, where m is the poloidal
+harmonic number. This poloidal resolution is suﬃcient
+to capture the dominant low-m activity during relaxation
+events in the RFP. The magnetic energy in the largest
+resolved Fourier harmonic (m = 5) is typically 3 orders
+of magnitude smaller than the energy in the dominant
+m = 1 component during relaxation events.
+B.
+Initial and Boundary Conditions
+Our RFP computations are initialized from a force-
+free paramagnetic pinch, J × B|t=0 = ∇p|t=0 = 0, with
+ﬁnite plasma pressure.
+The paramagnetic pinch is an
+Ohmic steady state that is sustained by an externally
+applied electric ﬁeld, E|t=0 = −V × B|t=0 + ηJ|t=0, with
+∇×E|t=0 = 0.35 The state includes a small inward pinch
+ﬂow that is directly proportional to resistivity, but con-
+tributions from this term are neglected in the density
+[Eq. (6)] and velocity [Eq. (2)] advances. As discussed in
+Sec. III E, this results in an anomalous sink of momen-
+tum, but it does not signiﬁcantly aﬀect the evolution of
+plasma ﬂow in the core, where the pinch ﬂow is small.
+Our computations do not include any initial axial or an-
+gular ﬂow proﬁle; our focus here is solely on changes in
+
+4
+plasma ﬂow associated with the discrete current relax-
+ation events. Small perturbations to the magnetic ﬁeld
+and ﬂow that are several orders of magnitude smaller
+than the axisymmetric ﬁelds described above are imposed
+to excite linearly unstable tearing modes.
+No-slip boundary conditions are imposed on the tan-
+gential components of plasma ﬂow, and the normal com-
+ponent of magnetic ﬁeld is held ﬁxed, B · ˆn|r=a = 0.
+Dirichlet boundary conditions are applied to the tem-
+perature, T|r=a = T|r=a,t=0, allowing thermal energy to
+ﬂow into and out of the system at a rate limited by the
+isotropic thermal conductivity. The artiﬁcial density dif-
+fusion allows one to utilize similar boundary conditions
+for the number density, n|r=a = n|r=a,t=0, and particles
+may enter or exit the computational domain at a rate
+limited by the density diﬀusion coeﬃcient.
+C.
+Parameters
+Our model system [Eqs. (1)-(7)] may be parametrized
+by seven dimensionless physical parameters and two nu-
+merical parameters.
+The characteristic length scale is
+taken to be the plasma minor radius a. The seven phys-
+ical parameters are (1) the Lundquist number, the ra-
+tio of the resistive diﬀusion time and the Alfv´en time,
+S = τR/τA, where τA = a√µ0min/|B| and τR = µ0a2/η;
+(2) the magnetic Prandtl number, the ratio of resistive
+and viscous times, Pm = τR/τν, where τν = a2/ν; (3)
+the ratio of the viscous and thermal conduction times,
+τν/τχ = χ/ν; (4) the plasma-β, the ratio of ﬂuid and
+magnetic pressures, β = 2µ0p/|B|2; (5) the ion temper-
+ature fraction fTi; (6) the normalized ion skin depth,
+di/a = c/ωpia =
+p
+mi/µ0ne2/a; and (7) the normal-
+ized electron skin depth, de/a = c/ωpea =
+p
+me/midi/a,
+which can be varied artiﬁcially by changing the mass ra-
+tio me/mi. The two numerical parameters are (1) the ra-
+tio of viscous to density diﬀusion times, τν/τDn = Dn/ν;
+and (2) the ratio of divergence cleaning to resistive dif-
+fusion times, τ∇·B/τR = η/µ0κ.
+All computations presented here have a Lundquist
+number S = 20000, which is roughly 2 orders of mag-
+nitude smaller than in the experiment, as limited by
+computational practicalities.
+The isotropic viscosity is
+of the same order as resistivity, Pm = 1.0.
+As an
+idealization in our computations, both the resistivity
+and viscosity proﬁles are essentially uniform; they rise
+sharply only near r = a.
+This is in contrast to ex-
+periments, where the resistivity increases more gradu-
+ally as plasma temperature decreases from the core to
+the edge. The isotropic thermal conduction is one order
+of magnitude smaller, τν/τχ = 0.1, and it is spatially
+uniform with no dependence on temperature. The ﬂuid
+pressure is slightly higher than in the MST experiment,
+and β = 0.10 on-axis.
+As noted previously, the pres-
+sure proﬁle is uniform in our computations to focus on
+the current-gradient-driven tearing dynamics. However,
+the ion skin depth is comparable to values inferred in
+TABLE I. Parameters of models used in our computations.
+Model
+Λe
+Λi
+S
+aλ (0)
+A
+0
+0
+20000
+−3.88
+B
+1
+0
+20000
+−3.88
+C
+1
+1
+20000
+−3.88
+MST, di/a ≈0.17. The ion and electron temperatures
+are assumed to be equal, fTi = 0.5. The electron mass is
+artiﬁcially increased by a factor of 5 for numerical con-
+venience, me/mi ≈2.72 · 10−3.
+Lastly, the numerical
+parameters for our computations are τν/τDn = 0.1 and
+τ∇·B/τR = 5 · 10−5.
+We consider computations for each of the three sets
+of dimensionless parameters that are summarized in Ta-
+ble I.
+The ﬁrst model (A) uses the standard magne-
+tohydrodynamic Ohm’s law (Λe = 0) and excludes the
+ion gyroviscous stress tensor (Λi = 0). The other two
+models incorporate two-ﬂuid eﬀects in the generalized
+Ohm’s law (Λe = 1). The second model (B) does not
+include the gyroviscous stress tensor (Λi = 0), while the
+third (C) does (Λi = 1). The dimensionless parallel cur-
+rent density, aλ = aµ0J · B/|B|2, has an on-axis value of
+aλ (0) = −3.88 in all our computations, and this is simi-
+lar to standard operation of the MST experiment which
+has −4 ≤aλ (0) ≤−3. The evolution of magnetic helic-
+ity, hybrid helicity, and magnetic energy for these cases
+is analyzed in Ref. 33.
+III.
+RESULTS
+A.
+Global Evolution
+Our computations display multiple discrete relaxation
+events during the nonlinear evolution, as indicated by
+the highlighted regions in Fig. 1.
+The upper plot for
+each computation shows the ﬁeld reversal parameter,
+F = ⟨Bz⟩r=a / ⟨Bz⟩vol, the average toroidal ﬁeld at the
+wall of the device divided by the average toroidal ﬁeld
+over the volume, and the lower plots show the evolution
+of the largest magnetic ﬂuctuation energies, normalized
+to the initial axisymmetric magnetic energy. Relaxation
+events in our computations are characterized by an in-
+crease in the level of ﬁeld reversal and a high level of
+magnetic ﬂuctuation energy in multiple helical compo-
+nents. The increase in depth of reversal is a characteris-
+tic of experimental relaxation events,4 and measurements
+of the magnetic ﬂuctuation amplitudes at the wall of
+the device27,36 show increased activity during relaxation,
+similar to our volume-integrated magnetic energies. Each
+event typically ends with a peaking of magnetic energy
+in the edge resonant m = 0 modes as the m = 1 mode
+energies begin to fall oﬀ.
+Each computation begins from the perturbed param-
+agnetic pinch state and evolves into a saturated quasi-
+single-helicity37,38 (QSH) state dominated by the fastest-
+
+5
+0.15
+0.10
+0.05
+0.00
+Field Reversal
+0
+1
+2
+3
+4
+5
+6
+7
+8
+t/τA ( ×103 )
+10-5
+10-4
+10-3
+10-2
+WB,m,n/WB (0)
+(a)
+0.15
+0.10
+0.05
+0.00
+Field Reversal
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+t/τA ( ×103 )
+10-5
+10-4
+10-3
+10-2
+WB,m,n/WB (0)
+(b)
+0.15
+0.10
+0.05
+0.00
+Field Reversal
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+t/τA ( ×103 )
+10-5
+10-4
+10-3
+10-2
+WB,m,n/WB (0)
+(c)
+m =1,n =5
+m =1,n =6
+m =1,n =7
+m =1,n =8
+m =1,n =9
+m =1,n =10
+m =0,n =1
+m =0,n =2
+FIG. 1.
+Field reversal parameter and normalized spectral
+magnetic energy WB,m,n (t) /WB,0,0 (0) in (a) case A: single-
+ﬂuid MHD (Λe = 0, Λi = 0), (b) case B: two-ﬂuid no gyro-
+viscosity (Λe = 1, Λi = 0), (c) case C: two-ﬂuid with gyrovis-
+cosity (Λe = 1, Λi = 1). Relaxation events are highlighted.
+growing core-resonant m = 1, n = 6 mode. The initial
+relaxation event disrupts this QSH state once additional
+tearing modes grow to appreciable amplitude. We iden-
+tify the beginning of the ﬁrst event as when the slower-
+growing modes contain approximately 5% of the energy
+of the dominant mode. In the single-ﬂuid MHD compu-
+tation, the QSH state persists for about 2500 τA. That
+period is shorter for the extended-MHD computations.
+In the absence of drift eﬀects, two-ﬂuid eﬀects enhance
+linear tearing growth rates, relative to resistive-MHD,
+when the resistive layer width is smaller than the ion
+sound gyroradius, ρs =
+p
+Γβ/2di.39,40 This eﬀect can
+shorten the time it takes for the other linearly unstable
+modes in cases B and C to compete with the m = 1, n = 6
+mode. However, warm-ion gyroviscous eﬀects represent-
+ing ∇|B| and poloidal-curvature drifts reduce tearing-
+mode growth rates.20 That the QSH state persists for
+only 1100 τA in case B and slightly longer, 2000 τA, in our
+case C is, therefore, consistent with the tearing growth-
+rates from the diﬀerent models. The end of the relaxation
+event is determined when the ﬁeld reversal parameter
+reaches a minimum. The initial relaxation events in our
+computations here are qualitatively consistent with the
+initial events reported in Ref. 7.
+Following the initial event, the magnetic energy in the
+ﬂuctuations remains at a modest level in a multi-helicity
+state.
+Subsequent relaxation events occur from these
+conditions and are identiﬁed, in part, based on signif-
+icant nonlinear correlations evidenced through dynamo
+activity. These events typically begin when core-resonant
+modes again grow to appreciable amplitude. Nonlinear
+coupling between these modes and the edge resonant
+m = 0 modes drives higher n modes, and the parallel
+current density is redistributed from the core region to
+the edge region, ﬂattening the gradient and reducing the
+source of free energy. The relaxation events end with a
+peaking of magnetic energy in the edge resonant modes
+and a rapid reduction in energies of the core modes.
+Before proceeding further, we ﬁrst draw a distinction
+between the subsequent events identiﬁed in our compu-
+tations and those of Ref. 7.
+In the subsequent events
+identiﬁed in that work, the m = 0 amplitude remained
+small, a fact that is attributed to a lack of nonlinear
+drive rather than a direct result of gyroviscous stabiliza-
+tion. In the subsequent events we have identiﬁed here,
+we ﬁnd signiﬁcant nonlinear drive of the m = 0 mode and
+consequently larger changes in ﬁeld reversal parameter.
+Our case C computation is comparable to the two-ﬂuid
+computations discussed in Ref. 7; the largest diﬀerences
+are that our computation is run at S = 20000 instead of
+S = 80000, and it has greater spatial resolution. The sec-
+ond large-scale relaxation event in our case C computa-
+tion occurs nearly 4000 τA after the initial event, roughly
+1/5 of a resistive diﬀusion time, which for S = 80000 cor-
+responds to 16000 τA. The computation of Ref. 7 is run
+out for 8000 τA, so it is possible that subsequent large
+scale relaxation events would also be observed at later
+times in that case.
+The magnetic energy spectrum, decomposed by axial
+(n) and azimuthal (m) mode numbers, is peaked around
+the core-resonant m = 1, n = 6 mode during relax-
+ation, as can be seen in Fig. 2 which shows the spec-
+trum averaged over each relaxation event for the compu-
+tations. Strong peaking around the single-helicity modes
+(m/n = 1/6, 2/12, 3/18,...) is observed in the initial re-
+laxation event, but spectral broadening in both m and n
+is evident in subsequent events. Interestingly, the initial
+event in our computations that include two-ﬂuid eﬀects
+in the generalized Ohm’s law (B and C) display strong
+coupling through the m = 0, n = 2 mode, rather than
+the m = 0, n = 1 mode, and the m = 1, n = 8 mode
+
+6
+10-7
+10-6
+10-5
+10-4
+10-3
+10-2
+WB,m,n/WB(0)
+A: 3800
+t/τA
+4240
+A: 5711
+t/τA
+6040
+A: 7670
+t/τA
+8049
+10-7
+10-6
+10-5
+10-4
+10-3
+10-2
+WB,m,n/WB(0)
+B: 2410
+t/τA
+2776
+B: 3773
+t/τA
+4035
+B: 5133
+t/τA
+5417
+10-7
+10-6
+10-5
+10-4
+10-3
+10-2
+WB,m,n/WB(0)
+B: 6530
+t/τA
+6802
+B: 7423
+t/τA
+7696
+m =0
+m =1
+m =2
+m =3
+m =4
+m =5
+0
+12
+24
+36
+Axial Mode n
+10-7
+10-6
+10-5
+10-4
+10-3
+10-2
+WB,m,n/WB(0)
+C: 4054
+t/τA
+4446
+0
+12
+24
+36
+Axial Mode n
+C: 8396
+t/τA
+8596
+0
+12
+24
+36
+Axial Mode n
+C: 9812
+t/τA
+10590
+FIG. 2.
+Magnetic energy spectra decomposed by axial n
+and azimuthal m mode numbers and averaged over relaxation
+events in all computations. Modes of larger |n|-values are rep-
+resented in the simulations but are yet smaller and omitted
+for clarity.
+is the second most active mode during relaxation. The
+exact reasons for this behavior are not clear, but it is not
+observed in subsequent relaxation events.
+In our single-ﬂuid MHD computation (case A), subse-
+quent events have comparable energy in the both edge-
+resonant m = 0, n = 1 mode and the core-resonant
+m = 1, n = 6 mode. However, in subsequent events in
+cases B and C, the edge-resonant m = 0, n = 1 is sig-
+niﬁcantly smaller than the m = 1, n = 6 mode, and the
+depth of ﬁeld reversal is also reduced. This behavior can-
+not be attributed to gyroviscous stabilization entirely, as
+it occurs in case B, which does not include gyroviscous
+eﬀects. Nonetheless, it is clear that gyroviscous stabiliza-
+tion is having an impact, as the mode magnetic energies
+in case C are generally smaller than those in case B. This
+is especially evident in the higher-m modes.
+B.
+Dynamo Electric Fields
+Current density is redistributed through dynamo elec-
+tric ﬁelds parallel to ⟨B⟩, and here we examine their be-
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+10
+8
+6
+4
+2
+0
+2
+4
+E / VA B0 ( ×10−5 )
+Avg. Over 3800
+t/τA
+4240
+−⟨˜V ×˜B⟩
+η
+DJ−J|t =0
+E
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Avg. Over 5711
+t/τA
+6040
+FIG. 3. Dynamo electric ﬁeld averaged over two relaxation
+events in case A (Λe = 0, Λi = 0), the single-ﬂuid MHD
+computation.
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+10
+8
+6
+4
+2
+0
+2
+4
+E / VA B0 ( ×10−5 )
+Avg. Over 2410
+t/τA
+2776
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Avg. Over 6530
+t/τA
+6802
+−⟨˜V ×˜B⟩
+⟨˜J ×˜B⟩/⟨n⟩e
+η
+DJ−J|t =0
+E
+MHD+Hall
+FIG. 4. Dynamo electric ﬁelds averaged over two relaxation
+events in case B (Λe = 1, Λi = 0), the two-ﬂuid computation
+without ion gyroviscosity.
+havior in the initial and subsequent events of our three
+computations. The MHD dynamo has a consistent radial
+structure in all of the relaxation events in our single-ﬂuid
+MHD computation (case A), as can be seen in Fig. 3,
+which shows the dynamo electric ﬁelds in the ﬁrst and
+second relaxation events. (The third event is similar in
+character to the second and is not shown here.)
+The
+MHD dynamo is negative in the core and positive near
+the edge, changing sign near r/a ∼0.5, and acting to ﬂat-
+ten the parallel current proﬁle in each event. In the sub-
+sequent relaxation events, the amplitude of the MHD dy-
+namo is roughly twice as large as it is in the initial event.
+This correlates well with the larger changes in the par-
+allel current density proﬁle, evident in the η ⟨J −J|t=0⟩∥
+term, and the increased depth of reversal observed in
+these later events.
+The two-ﬂuid Hall dynamo is comparable in magnitude
+to the MHD dynamo in our computations that include
+two-ﬂuid eﬀects in the model. In the absence of ion gyro-
+viscosity (case B), the two-ﬂuid Hall dynamo is largest in
+the initial relaxation event and the fourth event, shown
+in Fig. 4. In the other relaxation events, the Hall dy-
+
+7
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+10
+8
+6
+4
+2
+0
+2
+4
+E / VA B0 ( ×10−5 )
+Avg. Over 4054
+t/τA
+4446
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Avg. Over 8396
+t/τA
+8596
+−⟨˜V ×˜B⟩
+⟨˜J ×˜B⟩/⟨n⟩e
+η
+DJ−J|t =0
+E
+MHD+Hall
+FIG. 5. Dynamo electric ﬁelds averaged over two relaxation
+events in case C (Λe = 1, Λi = 1), the two-ﬂuid computation
+with ion gyroviscosity.
+namo has considerable temporal variation, and the aver-
+ages over the relaxation events remain small. Both MHD
+and Hall dynamos are large during the ﬁrst and second
+relaxation events in our two-ﬂuid computation with ion
+gyroviscosity (case C), as can be seen in Fig. 5. The third
+relaxation event in case C is signiﬁcantly weaker, evident
+in the smaller drop in ﬁeld reversal, although the dynamo
+electric ﬁeld structure is comparable to the second event.
+In the ﬁrst relaxation event of both two-ﬂuid computa-
+tions, the MHD dynamo and Hall dynamo act to ﬂatten
+the parallel current proﬁle, each being negative in the
+core and positive near the edge. This behavior is in qual-
+itative agreement with previous two-ﬂuid computations
+that also ﬁnd the two dynamo eﬀects acting construc-
+tively during the initial event.7 However, in some of the
+subsequent relaxation events in our computations, most
+notably in the fourth relaxation event of case B and in
+both subsequent events of case C, the two dynamo eﬀects
+oppose each other. The MHD dynamo always acts to re-
+lax the parallel current proﬁle, and the Hall dynamo is
+found to sometimes oppose this relaxation, although it
+remains weaker in amplitude. Consequently, in all cases,
+the total dynamo acts to relax the parallel current pro-
+ﬁle, and ∆⟨J⟩∥is always positive in the core for these
+negative-λ computations. As described in Sec. III D, the
+dynamo competition in the core region results in ∆⟨J⟩∥
+and ∆⟨V⟩∥being in the same direction, consistent with
+experimental measurements. The dynamo activity in the
+edge region (0.5 < r/a < 1) of all events tends to alter-
+nate over r between the two eﬀects to relax the parallel
+current proﬁle there. Possible causes of the dynamos act-
+ing in opposition are addressed in Sec. III C.
+The sum of the MHD and Hall dynamos can be ex-
+pressed in terms of an electron ﬂuid velocity,
+−
+D
+˜V × ˜B
+E
+∥+
+1
+⟨n⟩e
+D
+˜J × ˜B
+E
+∥≈−
+D
+˜Ve × ˜B
+E
+∥.
+(8)
+To the extent that non-ideal terms in the generalized
+Ohm’s law [Eq. (1)] remain small, the magnetic ﬁeld can
+be considered to be frozen into the electron ﬂuid. It is
+interesting to note that in all of the relaxation events of
+our two-ﬂuid computations, this sum is found to be very
+similar to the MHD dynamo from our single-ﬂuid com-
+putations. That is, radial variations in the Hall dynamo
+and MHD dynamo in our two-ﬂuid computations appear
+to complement each other in such a way that the total
+dynamo is similar to the dynamo from single-ﬂuid MHD.
+Lastly, note that dynamo terms involving density ﬂuc-
+tuations in the Hall term are also possible in our two-ﬂuid
+model,
+J × B
+ne
+
+∥
+=
+D
+˜J × ˜B
+E
+∥
+⟨n⟩e
+−
+
+⟨J⟩×
+D
+˜n ˜B
+E
+∥
+⟨n⟩2 e
+−
+D
+˜n˜J × ˜B
+E
+∥
+⟨n⟩2 e
++ O
+  ˜n
+⟨n⟩
+2!
+.
+(9)
+However, we ﬁnd that the diﬀerence between the total
+[LHS of Eq. (9)] and the ﬁrst term on the RHS of Eq. (9)
+is less than 1% in our computations. The second term on
+the RHS of Eq. (9) may have a larger eﬀect if a realistic
+pressure proﬁle, with more signiﬁcant ⟨J⟩⊥, is used.
+C.
+Dynamo Opposition
+Hall and MHD dynamo eﬀects acting in opposition in
+some subsequent relaxation events in our two-ﬂuid com-
+putations results from several factors.
+First, all sub-
+sequent relaxation events have signiﬁcant contributions
+from additional modes that are not active during the
+initial relaxation event. As noted previously, the initial
+event disrupts a quasi-single-helicity state, which is dom-
+inated by the m = 1, n = 6 mode, while the subsequent
+events occur from multi-helicity conditions that are be-
+lieved to be more representative of conditions prior to
+most events in conventional RFP experiments.
+This distinction can be readily seen in Figs. 6 and 7,
+which show the modal decomposition of the dynamo elec-
+tric ﬁelds averaged over representative relaxation events
+in our cases B and C, respectively.
+In the ﬁrst event
+of both two-ﬂuid computations, the MHD and Hall dy-
+namo electric ﬁelds are dominated by contributions from
+just the core-resonant m = 1, n = 6 mode with minor
+contributions from the m = 1, n = 8 mode. However,
+in the subsequent events, there are additional large con-
+tributions to the dynamo electric ﬁelds from both the
+m = 1, n = 5 mode and the m = 1, n = 7 mode. Impor-
+tantly, the contributions to the Hall dynamo from these
+two modes are often found to oppose current relaxation
+in the core, and this is at least partially responsible for
+the change in sign of the total Hall dynamo.
+We also ﬁnd that core Hall dynamo opposition to MHD
+dynamo in subsequent events is strongly correlated with
+reduced m = 1, n = 6 magnetic energy and correspond-
+ingly smaller contributions to the Hall dynamo. In our
+
+8
+10
+5
+0
+5
+−
+D ˜Vm,n × ˜Bm,n
+E
+[VA B0 ×10−5 ]
+Avg. Over 2410
+t/τA
+2776
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+4
+2
+0
+2
+4
+D˜Jm,n × ˜Bm,n
+E
+/ ⟨n ⟩e
+[VA B0 ×10−5 ]
+Avg. Over 6530
+t/τA
+6802
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+m =1,n =5
+m =1,n =6
+m =1,n =7
+m =1,n =8
+m =1,n =9
+m =1,n =10
+Total
+FIG. 6. Modal decomposition of dynamo electric ﬁelds aver-
+aged over two relaxation events in case B (Λe = 1, Λi = 0).
+8
+6
+4
+2
+0
+2
+4
+−
+D ˜Vm,n × ˜Bm,n
+E
+[VA B0 ×10−5 ]
+Avg. Over 4054
+t/τA
+4446
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+8
+6
+4
+2
+0
+2
+4
+6
+8
+D˜Jm,n × ˜Bm,n
+E
+/ ⟨n ⟩e
+[VA B0 ×10−5 ]
+Avg. Over 8396
+t/τA
+8596
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+m =1,n =5
+m =1,n =6
+m =1,n =7
+m =1,n =8
+m =1,n =9
+m =1,n =10
+Total
+FIG. 7. Modal decomposition of dynamo electric ﬁelds aver-
+aged over two relaxation events in case C (Λe = 1, Λi = 1).
+two-ﬂuid computation with ion gyroviscosity, the Hall
+dynamo is opposed to the MHD dynamo in both of the
+subsequent relaxation events.
+The magnetic energy in
+the m = 1, n = 6 mode in the second event is ∼23% of
+the maximum in the ﬁrst event, and it is ∼12% in the
+third event.
+Contributions to the Hall dynamo in the
+core from the m = 1, n = 6 mode drop signiﬁcantly in
+these subsequent relaxation events. In contrast, in our
+two-ﬂuid computations without ion gyroviscosity (case
+B), dynamo opposition is only observed in the fourth re-
+laxation event, where the m = 1, n = 6 mode magnetic
+energy peaks at roughly 26% of its maximum in the quasi-
+single-helicity event. In the second and third events of
+this computation, the m = 1, n = 6 mode magnetic en-
+ergy is signiﬁcantly larger, being 44–45% of the initial
+event, and there is a correspondingly larger contribution
+to the Hall dynamo from this mode.
+The smaller amplitudes of the m = 1, n = 6 mode
+magnetic energies in our case C computation may be at-
+tributed to gyroviscous stress. Its eﬀect on linear growth-
+rates is greatest for intermediate values of kρs, as kinetic
+Alfv´en wave tearing becomes predominant at higher k.20
+Our computations have a ﬂat pressure proﬁle, and the
+magnetic energy density decreases with radius, so ρs in-
+creases with r/a.
+Combining this with the increasing
+k as the safety factor proﬁle falls oﬀ, we ﬁnd that kρs
+becomes much larger and the gyroviscous stabilization
+becomes much less important as we move from core to
+edge.
+However, a more realistic pressure proﬁle, with
+decreasing ρs, might at least partially compensate the
+increasing k, resulting in more gyroviscous stabilization
+for modes resonant near r/a ∼0.5.
+D.
+Flow Proﬁle Evolution
+As discussed in Sec. I, correlated ﬂuctuations of ˜J and
+˜B also manifest as a Lorentz force density in the plasma
+momentum equation. In single-ﬂuid MHD modeling, the
+Hall term is absent from Ohm’s law, and without back-
+ground ﬂow we ﬁnd the ﬂuctuation-induced Lorentz force
+density associated with the relaxation dynamics and gen-
+eration of plasma ﬂow to be weak. This is in agreement
+with previous single-ﬂuid results for conditions without
+background ﬂow, reported in Ref. 7. These results may
+be contrasted with single-ﬂuid results for conditions with
+sheared background ﬂow, which excites Lorentz force
+density and, consequently, momentum transport.30,31
+In our two-ﬂuid computations we ﬁnd signiﬁcant
+Lorentz force density associated with the current relax-
+ation dynamics, as can be seen in Figs. 8 and 9, which
+show the radial structure of the axisymmetric force den-
+sities averaged over the relaxation events in cases B and
+C, respectively.
+In all of these events in our two-ﬂuid
+computations, the Lorentz force density has essentially
+the same radial structure as the Hall dynamo, diﬀering
+only by ⟨n⟩.
+The Lorentz force density provides the largest contri-
+bution to parallel ﬂow evolution during relaxation, but
+we also ﬁnd a signiﬁcant force density from Reynolds
+stress, ⟨−minV · ∇V⟩∥, which is an inertial eﬀect, in
+agreement with both previous two-ﬂuid computations7
+and experimental measurements.6 The Lorentz force den-
+sity precedes the ﬂuid response in both the core and the
+edge in our two-ﬂuid computations without ion gyrovis-
+cosity, as evident in Fig. 10, and in our two-ﬂuid com-
+
+9
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+3
+2
+1
+0
+1
+2
+3
+F / min0VA τ −1
+A
+( ×10−4 )
+Avg. Over 2410
+t/τA
+2776
+⟨˜J ×˜B⟩
+−⟨minV ·∇V⟩
+−⟨∇·Πiso⟩
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Avg. Over 6530
+t/τA
+6802
+FIG. 8. Axisymmetric force densities averaged over two re-
+laxation events in case B (Λe = 1, Λi = 0).
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+4
+3
+2
+1
+0
+1
+2
+3
+4
+F / min0 VA τ −1
+A
+( ×10−4 )
+Avg. Over 4054
+t/τA
+4446
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Avg. Over 8396
+t/τA
+8596
+⟨˜J ×˜B⟩
+−⟨minV ·∇V⟩
+−⟨∇·Πiso⟩
+−
+D∇·Πgyr
+E
+FIG. 9. Axisymmetric force densities averaged over two re-
+laxation events in case C (Λe = 1, Λi = 1).
+putations with ion gyroviscosity, Fig. 11. The Lorentz
+force density also tends to be larger in magnitude, and
+changes in the parallel ﬂow velocity tend to follow the
+radial structure of this term.
+Thus, the Lorentz force
+density drives the momentum density evolution as a re-
+sult of the magnetic relaxation, and the inertial response
+arises primarily to counter this drive.
+The intrinsic ﬂow proﬁle that appears in experiment
+between the relaxation events is believed to result from
+transport eﬀects that are beyond the scope of our model.
+Nevertheless, the current relaxation dynamics are well
+represented, and we expect that changes in the ﬂow pro-
+ﬁle associated with the current relaxation events are also
+captured in our two-ﬂuid computations. The parallel ﬂow
+proﬁles at the onset and end of relaxation, as well as the
+change over the relaxation event, are shown in Figs. 12
+and 13, for our two-ﬂuid computations without and with
+ion gyroviscosity, respectively.
+The parallel ﬂow generated in the core during the ini-
+tial relaxation event in both two-ﬂuid computations is
+in the opposite direction of experimental measurements,
+which are inferred from Fig. 4(a) of Ref. 6.
+The 200
+kA discharges of Ref. 6 use an on-axis magnetic ﬁeld of
+B0 = 0.2 T and a deuterium plasma with n0 ≈1019 m−3
+6
+4
+2
+0
+2
+4
+Forces at r/a =0.1
+[min0VA τ −1
+A
+×10−4 ]
+2.5
+2.6
+2.7
+t/τA ( ×103 )
+1
+0
+1
+Forces at r/a =0.8
+[min0VA τ −1
+A
+×10−4 ]
+6.5
+6.7
+6.9
+t/τA ( ×103 )
+⟨˜J ×˜B⟩
+−⟨minV ·∇V⟩
+FIG. 10.
+Fluctuation-induced Lorentz force density and
+Reynolds force density in the core (top) and edge (bottom) re-
+gions during two relaxation events in case B (Λe = 1, Λi = 0).
+8
+6
+4
+2
+0
+2
+4
+6
+Forces at r/a =0.1
+[min0 VA τ −1
+A
+×10−4 ]
+4.1
+4.3
+4.5
+t/τA ( ×103 )
+1
+0
+1
+2
+Forces at r/a =0.8
+[min0 VA τ −1
+A
+×10−4 ]
+8.4
+8.5
+8.6
+t/τA ( ×103 )
+⟨˜J ×˜B⟩
+−⟨minV ·∇V⟩
+FIG. 11.
+Fluctuation-induced Lorentz force density and
+Reynolds force density in the core (top) and edge (bottom) re-
+gions during two relaxation events in case C (Λe = 1, Λi = 1).
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+2
+1
+0
+1
+2
+V / VA ( ×10−2 )
+Relax. Over 2410
+t/τA
+2776
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Relax. Over 6530
+t/τA
+6802
+⟨V⟩(ti)
+⟨V⟩(tf)
+∆⟨V⟩
+Exp.
+FIG. 12. Axisymmetric parallel ﬂow before and after the re-
+laxation events in case B (Λe = 1, Λi = 0).
+
+10
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+2
+1
+0
+1
+2
+V / VA ( ×10−2 )
+Relax. Over 4054
+t/τA
+4446
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Relax. Over 8396
+t/τA
+8596
+⟨V⟩(ti)
+⟨V⟩(tf)
+∆⟨V⟩
+Exp.
+FIG. 13. Axisymmetric parallel ﬂow before and after the re-
+laxation events in case C (Λe = 1, Λi = 1).
+yielding an on-axis Alfv´en velocity of VA ≈106 m/s. We
+estimate ∆⟨V⟩∥/VA = +0.014, −0.011, and −0.018, at
+r/a = 0.30, 0.50, and 0.66, respectively, at the relaxation
+event in experiment. These values are indicated by the
+stars in Figs. 12 and 13. The magnitude of the simulated
+ﬂow-proﬁle evolution reported in Ref. 7 is in approximate
+agreement with these measurements, but the computa-
+tions there are performed for J·B > 0, and relative orien-
+tations of ∆⟨J⟩∥and ∆⟨V⟩∥are not consistent with the
+experiment. The computations reported here and typical
+experimental conditions both have J · B < 0. Reversing
+the direction of J·B also reverses the relaxation-induced
+change in plasma ﬂow during the initial event, and this
+is readily seen by comparing the ﬁrst events of our com-
+putations (shown in Figs. 12 and 13) to Fig. 13(a) of
+Ref. 7.
+The ﬂow-proﬁle evolution is markedly diﬀerent in sub-
+sequent relaxation events of our computations where the
+MHD dynamo acts to ﬂatten the parallel current den-
+sity proﬁle and the Hall dynamo acts in opposition to it.
+There, the relaxation-induced change in the parallel ﬂow
+proﬁle is more consistent with experimental observations,
+namely that changes in parallel plasma ﬂow in the core
+are in the same direction as changes in parallel current
+density in the core. This relative orientation of ∆⟨J⟩∥
+and ∆⟨V⟩∥holds regardless of the sign of J · B, as con-
+ﬁrmed in measurements from atypical MST experiments
+with J · B > 0. These subtleties were not appreciated in
+the analysis presented in Ref. 7.
+Lastly, we note that our two-ﬂuid computations have
+a much larger fraction of kinetic energy in ﬂows that
+are perpendicular to the magnetic ﬁeld, rather than par-
+allel to it.33 To lowest order in the ion skin depth, two-
+ﬂuid variational theories predict a relaxed state with ﬂow
+that is completely parallel to the magnetic ﬁeld.41 How-
+ever, our computations, previous computational work,20
+and two-ﬂuid variational theories carried out to higher
+order42 indicate that perpendicular ﬂows are also signif-
+icant during relaxation.
+0
+1
+2
+3
+4
+5
+6
+7
+8
+t/τA ( ×103 )
+1
+0
+1
+P / min0VA  Vol ( ×10−3 )
+(a)
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+t/τA ( ×103 )
+1
+0
+1
+2
+3
+4
+5
+P / min0VA Vol ( ×10−3 )
+(b)
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+t/τA ( ×103 )
+1
+0
+1
+2
+3
+4
+5
+P / min0 VA  Vol ( ×10−3 )
+(c)
+Z
+min ˆz ·V d3 x
+Z
+min rˆθ ·V d3 x
+FIG. 14. Evolution of total axial and angular momenta for (a)
+case A: single-ﬂuid MHD (Λe = 0, Λi = 0), (b) case B: two-
+ﬂuid no gyroviscosity (Λe = 1, Λi = 0), (c) case C: two-ﬂuid
+with gyroviscosity (Λe = 1, Λi = 1). Note axes diﬀer.
+E.
+Momentum Transport
+The total axial and angular momenta increase during
+relaxation events in our two-ﬂuid computations, as can
+be seen in Fig. 14, whereas both remain relatively small
+in our single-ﬂuid MHD computation. The momentum
+density, p ≡minV, in our computations evolves accord-
+ing to
+∂p
+∂t ≈∇·
+BB
+µ0
+−minVV −
+|B|2
+2µ0
++ p
+
+I −Πi
+
+,
+(10)
+where we have neglected small terms associated with
+the equilibrium pinch ﬂow and density diﬀusion.
+The
+evolution of the axial momentum inside radius r (for
+0 ≤r ≤a) is obtained by integrating the ˆz projection of
+Eq. (10) over the volume of the cylinder of radius r:
+∂
+∂t
+Z
+minV · ˆz d3x ≡∂
+∂tPz (r)
+≈
+Z
+dAˆr ·
+BB
+µ0
+−minVV −Πi
+
+· ˆz.
+(11)
+Similarly, the evolution of the angular momentum inside
+a ﬁnite volume is found by integrating the r ˆθ projection
+of Eq. (10), taking care to include the geometric variation
+
+11
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+5
+0
+5
+10
+15
+F / min0VA τ −1
+A  Vol ( ×10−6 )
+Avg. Over 2410
+t/τA
+2776
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Avg. Over 6530
+t/τA
+6802
+Z
+ˆr ·BB ·ˆz/µ0 dA
+Z
+−min ˆr ·VV ·ˆz dA
+Z
+−ˆr ·Πiso ·ˆz dA
+Total
+FIG. 15. Axial momentum ﬂux averaged over two relaxation
+events in case B (Λe = 1, Λi = 0).
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+10
+0
+10
+20
+30
+F / min0 VA τ −1
+A  Vol ( ×10−6 )
+Avg. Over 4054
+t/τA
+4446
+0
+0.2
+0.4
+0.6
+0.8
+1
+r/a
+Avg. Over 8396
+t/τA
+8596
+Z
+ˆr ·BB ·ˆz/µ0 dA
+Z
+−min ˆr ·VV ·ˆz dA
+Z
+−ˆr ·Πiso ·ˆz dA
+Z
+−ˆr ·Πgyr ·ˆz dA
+Total
+FIG. 16. Axial momentum ﬂux averaged over two relaxation
+events in case C (Λe = 1, Λi = 1).
+of ˆθ. The evolution of the total axial and angular mo-
+mentum, Pz (r = a) and Pθ (r = a), in our computations
+is shown in Fig. 14. The Maxwell and Reynolds stresses
+are associated with radial transport of momentum, and
+total axial and angular momentum are conserved, apart
+from viscous coupling with the boundary (neglecting the
+small numerical eﬀects) in our computations.
+The change in total axial momentum during relaxation
+events in our two-ﬂuid computations results from viscous
+and gyroviscous coupling to the boundary, and axial mo-
+mentum is transported radially inward through the large
+Maxwell stress, as can be seen in Fig. 15 and Fig. 16.
+These ﬁgures show the axial momentum ﬂux [terms in
+Eq. (11)] as a function of radius in case B and case C,
+respectively. Here, a positive term implies inward radial
+transport of momentum, while a negative term implies
+outward radial transport.
+In case B, viscous coupling to
+the boundary is responsible for nearly all of the axial mo-
+mentum injected during relaxation, with additional small
+contributions from numerical eﬀects. A thin boundary
+layer exists near r/a ≲1 in our computation with ion gy-
+roviscosity, as the viscous and gyroviscous stresses com-
+pete with each other near the edge, but total axial mo-
+mentum still increases during relaxation. The Maxwell
+stress peaks near r/a ≈0.7 and transports axial momen-
+tum further inward. In both computations the Reynolds
+stress generally opposes the Maxwell stress across the
+proﬁle, but the magnetic relaxation is dominant, and the
+total axial momentum ﬂux follows the Maxwell stress.
+Similar behavior is observed for the angular momentum
+ﬂux.
+Note that the ﬂux of axial momentum is inward in the
+core region, r/a ≲0.3, during the subsequent relaxation
+events shown here. The axial momentum is essentially
+the same as the parallel momentum in the core, where
+the magnetic ﬁeld is nearly axial. The increase in core
+plasma ﬂow parallel to the magnetic ﬁeld during the sub-
+sequent events in our computations is directly related to
+the inward radial transport of axial momentum via the
+Maxwell stress in these events.
+The equilibrium pinch ﬂow, neglected in Eq. (10), acts
+as an anomalous momentum sink, and it becomes slightly
+more signiﬁcant during later events when momentum has
+been injected into the system. In the initial relaxation
+event in both two-ﬂuid computations approximately 10%
+of the axial momentum that is transported radially in-
+ward by the Maxwell stress across r/a = 0.7 is dissipated
+by this term. In the fourth relaxation event in our case B
+computation, this anomalous diﬀusion removes roughly
+17% of the axial momentum transported by the Maxwell
+stress across r/a = 0.7, and it dissipates roughly 22.5%
+of the axial momentum transported across r/a = 0.7 by
+the Maxwell stress in the second relaxation event of our
+case C computation. However, as mentioned previously,
+the equilibrium pinch ﬂow scales as ∼1/S, and this term
+is expected to be much less signiﬁcant at more realistic
+parameters.
+IV.
+CONCLUSIONS
+Our single- and two-ﬂuid computations display multi-
+ple discrete relaxation events during the self-consistently
+modeled nonlinear evolution, and macroscopic features,
+such as rapid drops in ﬁeld reversal and magnetic ﬂuc-
+tuation activity, are qualitatively consistent with exper-
+imental observations. In all relaxation events, the paral-
+lel current density proﬁle is ﬂattened through the action
+of ﬂuctuation-induced dynamo electric ﬁelds. Two-ﬂuid
+computations show signiﬁcant contributions from the
+two-ﬂuid Hall dynamo in addition to the standard single-
+ﬂuid MHD dynamo. However, the sum of the MHD and
+Hall dynamos, −
+D
+˜Ve × ˜B
+E
+, in our two-ﬂuid computa-
+tions appears similar to the MHD dynamo, −
+D
+˜V × ˜B
+E
+,
+in our single-ﬂuid computations. We infer that the ener-
+getically accessible relaxed states (quantiﬁed by F) are
+suﬃciently similar in the diﬀerent models that the net
+dynamo eﬀects that relax the dominant magnetic energy
+proﬁles are similar. Nevertheless, the decoupling of elec-
+tron and ion dynamics allowed by the two-ﬂuid eﬀects
+leads to signiﬁcantly diﬀerent eﬀects on the subdominant
+
+12
+kinetic energy evolution.
+The initial relaxation event in each simulation disrupts
+a QSH state, and in our two-ﬂuid computations both the
+MHD and the Hall dynamo act to ﬂatten the parallel
+current density proﬁle. The corresponding Lorentz force
+density generates plasma ﬂow in a direction opposite to
+the change in parallel current density, in agreement with
+the previous results of Ref. 7, but in contradiction to ex-
+perimental observations.
+Subsequent relaxation events
+occur from multi-helicity conditions and are believed to
+be more representative of typical relaxation events in con-
+ventional RFP experiments. When the Hall dynamo op-
+poses the MHD dynamo, the Lorentz force density gen-
+erates core plasma ﬂow in the direction of the change in
+parallel current density, in qualitative agreement with ex-
+perimental observations. Whether events that terminate
+QSH states in experiments follow the behavior of the ﬁrst
+events in our simulations can be tested by isolating the
+relevant data.
+Dynamo competition in subsequent events is at-
+tributed to increased contributions from additional
+modes and a decreased contribution from the core-
+resonant m = 1, n = 6 mode. We note that dynamo com-
+petition is observed more consistently in our computation
+with ion gyroviscosity, while in our computation without
+ion gyroviscosity, it is only observed during a relaxation
+event when the energy in the dominant m = 1, n = 6
+mode is smaller than it is during other events. We spec-
+ulate that gyroviscous stabilization of the core-resonant
+m = 1, n = 6 mode may aid in reducing that mode’s
+contribution to core Hall dynamo, possibly altering the
+net Hall dynamo eﬀect.
+The variability of competition vs. cooperation between
+the two dynamo eﬀects during relaxation events needs
+further study. Experimental measurements rely on en-
+semble averages of many similar relaxation events, and
+this averaging precludes a direct comparison to a single
+experimental event. In principle, it is possible to average
+over many relaxation events in two-ﬂuid computations,
+but this is not done here owing to the small sample sizes.
+As longer two-ﬂuid simulations become more practical,
+more informative statistical analyses can be applied.
+Changes in axial and angular plasma momentum oc-
+cur during our two-ﬂuid computations and are associated
+with the discrete current relaxation events.
+We iden-
+tify the cause as viscous and gyroviscous coupling to the
+boundary, and the inward radial momentum transport
+occurs through the ﬂuctuation-induced Maxwell stress.
+We do not expect the viscous coupling to be representa-
+tive of net momentum injection in the experiment. In-
+vestigation of the relevant physical eﬀects that are active
+near the wall of the experiment awaits future modeling
+developments.
+ACKNOWLEDGMENTS
+The authors acknowledge Prof. John Sarﬀ, Joseph Tri-
+ana, and other members of the MST experimental team
+for helpful discussions of relaxation activity in MST.
+This work was supported by NSF grant PHY-0821899,
+and by the U.S. Department of Energy grant DE-FG02-
+06ER54850. This research used resources of the National
+Energy Research Scientiﬁc Computing Center, a DOE
+Oﬃce of Science User Facility supported by the Oﬃce of
+Science of the U.S. Department of Energy under Contract
+No. DE-AC02-05CH11231.
+1H. A. B. Bodin and A. A. Newton, Nuclear Fusion 20, 1255
+(1980).
+2H. P. Furth, J. Killeen, and M. N. Rosenbluth, Physics of Fluids
+(1958-1988) 6, 459 (1963).
+3S. Ortolani and D. D. Schnack, Magnetohydrodynamics of plasma
+relaxation, Vol. 156 (World Scientiﬁc, 1993).
+4R. N. Dexter, D. W. Kerst, T. W. Lovell, S. C. Prager, and J. C.
+Sprott, Fusion Science and Technology 19, 131 (1991).
+5A. K. Hansen, A. F. Almagri, D. Craig, D. J. Den Hartog, C. C.
+Hegna, S. C. Prager,
+and J. S. Sarﬀ, Physical Review Letters
+85, 3408 (2000).
+6A. Kuritsyn, G. Fiksel, A. F. Almagri, D. L. Brower, W. X. Ding,
+M. C. Miller, V. V. Mirnov, S. C. Prager, and J. S. Sarﬀ, Physics
+of Plasmas (1994-present) 16, 055903 (2009).
+7J. R. King, C. R. Sovinec, and V. V. Mirnov, Physics of Plasmas
+(1994-present) 19, 055905 (2012).
+8H. K. Moﬀatt, Field Generation in Electrically Conducting Flu-
+ids (Cambridge University Press, Cambridge, London, New York,
+Melbourne, 1978).
+9E. J. Caramana, R. A. Nebel,
+and D. D. Schnack, Physics of
+Fluids (1958-1988) 26, 1305 (1983).
+10H. R. Strauss, Physics of Fluids (1958-1988) 28, 2786 (1985).
+11D. D. Schnack, E. J. Caramana,
+and R. A. Nebel, Physics of
+Fluids (1958-1988) 28, 321 (1985).
+12E. Hameiri and A. Bhattacharjee, Physics of Fluids (1958-1988)
+30, 1743 (1987).
+13K. Kusano and T. Sato, Nuclear Fusion 27, 821 (1987).
+14J. A. Holmes, B. A. Carreras, P. H. Diamond, and V. E. Lynch,
+Physics of Fluids 31, 1166 (1988).
+15Y. L. Ho and G. G. Craddock, Physics of Fluids B: Plasma
+Physics (1989-1993) 3, 721 (1991).
+16H. Ji, A. F. Almagri, S. C. Prager,
+and J. S. Sarﬀ, Physical
+Review Letters 73, 668 (1994).
+17D. J. Den Hartog, J. T. Chapman, D. Craig, G. Fiksel, P. W.
+Fontana, S. C. Prager, and J. S. Sarﬀ, Physics of Plasmas (1994-
+present) 6, 1813 (1999).
+18P. W. Fontana, D. J. Den Hartog, G. Fiksel, and S. C. Prager,
+Physical Review Letters 85, 566 (2000).
+19R. Nebel, in Proceedings of the Physics of Alternative Magnetic
+Conﬁnement Schemes, Vol. 1, edited by S. Ortolani and E. Sin-
+doni (Editrice Compositori, Bologna (Italy), 1991) pp. 611–630.
+20J. R. King, C. R. Sovinec, and V. V. Mirnov, Physics of Plasmas
+(1994-present) 18, 042303 (2011).
+21A. Schluter and L. Biermann, Z. Naturforsch 5 (1950).
+22C. R. Sovinec, J. R. King, and the NIMROD Team, Journal of
+Computational Physics 229, 5803 (2010).
+23J. F. Drake and Y. C. Lee, Physics of Fluids (1958-1988) 20,
+1341 (1977).
+24D. Biskamp, E. Schwarz,
+and J. F. Drake, Physics of Plasmas
+4, 1002 (1997).
+25W. Shen and S. C. Prager, Physics of Fluids B: Plasma Physics
+(1989-1993) 5, 1931 (1993).
+26W. X. Ding, D. L. Brower, D. Craig, B. H. Deng, G. Fiksel, V. V.
+Mirnov, S. C. Prager, J. S. Sarﬀ,
+and V. Svidzinski, Physical
+Review Letters 93, 045002 (2004).
+27W. X. Ding, D. L. Brower, B. H. Deng, A. F. Almagri, D. Craig,
+G. Fiksel, V. V. Mirnov, S. C. Prager, J. S. Sarﬀ, and V. Svidzin-
+ski, Physics of Plasmas (1994-present) 13, 112306 (2006).
+
+13
+28J. Triana, A. F. Almagri, K. J. McCollam, J. S. Sarﬀ, and C. R.
+Sovinec, Bulletin of the American Physical Society (2016).
+29V. V. Mirnov, C. C. Hegna, and S. C. Prager, Plasma Physics
+Reports 29, 566 (2003).
+30F. Ebrahimi, V. V. Mirnov, S. C. Prager,
+and C. R. Sovinec,
+Physical Review Letters 99, 075003 (2007).
+31F. Ebrahimi, V. V. Mirnov, and S. C. Prager, Physics of Plasmas
+(1994-present) 15, 055701 (2008).
+32C. R. Sovinec, A. H. Glasser, T. A. Gianakon, D. C. Barnes, R. A.
+Nebel, S. E. Kruger, D. D. Schnack, S. J. Plimpton, A. Tarditi,
+M. S. Chu, et al., Journal of Computational Physics 195, 355
+(2004).
+33J. P. Sauppe and C. R. Sovinec, Physics of Plasmas (1994-
+present) 23, 032303 (2016).
+34S. I. Braginskii, Reviews of Plasma Physics 1, 205 (1965).
+35D. C. Robinson, Plasma Physics 13, 439 (1971).
+36H. D. Stephens, D. J. Den Hartog, C. C. Hegna,
+and J. A.
+Reusch, Physics of Plasmas (1994-present) 17, 056115 (2010).
+37J. M. Finn, R. Nebel, and C. Bathke, Physics of Fluids B: Plasma
+Physics (1989-1993) 4, 1262 (1992).
+38D. F. Escande, P. Martin, S. Ortolani, A. Buﬀa, P. Franz, L. Mar-
+relli, E. Martines, G. Spizzo, S. Cappello, A. Murari, et al., Phys-
+ical Review Letters 85, 1662 (2000).
+39L. Zakharov and B. Rogers, Physics of Fluids B: Plasma Physics
+(1989-1993) 4, 3285 (1992).
+40B. N. Rogers, R. E. Denton, J. F. Drake,
+and M. A. Shay,
+Physical Review Letters 87, 195004 (2001).
+41C. C. Hegna, Physics of Plasmas (1994-present) 5, 2257 (1998).
+42R. Numata, Z. Yoshida,
+and T. Hayashi, Computer Physics
+Communications 164, 291 (2004).

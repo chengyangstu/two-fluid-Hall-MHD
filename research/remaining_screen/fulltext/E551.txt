@@ -1,0 +1,1012 @@
+
+===== PDF PAGE 1 =====
+                              manuscript submitted to JGR-Space Physics
+
+
+ 1       Reconstruction of electron and ion distribution
+ 2   functions in a magnetotail reconnection diﬀusion region
+
+
+ 3        Jonathan Ng1,2, Li-Jen Chen3, Ammar Hakim4, A. Bhattacharjee1,4,5
+
+
+ 4               1Department of Astrophysical Sciences, Princeton University, Princeton NJ 08542
+ 5                 2Department of Astronomy, University of Maryland, College Park, MD 20742
+ 6                   3NASA Goddard Space Flight Center, Greenbelt MD 20771
+ 7                           4Princeton Plasma Physics Laboratory, Princeton NJ 08543
+ 8                   5Princeton Center for Heliophysics, Princeton University, Princeton NJ 08542
+
+
+
+ 9       Key Points:
+
+10           • Particle distribution functions in a reconnection diﬀusion region are reconstructed
+11           using a maximum-entropy closure.
+12           • Kinetic features such as electron anisotropy and acceleration are reproduced.
+13           • Inclusion of 4th order velocity moments allows the modeling of counterstreaming
+14           populations.
+
+
+
+
+
+       Corresponding author: Jonathan Ng, jonng@umd.edu
+
+
+
+                                               –1–
+
+===== PDF PAGE 2 =====
+                              manuscript submitted to JGR-Space Physics
+
+
+
+15    Abstract
+16     In the diﬀusion region of magnetotail reconnection, particle distributions are highly struc-
+17     tured, exhibiting triangular shapes and multiple striations that deviate dramatically from
+18     the Maxwellian distribution. Fully kinetic simulations have been demonstrated to be ca-
+19     pable of producing the essential structures of the observed distribution functions, yet are
+20     computationally not feasible for 3D global simulations. The ﬂuid models used for large-
+21     scale simulations, on the other hand, do not have the kinetic physics necessary for de-
+22     scribing reconnection accurately. Our study aims to bridge fully kinetic and ﬂuid sim-
+23     ulations by quantifying the information required to capture the non-Maxwellian features
+24     in the distributions underlying the closures used in the ﬂuid code. We compare the re-
+25     sults of fully kinetic simulations to observed electron velocity distributions in a magne-
+26      totail reconnection diﬀusion region, and use the maximum entropy model to reconstruct
+27     electron and ion distributions using various numbers of moments obtained from the sim-
+28     ulation. Our results indicate that using only local moments, the maximum entropy model
+29    can reproduce many of the features of the distributions: (1) the electron-outﬂow distri-
+30     bution with a tilted triangular structure is reproduced with 21 or more moments in agree-
+31    ment with Ng, Hakim, and Bhattacharjee [2018] and (2) counterstreaming distributions
+32    can be captured with the 35-moment model when the separation in velocity space be-
+33    tween the populations is large.
+
+
+34    Plain Language Summary
+
+35          Fluid modelling of plasmas in collisionless environments such as the magnetosphere
+36       is challenging because the approximation that collisions are important does not hold. It
+37       is important to understand the motion of individual particles as collisions do not bring
+38    them back to equilibrium, However, this is computationally intensive and cannot be used
+39     to model the Earth at the present time. We use a recent ﬂuid model which is based on
+40    maximising the entropy of an underlying distribution of particles and attempt to recon-
+41     struct particle distributions during reconnection in the Earth’s magnetotail. We show
+42     that most features of the distribution function can be reproduced using an increasing num-
+43     ber of ﬂuid moments.
+
+
+44   1 Introduction
+
+45         Non-Maxwellian particle velocity distributions prevail in weakly collisional plasma
+46     environments such as the magnetosphere. In particular, for magnetic reconnection re-
+47     gions in the magnetotail, strongly anisotropic electron velocity distributions with p∥>
+48    p⊥are found in inﬂow regions [Øieroset, Lin, Phan, Larson, & Bale, 2002], while trian-
+49     gular distributions with accelerated electrons are found within the electron diﬀusion re-
+50     gion and close to the x-point during antiparallel reconnection [Torbert et al., 2018]. The
+51     formation of these distributions can be explained by electron trapping in the inﬂow [Egedal,
+52     Le, & Daughton, 2013], while in the electron diﬀusion region, the meandering electron
+53     orbits in the magnetic ﬁeld reversal explains the striated and counterstreaming popu-
+54     lations [Bessho, Chen, Shuster, & Wang, 2014; Bessho, Chen, Wang, & Hesse, 2018; Fu-
+55     jimoto & Sydora, 2009; Ng, Egedal, Le, & Daughton, 2012; Ng, Egedal, Le, Daughton,
+56   & Chen, 2011].
+
+57         Although kinetic physics is necessary to capture these structures which are depen-
+58     dent on the electron trajectories, fully kinetic simulations are computationally expen-
+59      sive, and many global simulations of magnetospheres use ﬂuid models such as magne-
+60    tohydrodynamics (MHD). There have been diﬀerent approaches to incorporate physics
+61    beyond MHD in global simulations. This includes hybrid-PIC [Karimabadi, Vu, Krauss-
+62    Varban, & Omelchenko, 2006; Lu et al., 2015] and Vlasov codes [Kempf et al., 2013; Palm-
+63     roth et al., 2018], which simulate kinetic ions and ﬂuid electrons. Another approach in-
+64     volves embedding PIC boxes within a larger-scale MHD or two-ﬂuid simulation, so that
+
+
+
+                                               –2–
+
+===== PDF PAGE 3 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+ 65     only the regions in which kinetic eﬀects are thought to be important use a fully kinetic
+ 66    model [Fujimoto, 2018; Ho, Datta, & Shumlak, 2018; Lautenbach & Grauer, 2018; T´oth
+ 67     et al., 2017, 2016].
+
+ 68        The approach discussed in this paper involves extended ﬂuid models which evolve
+ 69     the higher moments of the Vlasov equation have been developed [Hesse, Winske, & Kuznetsova,
+ 70     1995; Ng, Hakim, Bhattacharjee, Stanier, & Daughton, 2017; Wang, Hakim, Bhattachar-
+ 71      jee, & Germaschewski, 2015; Yin, Winske, Gary, & Birn, 2001]. In addition to the usual
+ 72     density and momentum moments, these models evolve the pressure tensor, which is im-
+ 73     portant for balancing the reconnection electric ﬁeld at the x-point. Observational val-
+ 74     idation tests of such models have produced encouraging results [Dong et al., 2019; Wang
+ 75     et al., 2018]. However, closures for general plasma parameters are challenging to develop
+ 76    and these models do not capture all the kinetic physics, which can aﬀect the reconnec-
+ 77     tion rate and development of instabilities [Ng et al., 2017; Ng, Hakim, Juno, & Bhattachar-
+ 78      jee, 2019].
+
+ 79          In this paper we focus on what distribution function information can be obtained
+ 80     given a ﬁxed number of known moments of velocity distribution functions. We use the
+ 81    maximum entropy closure [Levermore, 1996], which has the useful property that the de-
+ 82     rived ﬂuid equations are hyperbolic. Our earlier work on using this closure to reconstruct
+ 83     electron distributions in reconnection regions has shown that the characteristic triangu-
+ 84      lar shape can be recovered using 21 moments (the heat ﬂux tensor and scalar v4 moment)
+ 85    [Ng et al., 2018]. In this study, we use parameters more relevant to the event reported
+ 86    by Torbert et al. [2018], and the distributions in the simulation are chosen to correspond
+ 87     to the observations. We also increase the number of moments kept to 35, thereby demon-
+ 88     strating the ability of the model to recover counterstreaming populations.
+
+ 89        The remainder of this paper is organised as follows: In Section 2 we review the deriva-
+ 90     tion of the maximum closure and the ﬂuid equations obtained, compared to the Chapman-
+ 91    Enskog and Grad approaches. In Section 3 we perform comparisons between the elec-
+ 92     tron distribution functions obtained from MMS observations, a kinetic simulation and
+ 93     reconstructions using successively higher numbers of moments. We then discuss the re-
+ 94     sults in Section 4 and the implications for ﬂuid modelling.
+
+
+ 95   2 Maximum entropy closure
+
+ 96       Maximum entropy methods are used to determine probability distributions given
+ 97     limited information [Jaynes, 1957], and have been used in many scientiﬁc ﬁelds includ-
+ 98     ing astrophysics [Richstone & Tremaine, 1988], biology [Yeo & Burge, 2004] and natu-
+ 99      ral language processing [Charniak, 2000]. In the context of ﬂuid dynamics, the maximum
+100     entropy ﬂuid closure was ﬁrst derived in [Levermore, 1996] as an alternative to the tra-
+101     ditional Chapman-Enskog and Grad approaches [Chapman & Cowling, 1970; Grad, 1949b].
+102      It is a non-perturbative closure and is constructed to ensure the positivity of the distri-
+103     bution function f and the hyperbolicity of the convective part of the ﬂuid equations ob-
+104     tained. Here we brieﬂy review the derivation of the moment equations.
+
+           Because the closures we discuss are also applicable to neutral ﬂuids, we start, for
+       simplicity, with the Boltzmann equation for a single particle phase space distribution f(x, v, t),
+
+
+                                  ∂f
+                          + v · ∇f = C(f).                                 (1)
+                                       ∂t
+
+
+105    Here f is the single-particle phase space density and C(f) is a collision operator, assumed
+106     to conserve number, momentum and energy. The evolution of ﬂuid quantities is obtained
+107    by taking moments of this equation to get the hierarchy of ﬂuid equations [Grad, 1949b;
+108     Levermore, 1996].
+
+
+
+                                                –3–
+
+===== PDF PAGE 4 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+
+
+                              ∂n
+                         + ∇· (nv) = 0
+                                      ∂t
+                         ∂nmv
+                         + ∇· (P + nmvv) = 0                            (2)
+                                     ∂t
+                                                                                                                                                                                                                ...
+
+109    Here n is the number density, v is the ﬂuid velocity, P is the pressure tensor.
+
+          More generally, one can write
+
+                          ∂U
+                           + ∇· F = S,                                   (3)
+                                         ∂t
+110    where U is the vector of moments of the distribution function, F is the vector of the as-
+111     sociated ﬂuxes and S the vector of source terms arising from moments of the collision
+112     operator. The time evolution of each ﬂuid quantity depends on the ﬂux term, which con-
+113     tains higher velocity moments. There are thus more moments than equations, and it is
+114     necessary to describe the unknown higher moments in terms of some other quantities (usu-
+115      ally lower moments) to close the equations.
+
+            In the collisional limit, where distributions are not far from Maxwellian, the Chapman-
+      Enskog approach can be used [Chapman & Cowling, 1970]. Deviations from local equi-
+       librium are expanded in powers of the Knudsen number ϵ, which describes the ratio of
+      the mean free path to the gradient scale.
+                      fCE(x, v, t) = fM(x, v, t)(1 + ϵf (1) + ϵ2f (2) + . . . ),
+                                    m3/2n(x, t)                                               exp −m|v −u(x, t)|2                  (4)                      fM(x, v, t) =
+                                   (2πT(x, t))3/2          2T(x, t)
+
+116    The ﬂuid equations are closed by solving for the perturbed distribution function, lead-
+117     ing to the Euler, Navier-Stokes and Burnett equations at zeroth, ﬁrst and second orders
+118     respectively. However, at second order and beyond, the equations are aﬀected by short
+119     wavelength instabilities [Bobylev, 2008].
+
+         The Grad approach uses an expansion of the distribution function in Hermite poly-
+      nomials about a local Maxwellian [Grad, 1949b] and truncating at the desired order. This
+         is written as                            ∞
+                                                1      w
+                                                                                                 (5)                                                                                           i  H(n)i                              fGrad(v) = fM(v) X n!α(n)                                                                            vt                                            n=0
+      where w = v −u(x, t) and H(n)i   are multivariate Hermite polynomials [Grad, 1949a].
+     The coeﬃcients α are determined from the moments of the distribution function. The
+      Hermite expansion has been used to investigate velocity space cascades in distribution
+       functions [Servidio et al., 2017], but the derivation of ﬂuid equations using Grad’s model
+      has diﬃculties. Away from equilibrium, there are regions of parameter space where the
+       equations have complex characteristic velocities [Brown, 1996; Cai, Fan, & Li, 2015; Lev-
+      ermore, 1996]. Additionally, the distribution functions can become negative in regions
+       of phase space, due to the presence of odd degree polynomials in the Hermite expansion.
+     Even so, there has been work on deriving regularised moment equations [Cai et al., 2015;
+      Struchtrup & Torrilhon, 2003; Torrilhon & Struchtrup, 2004], and work on using non-
+     Grad distribution functions to close the equations [¨Ottinger, 2010; Singh & Agrawal, 2016;
+       Torrilhon, 2010]. A particular distribution function and closure that has been used in
+      both hydrodynamics [Torrilhon, 2010] and plasma physics [Miller & Shumlak, 2016] is
+      the Pearson-IV distribution [Pearson, 1895], which leads to thirteen-moment equations
+       (including the heat ﬂux vector and pressure tensor). This can be written explicitly in
+       three-dimensions as
+                                        1   exp −ν arctan nτA−1 (v −λ)
+                  fP (v, λ, A, m, ν, n) =                                                      (6)                                        det (A)    (1 + (v −λ)τ A−2 (v −λ))
+
+
+
+                                                –4–
+
+===== PDF PAGE 5 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+120    Here v is the velocity variable, and A is a 3×3 matrix associated with the temperature.
+121   λ and n are vector parameters while m and ν are scalars. Compared to the Grad thirteen-
+122    moment equations, the equations obtained using the Pearson-IV closure have a wider
+123     region of hyperbolicity but this requires solving for the closure parameters. As there are
+124    14 parameters in the distribution but 13 equations, a closure must still be chosen. In this
+125    work we use the “realisable” closure discussed in [Torrilhon, 2010].
+
+            In contrast to the previous approaches, the maximum entropy approach introduced
+      by Levermore [Levermore, 1996] is non-perturbative and uses a distribution function
+                                   f(α, v) = exp(ατm(v)),                               (7)
+
+126    where m(v) a vector containing monomials up to a certain degree of the particle veloc-
+127      ity components and α is a vector of closure coeﬃcients [Levermore, 1996].
+
+128         For the distribution function to remain ﬁnite, as v →∞, the polynomial in the
+129    exponent must be of an even degree [Levermore, 1996]. In three dimensions, the lowest-
+130     order solutions have maximum degree 2, leading to the ﬁve- and ten-moment closures,
+131     in which the density, momentum and scalar or tensor pressures are evolved. At maxi-
+132   mum degree 4, the 14-, 21-, 26- and 35-moment systems are obtained [Levermore, 1996].
+133     In this work we use the 5-, 10-, 14-, 21- and 35-moment models. With the 14-moment
+134     model, the vector Qi = m R fv2vid3v and the scalar 4th moment R = m R fv4d3v are
+135     used. The 21-moment model uses the scalar R as well as the tensor Qijk = m R fvivjvkd3v.
+136    The 35-moment model includes the heat-ﬂux tensor but uses a tensor Rijkl = R fvivjvkvld3v
+137     instead of a scalar r. By integrating using the deviation from the mean velocities rather
+138    than v, information about the heat ﬂux and kurtosis, which provides information about
+139     the weight of the tails of the distribution [Westfall, 2014], are obtained.
+
+140        The free parameters in this closure model are the coeﬃcients α, which are calcu-
+141     lated by maximising the entropy given the known moments of the distribution. We brieﬂy
+142     reproduce the derivation [Levermore, 1996] here.
+
+           Using the form of the distribution function given above, the moment equations can
+      be rewritten as
+                  ∂⟨m(v)f(α, v)⟩
+                      + ∇· ⟨vm(v)f(α, v)⟩= ⟨m(v)C(f(α, v))⟩,             (8)
+                           ∂t
+143    where the angled brackets indicate integration over velocity space.
+
+         From here, we omit the v argument and let h(α) = ⟨f(α)⟩and j(α) = ⟨vf(α)⟩.
+      These are denoted as the density and ﬂux potentials respectively in [Levermore, 1996].
+      Here we can see that the α derivatives of these quantities give the moment and ﬂux terms
+       in Eq. (8). Thus the moment equations can be written as
+
+                                   ∂thα + ∇· jα = S(α)                                 (9)
+
+           Equation (9) can be rewritten as
+
+                           hαα(α)∂tα + jαα(α) · ∇α = S(α).                       (10)
+
+144     This ensures hyperbolicity as hαα(α) is positive deﬁnite and jαα(α) is symmetric.
+
+145        The closure coeﬃcients α are determined through the minimisation of the quan-
+146      tity h(α)−⟨ατmf(α)⟩with respect to α. This maximises the entropy −⟨f log f −f⟩
+147     given the constraint of the known moments [Levermore, 1996]. The remaining quanti-
+148      ties in the moment equations can then be calculated using this distribution.
+
+           For ﬁve and ten moments, there are closed form solutions, giving the isotropic Maxwellian
+      f5(v) = fM(v), and the generalised Gaussian distribution
+                             n                                          exp −1 (v −u)τ Θ−1 (v −u)              (11)                       f10(v) =
+               p(2π)3 det(Θ)       2
+
+
+
+                                                –5–
+
+===== PDF PAGE 6 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+149    where Θ is a positive deﬁnite matrix.
+
+150         There are no closed form solutions for systems keeping moments with degree greater
+151    than 2, and it is necessary to calculate the coeﬃcients numerically [Levermore, 1996] or
+152    make approximations to ﬁnd the remaining quantities to close the ﬂuid equations [J. Mc-
+153    Donald & Torrilhon, 2013; J. G. McDonald, 2016; Tensuda, McDonald, & Groth, 2016].
+154      It has also been shown that there can exist physically realisable states which cannot be
+155     described by Eq. (7), though it is possible to guarantee realisability by slightly modify-
+156     ing the distribution [Groth & McDonald, 2009; Junk, 1998; J. G. McDonald & Groth,
+157     2013; Schaerer & Torrilhon, 2015].
+
+
+
+158   3 Reconstruction of distributions in reconnection regions
+
+159         During the Magnetospheric Multiscale (MMS) encounter with an electron diﬀu-
+160     sion region described in [Torbert et al., 2018], highly non-Maxwellian electron distribu-
+161     tion functions were observed close to the x-point. These velocity distributions have been
+162     studied in detail [Bessho et al., 2018] and it has been shown that the combination of the
+163     electron meandering motion and reconnection electric ﬁeld is important for setting the
+164     structure of the distribution functions. These distributions are used to identify regions
+165     in the simulation for study and provide a link to reality.
+
+166       We focus on understanding what aspects of the distribution function in this recon-
+167     nection region successively higher moment models can capture compared to kinetic sim-
+168     ulations. To that end, we use the three distributions corresponding to the inﬂow, below
+169     the x-point and exhaust regions shown in Fig. 1, and perform fully kinetic particle-in-
+170      cell simulations for comparison. The known moments are then used to reconstruct dis-
+171     tributions using the maximum-entropy model for various numbers of moments. Aside
+172    from the usual isotropic Maxwellian, we use the 10-, 14-, 21- and 35-moment models, which
+173    have important properties in ﬂuid simulations. The 10-moment model is being used in
+174     global simulations of magnetospheres [Dong et al., 2019; Wang et al., 2018] and includes
+175     the pressure tensor, which is important for balancing the reconnection electric ﬁeld in
+176      collisionless reconnection. The 14- and 21-moment models include the heat-ﬂux vector
+177    and tensor respectively, and it has been shown that capturing the heat ﬂux correctly is
+178     important for reproducing the reconnection rate observed in kinetic simulations [Allmann-
+179    Rahn, Trost, & Grauer, 2018; Ng et al., 2017]. The 35-moment model extends our pre-
+180     vious study [Ng et al., 2018] by including the tensor vvvv moment instead of a scalar
+181     v4.
+
+188        The simulations are performed using the particle-in-cell code PSC [Germaschewski
+189     et al., 2016]. The initial condition is a Harris sheet [Harris, 1962], with mi/me = 100,
+190     ωpe/ωce = 2, Ti/Te = 5 with a background density nb/n0 = 0.05. We use the LMN
+191     coordinate system, where L is in the outﬂow direction, M is out-of-plane and N is in the
+192    inﬂow direction, and the computational domain is LL ×LN = 51.2di ×12.8di resolved
+193    by 2048×512 cells. The time step is ∆t = 0.17ω−1pe . Reconnection is initiated by a small
+194    magnetic ﬁeld perturbation. Particles from the kinetic simulations are chosen from re-
+195     gions corresponding to the observed distributions. We sample the particles from boxes
+196     with side 3.0de = 0.3di around the points marked in Fig. 1 at tωci = 16. There are
+197     approximately 3500 particles in the inﬂow sample and more than 5000 particles in the
+198     x-point and exhaust samples.
+
+199        To calculate the closure coeﬃcient vector α, we maximise the quantity −⟨f log f−
+200    f⟩using an iterative method. Because the kinetic code uses an artiﬁcially reduced speed
+201     of light, allowing some electrons to be accelerated to relativistic speeds, the distribution
+202     functions presented here are in p-space. However, the closure calculations remain the
+203    same as the model in Eq. (7) is non-relativistic, and we simply use p = mev, with me =
+204    1 in our simulations. We note that this method reconstructs the distribution function
+
+
+
+                                                –6–
+
+===== PDF PAGE 7 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+
+
+182    Figure  1.   (Left) Electron velocity distributions measured by MMS 3 in the reconnection re-
+
+183     gion at the listed times. The ﬁrst row is from the inﬂow, the second is from approximately 12.5
+
+184   km below the neutral line [Bessho et al., 2018] and the third is from the exhaust in the electron
+
+185     diﬀusion region. Each plot shows the velocity distribution integrated over the third velocity di-
+
+186     mension. (Right) Structure of the reconnecting current sheet from the kinetic simulation. The
+
+187      crosses mark points where the electron distribution functions are compared.
+
+
+
+
+205    from only the local moments, without the need for including any information about the
+206     electromagnetic ﬁelds.
+
+207       We ﬁrst study the distribution in the inﬂow of the reconnection region. The elec-
+208     tron velocity distribution from the Fast Plasma Investigation [Pollock et al., 2016] is shown
+209     in the ﬁrst row of Fig. 1. As the electrons in this region are still magnetised, a gyrotropic
+210     distribution is observed, with P∥> P⊥. This anisotropy is due to a combination of elec-
+211     trostatic and magnetic trapping [Egedal et al., 2013; Le, Egedal, Daughton, Fox, & Katz,
+212     2009].
+
+216           Fig. 2 shows the electron distributions obtained from the inﬂow of the kinetic sim-
+217     ulation, and reconstructions using the 5-, 10-, 14-moment Pearson-IV models. The ki-
+218     netic simulation reproduces the observed anisotropy as it retains all the kinetic physics
+219     associated with the particle trapping. In reconstructing the distributions, we ﬁnd that
+220     the 10-moment and Pearson-IV models are able to reproduce the anisotropy, but the v4
+221    moment is required to reproduce the ﬂattening associated with the particle trapping.
+
+222        The second distribution studied is from close to the x-point. In the second row of
+223     Fig. 1, which shows the electron velocity distribution from the MMS data, we observe
+224     the acceleration in the −vM direction associated with the reconnection electric ﬁeld and
+225    meandering motion, the spread in vL compared to vN due to the upstream pressure anisotropy,
+226    and the multiple populations in the vM-vN plane associated with the number of times
+227     electrons have meandered [Bessho et al., 2014, 2018; Fujimoto & Sydora, 2009; Ng et al.,
+228     2012, 2011]. The slight asymmetry in vN and lack of counterstreaming populations show
+229     that the distribution is taken from below the x-point.
+
+233          In Fig. 3 we show the structure of the particle distribution from the kinetic sim-
+234     ulation and the reconstructions using the moment models. Similarly to [Ng et al., 2018],
+235     the reproduction of the triangular shape associated with the acceleration requires the
+236      full heat ﬂux tensor (using the 21- or 35-moment models). Although the 14-moment model
+237       is unable to reproduce the triangular shape, the accelerated population of electrons is
+238       still present as seen in the rightmost column, and while the Pearson-IV distribution does
+239    show some asymmetry in the pM direction, it is not distorted to the extent of the 14-
+
+
+
+                                                –7–
+
+===== PDF PAGE 8 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+                                         pL-pM             pL-pN            pM-pN
+                                                   0.4                        0.5                        0.5
+                                   Kinetic
+
+                                                   0.4                        0.5                        0.5
+                                                   0.4                        0.5                        0.5
+                            5 m
+
+                                                   0.4                        0.5                        0.5
+                                                   0.4                        0.5                        0.5
+                            10 m
+
+                                                   0.4                        0.5                        0.5
+                                                   0.4                        0.5                        0.5
+                              Pearson
+
+                                                   0.4                        0.5                        0.5
+                                                   0.4                        0.5                        0.5
+                            14 m
+
+                                                   0.4                        0.5                        0.5
+                                            0.64          0.64    0.64          0.64     0.4          0.4
+
+                                              1.5   0.5  0.5   1.5   1.5   0.5  0.5   1.5   1.5   0.5  0.5   1.5
+                                                                             log10(f)
+
+
+213    Figure  2.  Comparisons of electron distributions from the kinetic simulation and reconstruc-
+
+214      tions using 5-moment, 10-moment, Pearson-IV and 14-moment models. f is normalised so that
+
+215     the density is 1.
+
+
+
+
+
+240    moment distribution nor does it show the acceleration in the negative M direction. The
+241     inclusion of the tensor v4 moment compared to the scalar v4 does not make a big dif-
+242     ference to the reconstruction for this region. In all cases, the structures associated with
+243     multiple electron crossings of the current sheet seen in the kinetic results are not repro-
+244     duced.
+
+245        The ﬁnal comparison of the electron distributions is between distributions in the
+246     exhaust approximately 7de downstream of the x-point. The bottom row of Fig. 1 shows
+247     the velocity distribution taken from MMS, where the distribution has been accelerated
+248     in the L direction due to the turning of vM into vL by BN. There are counterstream-
+249     ing populations in the N direction due to the meandering of the electrons, indicating this
+250     point is closer to the neutral line. These are most visible in the vL-vN plot.
+
+251        The results of the kinetic simulation and moment reconstructions are shown in Fig. 4.
+252     In the kinetic simulation, the triangular shape is maintained and rotated in the positive
+253    vL direction [Bessho et al., 2014; Ng et al., 2011]. Once again, the 10-, 14-moment and
+254     Pearson-IV models do not capture the triangular shape of the distribution, while the 21-
+255    and 35-moment models manage to do so. The counterstreaming populations seen in the
+256   LN distribution are not reproduced even using the 35-moment model, though the sep-
+257     aration of the distribution into two peaks can be seen in cuts at larger pL, and broad-
+258     ening of the distribution in the N direction compared to the 21-moment model is ob-
+259     served. This is because the inclusion of the 4th order tensor provides additional infro-
+260    mation about the tails of the distribution in the diﬀerent directions rather than just isotrop-
+261      ically. It is likely that the counterstreaming populations would be captured if the sep-
+262     aration of the populations were greater, as it has been shown that in one-dimension, coun-
+263     terstreaming populations in hydrodynamic simulations can be captured by 14-moment
+264     simulations [Forgues & McDonald, 2019]. We illustrate this using a reconstruction of the
+265     ion distribution at the x-point.
+
+
+
+                                                –8–
+
+===== PDF PAGE 9 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+                                         pL-pM             pL-pN            pM-pN
+                                                   0.2                        0.5                        0.5
+                                   Kinetic
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                            10 m
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                              Pearson
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                            14 m
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                            21 m
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                            35 m
+                                                   1.7                        0.5                        0.5
+                                            0.64          0.64    0.64          0.64     1.7            0.2
+
+                                              1.5   0.5  0.5   1.5   1.5   0.5  0.5   1.5   1.5   0.5  0.5   1.5
+                                                                             log10(f)
+
+
+230    Figure  3.  Comparisons of reduced electron distributions just below the x-point from the ki-
+
+231      netic simulation and reconstructions using Pearson-IV and 10-, 14-, 21-, and 35-moment models.
+
+232     f is normalised so that the density is 1.
+
+
+
+
+269          Figure 5 shows the reduced distributions of ions taken from the x-point. Since ions
+270    and electrons have opposite charge, the acceleration by the reconnection electric ﬁeld and
+271     thus the tip of the triangular population are in the positive pM direction. In the parti-
+272      cle distribution, there is much clearer separation between the ions in pN than in the elec-
+273     tron distribution because of the lower thermal velocity of the inﬂowing ions compared
+274     to the bulk velocity of each counterstreaming population. This can be seen in the third
+275    column at low pM. The results of using the 10-,14-, 21-moment and Pearson-IV mod-
+276      els are similar to what is observed with the electrons, with the acceleration in pM repro-
+277    duced to varying degrees of success. In particular, there is a large spread in pN, which
+278    would misleadingly indicate a high TNN when the distribution is in fact comprised of
+279    two separated colder populations.  The 35-moment reconstruction shows the best agree-
+280    ment with the kinetic distribution and a qualitative improvement on the 21-moemnt model.
+281     This is clearest in the pM-pN plot, in which the two counterstreaming populations are
+282      visible at low pN, and the overall shape of the distribution with the broader region at
+283     large pN is captured.
+
+
+287   4 Conclusion
+
+288       We have used successively higher numbers of moments to reconstruct electron ve-
+289     locity distributions in reconnection regions. The maximum entropy method, which we
+290     use, has the properties of guaranteeing the positivity of the resulting distribution and
+291     the hyperbolicity of the ﬂuid equations obtained, but is more diﬃcult to evaluate as no
+292     closed form solutions exist for > 10 moments. This closure reconstructs the distribu-
+293     tion from only the locally known moments without information about the electromag-
+294     netic ﬁelds or physical processes, allowing it to be used for diﬀerent plasma parameters.
+
+295        The use of the 35-moment model for reconstruction shows imporvements over the
+296    lower-moment models for the more non-Maxwellian distributions close to the x-point and
+
+
+
+                                                –9–
+
+===== PDF PAGE 10 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+                                         pL-pM             pL-pN            pM-pN
+                                                   0.2                        0.5                        0.5
+                                   Kinetic
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                            10 m
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                              Pearson
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                            14 m
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                            21 m
+                                                   1.7                        0.5                        0.5
+                                                   0.2                        0.5                        0.5
+                            35 m
+                                                   1.7                        0.5                        0.5
+                                            0.64          0.64    0.64          0.64     1.7            0.2
+
+                                              1.5   0.5  0.5   1.5   1.5   0.5  0.5   1.5   1.5   0.5  0.5   1.5
+                                                                             log10(f)
+
+
+266    Figure  4.  Comparisons of reduced electron distributions in the exhaust from the kinetic simu-
+
+267      lation and reconstructions using Pearson-IV, 10-, 14-, 21- and 35-moment models. f is normalised
+
+268     so that density is 1.
+
+
+
+
+
+297     in the exhaust. This is most evident in the pL-pN plane, where a broadening of the dis-
+298     tribution is observed, though the counterstreaming beams are still not reproduced. The
+299    model is also insuﬃcient to reproduce the ﬁner structures observed which are caused by
+300    meandering electron orbits. When modeling the ion distribution, at the x-point, the sep-
+301     aration between the counterstreaming ion populations is larger (compared to the ther-
+302    mal spread of the populations), and the 35-moment model is able to capture this fea-
+303     ture of the distribution function.
+
+304        The results give insight into what physics extended ﬂuid models, which are being
+305     developed for global simulations [Dong et al., 2019; Wang et al., 2018], are able to de-
+306     scribe, and how many variables will need to be evolved if the maximum entropy method
+307       is used. Here we see that the full fourth-order tensor is required to reproduce counter-
+308     streaming populations (which occur in reconnection regions and at shocks, for example),
+309    but this is dependent on how distinct the populations are as seen from the diﬀerent re-
+310     sults when comparing electrons and ions. We should note that the reconstruction here
+311       is a best-case scenario where the kinetic distribution is known, and it is not guaranteed
+312     that a ﬂuid simulation would evolve to the same state self-consistently.
+
+313         While this work is focused on the features of particle distributions that can be re-
+314    produced by the various models, we brieﬂy comment on the challenges of implementa-
+315     tion. The Pearson-IV model has been used in plasma physics to simulate some test prob-
+316     lems Miller and Shumlak [2016], but still requires study for physics relevant to the mag-
+317     netosphere. For the maximum-entropy model, each timestep would involve solving an
+318     optimisation problem for the closure parameters, which is challenging and computation-
+319      ally intensive as shown by existing work on 35-moment models [Schaerer & Torrilhon,
+320     2017]. A possible approach is that of J. McDonald and Torrilhon [2013], who use a closed-
+321    form approximation of the 14-moment closure.
+
+
+
+                                               –10–
+
+===== PDF PAGE 11 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+                                         pL-pM             pL-pN            pM-pN
+                                        0.29                  0.14                  0.14
+                                   Kinetic
+
+                                        0.04                  0.14                  0.14
+                                        0.29                  0.14                  0.14
+                            10 m
+
+                                        0.04                  0.14                  0.14
+                                        0.29                  0.14                  0.14
+                             Pearson
+
+                                        0.04                  0.14                  0.14
+                                        0.29                  0.14                  0.14
+                            14 m
+
+                                        0.04                  0.14                  0.14
+                                        0.29                  0.14                  0.14
+                            21 m
+
+                                        0.04                  0.14                  0.14
+                                        0.29                  0.14                  0.14
+                            35 m
+
+                                        0.04                  0.14                  0.14
+                                            0.07          0.07    0.07          0.07   0.04           0.29
+
+                                              0.5  0.5   1.5   2.5   0.5  0.5   1.5   2.5   0.5  0.5   1.5   2.5
+                                                                             log10(f)
+
+
+284    Figure  5.  Comparisons of reduced ion distributions at the x-point from the kinetic simulation
+
+285    and reconstructions using Pearson-IV, 10-, 14-, 21- and 35-moment models. f is normalised so
+
+286     that density is 1.
+
+
+
+
+322    Acknowledgments
+323     This work was supported by DOE Contract DE-AC02-09CH11466 and NSF Grant AGS-
+324     1338944, DOE Grant DESC0016278, NSF Grant AGS-1619584, NASA Grant 80NSSC18K1369.
+325     This research used resources of the National Energy Research Scientiﬁc Computing Cen-
+326     ter (NERSC), a U.S. Department of Energy Oﬃce of Science User Facility operated un-
+327     der Contract No. DE-AC02-05CH11231. Subsets of the data are available at The Dig-
+328      ital Repository at the University of Maryland http://hdl.handle.net/1903/25486.
+
+
+329    References
+
+330    Allmann-Rahn, F., Trost, T., & Grauer, R.   (2018).   Temperature gradient driven
+331          heat ﬂux closure in ﬂuid simulations of collisionless reconnection.    Journal of
+332         Plasma Physics, 84(3), 905840307. doi: 10.1017/S002237781800048X
+333     Bessho, N., Chen, L.-J., Shuster, J. R., & Wang, S.   (2014).   Electron distribution
+334           functions in the electron diﬀusion region of magnetic reconnection: Physics
+335         behind the ﬁne structures.         Geophysical Research Letters, 41(24), 8688–
+336          8695.    Retrieved from http://dx.doi.org/10.1002/2014GL062034      doi:
+337         10.1002/2014GL062034
+338     Bessho, N., Chen, L.-J., Wang, S., & Hesse, M.   (2018).  Eﬀect of the reconnection
+339            electric ﬁeld on electron distribution functions in the diﬀusion region of mag-
+340           netotail reconnection.     Geophysical Research Letters, 45(22), 12,142-12,152.
+341          Retrieved from https://agupubs.onlinelibrary.wiley.com/doi/abs/
+342         10.1029/2018GL081216  doi: 10.1029/2018GL081216
+343     Bobylev, A. V. (2008, Aug 01). Generalized burnett hydrodynamics. Journal of Sta-
+344             tistical Physics, 132(3), 569–580.  Retrieved from https://doi.org/10.1007/
+345         s10955-008-9556-5  doi: 10.1007/s10955-008-9556-5
+
+
+
+                                               –11–
+
+===== PDF PAGE 12 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+346    Brown, S. L.    (1996).   Approximate riemann solvers for moment models of dilute
+347          gases (Unpublished doctoral dissertation). University of Michigan.
+348     Cai, Z., Fan, Y., & Li, R.    (2015).  A framework on moment model reduction for
+349           kinetic equation.       SIAM Journal on Applied Mathematics, 75(5), 2001-
+350          2023.      Retrieved from http://dx.doi.org/10.1137/14100110X       doi:
+351         10.1137/14100110X
+352    Chapman, S., & Cowling, T. G.   (1970).  The mathematical theory of non-uniform
+353           gases: an account of the kinetic theory of viscosity, thermal conduction and
+354          diﬀusion in gases. Cambridge university press.
+355     Charniak, E.    (2000).  A maximum-entropy-inspired parser.    In Proceedings of
+356           the 1st north american chapter of the association for computational lin-
+357            guistics conference (pp. 132–139).          Stroudsburg, PA, USA: Association
+358            for Computational Linguistics.           Retrieved from http://dl.acm.org/
+359         citation.cfm?id=974305.974323
+360    Dong, C., Wang, L., Hakim, A., Bhattacharjee, A., Slavin, J. A., DiBraccio, G. A.,
+361      & Germaschewski, K.   (2019).   Global ten-moment multiﬂuid simulations of
+362          the solar wind interaction with mercury: From the planetary conducting core
+363           to the dynamic magnetosphere.   Geophysical Research Letters, 46(21), 11584-
+364          11596.    Retrieved from https://agupubs.onlinelibrary.wiley.com/doi/
+365         abs/10.1029/2019GL083180  doi: 10.1029/2019GL083180
+366     Egedal, J., Le, A., & Daughton, W.  (2013). A review of pressure anisotropy caused
+367         by electron trapping in collisionless plasma, and its implications for mag-
+368           netic reconnection.    Physics of Plasmas, 20(6), -.    Retrieved from http://
+369         scitation.aip.org/content/aip/journal/pop/20/6/10.1063/1.4811092
+370            doi: http://dx.doi.org/10.1063/1.4811092
+371     Forgues, F., & McDonald, J. G.   (2019).   Higher-order moment models for laminar
+372          multiphase ﬂows with accurate particle-stream crossing.    International Jour-
+373           nal of Multiphase Flow.     Retrieved from http://www.sciencedirect.com/
+374         science/article/pii/S0301932217307103      doi: https://doi.org/10.1016/
+375          j.ijmultiphaseﬂow.2019.01.003
+376     Fujimoto, K.   (2018).   Multi-scale kinetic simulation of magnetic reconnection with
+377          dynamically adaptive meshes.   Frontiers in Physics, 6, 119.   Retrieved from
+378         https://www.frontiersin.org/article/10.3389/fphy.2018.00119  doi: 10
+379          .3389/fphy.2018.00119
+380     Fujimoto, K., & Sydora, R. D.    (2009).    Particle description of the electron diﬀu-
+381           sion region in collisionless magnetic reconnection.  Physics of Plasmas, 16(11),
+382          112309. Retrieved from http://link.aip.org/link/?PHP/16/112309/1  doi:
+383          10.1063/1.3263694
+384    Germaschewski, K., Fox, W., Abbott, S., Ahmadi, N., Maynard, K., Wang, L., . . .
+385          Bhattacharjee, A.   (2016).  The plasma simulation code: A modern particle-
+386             in-cell code with patch-based load-balancing.        Journal of Computational
+387          Physics, 318, 305 - 326.     Retrieved from http://www.sciencedirect.com/
+388         science/article/pii/S0021999116301413    doi: http://dx.doi.org/10.1016/
+389           j.jcp.2016.05.013
+390    Grad, H. (1949a). Note on n-dimensional hermite polynomials. Communications on
+391         Pure and Applied Mathematics, 2(4), 325–330. Retrieved from http://dx.doi
+392         .org/10.1002/cpa.3160020402  doi: 10.1002/cpa.3160020402
+393    Grad, H. (1949b). On the kinetic theory of rareﬁed gases. Communications on Pure
+394         and Applied Mathematics, 2(4), 331–407. Retrieved from http://dx.doi.org/
+395         10.1002/cpa.3160020403  doi: 10.1002/cpa.3160020403
+396     Groth, C. P. T., & McDonald, J. G.    (2009, Nov 28).   Towards physically realiz-
+397           able and hyperbolic moment closures for kinetic theory. Continuum Mechanics
+398         and Thermodynamics, 21(6), 467. Retrieved from https://doi.org/10.1007/
+399         s00161-009-0125-1  doi: 10.1007/s00161-009-0125-1
+400     Harris, E.    (1962).  On a plasma sheath separating regions of oppositely directed
+
+
+
+
+                                               –12–
+
+===== PDF PAGE 13 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+401          magnetic ﬁeld.    Il Nuovo Cimento (1955-1965), 23, 115-121.   Retrieved from
+402         http://dx.doi.org/10.1007/BF02733547  (10.1007/BF02733547)
+403     Hesse, M., Winske, D., & Kuznetsova, M. M.  (1995).  Hybrid modeling of collision-
+404            less reconnection in two-dimensional current sheets: Simulations.    Journal of
+405          Geophysical Research: Space Physics, 100(A11), 21815–21825.  Retrieved from
+406         http://dx.doi.org/10.1029/95JA01559  doi: 10.1029/95JA01559
+407    Ho, A., Datta, I. A. M., & Shumlak, U.    (2018).    Physics-based-adaptive plasma
+408         model for high-ﬁdelity numerical simulations.          Frontiers in Physics, 6,
+409           105.       Retrieved from https://www.frontiersin.org/article/10.3389/
+410         fphy.2018.00105  doi: 10.3389/fphy.2018.00105
+411     Jaynes, E. T. (1957, May). Information theory and statistical mechanics. Phys. Rev.,
+412          106, 620–630.  Retrieved from https://link.aps.org/doi/10.1103/PhysRev
+413         .106.620  doi: 10.1103/PhysRev.106.620
+414     Junk, M.    (1998, December).   Domain of Deﬁnition of Levermore’s Five-Moment
+415          System.   Journal of Statistical Physics, 93, 1143-1167.   doi: 10.1023/B:JOSS
+416          .0000033155.07331.d9
+417    Karimabadi, H., Vu, H. X., Krauss-Varban, D., & Omelchenko, Y.    (2006, Decem-
+418           ber). Global Hybrid Simulations of the Earth’s Magnetosphere.  In G. P. Zank
+419      & N. V. Pogorelov (Eds.), Numerical modeling of space plasma ﬂows (Vol. 359,
+420           p. 257).
+421    Kempf, Y., Pokhotelov, D., von Alfthan, S., Vaivads, A., Palmroth, M., & Kosk-
+422           inen, H. E. J.     (2013).   Wave dispersion in the hybrid-vlasov model: Veri-
+423          ﬁcation of vlasiator.    Physics of Plasmas, 20(11), 112114.    Retrieved from
+424         https://doi.org/10.1063/1.4835315  doi: 10.1063/1.4835315
+425     Lautenbach, S., & Grauer, R.  (2018).  Multiphysics simulations of collisionless plas-
+426         mas.  Frontiers in Physics, 6, 113. Retrieved from https://www.frontiersin
+427         .org/article/10.3389/fphy.2018.00113  doi: 10.3389/fphy.2018.00113
+428     Le, A., Egedal, J., Daughton, W., Fox, W., & Katz, N.  (2009, FEB 27).  Equations
+429            of state for collisionless guide-ﬁeld reconnection [Article].      Phys. Rev. Lett,
+430          102(8), 085001. doi: {10.1103/PhysRevLett.102.085001}
+431     Levermore, C. D.  (1996). Moment closure hierarchies for kinetic theories.  Journal
+432           of Statistical Physics, 83(5), 1021–1065.  Retrieved from http://dx.doi.org/
+433         10.1007/BF02179552  doi: 10.1007/BF02179552
+434     Lu, S., Lin, Y., Lu, Q. M., Wang, X. Y., Wang, R. S., Huang, C., . . . Wang, S.
+435           (2015).        Evolution of ﬂux ropes in the magnetotail: A three-dimensional
+436           global hybrid simulation.     Physics of Plasmas, 22(5), 052901.     Retrieved
+437         from https://aip.scitation.org/doi/abs/10.1063/1.4919615          doi:
+438          10.1063/1.4919615
+439    McDonald, J., & Torrilhon, M.     (2013).    Aﬀordable robust moment closures for
+440           cfd based on the maximum-entropy hierarchy.       Journal of Computational
+441          Physics, 251, 500 - 523.     Retrieved from http://www.sciencedirect.com/
+442         science/article/pii/S0021999113004130      doi: https://doi.org/10.1016/
+443           j.jcp.2013.05.046
+444    McDonald, J. G.  (2016).  Approximate maximum-entropy moment closures for gas
+445          dynamics.   AIP Conference Proceedings, 1786(1), 140001.    Retrieved from
+446         https://aip.scitation.org/doi/abs/10.1063/1.4967632    doi: 10.1063/1
+447          .4967632
+448    McDonald, J. G., & Groth, C. P. T.  (2013, Sep 01).  Towards realizable hyperbolic
+449        moment closures for viscous heat-conducting gas ﬂows based on a maximum-
+450          entropy distribution.     Continuum Mechanics and Thermodynamics, 25(5),
+451          573–603.      Retrieved from https://doi.org/10.1007/s00161-012-0252-y
+452            doi: 10.1007/s00161-012-0252-y
+453     Miller, S. T., & Shumlak, U.  (2016). A multi-species 13-moment model for moder-
+454           ately collisional plasmas.  Physics of Plasmas, 23(8), 082303.  Retrieved from
+455         http://dx.doi.org/10.1063/1.4960041  doi: 10.1063/1.4960041
+
+
+
+
+                                               –13–
+
+===== PDF PAGE 14 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+456    Ng, J., Egedal, J., Le, A., & Daughton, W.       (2012).      Phase space structure
+457            of the electron diﬀusion region in reconnection with weak guide ﬁelds.
+458          Physics of Plasmas (1994-present), 19(11), -.          Retrieved from http://
+459         scitation.aip.org/content/aip/journal/pop/19/11/10.1063/1.4766895
+460            doi: http://dx.doi.org/10.1063/1.4766895
+461    Ng, J., Egedal, J., Le, A., Daughton, W., & Chen, L.-J.  (2011, Feb).  Kinetic struc-
+462           ture of the electron diﬀusion region in antiparallel magnetic reconnection.
+463          Phys. Rev. Lett., 106, 065002.     Retrieved from http://link.aps.org/doi/
+464         10.1103/PhysRevLett.106.065002  doi: 10.1103/PhysRevLett.106.065002
+465    Ng, J., Hakim, A., & Bhattacharjee, A.   (2018).   Using the maximum entropy dis-
+466           tribution to describe electrons in reconnecting current sheets.  Physics of Plas-
+467         mas, 25(8), 082113.    Retrieved from https://doi.org/10.1063/1.5041758
+468            doi: 10.1063/1.5041758
+469    Ng, J., Hakim, A., Bhattacharjee, A., Stanier, A., & Daughton, W.  (2017).  Simula-
+470           tions of anti-parallel reconnection using a nonlocal heat ﬂux closure.    Physics
+471           of Plasmas, 24(8), 082112.        Retrieved from https://doi.org/10.1063/
+472         1.4993195  doi: 10.1063/1.4993195
+473    Ng, J., Hakim, A., Juno, J., & Bhattacharjee, A.  (2019).   Drift instabilities in thin
+474          current sheets using a two-ﬂuid model with pressure tensor eﬀects.       Jour-
+475           nal of Geophysical Research: Space Physics, 124(5), 3331-3346.      Retrieved
+476         from https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/
+477         2018JA026313  doi: 10.1029/2018JA026313
+478     Øieroset, M., Lin, R. P., Phan, T. D., Larson, D. E., & Bale, S. D. (2002, Oct). Ev-
+479          idence for electron acceleration up to ∼300 keV in the magnetic reconnection
+480          diﬀusion region of earth’s magnetotail. Phys. Rev. Lett., 89, 195001. Retrieved
+481         from https://link.aps.org/doi/10.1103/PhysRevLett.89.195001   doi: 10
+482          .1103/PhysRevLett.89.195001
+483     ¨Ottinger, H. C.    (2010, Mar).    Thermodynamically admissible 13 moment equa-
+484           tions from the boltzmann equation.  Phys. Rev. Lett., 104, 120601.  Retrieved
+485         from https://link.aps.org/doi/10.1103/PhysRevLett.104.120601     doi:
+486          10.1103/PhysRevLett.104.120601
+487     Palmroth, M., Ganse, U., Pfau-Kempf, Y., Battarbee, M., Turc, L., Brito, T., . . .
+488         von Alfthan, S.   (2018).   Vlasov methods in space physics and astrophysics.
+489          Living reviews in computational astrophysics, 4(1), 1.
+490     Pearson, K.    (1895).   X. contributions to the mathematical theory of evolution.ii.
+491         skew variation in homogeneous material.      Philosophical Transactions of the
+492          Royal Society of London.(A.)(186), 343–414.
+493     Pollock, C., Moore, T., Jacques, A., Burch, J., Gliese, U., Saito, Y., . . . others
+494           (2016). Fast plasma investigation for magnetospheric multiscale. Space Science
+495          Reviews, 199(1-4), 331–406.
+496     Richstone, D. O., & Tremaine, S. (1988, April). Maximum-entropy models of galax-
+497             ies. The Astrophysical Journal, 327, 82-88. doi: 10.1086/166171
+498     Schaerer, R. P., & Torrilhon, M.  (2015). On singular closures for the 5-moment sys-
+499        tem in kinetic gas theory.   Communications in Computational Physics, 17(2),
+500          371400. doi: 10.4208/cicp.201213.130814a
+501     Schaerer, R. P., & Torrilhon, M. (2017). The 35-moment system with the maximum-
+502          entropy closure for rareﬁed gas ﬂows.        European Journal of Mechanics -
+503          B/Fluids, 64, 30 - 40.       Retrieved from http://www.sciencedirect.com/
+504         science/article/pii/S099775461630125X             (Special Issue on Non-
+505          equilibrium Gas Flows)      doi: https://doi.org/10.1016/j.euromechﬂu.2017.01
+506           .003
+507     Servidio, S., Chasapis, A., Matthaeus, W. H., Perrone, D., Valentini, F., Parashar,
+508         T. N., . . . Burch, J.   (2017, Nov).   Magnetospheric multiscale observation of
+509         plasma velocity-space cascade: Hermite representation and theory.  Phys. Rev.
+510            Lett., 119, 205101.     Retrieved from https://link.aps.org/doi/10.1103/
+
+
+
+
+                                               –14–
+
+===== PDF PAGE 15 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+511         PhysRevLett.119.205101  doi: 10.1103/PhysRevLett.119.205101
+512     Singh, N., & Agrawal, A.   (2016, Jun).   Onsager’s-principle-consistent 13-moment
+513          transport equations.    Phys. Rev. E, 93, 063111.    Retrieved from https://
+514         link.aps.org/doi/10.1103/PhysRevE.93.063111     doi: 10.1103/PhysRevE
+515          .93.063111
+516     Struchtrup, H., & Torrilhon, M.  (2003).  Regularization of grad’s 13 moment equa-
+517            tions: Derivation and linear analysis.      Physics of Fluids, 15(9), 2668-2680.
+518          Retrieved from http://scitation.aip.org/content/aip/journal/pof2/15/
+519         9/10.1063/1.1597472  doi: http://dx.doi.org/10.1063/1.1597472
+520    Tensuda, B. R., McDonald, J. G., & Groth, C. P. T.  (2016). Multi-dimensional val-
+521           idation of a maximum-entropy-based interpolative moment closure.  AIP Con-
+522           ference Proceedings, 1786(1), 140008. Retrieved from https://aip.scitation
+523         .org/doi/abs/10.1063/1.4967639  doi: 10.1063/1.4967639
+524     Torbert, R. B., Burch, J. L., Phan, T. D., Hesse, M., Argall, M. R., Shuster, J.,
+525                 . . . Saito, Y.   (2018).   Electron-scale dynamics of the diﬀusion region during
+526         symmetric magnetic reconnection in space.     Science, 362(6421), 1391–1395.
+527          Retrieved from http://science.sciencemag.org/content/362/6421/1391
+528            doi: 10.1126/science.aat2998
+529     Torrilhon, M.    (2010).   Hyperbolic moment equations in kinetic gas theory based
+530         on multi-variate pearson-iv-distributions.  Commun. Comput. Phys, 7(4), 639-
+531           673.
+532     Torrilhon, M., & Struchtrup, H.   (2004).   Regularized 13-moment equations: shock
+533           structure calculations and comparison to burnett models. Journal of Fluid Me-
+534           chanics, 513, 171198. doi: 10.1017/S0022112004009917
+535     T´oth, G., Chen, Y., Gombosi, T. I., Cassak, P., Markidis, S., & Peng, I. B.   (2017).
+536           Scaling the ion inertial length and its implications for modeling reconnection in
+537           global simulations.   Journal of Geophysical Research: Space Physics, 122(10),
+538           10,336-10,355.  Retrieved from https://agupubs.onlinelibrary.wiley.com/
+539         doi/abs/10.1002/2017JA024189  doi: 10.1002/2017JA024189
+540     T´oth, G., Jia, X., Markidis, S., Peng, I. B., Chen, Y., Daldorﬀ, L. K. S., . . .
+541            Dorelli, J. C.      (2016).     Extended magnetohydrodynamics with embed-
+542         ded particle-in-cell simulation of ganymede’s magnetosphere.        Journal of
+543          Geophysical Research: Space Physics, 121(2), 1273–1293.       Retrieved from
+544         http://dx.doi.org/10.1002/2015JA021997       (2015JA021997)       doi:
+545         10.1002/2015JA021997
+546    Wang, L., Germaschewski, K., Hakim, A., Dong, C., Raeder, J., & Bhattacharjee, A.
+547           (2018).    Electron physics in 3-d two-ﬂuid 10-moment modeling of ganymede’s
+548          magnetosphere.       Journal of Geophysical Research: Space Physics, 123(4),
+549          2815–2830.
+550    Wang, L., Hakim, A. H., Bhattacharjee, A., & Germaschewski, K.   (2015).  Com-
+551          parison of multi-ﬂuid moment models with particle-in-cell simulations of colli-
+552            sionless magnetic reconnection.    Physics of Plasmas (1994-present), 22(1), -.
+553          Retrieved from http://scitation.aip.org/content/aip/journal/pop/22/
+554         1/10.1063/1.4906063  doi: http://dx.doi.org/10.1063/1.4906063
+555     Westfall, P. H.    (2014).    Kurtosis as peakedness, 19052014. r.i.p.   The Ameri-
+556          can Statistician, 68(3), 191-195.   Retrieved from https://doi.org/10.1080/
+557         00031305.2014.917055  doi: 10.1080/00031305.2014.917055
+558     Yeo, G., & Burge, C. B.    (2004).   Maximum entropy modeling of short sequence
+559          motifs with applications to rna splicing signals.      Journal of Computational
+560           Biology, 11(2-3), 377-394.         Retrieved from https://doi.org/10.1089/
+561         1066527041410418  doi: 10.1089/1066527041410418
+562     Yin, L., Winske, D., Gary, S. P., & Birn, J.    (2001).    Hybrid and hall-mhd sim-
+563           ulations of collisionless reconnection: Dynamics of the electron pressure
+564           tensor.      Journal of Geophysical Research: Space Physics, 106(A6), 10761–
+565          10775.    Retrieved from http://dx.doi.org/10.1029/2000JA000398     doi:
+
+
+
+
+                                               –15–
+
+===== PDF PAGE 16 =====
+                               manuscript submitted to JGR-Space Physics
+
+
+
+566         10.1029/2000JA000398
+
+
+
+
+
+                                               –16–

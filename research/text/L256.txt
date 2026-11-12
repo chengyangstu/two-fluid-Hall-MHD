@@ -1,0 +1,755 @@
+J. Plasma Phys. (2018), vol. 84, 905840307
+c⃝Cambridge University Press 2018
+doi:10.1017/S002237781800048X
+1
+Temperature gradient driven heat ﬂux closure in
+ﬂuid simulations of collisionless reconnection
+F. Allmann-Rahn1, T. Trost1 and R. Grauer1,†
+1Institute for Theoretical Physics I, Ruhr University Bochum, Germany
+(Received 23 January 2018; revised 30 April 2018; accepted 1 May 2018)
+Recent efforts to include kinetic effects in ﬂuid simulations of plasmas have been very
+promising. Concerning collisionless magnetic reconnection, it has been found before
+that damping of the pressure tensor to isotropy leads to good agreement with kinetic
+runs in certain scenarios. An accurate representation of kinetic effects in reconnection
+was achieved in a study by Wang et al. (Phys. Plasmas, vol. 22, 2015, 012108) with
+a closure derived from earlier work by Hammett and Perkins (Phys. Rev. Lett., vol. 64,
+1990, 3019). Here, their approach is analysed on the basis of heat ﬂux data from a
+Vlasov simulation. As a result, we propose a new local closure in which heat ﬂux is
+driven by temperature gradients. This way, a more realistic approximation of Landau
+damping in the collisionless regime is achieved. Previous issues are addressed and
+the agreement with kinetic simulations in different reconnection set-ups is improved
+signiﬁcantly. To the authors’ knowledge, the new ﬂuid model is the ﬁrst to perform
+well in simulations of the coalescence of large magnetic islands.
+Key words: plasma dynamics, plasma simulation
+1. Introduction
+Magnetic reconnection is a process where the magnetic ﬁeld line topology changes
+(ﬁeld lines reconnect) to an energetically more advantageous state. Magnetic energy
+is converted into heating and particle acceleration. Reconnection occurs throughout
+the Universe, e.g. in the context of gamma ray bursts, in stellar and especially solar
+ﬂares or in the Earth’s magnetosphere. Due to its importance and the diversity of the
+underlying microphysics, it is one of the most studied topics in plasma physics with
+more than 764 000 entries in a web search. We only mention some major lines of this
+research. Besides the fundamental studies of Sweet–Parker (Sweet 1956; Parker 1957)
+and Petschek (1964) (see also Biskamp 2000) a milestone of reconnection research
+has been the formulation of the geospace environmental modelling (GEM) challenge
+(Birn et al. 2001) where various plasma descriptions such as magnetohydrodynamics
+(MHD), Hall-MHD and kinetic simulations were compared in order to understand the
+process of fast reconnection. This started intense studies on how to move from a large
+scale MHD description to more and more reﬁned models and ﬁnally to a full kinetic
+treatment. Another direction continued with a MHD description focused however
+on turbulent reconnection (see Lazarian et al. (2015) and references therein) and/or
+† Email address for correspondence: grauer@tp1.rub.de
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+2
+F. Allmann-Rahn, T. Trost and R. Grauer
+multiple island reconnection (Loureiro, Schekochihin & Cowley 2007; Bhattacharjee
+et al. 2009). The last reference (Bhattacharjee et al. 2009) also contains an overview
+of the parameter regimes in which Hall-MHD or MHD plasmoid reconnection takes
+place. In addition, a recent review on the 0.1 reconnection rate problem can be found
+in Cassak, Liu & Shay (2017).
+Plasma phenomena that happen on large time and spatial scales and those
+where collisions are an important factor can often be described sufﬁciently with
+hydrodynamic or ﬂuid models. In many cases, such as collisionless magnetic
+reconnection and collisionless shocks, these conditions are not fulﬁlled and thus
+kinetic effects have to be taken into account. However, kinetic simulations are
+computationally expensive and problems with large system sizes such as reconnection
+in the magnetotail or three-dimensional reconnection on larger scales cannot be
+computed with a fully kinetic model at this point. The ﬂuid equations on the
+other hand can be orders of magnitude cheaper to compute and can be a good
+approximation depending on how well the corresponding closure suits the problem.
+Thus ﬂuid closures including or mimicking kinetic effects have a long history. An
+excellent overview is given in Chust & Belmont (2006). Our starting point is the
+closure of Hammett & Perkins (1990) and successive work in this direction (Hammett,
+Dorland & Perkins 1992; Passot & Sulem 2003). An extension providing heat ﬂuxes
+in the parallel and perpendicular directions (with respect to the magnetic ﬁeld) was
+presented in Sharma, Hammett & Quataert (2003). All of these closures rely on the
+Hilbert transform and thus form non-local closures.
+Wang et al. (2015) suggested a heat ﬂux closure which approximates a spectrum
+of wavenumbers by one single wavenumber k0. The closure, although simple, gave
+very good results in ﬂuid simulations of collisionless reconnection. Nevertheless, Wang
+et al. asserted that further work is needed to improve the closure, e.g. by ﬁnding a
+more suitable k0. One way to do this is to compare the closure approximation to the
+actual heat ﬂux gained from a kinetic simulation. This is difﬁcult with a particle in
+cell (PIC) code because higher moments like pressure and especially heat ﬂux are very
+noisy in PIC simulations. We analyse the closure making use of kinetic data from a
+Vlasov simulation. Dependence of k0 on plasma parameters is sought as well as other
+major potential improvements to the closure.
+2. Vlasov equation and ten moment ﬂuid equations
+A plasma may be described by distribution functions fs(x, v, t) which determine the
+particle density at point (x,v) in phase space at time t for the particle species s. Under
+the assumption that there are no collisions (which is a good approximation e.g. for
+plasmas in space physics), the evolution of the distribution function is given by the
+continuity equation
+∂fs
+∂t + ∇· (vfs) + ∇v · (afs) = 0.
+(2.1)
+Inserting Lorentz acceleration a = (q/m)(E + v × B), the equation can be rearranged
+to give the Vlasov equation
+∂fs
+∂t + v · ∇fs + qs
+ms
+(E + v × B) · ∇v fs = 0.
+(2.2)
+Evolution of electric and magnetic ﬁelds is given by Maxwell’s equations ∇·E=ρ/ϵ0,
+∇· B = 0, ∇× E = −∂B/∂t and ∇× B = µ0 j + µ0ϵ0(∂E/∂t).
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+Temperature gradient driven heat ﬂux closure
+3
+The charge and current densities are deﬁned as ρ = P
+s qsns and j = P
+s qsnsus.
+Fluid quantities can be derived by taking moments of the distribution function,
+i.e. multiplying fs by powers of v and taking the integral over velocity space. The
+zeroth moment is the particle density ns(x, t) =
+R
+fs(x, v, t) dv. Similarly, the ﬁrst
+moment is the mean velocity us(x, t) = (1/(ns(x, t)))
+R
+vfs(x, v, t) dv. Higher moments
+include pressure Ps = ms
+R
+v′ ⊗v′fs dv and heat ﬂux Qs = ms
+R
+v′ ⊗v′ ⊗v′fs dv, where
+v′ = v −u.
+By taking moments of the whole Vlasov equation, one can obtain the ﬂuid
+equations. Due to the v · ∇f term in the Vlasov equation, however, every moment
+contains a quantity that is deﬁned by the next higher moment. Therefore, the resulting
+system of equations needs a closure in order to be self-consistent. Usually this is
+done by ﬁnding an approximation for pressure or heat ﬂux. Two common versions of
+the ﬂuid equations are the ﬁve moment equations (pressure closure) and ten moment
+equations (heat ﬂux closure).
+The following three equations along with Maxwell’s equations and a heat ﬂux
+closure are the complete set of ten moment equations:
+∂ns
+∂t + ∇· (nsus) = 0,
+(2.3)
+ms
+∂(nsus)
+∂t
+= nsqs(E + us × B) −∇· Ps,
+(2.4)
+∂Ps
+∂t −2qs sym
+
+nsusE + 1
+ms
+P × B
+
+= −∇· Qs.
+(2.5)
+Ps = ms
+R
+v ⊗vfs dv and Qs = ms
+R
+v ⊗v ⊗vfs dv are the second and third moment
+of the distribution function and ‘sym’ denotes the symmetrization.
+3. Wang et al. physical space ﬂuid closure for Landau damping
+Many heat ﬂux closures for collisionless plasmas exist and have been successfully
+applied, e.g. the Landau damping closures by Hammett & Perkins (1990) or Passot
+& Sulem (2003). An overview is given in Chust & Belmont (2006). Most closures
+are not designed for heat ﬂux and pressure tensors in three dimensions however.
+Hammett & Perkins (1990) (also: Hammett et al. 1992) approximated the plasma
+response function using a Padé series in order to include Landau damping in the
+ﬂuid equations which is the main damping mechanism – and thus cause of heat ﬂux
+– in collisionless plasmas. The closure was found to be an excellent approximation
+in many different cases (see e.g. the study by Sarazin et al. 2009).
+The Hammett–Perkins closure is an approximation of the scalar heat ﬂux q in one-
+dimensional Fourier space:
+˜qk = −n0χ1
+21/2vt
+|k| ik ˜Tk,
+(3.1)
+with vt = √kBT/m, χ1 = 2/√π and the equilibrium density n0. The closure resembles
+Fick’s second law q = −nD(∂T/∂x).
+Equations (2.3)–(2.5) and (3.1) contain two extreme cases: in the limit of vanishing
+heat ﬂux Qs = 0 these equations integrate to the Chew, Goldberger & Low (CGL)
+equations of state where p∥∝n3/B2 and P⊥∝nB (Chew, Goldberger & Low 1956).
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+4
+F. Allmann-Rahn, T. Trost and R. Grauer
+The other extreme case is when the thermal velocity tends to inﬁnity vth = ∞in (3.1)
+such that ∇T = 0, indicative of a Boltzmann plasma with constant temperature.
+The Hammett–Perkins closure was derived under the assumption of small deviations
+from a Maxwellian background. Thus, ﬁne scale structures in velocity space or particle
+trapping cannot be covered with this closure. A closure for guide ﬁeld reconnection,
+including the weakening of the heat ﬂux by particle trapping, is described in Le et al.
+(2009) (see also the review Egedal, Le & Daughton 2013). Thus, the Hammett–Perkins
+closure will not cover all of the physics near the X-point but may well be justiﬁed
+outside this region where the magnetic ﬁeld lines are nearly straight. For simulations
+coupling a kinetic treatment near the X-point and a ﬂuid description outside the
+reconnection zone (see Rieke, Trost & Grauer 2015) this closure can substantially
+improve and simplify the transition from the ﬂuid to the kinetic description.
+It was found by Johnson & Rossmanith (2010) that heat ﬂux in collisionless
+reconnection can be modelled by a relaxation of the pressure tensor to an isotropic
+equilibrium pressure. This can be motivated with the Hammett–Perkins closure:
+equation (3.1) was simpliﬁed by Wang et al. (2015) in order to be applicable in
+three-dimensional physical space. Since ∇· Q will be approximated, the divergence
+of (3.1) is taken which gives
+LHS = ikt · Qs
+(3.2)
+on one side and
+RHS = n0χ1
+21/2vt
+|k| kt · (kt · ˜Ts)
+(3.3)
+on the other side of the equation. Here, kt is the transposed wave vector. It becomes
+obvious that a direct generalization of Fick’s law to tensors is not possible since (3.2)
+is a second-order tensor and (3.3) is a scalar. Therefore, the vector character of k was
+neglected on the right-hand side (and the constant χ1
+√
+2 ≈1.6 was dropped), resulting
+in
+ikmQijm(k) ≈n0
+vt
+|k|k2 ˜Tij(k) = n0vt|k|˜Tij(k).
+(3.4)
+The adjustment done by treating k as a scalar is that (in physical space) ∇· (∇· Ts)
+is replaced by ∇2Ts, i.e. the Laplace operator is used on each component of Ts. At
+the same time regular divergence is taken on the left-hand side. A motivation for this
+approximation is given in § 7.
+The perturbed temperature ˜Tij can be expressed as (Pij −pδij)/n0, where pδij is the
+isotropic pressure with p = (Pxx + Pyy + Pzz)/3. Thus
+ikmQijm(k) ≈vt|k| (Pij(k) −p(k)δij).
+(3.5)
+Finally, the wavenumber ﬁeld k is approximated by one single wavenumber k0, so
+that the closure can be written in physical space as
+∂mQijm ≈vt|k0| (Pij −pδij).
+(3.6)
+We will refer to this closure as the scalar-k closure in this paper.
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+Temperature gradient driven heat ﬂux closure
+5
+4. Numerical set-up
+Fluid and kinetic Vlasov simulations of different reconnection problems are
+performed. The Vlasov code is described in Schmitz & Grauer (2006a,b), the
+ﬂuid code and its coupling to the Vlasov code is presented in Rieke et al. (2015).
+Time is normalized over the inverse ion cyclotron frequency Ω−1
+i,0 , length over ion
+inertial length di,0, speed over Alfvén velocity vA,0 and mass over ion mass mi. The
+electron–ion mass ratio is mi/me = 25 in all set-ups.
+4.1. GEM
+The GEM (geospace environmental modelling) reconnection set-up (Birn et al. 2001)
+is a reconnection problem that uses a Harris sheet conﬁguration (Harris 1962). The
+initial magnetic ﬁeld is given by Bx(y) = B0 tanh(y/λ) and the particle density by
+n(y) = n0 sech2(y/λ) + nb where λ = 0.5, B0 = 1, n0 = 1 and the background density
+nb = 0.2. Temperature is deﬁned by n0(Te + Ti) = B2
+0, Ti/Te = 5. Speed of light is
+set to c = 20vA,0. The domain is of size Lx × Ly = (8π × 4π)di,0. It is translationally
+symmetric in the z-direction, periodic in the x-direction and has conducting walls
+for ﬁelds and reﬂecting walls for particles in the y-direction. In order to start the
+reconnection process, a perturbation in the magnetic ﬁeld is applied that takes the
+form B = ˆz × ∇ψ where the perturbation in the magnetic ﬂux is given by ψ(x, y) =
+0.1 cos(2πx/Lx) cos(πy/Ly). Because of symmetries, it is sufﬁcient to simulate one
+fourth of the domain. The time span covered by the Vlasov simulation is 40Ω−1
+i,0 ,
+reconnection rate peaks at t ≈20Ω−1
+i,0 . The domain is resolved by 256 × 128 cells.
+4.2. Large Harris sheet – WHBG
+Reconnection in the Earth’s magnetotail happens on much larger spatial scales than
+reconnection in the GEM set-up. In order to approach larger scales, Wang et al. (2015)
+performed kinetic and ﬂuid simulations in a conﬁguration like GEM but with a (100×
+50)di,0 domain and c=15vA,0. For simple reference, it will be called the WHBG set-up
+(Wang, Hakim, Bhattacharjee, Germaschewski) in this paper. A study of reconnection
+in a domain of this size was done before by Daughton, Scudder & Karimabadi (2006),
+but with open boundary conditions unlike the WHBG version.
+4.3. Island coalescence
+The island coalescence reconnection problem has also been studied extensively, e.g. by
+Karimabadi et al. (2011) (large PIC simulations), Stanier et al. (2015) (PIC, hybrid
+and Hall-MHD compared) and Ng et al. (2015) (MHD, Hall-MHD and ten moment
+ﬂuid simulations). We use the same parameters as the aforementioned studies. The
+initial conﬁguration is a Fadeev equilibrium (Fadeev, Kvabtskhava & Komarov 1965):
+Az =−λB0 ln(cosh(y/λ)+ϵ cos(x/λ)) and n=n0(1−ϵ2)/(cosh(y/λ)+ϵ cos(x/λ))2 +nb
+with ϵ = 0.4, nb = 0.2 and a variable λ. Temperature is T = Ti = Te = 0.5, speed
+of light c = 15vA,0 and the domain size is proportional to λ according to Lx × Ly =
+(2πλ × 4πλ)di,0. The boundaries are periodic in the y-direction and conducting for
+ﬁelds and reﬂecting for particles in the x-direction. The B-ﬁeld perturbation is δBx =
+0.1 sin(y/(2λ) −π) cos(x/(2λ)) and δBy = −0.1 cos(y/(2λ) −π) sin(x/(2λ)) (Daughton
+et al. 2009). Time is normalized to the Alfvén time tA = Ly/vA,0. The normalized
+reconnection rate ER is computed as ER = (∂Ψ /∂t)/(B′v′
+A) where B′ is the maximum
+of the absolute value of the magnetic ﬁeld between the X-point and the O-point at
+x = 0 and t = 0 and v′
+A = B′/√µ0n0mi. The magnetic ﬂux is Ψ =
+R X
+O dyBx (integral
+from the O- to the X-point).
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+6
+F. Allmann-Rahn, T. Trost and R. Grauer
+FIGURE 1. Comparison of actual heat ﬂux change (ﬁrst row) and scalar-k closure (second
+row). (a) (∇· Qe)xx at t =17.5Ω−1
+i , (b) (∇· Qe)xy at t =7.5Ω−1
+i , (c) (∇· Qe)zz at t =30Ω−1
+i .
+5. Comparison of heat ﬂux data and the scalar-k closure
+In order to examine how well the actual divergence of heat ﬂux agrees with the
+closure approximation, both sides of (3.6) have been computed. While Wang et al.
+chose 1/de,0 as k0 for all components, ideally one can ﬁnd a better k0 by analysing
+the plots (cf. § 6) of the kinetic simulations. The comparison is done with simulations
+of the GEM set-up.
+Taking symmetry into account, the heat ﬂux tensor Qs has ten and the pressure
+tensor Ps has six independent components. Therefore (3.6) results in six separate
+equations, one for each of the pressure tensor’s components. 1/de,0 equates to 5d−1
+i,0
+since the electron–ion mass ratio me/mi is 1/25. For the purpose of comparison, a
+value of k0 = 1d−1
+i,0 is used to compute the closure. Representative plots are shown in
+ﬁgure 1.
+Overall the agreement is decent considering that heat ﬂux often has a complex
+shape. The approximation is best in the period before and during reconnection. In the
+beginning of the simulation the magnitude is usually off by a factor of between 1/10
+and 10 whereas after reconnection the shape of the heat ﬂux generally becomes very
+convoluted which is hard to replicate with a closure.
+Figure 1(a) shows typical issues insofar as the basic structure is approximated well
+(the area in the centre of the plot) but other parts of the shape are wrong (here the
+outer area around the x-axis). Another recurring problem is that the whole outer region
+usually has no heat ﬂux, which is wrongly predicted by the scalar-k closure. A major
+improvement with correct damping in this outer region will be presented in § 7.
+A positive example of the scalar-k closure is given by ﬁgure 1(b), showing how it
+can even cover details like the changing sign at the left and right borders around the
+x-axis. After reconnection, structures tend to get complicated (ﬁgure 1c) and while
+the shape is still similar, both the sign and the location of extrema are inaccurate.
+This holds true for many components towards the end of the simulation (35–40Ω−1
+i,0 ).
+Concerning a ﬁxed k0, the comparison suggests that values between 0.1 and 10d−1
+i,0
+can be reasonable choices for both ions and electrons.
+6. Searching for a parameter dependent k0
+The ﬁeld of wavenumbers k from (3.1) was replaced with a single ﬁxed number
+k0 by Wang et al. (2015). Although this is a massive simpliﬁcation, it already leads
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+Temperature gradient driven heat ﬂux closure
+7
+to good results. Nonetheless, there are differences between a kinetic simulation and
+a ten moment ﬂuid simulation using the scalar-k closure. Discrepancies exist e.g. in
+the pressure tensor which may be attributed to the issue that there is no trivial way
+to generalize the original Hammett–Perkins closure to three dimensions and that k is
+the same for each component of the pressure tensor.
+The idea behind the approximation is that a k0 represents the average length scales
+at which Landau damping occurs in the given scenario. Wang et al. (2015) found
+k0 = 1/de,0 = 5d−1
+i,0 to ﬁt well in their (100 × 50)di,0 reconnection set-up. Tests showed
+that in the original GEM reconnection problem, however, k0,i = 0.3d−1
+i,0 seems to be the
+optimal value. This is unintuitive as usually a smaller domain size would not require a
+smaller (indeed much smaller) characteristic wavenumber. That means k0 seems to be
+speciﬁc to the respective problem. It would be desirable to ﬁnd a consistent variable
+k0 which might depend on local plasma parameters.
+Eligible plasma parameters were investigated experimentally by computing the
+closure with the respective k0 candidate and comparing it to the actual divergence
+of heat ﬂux as done in § 5. Promising candidates were additionally tested in a ten
+moment ﬂuid simulation which was then compared to a run with k0 = 5d−1
+i,0 and a
+Vlasov run. Dependence of k0 on plasma parameters and quantities was examined in
+the GEM set-up, but none of the experiments led to an improvement. It is difﬁcult
+to ﬁnd suitable plasma parameters since the closure’s shape is overall decent and
+differences compared to the actual heat ﬂux are often very complex or vary heavily
+in time and component. Taking the analysis done in § 5 and in this section into
+account, it appears that the deﬁciencies are not solely related to k0 and its possible
+dependence on local plasma parameters.
+7. Modiﬁed, gradient driven closure
+The Hammett–Perkins closure was transferred to physical space because a Fourier
+space representation may be computationally expensive in a physical space code.
+More important is the issue that it is not clear how to generalize the closure to
+three-dimensional tensors. A generalization to tensors in Fourier space was proposed
+by Ng et al. (2017). They started with (3.1) and searched for a total symmetric
+generalization of the heat ﬂux Qijm resulting in
+Qijm(x) = n(x) ˜Qijm(x),
+ˆ˜Qijm(k) = −i vt
+|k|χk[i ˆTjk],
+(7.1a,b)
+where ˆ˜Qijm and ˆTjk denote the Fourier transforms of ˜Qijm and Tjk.
+We take a different approach and focus not on the heat ﬂux directly but on its
+divergence ∂mQijm. To attain the symmetry of this divergence tensor, Wang et al.
+(2015) used −k2P in place of the derivative −kt · (kt · P) and then approximated k
+by k0. The physical space equivalent of this is to replace ∇· (∇· P) by ∇2P where
+now the second approximation (k ≈k0) is not needed. This way the dependence on
+k0 is reduced and a different relaxation in each component of the pressure tensor
+is allowed. The resulting expression takes the form of a Fick’s law and thus the
+damping nature of the Hammett–Perkins closure is clearly retained.
+Our candidate for a new collisionless heat ﬂux closure is
+∂mQijm = −vt
+|k0|∇2(Pij −pδij),
+(7.2)
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+8
+F. Allmann-Rahn, T. Trost and R. Grauer
+FIGURE 2. Hammett–Perkins closure, components from left to right: Qxxz,e, Qxxz,i, Qxyy,e.
+where the symmetry of the divergence of the heat ﬂux appears naturally. We will call
+it the gradient closure in this paper.
+The motivation as to why −k2 P might be a suitable approximation of the derivative
+has not yet been clariﬁed. In order to do so, assume B = (Bx, 0, 0). The wave vector
+k is related to plasma oscillations, therefore k ∥B and k = (kx, 0, 0). The Hammett–
+Perkins closure in Wang et al.’s three-dimensional version is
+ikmQijm = χ1
+21/2vt
+|k| k2(Pij −pδij)
+(7.3)
+or
+ikxQijx + ikyQijy + ikzQijz = χ1
+21/2vt
+|k| (k2
+x + k2
+y + k2
+z)(Pij −pδij).
+(7.4)
+After dividing by ikx and with ky = kz = 0, the equation has the form of the original
+Hammett–Perkins closure
+Qijx(k) = −χ1
+21/2vt
+|kx| ikx(Pij(k) −p(k)δij).
+(7.5)
+Hence, equation (3.6) is a plausible generalization to three-dimensional tensors
+along magnetic ﬁeld lines. This indicates that, while not exact in all space, the
+simpliﬁcation of treating k as a scalar is reasonable.
+In the outer region of the simulation, ﬁeld lines are nearly parallel to the x-axis.
+Thus, it is straightforward to use (7.5) to test whether the Hammett–Perkins closure
+can be applied to the problem of reconnection or, more precisely, how far the issues
+found are related to the choice of k0 and the scalar-k approximation and in how far the
+problems are inherent to the original closure. The heat ﬂux according to the closure
+was calculated by Fourier transforming a one-dimensional section of the pressure data
+with y = const., multiplying it by −i(k/|k|) = −i sgn(k) and then Fourier transforming
+back to physical space. This corresponds to the Hilbert transform of the perturbed
+pressure. Data were taken at t =17.5Ω−1
+i
+and y=−4.27di,0. As an example, the results
+compared to the actual heat ﬂux are plotted in ﬁgure 2. The deviation from the heat
+ﬂux data is different for the various components. Generally, the issues are similar to
+those of the scalar-k closure concerning shape, magnitude and sign, but to a lesser
+extent.
+As done before with the scalar-k closure, we also compare the gradient closure
+to heat ﬂux data from a Vlasov run. A comparison of magnitude suggests k0,s =
+3/ds,0 for the characteristic wavenumber in the new closure. This is also the value
+that was used for the plots in ﬁgure 3. Improvements are recognizable like a better
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+Temperature gradient driven heat ﬂux closure
+9
+FIGURE 3. Comparison of actual heat ﬂux change (ﬁrst row), scalar-k closure (second
+row) and gradient closure (third row). (a) (∇· Qi)xx at t = 20Ω−1
+i , (b) (∇· Qi)xy at t =
+7Ω−1
+i , (c) (∇· Qe)yy at t = 17.5Ω−1
+i .
+representation of extrema (ﬁgure 3a). It has been asserted before that the scalar-k
+closure sometimes yields bad results in the outer regions which was not the case
+with the original Hammett–Perkins closure. This issue has indeed been ﬁxed using the
+Laplacian as can be seen in ﬁgure 3(b,c). Recent efforts to couple the Vlasov equation
+to the ten moment ﬂuid equations (Rieke et al. 2015; Trost, Lautenbach & Grauer
+2017) could proﬁt from the improvement in the outer region since that is where the
+ﬂuid model would be used in a coupling scenario.
+8. The pressure gradient closure in reconnection simulations
+8.1. GEM
+In the GEM set-up the gradient ﬂuid run is compared to both the kinetic Vlasov run
+and a scalar-k ﬂuid run. The respective plots can be seen in ﬁgure 4. Snapshots are
+taken at times where a similar amount of ﬂux has reconnected since ﬂuid simulations
+of Harris sheet reconnection usually have a longer onset than kinetic ones. The
+reconnected ﬂux is measured at y = 0 as Ψ =
+R O
+X By dx where the integral is between
+the centre and the right border of the domain (X- and O-point).
+The scalar-k simulation of the GEM set-up that is displayed here was computed
+with k0,i = 0.3d−1
+i,0 and k0,e = 5d−1
+i,0 which gave the best agreement with the Vlasov
+simulation (cf. § 6). Signiﬁcant improvement can be observed in the run with the
+gradient closure throughout all parameters. Also, the time development of the gradient
+run is closer to the Vlasov run. Figure 4(a) shows that the extremum of the current
+after reconnection is caught better. Details like the extrema and the changing sign
+in ﬁgure 4(b) in the outer areas around the x-axis that the scalar-k run misses are
+now included. This indicates that the new closure provides a better representation
+of kinetic effects. Heat ﬂux change directly inﬂuences the pressure tensor, so it
+is particularly interesting that the agreement with the kinetic pressure tensor has
+improved. In ﬁgure 4(c) an example is shown where the scalar-k closure produces a
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+10
+F. Allmann-Rahn, T. Trost and R. Grauer
+FIGURE 4. Vlasov run (ﬁrst row), scalar-k ﬂuid run (second row) and gradient ﬂuid run
+(third row). (a) jz when Ψ = 1.8, (b) jx when Ψ = 2, (c) Pxy,e when Ψ = 2.
+FIGURE 5. jz when Ψ = 1.8 in the GEM set-up for different mass ratios. From left to
+right: mi/me = 25 (1024 × 512 cells), mi/me = 400 (1024 × 512 cells) and mi/me = 1836
+(2048 × 1024 cells).
+result signiﬁcantly different from the Vlasov run while the result from the gradient
+closure is very similar.
+Using a higher resolution of 1024 × 512 cells for the gradient closure simulation
+further improves agreement with the Vlasov simulation (cf. ﬁgure 5). In the GEM
+conﬁguration, and in the other conﬁgurations as well, the ion–electron mass ratio was
+mi/me = 25 which makes the simulations computationally cheaper compared to more
+realistic mass ratios. Figure 5 shows the differences between runs with mass ratios
+of 25, 400 and the actual ratio 1836. Results are very similar to each other and are
+in good agreement with the Vlasov simulation. A lower electron mass allows more
+complex structures to develop with a localized X-point and leads to a higher current
+peak.
+Le, Egedal & Daughton (2016) (see also: Le et al. 2009; Egedal et al. 2013)
+showed that anisotropy due to particle trapping plays an important role in anti-
+parallel magnetic reconnection both near the X-point and in the inﬂow regions. A
+Hammett–Perkins type closure might be able to imitate this particle trapping by
+predicting a very low heat ﬂux (CGL limit) in the appropriate regions. Usually, vt,e
+in a Hammett–Perkins closure would cause higher electron heat ﬂuxes with realistic
+electron masses and therefore lead to a Boltzmann limit for the electrons. However,
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+Temperature gradient driven heat ﬂux closure
+11
+FIGURE 6. Time development of the reconnected ﬂux in the GEM set-up for different
+simulations. If not speciﬁed differently, the electron–ion mass ratio is mi/me = 25. The
+number next to the model is the resolution, e.g. 1024 for a resolution of 1024 × 512
+cells.
+since k0,s ∝1/ds,0, the amount of heat ﬂux is independent of the mass ratio so that
+the anisotropy is not underestimated for realistic mass ratios.
+In ﬁgure 6 the time development of the reconnected ﬂux in different GEM runs is
+compared. It can be seen that the low resolution scalar-k run has lower reconnection
+rates than the Vlasov run and the reconnection rate drops further when going to a
+higher resolution. The high resolution gradient run on the other hand has the same
+slope as the Vlasov run after a slightly longer onset and the low resolution gradient
+run has a differing slope but reconnection happens similarly fast overall.
+8.2. WHBG
+Originally, the scalar-k closure was tested by Wang et al. (2015) in the case of
+reconnection in a larger domain of size (100 × 50)di,0. They compared the ten
+moment scalar-k closure to a kinetic particle in cell (PIC) simulation and found good
+agreement but some issues as well. Figure 7 shows ten moment runs of the WHBG
+set-up with the scalar-k closure on one hand and the gradient closure on the other
+hand (resolution 4096 × 2048 cells). The scalar-k run is very similar to the one by
+Wang et al. The gradient run is closer to Wang et al.’s PIC run and has little to
+no plasmoid formation. The characteristic wavenumbers in the gradient closure were
+chosen as k0,s = (1/3)d−1
+s,0, although other values of k0,s are possible as well.
+8.3. Island coalescence
+The coalescence of islands has been observed in space plasmas and is reported
+to accelerate electrons to high energies (Song et al. 2012). Until now no ﬂuid or
+MHD model was capable of reproducing the kinetic effects in island coalescence
+well. Ng et al. (2015) found good agreement of the scalar-k ten moment model
+with PIC runs on small spatial scales with k0,e = 5d−1
+i,0 , k0,i = 0.3d−1
+i,0 as the optimal
+wavenumber values. Going to larger islands, however, average reconnection rates
+decreased according to (λ/di,0)−0.2 whereas there was a stronger scaling of (λ/di,0)−0.8
+in kinetic PIC simulations (see also Stanier et al. 2015). There were also further
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+12
+F. Allmann-Rahn, T. Trost and R. Grauer
+FIGURE 7. uz,e in the WHBG set-up when Ψ = 2.7. (a) Scalar-k simulation
+(t = 140Ω−1
+i,0 ) and (b) gradient simulation (t = 131Ω−1
+i,0 ).
+differences from kinetic simulations, e.g. islands did not bounce from each other and
+secondary islands formed in larger systems.
+Ng et al. (2017) proposed a global generalization (see (7.1)) of the Hammett–
+Perkins closure to tensors and tested it in the island coalescence set-up. The
+generalization is in Fourier space which is computationally expensive but has the
+advantage that no k0 needs to be chosen. It performed better than the scalar-k closure
+concerning the average reconnection rates (∝(λ/di,0)−0.45) but did not approach
+the kinetic scaling. Scaling of the maximum reconnection rate did not improve
+signiﬁcantly and the other discrepancies mentioned above remained.
+We conducted runs of the island coalescence problem with the scalar-k and the
+gradient closure. The results of our scalar-k simulations are very similar to those of
+Ng et al. (2017) with a scaling of the average reconnection rate ∝(λ/di,0)−0.23 and also
+matching values for the maximum reconnection rate. In our simulations no secondary
+islands formed however.
+Fluid simulations with the gradient closure show the characteristics of kinetic
+simulations, if k0 is chosen correctly. Here, the optimal value is k0,s = (1/2)/ds,0. The
+average reconnection rate (average taken from 0 to 1.5tA) is displayed in ﬁgure 9(a)
+and scales as (λ/di,0)−0.73 which is almost identical to the kinetic scaling. Scaling
+of the maximum reconnection rate is much stronger than with the scalar-k closure
+as well (ﬁgure 9b). There is no formation of secondary islands. Due to the lower
+reconnection rates, islands now bounce, as can be seen in ﬁgure 9(c). The out-of-plane
+current jz is displayed in ﬁgure 8 for both closures. The current sheet and the island’s
+oval form in the gradient simulation are similar to results from kinetic simulations
+(see the movie in the supplemental material of Stanier et al. 2015).
+Two different resolution set-ups were employed in order to show that the results do
+not change as long as the electron inertial length is resolved. Set-up 1 was 512 × 256
+cells for λ = 5di,0, 1024 × 512 cells for λ = 10di,0 and λ = 15di,0 and 2048 × 1024 cells
+for λ = 25di,0. Set-up 2 had a resolution of 2048 × 1024 cells for all simulations. Both
+average and maximum reconnection rates of the gradient closure runs were alike for
+the two set-ups, as can be seen in table 1. There were also no differences concerning
+the current sheet width and the overall shape of the islands.
+Figure 10 shows how the reconnection rate is affected by the choice of k0 for
+λ = 5di,. A higher amount of heat ﬂux (small k0) leads to faster reconnection. The
+scaling of the reconnection rate with λ depends on k0 as well. k0 was chosen so that
+the reconnection rates agree with the kinetic results which automatically implied the
+correct kinetic scaling concerning the domain size. This indicates that there are kinetic
+effects that are handled appropriately by the closure.
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+Temperature gradient driven heat ﬂux closure
+13
+FIGURE 8. The island coalescence set-up at t = tA for λ = 25di,0. Scalar-k closure (a) and
+gradient closure (b).
+Resolution set-up 1
+Resolution set-up 2
+λ/di,0
+Avg. rec. rate
+Max. rec. rate
+Avg. rec. rate
+Max. rec. rate
+5
+0.180
+0.387
+0.181
+0.392
+10
+0.113
+0.285
+0.113
+0.286
+15
+0.081
+0.208
+0.082
+0.210
+25
+0.052
+0.127
+0.052
+0.127
+TABLE 1. Reconnection rates in the island coalescence set-up (gradient closure) using
+different resolutions. Columns 2 and 3 show the same data as ﬁgure 9(a).
+8.4. Numerics
+The Laplacian in the closure was computed explicitly by means of ﬁnite differences.
+Therefore, instabilities are enhanced and a smaller time step is needed. Time step
+restrictions increase with higher resolution. For now, this has been circumvented by
+subcycling the computation of the Laplacian. Since the domain has to be split up
+into blocks for parallelization, and since boundaries are not exchanged in between the
+subcycles (for performance reasons), inaccuracies occur at these borders. Furthermore,
+the velocities and densities needed to compute pressure from the second moment are
+not updated between the subcycles, which has little inﬂuence however. A comparison
+of a subcycled version of the WHBG set-up with one without subcycling shows that
+globally there is no difference and that the approximation is acceptable when used
+thoughtfully. A more sophisticated solution to the time step problem is left to future
+work.
+9. Conclusion
+Following an analysis of kinetic heat ﬂux data, a closure to the ten moment ﬂuid
+equations is presented which approximates the heat ﬂux tensor as
+∂mQijm = −vt
+|k0,s|∇2(Pij −pδij),
+(9.1)
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+14
+F. Allmann-Rahn, T. Trost and R. Grauer
+FIGURE 9. Coalescence of magnetic islands. (a) Scaling of the average reconnection rate
+with the size parameter λ for both closures next to the scaling found by Stanier et al.
+(2015) in kinetic PIC simulations which was ∝(λ/di,0)−0.8. (b) Scaling of the maximum
+reconnection rate. (c) Distance of the islands’ O-points relative to their initial distance for
+λ = 15di,0.
+FIGURE 10. Island coalescence set-up in gradient closure simulations: reconnection rates
+dependent on k0 for a ﬁxed domain size (λ = 5di,0).
+with the free parameter k0,s (a typical wavenumber) and p = (Pxx + Pyy + Pzz)/3.
+Suitable values for k0,s in magnetic reconnection are 3/ds,0 in the GEM set-up,
+(1/3)/ds,0 in the WHBG set-up and (1/2)/ds,0 in island coalescence.
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+Temperature gradient driven heat ﬂux closure
+15
+The derivation of (9.1) used ﬁndings of Hammett & Perkins (1990) and Wang
+et al. (2015). The approximations made were motivated by a test of the original
+one-dimensional Hammett–Perkins approach along magnetic ﬁeld lines. The new
+closure was tested in three different reconnection set-ups and the results agreed well
+with kinetic Vlasov and PIC simulations in all cases. Good results were achieved
+in the coalescence of magnetic islands where ﬂuid models were unsuccessful before.
+Including the pressure gradient is supposed to improve the approximation of kinetic
+effects like Landau damping so that the ﬂuid equations can replace expensive kinetic
+computations. This way, simulations of large spatial scales like the Earth’s magnetotail
+become within reach.
+Future work includes further investigation of the free parameter because currently
+it has to be determined from experiments and a comparison with kinetic simulations.
+The focus should be on the effect of different set-ups since the free parameter appears
+to be speciﬁc to the speciﬁc problem. Another approach would be to couple the ﬂuid
+code to Vlasov computations in order to adaptively adjust the free parameter. From a
+technical point of view, more elaborate solutions to the time step restrictions caused
+by the Laplacian will be needed.
+Acknowledgements
+We acknowledge helpful suggestions by the referees. F.A.R. appreciated the
+discussions with S. Lautenbach and J. Dreher. Computations were conducted on
+the Davinci cluster at TP1 Plasma Research Department and on the JURECA cluster
+at Jülich Supercomputing Centre under the project number HBO43.
+REFERENCES
+BHATTACHARJEE, A., HUANG, Y.-M., YANG, H. & ROGERS, B. 2009 Fast reconnection in high-
+Lundquist-number plasmas due to the plasmoid instability. Phys. Plasmas 16 (11), 112102.
+BIRN, J., DRAKE, J. F., SHAY, M. A., ROGERS, B. N., DENTON, R. E., HESSE, M., KUZNETSOVA,
+M., MA, Z. W., BHATTACHARJEE, A., OTTO, A. et al. 2001 Geospace environmental modeling
+(gem) magnetic reconnection challenge. J. Geophys. Res. Space Phys. 106 (A3), 3715–3719.
+BISKAMP, D. 2000 Magnetic Reconnection in Plasmas. Cambridge University Press.
+CASSAK, P. A., LIU, Y.-H. & SHAY, M. A. 2017 A review of the 0.1 reconnection rate problem.
+J. Plasma Phys. 83 (5), 715830501.
+CHEW, G. F., GOLDBERGER, M. L. & LOW, F. E. 1956 The boltzmann equation and the one-ﬂuid
+hydromagnetic equations in the absence of particle collisions. Proc. R. Soc. Lond. A 236,
+112.
+CHUST, T. & BELMONT, G. 2006 Closure of ﬂuid equations in collisionless magnetoplasmas. Phys.
+Plasmas 13 (1), 012506.
+DAUGHTON, W., ROYTERSHTEYN, V., ALBRIGHT, B. J., KARIMABADI, H., YIN, L. & BOWERS,
+K. J. 2009 Inﬂuence of coulomb collisions on the structure of reconnection layers. Phys.
+Plasmas 16 (7), 072117.
+DAUGHTON, W., SCUDDER, J. & KARIMABADI, H. 2006 Fully kinetic simulations of undriven
+magnetic reconnection with open boundary conditions. Phys. Plasmas 13 (7), 072101.
+EGEDAL, J., LE, A. & DAUGHTON, W. 2013 A review of pressure anisotropy caused by electron
+trapping in collisionless plasma, and its implications for magnetic reconnection. Phys. Plasmas
+20, 061201.
+FADEEV, V. M., KVABTSKHAVA, I. F. & KOMAROV, N. N. 1965 Self-focusing of local plasma
+currents. Nucl. Fusion 5 (3), 202.
+HAMMETT, G. W., DORLAND, W. & PERKINS, F. W. 1992 Fluid models of phase mixing, Landau
+damping, and nonlinear gyrokinetic dynamics. Phys. Fluids B 4 (7), 2052–2061.
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press
+
+16
+F. Allmann-Rahn, T. Trost and R. Grauer
+HAMMETT, G. W. & PERKINS, F. W. 1990 Fluid moment models for Landau damping with
+application to the ion-temperature-gradient instability. Phys. Rev. Lett. 64, 3019–3022.
+HARRIS, E. G. 1962 On a plasma sheath separating regions of oppositely directed magnetic ﬁeld. Il
+Nuovo Cimento 23 (1), 115–121.
+JOHNSON, E. A. & ROSSMANITH, J. A. 2010 Ten-moment two-ﬂuid plasma model agrees well with
+pic/Vlasov in gem problem. arXiv:1010.0746.
+KARIMABADI, H., DORELLI, J., ROYTERSHTEYN, V., DAUGHTON, W. & CHACÓN, L. 2011 Flux
+pileup in collisionless magnetic reconnection: bursty interaction of large ﬂux ropes. Phys. Rev.
+Lett. 107, 025002.
+LAZARIAN, A., EYINK, G., VISHNIAC, E. & KOWAL, G. 2015 Turbulent reconnection and its
+implications. Phil. Trans. R. Soc. Lond. A 373, 20140144.
+LE, A., EGEDAL, J. & DAUGHTON, W. 2016 Two-stage bulk electron heating in the diffusion region
+of anti-parallel symmetric reconnection. Phys. Plasmas 23 (10), 102109.
+LE, A., EGEDAL, J., DAUGHTON, W., FOX, W. & KATZ, N. 2009 The equations of state for
+collisionless guide-ﬁeld reconnection. Phys. Rev. Lett. 102, 085001.
+LOUREIRO, N. F., SCHEKOCHIHIN, A. A. & COWLEY, S. C. 2007 Instability of current sheets and
+formation of plasmoid chains. Phys. Plasmas 14 (10), 100703–100703.
+NG, J., HAKIM, A., BHATTACHARJEE, A., STANIER, A. & DAUGHTON, W. 2017 Simulations of
+anti-parallel reconnection using a nonlocal heat ﬂux closure. Phys. Plasmas 24 (8), 082112.
+NG, J., HUANG, Y.-M., HAKIM, A., BHATTACHARJEE, A., STANIER, A., DAUGHTON, W., WANG,
+L. & GERMASCHEWSKI, K. 2015 The island coalescence problem: scaling of reconnection in
+extended ﬂuid models including higher-order moments. Phys. Plasmas 22 (11), 112104.
+PARKER, E. N. 1957 Sweet’s mechanism for merging magnetic ﬁelds in conducting ﬂuids. J. Geophys.
+Res. 62 (4), 509–520.
+PASSOT, T. & SULEM, P. L. 2003 Long-Alfvén-wave trains in collisionless plasmas. II. A Landau-ﬂuid
+approach. Phys. Plasmas 10 (10), 3906–3913.
+PETSCHEK, H. E. 1964 Magnetic ﬁeld annihilation. NASA Special Publication 50, 425.
+RIEKE, M., TROST, T. & GRAUER, R. 2015 Coupled Vlasov and two-ﬂuid codes on gpus. J. Comput.
+Phys. 283, 436–452.
+SARAZIN, Y., DIF-PRADALIER, G., ZARZOSO, D., GARBET, X., GHENDRIH, PH. & GRANDGIRARD,
+V. 2009 Entropy production and collisionless ﬂuid closure. Plasma Phys. Control. Fusion 51
+(11), 115003.
+SCHMITZ, H. & GRAUER, R. 2006a Comparison of time splitting and backsubstitution methods for
+integrating Vlasov’s equation with magnetic ﬁelds. Comput. Phys. Commun. 175, 86.
+SCHMITZ, H. & GRAUER, R. 2006b Kinetic Vlasov simulations of collisionless magnetic reconnection.
+Phys. Plasmas 13 (9), 092309.
+SHARMA, P., HAMMETT, G. W. & QUATAERT, E. 2003 Transition from collisionless to collisional
+magnetorotational instability. Astrophys. J. 596, 1121.
+SONG, H.-Q., CHEN, Y., LI, G., KONG, X.-L. & FENG, S.-W. 2012 Coalescence of macroscopic
+magnetic islands and electron acceleration from stereo observation. Phys. Rev. X 2, 021015.
+STANIER, A., DAUGHTON, W., CHACÓN, L., KARIMABADI, H., NG, J., HUANG, Y.-M., HAKIM,
+A. & BHATTACHARJEE, A. 2015 Role of ion kinetic physics in the interaction of magnetic
+ﬂux ropes. Phys. Rev. Lett. 115, 175004.
+SWEET, P.A. 1956 Electromagnetic Phenomena in Ionized Gases, IAU Symposium, vol. 6, p. 123.
+TROST, T., LAUTENBACH, S. & GRAUER, R. 2017 Enhanced conservation properties of Vlasov codes
+through coupling with conservative ﬂuid models. arXiv:1702.00367.
+WANG, L., HAKIM, A. H., BHATTACHARJEE, A. & GERMASCHEWSKI, K. 2015 Comparison of multi-
+ﬂuid moment models with particle-in-cell simulations of collisionless magnetic reconnection.
+Phys. Plasmas 22 (1), 012108.
+https://doi.org/10.1017/S002237781800048X Published online by Cambridge University Press

@@ -1,0 +1,64 @@
+\subsection{补算：电荷约束怎样随时间保持}
+将离子连续性乘$+e$，电子连续性乘$-e$，相加有
+\begin{equation}
+ \partial_t[e(n_i-n_e)]+\grad\cdot[e(n_i\vel_i-n_e\vel_e)]=0.
+\end{equation}
+这就是$\partial_t\rho_q+\grad\cdot\J=0$，它来自粒子数守恒，不是另外独立猜出的方程。再对电场演化取散度：
+\begin{align}
+ \partial_t(\grad\cdot\E)
+ &=c^2\grad\cdot(\grad\times\B)-{1\over\epsilon_0}\grad\cdot\J
+ ={1\over\epsilon_0}\partial_t\rho_q,\\
+ \partial_t\left(\grad\cdot\E-{\rho_q\over\epsilon_0}\right)&=0.
+\end{align}
+因此满足约束的初始条件在连续方程中保持满足；不满足约束的初始误差也不会自动消失。同理，Faraday定律给$\partial_t(\grad\cdot\B)=0$。数值离散若破坏这些散度--旋度恒等式，就需要额外控制误差。
+
+\subsection{补算：准中性与忽略位移电流是两个不同估计}
+设电势变化尺度为$\Phi_0$、空间尺度为$L$。Poisson方程的量级是
+\begin{equation}
+ {e|n_i-n_e|\over\epsilon_0}\sim{\Phi_0\over L^2}
+ \quad\Longrightarrow\quad
+ {|n_i-n_e|\over n_0}
+ \sim{\lambda_{De}^2\over L^2}{e\Phi_0\over T_e}.
+\end{equation}
+前面的简式还隐含$e\Phi_0/T_e=O(1)$。若外加电势极强、存在鞘层或空间已接近$\lambda_D$，不能只看$L$很大就忽略电荷分离。准中性采用的是渐近展开中密度的最低阶相等；不能同时把有限$\grad\cdot\E$代入未作展开的Gauss定律，声称两者精确相等。
+
+再设典型速度$U$，过程时间$L/U$，电场量级$E\sim UB$。Ampère方程两项的比值为
+\begin{equation}
+ {\epsilon_0|\partial_t\E|\over|\grad\times\B|/\mu_0}
+ \sim{\epsilon_0U^2B/L\over B/(\mu_0L)}
+ ={U^2\over c^2}.
+\end{equation}
+这一步使用的是低速电磁排序，与Debye长度估计不同。准中性低频模型通常还要求不解析电子等离子体振荡，不能仅用$U/c\ll1$宣布所有高频自由度都可删除。
+
+\subsection{补算：质心速度变换与漂移应力的系数}
+令$\vct w=\J/(en)=\vel_i-\vel_e$，$M=m_i+m_e$。把$\vel_i=\vel_e+\vct w$代入质心定义，
+\begin{equation}
+ M\vel=M\vel_e+m_i\vct w
+ \quad\Longrightarrow\quad
+ \vel_e=\vel-{m_i\over M}\vct w,\qquad
+ \vel_i=\vel+{m_e\over M}\vct w.
+\end{equation}
+现在展开两种物质的动量通量。记$a=m_e/M,b=m_i/M$：
+\begin{align}
+ \rho_i\vel_i\vel_i+\rho_e\vel_e\vel_e
+ ={}&\rho\vel\vel+
+ (\rho_i a-\rho_e b)(\vel\vct w+\vct w\vel)\\
+ &+(\rho_i a^2+\rho_e b^2)\vct w\vct w.\nonumber
+\end{align}
+因$\rho_i=m_in,\rho_e=m_en$，中间项系数严格为零，而
+\begin{equation}
+ \rho_i a^2+\rho_e b^2
+ =n{m_im_e^2+m_em_i^2\over M^2}
+ ={nm_im_e\over M}.
+\end{equation}
+代入$\vct w=\J/(en)$，便得到式\eqref{eq:singlemom}中的
+$m_im_e\J\J/(Me^2n)$。同一展开取迹再除以2，得到总动能
+\begin{equation}
+ {1\over2}\rho_iu_i^2+{1\over2}\rho_eu_e^2
+ ={1\over2}\rho u^2+{m_im_e\over2Me^2n}J^2.
+ \label{eq:tutorial-drift}
+\end{equation}
+漂移应力和漂移动能是同一个速度变换的两个结果。若要保留电子尺度的惯性，却删掉相关能量而不作一致排序，就可能失去能量守恒。
+
+\paragraph{自检。}
+电中性不等于无电流。令$n_i=n_e=n$，$\vel_i=0$，$\vel_e=-V\hat z$，则$\rho_q=0$、$\J=enV\hat z$；质心速度为$-(m_e/M)V\hat z$，虽小却并非严格为零。把这组数代入式\eqref{eq:tutorial-drift}，两边都应等于$m_enV^2/2$。

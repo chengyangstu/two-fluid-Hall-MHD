@@ -1,0 +1,1696 @@
+
+===== PDF PAGE 1 =====
+      Magnetic Reconnection Process in Partially Ionized
+       Fluids: Insights from the Solar Chromosphere
+
+                   Adrian R. Monta˜nez-Lobo† and F. D. Lora-Clavijo†∗
+                                   † Grupo de Investigaci´on en Relatividad y Gravitaci´on, Escuela de F´ısica,
+                           Universidad Industrial de Santander, A. A. 678, Bucaramanga 680002, Colombia
+
+                            E-mail: fadulora@uis.edu.co
+
+                            July 2026
+
+
+                         Abstract.  Magnetic reconnection converts stored magnetic energy  into  kinetic2026                              energy, heat, and radiation.  While extensively studied in fully ionized plasmas,
+Jul                       observationsthe local plasmashow resistivitythat ionizationand enablingand recombinationadditional heatingalso playchannels.a role byThismodifyingstudy
+30                     examinesits morphologymagneticand reconnectionenergy releasesin thewithpartiallyattentionionizedto elasticsolarcollisions,chromosphere,ionization,analyzingand
+                            recombination. The MAGNUS code, originally built for ohmic resistivity and heat
+                                transfer, was modified to handle elastic and inelastic collisions.  The simulations
+                             are 2.5D  resistive MHD with two-fluid  effects (charged + neutrals), adapted to
+                           handle interactions via these collision terms. A mixed explicit-implicit scheme was
+                         implemented to manage the stiffness of these terms.  Simulations were carried out
+                                for three different magnetic field strengths:  100G, 110G, and 120G. These values
+                           correspond to the low to mid chromosphere in quiet Sun conditions. We found that
+                            reconnection heats the plasma components by 18% to 110%. Although plasma beta[astro-ph.SR]                           rises only slightly, the energy release grows far more, indicating that charged–neutral
+                                  collisions, not just beta or available magnetic energy, drive the enhanced reconnection.
+                           Furthermore, ionization and recombination become most significant in regions of peak
+                           temperature, particularly where particles are accelerated.  Maximum reconnection
+                               rates from temporal analysis are 0.226, 0.253, and 0.279, respectively.  Finally, in
+                          terms of energy, our results show that in a chromospheric volume of 0.4 × 0.01 × 0.4
+                     Mm3, the energy released ranges from 1022 to 1023.
+
+
+
+
+          Keywords: Magnetic Reconnection; Partially Ionized Fluids; Numerical SimulationsarXiv:2607.28447v1
+
+===== PDF PAGE 2 =====
+                                                                           2
+
+1. Introduction
+
+Partially  ionized plasma  is  ubiquitous,  found  in molecular clouds  [1],  planetary
+ionospheres [2], and protoplanetary disks [3]. On Earth, it exists in the ionosphere and
+thermosphere, and in the Sun’s chromosphere [4]. In these regions, the plasma can be
+modeled as a fluid of neutral and charged particles [5]. Despite its known presence, the
+role of partially ionized plasma in major solar events has been overlooked. In this study,
+particular attention is given to solar flares, explosive events characterized by the release
+of large amounts of energy and the acceleration of solar material. These phenomena
+have been extensively documented, with magnetic reconnection identified as the primary
+mechanism driving energy release. Traditionally, solar flares have been primarily studied
+from a coronal perspective, as this region is assumed to contain the energy required to
+accelerate the plasma [6]. Yet, evidence from ionization and recombination observations
+including hydrogen Balmer line emissions (e.g., Hα, Hβ) and continuum enhancements
+captured by instruments such as IRIS (Interface Region Imaging Spectrograph) and
+ground-based observatories  [7,  8] suggests the role  of partially ionized plasma in
+modifying the local heating rate, accelerating both ions and neutrals, and altering the
+thickness and dynamics of the reconnection current layer (e.g., [9, 10]), thereby affecting
+how magnetic energy is partitioned between charged and neutral species during flaring
+and sub-flaring events in the chromosphere.  This has motivated particular interest
+in studying magnetic reconnection in the solar chromosphere, where partially ionized
+plasma is known to exist [11].
+   As previously mentioned, magnetic reconnection  is the primary mechanism for
+solar flares, releasing stored magnetic energy through a restructuring of field lines
+[12].  While extensively studied in fully ionized plasmas, reconnection in partially
+ionized plasmas has garnered significant interest due to its role in various astrophysical
+environments, including the solar chromosphere, planetary magnetospheres (e.g., Earth,
+Mars, Jupiter), and the interstellar medium [10, 13, 14]. Recent studies have modeled
+the chromosphere as separate charged and neutral  fluids,  assessing both whether
+reconnection can occur on solar flare timescales [15] and how collisions between species
+affect the process [16].
+    Models have been proposed to explain the emission of ionization and recombination
+lines as Balmer lines, such as the chromospheric evaporation model. The latter consists
+of the upward expansion of the chromosphere after it is heated to coronal temperatures
+by either high-energy particles or downward-propagating conduction fronts from the
+coronal energy-release site [6]. The evaporated plasma fills the flare loops with hot,
+dense material, increasing temperature and coronal density, and potentially influencing
+the reconnection rate or the development of turbulence.  Both then decrease as the
+plasma cools and drains back to the chromosphere, explaining observed spectra and
+Doppler shifts [17, 18].  However, this model is challenged by persistent unexplained
+redshifts and flow velocities inconsistent with the associated energy in IRIS observations
+[19], suggesting that, to achieve a more precise description of the magnetic reconnection
+
+===== PDF PAGE 3 =====
+                                                                           3
+
+phenomenon, it is appropriate to approach the problem through its description within
+the framework of partially ionized fluids. For this reason, particular attention is given
+to magnetic reconnection in the solar chromosphere, an environment composed of
+partially ionized plasma where ionization and recombination modify the local plasma
+resistivity, enable additional heating channels through collisional frictional interactions,
+and alter the reconnection rate, behaviors that are not captured by a single-fluid model.
+The chromosphere  is of additional interest as  it represents a transition region. A
+manifestation of this behavior is observed in the plasma parameter plasma beta (which
+denotes the ratio between magnetic and kinetic pressures), which varies abruptly in this
+region, going from values of 102 down to values of 10−4 [20], and in our work, presenting
+magnitudes from 100 to 10−2, indicating that the influence of kinetic pressure becomes
+significant for the reconnection process.
+    Using a two-fluid model, this work quantifies how elastic and inelastic collisions
+influence magnetic reconnection in the solar chromosphere. For this purpose, a series of
+simulations are carried out in this work to investigate magnetic reconnection in the solar
+chromosphere, taking into account the stratification of this region. In the quiet Sun,
+typical magnetic field strengths range from 10 to 100 G, while in active regions they
+reach 150–1000 G [21, 22]. In this study, we work with magnetic field strengths of 100 G,
+110 G, and 120 G. This relatively narrow range was chosen for a systematic investigation
+of the role of elastic and inelastic collisions on magnetic reconnection in a partially
+ionized plasma typical of the low to mid chromosphere under quiet Sun conditions. A
+broader parameter survey, including active region field strengths, is planned for future
+work. An extension of MAGNUS [23] is employed, a code adapted to solve the two-
+fluid equations. The objective is to quantify the energy released during the evolution of
+the phenomenon and to examine its morphological development, thereby assessing the
+behavior of reconnection in this region.
+    This article is structured as follows: Section 2 presents the two-fluid equations,
+including the models for elastic and inelastic collisions, and outlines the initialization
+of the chromospheric profiles. Section 3 investigates the collision frequencies and their
+atmospheric profiles.  Section 4 describes the numerical method, used to evolve the
+system, capturing the collision dynamics. Section 5 analyzes the magnetic reconnection,
+including its morphology, rate, and associated energy conversion, alongside the evolution
+of the collision terms.  Finally, Section 6 discusses the broader implications of our
+findings.
+
+
+2. Governing Equations for Partially Ionized Fluids
+
+We model magnetic reconnection in a partially ionized plasma using a two-fluid
+framework. For this, we will use a hydrogen plasma, composed of two fluids. The first
+fluid is composed of the charged species (ions and electrons), while the second consists
+of the neutral species.  This separation allows us to explicitly resolve their distinct
+dynamics and collisions. The system is evolved according to the two-fluid equations
+
+===== PDF PAGE 4 =====
+                                                                           4
+
+given in [2] and [24]:
+
+              ∂tρn + ∇· (ρnun) = Sn,                                                (1)
+               ∂tρi + ∇· (ρiui) = Si,                                                 (2)
+             ∂t(ρnun) + ∇· (ρnun ⊗un + PnI) = ρng + Rn,                        (3)
+                     ⊗B        B2               ∂t(ρiui) + ∇·  ρiui ⊗ui −B   +  Pi +       I = ρig + Ri,      (4)
+                                        µ0           2µ0
+            ∂tEn + ∇· [(En + Pn)un] = ρng · un + Hn,                            (5)
+                            B2                           η             ∂tEi + ∇·   Ei + Pi +      ui −B (ui · B) = −∇·    J × B
+                                  2µ0       µ0                  µ0
+         + ρig · ui + Hi,                                                     (6)
+         ∇· B = 0,                                                             (7)
+
+           ∂tB + ∇· (ui ⊗B −B ⊗ui) = −∇× (ηJ),                           (8)
+       ∇× B = µ0J,                                                         (9)
+
+where the subscripts  i and n denote the charged and neutral species, respectively.
+The complete system comprises the mass conservation equations 1–2, momentum
+conservation  3–4,  energy  conservation  5–6,  the magnetic  solenoidal  condition  7,
+Faraday’s induction law 8, and Amp`ere’s law in the low-speed approximation 9. Here,
+ρi,n are the mass densities, ui,n the velocities, and Pi,n the pressures. The identity tensor
+is I, g = (0, −274, 0) m s−2 is the solar gravitational acceleration, B the magnetic field,
+J the current density, η the resistivity, and µ0 the permeability of free space. The total
+energy densities for the charged and neutral fluids are defined as:
+                  1      B2
+                  + ρiei,                                           (10)                                            i +            Ei = 2ρiu2                          2µ0
+                  1
+                         n + ρnen,                                                (11)          En = 2ρnu2
+and the pressures for both fluids are given by the equations of state:
+                               kB
+                Pi,n = (γ −1)ρi,nei,n =      ρi,nTi,n,                                 (12)
+                                     mi,n
+where Ti,n are the temperatures, mi,n the particle masses, kB the Boltzmann constant
+and γ = 5/3 the adiabatic index.
+   The terms Si,n, Ri,n, and Hi,n denotes the collisional source and sink rates for mass,
+momentum, and energy, respectively:
+              Si = −Sn = ρnΓion −ρiΓrec,                                       (13)
+           Ri = −Rn = α(un −ui) + ρnunΓion −ρiuiΓrec,                    (14)
+                         1                                       1
+           Hi = −Hn =                               u2n −u2i +                                            ρnu2nΓion −1      i Γrec                    2α           2             2ρiu2
+                 α  kB             1  kB
+           +         (Tn −Ti) +          ρnTnΓion −ρiTiΓrec  ,        (15)
+                   γ −1 ¯m           γ −1 ¯m
+where ¯m is the mean particle mass of the fluid, and Γion and Γrec are the ionization and
+recombination rates.
+
+===== PDF PAGE 5 =====
+                                                                           5
+
+    Equation 13 accounts for mass density exchange between ions and neutrals through
+ionization and recombination processes, thereby coupling the continuity equations of the
+two fluids. The momentum exchange between species is described by Equation 14, where
+the total collisional force density includes both elastic and inelastic contributions. The
+first term represents elastic ion–neutral collisions and arises from the relative velocity
+between the fluids. The other terms correspond to inelastic processes associated with
+ionization and recombination, where momentum is transferred as particles are converted
+from one species to the other.
+   The energy exchange is governed by Equation 15, which describes the collisional
+power density Hi,n. The first term represents the kinetic energy exchange associated
+with elastic collisions and corresponds to the work done by the collisional force appearing
+in Ri,n. This can be made explicit by rewriting it as
+            1                             1
+            2α(u2                   n −u2i ) = α, ui · (un −ui) + 2α |un −ui|2 ,                    (16)
+which shows that the energy transfer consists of two distinct contributions:  work
+performed by the elastic collisional force between the fluids, and irreversible frictional
+heating due to the relative drift between ions and neutrals.  The second term in
+Hi,n accounts for the kinetic energy exchanged through particle conversion during
+ionization and recombination. The third term describes thermal energy transfer driven
+by temperature differences between the two fluids, while the fourth term represents
+the thermal energy gained or lost through particle exchange.  Together, these terms
+encapsulate the key collisional pathways through which momentum and energy are
+redistributed in partially ionized plasmas relevant to magnetic reconnection in the solar
+atmosphere.
+   The ionization and recombination rates, Γion and Γrec, are given by semi-empirical
+models [25, 26]:
+                                    ne         ϕion K           e               Γion = 2.91 × 10−14                          e−ϕion/T ∗   s−1,             (17)
+                  X + ϕion/Te∗  Te∗
+                               ne
+                Γrec = 2.6 × 10−19        s−1,                                       (18)
+              pTe∗
+where X = 0.232 and K = 0.39 are fitting parameters, Te∗ is the electron temperature
+in eV, ne is the electron number density, and ϕion = 13.6 eV is the hydrogen ionization
+potential.
+   The collisional friction coefficient α is modeled as [27, 2]:
+
+             s                4  σρiρn    8kB   Ti   Tn
+          α =             +         ,                                 (19)
+                3 mi + mn   π   mi  mn
+
+where σ is the effective collision cross-section. This expression derives from the reaction
+rate formalism of [28]. For our system, initialized from rest and considering the high
+temperatures of the solar atmosphere, Equation 19 provides a suitable approximation.
+Although α can be treated as a free parameter to modulate elastic collision effects, we
+adopt a cross-section of σ ∼10−20 m2 based on established models [27].
+
+===== PDF PAGE 6 =====
+                                                                           6
+
+2.1. Modeling the Solar Background
+
+The initial hydrostatic equilibrium state for the charged particles is derived using the
+semi-empirical temperature model from [29]. Combining the hydrostatic equilibrium
+equation with the ideal gas law,
+
+           ∇Pi = ρig,                                                         (20)
+
+               mi Pi
+                ρi =          ,                                                         (21)
+                kB Ti
+
+yields the pressure profile
+              Pi = Pi0 exp  −mi|g| Z  1 dz   ,                                   (22)
+                          kB     Ti
+where the reference pressure is Pi0 = 1.29 Pa, set in a atmospheric solar height of 5 Mm
+[30, 31]. This solution follows from the momentum equation under the assumption of
+an initially force-free magnetic field (J × B = 0).
+    For the neutral species, density and pressure profiles are determined by collisional
+processes. The equilibrium condition requires the collisional source terms for mass to be
+zero (Si = Sn = 0), which enforces a local balance between ionization and recombination:
+                        Γrec
+             ρn = ρi Γion.                                                        (23)
+The neutral pressure can then be obtained from the equation of state 12.  Similarly,
+the equilibrium state also demands that the collisional source terms for energy vanish
+(Hi = Hn =  0), which requires the neutral and ion temperatures to be equal:
+Tn = Ti = T.  The resulting initial profiles for temperature, density, and pressure
+of both species are shown as functions of height in Figure 1.  It is worth mentioning
+that the neutral fluid is not in hydrostatic equilibrium, as the system is overdetermined:
+while neutrals satisfy the equation of state and the ionization-recombination balance 23,
+they do not satisfy the momentum balance ∇Pn = ρng.
+   The initial magnetic field follows a force-free Harris current sheet [32]:
+                        x     q
+           Bz = −B0 tanh           ,  By =  B20 −B2z,  Bx = 0,                (24)
+                         w0
+where B0 corresponds to the mean chromospheric field strength from the VAL-C model
+[30], and w0 is the current sheet transition width.  Localized anomalous resistivity is
+specified as:
+            η = η0 exp −x2 + (z −hrec)2    ,                                    (25)
+                           w2η
+with hrec the reconnection height, wη the resistivity-region width, wη = 0.066 Mm and
+η0 = 6.28 × 104 Ω·m.  This amplitude produces Lundquist numbers S ∼102 −104,
+consistent with fast reconnection regimes [33]. The anomalous resistivity locally seeds
+reconnection at a controlled location, reducing the numerical transient while preserving
+the physical dynamics. Its width (0.066 Mm) is consistent with the expected thickness
+of a chromospheric current sheet in a partially ionized plasma [34].
+
+===== PDF PAGE 7 =====
+                                                                           7
+
+
+
+                                                                                                                   5
+           3                                                                      10     10                                                                                                                                                                                                                                                            i
+           5                                                                                                            n      3
+     10                                                                                                                         Pi  10
+                                                                                                      Pn                 5[K]           7
+     10                                                                               T                                                                              10 1 [Pa]  10    [Kg/m³]
+     10 9                                                                                                        1
+                                                                              10          11                                                                                                                                                                                                                               Pressure    Density 10                                                                                                                                                                                                                                                                                                                                                          Temperature
+                                                                              10 3
+    10 13                                                                                                                  4                                                                                      10                                                                                                                    5
+          15                                                                      10
+    10
+
+            0           1           2           3           4           5
+                                              z [Mm]
+
+
+
+
+             Figure 1. Representation of the equilibrium solar profile from the atmospheric base
+             up to a height of h = 5 [Mm]. The temperature profile (black line) is shown with its
+               corresponding values on the floating bar to the right, obtained from the observational
+              models of Avrett. In addition, the interpolated profiles of the neutral species (dashed
+                   line) and the charged species (solid line) are displayed for the density profiles (beige)
+             and the pressure profiles (green).
+
+
+     Finally, the behavior of the plasma beta parameter (β) in the equilibrium state
+must be defined. The plasma β is calculated using the expression
+                     Pi
+           β =             ,                                                       (26)
+               B2/2µ0
+which defines the ratio between the kinetic and magnetic pressure in the ionized plasma.
+In Figure 2 we can see the value of the plasma β for the region between z = 1 and 2 Mm.
+This corresponds to the chromospheric region, which is of interest for our simulations.
+Thus, the variation of the plasma β is shown for the cases of initial magnetic field B0
+= 100 (blue), 110 (green), and 120 G (red). As can be seen, in all three cases, the
+parameter scales are within orders of 100 to 10−2, within the observationally accepted
+values [20].
+
+
+3. The Role of Collision Terms in the Solar Atmosphere
+
+Collision terms  give  rise  to phenomena such  as enhanced  resistivity,  prolonged
+reconnection times, and increased reconnection rates [9]. For this reason, it is essential
+to identify the regions of the solar atmosphere where ionization and recombination
+processes become dynamically significant. The present analysis is based on the solar
+atmospheric model shown in Figure 1.
+    Figure 3 shows the ionization and recombination rates throughout the atmosphere.
+Below  the  transition  region,  recombination  frequencies dominate  over  ionization
+
+===== PDF PAGE 8 =====
+                                                                           8
+
+
+
+                                                           |B| = 100[G]
+                                                           |B| = 110[G]
+                                                           |B| = 120[G]
+
+
+                                                                                           1
+                                                             10
+
+
+
+
+                   1.0       1.2       1.4       1.6       1.8       2.0
+                                       z [Mm]
+
+
+
+
+             Figure 2. Plasma β as a function of height z (from 1 to 2 Mm) in the chromospheric
+                region for three initial magnetic field strengths B0= 100 G (blue), 110 G (green), and
+              120 G (red).
+
+
+frequencies, indicating that interactions between charged and neutral particles play a
+significant role in the plasma dynamics in this region. In contrast, above the transition
+region,  the  ionization frequency becomes dominant,  exceeding the recombination
+frequency by several orders of magnitude. When this difference reaches approximately
+six orders of magnitude, the plasma may be regarded as fully ionized, marking a
+transition to a regime well described by single-fluid dynamics.
+   On the other hand, we examine the role of elastic collisions in coupling the dynamics
+of the charged and neutral fluids. To this end, we introduce the parameter α, defined
+as
+
+          α = ρiνni = ρnνin,                                                  (27)
+
+where νni and νin denote the elastic collision frequencies between neutral and charged
+particles.  Here, νni corresponds to collisions experienced by charged particles due to
+interactions with neutral species, while νin represents the reciprocal process. Expressing
+α in this form emphasizes that elastic collisions exert equal and opposite coupling forces
+on the two fluids, while their dynamical response is modulated by the inertia of each
+species through their respective mass densities.
+    Figure 4 shows the height dependence of the elastic collision frequencies νni and νin.
+Throughout this work, including the calculation of these collision frequencies, we adopt
+a constant elastic collision cross section of σ = 10−20 m2. From Figure 4, three distinct
+regions can be identified. Below the chromosphere, the neutral–ion collision frequency
+νni exceeds νin by approximately three orders of magnitude, reflecting the dominance
+of neutrals in this region. Above the transition region, the situation is reversed, with
+
+===== PDF PAGE 9 =====
+                                                                           9
+
+
+                   4
+           10
+
+                   3
+           10
+            [Hz] 10 2
+                   1                                                    ion           10
+                                                                     rec
+                   0
+           10                                frequencies
+                   1
+           10
+
+                   2
+           10
+                0      1      2      3      4      5
+                                    z [Mm]
+
+
+
+             Figure  3.   Variation of ionization (solid  line) and recombination (dashed  line)
+                 frequencies with height in the solar atmosphere.
+
+
+νin exceeding νni by roughly six orders of magnitude, consistent with the predominance
+of the ionized component. In the chromosphere layer itself, the ratio between νni and
+νin typically lies within one to two orders of magnitude, with νni > νin due to the
+higher neutral density. This asymmetry means that while ions are effectively coupled
+to neutrals via collisions, neutrals are not necessarily coupled to ions, nor are they
+coupled to the magnetic field. Consequently, the system does not behave as a single
+fluid; instead, the differential motion between ions and neutrals gives rise to frictional
+heating and modifies the reconnection dynamics in ways distinct from fully ionized.
+    In light of the considerations above, distinct dynamical regimes can be identified
+across the solar atmosphere. Below the chromosphere, the strong collisional coupling
+is dominated by the neutral component, and the dynamics of the charged species are
+largely controlled by neutral hydrodynamics. This region can therefore be regarded as
+primarily neutral in character. In contrast, above the transition region, the influence of
+neutrals on the charged species becomes negligible, and the plasma can be accurately
+described within the framework of fully ionized magnetohydrodynamics.
+   Due to the predominantly neutral nature of the chromosphere, there are important
+physical consequences:  neutrals frequently collide with ions, but ions are much less
+effective at perturbing the neutral population. As a result, the chromosphere maintains
+a regime where frictional heating  is efficient, even while some degree of collisional
+coupling persists. This coexistence of neutral and charged effects, with the ionization
+fraction being the key parameter, defines the chromosphere as a genuine partially
+
+===== PDF PAGE 10 =====
+                                                                          10
+
+
+                   9
+           10                                                                                 ni
+                   7
+           10                                                            in
+            [Hz] 10 5
+                   3
+           10
+                   1
+           10                                frequencies                   1
+           10
+                   3
+           10
+
+                0      1      2      3      4      5
+                                    z [Mm]
+
+
+
+             Figure 4. Effect of elastic collisions as a function of height. The graphic displays the
+                  collision frequency of neutral species with charged species (νni, green solid line) and
+                the frequency of charged species with neutral species (νin, orange dashed line).
+
+
+ionized plasma.  As a result, both the hydrodynamic response of the neutral fluid
+and the magnetohydrodynamic behavior of the charged component play a central
+role in determining the system dynamics.  Accordingly, we focus our analysis on the
+chromospheric layer, where collisional coupling between ions and neutrals is expected
+to exert a decisive influence on the onset and evolution of magnetic reconnection.
+
+
+4. Numerical Methods
+
+We use the MAGNUS code to numerically solve the equations for partially ionized
+fluids [23]. MAGNUS solves the resistive magnetohydrodynamics equations with finite
+volume methods and high-resolution shock-capturing schemes [35].  It has previously
+been applied to solar physics problems, including plasma emergence into a coronal hole
+[36] and the formation of chromospheric jets with thermal conduction [37]. The code has
+also been used to study torsional Alfv´en waves in a stratified atmosphere [38]. Recently,
+MAGNUS was extended to include the Hall effect and ambipolar diffusion, which are
+investigated as mechanisms for fast magnetic reconnection [39].
+    For this study, we further adapt MAGNUS to solve two-fluid equations, treating
+charged and neutral species separately and coupling them through collisions. Because
+collision frequencies change abruptly across the sharply stratified solar atmosphere, these
+terms become stiff, especially in lower layers.  To maintain stability under extreme
+
+===== PDF PAGE 11 =====
+                                                                          11
+
+temperature and pressure gradients, we implement an implicit-explicit (IMEX) scheme.
+This scheme is a numerical technique for solving differential equations that splits the
+equation into two components: a stiff‡ part treated with computationally stable implicit
+methods, and a non-stiff part treated with highly efficient explicit methods. [40]. This
+approach preserves stability for systems dominated by stiff terms. A Runge-Kutta
+(RK) subroutine handles the collision evolution, with an implicit matrix inversion of
+the Jacobian to manage stiffness, ensuring robust integration.
+    To integrate the governing equations in time, we employ an IMEX-RK scheme,
+which allows for a stable and efficient treatment of the stiff collisional source terms
+while retaining an explicit formulation for the remaining contributions. The system of
+evolution equations can be written compactly as
+         dU
+          = Fns(U) + Fs(U),                                             (28)
+               dt
+where U denotes the vector of conservative variables,
+
+       U = (ρi, ρiui, Ei, B, ρn, ρnun, En) .                                  (29)
+
+Here, Fns contains the non-stiffsources of the evolution, such as advective and magnetic
+contributions, while Fs collects the stiff source terms arising primarily from collisional
+coupling between ions and neutrals.
+    Within an IMEX-RK, the solution is advanced from time level n to n+1 according
+to
+                       "  s                    s       #
+           Un+1 = Un + ∆t X biFns(Ui) + X ˆbiFs(Ui)   ,                   (30)
+
+                                     i=1               i=1
+where s is the number of stages and Ui are the stage values, given by
+                     " i−1                             i         #
+           Ui = Un + ∆t X AijFns(Uj) + X ˆAijFs(Uj)   .                  (31)
+
+                                j=1               j=1
+The coefficients Aij, ˆAij, bi, and ˆbi define the specific IMEX-RK scheme, with the non-
+stiff terms treated explicitly and the stiff terms handled implicitly.
+    For the stiff contribution, we adopt an explicit singly diagonally implicit Runge–
+Kutta (ESDIRK) scheme [41], in which the diagonal coefficients ˆAii are non-zero. As a
+consequence, each stage requires the solution of an implicit system. The stage equation
+can be rearranged as
+
+                                 i−1
+           Ui = U∗+ ∆t X ˆAijFs(Uj) + ∆tˆAiiFs(Ui),                        (32)
+
+                              j=1
+
+‡ A system is stiffif the numerical method required for stability is forced to take much smaller time steps
+than the accuracy requirement alone would demand. In this case, the collision terms are considered
+stiff because their frequencies are sufficiently high compared to the plasma dynamics, especially in the
+chromosphere.
+
+===== PDF PAGE 12 =====
+                                                                          12
+
+where the explicit predictor U∗gathers all contributions known from previous stages,
+
+                                 i−1
+        U∗= Un + ∆t X AijFns(Uj).                                      (33)
+
+                               j=1
+
+    To solve Eq. 32, the stiff source term is linearized about the predictor state using
+a first-order Taylor expansion,
+
+            Fs(Ui) ≈Fs(U∗) + J · (Ui −U∗) ,                                  (34)
+
+where J is the Jacobian of the stiff source term evaluated at U∗,
+
+               ∂Fs(U)
+          J =                        .                                                (35)
+             ∂U   U=U∗
+Substituting this approximation into Eq. 32 yields the final update for the stage solution,
+
+                                                    i−1             !
+           Ui = U∗+ h I −∆tˆAiiJ i−1 ∆t              X ˆAijFs(Uj) + ˆAiiFs(U∗)    .       (36)
+
+                                                j=1
+
+   The coefficients defining the explicit and implicit RK schemes are conveniently
+represented using Butcher tableaus [42]. For the non-stiff(explicit) part of the evolution,
+the tableau is
+                               0  0    0    0
+                         ω ω    0    0
+                               1  κ  1 −κ  0
+                                  0  1 −ω ω
+
+while the stiff (implicit) contribution is advanced using
+
+                               0  0    0    0
+                         ω  0   ω    0
+                                                                                  .
+                               1  0  1 −ω ω
+                                  0  1 −ω ω
+
+The parameters ω and κ are free and control the balance between the explicit and
+implicit contributions, as well as the overall order and stability properties of the scheme.                                         √
+For the second-order IMEX formulation used in this work, the choice ω = (2 −  2)/2                                  √
+provides optimal linear stability for the stiff terms, while κ = −2  2/3 ensures second-
+order accuracy of the explicit Runge–Kutta scheme.
+
+
+5. Magnetic Reconnection at the Solar Chromosphere
+
+We investigate magnetic reconnection in the solar chromosphere for initial magnetic
+field strengths of B0 = 100, 110, and 120 G. The computational domain extends from
+1 to 2 Mm above the base of the photosphere and is centered at the origin of the x–y
+plane, with dimensions 1 × 0.01 × 1 Mm3, representative of chromospheric conditions.
+For this purpose, we will employ a 2.5 D system, in which the numerical grid will be
+400 × 4 × 400 along the (x,y,z) axes.  In this way, we obtain a spatial resolution of
+
+===== PDF PAGE 13 =====
+                                                                          13
+
+∆x = ∆y = ∆z = 2.5 · 10−3 Mm in our mesh. Likewise, a value of wη = 0.066 Mm is
+assumed for the width of the Ohmic resistivity. Charged species are assumed to be in
+hydrostatic equilibrium, while the neutral component satisfies ionization–recombination
+equilibrium.  Gravitational effects are included self-consistently.  Figure 5 presents a
+close-up view of the thermodynamic profiles corresponding to the chromospheric volume
+adopted in our simulations. This detailed perspective highlights that the background
+atmosphere is stratified. By employing the Avrett model to prescribe the temperature,
+pressure, and density profiles, the model self-consistently incorporates the effects of
+solar gravity. As a result, the simulated domain captures the sharp gradients and non-
+uniform conditions characteristic of the chromosphere, which are essential for accurately
+modeling collisional processes and magnetic reconnection in a partially ionized plasma.
+     Finally, it is necessary to specify the boundary conditions in accordance with the
+expected behavior of the solar atmosphere. For this reason, we employ a Dirichlet-type
+boundary condition. This condition implies that the function describing the boundary
+remains constant and equal to its initial value. This boundary condition is applied at
+the lateral boundaries of the simulation, since our computational domain is sufficiently
+large to encompass the principal dynamics of the system, which barely reach the edges
+of the numerical box. Similarly, this condition is imposed at the bottom boundary of
+the domain because the stratification of the solar chromosphere leads to an increase
+in density and pressure with depth, making it difficult for the magnetic reconnection
+dynamics to propagate downward and perturb the lower region. On the other hand,
+for the upper boundary of the domain, we implement a homogeneous Neumann-type
+boundary condition.  This condition enables us to describe both the transmission of
+the reconnection dynamics into the less stratified upper layers and the ejection of
+chromospheric material into the corona.
+
+
+5.1. Morphology
+
+First, we analyze the morphological evolution of the thermal, kinetic, and magnetic fields
+alongside the current density distribution. This analysis facilitates the identification of
+solar magnetic structures produced by magnetic reconnection within the chromosphere
+and allows us to quantify the impact of magnetic field strength on plasma heating and
+morphological development.  Initially, we focus on the Jy component of the current
+density, as it tracks the current flow across the polarity inversion line. The emergence
+of a current sheet, a primary diagnostic of ongoing magnetic reconnection, is monitored
+through this component [43, 44]. To illustrate this, Figure 6 displays the Jy profiles in the
+xz-plane at the mid-plane of the computational domain (y = 0). The rows correspond
+to magnetic field strengths of 100, 110, and 120 G, respectively. The columns, from
+left to right, illustrate the temporal evolution at t = 0.2, 7.5, and 14.0 s.  Finally, on
+each current density representation, line contours are shown, which indicate the flux
+and direction of the magnetic field throughout the evolution.
+     Initially, in Figure 6, we observe that the thin current sheet structure typically
+
+===== PDF PAGE 14 =====
+                                                                          14
+
+
+
+
+                                                                                                                                                                                                                                            i      2                3                                                                   10       6.6 × 10                                                                                                       n
+          6                                                                                                   Pi    10                                                                                       Pn                                                                                                                    3[K]
+                                                                          T        [Pa]   6.5 × 10    [Kg/m³]
+
+                                                                                                   1                3
+                                                                   10       6.4 × 10          7                                                                                                                                                                                            Pressure    Density 10                                                                                                                                                                                                                                                                                                                            Temperature
+
+                                                                                                                    3
+                                                                                          6.3 × 10
+
+
+                                                                                                                    3
+                                                                                          6.2 × 10
+            1.0          1.2          1.4          1.6          1.8          2.0
+                                       z [Mm]
+
+
+
+
+             Figure 5. Close-up view of the atmospheric profiles within the computational domain,
+               extending from 1 to 2 Mm in height. The interpolated temperature profile is shown by
+                the black curve, with the corresponding values indicated by the color bar on the right.
+                 Additionally, we present the evolution of mass density (beige) and thermal pressure
+                (green) for both the neutral (dashed lines) and charged (solid lines) fluid components.
+
+
+expected in reconnection events does not manifest.   Instead,  following the onset
+of reconnection, the initial current density bifurcates into two distinct regions and
+undergoes a localized broadening around the diffusion region.  This can be seen by
+observing the regions above and below the reconnection zone, where a significant and
+localized increase in current density can be observed, as well as the manifestation
+of closed loops in the magnetic field lines around these regions.  This morphological
+divergence is attributed to the elevated role of thermal gas pressure in the chromospheric
+plasma; unlike the magnetically dominated (low-β) environment of the corona, the
+chromosphere exhibits higher plasma-β conditions where fluid pressure significantly
+influences the reconnection dynamics. In fact, to observe this in more detail, Figure 7
+shows the morphological evolution of the plasma beta parameter, where its magnitude
+can be observed at times t = 0.2, 7, and 14 seconds. In this case, although for each
+case we have a change in the initial magnetic field and, consequently, in the initial value
+of the plasma beta parameter, the morphological evolution of the plasma beta is very
+similar for all three cases, as is the case for the current density morphology; therefore,
+this figure is representative of all three cases. As can be seen, during the evolution
+of the reconnection, the magnitude of the plasma beta parameter increases, with its
+largest growth occurring in the region where reconnection takes place. Thus, in this
+region, the kinetic pressure exceeds the magnetic pressure, which is consistent with the
+fact that kinetic pressure becomes significant for the morphological evolution and the
+
+===== PDF PAGE 15 =====
+                                                                          15
+
+                                               Current sheet profile
+                      t = 0.2 s                             t = 7.5 s                            t = 14.0 s   2.0
+
+   1.8
+
+G1.6
+100
+=
+B1.4
+                                                                                                                        0.4
+   1.2
+                                                                                                                        0.3
+   1.0
+   2.0                                                                                                                        0.2
+   1.8
+                                                                                                                        0.1
+G1.6
+110                                                                                                                     0.0  [A/m²]
+=
+B1.4                                                                          Jy
+
+   1.2
+
+   1.0
+   2.0
+
+   1.8
+
+G1.6120                                                                                                                       0.1
+=
+B1.4
+
+   1.2
+
+   1.0          0.4    0.2   0.0    0.2    0.4      0.4    0.2   0.0    0.2    0.4      0.4    0.2   0.0    0.2    0.4
+                  x [Mm]                          x [Mm]                          x [Mm]
+
+
+
+              Figure 6. Evolution of the current density Jy across different magnetic field strengths.
+             Rows represent field strengths of 100, 110, and 120 G (top to bottom), illustrating
+                the morphological response to increasing field intensity. Columns from left to right
+                correspond to snapshots at t = 0.2, 7.5, and 14.0 s. On each current density panel,
+                   line contours indicate the flux of the magnetic field.
+
+
+ formation of structures. Despite this broadening, in Figure 6 the lower region displays
+an arcade-like structure through which the plasma circulates, while the upper region
+ exhibits a characteristic thinning of the current flow, both of which are hallmarks of
+ flare-associated reconnection [45, 46]. Furthermore, variations in the initial magnetic
+ field strength do not qualitatively alter the global morphology; the primary effect of an
+ increased field is a marginal enhancement of the peak current density.
+     Next, we examine the morphology of the temperature profiles of the charged and
+ neutral species to characterize chromospheric heating from reconnection. This analysis
+ quantifies the efficiency of magnetic-to-thermal energy conversion and assesses how
+ variations in the initial magnetic field strength affect the thermal signatures. Figure 8
+shows the temperature distributions for the charged (top row) and neutral (middle row)
+ species at 14.0 s, along with their difference (bottom row), for B0 = 100, 110, and 120 G
+
+===== PDF PAGE 16 =====
+                                                                          16
+
+                     t = 0.2 [s]                                 t = 7 [s]                                 t = 14 [s]   2.0
+
+   1.8
+                                                                                                10 0   1.6                                                                                                                                                                                                                                    scale)[Mm]
+z                                                                                                                                                    (log   1.4
+   1.2                                                                                           10 1
+
+   1.0
+      0.50   0.25   0.00   0.25   0.50  0.50   0.25   0.00   0.25   0.50  0.50   0.25   0.00   0.25   0.50
+                x [Mm]                        x [Mm]                        x [Mm]
+
+
+
+             Figure 7. Morphological evolution of the plasma β parameter at times t = 0.2, 7, and
+              14 seconds. Although the initial magnetic field strength varies across the three cases,
+             we display only the case B0 = 100 G for clarity. The evolution of β is qualitatively
+                 similar for all three cases, with the largest increase occurring in the reconnection region.
+
+
+(left to right).
+    In the Figure 8, the first thing that can be observed is that, for both the charged
+and neutral species, the thermal evolution behaves similarly to the current density
+distribution; After reconnection occurs, the temperature bifurcates into two regions of
+maximum heating, one upper and one lower. These regions of localized heating coincide
+with the sites of maximum energy dissipation during the reconnection event. Physically,
+these features are driven by the bulk acceleration of plasma; the lower region manifests
+as a heating signature within the magnetic arcade, while the upper region corresponds
+to the upward ejection of a chromospheric lobe. On the other hand, it can be seen that,
+although the temperature morphology is similar for both fluids, the heating process is
+more efficient in the neutral species, with a maximum temperature gradient between
+the two fluids occurring in the regions located above and below the reconnection zone
+mentioned earlier.
+     Lastly, we analyze the morphology of the ionization and recombination frequencies.
+To this end, Figure 9 shows the ionization (top row) and recombination (bottom row)
+frequencies at time t = 14 seconds. The frequencies are displayed for the cases B0 =
+100, 110, and 120 G, arranged from left to right, respectively.
+    In Figure 9 we can see that, as a result of reconnection, the ionization and
+recombination  frequencies  increased  considerably due  to  the  increase  in  species
+temperature.    Additionally,  although  initially  in our system  the recombination
+frequencies in the chromosphere were higher than the ionization frequencies, after
+reconnection the ionization frequencies become dominant, exceeding the recombination
+frequencies, mainly near the plasma regions where the most significant temperature
+increases were recorded which are associated with the arcade and the ejected lobe of
+material.
+
+===== PDF PAGE 17 =====
+                                                                          17
+
+        B = 100 G           B = 110 G           B = 120 G   2.0
+                                                                                          10000
+   1.8
+                                                                                          9000
+   1.6
+[Mm]                                                                                       8000 [K]
+z 1.4                                                            Ti
+                                                                                          7000
+   1.2
+                                                                                          6000
+   1.0
+   2.0
+
+   1.8                                                                                          12000
+   1.6                                                                                                            [K]                                                                                          10000[Mm]
+z 1.4                                                            Tn
+                                                                                          8000
+   1.2
+                                                                                          6000   1.0
+   2.0
+
+   1.8                                                                                    3000
+                                                                                                           [K]   1.6
+                                                                                          2000Ti[Mm]
+z 1.4
+                                                               Tn
+                                                                                          1000   1.2
+
+   1.0                                                                                    0
+      0.5          0.0           0.5   0.5          0.0           0.5   0.5          0.0           0.5
+               x [Mm]                      x [Mm]                      x [Mm]
+
+
+
+             Figure  8.  Temperature distributions at 14.0 s for the charged (top row) and
+                neutral (middle row) species, and the difference between them (bottom row), for
+                    initial magnetic field strengths B0 = 100, 110, and 120 G (from left to right). The
+                  figure illustrates the morphological differences in chromospheric heating associated
+               with magnetic reconnection and how variations in the initial field strength affect the
+               thermal signatures of both species.
+
+
+    To facilitate a quantitative assessment of the underlying dynamics, Figure 10
+presents the normalized vertical profile of the magnetic field, as well as the z-velocity
+component and the plasma temperature for charged (solid lines) and neutral species
+(dash-dotted lines), measured along the polarity inversion line. These profiles compare
+the initial state (t = 0 s, dashed lines) with the evolved state at t = 14 s for the 100 G
+(yellow), 110 G (green), and 120 G (red) configurations.
+    In accordance with the magnetic evolution, shown in the top panel of the figure
+10, a rapid depletion of the magnetic field occurs within the diffusion region centered at
+the reconnection point. Conversely, two distinct zones of magnetic compression emerge
+above and below this site, where the field strength increases significantly relative to the
+initial state. While the initial field magnitudes were 100, 110, and 120 G (representing
+10% and 20% increments relative to the baseline case), the system evolves over 14 s to
+
+===== PDF PAGE 18 =====
+                                                                          18
+
+       B = 100 G        B = 110 G        B = 120 G   2.00                                                                                                         3                                                                              10
+   1.75                                                                                                         2
+                                                                              10
+                                                                                                                             [Hz][Mm] 1.50                                                                                                         1
+z                                                                           10     ion
+   1.25                                                                                                                  0
+                                                                              10
+   1.00
+   2.00
+
+                                                                                                                  2
+   1.75                                                                        10
+                                                                                                                             [Hz][Mm] 1.50
+z                                                                                                                          rec
+   1.25                                                                                                         1
+                                                                              10
+   1.00       0.5        0.0         0.5  0.5        0.0         0.5  0.5        0.0         0.5
+              x [Mm]                 x [Mm]                 x [Mm]
+
+
+
+             Figure 9. Ionization (top row) and recombination (bottom row) frequencies at time
+                    t = 14 seconds for initial magnetic field strengths B0 = 100, 110, and 120 G, ordered
+              from left to right. The figure illustrates the morphology of both frequencies following
+                the reconnection event.
+
+
+reach peak intensities of 127.90, 143.41, and 158.89 G in the lower region at a height of
+1.16 Mm. In the upper region, peak values of 118.37, 130.75, and 143.08 G are recorded
+at 1.67 Mm. These altitudes coincide with the structural maxima observed in the Jy
+morphological distribution. Quantitatively, the lower region exhibits field enhancements
+of 27.9%, 30.37%, and 32.41% for the 100, 110, and 120 G configurations, respectively,
+while the upper region shows increases of 18.37%, 18.86%, and 19.23%. These results
+indicate that a higher  initial magnetic flux density leads to a greater percentage
+increase in post-reconnection field maxima, suggesting a more efficient magnetic flux
+processing, particularly in the lower region.  This behavior is linked to the localized
+decrease in magnetic pressure relative to the plasma kinetic pressure. Furthermore, the
+lower percentage increase in the upper region suggests that energy release and particle
+acceleration are more dominant there, resulting in a higher conversion rate of stored
+magnetic energy into kinetic and thermal forms.
+    Regarding the vertical velocity (vz), the middle panel illustrates the development
+of bidirectional plasma outflows emanating from the reconnection site for both the
+charged and neutral species.   It  is important to note that the maximum velocity
+differential between the neutral and charged species is negligible, residing on the order
+of 10−1 m/s.  For this reason, although the velocity profiles for both the neutral
+and charged species are shown, they overlap, and only the profile of the charged
+
+===== PDF PAGE 19 =====
+                                                              19
+
+
+
+
+
+                                                                       1.2
+
+                                                                       1.0
+
+                                                                       0.8B/B0
+                                                                       0.6
+
+                                                                       0.4
+
+                                                                       0.2
+                                                           10000
+
+                                                           7500
+
+                                                           5000
+
+                                                           2500 [m/s]
+vz                                                      0
+
+                                                            2500
+
+                                                            5000
+
+                                                           14000
+
+
+                                                           12000
+
+ [K]                                                      10000
+T
+
+                                                           8000
+
+
+                                                           6000
+        1.0         1.2         1.4         1.6         1.8         2.0
+                   z [Mm]
+            |B| = 100[G]           |B| = 110[G]           |B| = 120[G]
+              t = 0 s                                           i (t = 14 s)             n (t = 14 s)
+
+
+Figure 10.  Normalized magnetic field magnitude (top), vertical profiles of the z-
+velocity component (center), and plasma temperature (bottom) as a function of height.
+Measurements are recorded along the z-axis at the origin of the xy-plane (x = 0, y = 0)
+within the chromospheric domain. Dashed lines represent the initial state (t = 0 s),
+while solid and dash-dotted lines correspond to the evolved state at t = 14 s for the
+charged and neutral species, respectively. The configurations for B = 100 G, 110 G,
+and 120 G are indicated by yellow, green, and red profiles, respectively.
+
+===== PDF PAGE 20 =====
+                                                                          20
+
+species is displayed. Nevertheless, given that the velocities are nearly identical for the
+phenomenon, the dynamical evolution of the velocity field and the associated growth
+percentages are effectively identical for both fluid populations.  Given this strong
+coupling, a unified description  is applied to both species throughout this analysis.
+At t = 14 s, the downward-propagating pulses reach maximum velocities of 4988.44,
+5479.33, and 5948.27 m/s for the 100, 110, and 120 G cases, respectively, at an altitude
+of z = 1.2 Mm.  Conversely, the upward-directed pulses attain significantly higher
+velocities of 7387.00, 8527.01, and 9670.26 m/s, peaking at z = 1.65 Mm.
+    These results demonstrate that plasma acceleration scales positively with the initial
+magnetic field intensity; specifically, the 110 and 120 G configurations exhibit velocity
+increments of 9.84% and 19.24% in the lower pulse, and 15.43% and 30.90% in the upper
+pulse, relative to the 100 G baseline.  This asymmetry suggests that acceleration is
+markedly more efficient in the upper region. This disparity is attributed to atmospheric
+stratification: the downward pulse is decelerated by the increasing density and pressure
+gradients in the lower chromosphere, whereas the upward pulse propagates into a
+lower-density environment, facilitating rapid acceleration. Ultimately, these kinematic
+signatures corroborate our morphological findings, identifying the lower pulse as plasma
+driven into the magnetic arcade and the upper pulse as a chromospheric jet ejected
+toward the solar corona.
+     Finally, as  it  is shown in the bottom panel of the figure 10, an analysis of
+the thermal profiles along the polarity inversion line reveals that the magnitude of
+chromospheric heating scales positively with the initial magnetic field strength.  For
+the charged species, we identify two distinct thermal maxima corresponding to the
+previously discussed regions. In the lower region (z = 1.25 Mm), peak temperatures
+reach 7798.14, 8050.89, and 8349.29 K for the 100, 110, and 120 G cases, respectively.
+In the upper region (z = 1.55 Mm), the temperature maxima are significantly higher,
+reaching 9006, 9682, and 10495 K across the same magnetic configurations.  Given
+that the initial temperatures at z = 1.25 Mm and z = 1.55 Mm were 6581.41 K and
+6623.09 K, respectively, these results represent thermal enhancements ranging from
+18.49% to 58.46%.  This significant temperature rise  is indicative of the enhanced
+energy-dissipation efficiency associated with higher magnetic flux densities, particularly
+in the upward-ejected chromospheric material. On the other hand, the behavior of the
+temperature is quite similar to that of the charged species, with an upper and a lower
+thermal maximum, whose locations are the same as those of the charged species but
+slightly displaced. However, for the lower region, the peak temperatures reach values of
+7848.22 K, 8230.97 K, and 8882.82 K, while in the upper region the temperature reaches
+values of 9201.31 K, 10644.54 K, and 13975.88 K. Given that the neutral species share
+the same initial temperature as the charged species, these results represent thermal
+enhancements ranging from 19.25% to 111.02%. This shows that the thermal energy
+released in the neutral species during magnetic reconnection is particularly significant,
+possibly because the neutral species is dominated by kinetic and thermal processes,
+allowing the system to reach higher temperatures.
+
+===== PDF PAGE 21 =====
+                                                                          21
+
+         B = 100 G             B = 110 G             B = 120 G
+   103
+[Hz]   102
+  rec
+
+
+
+,
+  ion101
+
+   100
+
+
+   105
+[Hz]
+
+ in
+
+
+
+,
+ ni104
+
+
+   103
+     1.00  1.25  1.50  1.75  2.00  1.00  1.25  1.50  1.75  2.00  1.00  1.25  1.50  1.75  2.00
+                 z [Mm]                          z [Mm]                          z [Mm]
+                                                                                                    ion /  _ni            t = 0 s               t = 14.0 s
+                                                                                                 rec /  _in            t = 7.5 s
+
+
+
+              Figure 11.  Evolution of collisionality during the reconnection process. The rows
+                 display the inelastic frequencies of ionization (solid) and recombination (dashed), and
+                   elastic frequencies νni (solid) and νin (dashed), while columns correspond to the initial
+               magnetic field configurations of 100, 110, and 120 G. Frequencies are plotted as a
+                 function of height z, extracted along the vertical axis at the center of the current
+                  sheet. The temporal evolution is represented at t = 0 s (purple), t = 7.5 s (blue), and
+                     t = 14 s (yellow).
+
+
+5.2. Collision Terms Impact
+
+Continuing the investigation of the reconnection dynamics, and given that a primary
+objective  of  this study  is to characterize reconnection within a  partially ionized
+environment, we examine the multi-species coupling between the charged and neutral
+components.  Specifically, we evaluate the impact of elastic and inelastic collisional
+processes, alongside the influence of the magnetic field on the spatial and temporal
+evolution of ionization and recombination rates throughout the reconnection event.
+    To this end, Figure 11  illustrates the evolution of the inelastic  collisionality,
+ specifically the ionization (solid) and recombination (dashed) rates, alongside the elastic
+ collision frequencies, νni (solid) and νin (dashed).  The rows categorize the specific
+frequency under analysis, while the columns correspond to the varying initial magnetic
+ field intensities. These frequencies are calculated as a function of altitude z and are
+sampled along the vertical axis at the center of the current sheet. The temporal evolution
+ is captured at three discrete intervals: the initial state (t = 0 s, purple), t = 7.5 s (blue),
+and t = 14 s (yellow).
+
+===== PDF PAGE 22 =====
+                                                                          22
+
+     First, we examine the inelastic  collisional processes.  As the system evolves,
+the ionization and recombination rates increase significantly, particularly in regions
+experiencing peak thermal enhancement. At t = 14 s, we analyze the maximum inelastic
+frequencies and their corresponding altitudes. In the lower region, ionization frequencies
+reach 154.92, 239.34, and 374.68 Hz, while recombination frequencies are 196.75, 218.10,
+and 238.11 Hz for the 100, 110, and 120 G configurations, respectively. These ionization
+maxima are localized at z = 1.24 Mm, with recombination peaking at z = 1.22 Mm.
+For comparison, the initial ionization and recombination frequencies in this region were
+5.06 Hz and 47.21 Hz, respectively.
+    In the upper region ionization frequencies attain 391.02, 790.39, and 1598.78 Hz,
+while recombination rates are 107.48, 114.38, and 119.12 Hz. The ionization maxima
+occur at z = 1.55 Mm, with recombination at z = 1.58 Mm.  Initially, these rates
+were 2.19 Hz (ionization) and 16.37 Hz (recombination). While both rates scale with
+time and magnetic field intensity, the ionization frequency exhibits a vastly superior
+percentage increase, eventually reaching or surpassing recombination scales. This trend
+highlights enhanced ionization activity and a substantial increase in charged-neutral
+coupling. These findings align with observational signatures of ionization traces and
+enhanced X-ray emissions recorded at the base and cusp of flare arcades, as well as
+within ejected lobes [46, 47].
+    Next, we analyze the extrema of the elastic collision frequencies in the same instant
+t = 14 s, specifically focusing on the νin maxima. In the lower region, peak νin values
+of 53801.96, 61302.52, and 68955.15 Hz are recorded for the 100, 110, and 120 G cases,
+respectively, at an altitude of z = 1.27 Mm.  Conversely, the upper region exhibits
+lower maxima of 33621.86, 37751.42, and 42461.17 Hz at z = 1.58 Mm. These results
+demonstrate that both the absolute magnitude and the relative increase of νin are
+significantly more pronounced in the lower chromospheric layers. This trend is physically
+consistent with the plasma environment: although the upper region experiences higher
+thermal enhancements, the ion-neutral collision frequency νin is primarily governed by
+the charged-species density, which remains dominant in the more stratified lower region.
+    In contrast, at t = 14 s the neutral-ion collision frequency, νni, exhibits a significant
+decrease during the reconnection event. In the lower region (z = 1.27 Mm), we record
+minima of 34791.47, 28168.86, and 21482.51 Hz for the 100, 110, and 120 G cases,
+respectively. This depletion is even more pronounced in the upper region (z = 1.54 Mm),
+where frequencies drop to 5405.97, 2976.06, and 1566.56 Hz. Although the temperature
+rise might suggest an increase in collisionality, νni is fundamentally constrained by the
+local neutral density as it is shown in equations 19 and 27. As demonstrated by the
+elevated ionization rates discussed previously, the neutral population is rapidly depleted
+as neutrals are converted into charged species. This localized reduction in neutral density
+outweighs the thermal effects, leading to the observed decline in νni. Consequently, the
+most substantial decrease occurs in the upper region, where the ionization efficiency and
+the resulting neutral species depletion are most significant.
+     Finally, we characterize the impact of collisional processes on the energetic evolution
+
+===== PDF PAGE 23 =====
+                                                                          23
+
+of the system. To this end, we analyze the individual components of the collisional
+interaction term Hi, categorized as follows:
+                  1
+                          n −u2i   ,                                                (37)          PE = 2α u2
+                  1
+             PI =   ρnu2nΓion −ρiu2i Γrec  ,                                      (38)
+                  2
+               α  kB
+         QE =         (Tn −Ti) ,                                          (39)
+                 γ −1 ¯m
+                    1  kB
+           QI =          ρnTnΓion −ρiTiΓrec  .                               (40)
+                 γ −1 ¯m
+In this framework, PE and PI represent the kinetic power transfer driven by elastic and
+inelastic collisions, respectively, while QE and QI denote the inter-species heat exchange.
+Figure 12 illustrates the temporal evolution of these energy transfer rates. The rows
+correspond to the individual components of Hi, and the columns categorize the results
+by initial magnetic field strength.  Consistent with the previous analysis of collision
+frequencies, these energetic terms are plotted as a function of altitude z along the mid-
+plane of the domain, comparing the initial state (t = 0 s, black) with the evolved states
+at t = 7.5 s (yellow) and t = 14 s (green).
+    Regarding the kinetic power transfer terms, PE and PI,  their impact on the
+plasma dynamics  is negligible compared to both the total energy release and the
+thermal exchange rates.  This result suggests a regime of strong species coupling; as
+the ion and neutral fluids move nearly in unison, the relative drift velocity remains
+minimal, effectively nullifying the collisional power terms. In contrast, the elastic heat
+transfer term, QE, represents the dominant contribution to the energetic evolution.
+This indicates that elastic collisions, primarily through inter-species friction, drive
+a substantial transfer of thermal energy, contributing significantly to the heating of
+the charged species.  Furthermore, the magnitude of QE scales positively with the
+initial magnetic field intensity, corroborating our previous observations of enhanced
+chromospheric heating at higher flux densities.
+     Finally,  the  inelastic  heat  transfer  term,  QI,  provides  the  second-largest
+contribution to the energy budget. Unlike QE, the QI term represents a thermal energy
+flux from the charged species to the neutral background. This is physically consistent
+with the reconnection dynamics: the charged species is preferentially heated by magnetic
+dissipation and elastic interactions, and subsequently transfers a portion of this thermal
+energy to the neutral population during recombination events.
+
+
+5.3. Reconnection rates
+
+A critical parameter in this study is the reconnection rate, which dictates the timescale
+of the magnetic flux processing and determines the overall efficiency of the reconnection
+event [48]. The dimensionless reconnection rate, often expressed as the Alfv´enic Mach
+
+===== PDF PAGE 24 =====
+                                                                       24
+
+      B = 100 [G]          B = 110 [G]          B = 120 [G]
+                                                                                                             2.0 108
+
+                                                                                                             1.0 108
+[erg/s]                                                                                       0
+PE
+                                                                                                               1.0 108
+
+                                                                                                               2.0 108
+
+                                                                                           0
+
+                                                                                                               2.0 1010
+
+                                                                                                               4.0 1010[erg/s]
+PI
+                                                                                                               6.0 1010
+
+                                                                                                               8.0 1010
+
+
+                                                                                                             1.5 1013
+                                                                                                                 1.2 1013
+[erg/s]                                                                                                         1.07.5 10131012
+QE                                                                                                             5.0 1012
+                                                                                                             2.5 1012
+                                                                                           0
+
+                                                                                           0
+
+                                                                                                               5.0 1010
+
+                                                                                                               1.0 1011[erg/s]
+QI                                                                                                          1.5 1011
+
+                                                                                                               2.0 1011
+
+    1.0           1.5           2.0   1.0           1.5           2.0   1.0           1.5           2.0
+            z [Mm]                    z [Mm]                    z [Mm]
+
+                                                 t = 0 [s]            t = 7.5 [s]            t = 14 [s]
+
+
+          Figure 12. Temporal evolution of the collisional energy transfer terms during the
+            reconnection process. The rows categorize the components of the interaction term Hi,
+            representing the kinetic power transfer via elastic (PE) and inelastic (PI) collisions,
+            alongside the inter-species heat exchange for elastic (QE) and inelastic (QI) processes.
+          Columns denote the initial magnetic field configurations of 100, 110, and 120 G. Each
+          term is plotted as a function of altitude z, extracted along the vertical axis at the
+            center of the current sheet. The profiles compare the initial state (t = 0 s, black) with
+            the evolved states at t = 7.5 s (yellow) and t = 14 s (green).
+
+===== PDF PAGE 25 =====
+                                                                          25
+
+
+
+                                                                                    |B| = 100[G]
+                                                                                    |B| = 110[G]
+                                                                                    |B| = 120[G]   0.25
+
+
+                                                                                                        0.20
+                 rate
+
+                                                                                                        0.15
+
+
+
+                                                                                                        0.10                                                   reconnection
+
+
+                                                                                                        0.05
+
+
+
+                                                                                                        0.00
+                         0        2        4        6        8       10       12       14
+                                                             t [s]
+
+
+
+
+             Figure 13.  Temporal evolution of the magnetic reconnection rate MA.  Profiles
+               correspond to magnetic field strengths of 100 G (blue), 110 G (green), and 120 G (red).
+              Measurements were recorded at the edge of the current sheet at the reconnection site,
+                 (x, y, z) = (0.2, 0, 1.4) [Mm], over a 14-second interval following onset.
+
+
+number MA, is defined as:
+                      uin            |B|
+        MA =      ,    uA =                                               (41)                 uA          √µ0ρ.
+In this framework, uin denotes the plasma inflow velocity into the diffusion region
+(corresponding here to the ux component), while uA represents the local Alfv´en speed.
+Typically, fast reconnection rates in solar environments are found within the range of
+0.01 ≲MA ≲0.1 [6]. However, these values are not strictly bounded; regimes of ”fast”
+or ”explosive” reconnection can surpass these scales depending on the local plasma-β
+and the specific resistivity model employed [39].
+    To this end, Figure 13 illustrates the temporal evolution of the reconnection rates
+for the 100 G (blue), 110 G (green), and 120 G (red) configurations. The dynamics
+are captured over a 14-second interval, during which the reconnection rate accelerates
+to a peak value, denoting the phase of maximum flux processing, before subsequently
+decaying as the available magnetic energy is depleted.
+    At  first  glance,  the temporal  interval  required  to reach the onset  of peak
+reconnection exhibits minimal observational variance.  However, a precise recording
+of the peak timescales reveals values of 4.2285, 4.0265, and 3.878 s for the 100, 110,
+
+===== PDF PAGE 26 =====
+                                                                          26
+
+and 120 G configurations, respectively.  These results demonstrate that the onset of
+the maximum reconnection rate scales inversely with the initial magnetic field strength.
+While the dimensionless rate MA typically decays following the primary maximum,
+the observed secondary enhancement could be attributed to the fact that the neutral
+species was not in thermal equilibrium. However, previous analyses have shown that
+this does not significantly perturb the overall dynamics of the problem. Consequently,
+the secondary enhancement of the reconnection process is likely a consequence of the
+intrinsic system dynamics, demonstrating that the system remains capable of undergoing
+further energy release.
+    In contrast, the peak reconnection rates are 0.226, 0.253, and 0.279 for the 100, 110,
+and 120 G configurations, respectively, demonstrating a positive correlation with the
+initial magnetic field intensity. While typical solar flare reconnection rates are reported
+in the range 0.01 ≲MA ≲0.1, our results, though slightly exceeding this interval, remain
+within the expected order of magnitude. This discrepancy is primarily attributed to the
+simulation domain size, which is significantly smaller than the characteristic length
+scales of a typical solar flare.
+    To contextualize these values, we consider the maximum reconnection rate predicted
+by the Petschek model, MA,max = π/(8 ln S) [48]. For our parameters, this analytical
+model  yields a rate  of  0.074.   Given that the Lundquist number  is defined as
+S = µ0LuA/η [12], where L is the characteristic length of the reconnection site, the
+reconnection rate effectively exhibits an inverse relationship with the system’s spatial
+scale.  Consequently, at realistic solar scales, the maximum reconnection rates would
+likely converge toward standard observational values. Finally, it should be noted that
+the Petschek model is derived from 2D steady-state equilibrium conditions.  In 3D
+geometries, the precise characterization of reconnection rates remains an area of active
+research, with current models suggesting that maximum rates can exceed classical 2D
+predictions [12].
+
+
+5.4. Energy Release
+
+Next, we quantify the energy release and partitioning during the reconnection event.
+Typical solar flares dissipate energy in the range of 1028 to 1032 erg [6], distributed
+primarily among kinetic, enthalpy, and magnetic energy reservoirs. To evaluate these
+components, we define the following energy densities:
+                 1                         B2
+            kα = 2ραu2α,  hα = Pα + ραeα,  eM = 2µ0 ,                        (42)
+where kα represents the kinetic energy density for the species α (charged i, neutral n),
+hα is the corresponding enthalpy density (with internal energy eα), and eM denotes the
+magnetic energy density. The total energy content within a specified chromospheric
+volume V  is obtained through volume integration:
+                Z             Z             Z
+         Kα =    kα dV,  Hα =   hα dV,  EM =   eM dV.                (43)
+                       V                  V                  V
+
+===== PDF PAGE 27 =====
+                                                                          27
+
+The net energy release is subsequently determined by the temporal variation of these
+global quantities relative to the initial state of the system (t = 0 s).
+    Furthermore, we account for the irreversible energy dissipation driven by magnetic
+resistivity. The volumetric power density associated with Joule heating is defined as:
+
+               eη = ηJ2,                                                          (44)
+
+where η corresponds to the plasma resistivity and J is the current density. Integrating
+this density over the volume yields the instantaneous dissipated power, Eη = R V eη dV .
+Finally, the cumulative dissipated energy is calculated by integrating Eη over the full
+15-second temporal evolution.
+    In this study, the integration volume is defined by the dimensions 0.4 × 0.01 ×
+0.4 Mm3, spanning the altitude range z ∈[1.4, 1.8] Mm and centered at the origin
+of the xy-plane.  To characterize the energetic evolution, Figure 14 illustrates the
+variation in kinetic energy (∆K) and enthalpy (∆H) for both charged (solid lines) and
+neutral species (dashed lines), alongside the fluctuations in magnetic energy (∆EM)
+and cumulative Ohmic dissipation (Eη). These variations are calculated relative to the
+initial state over a 15-second temporal evolution.
+   As the system is initialized from a state of rest, the initial kinetic energies and
+Ohmic dissipation are identically zero. The baseline enthalpy values are 1.79 × 1023 erg
+for the charged species and 6.55×1023 erg for the neutral species across all configurations.
+Finally, the initial magnetic energy content is 6.48×1023, 7.85×1023, and 9.33×1023 erg
+for the 100, 110, and 120 G cases, respectively.
+     First, we analyze the variation in magnetic energy, which serves as the primary
+reservoir for energy extraction during the reconnection process. This variation is shown
+in the bottom-left panel in the figure 14. At t = 15 s, the total released magnetic
+energy attains values of 9.67×1022, 1.21×1023, and 1.53×1023 erg for the 100, 110, and
+120 G cases, respectively. While a linear scaling of the released energy percentage might
+be expected, given that only the initial field magnitude is varied, our results reveal a
+non-linear trend. Specifically, approximately 14.92%, 15.41%, and 16.40% of the initial
+magnetic energy was liberated in each respective case. These findings indicate that the
+efficiency of magnetic energy conversion during reconnection scales positively with the
+initial magnetic field strength.
+    Regarding the enthalpy evolution, in the upper-right panel of the figure 14, we
+observe significant variations across both species at t = 15 s. For the charged species,
+enthalpy increases by 2.02 × 1023, 2.43 × 1023, and 2.88 × 1023 erg, while the neutral
+species exhibits a corresponding decrease of 7.79 × 1022, 2.55 × 1022, and 3.26 × 1022 erg
+for the 100, 110, and 120 G cases, respectively.  These gains in the charged-species
+enthalpy represent 112.84%, 135.63%, and 160.33% of their baseline values. Conversely,
+the neutral population shows a relative decrease of 11.90%, 13.42%, and 15.11%. These
+results confirm that the magnitude of enthalpy flux scales directly with the initial
+magnetic field intensity. The enthalpy is a critical diagnostic in this framework, as
+it accounts for both internal energy changes and the work performed through expansion
+
+===== PDF PAGE 28 =====
+                                                                          28
+
+
+                 K [Ergs]                 H [Ergs]                                                                                                3.0 1023
+       3.0 1022
+       2.5 1022                                                                                2.0 1023
+       2.0 1022
+                                                                                                1.0 1023       1.5 1022
+       1.0 1022                                                                                0
+       5.0 1021
+            0                                                                                  1.0 1023
+                    EB [Ergs]                   E  [Ergs]
+            0
+                                                                                                   1.2 1023
+       2.5 1022                                                                                                1.0 1023
+       5.0 1022                                                                                                8.0 1022
+       7.5 1022                                                                                                6.0 1022
+                                                                                                    Charged
+       1.0 1023                                                                                            Neutral       4.0 1022
+                                                                                                           |B| = 100[G]       1.2 1023                                                                                                           |B| = 110[G]  2.0 1022
+       1.5 1023                                                                                       |B| = 120[G]  0
+                0         5         10        15       0         5         10        15
+                                                      t [s]                                                                 t [s]
+
+
+
+
+
+             Figure 14.  Temporal evolution of the energy components for the charged species
+                  (solid lines) and neutral species (dashed lines). The panels illustrate the variation in
+                 kinetic energy (∆K), enthalpy (∆H), magnetic energy (∆EM), and cumulative Ohmic
+                 dissipation (Eη), calculated relative to the initial state. Energies are integrated over
+              a chromospheric volume of 0.4 × 0.01 × 0.4 Mm3 centered in the xy-plane, spanning
+              a 15-second interval following the onset of reconnection. Results are categorized by
+                    initial magnetic field strengths: 100 G (green), 110 G (red), and 120 G (blue).
+
+
+[49]. Our findings suggest that while magnetic reconnection drives both bulk acceleration
+and localized heating, the collisional coupling mediates a net thermal energy transfer
+from the neutral background to the charged fluid. This inter-species coupling effectively
+depletes the neutral enthalpy reservoir to drive the observed intensification of charged-
+species heating, highlighting the essential role of collisions in the energetic partitioning
+of the partially ionized plasma.
+    In the upper-left panel of the figure 14, the kinetic energy values for the charged
+species at t = 15 s are 7.31 × 1021, 1.12 × 1022, and 1.68 × 1022 erg, while the neutral
+species attain 1.96 × 1022, 2.55 × 1022, and 3.26 × 1022 erg for the 100, 110, and 120 G
+cases, respectively. Normalizing these values to the 100 G baseline, the kinetic energy of
+the charged species increases by 53.21% and 129.82%, whereas the neutral species shows
+
+===== PDF PAGE 29 =====
+                                                                          29
+
+gains of 29.85% and 65.64%. Summing both components, the total kinetic energy growth
+relative to the 100 G case is 36.34% and 83.01% for the 110 and 120 G configurations,
+respectively.
+    These results indicate that while the kinetic energy of the neutral population
+remains higher in absolute terms, owing to its significantly larger mass density, the
+charged species exhibits a much more rapid rate of acceleration. This discrepancy is
+physically rooted in the collisional coupling: as density increases, the neutral population
+acts as a momentum reservoir, transferring a greater proportion of its momentum to the
+charged fluid through elastic interactions. Furthermore, the intensification of ionization
+processes during reconnection, driven by the localized thermal enhancement, facilitates
+an additional transfer of momentum and energy as neutral mass is converted into the
+charged fluid.
+    Regarding the energy dissipated via Ohmic resistivity, corresponding to the bottom-
+right panel of the figure 14, we record values of 8.84×1022, 1.07×1023, and 1.27×1023 erg
+for the 100, 110, and 120 G cases, respectively.  Evaluating the growth in dissipated
+energy relative to the 100 G baseline reveals increases of 20.92% and 43.89% for the 110
+and 120 G configurations. Notably, these variations align closely with the percentage
+increase in the initial magnetic energy stored within the system.  This correlation
+suggests that Ohmic dissipation scales linearly with the available magnetic energy
+density (eM ∝B2), implying that the total resistive heating is directly proportional
+to the square of the initial magnetic field strength.
+    Furthermore, while the declining reconnection rates might suggest the cessation of
+the primary reconnection event, the evolution of the magnetic energy and the cumulative
+Ohmic dissipation tends to plateau. This diminishing slope in their respective temporal
+variations indicates that the bulk conversion of magnetic energy is reaching completion.
+A similar trend  is observed in the enthalpy of both species, which asymptotically
+approaches a stable state.
+    In contrast, the kinetic energy doesn’t exhibit immediate stabilization; rather,
+it continues to increase even after the thermal and magnetic energy reservoirs have
+equilibrated.  This persistent evolution  is  likely a signature of the chromospheric
+environment, characterized by higher plasma densities and higher plasma-β regimes
+relative to the corona  [50].   In such a dense,  partially ionized medium, energy
+transformation  is tempered by  significant  inertia and  high  collisionality.   The
+hydrodynamic non-equilibrium of the region, coupled with the momentum stored in the
+neutral background, prolongs the acceleration phase. Consequently, the kinetic energy
+scales would likely continue to rise beyond the current 15-second window, reaching even
+larger magnitudes if the simulation duration were extended.
+     Finally, the observed energy budget, comprising the liberated magnetic energy,
+the growth in kinetic energy and enthalpy, and the Ohmic dissipation, consistently
+exhibits scales between 1022 and 1023 erg. While these magnitudes are below the 1027–
+1032 erg range typically associated with standard solar flares [6], this discrepancy does
+not preclude the possibility of achieving flare-scale energetics.  This result must be
+
+===== PDF PAGE 30 =====
+                                                                          30
+
+interpreted within the context of our simulation’s spatial constraints. As established in
+Equation 43, the total energy content is inherently extensive, scaling linearly with the
+integration volume (E ∝V ).
+    Given that the characteristic spatial scales of solar flares range from 101 to 103 Mm
+[6], scaling our current domain to match these observed dimensions would yield a
+volumetric increase of several orders of magnitude.  For instance, an increase of 101
+in the micro-flare characteristic length scale corresponds to a 103 factor in volume.
+Consequently, at realistic micro-flare scales, the released energy would reach magnitudes
+of approximately 1026 erg. This positioning aligns our results with the energetic regime
+of micro-flares [6], suggesting that the underlying reconnection mechanism identified in
+this work is a viable candidate for driving small-scale solar eruptive events.
+
+
+6. Discussions and Conclusions
+
+In this study, we employed a MAGNUS-based extension of the two-fluid equations
+to simulate magnetic reconnection within chromospheric conditions and evaluate its
+consistency with solar flare energetics.  The MAGNUS framework was adapted to
+resolve the coupled evolution of neutral and charged fluid species, incorporating both
+solar atmospheric stratification and inter-species collisional dynamics.  Crucially, the
+implementation of a dedicated module for collisional energy exchange ensured the
+numerical stability of the system, allowing for a robust representation of the reconnection
+environment.
+    Morphologically, despite lower intensities than typical coronal events, the system
+manifests a magnetic arcade and plasma ejections, confirming consistency with flare-like
+physics. Thermal evolution corroborates this interpretation: heating bifurcates into an
+upper locus, associated with lobe formation, and a lower locus, where plasma accelerates
+toward denser atmospheric layers. The arcade topology is clearly evidenced by both
+current density and temperature  profiles.  Notably, reconnection drives significant
+localized heating, increasing peak regional temperatures by 18.49%–58.46%, suggesting
+that small-scale reconnection events contribute substantially to the chromospheric and
+coronal energy budget.
+     Initially, the chromospheric plasma  is recombination-dominated, evidenced by
+its  respective  orders  of magnitude.   During  reconnection,  both  frequencies  rise
+significantly; however, the ionization rate increases by two orders of magnitude relative
+to recombination, eventually peaking with and exceeding the intensity maxima. This
+dynamically enhances the activity of the charged species.  These results align with
+observed X-ray emission traces at the arcade base, cusp, and the resulting lobe,
+consistent with established flare diagnostics [47, 46].
+    Analysis of the collision terms reveals negligible relative velocities between fluids
+compared to the system’s global dynamics, confirming strong collisional coupling.
+Furthermore, thermal transfer diagnostics demonstrate that this fluid interaction is a
+primary driver of the observed heating. The acceleration and heating of the neutral
+
+===== PDF PAGE 31 =====
+                                                                          31
+
+species are essentially dependent on their interaction with the charged population.
+Because the neutral component exhibits more  efficient heating due to  its purely
+hydrodynamic nature, a significant temperature gradient ensues,  facilitating a net
+thermal energy transfer from the neutral to the charged species.
+    Temporal analysis yields peak reconnection rates of 0.226, 0.253, and 0.279 for
+the 100, 110, and 120 G cases, respectively, attained at 4.23, 4.03, and 3.88 s. This
+demonstrates that increasing the magnetic field strength enhances the peak reconnection
+rate and accelerates the onset of the phenomenon.  Although these rates exceed the
+typical literature range (0.01–0.1), they remain physically plausible, residing within the
+same order of magnitude (∼10−1).  Furthermore, scaling the simulation domain to
+solar flare dimensions would likely moderate these rates and extend the characteristic
+timescale. Finally, theoretical frameworks support reconnection rates (MA) exceeding
+0.1 [12], and collisional effects are known to facilitate accelerated reconnection dynamics
+[15].
+   The released energy spans 1022–1023 erg, scaling with the initial magnetic energy
+density (EB ∝B2).  Although these magnitudes fall below those of standard solar
+flares, this discrepancy is an artifact of our spatially constrained simulation domain,
+approximately 1/5 the scale of a micro-flare in x and z, and 1/1000 in y. Given the
+scale-invariance of the solver, extrapolating these results to observational dimensions
+yields energy releases of 1026–1028 erg, aligning with empirical observations of solar
+events.  Furthermore, kinetic energy accumulation persists beyond the reconnection
+peak. This delayed energy conversion is attributable to the chromospheric environment:
+the elevated mass density and high plasma-β regime introduce significant inertia and
+kinetic pressure, which retard magnetic advection and modulate the rate of energy
+propagation.
+     Finally,  our  results  demonstrate  that  increasing  magnetic  field  strength
+correlates with higher peak temperatures, liberated energy, Ohmic  resistivity, and
+ionization/recombination frequencies.  However, this growth is linear, outpacing the
+proportional increase in initial magnetic energy. This indicates an enhanced conversion
+efficiency:  the fraction of released energy rose from 14.92% to 16.40% between the
+100 G and 120 G cases.  Correspondingly, enthalpy and kinetic energy exhibited
+significant gains, with peak kinetic energy increasing by up to 129.82%. We attribute
+this heightened efficiency to collisional coupling, which facilitates rapid energy transfer
+from the neutral to the charged population. In the case of enthalpy, the neutral fluid
+acts as an energy reservoir, transferring thermal energy to the charged species, evidenced
+by a 15.11% decrease in neutral enthalpy. This mechanism is similarly operative in the
+kinetic energy budget: the kinetic energy of the charged species surged from 53.21%
+to 129.82%, significantly outperforming the 29.85%–65.64% increase observed in the
+neutral population.
+     It is important to acknowledge several limitations inherent to the present numerical
+study. The simulations were performed in a 2.5D configuration, employing a reduced
+computational domain focused primarily on the solar chromosphere.  This imposes
+
+===== PDF PAGE 32 =====
+                                                                          32
+
+inherent limitations on the representation of fully three-dimensional turbulent dynamics
+and magnetic-field-line stochasticity. In addition, although the two-fluid equations for
+charged and neutral species, including both elastic and inelastic collisions, were solved to
+capture the essential physics of chromospheric reconnection, certain significant physical
+processes were necessarily omitted from the model. Specifically, the current setup does
+not account for radiative transfer or non-local thermal conduction. Consequently, while
+the simulation successfully reproduces the key morphological and energetic signatures of
+the reconnection process, the resulting temperature evolution and energy budget remain
+subject to the limitations imposed. Future investigations will extend this work to full
+3D simulations, incorporating a more comprehensive treatment of radiative and thermal
+effects.
+    In summary, this work demonstrates that chromospheric magnetic reconnection
+is a highly efficient process, driven by strong collisional coupling between neutral and
+charged fluid populations. Our MAGNUS-based simulations reveal that energy release
+is not merely a product of magnetic field decay, but is dynamically enhanced by efficient
+thermal energy transfer and kinetic acceleration. By bridging the gap between small-
+scale simulation energetics and observable micro-flare signatures, these results provide
+a theoretical framework for understanding the role of partially ionized plasmas in the
+heating of the solar atmosphere. These findings underscore the importance of accounting
+for multi-species interactions in future models of solar eruptive events.
+
+
+Acknowledgments
+
+We thank the anonymous referee for their valuable comments and suggestions. F.D.L-C
+was supported by the Vicerrector´ıa de Investigaci´on y Extensi´on - Universidad Industrial
+de Santander, under Grant No. 3703.
+
+
+References
+
+ [1] Mouschovias T C, Ciolek G E and Morton S A 2011 Monthly Notices of the Royal Astronomical
+       Society 415 1751–1782
+ [2] Ballester J L, Alexeev I, Collados M, Downes T, PfaffR F, Gilbert H, Khodachenko M, Khomenko
+      E, Shaikhislamov I F, Soler R et al. 2018 Space Science Reviews 214 58
+ [3] Kataoka R and Sato T 2017 Geoscience Frontiers 8 247–252
+ [4] Leake J, DeVore C, Thayer J, Burns A, Crowley G, Gilbert H, Huba J, Krall J, Linton M, Lukin
+    V et al. 2014 Space Science Reviews 184 107–172
+ [5] Judge P 2006 Observations of the solar chromosphere Solar MHD theory and observations: a high
+        spatial resolution perspective vol 354 p 259
+ [6] Shibata K and Magara T 2011 Living Reviews in Solar Physics 8 1–99
+ [7] De Pontieu B, Title A M, Lemen J R, Kushner G D, Akin D J, Allard B, Berger T, Boerner P,
+     Cheung M, Chou C, Drake J F, Duncan D W, Freeland S, Heyman G F, Hoffman C, Hurlburt
+    N E, Lindgren R W, Mathur D, Rehse R, Sabolish D, Seguin R, Schrijver C J, Tarbell T D,
+       W¨ulser J P, Wolfson C J, Yanari C, Mudge J, Nguyen-Phuc N, Timmons R, van Bezooijen R,
+      Weingrod I, Brookner R, Butcher G, Dougherty B, Eder J, Knagenhjelm V, Larsen S, Mansir
+      D, Phan L, Boyle P, Cheimets P N, DeLuca E E, Golub L, Gates R, Hertz E, McKillop S, Park
+
+===== PDF PAGE 33 =====
+                                                                          33
+
+
+       S, Perry T, Podgorski W A, Reeves K, Saar S, Testa P, Tian H, Weber M, Dunn C, Eccles S,
+       Jaeggli S A, Kankelborg C C, Mashburn K, Pust N, Springer L, Carvalho R, Kleint L, Marmie
+        J, Mazmanian E, Pereira T M D, Sawyer S, Strong J, Worden S P, Carlsson M, Hansteen V H,
+      Leenaarts J, Wiesmann M, Aloise J, Chu K C, Bush R I, Scherrer P H, Brekke P, Martinez-
+      Sykora J, Lites B W, McIntosh S W, Uitenbroek H, Okamoto T J, Gummin M A, Auker G,
+      Jerram P, Pool P and Waltham N 2014 Solar Physics 289 2733–2779 (Preprint 1401.2491)
+ [8] Mulay S M and Fletcher L 2021 Monthly Notices of the Royal Astronomical Society 504 2842–2852
+ [9] Zweibel E, Lawrence E, Yoo J, Ji H, Yamada M and Malyshkin L 2011 Physics of Plasmas 18
+      111211
+[10] Ni L, Ji H, Murphy N and Jara-almonte J 2020 Proceedings of the Royal Society A 476
+[11] Carlsson M, De Pontieu B and Hansteen V H 2019 Annual Review of Astronomy and Astrophysics
+     57 189–226
+[12] Pontin D I and Priest E R 2022 Living Reviews in Solar Physics 19 1
+[13] Blanc M, Kallenbach R and Erkaev N 2005 Space Science Reviews 116 227–298
+[14] Clark G, Kinnison J, Kelly D, Kollmann P, Li W, Jaynes A, Blum L, Marshall R, Turner D, Cohen
+        I et al. 2023 Authorea Preprints
+[15] Jara-Almonte J, Ji H, Yoo J, Yamada M, Fox W and Daughton W 2019 Physical review letters
+     122 015101
+[16] Wargnier Q, Martinez-Sykora J, Hansteen V H and De Pontieu B 2023 The Astrophysical Journal
+     946 115
+[17] Hirayama T 1974 Solar Physics 34 323–338
+[18] Wang L, Li Y, Ding M, Cheng X and Li Q 2024 45th COSPAR Scientific Assembly. Held 13-21
+       July 45 1966
+[19] Sadykov V M, Dominguez S V, Kosovichev A G, Sharykin I N, Struminsky A B and Zimovets I
+      2015 The Astrophysical Journal 805 167
+[20] Gary G A 2001 Solar Physics 203 71–86
+[21] Pozuelo S E, Ramos A A, de la Cruz Rodr´ıguez J, Bueno J T and Gonz´alez M M 2023 Astronomy
+    & Astrophysics 672 A141
+[22] Wang J, Li W, Bai X, Sun Y, Deng Y and Lin J 2026 Research in Astronomy and Astrophysics
+     26 075004
+[23] Navarro A, Lora-Clavijo F and Gonz´alez G A 2017 The Astrophysical Journal 844 57
+[24] Popescu Braileanu B, Lukin V, Khomenko E and De Vicente ´A 2019 Astronomy & Astrophysics
+     627 A25
+[25] Voronov G S 1997 Atomic Data and Nuclear Data Tables 65 1
+[26] Smirnov B M 2003 Physics of atoms and ions
+[27] Braginskii S I 1965 Reviews of Plasma Physics 1 205
+[28] Draine B 1986 Monthly Notices of the Royal Astronomical Society 220 133–148
+[29] Avrett E H and Loeser R 2008 Astrophysical Journal Supplements 175 229–276
+[30] Vernazza J E, Avrett E H and Loeser R 1981 Astrophysical Journal Supplements 45 635–725
+[31] Zhang F, Poedts S, Lani A, Ku´zma B and Murawski K 2021 Astrophysical Journal 911 119
+       (Preprint 2011.13469)
+[32] Harris E G 1962 Il Nuovo Cimento 23 115–121
+[33] Murtas G, Hillier A and Snow B 2021 Physics of Plasmas 28 032901 (Preprint 2102.01630)
+[34] Zweibel E G and Yamada M 2009 Annual review of astronomy and astrophysics 47 291–332
+[35] Toro E F 2013 Riemann solvers and numerical methods for fluid dynamics: a practical introduction
+       (Springer Science & Business Media)
+[36] Navarro A, Murawski K, W´ojcik D and Lora-Clavijo F 2019 Monthly Notices of the Royal
+      Astronomical Society 489 2769–2774
+[37] Navarro A, Lora-Clavijo F, Murawski K and Poedts S 2021 Monthly Notices of the Royal
+      Astronomical Society 500 3329–3334
+[38] Wandurraga P C, Navarro A and Lora-Clavijo F D 2021 Revista de la Academia Colombiana de
+
+===== PDF PAGE 34 =====
+                                                                          34
+
+
+       Ciencias Exactas, F´ısicas y Naturales 45 52–66
+[39] Landinez G and Lora-Clavijo F D 2024 Physics Letters A 525 129897
+[40] Boscarino S, Pareschi L and Russo G 2024 Implicit-explicit methods for evolutionary partial
+        differential equations (SIAM)
+[41] Jørgensen J B, Kristensen M R and Thomsen P G 2018 A family of esdirk integration methods
+       (Preprint 1803.01613) URL https://arxiv.org/abs/1803.01613
+[42] Butcher J C 1996 Applied numerical mathematics 20 247–260
+[43] Li Y, Xue J, Ding M, Cheng X, Su Y, Feng L, Hong J, Li H and Gan W 2018 The Astrophysical
+      Journal Letters 853 L15
+[44] Reva A, Bogachev S, Loboda I, Ulyanov A and Kirichenko A 2022 The Astrophysical Journal 931
+      93
+[45] Reeves K K 2022 Frontiers in Astronomy and Space Sciences 9 1041951
+[46] Fletcher L 2024 Annual Review of Astronomy and Astrophysics 62 437–474
+[47] Vievering J T, Glesener L, Athiray P, Buitrago-Casas J C, Musset S, Ryan D F, Ishikawa S n,
+     Duncan J, Christe S and Krucker S 2021 The Astrophysical Journal 913 15
+[48] Birn J and Priest E R 2007 Reconnection  of magnetic  fields:  magnetohydrodynamics and
+        collisionless theory and observations (Cambridge University Press)
+[49] Birn J, Fletcher L, Hesse M and Neukirch T 2009 The Astrophysical Journal 695 1151
+[50] Priest E R and Forbes T G 2002 The Astronomy and Astrophysics Review 10 313–377

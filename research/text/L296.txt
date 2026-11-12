@@ -1,0 +1,2231 @@
+
+===== PAGE 1 =====
+A scalable multidimensional fully implicit solver for Hall
+magnetohydrodynamics
+L. Chacóna,∗
+aLos Alamos National Laboratory, Los Alamos, NM 87545, USA
+Abstract
+We propose an optimally performant fully implicit algorithm for the Hall magnetohydrodynamics (HMHD)
+equations based on multigrid-preconditioned Jacobian-free Newton-Krylov methods. HMHD is a challeng-
+ing system to solve numerically because it supports stiff fast dispersive waves. The preconditioner is for-
+mulated using an operator-split approximate block factorization (Schur complement), informed by physics
+insight. We use a vector-potential formulation (instead of a magnetic field one) allow a clean segregation
+of the problematic ∇×∇× operator in the electron Ohm’s law subsystem. This segregation allows the for-
+mulation of an effective damped block-Jacobi smoother for multigrid. We demonstrate by analysis that our
+proposed block-Jacobi iteration is convergent and has the smoothing property. The resulting HMHD solver
+is verified linearly with wave propagation examples, and nonlinearly with the GEM challenge reconnection
+problem by comparison against another HMHD code. We demonstrate the excellent algorithmic and parallel
+performance of the algorithm up to 16384 MPI tasks in two dimensions.
+Keywords: implicit methods, Hall magnetohydrodynamics, Newton-Krylov, multigrid, physics-based
+preconditioning, approximate block factorization.
+1. Introduction
+We propose a scalable implicit algorithm for the Hall magnetohydrodynamics (HMHD) model, which
+is of relevance in the modeling of astrophysical, magnetospheric, and laboratory (e.g., fusion) plasmas.
+HMHD is well known to support fast dispersive waves, which become very stiff numerically with increasing
+spatial resolution, resulting in explicit Courant-Friedrichs-Lewy (CFL) timestep stability constraints scaling
+quadratically with the mesh spacing rather than linearly. As a result, the explicit integration of this system
+becomes very expensive for sufficiently refined meshes, encouraging the exploration of implicit methods.
+Several authors have attempted to build implicitness in the solution algorithm of the HMHD equations
+over the years. The earliest study we are aware of is Ref. [1], where a semi-implicit solver for the HMHD
+system based on a pseudospectral discretization in cylindrical geometry was proposed for out-of-plane uni-
+form magnetic fields (which incidentally do not propagate the problematic stiff hyperbolic waves mentioned
+earlier). The stability analysis of the semi-implicit time-advance formulation in the general case (including
+stiff hyperbolic waves) was studied in Ref. [2], concluding that strict time-centering was needed for numer-
+ical stability. Several authors have explored fully implicit HMHD formulations, either in its reduced form
+(i.e., assuming plasma incompressibility) [3, 4, 5, 6, 7] or in primitive-variable form [5, 8, 9, 10, 11, 12].
+Of these, many of them employ either direct solvers [4, 5, 6, 11, 12] or incomplete LU factorizations [10],
+which are known not to scale well either algorithmically under grid refinement, or in parallel (and in fact
+little information is provided about either scaling in the references). Scalable fully implicit solutions for the
+∗Corresponding author
+Email address: chacon@lanl.gov (L. Chacón)
+Preprint submitted to Elsevier
+July 10, 2024
+arXiv:2407.07031v1  [physics.plasm-ph]  9 Jul 2024
+
+
+===== PAGE 2 =====
+reduced HMHD system [3, 7] and the primitive-variable HMHD system in a non-standard ion formulation
+[8] were proposed that show significant promise. However, the latter formulation (relevant to the present
+study) has been found by the author to be prone to numerical noise from fast dispersive waves, and prob-
+lematic to solve when attempting to include high-order dissipation (via hyperresistivity, mimicking electron
+viscosity [13]) to control it. Other authors have attempted to bypass the numerical stiffness challenges of
+HMHD either by adding a fictitious displacement current term in Ampere’s law [14, 15] or by reverting
+back to a multi-fluid formulation with promising approximate block-factorization preconditioners [16, 17].
+The former approach is problematic because the formulation is physically inconsistent, and can be shown
+to introduce instability [15]. The latter introduces a large number of additional equations, and features fast
+charge-separation and lightwave timescales that complicate an implicit treatment (although these could be
+important in some physical contexts such as the treatment of boundary sheaths).
+This paper builds on earlier work [18] where a scalable, parallel, fully implicit, fully nonlinear solver for
+the 3D resistive compressible MHD equations was demonstrated, and augments it to include electron Hall
+and pressure effects. As in the reference, we base our nonlinear solver approach on the Newton-Raphson
+iterative algorithm. Krylov iterative techniques [19], implemented Jacobian-free [20, 21] (i.e., without ever
+forming and storing the Jacobian matrix) for memory efficiency, are employed for the required algebraic
+matrix inversions. Here, FGMRES (Flexible Generalized Minimal RESiduals [22, 23]) is employed as
+the Krylov solver of choice, due to the lack of symmetry in the algebraic system of interest. The flexible
+character of FGMRES allows the preconditioner to change between successive GMRES iterations. We will
+exploit this feature in our implementation.
+The efficiency and scalability of Krylov methods depends strongly on adequate preconditioning [19].
+In Refs. [3, 18], a suitable multigrid-based preconditioner is developed for the MHD system around the
+parabolization concept, whereby a hyperbolic system is reformulated as a parabolic one using a Schur fac-
+torization, which is in turn amenable to a multilevel treatment. The parabolization procedure is generalized
+here to HMHD. Using physics insight, we approximate the exact Schur factorization with an operator-split
+procedure, where the stiff electron subsystem (which we will term electron MHD, or EMHD) is inverted
+first, followed by the ion MHD subsystem inversion proposed in Ref. [18]. All subsystems are solved using
+a fully parallel geometric multigrid (MG) implementation based on a coarse-grid parallel-domain agglom-
+eration strategy (similar to that proposed in Refs. [24, 25]). For the EMHD subsystem (which is the stiffest
+one in HMHD), we propose a novel six-equation block damped-Jacobi smoothing strategy that is shown by
+analysis to lead to convergent Jacobi iterations and to possess the smoothing property. Damped Jacobi is
+demonstrated in Ref. [9] to be a viable smoother for a semi-implicit discretization of the 2D EMHD system
+(without hyperresistivity), and is implemented in a nonlinear MG solver. However, no grid-convergence
+study is offered in the reference, and relatively small implicit timesteps (of O(40) explicit CFLs) are used.
+Here, we extend the analysis to full 3D geometry (which requires dealing with the ∇× ∇× operator, very
+challenging for geometric MG solvers), include hyperresistivity, and push implicit timesteps to 8400 CFLs
+without loss of algorithmic performance. The formulation is enabled by a vector-potential formulation of
+the HMHD system (instead of the more common magnetic-field one). The resulting smoother is able to
+deal seamlessly with both the whistler-wave and the fourth-order hyper-resistivity operators, both featuring
+∇×∇× terms. As a result of these advances, the preconditioner renders the Jacobian-free Newton-Krylov
+(JFNK) solver optimally scalable algorithmically and in parallel (in a weak scaling sense) up to the largest
+number of processors considered in this study (16384 processors).
+The rest of the paper is organized as follows. Section 2 introduces the base model equations. Sec. 3
+discusses the details of the proposed physics-based preconditioner. Numerical details of our implemen-
+tation, including the multigrid (MG) treatment of the hyperbolically stiff HMHD system, are provided in
+Sec. 4 (with detailed analysis of the smoothing properties of our block-Jacobi treatment of the Hall MHD
+equations provided in Appendix A). Linear and nonlinear verification results of our implementation using
+wave propagation examples and the GEM challenge problem [13], respectively, along with a weak parallel
+2
+
+
+===== PAGE 3 =====
+scalability study of our implicit solver up to 16384 cores, are presented in Sec. 5. Finally, we conclude in
+Sec. 6.
+2. Vector-potential formulation of the Hall MHD model
+In Alfvénic units (i.e, Alfvén speed vA = B0/√µ0ρ0, Alfvén time τA = L/vA, where B0, ρ0, and L are
+the reference magnetic field, density, and length, respectively), the HMHD model of interest for this study
+reads:
+∂ρ
+∂t
++
+∇·(ρv) = 0,
+(1)
+∂B
+∂t
++
+∇×E = 0
+(2)
+∂(ρv)
+∂t
++∇·[ρvv−BB
++
+I(p+ B2
+2 )+Πi
+
+= 0,
+(3)
+∂p
+∂t +∇·(v∗p)
++
+(γ −1)p∇·v∗= (γ −1)(Q−∇·q),
+(4)
+with I the identity operator, ρ the particle density, v the plasma velocity, B the magnetic field, E the electric
+field, p = ρT = (1 + α)ρTe the total pressure, and v∗= αv+ve
+α+1 = v −
+di
+1+α
+j
+ρ . Here, α = Ti/Te is a fixed
+ion-to-electron temperature ratio, ve = v −di j/ρ is the electron velocity, j = ∇× B is the current, and
+di = c/ωpiL the dimensionless ion inertial length. The velocity v∗in the pressure equation, Eq. 4, is derived
+by adding the ion and electron internal energy evolution equations [26], and using the fixed-temperature-
+ratio assumption to ensure existence of a local energy conservation law for fixed temperature ratio α, as we
+outline below. Note that the pressure equation reverts to the electron pressure equation pe = p/(1+α) for
+cold ions (α ≪1), and to the ion pressure equation pi = pα/(1+α) for cold electrons (α ≫1).
+In these equations, η is the normalized resistivity (inverse Lundquist number), q is the heat flux, and
+Q = η j2 −∑s=i,e Πs : ∇vs contains the joule and viscous heating sources. Simple closures for the heat
+flux q = −κ∇Te and the viscous stress tensors Πs = −ρνs∇vs (with s the species, and νs the normalized
+viscosity) are considered at this time. More accurate closures (such as gyroviscosity and anisotropic heat
+transport) will be considered in future work.
+Key to the character of the model in Eqs. 1-4 is the specification of the electric field E via an Ohm’s law.
+In general, the Ohm’s law is derived from the electron equation of motion, which reads:
+E = −v×B+ηj+ di
+ρ (j×B−∇pe −∇·Πe)−d2
+e
+di
+dve
+dt = −ve ×B+ηj−di
+ρ (∇pe +∇·Πe)−d2
+e
+di
+dve
+dt . (5)
+The parameter di characterizes the importance of Hall effects: for di ≪1 the model transitions to resistive
+MHD, while for di ≫1 the model transitions to the so-called electron MHD model [27, 28]. The parameter
+de = c/ωpeL is the dimensionless electron inertial length, which characterizes the importance of electron
+inertia. The ion and electron inertial lengths are related as d2
+e/d2
+i = me/mi.
+The system of Eqs. 1-4, together with Eq. 5, admits the following local energy conservation law:
+∂t
+
+ρ v2
+2 + B2
+2 +
+p
+γ −1
+
++∇·
+"
+ρ v2
+2 v+E×B+ γ p
+γ −1v∗+ ∑
+s=i,e
+Πs ·vs +q
+#
+= 0.
+This implies that, with appropriate boundary conditions [e.g., perfect conductor (E × n = 0), impenetrable
+wall (v·n = 0), and no viscous stress (n·Πs = 0)], the total energy is exactly conserved. Numerically, energy
+will be conserved only approximately, since we are solving for the specific internal energy (Eq. 4) instead
+3
+
+
+===== PAGE 4 =====
+of total energy (the former is more advantageous for low plasma-β applications). In our simulations, energy
+is typically conserved to better than one part in 103.
+For sufficiently large di, the system in Eqs. 1-4, together with Eq. 5, is dispersively hyperbolic, sup-
+porting fast dispersive normal modes (Chap. 3 in Ref. [29]). In many applications of interest, however,
+dynamical time scales of interest are much slower than those associated with these normal modes. This is
+so because macroscopic dynamical time scales of interest are typically related to the bulk plasma, and thus
+controlled by ions, while the much faster normal modes are related to electron physics. In such instances,
+an implicit approach that steps over the fast normal-mode time scales to resolve the slower time scales of
+interest is advantageous. This is the subject of this paper. However, as we shall see, the extreme hyperbolic
+character of the Hall MHD model makes the task of developing an optimal, scalable solver a very difficult
+task.
+For preconditioning purposes, we will find it advantageous to consider a governing equation for the
+magnetic vector potential A instead of the magnetic field B (which are related as B = ∇×A). Evolving A
+instead of B has additional benefits in that it allows more flexibility in the numerical discretization without
+sacrificing the solenoidal property of the magnetic field. However, it is also more challenging in that it
+requires a suitable gauge, and care must be taken with boundary conditions. The evolution equation for A
+is found from E = −∇Φ −∂tA (where Φ is a scalar potential) and the generalized Ohm’s law, Eq. 5, and
+reads:
+∂A
+∂t +E = ∂A
+∂t −ve ×B+ηj−di
+ρ (∇pe +∇·Πe)−d2
+e
+di
+dve
+dt = −∇Φ.
+(6)
+One can eliminate Φ by choosing an appropriate gauge. Here, we consider a variation of the Weyl gauge,
+Φ = −d2
+e
+di
+v2
+e
+2 , to find:
+∂A∗
+∂t −ve ×(∇×A∗)+η∇×∇×A−di
+ρ (∇pe +∇·Πe) = 0,
+(7)
+where A∗= A −d2
+e
+di ve. This equation is what we implement numerically. The solenoidal constraint of the
+magnetic field is automatically guaranteed as long as ∇·∇× = 0 discretely (as is the case in our implemen-
+tation [30]). We discuss the specifics of the electron pressure tensor term in the next section.
+As stated earlier, a simple viscous closure is used for both species, Πs ≈−ρνs∇vs. It is important to
+note that the main purpose of keeping the electron pressure tensor contribution in our implementation, in
+the absence of a more informed closure, is to regularize the electron equation of motion by providing some
+dissipation scale. Such regularization is needed for numerical purposes, as has been described in various
+other studies [13, 3]. In our context, we have seen rapid degradation of the preconditioner performance
+when such a term is lacking. The reason is that approximations introduced in the preconditioner impact
+small scales the most [18], and the dispersive nature of Hall MHD seems to amplify these differences to the
+point that it renders the preconditioner ineffective after just a few implicit time steps.
+For electrons, the simple viscous closure gives:
+∇·Πe = −∇·(ρνe∇ve) = −∇·
+
+ρνe∇
+
+v−di
+ρ j
+
+= −∇·
+
+ρνe∇
+
+v−di
+ρ ∇×∇×A
+
+,
+(8)
+where νe is the electron viscosity (also known as hyperresistivity). This expression contains a fourth-order
+dissipation operator on A, with di∇· Πe ∼d2
+i νe∇2(∇× ∇× A). The higher differential order is needed
+to provide a dissipation length scale to quadratic dispersive waves with dispersion relation ω ∼k2 [13].
+Numerical considerations can help to determine a grid-bound νe that provides sufficient dissipation while
+avoiding excessive stiffness from the high-order operators. An estimate of νe can be obtained by balancing
+the damping rate d2
+i νek4 with the dispersive wave frequency divAk∥k, to find [3]:
+νe = Cd−1
+i
+vAk∥k−3,
+(9)
+4
+
+
+===== PAGE 5 =====
+with C a constant of order unity.
+We comment briefly on the discretization of Eqs. 1-4. Spatially, the system is discretized using second-
+order finite volumes with all variables (vectors and scalars) co-located at cell centers [30]. Such spatial
+representation is conservative and nonlinearly stable, and has proved to remarkably robust both in resistive
+[30] and Hall MHD (see Ref. [5] and results herein). Temporally, we employ either a θ-scheme with θ = 0.5
+(second-order Crank-Nicolson), or second-order backward differentiation formulas [31], depending on the
+problem. Either approach results in a set of nonlinear algebraic equations G(x) = 0, with xT = (ρ,T,A,v),
+that needs to be inverted every time step. For this, we employ preconditioned Jacobian-free Newton-Krylov
+(JFNK) methods. The next section discusses our approach to preconditioning the Hall MHD system.
+3. Physics-based preconditioning strategy
+We formulate our preconditioner by first parabolizing the implicitly discretized hyperbolic system via
+an approximate block factorization, and then invert the resulting systems with multigrid methods (MG) for
+scalability.
+As preconditioners, MG methods have been shown in many applications of interest to lead to optimal
+convergence rates in JFNK [32]. The key element in a working MG solver is the smoother. While smoothers
+can be found fairly easily for diagonally dominant systems (in a point or block sense; p. 96 in [33]), it is
+remarkably hard otherwise. Hyperbolic systems (such as MHD) can be shown to be diagonally submissive
+when time steps larger than the explicit CFL stability constraint are employed (see Ref. [34] for an in-depth
+explanation of this issue). However, hyperbolic systems can be conveniently parabolized in an implicit time-
+stepping setting. The basic idea is to produce a well-conditioned (diagonally-dominant) parabolic operator
+from an ill-conditioned hyperbolic system of equations by a block factorization [35, 32, 36, 34, 3, 37, 18,
+38, 39, 40, 41]. The procedure can be understood easily with a first-order coupled hyperbolic linear system:
+∂tu
+=
+∂xv,
+∂tv
+=
+∂xu.
+Differencing implicitly in time (with backward Euler for simplicity) but keeping the continuum spatial
+representation, we have:
+un+1
+=
+un +∆t∂xvn+1,
+(10)
+vn+1
+=
+vn +∆t∂xun+1.
+(11)
+It is now possible to substitute the second equation into the first to obtain the following parabolic equation:
+(I−∆t2∂xx)un+1 = un +∆t∂xvn,
+(12)
+which is equivalent to Eqs. 10-11, but much better conditioned because the parabolic operator is diagonally
+dominant. Once un+1 is found, vn+1 can be found straightforwardly from Eq. 11. A similar idea is behind
+the method of differential approximations [42], and the semi-implicit solvers developed in the MHD context
+[43, 44, 1].
+The parabolization of the hyperbolic equation is a manifestation of the implicit discretization of the semi-
+discrete hyperbolic system. Indeed, hyperbolic waves feature a finite propagation speed. By construction,
+implicit methods are designed to step over stiff hyperbolic waves to follow the dynamics on a slower time
+scale. In order to do so, the implicit scheme must change the character of the equations for unresolved
+hyperbolic time scales, and parabolization is the outcome. Resolved hyperbolic time scales maintain their
+character. This can be clearly seen from Eq. 12: for small enough time steps, the second-order term can be
+5
+
+
+===== PAGE 6 =====
+neglected, and one recovers an explicit (hyperbolic) formulation. It is only for large enough time steps that
+the system changes character to become parabolic.
+The connection between parabolization and the Schur factorization [3, 18] enables the generalization of
+these ideas to more complicated hyperbolic systems. Equations 10-11, when written in block-matrix form,
+can be factorized as:
+
+I
+−∆t∂x
+−∆t∂x
+I
+
+=
+ I
+−∆t∂x
+0
+I
+ I−∆t2∂2
+x
+0
+0
+I
+
+I
+0
+−∆t∂x
+I
+
+.
+The connection is now obvious, as the parabolic operator appears naturally. Its usefulness will become
+apparent in the following sections.
+3.1. Block structure of the linearized Hall MHD model
+We begin by considering the linearized Hall MHD model for our preconditioning development. Ne-
+glecting heat sources (which do not introduce stiff time scales), the coupling structure of the linearized
+MHD system in terms of the linear updates δρ, δTe, δA, and δv reads:
+δρ
+=
+Lρ(δρ,δv),
+δ p
+=
+LT(δ p,δv,δA,δρ),
+δA
+=
+LE(δv,δA,δρ,δ p),
+δv
+=
+Lv(δv,δA,δρ,δ p),
+where the Li represent linear operators. The resulting Jacobian structure is:
+Jδx =
+
+
+Dρ
+0
+0
+Uρv
+Lpρ
+Dp
+UpA
+Upv
+LAρ
+LAp
+DA
+UvA
+Lvρ
+Lvp
+LvA
+Dv
+
+
+
+
+
+
+δρ
+δ p
+δA
+δv
+
+
+
+.
+(13)
+The boxed blocks contain Hall-MHD contributions from finite di terms (stemming from the Ohm’s law and
+the definition of v∗in the temperature equation). Here, diagonal blocks are given by:
+Dρδρ
+=
+δρ
+∆t +θ[∇·(v0δρ)−D∇2δρ],
+Dpδ p
+=
+ 1
+∆t +θ(γ −1)∇·v∗
+0
+
+δ p+θ[∇·(v∗
+0δ p)−
+κ
+αTρ0
+∇2δT],
+DAδA
+=
+δA∗
+∆t −θ
+
+ve,0 ×∇×δA∗−di
+∇×∇×δA
+ρ0
+×B0 −η∇×∇×δA+∇·
+
+ρ0diνe∇
+∇×∇×δA
+ρ0
+
+,
+Dvδv
+=
+ρ0
+δv
+∆t +θ(v0 ·∇δv+δv·∇v0)
+
+−θ∇·(νiρ0∇δv),
+where, for Dv, we have used the non-conservative form of the momentum equation [18]. Here, θ is the time
+centering parameter, and δA∗= δA+ d2
+e
+ρ0 ∇×∇×δA. Off-diagonal blocks L and U are given by:
+Uρvδv
+=
+θ∇·(δvρ0),
+UpAδA
+=
+−θdi
+
+∇·(Te,0∇×∇×δA)+(γ −1)pe,0∇· ∇×∇×δA
+ρ0
+
+,
+UvAδv
+=
+−θδv×B0,
+6
+
+
+===== PAGE 7 =====
+Upvδv
+=
+θ[∇·(δvp0)+(γ −1)p0∇·δv],
+LAρδρ
+≈
+θdi
+δρ
+ρ2
+0
+∇pe,0,
+Lpρδρ
+=
+θ
+di
+1+α
+
+∇·
+δρ
+ρ2
+0
+p0j0
+
++(γ −1)p0∇·
+δρ
+ρ2
+0
+j0
+
+,
+LApδ p
+=
+−θ
+di
+1+α
+1
+ρ0
+∇δ p,
+Lvρδρ
+=
+δρ
+v0
+∆t +θv0 ·∇v0
+
+−θ∇·((νi +νe)δρ∇v0),
+LvAδA
+=
+−θ [j0 ×∇×δA+(∇×∇×δA)×B0],
+Lvpδ p
+=
+θ∇δ p.
+3.2. Parabolization of the Hall MHD Jacobian matrix
+Upon inspection of Eq. 13, it is clear that the the convenient “arrow structure” of the resistive MHD
+Jacobian matrix [18] has been spoiled. However, the stiff electron timescales introduced in Hall MHD are all
+contained in the magnetic field diagonal block DA via the di(∇×∇×δA
+ρ0
+×B0) term, responsible for the prop-
+agation of fast whistler waves. This realization opens the way for a tractable physics-based preconditioning
+algorithm.
+The Jacobian recovers a manageable structure by simply neglecting the block UpA (stemming from the
+linearization of the current correction in the vs velocity, which is not stiff). Then, the approximate Jacobian
+system reads:
+Jδx ≈
+ M
+U
+L
+Dv
+ δy
+δv
+
+,
+where δy = (δρ,δA,δ p)T, and
+M ≈
+
+
+Dρ
+0
+0
+Lpρ
+Dp
+0
+LAρ
+LAp
+DA
+
+
+(14)
+a lower triangular system. The exact Schur factorization of the inverse of the 2×2 block Jacobian matrix
+yields:
+ M
+U
+L
+Dv
+−1
+=
+ I
+−M−1U
+0
+I
+ M−1
+0
+0
+P−1
+Schur
+
+I
+0
+−LM−1
+I
+
+,
+where PSchur = Dv −LM−1U is the Schur complement, which contains all the information from the off-
+diagonal blocks L and U (similarly to the simple coupled-wave-equation example discussed earlier). This
+gives the exact inversion process:
+δy∗
+=
+−M−1Gy,
+δv
+=
+P−1
+Schur[−Gv −LM−1δy∗],
+(15)
+δy
+=
+δy∗−∆t M−1Uδv.
+As it stands, however, inverting PSchur is impractical due to the presence of M−1. Suitable simplifications
+have been proposed for small ion flows [18], and later generalized to arbitrary ion flows [8], which cannot
+yet be directly applied in this context owing to the presence of the very stiff vector-potential diagonal block,
+DA. However, progress can be made by realizing that the vector potential diagonal block is the only one
+supporting stiff EMHD physics, while the rest of the algorithm in Eq. 15 is correcting for ion dynamics.
+7
+
+
+===== PAGE 8 =====
+Since electron Hall physics is largely decoupled from ions, we hypothesize that an operator-split approach
+in which the electrons response is solved for first, followed by an ion response correction will form the basis
+for an effective preconditioner.
+Making this approximation explicit in Eq. 15, we perform a full solve of M−1 in the first step, while in
+subsequent ones we neglect electron dynamics and approximate M−1 ≈∆tI (small-bulk-flow approximation
+[18]). The resulting approximate “physics-based” preconditioner reads:
+δy∗
+=
+−M−1Gy,
+δv
+=
+P−1
+SF [−Gv −Lδy∗],
+(16)
+δy
+=
+δy∗−∆tUδv,
+with PSF = Dv −∆t LU. This is formally identical to the resistive MHD preconditioner proposed in [18],
+except now the inversion of the M block contains the EMHD block, which is the stiffest in the system and
+whose treatment we discuss in detail below. As in the reference, taking L and U from the linearized form
+of Eqs. 1-4, using the non-conservative form of Eq. 3, and Picard-linearizing the density (by ignoring δρ
+terms), the operator PSF acting on δv reads:
+PSFδv =
+
+ρ0
+δv
+∆t +θρ0(v0 ·∇δv+δv·∇v0)−θ∇·(ρ0νi∇δv)
+
++∆tθ 2W(B0, p0)δv,
+(17)
+where W(B0, p0) results from the composition of off-diagonal operators LAv and UvA, and reads:
+W(B0, p0)δv ≈B0 ×∇×∇×[δv×B0]−j0 ×∇×[δv×B0]−∇[δv·∇p0 +γ p0∇·δv],
+(18)
+with j0 = ∇× B0. This is a linearized form of the MHD energy principle, which is self-adjoint when
+j0 ×B0 = ∇p0 (and therefore has real eigenvalues in that case). Thus, the MHD system has been effectively
+parabolized.
+Equations 16, with M defined in Eq. 14, is the proposed preconditioner. It reuses most of the elements
+of the resistive MHD preconditioner proposed in Ref. [18], except for the treatment of the vector potential
+diagonal block, which we discuss next.
+4. Numerical implementation
+We employ a Newton-FGMRES (flexible GMRES [23]) nonlinear iterative method, implemented Jacobian-
+free. Newton nonlinear convergence is controlled in our implementation by the usual criterion:
+∥G(xk)∥2 < εa +εr ∥G(x0)∥2 = εt,
+(19)
+where ∥·∥2 is the L2-norm (euclidean norm), εa =
+√
+N × 10−15 (with N the total number of degrees of
+freedom) is an absolute tolerance to avoid converging below round-off, εr is the Newton relative convergence
+tolerance (set to 10−3 in this work), and G(x0) is the initial residual. GMRES convergence is controlled by an
+inexact Newton method [45] in which the Krylov convergence tolerance every Newton iteration is adjusted
+as follows:
+∥Jkδxk +G(xk)∥2 < ζk ∥G(xk)∥2
+(20)
+where ζk is the inexact Newton parameter and Jk = ∂G
+∂x
+
+k is the Jacobian matrix. Here, we employ the same
+prescription for ζk as in earlier studies [3, 18]:
+ζ A
+k
+=
+γ
+ ∥G(xk)∥2
+∥G(xk−1)∥2
+α
+,
+ζ B
+k
+=
+min[ζmax,max(ζ A
+k ,γζ α
+k−1)],
+ζk
+=
+min[ζmax,max(ζ B
+k ,γ
+εt
+∥G(xk)∥2
+)],
+8
+
+
+===== PAGE 9 =====
+with α = 1.5 , γ = 0.9, and ζmax = 0.8. The convergence tolerance εt is the same as in Eq. 19. In this
+prescription, the first step ensures superlinear convergence (for α > 1), the second avoids volatile decreases
+in ζk, and the last avoids oversolving in the last Newton iteration.
+Our geometric MG solver is fully parallel, with coarse-grid parallel domain agglomeration [24, 25].
+It features a matrix-light implementation [3, 18], in which only the diagonal of the system of interest is
+stored for smoothing purposes. Coarse operators are found via rediscretization, and required residuals in the
+MG iteration are found in a matrix-free manner. As a smoother, we employ three passes of damped Jacobi
+(p. 10 in [46]; p. 118 in [33]), with weight ω = 0.7, for both the restriction and the prolongation steps.
+MG restriction employs conservative agglomeration, and prolongation employs a first-order interpolation.
+In MG jargon, such V-cycle is identified as V(3,3), where the two integers indicate restriction and prolon-
+gation smoothing steps, respectively. In parallel, we use colored damped Jacobi, which parallelizes very
+well; four colors are needed in 2D (for a 9-point stencil), and 8 colors in 3D (for a 27-point stencil). Our
+matrix-light geometric-MG approach features excellent parallel performance, with wall-clock time scaling
+logarithmically with the number of MPI tasks (as demonstrated in the next section).
+For typical timesteps in HMHD, a single V(3,3) MG V-cycle is sufficient to approximately invert the
+diagonal blocks Dρ, Dp, and PSF in Eq. 16. However, the EMHD block DA is much more challenging to
+invert robustly. For this block, we use MG-preconditioned GMRES, converged to either 10 Krylov iterations
+or a relative tolerance of 0.1, whichever comes first (note that nested GMRES solves in the preconditioner
+are allowed by FGMRES). This strategy still requires a working MG solver for the EMHD block, which in
+turn requires a suitable smoother. We describe our smoothing strategy for this block next.
+4.1. Smoothing of the vector-potential diagonal block
+In order to make the DA operator MG-friendly we need to provide a suitable smoother. Here, we are
+seeking to use damped block-Jacobi smoothing, which is cheap and easily parallelizable. The DA diago-
+nal block contains fast electron hyperbolic physics (whistler waves, with dispersion relation ω ∼divAkk∥),
+electron inertia, and electron viscosity (also known as hyperresistivity), and reads:
+DAδA
+=
+δA∗
+∆t
+−
+θ
+
+
+
+
+ve,0 ×∇×δA∗−di
+∇×∇×δA
+ρ0
+×B0
+|
+{z
+}
+Whistlerterm
+−η∇×∇×δA+∇·
+
+ρ0d2
+i νe∇
+∇×∇×δA
+ρ0
+
+|
+{z
+}
+Hyperresistivityterm
+
+
+
+
+,
+with:
+δA∗= δA+ d2
+e
+ρ0
+∇×∇×δA.
+This operator is the linearized form of the EMHD model.
+The iterative solution of the vector-potential diagonal block is extremely challenging, and has in fact
+been the key roadblock overcome in this research. It is a stiff, high differential order, vectorial system of
+equations. It supports fast (quadratic) dispersive waves, and features a fourth-order dissipative operator
+of the form ∇2(∇× ∇×) that provides a dissipation length scale to the fast dispersive waves, needed for
+nonlinear stability of the discretization [13]. The form of the dissipative operator is not only problematic
+because of its high order, but also because it features an infinitely degenerate null space: any gradient
+component in the vector potential will get annihilated by the curl. Although the DA operator in aggregate
+is non-singular, the presence of a null space in the hyperresistivity term makes its MG implementation
+problematic. One may consider approximating it, but being the term with the highest differential order,
+our experience is that any approximations introduced to it will negatively (and significantly) impact the
+9
+
+
+===== PAGE 10 =====
+performance of the preconditioner. In particular, replacing ∇× ∇× by −∇2 is not justified in principle
+because we do not use the Coulomb gauge (∇·A = 0) but a modified Weyl gauge, as discussed earlier. (A
+Coulomb gauge could in principle be used, but it would result in an additional equation for the electrostatic
+potential, which the Weyl gauge avoids.)
+To provide for a suitable smoother, we begin by reformulating the EMHD system by splitting it into two
+second-order vectorial systems:
+1
+∆t
+
+δA+d2
+e
+δj
+ρ0
+
+−θ
+
+ve,0 ×∇×
+
+δA+d2
+e
+δj
+ρ0
+
+−di
+δj
+ρ0
+×B0 −ηδj+∇·
+
+ρ0d2
+i νe∇
+δj
+ρ0
+
+=
+rhs,
+δj−∇×∇×δA
+=
+0.(21)
+The auxiliary variable δj is a physical quantity (current density), with a well-defined set of boundary con-
+ditions, ensuring the split system is well posed. The feasibility of this physical system splitting without
+approximation is, in fact, the key reason why we pursued a vector-potential-based representation of our Hall
+MHD model instead of a magnetic-field-based one. For the latter, the hyperresistivity term would read:
+∇×∇·
+
+ρ0d2
+i νe∇
+∇×δB
+ρ0
+
+,
+which cannot be split into two second-order systems in an obvious way.
+The Jacobi smoother for the coupled system in Eq. 21 iterates on all local vector components for δA and
+δj simultaneously on a per-cell basis. To deal with the ∇×∇× operator in the smoothing stage, we employ
+a defect-correction approach whereby we selectively approximate ∇×∇× by −∇2 in the computation of the
+diagonal blocks, but retain the ∇× ∇× form for all the residual computations within the MG V-cycle. We
+show in the Appendix for the special case of a homogeneous plasma that this strategy produces a convergent
+damped-Jacobi iteration with the smoothing property (critical for the effectiveness of MG), and therefore
+provides an excellent basis for an effective MG preconditioner.
+5. Numerical results
+We have implemented this algorithm in the PIXIE3D nonlinear MHD code [30, 18, 8]. In what fol-
+lows, we present numerical examples that demonstrate the correctness of our implementation as well as its
+performance (algorithmically and in parallel). We consider both linear examples (wave propagation) and
+nonlinear examples (with the well-known GEM challenge magnetic reconnection problem [13], which we
+verify against the HiFi nonlinear MHD code [47]). The latter example is also considered for the algorith-
+mic and parallel performance assessment. The GEM challenge problem benefits from an implicit treatment,
+since the dynamical time scale of interest is independent of the grid resolution, and much slower than fast
+HMHD normal modes.
+5.1. Linear verification: whistler wave
+We consider a collisionless, homogeneous, adiabatic (γ = 1) plasma with ρ0 = 1, Ti0 = Te0 = 1, B0 =
+(1,0,0), v = 0, and di = 10 in a one-dimensional domain with Lx = 1. Linear theory predicts that the
+frequency of the resulting wave is ω = ±dik2
+x, with mode structure:
+δAy
+=
+−iδAz,
+ωδvy
+=
+k2
+xδAy,
+ωδvz
+=
+k2
+xδAz.
+10
+
+
+===== PAGE 11 =====
+||dvy||
+0
+1
+2
+3
+4
+5
+x10
+x10
+x10
+x10
+−2
+−2
+−2
+−2
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+x10
+−5
+time
+||dvz||
+0
+1
+2
+3
+4
+5
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+x10
+−5
+time
+||dAy||
+0
+1
+2
+3
+4
+5
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+x10
+−4
+time
+||dAz||
+0
+1
+2
+3
+4
+5
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+x10
+−4
+time
+Figure 1: Time histories of perturbations of vy, vz, Ay, Az for the whistler wave linear verification test.
+For kx = 2π/Lx = 2π, the wave period is T = 2π/ω = (2πdi)−1 ≈0.016. We set up a standing whistler
+wave with a perturbation of the form:
+δAz
+=
+−ε
+kx
+sin(kxx),
+δvz
+=
+ε
+kxdi
+sin(kxx),
+with ε = 10−3. Simulations are performed using 32 mesh points and ∆t = 10−4. Figure 1 shows the time
+histories of the ℓ2-norm of δvy, δvz, δAy, δAz, where one can appreciate that, as expected: 1) wave period
+is 0.016, 2) ∥δvy∥and ∥δAy∥are in phase, as are ∥δvz∥and ∥δAz∥, and 3) ∥δAy∥and ∥δAz∥are 90 degrees
+out of phase (as are ∥δvy∥and ∥δvz∥).
+5.2. Linear verification: kinetic Alfvén wave
+We consider a collisionless, homogeneous, adiabatic (γ = 1) plasma with ρ0 = 1, Ti0 = Te0 = 2.5×103,
+B0 = (1,0,0), v = 0, and di = 5/π in a two-dimensional domain with Lx = 10 and Ly = 1. Linear theory
+predicts that the frequency of the resulting wave is ω ≈±ρskxky, with ρs = di
+p
+β/2 the sound Larmor
+radius and β = 2µ0p0/B2
+0 = 104 the plasma beta, and mode structure:
+δAz
+=
+i
+ρsk2x
+δvy,
+(22)
+δvy
+=
+kx
+ky
+[d2
+i (k2
+x +k2
+y)−1]δvx.
+(23)
+11
+
+
+===== PAGE 12 =====
+||dvx||
+0
+1
+2
+3
+4
+x10
+−3
+0
+1
+2
+3
+4
+5
+6
+7
+x10
+−8
+time
+||dvy||
+0
+1
+2
+3
+4
+x10
+−3
+0.0
+0.5
+1.0
+1.5
+2.0
+2.5
+3.0
+3.5
+x10
+−6
+time
+||daz||
+0
+1
+2
+3
+4
+x10
+−3
+0.0
+0.5
+1.0
+1.5x10
+−9
+time
+Figure 2: Time histories of perturbations of vx, vy, Az for the KAW wave linear verification test.
+For kx = 2π/Lx = π/5, ky = 2πny/Ly = 2πny, and ny = 5, the wave period is T = 2π/ω = n−1
+y
+p
+2/β ≈
+2.83×10−3. We set up a standing wave with a perturbation of the form:
+δvx
+=
+ε cos(kxx+kyy),
+δvy
+=
+ε kx
+ky
+[d2
+i (k2
+x +k2
+y)−1]cos(kxx+kyy),
+with ε = 10−7. Simulations are performed using 32×128 mesh points and ∆t = 4 ×10−5. Figure 1 shows
+the time histories of the ℓ2-norm of δvy, δvz, δAy, δAz, where one can appreciate that, as expected: 1)
+wave period is ≈2.8 ×10−3, 2) ∥δvx∥and ∥δvy∥are in phase and the ratio in magnitude is δvy/δvx ≈50
+(as expected from Eq. 23), and 3) ∥δAz∥is 90 degrees out of phase from the velocity perturbations, and
+consistent in magnitude with Eq. 22.
+5.3. Nonlinear verification: GEM challenge magnetic reconnection problem
+We consider the GEM challenge problem [13] for a nonlinear verification study against the HiFi non-
+linear extended MHD code. HiFi [47] is a highly accurate, fully implicit, spectral-element-based nonlinear
+extended MHD code. To preserve smoothness during the simulation, HiFi features a moving mesh strategy
+based on a Laplace-Beltrami mesh governing equation (see Ref. [48] and references therein). For consis-
+tency with HiFi, we have replaced v∗in Eq. 4 with v.
+The GEM challenge problem setup is a Harris current sheet, defined by the vector potential (0,0,Az),
+with:
+Az = −λ ln(cosh(x/λ)),
+with λ = 0.5di, balanced by a pressure profile given by constant ion and electron temperatures with Ti/Te =
+α = 5 and (Ti +Te) = 1/2, and density profile:
+ρ(x) =
+n0
+cosh(x/λ) +n∞.
+with n0 = 1, n∞= 0.2. We consider a slab domain (−Lx/2,Lx/2) × (−Ly/2,Ly/2) with Lx = 12.8di and
+Ly = 25.6di. Boundary conditions are perfect conductor at ±Lx/2, and periodic at ±Ly/2. The transport
+coefficients are: νi = 5 × 10−2, νe = 10−4, η = 5 × 10−3, and κ = 2 × 10−2. The specific heat ratio is
+γ = 5/3.
+The simulation in both codes is started by perturbing Az with a sinusoidal perturbation of the form:
+δAz = −ε cos
+πx
+Lx
+
+cos
+2πy
+Ly
+
+,
+12
+
+
+===== PAGE 13 =====
+ 0
+ 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+ 10
+ 0
+ 5
+ 10
+ 15
+ 20
+ 25
+ 30
+ 35
+ 40
+ 45
+time
+HiFi
+PIXIE3D
+Kinetic energy
+ 90
+ 100
+ 110
+ 120
+ 130
+ 140
+ 150
+ 160
+ 0
+ 5
+ 10
+ 15
+ 20
+ 25
+ 30
+ 35
+ 40
+ 45
+time
+HiFi
+PIXIE3D
+Magnetic energy
+ 65
+ 70
+ 75
+ 80
+ 85
+ 90
+ 95
+ 100
+ 105
+ 110
+ 115
+ 120
+ 0
+ 5
+ 10
+ 15
+ 20
+ 25
+ 30
+ 35
+ 40
+ 45
+time
+HiFi
+PIXIE3D
+Thermal energy
+ 0
+ 0.5
+ 1
+ 1.5
+ 2
+ 2.5
+ 3
+ 3.5
+ 4
+ 4.5
+ 0
+ 5
+ 10
+ 15
+ 20
+ 25
+ 30
+ 35
+ 40
+ 45
+time
+GEM particle
+GEM Hall MHD
+PIXIE3D
+Reconnected flux
+Figure 3: Nonlinear comparison of the temporal evolution of the kinetic, magnetic and thermal energies from the PIXIE3D and
+HiFi codes for the GEM challenge (see text for setup). The reconnected flux for PIXIE3D is compared with data from Fig. 1 of
+Ref. [13], with excellent agreement in the slope of the curve (which determines the peak reconnection rate) vs. the GEM results.
+13
+
+
+===== PAGE 14 =====
+Figure 4: Snapshots of Az (contours) and jz (color) at three different times (t = 20,30,40) for the GEM simulation.
+with ε = 10−1. This problem was run with a 256×256 packed mesh along both axes, with ∆x = 2×10−2 at
+x = 0 (at the rational surface), and ∆y = 5×10−2 at y = ±Ly/2 (the periodic boundaries). This represents a
+packing ratio vs. the uniform mesh of 2.5 in x and 2 in y. The time step is ∆t = 0.05.
+In addition to the reconnected flux (which is a robust measure [13]), we also track the temporal histories
+of kinetic (1
+2
+R dxρv2), magnetic ( 1
+2
+R dxB2), and thermal ( 1
+2
+R dx
+p
+γ−1) energies, which are more nuanced. The
+time history comparison is depicted in Fig. 3, and shows an early (slow) phase followed by a late, explosive
+phase characterized by rapid growth of kinetic energy and thermal energy, fed by a significant decrease in
+magnetic energy. During this evolution, total energy is conserved better than 0.04%. The comparison shows
+remarkably good agreement between HiFi and PIXIE3D during the slow phase and most of the explosive
+phase, with some deviation (of about 1%) late in the nonlinear evolution of the problem. Key elements
+of comparison are the excellent agreement in the timing of the transition from slow to explosive phase, in
+the slopes during most of the explosive phase, and in the extrema values of the energies at saturation. The
+reconnected flux for PIXIE3D is also shown, along with data from Ref. [13] for the fully kinetic particle
+simulation and the Hall MHD simulation. While details differ in terms of timing and saturation level,
+the agreement in the slope (maximum reconnection rate) between all three simulations is apparent. The
+reconnected-flux history itself is not, but it is in very good qualitative agreement with more recent HMHD
+GEM results, e.g. Fig. 13 of Ref. [49].
+Snapshots of the z-component of the vector potential and the current density for the GEM challenge at
+t = 20 (before the explosive phase), t = 30 (at the peak of the explosive phase), and t = 40 (at the end of the
+simulation) are depicted in Fig. 4. The formation of an open X-point and associated current density spike is
+apparent. We do not find the formation of a central magnetic island for our particular choice of parameters,
+which has been the subject of contention in the literature [10, 17].
+5.4. Parallel and algorithmic performance
+We assess the (weak) parallel and algorithmic scalability of our solver with the GEM challenge problem,
+with slightly modified parameters as indicated below. Preconditioner setup and linear and nonlinear con-
+vergence tolerances are set as stated earlier. For this exercise, we consider uniform meshes in full domain
+starting at 32×32 with np = 1 MPI task, up to 4096×4096 meshes with np = 16384 tasks. We consider a
+14
+
+
+===== PAGE 15 =====
+Table 1: Parallel weak-scaling performance for the GEM Challenge problem with ∆t = 0.01 and η = νi = κ = 5×10−4. Results
+are obtained in full domain and a uniform Cartesian mesh, and averaged over 100 time steps with a fixed timestep ∆t = 0.01. In
+this table, WCT stands for wall-clock time. Speedup measures the speedup vs and explicit method.
+np
+mesh
+νe
+∆t
+∆texp
+GMRES/∆t
+Newton/∆t
+WCT(s)
+WCT/GMRES
+Speedup
+1
+32×32
+10−4
+1.0
+2.0
+2.0
+132
+66
+0.04
+4
+64×64
+2.5×10−5
+2.1
+2.6
+2.6
+172
+66
+0.07
+16
+128×128
+6.3×10−6
+8.3
+2.0
+2.0
+182
+105
+0.26
+64
+256×256
+1.6×10−6
+33
+2.0
+2.0
+303
+151
+0.63
+256
+512×512
+3.9×10−7
+130
+2.0
+2.0
+321
+160
+3.0
+1024
+1024×1024
+9.8×10−8
+520
+2.0
+2.0
+509
+203
+8.5
+4096
+2048×2048
+2.4×10−8
+2100
+2.0
+2.0
+512
+256
+38
+16384
+4096×4096
+6.0×10−9
+8400
+3.0
+3.0
+1130
+377
+75
+fixed implicit timestep (∆t = 0.01) for all experiments, so the problem is becoming numerically stiffer as the
+number of MPI tasks grows. In this way, when increasing the processor count we are able to test the ability
+of the algorithm to both scale with mesh refinement and to scale in parallel. To maintain the simulation in
+the stiff hyperbolic regime, we decrease the hyperresistivity coefficient as we refine the mesh according to
+Eq. 9 to ensure that high-order dissipation is only provided for the grid-scale components of the solution.
+The results of the mesh/processor convergence study are shown in Table 1. Timings have been obtained
+on the CPU partition of the Chicoma computer at Los Alamos National Laboratory, featuring 1792 nodes,
+each with two Rome 64 core 2.6 GHz CPUs (also called the AMD EPYC 7H12) with 512 GB per node.
+Several observations are in order. Firstly, as advanced earlier, the fixed implicit timestep results in a stiffer
+numerical setup as we refine the mesh, and indicated by the increase in ∆t/∆texp (with ∆texp the explicit
+stability-limit CFL timestep). Next, the total number of GMRES iterations per timestep (GMRES/∆t, which
+includes all Newton iterations) shows a very weak dependence with mesh resolution (and number of MPI
+tasks), attesting to the effectiveness of our preconditioning strategy. The performance of our MG parallel
+implementation is demonstrated by the WCT/GMRES column, which measures the time per GMRES iter-
+ation, which is dominated by the MG preconditioning step and features a log(np) increase. The favorable
+algorithmic (per the GMRES/∆t column) and parallel (per the WCT/GMRES column) scalings result in
+an overall remarkable scaling of the wall-clock time WCT, which only increases by a factor of 8.6 when
+increasing the problem size by a factor of 16384. It also results in a speedup of 75 for the finest mesh con-
+sidered vs. an explicit integrator, with performance cross-over between implicit and explicit happening at
+moderate meshes (between 256×256 and 512×512; the cross-over happens at such fine meshes due to the
+fairly conservative solver-parameter choices of the MG solver for the inversion of the EMHD block, which
+makes the preconditioner quite expensive).
+6. Conclusions
+We have developed a parallel, scalable multigrid-based physics-based preconditioning strategy for the
+Hall MHD equation system. As in earlier MHD preconditioning studies, the physics-based preconditioning
+approach exploits the natural parabolization of the hyperbolic couplings that occurs when one discretizes
+them implicitly. The block structure of the Hall MHD Jacobian spoils the “arrow” structure that was so
+convenient in resistive MHD, but can still be formally Schur-factorized in much the same way leading to a
+coupled system of equations for the fluid velocity components. The Schur factorization is rendered practical
+by 1) using the small-bulk-flow approximation (as in earlier studies), and 2) exploiting the natural separation
+of stiff timescales between ions and electrons in Hall MHD to segregate the electromagnetic diagonal block
+solve.
+15
+
+
+===== PAGE 16 =====
+The electromagnetic diagonal block corresponds to the so-called electron MHD model (EMHD), and
+supports fast (quadratic) dispersive waves and high-order dissipation (hyperresistivity), which is critical for
+nonlinear stability. We invert this system robustly and scalably with MG-preconditioned GMRES (nested
+GMRES solves in the preconditioning stage are allowed by FGMRES in JFNK). Several strategies have
+helped in rendering the EMHD block MG-friendly. Firstly, we have chosen to solve the vector-potential
+formulation of Hall MHD (instead of the more standard magnetic field one), which allowed us to reformulate
+the EMHD block into a set of two coupled vectorial equations with physical interpretation (vector potential
+and current density, respectively) and well-defined boundary conditions. This coupled set of equations is
+Jacobi-smoothed in a fully coupled manner. Secondly, we use a deferred-correction approach in our MG
+smoothing strategy, whereby we approximate the ∇× ∇× operator (which relates the current density and
+the vector potential) as a vector Laplacian for the construction of the Jacobi block diagonals. This strategy
+is demonstrated by analysis to produce a strongly smoothing damped Jacobi iteration, and therefore a robust
+MG algorithm.
+We have verified our implementation linearly with two wave propagation tests, a whistler wave and a
+KAW, and nonlinearly with the GEM challenge problem, by direct comparison with the HiFi spectral ex-
+tended MHD code. We have demonstrated the excellent scalability properties of our preconditioner algorith-
+mically (by demonstrating a bounded iteration count with grid refinement) and in parallel (by demonstrating
+logarithmic scaling of wall clock time with the number of MPI tasks in a weak scaling sense with up to
+16384 processors).
+Future work will focus on extending the algorithm to singular coordinate systems (with application to
+cylindrical and toroidal geometries, of interest for fusion plasma simulation), and to include separate ion
+and electron temperatures, anisotropic heat transport, and gyroviscosity.
+Acknowledgments
+We acknowledge useful discussions with J. N. Shadid and A. Stanier. We also acknowledge V. Lukin for
+providing the GEM challenge simulation data for comparison with the HiFi code. This work was supported
+by Triad National Security, LLC under contract 89233218CNA000001 and DOE Office of Applied Scientific
+Computing Research (ASCR). The research used computing resources provided by the Los Alamos National
+Laboratory Institutional Computing Program.
+References
+[1] D. S. Harned and Z. Mikic, “Accurate semi-implicit treatment of the Hall effect in magnetohydrody-
+namic computations,” J. Comput. Phys., vol. 83, pp. 1–15, 1989.
+[2] C. R. Sovinec, J. R. King, and NIMROD Team, “Analysis of a mixed semi-implicit/implicit algorithm
+for low-frequency two-fluid plasma modeling,” J. Comput. Phys., vol. 229, pp. 5803–5819, AUG 10
+2010.
+[3] L. Chacón and D. A. Knoll, “A 2D high-β Hall MHD implicit nonlinear solver,” J. Comput. Phys.,
+vol. 188, no. 2, pp. 573–592, 2003.
+[4] S. C. Jardin and J. A. Breslau, “Implicit solution of the four-field extended-magnetohydrodynamic
+equations using high-order high-continuity finite elements.,” Phys. Plasmas, vol. 12, no. 5, p. 056101,
+2005.
+[5] K. Germaschewski, A. Bhattacharjee, and C.-S. Ng, “The Magnetic Reconnection Code: an AMR-
+based fully implicit simulation suite,” in Numerical Modeling of Space Plasma Flows (N. B. Pogorelov
+and G. P. Zank, eds.), vol. 359 of ASP Conference Series, p. 151, 2006.
+16
+
+
+===== PAGE 17 =====
+[6] S. Ovtchinnikov, F. Dobrian, X.-C. Cai, and D. Keyes, “Additive schwarz-based fully coupled implicit
+methods for resistive hall magnetohydrodynamic problems,” J. Comput. Phys., vol. 225, pp. 1919 –
+1936, 2007.
+[7] L. Chacon and A. Stanier, “A scalable, fully implicit algorithm for the reduced two-field low-β ex-
+tended mhd model,” Journal of Computational Physics, vol. 326, pp. 763–772, 2016.
+[8] L. Chacón, “Scalable solvers for 3D magnetohydrodynamics,” J. Physics: Conf. Series, vol. 125,
+p. 012041, 2008.
+[9] L. Arnold, J. Dreher, and R. Grauer, “A semi-implicit hall-mhd solver using whistler wave precondi-
+tioning,” Computer Physics Communications, vol. 178, no. 8, pp. 553–557, 2008.
+[10] G. Toth, Y. Ma, and T. I. Gombosi, “Hall magnetohydrodynamics on block-adaptive grids,” J. Comput.
+Phys., vol. 227, pp. 6967–6984, JUL 1 2008.
+[11] H. Lütjens and J.-F. Luciani, “Xtor-2f: a fully implicit newton–krylov solver applied to nonlinear 3d
+extended mhd in tokamaks,” Journal of Computational Physics, vol. 229, no. 21, pp. 8130–8143, 2010.
+[12] F. Laakmann, K. Hu, and P. E. Farrell, “Structure-preserving and helicity-conserving finite element
+approximations and preconditioning for the hall mhd equations,” Journal of Computational Physics,
+vol. 492, p. 112410, 2023.
+[13] J. Birn, J. F. Drake, M. A. Shay, B. N. Rogers, R. E. Denton, M. Hesse, M. M. Kuznetsova, Z. W. Ma,
+A. Bhattacharjee, A. Otto, and P. L. Pritchett, “Geospace Environment Modeling (GEM) magnetic
+reconnection challenge,” J. Geophys. Res., vol. 106, no. A3, pp. 3715–3719, 2001.
+[14] X. Zhao, Y. Yang, and C. E. Seyler, “A positivity-preserving semi-implicit discontinuous galerkin
+scheme for solving extended magnetohydrodynamics equations,” Journal of Computational Physics,
+vol. 278, pp. 400–415, 2014.
+[15] C. Thoma, D. R. Welch, and D. V. Rose, “Implicit highly-coupled single-ion hall-mhd formulation for
+hybrid particle-in-cell codes,” Computer Physics Communications, vol. 261, p. 107823, 2021.
+[16] E. G. Phillips, J. N. Shadid, E. C. Cyr, and S. T. Miller, “Enabling scalable multifluid plasma simu-
+lations through block preconditioning,” Numerical Methods for Flows: FEF 2017 Selected Contribu-
+tions, pp. 231–244, 2020.
+[17] M. M. Crockatt, S. Mabuza, J. N. Shadid, S. Conde, T. M. Smith, and R. P. Pawlowski, “An implicit
+monolithic afc stabilization method for the cg finite element discretization of the fully-ionized ideal
+multifluid electromagnetic plasma system,” Journal of Computational Physics, vol. 464, p. 111228,
+2022.
+[18] L. Chacón, “An optimal, parallel, fully implicit Newton-Krylov solver for three-dimensional visco-
+resistive magnetohydrodynamics,” Phys. Plasmas, vol. 15, p. 056103, 2008.
+[19] Y. Saad, Iterative Methods for Sparse Linear Systems. Boston: PWS Publishing Company, 1996.
+[20] T. F. Chan and K. R. Jackson, “Nonlinearly preconditioned Krylov subspace methods for discrete
+Newton algorithms,” SIAM J. Sci. Stat. Comput., vol. 5, pp. 533–542, 1984.
+[21] P. N. Brown and Y. Saad, “Hybrid Krylov methods for nonlinear systems of equations,” SIAM J. Sci.
+Stat. Comput., vol. 11, pp. 450–481, 1990.
+17
+
+
+===== PAGE 18 =====
+[22] Y. Saad and M. Schultz, “GMRES: A generalized minimal residual algorithm for solving non-
+symmetric linear systems,” SIAM J. Sci. Stat. Comput., vol. 7, pp. 856–869, 1986.
+[23] Y. Saad, “A flexible inner-outer preconditioned GMRES algorithm,” SIAM J. Sci. Comput., vol. 14,
+no. 2, pp. 461–469, 1992.
+[24] F. Hülsemann, M. Kowarschik, M. Mohr, and U. Rüde, “Parallel geometric multigrid,” in Numerical
+Solution of Partial Differential Equations on Parallel Computers, pp. 165–208, Springer, 2006.
+[25] D. A. May, P. Sanan, K. Rupp, M. G. Knepley, and B. F. Smith, “Extreme-scale multigrid components
+within petsc,” in Proceedings of the Platform for Advanced Scientific Computing Conference, pp. 1–12,
+2016.
+[26] S. I. Braginskii, “Transport processes in a plasma,” in Reviews of Plasma Physics (M. A. Leontovich,
+ed.), vol. 1, pp. 205–311, New York: Consultants Bureau, 1965.
+[27] D. Biskamp, Magnetic Reconnection in Plasmas. Cambridge, UK: Cambridge University Press, 2000.
+[28] A. S. Kingsep, K. V. Chukbar, and V. V. Yan’kov, Reviews of Plasma Physics, vol. 16, pp. 243–288.
+New York: Consultants Bureau, 1990.
+[29] D. G. Swanson, Plasma waves. IOP Publishing, 2nd ed., 2003.
+[30] L. Chacón, “A non-staggered, conservative, ∇·B = 0, finite-volume scheme for 3D implicit extended
+magnetohydrodynamics in curvilinear geometries,” Comput. Phys. Commun., vol. 163, pp. 143–171,
+2004.
+[31] G. D. Byrne and A. C. Hindmarsh, “A polyalgorithm for the numerical solution of ordinary differential
+equations,” ACM Transactions on Mathematical Software, vol. 1, no. 1, pp. 71–96, 1975.
+[32] D. A. Knoll and D. E. Keyes, “Jacobian-free Newton-Krylov methods: a survey of approaches and
+applications.,” J. Comput. Phys., vol. 193, no. 2, pp. 357 – 97, 2004.
+[33] P. Wesseling, An Introduction to Multigrid Methods. Chichester: John Wiley & Sons, 1992.
+[34] L. Chacón, D. A. Knoll, and J. M. Finn, “Implicit, nonlinear reduced resistive MHD nonlinear solver,”
+J. Comput. Phys., vol. 178, no. 1, pp. 15–36, 2002.
+[35] H. C. Elman, V. E. Howle, J. N. Shadid, and R. S. Tuminaro, “A parallel block multi-level precondi-
+tioner for the 3D incompressible Navier-Stokes equations,” J. Comput. Phys., vol. 187, no. 2, pp. 504
+– 23, 2003.
+[36] H. Elman, V. E. Howle, J. Shadid, R. Shuttleworth, and R. Tuminaro, “Block preconditioners based
+on approximate commutators,” SIAM Journal on Scientific Computing, vol. 27, no. 5, pp. 1651–1668,
+2006.
+[37] H. Elman, V. E. Howle, J. Shadid, R. Shuttleworth, and R. Tuminaro, “A taxonomy and comparison of
+parallel block multi-level preconditioners for the incompressible navier–stokes equations,” Journal of
+Computational Physics, vol. 227, no. 3, pp. 1790–1808, 2008.
+[38] E. C. Cyr, J. N. Shadid, and R. S. Tuminaro, “Stabilization and scalable block preconditioning for the
+navier–stokes equations,” Journal of Computational Physics, vol. 231, no. 2, pp. 345–363, 2012.
+18
+
+
+===== PAGE 19 =====
+[39] E. C. Cyr, J. N. Shadid, R. S. Tuminaro, R. P. Pawlowski, and L. Chacón, “A new approximate block
+factorization preconditioner for two-dimensional incompressible (reduced) resistive mhd,” SIAM Jour-
+nal on Scientific Computing, vol. 35, no. 3, pp. B701–B730, 2013.
+[40] E. G. Phillips, J. N. Shadid, E. C. Cyr, H. C. Elman, and R. P. Pawlowski, “Block preconditioners
+for stable mixed nodal and edge finite element representations of incompressible resistive mhd,” SIAM
+Journal on Scientific Computing, vol. 38, no. 6, pp. B1009–B1031, 2016.
+[41] J. Bonilla, J. Shadid, X.-Z. Tang, M. Crockatt, P. Ohm, E. Phillips, R. Pawlowski, S. Conde, and
+O. Beznosov, “On a fully-implicit vms-stabilized fe formulation for low mach number compressible
+resistive mhd with application to mcf,” Computer Methods in Applied Mechanics and Engineering,
+vol. 417, p. 116359, 2023.
+[42] E. J. Caramana, “Derivation of implicit difference schemes by the method of differential approxima-
+tion,” J. Comput. Phys., vol. 96, no. 2, pp. 484–493, 1991.
+[43] D. S. Harned and W. Kerner, “Semi-implicit method for three-dimensional compressible magnetohy-
+drodynamic simulation,” J. Comput. Phys., vol. 60, pp. 62–75, 1985.
+[44] D. S. Harned and D. D. Schnack, “Semi-implicit method for long time scale magnetohydrodynamic
+computations in three dimensions,” J. Comput. Phys., vol. 65, pp. 57–70, 1986.
+[45] R. Dembo, S. Eisenstat, and R. Steihaug, “Inexact Newton methods,” J. Numer. Anal., vol. 19, p. 400,
+1982.
+[46] W. L. Briggs, A Multigrid Tutorial. Philadelphia, PA: SIAM, 1987.
+[47] V. S. Lukin, A. H. Glasser, W. Lowrie, and E. T. Meier, “Overview of hifi–implicit spectral element
+code framework for multi-fluid plasma applications,” arXiv preprint arXiv:1608.06030, 2016.
+[48] L. Chacón and G. Lapenta, “A fully implicit, nonlinear adaptive grid strategy,” J. Comput. Phys.,
+vol. 212, no. 2, p. 703, 2006.
+[49] B. Srinivasan and U. Shumlak, “Analytical and computational study of the ideal full two-fluid plasma
+model and asymptotic approximations for hall-magnetohydrodynamics,” Physics of Plasmas, vol. 18,
+no. 9, 2011.
+Appendix A. Analysis of the smoothing property of the damped-Jacobi iteration for the linearized
+EMHD system
+We specialize the linearized EMHD system in Eq. 21 for a homogeneous uniform plasma in a periodic
+domain with a constant magnetic field (and therefore no background current) and no electron flow or electron
+inertia. The corresponding linear system reads:
+δA+∆tθdi
+ vAδj×B0 −diνe∇2δj
+
+=
+0,
+δj−∇×∇×δA
+=
+0.
+(A.1)
+We have explicitly added the Alfven speed vA to keep track of dimensionless numbers later. In matrix form,
+the system can be written as:
+
+I
+∆tθdi
+
+vAI×B0 −diνe∇2
+−∇×∇×
+I
+ δA
+δj
+
+=
+ 0
+0
+
+.
+19
+
+
+===== PAGE 20 =====
+Calling ⃗ξ = (δA,δj)T, we can write the damped Jacobi iteration as:
+⃗ξ l+1 = (I−σD−1A)⃗ξ l,
+(A.2)
+where A is the matrix above, D is its diagonal (element- or block-wise), and σ ∈(0,1] is the damping
+parameter. For simplicity, we restrict the analysis below to 2D and consider a uniform mesh with ∆x = ∆y =
+∆as a sufficiently representative case for the challenges at hand.
+In this study, we consider the block diagonal matrix formed by the diagonal coefficients of all vector
+components at a given cell, with one important approximation: −∇× ∇× ≈∇2 in the current density
+equation. As we shall see, this approximation delivers a convergent Jacobi iteration while avoiding the
+MG difficulties originating in the ∇× ∇× term without changing the solution to the linear system upon
+convergence. There results:
+D =
+
+I
+∆tθdi
+
+vAI×B0 +diνe 4
+∆2 I
+
+−4
+∆2 I
+I
+
+=
+ I
+U
+L
+I
+
+,
+(A.3)
+where:
+U = ∆tθdi
+
+vAI×B0 +diνe
+4
+∆2 I
+
+, L = −4
+∆2 I.
+The inverse of the diagonal matrix D is exactly given by:
+D−1 =
+ I
+−U
+0
+I
+ I
+0
+0
+P−1
+
+I
+0
+−L
+I
+
+=
+ I+UP−1L
+−UP−1
+−P−1L
+P−1
+
+=
+"
+P−1
+−∆2
+4
+
+I−P−1
+4
+∆2 P−1
+P−1
+#
+,
+where:
+P = I−LU = αI+β(I×B0),
+with:
+α = 1+ 4νedi
+vA∆2 β ; β = 4∆tθvAdi
+∆2
+.
+(A.4)
+Here, β ≫1 is the whistler CFL number (which ensures we are in the stiff hyperbolic limit). The ratio α/β
+determines the dissipation regime. If we choose νe such that dissipation is provided at the grid scale, and
+have νe ∼vA∆2/di and therefore α ∼β ≫1. Weak and strong hyperresistivity regimes are then defined by
+α ≪β and α ≫β, respectively. The matrix P has an analytical inverse, given by:
+P−1 = αI−β(I×B0)+ β 2
+α (I·B0)B0
+α2 +β 2
+.
+To study the convergence properties of the Jacobi iteration, we perform a Von-Neumann analysis with
+the ansatz:
+⃗ξ l = λ leik·x⃗ξ 0,
+where λ is the Jacobi iteration amplification factor. Stability of the iteration demands |λ| ≤1. The smooth-
+ing property requires |λ| < 1 for the high-wavenumber modes in the system. With this ansatz, we can
+diagonalize our differential operators as:
+∇2
+→
+−
+
+k2
+xsinc2
+kx∆
+2
+
++k2
+ysinc2
+ky∆
+2
+
+= −κ2
+L,
+∇
+→
+i(kxsinc(kx∆),kysinc(ky∆)) = iκG,
+∇×∇×
+→
+−κG ×κG×,
+20
+
+
+===== PAGE 21 =====
+where sinc(x) = sin(x)/x. The JB iteration in Eq. A.2 then yields the equation for the amplification factor:
+(1−λ)
+ I
+0
+0
+I
+
+= σ
+"
+I+K
+
+P−1 −I
+
+∆2
+4 γP−1
+4
+∆2 KP−1
+I+γP−1
+#
+,
+(A.5)
+where:
+γ = diνe
+vA
+β
+
+κ2
+L −4
+∆2
+
+= (α −1)
+  ˆκ2
+L −1
+
+,
+and:
+K
+=
+[I+ ˆκG × ˆκG ×I],
+with:
+ˆκ2
+L
+=
+∆2κ2
+L
+4
+=
+ 
+∆2k2
+x
+4
+sinc2
+kx∆
+2
+
++ ∆2k2
+y
+4
+sinc2
+ky∆
+2
+!
+= sin2
+kx∆
+2
+
++sin2
+ky∆
+2
+
+∈(0,2],(A.6)
+ˆκG
+=
+∆κG
+2
+= 1
+2 (kx∆sinc(kx∆),ky∆sinc(ky∆)) = (sin(kx∆),sin(ky∆)).
+Therefore, Eq. A.5 yields:
+"
+(λ −1+σ)I+σK
+
+P−1 −I
+
+σ∆2
+4 γP−1
+4σ
+∆2 KP−1
+(λ −1+σ)I+σγP−1
+#
+= 0.
+(A.7)
+Equation A.7 is a 2×2 block matrix with commuting blocks. The solution for λ is given by the determinant
+of the matrix being zero. The determinant can be found as (proof via a Schur factorization):
+det
+h
+(λ ∗)2 P+λ ∗σ[γI+K(I−P)]−σ2γK
+i
+= 0.
+Restricting the analysis to the the stiff hyperbolic limit [α ≫1, which implies (I −P) ≈−P and γ ≈
+α
+  ˆκ2
+L −1
+
+], we find:
+det
+
+(λ ∗)2 P
+α +λ ∗σ
+  ˆκ2
+L −1
+
+I−K P
+α
+
+−σ2   ˆκ2
+L −1
+
+K
+
+= 0.
+(A.8)
+Here:
+P
+α = I+ β
+α (I×B0),
+and:
+β
+α ≈vA∆2
+4νedi
+.
+Equation A.8 will be the starting point to analyze three dissipation regimes of interest, all of them in the
+strongly hyperbolic limit (β ≫1): the strong hyperresistivity regime, the weak one, and the balanced regime
+with hyperresistivity dissipation at the grid scale.
+21
+
+
+===== PAGE 22 =====
+Strong hyperresistivity regime: β ≪α. In this case, we have:
+ P
+α
+−1
+= αP−1 ≈I−β
+α (I×B0).
+There results:
+det
+
+(λ ∗)2 I+λ ∗σ
+  ˆκ2
+L −1
+
+I−β
+α (I×B0)
+
+−K
+
+−σ2   ˆκ2
+L −1
+
+K
+
+I−β
+α (I×B0)
+
+= 0.
+Taking the β/α →0 limit, we have:
+det
+h
+(λ ∗)2 I+λ ∗σ
+  ˆκ2
+L −1
+
+I−K
+
+−σ2   ˆκ2
+L −1
+
+K
+i
+= 0.
+This leads to a sixth-order characteristic polynomial, with six roots. In vector form:
+
+λ ∗+σ
+  ˆκ2
+L −1
+
+[ξA−KA] = 0,
+(A.9)
+with ξ = λ ∗
+σ . This has the solution (with multiplicity three, applying to all vector components):
+λL = 1−σ ˆκ2
+L .
+Taking components of the remainder of Eq. A.9, and noting that [assuming B0 = 1 without loss of
+generality and defining A∥= A·B0, Ak = ˆκG ·A, A×,∥= B0 ·(ˆκG ×A)]:
+ˆκG ·KA = Ak ; ˆκG ×KA = K(ˆκG ×A) ; B0 ·KA = (1−ˆκ2
+G)A∥+Ak ˆκ∥,G,
+we find:
+• B0 ·[···] ⇒ξA∥−(1−ˆκ2
+G)A∥+Ak ˆκ∥,G = 0,
+• ˆκG ·[···] ⇒ξAk −Ak = 0 ⇒ξ = 1 ⇒λ = 1 ,
+• B0 ·[ˆκG ×[···]] ⇒ξA×,∥−(1−ˆκ2
+G)A×,∥= 0 ⇒λG = 1−σ ˆκ2
+G .
+The first equation with Ak = 0 (from the second equation for λ ̸= 1) also gives;
+λG = 1−σ ˆκ2
+G .
+We have now found all six eigenvalues for the Jacobi amplification factor, and they are all stable (|λ| ≤1).
+However, only λL allows for the smoothing property. In particular, from the definition of ˆκ2
+L in Eq. A.6,
+for the Nyquist mode kx = kx = π/∆we have ˆκ2
+L = 2 and therefore λL = 1 −2σ, which implies strong
+damping for a suitably chosen σ ∈(0,1] (e.g., σ = 0.7) and therefore a robust smoothing property for
+error components at the grid scale. This is not the case for λG, since for the Nyquist mode ˆκ2
+G = 0 and
+therefore λG = 1. This difference in smoothing behavior stems from the fact that ˆκ2
+G originates in the central
+difference discretization of a gradient, whereas ˆκ2
+L originates in the usual Laplacian discretization. That
+said, for the strong hyperresistivity regime, λL has multiplicity three and is affecting all vector components
+simultaneously, and is therefore providing strong smoothing to the whole system.
+22
+
+
+===== PAGE 23 =====
+Weak hyperresistivity regime: α ≪β. In this case, we have:
+ P
+α
+−1
+= αP−1 = α2/β 2I−α/β(I×B0)+(I·B0)B0
+α2/β 2 +1
+≈(I·B0)B0 −α
+β (I×B0).
+Taking the α/β →0 limit, there results:
+det
+h
+(λ ∗)2 I+λ ∗σ
+  ˆκ2
+L −1
+
+(I·B0)B0 −K
+
+−σ2   ˆκ2
+L −1
+
+K(I·B0)B0
+i
+= 0.
+In vector form, the determinant equation can be written as:
+(λ ∗)2 A+λ ∗σ
+  ˆκ2
+L −1
+
+A∥B0 −KA
+
+−σ2   ˆκ2
+L −1
+
+A∥KB0 = 0.
+Taking components of this equation, we find:
+• B0 ·[···] ⇒(λ ∗)2 A∥+λ ∗σ
+  ˆκ2
+L + ˆκ2
+G −2
+
+A∥−Ak ˆκ∥,G
+
+−σ2   ˆκ2
+L −1
+
+(1−ˆκ2
+⊥,G)A∥= 0, or:
+ λ ∗
+σ
+2
++ λ ∗
+σ
+  ˆκ2
+L + ˆκ2
+G −2
+
+−
+  ˆκ2
+L −1
+
+(1−ˆκ2
+⊥,G)
+!
+A∥−λ ∗
+σ ˆκ∥,GAk = 0.
+• ˆκG ·[···] ⇒(λ ∗)2 Ak +λ ∗σ
+  ˆκ2
+L −1
+
+A∥ˆκ∥,G −Ak
+
+−σ2   ˆκ2
+L −1
+
+A∥ˆκ∥,G = 0 or:
+(λ ∗−σ)
+λ ∗
+σ Ak +
+  ˆκ2
+L −1
+ ˆκ∥,GA∥
+
+= 0 ⇒λ = 1 ; λ ∗
+σ Ak +
+  ˆκ2
+L −1
+ ˆκ∥,GA∥= 0.
+• B0 ·[ˆκG ×[···]] ⇒(λ ∗)2 A×,∥−λ ∗σ(1−ˆκ2
+G)A×,∥= 0 ⇒λ = 1−σ ; λG = 1−σ ˆκ2
+G .
+Solving the first two equations, we find (in terms of ξ = λ ∗/σ):
+λ = 1−σ ; ξ 2 +ξ
+  ˆκ2
+L + ˆκ2
+G −2
+
++
+  ˆκ2
+L −1
+
+( ˆκ2
+G −1) = 0,
+gives:
+ξ = 1−ˆκ2
+L ; ξ = 1−ˆκ2
+G,
+which finally results in:
+λL = 1−σ ˆκ2
+L ; λG = 1−σ ˆκ2
+G .
+For this case, we find that the problematic amplification factor λG is present for all three components, but
+is always accompanied by a strongly damping one, either (1 −σ) (for A×,∥) or λL (for A∥, Ak), therefore
+resulting in effective smoothing even without hyperresistivity.
+Grid-scale hyperresistivity regime: β/α = 1. For this case, we have:
+det
+h
+(λ ∗)2 I+λ ∗σ
+  ˆκ2
+L −1
+
+αP−1 −K
+
+−σ2   ˆκ2
+L −1
+
+KαP−1i
+= 0
+with:
+αP−1 = I−(I×B0)+(I·B0)B0
+2
+.
+This system can be expressed in vector form as:
+(λ ∗)2 A+λ ∗σ
+  ˆκ2
+L −1
+
+(αP−1)A−KA
+
+−σ2   ˆκ2
+L −1
+
+K(αP−1)A = 0,
+with:
+αP−1A = A−A×B0 +A∥B0
+2
+.
+Taking components of this equation, noting that:
+23
+
+
+===== PAGE 24 =====
+• ˆκG ·(αP−1)A =
+Ak−A×,∥+A∥ˆκ∥,G
+2
+.
+• B0 ·
+ ˆκG ×(αP−1)A
+
+=
+A×,∥−A∥ˆκ∥,G+Ak
+2
+.
+• B0 ·(αP−1)A = A∥.
+we find:
+• B0 ·[···] ⇒
+
+(λ ∗)2 +λ ∗σ
+  ˆκ2
+G + ˆκ2
+L −2
+
+−σ2   ˆκ2
+L −1
+
+(1−ˆκ2
+G)
+
+A∥−λ ∗σAk ˆκ∥,G−σ2   ˆκ2
+L −1
+ ˆκ∥,G
+Ak−A×,∥+A∥ˆκ∥,G
+2
+=
+0, or:
+ λ ∗
+σ
+2
++ λ ∗
+σ
+  ˆκ2
+G + ˆκ2
+L −2
+
+−
+  ˆκ2
+L −1
+
+(1−ˆκ2
+G)
+!
+A∥−λ ∗
+σ Ak ˆκ∥,G−
+  ˆκ2
+L −1
+ ˆκ∥,G
+Ak −A×,∥+A∥ˆκ∥,G
+2
+= 0
+• ˆκG ·[···] ⇒
+
+(λ ∗)2 −λ ∗σ
+
+Ak +
+
+λ ∗σ −σ2  ˆκ2
+L −1
+ Ak−A×,∥+A∥ˆκ∥,G
+2
+= 0, or:
+(λ ∗−σ)
+λ ∗
+σ Ak +
+  ˆκ2
+L −1
+ Ak −A×,∥+A∥ˆκ∥,G
+2
+
+= 0 ⇒λ = 1 ; λ ∗
+σ Ak+
+  ˆκ2
+L −1
+ Ak −A×,∥+A∥ˆκ∥,G
+2
+= 0.
+• B0 ·[ˆκG ×[···]] ⇒
+(λ ∗)2 A×,∥+λ ∗σ
+  ˆκ2
+L −1
+ A×,∥−A∥ˆκ∥,G +Ak
+2
+−λ ∗σ(1−ˆκ2
+G)A×,∥−σ2   ˆκ2
+L −1
+
+(1−ˆκ2
+G)A×,∥−A∥ˆκ∥,G +Ak
+2
+= 0,
+or:
+
+λ ∗−σ(1−ˆκ2
+G)
+
+λ ∗A×,∥+σ
+  ˆκ2
+L −1
+ A×,∥−A∥ˆκ∥,G +Ak
+2
+
+= 0,
+and therefore:
+λG = 1−σ ˆκ2
+G ; λ ∗
+σ A×,∥+
+  ˆκ2
+L −1
+ A×,∥−A∥ˆκ∥,G +Ak
+2
+= 0.
+Solving the first two equations, we find:
+λ ∗
+σ
+2
++ λ ∗
+σ
+  ˆκ2
+G + ˆκ2
+L −2
+
++
+  ˆκ2
+L −1
+  ˆκ2
+G −1
+
+= 0,
+or:
+λL = 1−σ ˆκ2
+L ; λG = 1−σ ˆκ2
+G .
+Else, A∥= 0, and from the last two equations we find:
+λ ∗A×,∥
++
+σ
+  ˆκ2
+L −1
+
+2
+ A×,∥+Ak
+
+= 0,
+λ ∗Ak
++
+σ
+  ˆκ2
+L −1
+
+2
+ Ak −A×,∥
+
+= 0.
+Solving, we find two complex conjugate roots:
+λ = 1−σ
+
+1+ ˆκ2
+L −1
+2
+
+±iσ | ˆκ2
+L −1|
+2
+.
+24
+
+
+===== PAGE 25 =====
+Recall that | ˆκ2
+L −1| ∈[0,1], that for stability of the Jacobi iteration we need |λ| ≤1, and for the smoothing
+property we need the strict inequality for the Nyquist mode. Computing |λ|, we find:
+|λ|2 = (1−σ)2 −(1−σ)σ( ˆκ2
+L −1)+σ2 ( ˆκ2
+L −1)2
+2
+,
+(A.10)
+and therefore it follows that:
+|λ| < 1 ⇒σ < 2(1+ ˆκ2
+L)
+1+ ˆκ4
+L
+.
+This condition is always satisfied, as the right hand side is always greater than unity for ˆκ2
+L ∈[0,2], and
+σ ∈(0,1]. Therefore, these roots are stable and strongly damping for the Nyquist mode ˆκ2
+L = 2. This can be
+shown by introducing ˆκ2
+L into Eq. A.10, to find:
+|λ|2 = 1−3σ + 5
+2σ2,
+which is always less than unity for σ ∈(0,1], and results in very strong damping of the Nyquist mode for a
+suitably chosen damping parameter: |λ|2 = 0.1 for σ = 0.6.
+As in previous cases, we find the problematic amplification factor λG is present for all vector compo-
+nents, but always accompanied by a robustly smoothing one: λL for A∥and two robustly smoothing complex
+conjugate amplification factors for A×,∥and Ak. These ensure the smoothing property of the Jacobi iteration
+for the whole system.
+25

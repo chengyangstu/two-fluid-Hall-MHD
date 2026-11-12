@@ -1,0 +1,347 @@
+Simulation of Fast Magnetic Reconnection using a Two-Fluid Model of Collisionless Pair
+Plasma without Anomalous Resistivity1
+E. Alec Johnson (ejohnson@math.wisc.edu)2
+James A. Rossmanith (rossmani@math.wisc.edu)
+Department of Mathematics
+UW-Madison
+Abstract
+For the ﬁrst time to our knowledge, we demonstrate fast magnetic reconnection near a
+magnetic null point in a ﬂuid model of collisionless pair plasma without resorting to the con-
+trivance of anomalous resistivity. In particular, we demonstrate that fast reconnection occurs
+in an anisotropic adiabatic two-ﬂuid model of collisionless pair plasma with relaxation toward
+isotropy for a broad range of isotropization rates. For very rapid isotropization we see fast
+reconnection, but instabilities eventually arise that cause numerical error and cast doubt on the
+simulated behavior.
+Overview
+Motivating Problem.
+We have been working to develop algorithms that efﬁciently model
+fast magnetic reconnection in collisionless space plasmas. A plasma is a gas of charged particles
+and the accompanying magnetic ﬁeld that it carries. The ability to simulate plasmas efﬁciently over
+a wide range of phenomena and scales is essential to understanding and predicting the behavior
+both of space plasmas and of industrial fusion plasmas.
+The two basic types of plasma models are kinetic models and ﬂuid models. Fluid models are
+computationally less expensive attempts to approximate kinetic models. Kinetic models represent
+particles or evolve the space-velocity distribution of particles. Fluid models evolve moment av-
+erages (e.g. density, momentum, or energy) of assumed (e.g. Maxwellian) velocity distributions.
+Fluid models give good accuracy for highly collisional plasmas. For rareﬁed space plasmas, how-
+ever, particularly near magnetic null points, the regular velocity distributions assumed by ﬂuid
+models often fail to hold, since the particles move essentially unconstrained.
+The phenomenon for which ﬂuid models of plasma have been most apt to fail is collisionless fast
+magnetic reconnection. It is precisely this phenomenon which has proved most critical to under-
+standing and predicting the volatile dynamics of astrophysical plasmas, including solar storms and
+geomagnetic substorms in Earth’s magnetosphere. The critical physical role of fast reconnection
+and the failure of ﬂuid models to capture it has prompted extensive studies using particle-based
+simulations of collisionless magnetic reconnection. Our objective is to study the ability of ﬂuid
+models to match particle-based simulations of collisionless fast magnetic reconnection. We have
+1Appeared in Proceedings of the 19th Annual Wisconsin Space Conference (2009).
+2This research was supported by a Wisconsin Space Grant Consortium Graduate Fellowship for 2008-2009.
+arXiv:1010.0222v1  [physics.plasm-ph]  1 Oct 2010
+
+concentrated our effort speciﬁcally on fast magnetic reconnection in collisionless pair plasmas. A
+pair plasma is a plasma whose positively and negatively charged particles have the same charge-
+to-mass ratio. The physical example of a pair plasma is an electron-positron plasma, of interest to
+astrophysicists.
+Historical development.
+The GEM magnetic reconnection challenge problem [3] identi-
+ﬁed Hall effects as critical to fast magnetic reconnection in electron-ion plasmas. Since Hall effects
+are absent for electron-positron (pair) plasmas, this prompted Bessho and Bhattacharjee [1, 2] to
+demonstrate via particle simulations that fast magnetic reconnection occurs even in collisionless
+pair plasma, which they attributed to pressure anisotropy.
+The next challenge was to demonstrate fast reconnection in a ﬂuid model of pair plasma. Assuming
+the ubiquitous presence of a strong background magnetic guide ﬁeld (which constrains charged
+particles to move in tight spirals) allowed Chac´on et al. [4] to develop an analytical ﬂuid theory of
+fast reconnection in magnetized pair plasma.
+For the case where there is a magnetic null point, Zenitani et al. [10] demonstrated fast recon-
+nection in a two-ﬂuid model of relativistic isotropic pair plasma. Their model assumes a spatially
+dependent anomalous resistivity, as has been used with resistive single-ﬂuid MHD to simulate fast
+reconnection. By selecting a resistivity with an anomalously high value near the X-point, one can
+essentially prescribe the desired rate of reconnection (as determined from PIC simulations); the
+elusive goal is to ﬁnd a simple and generic expression for anomalous resistivity that works for a
+broad range of problem conditions. We remark that resistive single-ﬂuid MHD does not assume
+any particular ratio of mass-to-charge ratios between the two species and thus (with an appropriate
+choice of anomalous resistivity) could be used as a ﬂuid model of pair plasma.
+Our work.
+Rather than resort to an anomalous resistivity, we seek generic two-ﬂuid
+moment closures that give reconnection behavior in agreement with particle-based simulations.
+We have studied reconnection in ﬁve-moment (isotropic) and ten-moment (anisotropic) adiabatic
+ﬂuid models of collisionless pair plasma with varying rates of relaxation toward isotropy. We im-
+plemented conservative shock-capturing Discontinuous Galerkin two-ﬂuid ﬁve-moment and ten-
+moment plasma models, following Hakim et al. [5, 6].
+We initially adopted the modiﬁed GEM settings of [1, 2], but found that for pair plasmas the
+large aspect ratio of the reconnection region gives rise to a secondary instability, namely, the un-
+predictable formation of magnetic islands, making it difﬁcult to obtain demonstrably converged
+results, as seen in our paper, [8]. Essentially, for the pair plasma case of the GEM problem, in con-
+trast to the electron-proton case, the tearing instability wants to produce smaller magnetic islands;
+since the GEM problem is the formation of one big magnetic island, we can avoid the instability
+by reducing the size of the domain. Pair plasma involves no need to resolve scale separation be-
+tween species, so arguably a smaller domain is acceptable. Therefore, to eliminate the secondary
+instability and to reduce computational expense we multiplied the dimensions of the domain by
+one half.
+We also chose to focus on the case where both species have the same temperature. In this case there
+is complete symmetry between the two species, and the number of equations needed is halved. In
+
+the case of zero guide ﬁeld the GEM problem is symmetric about both the horizontal and vertical
+axes. We enforced all these symmetries, reducing computational expense by a factor of eight.
+We simulated the GEM problem using the collisionless adiabatic ten-moment pair plasma model
+supplemented with a globally prescribed rate of pressure tensor isotropization.
+We have ne-
+glected all diffusivities and relaxation terms except isotropization. We varied the rate of pressure
+isotropization and studied the resulting variation in the rate of reconnection and the contributions
+of the terms in Ohm’s law.
+Model
+Generic physical equations for the ten-moment two-ﬂuid model are:
+• conservation of mass for each species:
+∂tρs +∇·(ρsus) = 0,
+• conservation of momentum for each species:
+∂t(ρsus)+∇·(ρsus ⊗us +Ps) = qs
+ms
+ρs(E+us ×B)+Rs,
+• evolution of the pressure tensor for each species:3
+∂tPs +∇·(usPs)+2Sym(Ps ·∇us)+∇·Qs = 2Sym( qs
+ms
+Ps ×B)+Rs,
+• Maxwell’s equations for evolution of electromagnetic ﬁeld:
+∂tB+∇×E = 0,
+∂tE−c2∇×B = −J/ε,
+• and Maxwell’s divergence constraints:
+∇·B = 0,
+∇·E = σ/ε.
+In these equations, Sym denotes the symmetric part of the argument tensor (i.e. the average over
+all permutations of subscripts), ∨denotes symmetric outer product (i.e. the symmetric part of
+the tensor product), and i and e are positive (“ion”) and negative (“electron”) species indices; for
+species s ∈{i,e}, qs = ±e is particle charge, ms is particle mass, ns is particle number density,
+ρs = msns is mass density, σs = qsns is charge density, usρs is momentum, Js = usσs is current
+3For conservation and shock-capturing purposes we actually evolve the energy tensor Es := Ps +ρsusus rather than
+directly evolving the pressure tensor.
+
+density, and Ps is a pressure tensor; B is magnetic ﬁeld, E is electric ﬁeld, c is the speed of light,
+ε is vacuum permittivity, J = Ji +Je is net current density, and σ = σi +σe is net charge density.
+To close the system, constitutive relations must be supplied for the generalized heat ﬂuxes Qs,
+the interspecies drag force on the ions Ri = −Re, and Rs, the production of generalized thermal
+energy due to collisions. We nondimensionalize these equations, choosing the timescale to be the
+gyroperiod of a typical particle of mass 1, and choosing the typical velocity to be a typical Alfv´en
+speed. The nondimensionalized equations retain the form of the dimensional equations above, with
+the simpliﬁcations that e = 1, mi +me = 1, and 1
+ε = c2.
+In our closure we assume that Rs = 0, and to provide for isotropization we let
+Rs = 1
+τs
+1
+3(trPs)I−Ps
+
+,
+where τs is the isotropization period of species s, tr denotes tensor trace, and I is the identity tensor.
+In our present work we assume that Qs = 0. This assumption might not be satisfactory, though: the
+particle simulations of Hesse et al. [7] showed, at least for the case of guide-ﬁeld electron-proton
+reconnection, that generalized heat ﬂux contributions to the evolution of the pressure tensor are
+necessary to obtain an appropriate approximation for the pressure nongyrotropy near the X-point.
+We therefore plan to investigate C. David Levermore’s closure [9],
+Qs = 9
+5(ν0 −ν1)I∨tr
+ ∇∨Θ−1
+s
+
++3ν1
+
+∇∨Θ−1
+s
+
+,
+where Θs := Ps/ρs and ν0 ≃ν1 is proportional to collision frequency. We expect to determine
+whether we can get fast reconnection without isotropization by using such a non-vanishing gener-
+alized heat ﬂux.
+Ohm’s law.
+Combining the momentum equations gives net current balance. Assuming
+quasineutrality (zero net charge) and solving for electric ﬁeld gives Ohm’s law for the electric
+ﬁeld:
+E = ˜mi + ˜me
+ρ
+(−Ri)
+(resistive term)
++B×u
+(ideal term)
++ ˜mi −˜me
+ρ
+J×B
+(Hall term)
++ 1
+ρ∇·( ˜mePi −˜miPe)
+(pressure term)
++ ˜mi ˜me
+ρ
+
+∂tJ+∇·
+ uJ+Ju+ ˜me −˜mi
+ρ
+JJ
+
+(inertial term),
+where ˜mi := mi
+e and ˜me := me
+e and the resistive term is usually assumed to be of the form η·J, i.e.,
+a linear function of current.
+
+GEM magnetic reconnection challenge problem
+The GEM magnetic reconnection challenge problem studies the evolution of 2-dimensional plasma
+in a rectangular box aligned with the coordinate axes and centered at the origin. The top and
+bottom of the box are conducting walls and periodic symmetry in the x-axis deﬁnes the width of
+the box. The plasma is initially in near-equilibrium. The upper half of the box is occupied by
+strong magnetic ﬁeld lines pointing to the right and the lower half is occupied by strong magnetic
+ﬁeld lines pointing to the left, separated by a thin, potentially volatile transition layer along the
+x-axis. Some studies (e.g. [4]) add a constant out-of-plane component to the magnetic ﬁeld, called
+a “guide ﬁeld”. We do not have a guide ﬁeld (nor did the original GEM problem or the studies we
+are trying to replicate).
+Domain.
+The computational domain is the rectangular domain [−Lx/2,Lx/2]×[−Ly/2,Ly/2].
+The problem is symmetric under 180 degree rotation around the origin, and in the case of zero guide
+ﬁeld is also symmetric under reﬂection across either the horizontal or vertical axis. In the original
+GEM problem, Lx = 8π and Ly = 4π. We halved the dimensions, so that Lx = 4π and Ly = 2π.
+Boundary conditions.
+The domain is periodic along the x-axis. The boundaries parallel
+to the x-axis are thermally insulating conducting wall boundaries. A conducting wall boundary
+is a solid wall boundary (with slip boundary conditions in the case of ideal plasma) for the ﬂuid
+variables, and the electric ﬁeld at the boundary has no component parallel to the boundary. We
+also assume that magnetic ﬁeld does not penetrate the boundary.
+Model Parameters.
+We set the speed of light to 10 (rather than 20 as in [1]) and set the
+mass of each species to 0.5 (rather than the GEM values of 1 for ions and 1/25 for electrons).
+Initial conditions.
+The initial conditions are a perturbed Harris sheet equilibrium. The
+unperturbed equilibrium is given by
+B(y) = B0 tanh(y/λ)ex,
+p(y) = B2
+0
+2n0
+n(y),
+n(y) = ni(y) = ne(y) = n0(1/5+ sech2(y/λ)),
+pe(y) =
+Te
+Ti +Te
+p(y),
+E = 0,
+pi(y) =
+Ti
+Ti +Te
+p(y).
+On top of this the magnetic ﬁeld is perturbed by
+δB = −ez ×∇(ψ),
+where ψ(x,y) = ψ0 cos(2πx/Lx)cos(πy/Ly).
+In the GEM problem the initial condition constants are
+Ti/Te = 5,
+λ = 0.5,
+B0 = 1,
+n0 = 1,
+ψ0 = B0/10;
+we reset the initial temperature ratio to 1 to get symmetry between the species, and we set ψ0 to
+r2
+sB0/10, where rs = 0.5 is our domain rescaling factor, so that in the vicinity of the X-point our
+initial conditions agree (up to ﬁrst-order Taylor expansion) with the initial conditions of the GEM
+problem.
+
+Properties of the GEM problem
+Reconnected ﬂux.
+We deﬁne magnetic reconnection to be the loss of magnetic ﬂux
+through the vertical axis into the ﬁrst quadrant. Using Faraday’s law, ∂tB + ∇× E = 0, one can
+show that the rate of reconnection is minus the value of the out-of-plane component of the electric
+ﬁeld at the origin (i.e. the X-point) [8].
+Ohm’s law at the origin.
+Since the electric ﬁeld at the origin is the rate of reconnection,
+we are lead to study the terms of Ohm’s law for the electric ﬁeld at the origin. Since the problem
+is symmetric under 180 degree rotational symmetry about the origin, only the out-of-plane com-
+ponent of vectors is nonzero at the origin. In Ohm’s law only the out-of-plane components of the
+resistive, pressure, and inertial terms survive.
+As a proxy for Ohm’s law4, we select a species and write the momentum equation solved for the
+electric ﬁeld:
+dt(reconnected ﬂux) = E3
+
+origin =
+−Ri
+eni
++ ∇·Pi
+eni
++ mi
+e ∂tui
+
+3
+
+origin
+.
+In a perfectly collisionless, gyrotropic plasma, the resistive term and pressure divergence vanish,
+and reconnected ﬂux should exactly track with species velocity (a proxy for the current) at the
+origin.
+Results
+We simulated the GEM magnetic reconnection challenge problem for a pair plasma, varying the
+mesh resolution and varying the rate of isotropization from zero to instantaneous. We plotted
+the contribution of proxy Ohm’s law terms to the reconnected ﬂux. We ﬁnd that for a broad
+intermediate range of isotropization rates reconnection is fast and that the pressure term makes the
+dominant contribution to reconnected ﬂux.
+When isotropization is very slow or absent, there is oscillatory exchange between the inertial term
+and the pressure term at roughly a typical gyrofrequency, and reconnection proceeds at a slow
+to moderate rate (our simulations for the case of no isotropization are not sufﬁciently resolved).
+For a broad intermediate range of isotropization, there is little oscillation and, in agreement with
+PIC simulations (see [1, 2]), the pressure divergence dominates and provides for faster reconnec-
+tion. As the rate of isotropization becomes very fast, however, the pressure divergence is forced to
+vanish and the inertial term is the only remaining term in the equation that can provide for recon-
+nected ﬂux. This forces the current at the origin to ramp up in track with reconnected ﬂux. The
+system seems unable to sustain this ramp-up in current, however, and numerical instability kicks
+in, as evidenced by the sudden appearance of strong, very rapid oscillatory exchange (less evident
+in the accumulation integrals shown) between the inertial term and the residual. The numerical
+4 Ohm’s law involves the approximating assumption of quasineutrality, whereas the momentum equation holds
+exactly and the inertial term reduces to a simpler form at the origin.
+
+residual displaces the inertial term, allowing the the current to peak and then decay while the re-
+connected ﬂux maintains the same smooth, rapid ascent seen for intermediate isotropization rates,
+as if unconcerned whether pressure, inertia, numerical resistivity – or even anomalous resistivity,
+as our cursory investigations suggest – provides for its determined course. We can conclude that
+fast reconnection at least commences in an isotropic pair plasma model, and we conjecture that
+the numerical instability we see corresponds to some physical (perhaps streaming?) instability
+that provides for an effective anomalous resistivity (whose functional form we have not analyzed).
+As expected, the ﬁve-moment simulations show agreement with instantaneous relaxation of the
+ten-moment system to isotropy.
+Acknowledgements
+I thank the Wisconsin Space Grant Consortium for their support. In addition to my advisor, James
+Rossmanith, I also thank Nick Murphy, Ellen Zweibel, and Ping Zhu for helpful conversations.
+References
+[1] N. Bessho and A. Bhattacharjee. Collisionless reconnection in an electron-positron plasma.
+Phys. Rev. Letters, 95:245001, December 2005.
+[2] N. Bessho and A. Bhattacharjee. Fast collisionless reconnection in electron-positron plasmas.
+Physics of Plasmas, 14:056503, 2007.
+[3] J. Birn, J.F. Drake, M.A. Shay, B.N. Rogers, R.E. Denton, M. Hesse, M. Kuznetsova,
+Z.W. Ma, A. Bhattacharjee, A. Otto, and P.L. Pritchett. Geospace environmental modeling
+(GEM) magnetic reconnection challenge. Journal of Geophysical Research – Space Physics,
+106:3715–3719, 2001.
+[4] L. Chac´on, Andrei N. Simakov, V.S. Lukin, and A. Zocco. Fast reconnection in nonrelativistic
+2D electron-positron plasmas. Phys. Rev. Letters, 101:025003, July 2008.
+[5] A. Hakim, J. Loverich, and U. Shumlak. A high-resolution wave propagation scheme for
+ideal two-ﬂuid plasma equations. J. Comp. Phys., 219:418–442, 2006.
+[6] A.H. Hakim. Extended MHD modelling with the ten-moment equations. J. Fusion Energy,
+27(1–2):36–43, June 2007.
+[7] M. Hesse, M. Kuznetsova, and J. Birn. The role of electron heat ﬂux in guide-ﬁeld magnetic
+reconnection. Physics of Plasmas, 11(12):5387–5397, 2004.
+[8] E.A. Johnson and J.A. Rossmanith. Collisionless magnetic reconnection in a ﬁve-moment
+two-ﬂuid electron-positron plasma. In Proceedings of Symposia in Applied Mathematics,
+volume 67.2, 2009.
+[9] C. David Levermore. Kinetic theory, Gaussian moment closures, and ﬂuid approximations.
+Presented at IPAM KT2009 Culminating Retreat, Lake Arrowhead, California, June 2009.
+[10] S. Zenitani, M. Hesse, and A. Klimas. Two-ﬂuid magnetohydrodynamic simulations of rela-
+tivistic magnetic reconnection. The Astrophysical Journal, 696:1385–1401, May 2009.
+
+Figure 1: Increase in reconnection rate as isotropization increases. For very slow or no isotropization the
+simulations we report are not sufﬁciently resolved. For instantaneous relaxation the positron bulk velocity
+ceases to track with reconnected ﬂux and the residual becomes unacceptably large after t = 15, indicating
+that we are no longer solving the momentum equation faithfully.
+
+Figure 2: Convergence comparisons for coarse (left) and ﬁne (right) meshes. For intermediate isotropiza-
+tion rates a coarser mesh is satisfactory, but for no isotropization and for fast isotropization a ﬁner mesh
+is required. For fast and instantaneous isotropization, even for a very ﬁne mesh, the residual in “Ohm’s
+law” (the momentum equation) becomes unacceptably large, overwhelming and displacing the inertial and
+pressure terms. The ﬁve-moment simulations and the instantaneously relaxed ten-moment simulations agree
+well where convergence is demonstrated.
+
+Figure 3: Examples of agreement of reconnected ﬂux with minus the accumulation integral of the out-
+of-plane electric ﬁeld at the origin for ﬁne and coarse mesh. (For the ﬁne mesh the two plots are exactly
+superimposed and so are indistinguishable.) Flux across the vertical axis represents the portion of ﬁeld lines
+that have not reconnected. We obtained similar excellent agreement in all our simulations.
+Figure 4: Snapshots of magnetic ﬁeld lines. The reconnected ﬂux is proportional to (the change in) the
+number of ﬁeld lines through the horizontal axis of symmetry, and the unreconnected ﬂux is proportional to
+the number of ﬁeld lines through the vertical axis of symmetry.

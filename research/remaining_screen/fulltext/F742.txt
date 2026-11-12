@@ -1,0 +1,1585 @@
+
+===== PDF PAGE 1 =====
+      Astronomy & Astrophysics manuscript no. Melzani_reconnection_ion_electron_relat                  ©ESO 2021
+      October 23, 2021
+
+
+
+      Relativistic magnetic reconnection in collisionless ion-electron
+          plasmas explored with particle-in-cell simulations
+
+               Mickaël Melzani1, Rolf Walder1, Doris Folini1, Christophe Winisdoerﬀer1, and Jean M. Favre2
+
+
+                 1 École Normale Supérieure, Lyon, CRAL, UMR CNRS 5574, Université de Lyon, France
+               E-mail: mickael.melzani@ens-lyon.fr
+                 2 CSCS Lugano, Switzerland
+
+            Received ... ; accepted ...
+
+
+                                             ABSTRACT
+
+           Magnetic reconnection is a leading mechanism for magnetic energy conversion and high-energy non-thermal particle production in a2014              variety of high-energy astrophysical objects, including ones with relativistic ion-electron plasmas (e.g., microquasars or AGNs) – a
+            regime where ﬁrst principle studies are scarce. We present 2D particle-in-cell (PIC) simulations of low β ion-electron plasmas under
+               relativistic conditions, i.e., with inﬂow magnetic energy exceeding the plasma rest-mass energy.Apr    We identify outstanding properties: (i) For relativistic inﬂow magnetizations (here 10 ≤σe ≤360), the reconnection outﬂows are
+            dominated by thermal agitation instead of bulk kinetic energy. (ii) At large inﬂow electron magnetization (σe ≥80), the reconnection
+               electric ﬁeld is sustained more by bulk inertia than by thermal inertia. It challenges the thermal-inertia-paradigm and its implications.29        (iii) The inﬂows feature sharp transitions at the entrance of the diﬀusion zones. These are not shocks but results from particle ballistic
+            motions, all bouncing at the same location, provided that the thermal velocity in the inﬂow is far smaller than the inﬂow E × B bulk
+              velocity. (iv) Island centers are magnetically isolated from the rest of the ﬂow, and can present a density depletion at their center. (v)
+          The reconnection rates are slightly larger than in non-relativistic studies. They are best normalized by the inﬂow relativistic Alfvén
+            speed projected in the outﬂow direction, which then leads to rates in a close range (0.14–0.25) thus allowing for an easy estimation of
+             the reconnection electric ﬁeld.
+
+         Key words. Plasmas – Magnetic reconnection – Relativistic processes – Methods: numerical – Instabilities
+
+
+      1. Introduction                                         Dal Pino et al. 2010; Kowal et al. 2011; McKinney et al. 2012;
+                                                                 Dexter et al. 2013), gamma-ray burst outﬂows and non-thermal[astro-ph.HE]Magnetic reconnection has been the focus of extended studies                                                                   emissions (Drenkhahn & Spruit 2002; McKinney & Uzdensky
+      since its ﬁrst introduction by Giovanelli (1947, 1948) to explain                                                                    2012), X-ray ﬂashes (Drenkhahn & Spruit 2002), soft gamma-
+      the sudden release of energy in solar ﬂares. The term itself was                                                                     ray repeaters (Lyutikov 2006b), ﬂares in double pulsar systems
+      coined by Dungey (1958).  It is now the key ingredient for the-                                                                   (Lyutikov & Lazarian 2013), or energy extraction in the ergo-
+       ories of coronal heating, solar ﬂares and jets, and coronal mass                                                                   sphere of black holes (Koide & Arai 2008). As pointed out by
+       ejections in the Sun (Priest 1987), of magnetic storms and sub-                                                           Uzdensky (2006), magnetic reconnection is of dynamical impor-
+      storms in the Earth magnetosphere (Paschmann et al. 2013), and                                                                      tance in any environment where magnetic ﬁelds dominate the en-
+       for the behavior of fusion plasmas with, e.g., the sawtooth os-                                                                   ergy budget, so that the energy transfer can have dynamical and
+       cillation in tokamaks (Biskamp 2000).  Space physics proofs                                                                    observable consequences, and where the rates of reconnection
+       that magnetic reconnection can quickly convert magnetic en-                                                                        are fast, which is known to hold in collisionless plasmas (Birn
+      ergy into kinetic energies (bulk ﬂow, heat, non-thermal parti-                                                                                 et al. 2001) or in collisional but turbulent plasmas (Lazarian &
+       cles), with fast variability and high eﬃciency. Such attributes                                                                   Vishniac 1999; Lazarian et al. 2011).
+     made it most attractive for high-energy astrophysics to explain,
+                                                     Many of the above mentioned environments are collisionless
+       for example, radiation (Romanova & Lovelace 1992) and ﬂares
+                                                                                        (Ji & Daughton 2011), so that fast reconnection must be trig-
+      (Giannios et al. 2009) in active galactic nuclei (AGN) jets or in
+                                                                  gered and sustained by non-ideal terms others than collisionalarXiv:1404.7366v1gamma-ray bursts (Lyutikov 2006a; Lazar et al. 2009), the heat-                                                                      ones, which implies kinetic processes on scales of the order
+      ing of AGN and microquasar coronae and associated ﬂares (Di
+                                                                      of the electron inertial length or Larmor radius, with particles
+      Matteo 1998; Merloni & Fabian 2001; Goodman & Uzdensky
+                                                                          largely out of equilibrium and possibly comprising high-energy
+      2008; Reis & Miller 2013), the ﬂat radio spectra from galactic
+                                                                                            tails. These non-ideal terms can be linked to particle inertia and
+      nuclei and AGNs (Birk et al. 2001), the heating of the lobes of
+                                                                       wave-particle resonant interactions, or to ﬁnite Larmor radius ef-
+       giant radio galaxies (Kronberg et al. 2004), the σ-paradox and
+                                                                              fects in magnetic ﬁeld gradients. Simulation studies thus require
+       particle acceleration at pulsar wind termination shocks (Kirk &
+                                                                                     full kinetic codes such as Vlasov solvers or particle-in-cell algo-
+      Skjæraasen 2003; Pétri & Lyubarsky 2007; Sironi & Spitkovsky
+                                                                         rithms.
+      2011), GeV-TeV ﬂares from the Crab nebulae (Cerutti et al.
+                                                            Most of the above environments are also relativistic,  ei-      2012a,b, 2013a), transient outﬂow production in microquasars
+                                                                           ther because of relativistic velocities (bulk ﬂows or currents),     and quasars (de Gouveia dal Pino & Lazarian 2005; de Gouveia
+                                                                      or because the thermal kinetic energy and/or the magnetic en-
+      Send oﬀprint requests to: M. Melzani                              ergy density exceeds the rest-mass energy of the particles. The
+
+                                                                                                                             Article number, page 1 of 22
+
+===== PDF PAGE 2 =====
+latter translates into the magnetization of the inﬂow, σin,s =   Table 1. Parameters of the current sheet. They hold for a mass ratio
+B2in/(µ0ninmsc2) with s denoting ions or electrons, being larger   of 25, and are independent of the background plasma parameters. The                                                                            free variables are ωce/ωpe and L/di. The electron and ion temperaturesthan unity. This magnetic energy can be transferred to the par-
+                                                                         are the same, normalized as Θs = Ts/(msc2). The ions and electrons
+ticles, and as it is larger than the particles rest mass, relativistic                                                                    counterstream with opposite velocities ±Ueˆy (given here in units of c)
+particles are expected. The relation h0,out,sΓout,s = 1 + σin,s, with   and associated Lorentz factors Γe. The sheet half-width in units of ion
+h0,out,s the enthalpy and Γout,s the bulk Lorentz factor of the re-    inertial lengths is L/di, while in units of the thermal Larmor radii (at
+connection outﬂow (see Sect. 3.4, Eq. 11), indeed shows that   current sheet center) it is L/rce.
+either relativistic temperatures (h0,out,s > 1) or relativistic bulk
+velocities (Γout,s > 1) are obtained for the outﬂows. The rele-      ωce/ωpe   L/di   ΓeUe   Θe     Θi     rce/de   L/rce
+vant magnetization is thus not that of the plasma, which is low        1       0.5    0.20   0.25   0.01     0.7     3.8
+because of the ion mass, but that of each species taken individu-        3       0.5    0.53   2.40   0.096    1.6     1.6
+ally.                                                        6      1     0.70   10     0.4     3.3     1.5
+    Studies of relativistic reconnection are more scarce than their
+non-relativistic counterparts (for the latter, see the reviews by
+Birn & Priest 2007; Treumann & Baumjohann 2013), and they   of the magnetic islands and of their central density dips and iso-
+mainly deal with pair plasmas: for relativistic pair plasmas, they   lated centers. Section 3.6 studies the reconnection electric ﬁeld.
+include 2D MHD simulations (Watanabe & Yokoyama 2006;  The relevant normalization is non-trivial for relativistic setups,
+Zenitani et al. 2011a; Takamoto 2013; Baty et al. 2013), two-  and we propose to use the relativistic Alfvén speed in the inﬂow,
+ﬂuid simulations (Zenitani et al. 2009a,b), test-particle simula-  which leads to rates in a close range. Section 4 highlights dif-
+tions (Bulanov & Sasorov 1976; Romanova & Lovelace 1992;   ferences resulting from the presence of a guide magnetic ﬁeld.
+Larrabee et al. 2003; Cerutti et al. 2012a), 1D PIC simulations  We summarize and conclude our work in Sect. 5, and discuss
+(Pétri & Lyubarsky 2007), 2D PIC simulations (Jaroschek et al.   applications to astrophysical objects.
+2008; Sironi & Spitkovsky 2011; Bessho & Bhattacharjee 2012;
+Cerutti et al. 2012b, 2013a; Zenitani & Hoshino 2001, 2005,
+2008a, 2007), and 3D PIC simulations (Zenitani & Hoshino
+2008a,b; Sironi & Spitkovsky 2011; Kagan et al. 2012; Cerutti   2. Problem setup
+et al. 2013b; Sironi & Spitkovsky 2014).  Relativistic recon-
+                                                                    2.1. Description of the relativistic Harris equilibriumnection in ion-electron plasmas is less studied. We ﬁnd a test-
+particle simulation (Romanova & Lovelace 1992), a resolution                                         We use the explicit particle-in-cell code Apar-T, presented and
+of the diﬀusion equation (Birk et al. 2001), and a discussion by                                                                     tested in Melzani et al. (2013). Broadly speaking, it is a paral-
+Sakai et al. (2002) in a 2D PIC simulations of laser fusion beams.                                                                                lel electromagnetic relativistic three dimensional PIC code with
+   The focus of the present work is on relativistic reconnection                                                            a staggered grid, where the ﬁelds are integrated via Faraday and
+– as compared to non-relativistic studies – and on ion-electron                                                     Maxwell-Ampère equations, currents computed by a charge con-
+plasmas – as compared to pair plasmas. Our goal is to carve out                                                                serving volume weighting (CIC), and ﬁelds interpolated accord-
+aspects that are particular to this regime, to shed light on the un-                                                                        ingly.
+derlying physical causes, and to ultimately put our ﬁndings in
+                                                      The simulations start from a Harris equilibrium, which is athe, admittedly speculative, larger astrophysical context of mi-
+                                                                  solution of the Vlasov-Maxwell system. The magnetic ﬁeld iscroquasar and AGN disk coronae and magnetospheres, and of
+                                                                      Brec =   ˆz B0 tanh (x/L) (see Figs. 1 or 2 for axis orientation),other possible environments with ion-electron relativistic plas-
+                                                        and is sustained by a population of electrons and ions of equalmas. Part of our results are also of interest for pair plasmas and
+                                                     number density ncs(x) = ncs(0)/cosh2(x/L) (cs stands for cur-for non-relativistic cases.
+                                                                     rent sheet), ﬂowing with bulk velocities Ue and Ui = −Ue in    In Sect. 2 we describe the simulation setup and parameters.
+                                                                  the ±y directions. We denote the associated Lorentz factors by
+Section 3 presents the results of simulations with antiparallel
+                                                              Γe and Γi. Each species follows a Maxwell-Jüttner distributionasymptotic magnetic ﬁelds. We investigate the structure of the
+                                                               (Eq. A.1) of normalized temperature Θs = 1/µs = Ts/msc2.two-scale diﬀusion region in Sect. 3.2, and explain why we see
+                                           We derived the equilibrium relations for relativistic tempera-sharp transitions at the entrance of this region. Next, we turn to
+                                                                     tures and current drift speeds, as well as for arbitrary ion to elec-the relativistic Ohm’s law. In non-relativistic reconnection, non-
+                                                                  tron mass ratios and temperature ratios, in Melzani et al. (2013).ideal terms are dominated by thermal inertia, i.e., by the diver-
+                                                                  Details speciﬁc to the present application can be found in Ap-gence of oﬀ-diagonal elements of the pressure tensor. There are,
+                                                           pendix A. The equilibrium depends on the ratio ωce/ωpe, withhowever, PIC studies (see references of Sect. 3.3) suggesting that
+for relativistic reconnection, thermal inertia can be dominated   ωpe = (ncs(0)e2/(ϵ0me))1/2 the electron plasma pulsation deﬁned
+by bulk inertia. In Sect. 3.3 we show that this is the case in our   with the lab-frame number density ncs(0) (not including back-
+simulations with large inﬂow magnetization. We demonstrate in  ground particles) and ωce = eB0/me the electron cyclotron pul-
+Sect. 3.8 that this is to be expected on the basis of an analytical   sation in the asymptotic magnetic ﬁeld (not including the guide
+model. Concerning the reconnection outﬂows, mass and energy   ﬁeld, e > 0). Our simulations are, however, not loaded exactly
+conservation imply that relativistic inﬂow magnetization results   with the equilibrium values, but with a temperature and current
+in relativistic temperatures and/or relativistic bulk velocities in  speed uniformly in excess of ∼10% in order to shorten the oth-
+the outﬂows, but say nothing on the balance between the two. In   erwise rather long stable phase.
+Sect. 3.4 we show that in our simulations, thermal energy largely    We also set a background plasma of number density (for
+dominates over bulk kinetic energy. We demonstrate analytically   electrons or for ions) nbg and of temperature Tbg,e for electrons
+in Sect. 3.8 that this is to be expected for large inﬂow magneti-  and Tbg,i for ions. Finally, a guide magnetic ﬁeld is sometimes
+zation, under the assumption that thermal inertia signiﬁcantly   considered, i.e., a uniform component BG = BGˆy. Adding the
+contributes in Ohm’s law. This is an important question that has  background plasma or the guide ﬁeld does not change the Harris
+observational consequences. In Sect. 3.5 we detail the structure   equilibrium.
+
+Article number, page 2 of 22
+
+===== PDF PAGE 3 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+Table 2. Physical input parameters of the simulations and resulting magnetizations of the background plasma. The enthalpy of the background
+plasma is h0,bg,s. Its cold magnetization σcolds  (B) is deﬁned by Eq. 4, σhots  by Eq. 3, and σi+e(B) by Eq. 5. In all cases, we assume Γin ∼1. The
+background plasma βs = nsTs/(B2/2µ0) = 2Θs/σcolds  (B) includes the guide ﬁeld (σcolds   (Btot) = σcolds  (B0) + σcolds  (BG)). The Alfvén speeds, deﬁned
+in Sect. 2.3, do not take into account the temperature, and are given in units of c. For the relativistic Alfvén speed, when there is a guide ﬁeld we
+display the ˆz-projection: VRA,in cos θ, with θ = arctan BG/B0.
+
+   ωce/ωpe   nbg/ncs(0)  BG/B0           Tbg,s (K)       βs         h0,bg,s   σcolds   (Brec)   σhots  (Brec)    σi+e(Brec)  VNRA,in, VRA,in
+     1         0.1       0      ion   1.5 × 107   5 × 10−4     1        0.4         0.4         0.38      0.63, 0.53
+                                       lec           ´´                 ´´      1.006      10         9.94
+     3        0.31       0      ion   2 × 108    2.5 × 10−3    1       1.16        1.16        1.11      1.08, 0.73
+                                       lec           ´´                 ´´      1.086      29        27
+     3         0.1       0      ion   2 × 108    7.5 × 10−4    1        3.6         3.6         3.26      1.90, 0.88
+                                       lec   3 × 109    1.1 × 10−2   2.57      90        35
+     3         0.1       0      ion   1.5 × 107   5.6 × 10−5    1        3.6         3.6         3.46      1.90, 0.88
+                                       lec           ´´                 ´´      1.006      90        89
+     3         0.1       0      ion   2 × 108    7.5 × 10−4    1        3.6         3.6         3.45      1.90, 0.88
+                                       lec           ´´                 ´´      1.086      90        83
+     3         0.1        0.5     ion   1.5 × 107   4.5 × 10−5    1        3.6         3.6         3.46      1.90, 0.81
+                                       lec           ´´                 ´´      1.006      90        89
+     3         0.1       1      ion   1.5 × 107   2.8 × 10−5    1        3.6         3.6         3.46      1.90, 0.66
+                                       lec           ´´                 ´´      1.006      90        89
+     6         0.1       0      ion   8 × 108    7.5 × 10−4   1.014     14.4        14.2        13.5      3.80, 0.97
+                                       lec           ´´                 ´´       1.37      360       260
+
+
+2.2. Magnetization and energy ﬂuxes                                  If σcolds   (Brec) exceeds unity, then it is possible to pass to the par-
+                                                                            ticles an amount of energy from the reconnecting ﬁeld that ex-
+There are several ways to characterize the magnetization of the                                                            ceeds their rest-mass, i.e., it is possible to obtain relativistic par-
+conﬁguration. The ratio ωce/ωpe has no direct physical meaning                                                                               ticles. We do not include the guide ﬁeld BGˆy in the deﬁnition of
+and is mostly used as a simulation label.                                                                  the magnetization because it is mostly compressed and does not
+   The magnetization σhots  of the background plasma species s   transfer energy to the particles.
+is the ratio of the energy ﬂux in the reconnecting magnetic ﬁeld                                                                           Finally, the total magnetization of the plasma is:
+to that in the particles (rest-mass, thermal, bulk). The electro-
+magnetic energy ﬂux is the Poynting ﬂux. Far from the current                                                                        B2rec/µ0             σcoldi   (Brec)
+sheet, it reads                                                       σi+e(Brec) =             =                            (5)                                        P s nlab,smsc2Γsh0,s  P s Γsh0,s(ms/mi).
+E ∧B  E ∧Brec  E ∧BG   B2rec          B2G
+     =      +      =      vEy×Brec ˆx +     vEy×Brec ˆx, (1)   In the inﬂow part of our simulations, we have for the range of  µ0        µ0        µ0      µ0           µ0
+                                                         background temperatures considered here: h0,i ∼1, h0,e < 2.6,
+where B = Brecˆz + BGˆy and vEy×Brec = Ey/Brec. This splitting of  and mi =  25me, so that the particle energy ﬂux is largely
+the energy ﬂux in two contributions, one from the magnetic ﬁeld  dominated by the rest-mass energy ﬂux of the ions, which is
+that will reconnect, the other from the guide ﬁeld that will mostly    nlab,i¯vimic2, and has no temperature dependence. We thus have
+be compressed, is possible only if the electric ﬁeld is normal to   σi+e ∼σcoldi    , and σi+e is not a good representative of the elec-
+B, which is indeed the case in the ideal outer area because of the   tron physics and of the possibility that they be relativistically
+tendency of the plasma to screen parallel electric ﬁelds. For the   magnetized. The inﬂow magnetizations in our simulations are
+particles, the energy ﬂux of species s is (Eq. B.9):                presented in Table 2.
+nlab,s⟨vγmsc2⟩s = nlab,sΓsh0,s¯vsmsc2,                           (2)
+                                                                    2.3. Alfvén velocitieswith nlab,s the particle number density in the lab frame (= Γs
+times that in the comobile frame), ⟨·⟩s denoting an average over  We give the deﬁnitions of the Alfvén speeds that will be used
+momentum of the distribution function, ms the particle mass, ¯vs   to discuss the normalization of the reconnection electric ﬁeld in
+their bulk velocity, Γs the associated Lorentz factor, and h0,s their   Sect. 3.6. They are reported in Table 2.
+comobile enthalpy (drawn in Fig. B.1 for a thermal distribution).     The Alfvén velocity in the inﬂow plasma, far from the cur-
+All in all, the magnetization of species s is:                        rent sheet, is expressed in the comobile plasma frame and is,
+                                                                   respectively in the non-relativistic and relativistic cases:          E × Brec/µ0        B2rec/µ0
+σhots  (Brec) =          =
+              nlab,s⟨vγmsc2⟩s    nlab,smsc2Γsh0,s                                           Btot
+                                                               (3)  VNRA,in =                                ,                                (6a)
+              σcolds   (Brec)                                               pµ0n0,bg(me + mi)       =                   ,
+                 Γsh0,s                                                                                     σi+e(Btot)   !1/2       VNRA,in
+                                              VRA,in = c             ≃                              ,          (6b)with σcolds   the magnetization of the plasma without taking into           1 + σi+e(Btot)    q       2
+                                                                         VNRA,in  /c2 + 1account temperature eﬀects and relativistic bulk motion:
+
+              B2                                        where σi+e(Btot) is to be expressed in the comobile frame (Eq. 5
+                                      .                                      (4)σcolds  (B) =                                                            with nlab,s = n0,bg the comobile density and Γs = 1), and where            µ0nlab,smsc2
+
+                                                                                                                      Article number, page 3 of 22
+
+===== PDF PAGE 4 =====
+Btot = (B20 + B2G)1/2. For the relativistic expression 6b, the ﬁrst
+equality is general and derived from the relativistic ideal MHD
+description (Gedalin 1993), while the second holds only because
+mi ≫me and the total enthalpy is dominated by the ion contribu-
+tion. When there is a guide magnetic ﬁeld, we show in Sect. 4.3
+that it is relevant to project the Alfvén speed into the direction of
+the reconnecting magnetic ﬁeld (ˆz), i.e., to consider VRA,in cos θ
+with tan θ = BG/B0.
+  A hybrid Alfvén speed is often deﬁned in the literature, as
+depending on the asymptotic magnetic ﬁeld (without the guide
+ﬁeld) and on the comobile density at the center of the current
+sheet:
+              B0             me   !1/2 ωce
+VNRA,0 =               =                       c,        (7)
+    p µ0n0,cs(0)(me + mi)    me + mi     ω0,pe
+
+where a subscript 0 indicates a comobile quantity. Its relativistic
+generalization is denoted by VRA,0, and is obtained with Eq. 6b
+but with parameters of the plasma at the center of the current
+sheet in the magnetization.
+
+
+2.4. Simulation parameters and resolution tests
+
+The physical parameters of the main simulations are given in
+Tables 1 and 2. We consider a mass ratio mi/me = 25, except
+for one simulation with pairs. The background plasma number
+density is nbg = 0.1ncs(0) or 0.3ncs(0).  Its temperature is var-
+ied between Tbg = 1.5 × 107 K (2.5 × 10−3mec2) and 3 × 109 K
+(0.5mec2). The magnetization depends on the ratio ωce/ωpe = 1,
+3, or 6, leading to inﬂow magnetizations σhots  between 10 and
+260 for electrons, or 0.4 and 14 for ions. The current sheet is
+either of initial half-width L = 0.5di = 2.5de, or L = 1di in the
+ωce/ωpe = 6 case, with de, di the inertial lengths deﬁned at cur-
+rent sheet center. We stress that for relativistic temperatures the
+sheet width in terms of Larmor radii will not be the same for sim-
+ulations with diﬀerent ωce/ωpe (Eq. A.5); see L/rce in Table 1.                                                                         Fig. 1.   Electron number density in the whole simulation domain, at
+   The numerical resolution is set by the number of cells nx   two diﬀerent times. From run ωce/ωpe = 3, σhote = 89, Tbg = 1.5×107 K.
+per electron inertial length de, by the number of timesteps nt   Units are the number of electron superparticles per cell, lengths are in
+per electron plasma period 2π/ωpe, and by the number of com-    cell numbers. Here 40Tpe = 30ω−1ci = 750ω−1ce .
+puter particles (the so-called superparticles) per cell ρsp. The
+quantities de, ωpe, and ρsp are deﬁned at t = 0 at the center of
+the current sheet, where the particle density is highest. For the   a large enough number ΛPIC of superparticles per Debye sphere.
+simulations of Table 2, we take nx = 9 and nt = 150 (250 for  For example, with Θe = 2.4 the electron Debye length is 20 cells
+ωce/ωpe = 6). We checked with a simulation with twice this res-   large, and we have initially at the center of the current sheet:
+olution (ωce/ωpe = 3, nx = 18, nt = 250) that all of the presented   ΛPIC ∼364 × 20 × 20 = 7.3 × 105 superparticles. For a back-
+results are not aﬀected1.                                    ground plasma with Tbg = 2×108 K: ΛPIC = 133. We performed
+   Concerning the number of superparticles per cell, the simu-   a simulation identical to that with ωce/ωpe = 3, nbg/ncs(0) = 0.1,
+lations of Table 2 use ρsp = 1820 (1090 for nbg/ncs(0) = 0.3).   Tbg = 2 × 108 K, but with half the superparticles, and found no
+This corresponds, for the case nbg/ncs(0) = 0.1, to 1650 electron  change in the results.  It shows that the main simulations use a
+and ion superparticles per cell for the plasma of the current sheet,   large enough ρsp.
+and to 170 for the background plasma. The density proﬁle of the                                                              Boundaries are periodic along z and y.  At the top and
+current sheet plasma is set by changing the number of superpar-                                                         bottom x boundaries we use reﬂective boundaries,  i.e., we
+ticles per cell when going away from the center. We stressed                                                               place a perfectly conducting wall that reﬂects waves and par-
+in Melzani et al. (2013, 2014) that because of their low num-                                                                               ticles.  The number of cells for the standard simulations is
+bers of superparticles per cell when compared to real plasmas,                                                     4100 × 6144.  The length along y  is of no dynamical im-
+PIC simulations present high levels of collisionality. One should                                                                 portance, and the dimensions correspond to a 2D simulation
+thus ensure that collisionless kinetic processes remain faster than                                                            with 455 initial electron inertial lengths along x and 683 along
+collisional eﬀects (e.g., for thermalization), essentially by taking                                                                                    z, with typically 4 × 109 superparticles.   It takes 70 Tpe for
+ 1                                                                        light waves to start from the current sheet, reﬂect at the ±x  Throughout this section, “all the results” means the time evolution of
+the reconnection rate and of the width of the diﬀusion zone for electrons   boundaries, and come back to the sheet.  This corresponds
+and ions, the distribution functions of high-energy particles, the temper-   to (18, 52, 106)ω−1ci , or (450, 1300, 2650)ω−1ce  for, respectively,
+ature curves in the diﬀusion zone, the energy content in the outﬂows, as   simulations with ωce/ωpe = 1, 3, 6. The light travel time in
+well as the relative weight of the terms in Ohm’s law.                   the z direction is larger.  Except for run ωce/ωpe = 1, all the
+
+Article number, page 4 of 22
+
+===== PDF PAGE 5 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+
+
+
+
+                                                                                                                                 Brec
+                                                                                 sheet
+                                                        2600                                                                             Current                          island
+                                                        2400
+
+                                                        2200
+                                                     x                                                       Brec
+                                                        2000
+
+                                                         1800
+
+                                                         1600                                                                                                      400
+                                                                                                    600
+                                                                                                 800
+                                                                                               1000
+                                                                                             1200   y
+                                                                                 z                 1400                                                            4800500052005400560058006000
+
+                                                                         Fig. 3.   Typical trajectory for a particle, here an electron. Note the
+                                                                           Speiser-like oscillatory motion inside the current sheet. Axis scales are
+                                                                    given in cell numbers, with 9 cells representing one initial electron in-
+                                                                                       ertial length de. Dot colors are the particle Lorentz factor. Solid lines
+                                                                         are projections onto the x-y, y-z, and z-x planes. The y direction is not
+                                                                      described in the simulations, and is here reconstructed on the basis of
+                                                               an invariance of the electromagnetic ﬁelds along y.
+Fig. 2.    Zoom around a X-point showing various ﬂuid quantities.
+From run ωce/ωpe = 3, σhote  = 89, Tbg = 1.5 × 107 K, at t = 40Tpe =
+30ω−1ci = 750ω−1ce and z ∼3024 cells. Units for particle densities are   the layer of magnetic ﬁeld reversal (Coppi et al. 1966), with a
+particle numbers per cell. The temperatures at the same time are shown  mechanism similar to a ﬁlamentation instability: perturbations
+in Fig. 10, and cuts along x and z in Figs. 4 (upper-right), 7, 8, and 9   in Bx and Bz lead to a bunching of the particles, which in turn in-
+(right).                                                          crease the magnetic ﬁeld perturbation. It leads to the formation
+                                                                of alternating X- and O-points, here with no privileged location
+                                                           because we impose no localized initial perturbation (Fig. 1).
+analyses presented here are for smaller times and are thus not
+                                                          With the appearance of X- and O-points, the magnetic ﬂux
+aﬀected by boundaries. To check this, we performed a larger
+                                                                    variations across ﬁxed contours induce an out-of-plane electricsimulation with 8000 × 10240 cells (i.e., 888 × 1138 initial elec-
+                                                            ﬁeld Eyˆy ∝−ˆy, that ampliﬁes the initial current along −y, that in-
+tron inertial length) for the case ωce/ωpe = 3, nbg/ncs(0) = 0.1,                                                                 creases the magnetic ﬁeld in order to cancel the former magnetic
+Tbg = 2 × 108 K, with the same nt, nx, ρsp. The corresponding                                                    ﬂux variations and prevent reconnection.  However, non-ideal
+light-crossing time is now 136 Tpe = 101ω−1ci = 2535ω−1ce . All   processes forbid an ideal plasma response, and allow the trigger-
+the results are the same, which shows that we do not suﬀer from                                                               ing of reconnection and the existence of a ﬁnite electric ﬁeld at
+boundary eﬀects.                                                                  the current sheet center, where ideal Ohm’s law would otherwise
+                                                              read Ey = 0. This electric ﬁeld Ey is at the heart of the reconnec-
+                                                                     tion process, as it is responsible for the transfer of energy from3. Results with no guide ﬁeld
+                                                                  the magnetic ﬁeld to particles in the diﬀusion region. We de-
+This Section explores results for simulations with no guide ﬁeld,    tail Ohm’s law and the contribution of each non-ideal terms in
+where the magnetic ﬁeld above and below the current sheet is   Sect. 3.3.
+antiparallel.                                                 Plasma and magnetic ﬁelds decouple in the non-ideal re-
+                                                                  gion, and ﬂux tubes can “reconnect”, producing new ﬂux tubes
+                                                                 strongly bent that accelerate the plasma outward in the ±ˆz direc-
+3.1. Overall structure and evolution
+                                                                         tions, thus producing the exhaust outﬂows. This depletion of par-
+We ﬁrst summarize the general picture, rising important points   ticles and/or the spreading of the electric ﬁeld Ey outside the cur-
+that are detailed in the next subsections. The initial kinetic equi-   rent sheet create an inﬂow from the ideal zone toward the current
+librium is unstable to the collisionless tearing mode, which in all   sheet: particles E × B drift at a speed vin = E × B/B2 = Ey/Bzˆx.
+presented simulations is triggered by the noise level and by the  The incoming particles are then accelerated along ˆy by Ey once
+slightly out of equilibrium initial state. We have studied in detail   they enter the non-ideal region where they are unmagnetized (be-
+the linear phase of this instability with PIC simulations (Melzani   cause there E > B). The structure of this central region is inves-
+et al. 2013) for pair plasmas, and found growth rates within 5%   tigated in Sect. 3.2.
+of the analytical derivations of Pétri & Kirk (2007) made on the     The exhaust outﬂows, which in the MHD view are driven
+basis of a linearization of the Vlasov-Maxwell system. Physi-  by the magnetic ﬁeld tension force, are produced by particles
+cally, the instability is driven by the particles freely bouncing in   accelerated by Ey along ˆy and then slowly rotating due to the
+
+                                                                                                                      Article number, page 5 of 22
+
+===== PDF PAGE 6 =====
+increasingly strong magnetic ﬁeld Bx as one goes away from the                                                     200        width δi
+X-point (Fig. 3). As they do so, particles still gain energy as                                                                                         inertial length di
+long as qsEyˆy·v > 0. The energy content of these outﬂows com-  150
+prises a Poynting ﬂux, bulk kinetic energy, and thermal energy,
+                                                     100with respective weights that depend on the background plasma
+parameters, as studied in Sect. 3.4. The balance between inﬂow                                                      50
+and outﬂow can lead, depending on the conditions, to a steady                                            a
+state Sweet-Parker-like conﬁguration.                         0
+    In the conﬁguration of the simulations the initial perturba-                      width δe                                                      40
+tion is not localized in space, so that several X-points appear,                            inertial length de
+with islands in-between that collect the ﬂux of particles and of   30
+reconnected magnetic ﬁeld. The islands are trapped between two
+exhausts, and the bulk energy of the outﬂows is converted into   20
+heat by random scatterings in the complex electric and magnetic                                                      10                                       a
+structures at the island entrance and inside the islands (Fig. 10),
+with however particle distributions not necessarily thermal (see     0        20       40       60       80      100                                                                                                   t/Tpe
+Sect. 3.5). The islands grow, and since they are threaded by
+                                                      180parallel currents (along −ˆy), attract each others via the Lorentz
+                                                      160       width δiforce and merge, thus growing even more. As time goes on,
+                                                      140         inertial length dithe island number dwindles and the space in-between them in-
+                                                      120creases, forming elongated current sheets composed of a X-point
+                                                      100
+surrounded by two elongated exhausts (see Fig. 2). We stop the                                                       80
+simulations when only two or three islands remain.
+                                                       60                                    b
+                                                       40
+
+3.2. Inﬂow: two-scale diffusion region and sharp transitions                                                       70
+                                                                                                 width δe                                                       60We examine the inﬂow of plasma into the diﬀusion region. In                                                       50                                             inertial length de
+the literature, for antiparallel reconnection (i.e., no guide ﬁeld),
+                                                       40
+its width is found to scale with the particles inertial length, a                                                       30
+result that we show to hold also for relativistic reconnection in                                                       20
+Sect. 3.2.1. The originality of our results is the formation of a                                                       10                                    b
+very sharp transition at the entrance of the diﬀusion regions, that
+we explore in Sect. 3.2.2.                                          10     20     30     40     50     60     70
+                                                                                                    t/Tpe
+
+                                                                         Fig. 5.  Width of the diﬀusion region δs, and inertial length ds measured
+3.2.1. Width of the diffusion region                                                                                  at the center of the diﬀusion region, for ions and electrons. Panels a are
+                                                                            for the simulation with ωce/ωpe = 3, σhote = 89, Tbg = 1.5 × 107 K andThe diﬀusion region is, by deﬁnition, the area where impeding
+                                                       BG = 0; panels b for ωce/ωpe = 6, σhote = 260. The phase between 0 andmechanisms (which can be collisions, inertia and collective in-
+                                                                   18Tpe for panels a (0 and 33Tpe for panels b) corresponds to times whereteractions, or ﬁnite Larmor eﬀects) prevent the particles from
+                                                                         the tearing instability has not yet started. The decrease in δe between 18
+responding in an ideal way to the electric ﬁelds induced by mag-                                                              and 20Tpe for a (33 and 37Tpe for b) is the linear and non-linear growth
+netic ﬂux variations. The magnetic ﬁeld and the plasma are then   phase of the instability.
+not coupled anymore, the former can freely diﬀuse, and recon-
+nection can start or be sustained. Deﬁning the diﬀusion region is
+thus a matter of ﬁnding the area where the non-ideal processes
+dominate over ideal behavior.
+   Deﬁning unambiguous criteria to identify this region is a
+                                                                  ent simulations. The width δs of the diﬀusion region is roughlycomplex subject (Ishizawa & Horiuchi 2005; Klimas et  al.
+                                                             given by the inertial length ds of the corresponding species, de-2010), especially in the presence of a guide ﬁeld (Hesse et al.
+                                                     ﬁned with the particle density at the center of the diﬀusion re-
+2002, 2004; Liu et al. 2014), in 3D simulations (Pritchett 2013),
+                                                                  gion, i.e., δs ∼ds = c/ pns(x = 0, t)q2s/ϵ0ms, with throughout allor in asymmetric conﬁgurations (Zenitani et al. 2011b). In our
+                                                                simulations 0.5 ≤δi/di ≤1 and 1 ≤δe/de ≤1.5 (Fig. 5). Thiscase, as we show in Sect. 3.2.2, there is a sharp increase in parti-
+                                                                                is also the scaling found in PIC simulations of non-relativisticcle density when the inﬂow plasma reach the central part, where
+                                                                  ion-electron magnetic reconnection (e.g., Pritchett 2001; Klimasparticles are retained by bouncing motions around the reversing
+                                                                          et al. 2010).magnetic ﬁeld. It is associated with a sharp drop in inﬂow veloc-
+ity, a rise in temperature, and a violation of the frozen-in relation
+E + ¯vs ∧B = 0. We identify the diﬀusion region with this area      In the case of hot background electrons (Tbg,e = 3 × 109 K,
+of increased density.                                          with a corresponding background plasma βe = 1.1 × 10−2), the
+   Because of their lighter mass and fastest response, electrons   transition is less sharp and the width is larger than the inertial
+remain frozen to the magnetic ﬁeld longer than ions. The ion   length. The sharpness is discussed in Sect. 3.2.2, and the larger
+diﬀusion region is thus larger than the electron one. In all the   extent is expected because inﬂowing particles have larger speeds,
+antiparallel simulations we ﬁnd the expected two-scale (ion and  and thus larger Larmor radii and larger bouncing motions. The
+electron) diﬀusion region.  It can be seen in Fig. 4, where we  width δs should thus also depend on the βs parameter of the in-
+present a cut along x through a X-point at a given time for diﬀer-  ﬂow.
+
+Article number, page 6 of 22
+
+===== PDF PAGE 7 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+ 200                                                               600
+                                                                                                                               ion diﬀusion region
+                                                                   400
+ 100                                                                                                                          electron diﬀusion region
+                                                                   200
+  0                                                                 0
+                                                           electron density                                                                  electron density
+                                                        ion density          200                                                   ion density 100
+                                                          current jy            400                                                      current jy
+       ωce/ωpe = 1                              6000[E + ve ∧B]y           ωce/ωpe = 3                              3000[E + ve ∧B]y
+ 200
+          Tbg,i or e = 1.5 × 107 K                                                  1.0     Tbg,i or e = 1.5 × 107 K
+  0.6                                                             vy electron                                                                            vy electron
+  0.4                                                            vx electron          0.5                                                            vx electron
+  0.2                                                    Bz                                                                       Bz
+  0.0                                              100Ey              0.0                                              10Ey                                                                                                                                          ion                                                                                                                                                       vx                                                             ion  0.2                                                            vx                                                                                                                   [E                                                                                                              ∧B/B2]x  0.4                                                  [E                                                 ∧B/B2]x        0.5
+  0.6
+                                                                                1.0
+               1900        2000   cells  2100        2200        2300  1800        1900        2000   cells  2100        2200        2300
+
+ 200
+                                                                   100
+ 100
+
+  0                                                                 0
+                                                            electron density                                                                  electron density
+ 100                                                    ion density                                                                   ion density
+                                                               =                                                                                 3                                                                              ωce/ωpe                                                            current                                                                                      jy                                                                   100                                                                                                                                             current                                                                                                                                                                                              jy           =               3       ωce/ωpe                                           +                                                3000[E                                                                    ve ∧B]y 200                                                                                               +                                                                                                                  6000[E                                                               ×                                                                              2                                                                                         108                                                           K                                                                                                                                                   ve ∧B]y                                                                                                        Tbg,i =                                                                                0.8 0.8               2             × 108 K         Tbg,i or e =                                                               ×                                                            =                                                                              3                                                                                         109                                                           K                                                                                                 Tbg,e                                                                                0.6 0.6                                                                                                                                                           vy electron                                                                   vy electron
+ 0.4                                                             vx electron          0.4                                                              vx electron
+ 0.2                                                     Bz                  0.2                                                     Bz
+ 0.0                                              10Ey               0.0                                               10Ey
+ 0.2                                                             vx ion              0.2                                                              vx ion
+ 0.4                                               [E ∧B/B2]x        0.4                                               [E ∧B/B2]x
+ 0.6                                                                            0.6
+   1800        1900        2000   cells  2100        2200        2300  1800        1900        2000   cells  2100        2200        2300
+    30        20        10        0         10        20               30        20        10        0         10        20
+                               electron inertial lengths c/ωpe(t = 0, x = 0)                                       electron inertial lengths c/ωpe(t = 0, x = 0)
+
+Fig. 4.  Cut along x through the X-point for four simulations, as indicated in the insets. The times are t = 40Tpe = 30ω−1ci = 750ω−1ce for the cases
+ωce/ωpe = 3, and t = 142Tpe = 35ω−1ci = 875ω−1ce for the case ωce/ωpe = 1.
+
+
+                                                    current jy     ond, because the width of the transition between inﬂow plasma
+                                                                                     ¯vx electron   and diﬀusion region plasma is, in the sharpest case, less than an
+                                                                                     ¯vx ion         electron inertial length, while we know that the thermalization
+                                                                of a cold inﬂow by collisionless kinetic processes occurs on a
+                                                           width of some inertial length, with also the formation of a pre-
+                                                                cursor upstream (e.g., Plotnikov et al. 2013) that is not seen here.
+                                                                 Third, because there is no variations in the magnetic ﬁeld across
+                                                                  the sharp particle density variation.
+
+                                                                        Instead, we explain these sharp transitions by quasi-ballistic
+                                                          motions of the particles entering in the diﬀusion region. Figure 6
+                                                      shows some particle trajectories: they travel toward the diﬀusion
+                                                               region because of the electric ﬁeld E with a guiding center ve-
+                                        cut                                                    x        locity given by vE×B = E × B/B2, they reach the magnetic ﬁeld
+                                                                       reversal, overshoot to the other side because of their inertia, turn
+Fig. 6.    Trajectories of a sample of particles, and on the right ﬂuid  around the increasingly strong magnetic ﬁeld, and then oscillate
+velocities and current for a cut through the X-point.                  around the B = 0 line before being ejected toward the islands
+                                                             (because they have a large vy in the Bx ﬁeld, see Sect. 3.1 and
+                                                                    Fig. 3 for a trajectory in 3D). This explains well the ﬂuid point
+3.2.2. Sharpness of the inﬂow boundaries                      of view of Fig. 4: averaging over particles to obtain the ﬂuid
+                                                                       particle number density or ﬂuid velocity, the sharpness of the
+We see from Fig. 4 that the boundary of the diﬀusion region,   transitions is due to the fact that all particles of the same species
+deﬁned by the increase in particle number density, is very sharp   turn around at roughly the same location.
+in some cases (especially for the case ωce/ωpe = 3 with a cold
+background plasma). These sharp transitions are not the trace         It also explains the M shape of the particle densities of Fig. 4:
+of a shock between the incoming plasma and the over-dense dif-   particles spend more time at the edge of the diﬀusion region,
+fusion region. First, because the inﬂow bulk velocity is not su-  when turning back, than at the center, hence the peaks at the
+personic, in the sense that we have ¯vin,s < Cfms, with Cfms the  edges and the depletion at the center. The ﬂuid velocity proﬁles
+phase speed of waves propagating perpendicular to the magnetic   are also well explained by the particle view. We note that a M
+ﬁeld B0, i.e., the fast magnetosonic velocity in MHD (Alfvén   shape is also reported in the context of the inversion electric ﬁeld
+and slow waves do not propagate perpendicularly to B0). Sec-   layer (Chen et al. 2011, and references therein). Here we do
+
+                                                                                                                      Article number, page 7 of 22
+
+===== PDF PAGE 8 =====
+not ﬁnd any trace of the inversion layer in the electric ﬁeld. A                                                                                         Ey
+possible explanation may be that our electrons are relativistic.                                                                                                                         −[¯ve ∧B]y
+   Concerning the sharp transitions, the question is thus to                                       −[n−1e ∇· (ne¯ve ¯pe)]y
+know why and under which conditions all the particles of a                                                                                               −[n−1e ∇· (neδveδpe)]y                                                                0.1
+species turn back at the same location.  They will do so  if                                                                                                                                    elec.        all (should be
+they all enter the diﬀusion region with the same velocity, i.e.,                               ion      diﬀ.      equal to Ey)
+                                                                                                                diﬀ.     region
+if their thermal velocity is smaller than their bulk velocity:                                region
+vth  in,s ≪¯vin,s ∼vE×B.  Table 3 presents the ratio vthin,s/¯vin,s for            thermal inertia
+the diﬀerent simulations of Fig. 4. For a given magnetization,   0.
+here ωce/ωpe = 3, we clearly see a correlation between a small              bulk inertia
+vthin,s/¯vin,s and a sharp transition. In particular, in the case with
+very hot electrons (vthin,e/¯vth,e =  1.8) and relatively cold ions
+(vthin,i/¯vin,i =  0.1), the electron particle number and velocities
+present smooth variations, while the same curves for ions do ex-
+hibit sharp transitions. This is in accordance with the explana-             1950    2000    2050    2100    2150  cells
+tion of sharp transitions by the cold nature, in term of the ratio                                                                    -15     -10     -5     0      5      10     15
+vthin/vE×B, of the inﬂowing plasma.                                                     electron inertial lengths c/ωpe(x = 0, t = 0)
+   The inﬂuence of the magnetization on the sharpness of the
+                                                                         Fig. 7.    Diﬀerent components of Ohm’s law (Eq. 8) for a cut alongtransitions is seen by comparing the two ﬁrst simulations of Ta-
+                                                                   x through a X-point (the same as in Figs. 2, 4 upper-right, 8, 9 right,
+ble 3, with ωce/ωpe = 1 and 3 and same ratio vthin,s/¯vin,s (plotted   and 10). Run ωce/ωpe = 3, σhote  = 89, Tbg = 1.5 × 107 K, BG = 0,
+on the top part of Fig. 4). A smaller magnetization implies a                                                                                                           t = 40Tpe = 30ω−1ci = 750ω−1ce .
+smoother shape. We understand this as a consequence of the fact
+that particles turn back on a scale given by their Larmor radii in
+the magnetic ﬁeld at the sheet entrance, which is smaller when   ∂t(ne ¯py).   Here we explore the situation in ion-electron rela-
+ωce/ωpe is higher.                                                          tivistic plasmas for antiparallel reconnection. We show for the
+   As a ﬁnal remark concerning resolution, we note that in the   ﬁrst time in the antiparallel case that bulk inertia contributes at
+coldest cases, the thermal Larmor radius of the electrons are   least as much as thermal inertia for large inﬂow magnetizations.
+smaller than a cell length. The resolution of the Larmor radius on  We explain that this is due to a relativistic inﬂow magnetization
+the grid is, however, of no importance to integrate particle trajec-   in Sect. 3.8.
+tories in constant ﬁelds, because interpolation of ﬁeld quantities     Ohm’s law is the ﬂuid equation of motion for the lighter
+to particle position then provides the same (constant) values, re-   particles (the electrons), and is a mean to evaluate the relative
+gardless of the cell size. What matters is the temporal resolution,   weight of the diﬀerent non-ideal terms allowing reconnection
+ωcs∆t < 1 (see Melzani et al. 2013, §3.1, for a discussion). Here,   with a simple ﬂuid picture. Understanding the weight and local-
+we have ωcs∆t = 0.04 and 0.12 for ωce/ωpe = 1 or 3. Also, a test   ization of each term is a ﬁrst step toward building of an eﬀective
+run with a spatial and temporal resolution increased by a factor   resistivity for ﬂuid models (resistive MHD, two-ﬂuid codes, hy-
+two leads to the same structures.                                  brid codes), where concrete resistive parametrizations can lead
+    In summary, the sharp transitions are explained by collec-   to very diﬀerent behaviors, for instance changing from steady
+tive bouncing motions allowed by the cold nature of the inﬂow:   to unsteady states in Zenitani et al. (2009b), or triggering or not
+vth  in,s ≪¯vin,s. Such transitions may also occur in non-relativistic   a Petsheck-like conﬁguration depending on the localization and
+reconnection, but then the inﬂow speed ¯vin,s ∼E/B is low and   gradients of the resistivity (Baty et al. 2006).
+the background plasma should be very cold. They are likely to     The relativistic Ohm’s law for electrons is directly derived
+be more common in relativistic reconnection, where ¯vin,s ∼E/B  from the equation of conservation of momentum for the electron
+is larger. This may be why, to our knowledge, they have never   ﬂuid, Eq. B.4, which is itself obtained from Vlasov equation in
+been reported in other simulations.                          Appendix B. It reads:
+
+                                                                   qe              1 ∂        1 ∂
+3.3. The relativistic Ohm’s law                               (E + ¯ve ∧B) =            ¯pe) +           · (ne⟨peve⟩)                                                    me                ne ∂t(ne      ne ∂x
+We explore the balance of terms in Ohm’s law. The literature        1 ∂        1 ∂
+                                             =            ¯pe) +           · (ne ¯pe¯ve)concerning 2D non-relativistic reconnection largely shows that          ne ∂t(ne      ne ∂x
+for antiparallel reconnection, the dominant term is thermal iner-      |            bulk{zinertia      }                         (8)
+tia either in ion-electron (Klimas et al. 2010; Shay et al. 2007;
+                                                                                 1 ∂
+Fujimoto 2009) or pair (Bessho & Bhattacharjee 2005) plasmas,                      +           · (ne⟨δpeδve⟩) .
+and this fact is the key element of various analytical models                                     ne ∂x
+(e.g., Hesse et al. 2011). On the other hand, reconnection with                        |    thermal{zinertia  }
+a guide ﬁeld is sustained by electron bulk inertia at skin-depth
+scales, and thermal inertia at Larmor radius scales (Hesse et al.  Here we use for simplicity quantities computed in the simula-
+2002, 2004; Liu et al. 2014). Existing studies with relativistic   tion (or lab) frame, e.g., ne is the electron number density in the
+pair plasmas conﬁrm the non-relativistic trend: with no guide   lab-frame (denoted by nlab,e in Appendix B). Bared quantities
+ﬁeld, Hesse & Zenitani (2007); Bessho & Bhattacharjee (2012);   are averaged over the momentum distribution function. We also
+Zenitani et al. (2009a) ﬁnd a dominating contribution of thermal  used the deﬁnition δp = p −¯p where p = γv is the momen-
+inertia, while with a guide ﬁeld Hesse & Zenitani (2007) ﬁnd a   tum. Brackets ⟨·⟩s denote an average in momentum space over
+signiﬁcant contribution of the time derivative of bulk momentum   the particles distribution function. The left-hand side of Eq. 8 is
+
+Article number, page 8 of 22
+
+===== PDF PAGE 9 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+Table 3. Values regarding the sharpness of the edge of the diﬀusion region. Here Θs = Ts/(msc2), vthin,s = √Ts/ms, and ¯vin,s the ﬂuid velocity at the
+entrance of the diﬀusion region of species s, measured in Fig. 4. Also, ˜rcs is the thermal Larmor radius in number of cells with rcs = ⟨(γv⊥)2⟩1/2/ωcs,
+estimated with the formula for a Maxwell-Jüttner plasma at rest as rcs = (c/ωce) √2Θsκ32(1/Θs) (Melzani et al. 2013). The indication of sharpness
+is qualitative, see Fig. 4 for details.
+
+   ωce/ωpe    Tbg,e (K)     Tbg,i (K)       Θbg,e       Θbg,i    vthin,e/¯vin,e    vthin,i/¯vin,i   Sharpness: elecs.   and ions       ˜rci,in     ˜rce,in
+     1      1.5 × 107   1.5 × 107   2.5 × 10−3   10−4      0.1       0.02          sharp           sharp      0.6   3.18
+     3      1.5 × 107   1.5 × 107   2.5 × 10−3   10−4      0.1       0.02       very sharp      very sharp   0.2    1.1
+     3      2 × 108    2 × 108    3 × 10−2    10−3      0.3        0.1          sharp           sharp      0.7    3.7
+     3      3 × 109    2 × 108    5 × 10−1    10−3      1.8        0.1        smooth          sharp      3     3.7
+
+
+      1.5                                    Θxx  Θxy     sharp transitions at the entrance of the electron diﬀusion region,
+           electrons                           Θyy  Θxz     where the derivatives diverge. Diﬀerent areas emerge:
+      1.0                                         Θzz   Θzy
+                                                                    jy
+      0.5                                               – The electrons are ideal outside of the ion diﬀusion region.
+      0.0                                               – In the ion diﬀusion region, |¯ve ∧B| decreases linearly.
+      0.5                                                The bulk inertia term P k ∂k(ne ¯pk¯vy) rises linearly to compen-
+                                                                              sate. The term ∂x(ne ¯px¯vy) dominates over ∂z(ne ¯pz¯vy). The
+10                                                                   contribution of the former is understandable when looking at
+                                             Θxx  Θxy 7.5  0.3                                                                                        ¯px and ¯vy that increase when we get closer to the sheet in this                                              Θyy  Θxz           ions
+5    0.2                                                  Θzz   Θzy        region (see Fig. 4 for ¯vy).
+                                                                      jy            The thermal inertia term P k ∂k(neδpkδvy) is slightly posi- 2.5  0.1
+                                                                                   tive, and partly cancels the contribution of bulk inertia. This
+ 0.0  0.0
+                                                                      cancellation is also reported in Fujimoto (2009) and Klimas
+ 2.5  0.1                                                                              et al. (2010) for non-relativistic ion-electron plasmas, and in
+ 5   0.2                                                   Bessho & Bhattacharjee (2012) for relativistic pairs. Only
+                                                                  ∂x(neδpxδvy) contributes, and is negative, which is easily
+      1950      2000      2050      2100        cells                                                                seen when looking at the temperature curves Txy,e and Tzy,e
+           10       5       0        5        10           (Fig. 8).
+                 electron inertial lengths c/ωpe(x = 0, t = 0)                                                      – In the electron diﬀusion region, the ¯ve ∧B term vanishes
+Fig. 8.    Temperatures for a cut along x through the same X-point      (because B is very weak and ¯vx = 0).
+as in Figs. 2, 4 upper-right, 9 right, and 10. Run with ωce/ωpe = 3,     The bulk inertia term is constant, and due only to the term
+σhote = 89, Tbg = 1.5 × 107 K. We deﬁne Θmn,s = Tmn,s/msc2 with s = i       ∂z(ne ¯pz¯vy), which is expected to contribute given that ¯vy ∼cst
+or e. For the ion temperatures, the inner vertical axis is Θi, the outer one                                                           and ¯pz ∝z −zX−point in this region (Fig. 9). The other term,
+is Θi × mi/me, and shows that Ti > Te.
+                                                                     ∂x(ne ¯px¯vy), vanishes because ¯px = cst = 0 in this area.
+                                                      The thermal  inertia term Pk ∂k(neδpkδvy) contributes as
+the ideal part, and is set equal to 0 in ideal MHD. On the right-     much as the bulk inertia term. Only ∂x(neδpxδvy) contributes,
+hand side ﬁgure terms linked to ﬁnite inertia (i.e., particles do     and is negative, which is easily seen when looking at the tem-
+not respond perfectly to the electric ﬁeld variations because of      perature curves Txy,e and Tzy,e in Fig. 8.
+their inertia):
+                                       A cut along x through other X-points in the simulation leads
+ – The ﬁrst term is a part of bulk inertia. However, it vanishes   to the same results. Also, a cut along z through the X-point re-
+    in steady state and we will neglect it (this is validated a pos-   veals that the results of the electron region hold throughout the
+    teriori).                                                       center of the current sheet, with a slow increase of the ¯ve ∧B
+ – The second term is inertia linked to the bulk ﬂow, and is  term as we get near the islands.
+   denoted as bulk inertia. It comes from the overall structure of                                                                    In summary, non-ideal terms in the ion regions are due to
+    the ﬂow around the sheet (the proﬁles of the mean quantities:                                                             bulk inertia and, in the electron diﬀusion region, to an interest-
+    increase of ¯v, ¯p).                                                                 ingly equal contribution of bulk and thermal inertia. For other
+ – The third term is inertia linked to microscopic thermal mo-   runs with ωce/ωpe = 3 (σhote  = 27 to 89), we also ﬁnd an equal
+    tion, and is denoted as thermal inertia.  It comes from the   contribution from thermal and bulk inertia. For the most mag-
+   divergence of the oﬀ-diagonal terms of the pressure tensor,   netized run, ωce/ωpe = 6 (σhote  = 260), the contribution of bulk
+   and can be anticipated by a study of the temperature curves.    inertia exceeds that of thermal inertia by a factor 1.5 to 3. We
+                                                   show in Sect. 3.8 with analytical estimations that the large mag-
+We analyze Ohm’s law in the direction of the reconnection elec-                                                                    netization for electrons indeed allows bulk inertia to overreach
+tric ﬁeld (ˆy here). Given the invariance along y, the divergence
+                                                             thermal inertia, with the former scaling as σcoldin,e and the latterterms have two contributions: P k ∂k(pkvy) = ∂x(pxvy) + ∂z(pzvy).
+A computation of the divergence requires a smoothing of the   as  σcoldin,e  1/2. This eﬀect is present in our simulations, and not
+quantities, especially for the thermal inertia term which is very   in the references previously mentioned with antiparallel ﬁelds,
+noisy.                                                      because our background electron magnetization is larger.  It is
+  We show in Fig. 7 the results for a cut through the X-point,   thus a new regime that challenges the thermal inertia paradigm
+for the simulation with ωce/ωpe = 3 and Tbg = 1.5 × 107 K   at large electron magnetizations. We discuss the possible conse-
+(σhote  = 89). Ohm’s law is satisﬁed everywhere, except at the  quences in Sect. 5.2.
+
+                                                                                                                      Article number, page 9 of 22
+
+===== PDF PAGE 10 =====
+  2.0                                                                   12                                  electrons                                         electrons
+                                                                                                            Θxy                                                                                                     Θxx                                          Θxy                       10  1.5                               Θxx                                                                                                      Θyy                                                                                                                 Θxz                                                                    8                                     Θyy   Θxz                                                                                                                  Θzy                                             Θzy                        6                                  Θzz  1.0                                   Θzz                                                                                                                                                           jy                                                        jy                                                                    4
+  0.5                                                               2
+                                                                    0
+  0.0
+                                                                    2
+     4200      4400      4600      4800      5000      5200          2400     2600     2800     3000     3200     3400     3600
+
+ 0.15
+                                                         ions   Θxx   Θxy     0.8                            ions   Θxx   Θxy
+                                                        Θyy   Θxz                                      Θyy   Θxz
+ 0.10                                                         Θzz    Θzy      0.6                                  Θzz    Θzy
+                                                                                     jy                                                                     jy                                                                                0.4
+ 0.05
+                                                                                0.2
+ 0.00                                                                           0.0
+                                                                                0.2
+     4200      4400      4600      4800      5000      5200          2400     2600     2800     3000     3200     3400     3600
+
+                                                                                                                                density                                                    electron                                                           density           4000                                    electron 3000                                                                                                                    ion density                                                 ion density
+                                                    current jy                2000                                    current jy 2000
+                                                                                               island                                                  island
+ 1000                                                               0
+              island                                                   island
+  0
+
+     4200      4400      4600      4800      5000      5200           2400     2600     2800     3000     3200     3400     3600
+                                                                   20
+  2.0                                           ¯pz elec.
+                          5 ¯pz ions                                  10                      X-point
+  1.0                       Bx/B0
+                                   elec. density
+                                                                    0
+  0.0                                                                                                                                                                                                 ¯pz elec.
+                                                                   10                                     5 ¯pz ions
+  1.0                                                                                                     10Bx/B0
+                                                                                                                                              elec. density
+                                                                   20
+     4200      4400      4600      4800      5000      5200           2400     2600     2800     3000     3200     3400     3600
+  0.5                            X-point                                      1.0                  ¯vz¯vz elec.ion
+                                                                                0.5
+  0.0
+                                                                                0.0
+                                                (E ∧B)z/B2  0.5                                                                                                                   (E                                                                                                               ∧B)z/B2                                                   10[Ey                                          + (¯ve ∧B)y]                  elec.                        ¯vz                                                                                                                          10[Ey                                                                                              + (¯ve ∧B)y]                                                                                0.5                                                                 elec. density               ion                        ¯vz                                                                                                                                                          elec.                                                                                                                                                density
+  1.0
+     4200      4400      4600      4800      5000      5200          2400     2600     2800     3000     3200     3400     3600
+  0.8
+                                                                                                               ¯vy elec.                                                                                                                           ¯vy elec.
+  0.6                                                                                                       ¯vy ion       0.5                                                                                                            ¯vy ion
+  0.4                                                   10Ey                                                               10Ey
+  0.2                                                                           0.0
+  0.0
+                                                                                0.5  0.2
+
+  0.4
+      4200      4400      4600      4800      5000      5200           2400     2600     2800     3000     3200     3400     3600
+                                              cells                                                                                    cells
+       80       100      120      140      160      180      200            120     100     80      60      40      20      0
+                        electron inertial lengths c/ωpe(x = 0, t = 0)                                       electron inertial lengths c/ωpe(x = 0, t = 0)
+
+Fig. 9.  Cut along z through the X-point. Left: Run ωce/ωpe = 1, σhote = 9.9, same X-point as in Fig. 4, t = 142Tpe = 35ω−1ci = 875ω−1ce . Right: Run
+ωce/ωpe = 3, σhote = 89, Tbg = 1.5 × 107 K, BG = 0, same X-point and time as in Figs. 2, 4 upper-right, 7, 8, and 10 (t = 40Tpe = 30ω−1ci = 750ω−1ce ).
+
+
+3.4. Outﬂow: energy content of the exhaust jets                 3.4.1. A simple analytical estimation
+
+
+It can easily be shown (Sect. 3.4.1) from analytical considera-  As explained in Sect. 3.1, bipolar outﬂow jets are naturally pro-
+tions that the outﬂows from the diﬀusion region should have rel-  duced from each side of the X-points. They are clearly visible
+ativistic bulk velocities and/or relativistic temperatures. In our   in Fig. 2. An estimation of the energy content of these outﬂows
+simulation data, the thermal part always clearly dominates over  can be easily obtained in steady state, by using the conservation
+the bulk kinetic energy part, more strongly for more relativistic   of particle number and of energy. To do so, we consider that
+cases (Sect. 3.4.2). A reﬁned analytical estimate explains why in   the diﬀusion region for species s has a length Ds (along z) and
+Sect. 3.8.                                                    a width δs (along x). We generalize the situation to cases where
+
+Article number, page 10 of 22
+
+===== PDF PAGE 11 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+Table 4. Energy content of the outﬂows. The energy ﬂux due to the bulk ﬂow mean velocity is proportional to Γout,s −1, and the energy ﬂux due
+to kinetic particle motions and pressure work is proportional to Γout,s(h0,out,s −1) (see Eq. 12). Here BG/B0 = 0. Quantities are measured at their
+maximum value, which is reached at the end of the exhausts along z.
+
+          ωce/ωpe   nbg/n0     Tbg,e, Tbg,i (K)    σcoldin,e    σcoldin,i                        electrons           ions
+            1        0.1     1.5 × 107, idem    10     0.4          Γout,s −1        0.49   31%   0.02  20%
+                                                                                     Γout,s(h0,out,s −1)     1.07   69%   0.08  80%
+            3       0.31    2.0 × 108, idem    29     1.2          Γout,s −1        0.71   14%   0.065  22%
+                                                                                     Γout,s(h0,out,s −1)     4.34   86%   0.24  78%
+            3        0.1    3 × 109, 2 × 108   90     3.6          Γout,s −1        0.089   1%   0.056  9%
+                                                                                     Γout,s(h0,out,s −1)     15    99%   0.54  91%
+            3        0.1     1.5 × 107, idem    90     3.6          Γout,s −1        0.63    5%    0.13  20%
+                                                                                     Γout,s(h0,out,s −1)     11    95%    0.5   80%
+            3        0.1     2.0 × 108, idem    90     3.6          Γout,s −1        0.38    4%   0.091  14%
+                                                                                     Γout,s(h0,out,s −1)      9.7    96%   0.56  86%
+            6        0.1     8.0 × 108, idem   360    14           Γout,s −1        0.42    1%    0.19   8%
+                                                                                     Γout,s(h0,out,s −1)     51    99%    2.2   92%
+
+
+there is a guide ﬁeld BG. We denote quantities entering (leaving)   non-relativistic velocities, Eq. 9 becomes2
+this region by a subscript “in” (“out”, respectively).
+                                                                                     h0,out,sΓout,s = 1 + σcoldin,s (B0).                               (11)
+   Conservation of particle number (Eq. B.3) gives nin,svin,sDs =
+nout,svout,sδs. The inﬂow velocity is estimated by the E × B veloc-  We clearly see that for a  relativistic inﬂow plasma, where
+ity as vin,s = Ey/B0. This assumes that the reconnection electric   B2/µ0 > nmc2 and hence σcoldin,s (B0) > 1, magnetic reconnec-
+ﬁeld is constant inside and outside of the diﬀusion region, a fact   tion is expected to produce outﬂows with either relativistic bulk
+conﬁrmed by our simulations, and that particles do E × B drift   velocities (Γout,s > 1), or relativistic temperatures (h0,out,s > 1),
+up to the very entrance of the diﬀusion region, which is true in   or both. We also see that since σcolds   ∝1/ms, electrons will
+our simulations up to a factor ∼2 (Fig. 4). It also assumes that  be more accelerated/heated than ions, and that relativistic elec-
+the value of the magnetic ﬁeld at the entrance of the diﬀusion   trons (σcolde  > 1) can be expected even at low ion magnetizations
+region is the asymptotic ﬁeld B0, while in our simulations Bz has   (σcoldi  = σcolde  × me/mi ≪1).
+already dropped by a factor ∼3 at this level (Fig. 4), leading to
+an error in vin,s of the same order.
+                                                                    3.4.2. Results from simulations
+   Regarding energy conservation (Eq. B.9), the inﬂow energy
+                                         We ﬁrst check that the energy estimate of Eqs. 9 and 11 holds
+ﬂux includes the particle energies, and the reconnecting and
+                                                                     in all simulations, which is indeed true up to a factor ∼6. An
+guide ﬁeld Poynting ﬂuxes (Eqs. 1 and 2): Dsnin,smsc2 ¯pin,s +                                                            only approximate correspondence is to be expected because this
+Dsvin,s · B20/µ0 + Dsvin,s · B2G,in/µ0. We assume that in the out-                                                                      relation assumes a simple geometry, and no energy exchange be-
+ﬂow the energy in the reconnected magnetic ﬁeld B0 is neg-                                                        tween the species.  For example, in Fig. 9, for ωce/ωpe = 3,
+ligible compared to particle energy, so that the energy ﬂux is
+                                              we measure in the inﬂow 1 + σcoldin,s (B0) = 2.1 for ions and 1.7δsnout,smsc2 ¯pout,s + δsvout,s · B2G,out/µ0. Equating the two ﬂuxes,                                                                     for electrons, while we have at the outﬂow maximal velocitycombining this with the conservation of particle number, we ob-
+                                                                                                 ¯pout,s/¯vout,s = 1.7 for ions and 13 for electrons. These orderstain:
+                                                                of magnitude hold for all cases.
+                                       A more reﬁned analysis of the energy content of the outﬂow,
+                                                                              split into its thermal and bulk contributions, can be performed.
+                                                    To do so, we decompose the particle energy ﬂux as (see Ap-
+ ¯pout,s      ¯pin,s                                                pendix B):
+    =    + σcoldin,s (B0) + σcoldin,s (BG,in)(1 −α),               (9) ¯vout,s       ¯vin,s
+                                                             ns⟨γmsc2v⟩s = nsmsc2h0,out,sΓout,s¯vout,s
+                                                                                                                          (12)
+                                             = nsmsc2¯vout,s 1 + (Γout,s −1) + Γout,s(h0,out,s −1)  .
+
+                                            On the right-hand side, the ﬁrst term is the rest-mass energy ﬂux,
+                                nin,sB2G,out                                 and is the same as that from the inﬂow. The second is the ki-with (1 −α) = 1 −              . The guide ﬁeld is usually merely
+                                nout,sB2G,in                                        netic energy of a cold bulk ﬂow of velocity ¯vout,s. The third is
+compressed, so that 1 −α ≃0.
+                                                                                          2 We note that the non-relativistic limit of Eq. 11, with h0,out,s ∼1 and
+   Equation 9 is independent of the p dependence of the dis-     ¯vout,s ≪c, is
+tribution function  fs.  However, some insights can be gained                                                        √                                        qby considering a distribution that is isotropic in the comobile                                                                                                                          ¯vout,s =                                                                                       2σcoldin,s (B0) =   2Vins,A(B0),                              (10)
+frame, for which we have the result ¯p = h0(T)Γ¯v, with h0 the co-
+mobile enthalpy (as deﬁned and pictured for a Maxwell-Jüttner   where Vins,A(B0) is the non-relativistic inﬂow Alfvén speed with only the
+distribution in Fig. B.1), and Γ = (1 −¯v2/c2)−1/2.  If, in ad-   mass of species s. It comprises only the component B0, so that if there
+dition, we neglect the contribution of the guide ﬁeld, and as-    is a guide ﬁeld, this is the projection of the total Alfvén speed onto the
+sume an inﬂow plasma with non-relativistic temperatures and   outﬂow direction ˆz.
+
+                                                                                                                    Article number, page 11 of 22
+
+===== PDF PAGE 12 =====
+the energy transported by thermal motions in the plasma rest-
+frame and by pressure work, and we will denote it as the enthalpy
+ﬂux. We note that these deﬁnitions match those of Zenitani et al.
+(2009a), who performed a similar analysis with two-ﬂuid simu-
+lations of relativistic reconnection in pair plasmas.
+  We measure the maximum outﬂow velocity ¯vout,s, deduce the
+Lorentz factor Γout,s, measure the maximum in momentum ¯pout,s,
+and compute the enthalpy h0,out,s =  ¯pout,s/(Γout,s¯vout,s). From
+these values, we estimate in Table 4 the balance of particle en-
+ergy between each of the terms of Eq. 12.
+    In all cases, a large fraction of the particle energy ﬂux is
+in thermal kinetic energy, not in bulk ﬂow kinetic energy. For
+electrons, we see that the thermal part clearly dominates more as
+one increases the relativistic nature of the inﬂow (e.g., 69% in
+the thermal part for the less relativistic case, 99% for the most
+relativistic). This is also the case for ions: from 80% to 92% in
+the thermal part as the ion magnetization increases. The Tbg,i =
+2 × 108 K case is exceptional with 91% in the thermal energy,
+but this large fraction is likely explained by interactions with
+the hot electrons Tbg,e = 3 × 109 K. We explain why thermally                                                                         Fig. 10.    Temperatures for same simulation and time as in Figs. 2,
+dominated outﬂows are expected at large inﬂow magnetization                                                           4 upper-right, 8, and 9 right) Note the diﬀerent units for ions and elec-
+with a reﬁned analytical model in Sect. 3.8.                            trons. Since mic2 = 25mec2, the ions are actually hotter than the elec-
+                                                                               trons.
+
+3.5. Islands structure
+                                                           Ey/(B0VRA,in)               ωce/ωpe
+Turning to the magnetic islands, we emphasize that they are                                                             0.30                                      1,    Tbg = 1.5 · 107 K
+magnetically isolated, have an M-shaped density distribution,                                                                                                                  3,    Tbg = 1.5 · 107 K
+and are hot with anisotropic temperatures.                                                             0.25                                      3,    Tbg = 2 · 108 K
+    After being expelled along ±z in the outﬂow, the particles                                              3,     Te,bg = 3 · 109 K
+meet the magnetic islands that separate each pair of X-points.   0.20                                      3,    nbg = 0.3ncs(0)
+The islands are initially formed by the tearing of the current                                              6,    Tbg = 8 · 108 K
+sheet. They then consist only of particles of the current sheet,   0.15                                      3,    mi = me
+plus those of the background plasma that were inside the current
+                                                             0.10
+sheet location. Small at the beginning, they grow by collecting
+particles from the outﬂows at their periphery and by merging                                                             0.05
+with other islands. A remarkable property is that particles from
+the background plasma cannot enter inside the islands: they are   0.00
+scattered by the strong magnetic ﬁeld structure surrounding the
+island, and circle around it. Consequently, the particles at the
+                                                         0      20      40      60      80     100     120island centers remain the same throughout the whole simulation,                                                                                                          tωci
+even after many island merging events. This matter is explored
+in more details in Melzani et al. (in prep.). We stress here two   Fig. 11.    Time evolution of the normalized reconnection electric
+                                                                   ﬁeld Ey/(B0VRA,in), measured at the X-point of various simulations. Themain points.
+    First, the trapped particles are heated by the island contrac-   velocity VRA,in is given in Table 2, and B0 = 0.11, 0.33 or 0.66 for
+                                                                   ωce/ωpe = 1, 3 or 6 respectively. Time is normalized by the ion cy-tion (which occurs when two islands merge), so that the central
+                                                                         clotron pulsation, but note that the growth rate of the collisionless rel-
+temperatures are very high for both species, highly anisotropic                                                                                     ativistic tearing mode is not proportional to ωci (Pétri & Kirk 2007),
+(Figs. 9 and 10), with a dominance of Tzz. The island centers are   hence the diﬀerent time lags and shapes. In particular for ωce/ωpe = 6,
+also where the currents are the strongest.                            the time scale of the plot is divided by 3. For pairs, the timescale is
+   Second, as we said, most of the inﬂowing background par-   tωce/25.
+ticles populate a region around the center, and the central part
+of the island mainly consists of particles originally from the cur-
+rent sheet. As a result, the central part is less dense than the sur-   ﬁgurations to the y component Ey of the electric ﬁeld at the X-
+rounding part, and a cut along z through an island center (Fig. 9)   point location. In addition, dΦBz/dt is in part determined by the
+reveals for the particle density a M-shape, with a central dip  outﬂow velocity, because the latter sets the rate at which mag-
+and two shoulders. This may explain observed density dips at   netic ﬁeld is extracted from around the X-point (see e.g., in a re-
+the center of magnetic islands during magnetotail reconnection   sistive MHD context, Borovsky & Hesse 2007; Cassak & Shay
+events (Khotyaintsev et al. 2010), without invoking island merg-   2007). Since in non relativistic setups one expects ¯vout ∝VA,
+ing or particle escape along the ﬂux tube.                         the reconnection rate Ey is usually normalized either to B0VNRA,0,
+                                                            with VNRA,0 the hybrid Alfvén speed of Eq. 7, or to B0VNRA,in, with
+3.6. Reconnection electric ﬁeld and reconnection rate        VNRA,in the Alfvén speed in the inﬂow of Eq. 6a. These normal-
+                                                                     izations are chosen so that the normalized rate, E∗= Ey/B0VA,
+The rate of variation of magnetic ﬁeld ﬂux across a X-point,                                                                   stays close to the same set of values. For example it has been
+                                     is equal in two-dimensional con-  shown that it gives identical results when varying the mass ra-dΦBz/dt = (d/dt) R x=0X-point Bzdx,
+
+Article number, page 12 of 22
+
+===== PDF PAGE 13 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+tio (e.g., Hesse et al. (1999), or Ricci et al. (2002, 2003) for   0.15, Daughton et al. (2006): 0.08, Klimas et al. (2010): 0.07–
+mi/me = 25, 180, 1836 with an implicit PIC code)3.                0.09, and the theoretical work of Hesse et al. (2009a,b) pre-
+    In the following we turn to our relativistic case and ask   dicting a maximal rate of 0.28. Our results thus suggest larger
+whether a normalization can be found that conﬁnes the range of   rates for relativistic reconnection, a fact already seen in relativis-
+values for E∗in a narrow range, and relaxes to the above normal-   tic simulations of pair plasmas with, e.g., Zenitani & Hoshino
+ization in the non-relativistic case. We argue here that the nor-   (2007) (E∗= 0.2), Cerutti et al. (2012b) (E∗= 0.17), or Bessho
+malization by the hybrid Alfvén speed is not relevant, because & Bhattacharjee (2012) (E∗= 0.19 and 0.36).
+it does not depend on the particle number density of the inﬂow,      In conclusion, the relativistic Alfvén speed of the inﬂow pro-
+while the ratio Ey/B0 clearly does. This is seen for the simula-   vides the best normalization for the reconnection electric ﬁeld, in
+tion with nbg = 0.3ncs(0), for which Ey/B0 peaks at 0.13c, com-   that it is robust from non-relativistic to relativistic ﬂows. Corre-
+pared to the otherwise identical simulation with nbg = 0.1ncs(0),  sponding rates are in a close range (0.14–0.25), which is higher
+where Ey/B0 peaks at 0.20c. On another hand, the inﬂow Alfvén   than the rates found in non-relativistic simulations with the same
+                                                               normalization (0.07–0.15). The rate does not depend on the in-speed VNRA,in ∝1/ √nbg, and thus leads to closer normalized rates.
+                                              ﬂow temperature at low β, but is nevertheless not universal:  itWe consequently exclude hybrid quantities for normalization.
+                                                               decreases with increasing background particle number density.    In a  relativistic conﬁguration the non-relativistic Alfvén
+                                                                Generalization to the presence of a guide ﬁeld is discussed inspeed can increase to inﬁnity. However, the ratio Ey/B0 is also
+                                                                    Sect. 4.3.the E×B velocity of the incoming plasma, and cannot exceed the
+speed of light. The normalizing Alfvén velocity should thus also
+saturate to some value, which is why we choose to normalize the   3.7. Hall ﬁeld and dispersive waves
+electric ﬁeld by
+                                         We can see in Fig. 4 that inside the ion diﬀusion region, but
+       Ey                                                      outside of the electron diﬀusion region, ions have a small ﬂuid
+E∗=              ,                                            (13)   velocity, while electrons still E × B drift toward their diﬀusion
+    B0VRA,in                                                      region. This results in a net current roughly given by qene¯ve =
+                                                        qeneE ∧B/B2, which is the Hall current. This current continues
+with VRA,in the relativistic Alfvén speed in the inﬂow (Eq. 6b), that   along the magnetic separatrices in the outﬂow direction, and is at
+cannot exceed c. The time evolution of E∗is shown in Fig. 11.   the origin of a quadripolar magnetic ﬁeld directed along ±ˆy. This
+Several comments can be made.                                Hall magnetic ﬁeld, with the quadripolar structure, is present in
+    First, the rate E∗is not sensitive to the background plasma   our simulations. It has a weak intensity (between 1% and 10% of
+temperatures, as can be seen for the simulations ωce/ωpe = 3,   B0). The charge separation between electrons and ions (Fig. 4)
+nbg = 0.1ncs(0), no guide ﬁeld and Tbg = 1.5 × 107, 2 × 108   also leads to the creation of a Hall electric ﬁeld directed along
+and 3 × 109 K. This contrasts with the interpretation of Hesse   +ˆx in the x < 0 region and −ˆx in the x < 0 region. Both the
+& Zenitani (2007) who attribute a lower rate to a larger inﬂow  magnetic and electric Hall ﬁelds are absent in a simulation with
+temperature. In addition to the temperatures, the magnetization   pairs.
+of their simulation also changes, and may also aﬀect the rates.     The diﬀerence in the dynamical response of ions and elec-
+Coming back to our simulations, we note that we use very low   trons also allows the existence of waves with a quadratic disper-
+background plasma β (< 10−2, Table 2), and that a weak plasma   sion relation, ω ∝k2, below ion scales (either whistler waves
+β dependence is expected for higher values (e.g., TenBarge et al.   or kinetic Alfvén waves, see Rogers et al. 2001). Observations
+2013, have rates E∗multiplied by ∼2 when β passes from 0.01   of the same reconnection rate for any simulation model allow-
+to 1).                                                          ing these waves (PIC, electron-MHD, Hall-MHD, two-ﬂuid with
+                                                        and without electron inertia, hybrid simulations, see Birn et al.   Second, the reconnection rate for the simulation with a
+                                                           2001; Shay et al. 2007; Rogers et al. 2001), as well as theoret-higher background particle density (nbg = 0.3ncs(0), E∗= 0.18)
+                                                                          ical considerations, have led to the thesis that these waves areremains lower than its counterpart with nbg = 0.1ncs(0) (E∗=
+                                                                      essential to allow for fast reconnection rates. However, this view0.23). This is in line with the pair plasma simulations of Bessho
+                                                                                is questioned by a number of simulations that do not support& Bhattacharjee (2012) who found a similar rate for nbg =
+                                                                 quadratic dispersive waves, but still support fast rates (hybrid0.1ncs(0) (E∗= 0.19), and a higher rate for nbg = 0.01ncs(0)
+(E∗= 0.36). The reconnection rate thus increases with decreas-   simulations with no Hall term, pair plasmas, or strong guide
+                                                            ﬁeld regime, see Karimabadi et al. 2004; Bessho & Bhattachar-ing background plasma density, which is also coherent with the
+                                                                     jee 2005; Daughton et al. 2006; Daughton & Karimabadi 2007;β dependence mentioned above.
+    Finally, the normalization leads to very similar values of E∗   Liu et al. 2014). It is thus interesting to see whether our simula-
+                                                                     tion data can provide any further insight into the matter.for the relativistic cases (ωce/ωpe = 3 or 6), with E∗= 0.17-
+                                       A prediction of the dispersive wave physics is that the re-0.24, but to a signiﬁcantly smaller rate for the less relativistic
+                                                             connection rate is controlled solely by the ion physics, and notcase (ωce/ωpe = 1), with E∗= 0.14. More generally, the val-
+                                                     by the electrons. According to Daughton et al. (2006), it shouldues for the relativistic cases are larger than those reported in the
+                                                         be independent of the electron diﬀusion region length.  Theirliterature for undriven, symmetric reconnection with zero guide
+                                                                  analysis we could, however, not reproduce because the electronﬁeld in non-relativistic ion-electron plasmas. We can quote for
+                                                            diﬀusion zone length is, in our case, limited by the standing is-the peak values of E∗(once normalized in the same way as here):
+                                                                    lands. It cannot stretch to large values, and we are thus unable toBirn et al. (2001); Pritchett (2001): 0.09, Fujimoto (2006, 2009):
+                                                           conclude in favor or in disfavor of the dispersive wave paradigm.
+                                                           However, we underline that the simulation with mi/me = 1 3 However, going down to mi/me = 1 leads to less systematic results.
+For example, Fujimoto (2009) reports E∗= 0.15 for mi/me = 100 and   that we performed features an identical (and even slightly larger,
+0.08 for pairs. Liu et al. (2014) report close rates for mi/me = 1 and   Fig. 11) reconnection rate than simulations with mi/me = 25. It
+25. Here we performed a simulation with mi/me = 1, and ﬁnd a peak   thus points toward a negligible inﬂuence of the dispersive waves,
+reconnection rate E∗= 0.30, larger than for mi/me = 25 (Fig. 11).       or to another mechanism allowing fast rates in pair plasmas.
+
+                                                                                                                    Article number, page 13 of 22
+
+===== PDF PAGE 14 =====
+3.8. Simulation-based scaling analysis                                 at the center of the current sheet, or of the plasma inertial
+                                                                    length at the center of the current sheet.  In all our simu-
+The energy content of the outﬂows and the balance between ther-                                                                          lations we ﬁnd that the latter assumption holds throughout
+mal and bulk inertia in Ohm’s law were explored through the                                                                time to within a factor 2 (Sect. 3.2.1), and in any case, δe/dinesimulations in Sects. 3.3 and 3.4. The aim of the present section                                                                                     is expected to be of order unity.
+is to investigate these points with a simple analytical model in                                                      The inﬂow speed is set by the reconnection electric ﬁeld,
+order to gain physical insight concerning these phenomena, and
+                                                                                                                         ¯vin = Ey/B0 = E∗VRA,in with E∗the normalized reconnectionto extrapolate our simulation results to a larger parameter space.
+                                                                           rate (which lies in the range 0.1-0.25, Sect. 3.6) and VRA,in the  We extend the analytical results of Sect. 3.4.1, where par-
+ticle number and energy conservation allowed an estimation of        relativistic Alfvén speed in the inﬂow. For relativistic setups
+the quantity h0,out,sΓout,s (Eqs. 9 or 11), by now also using the     we thus have ¯vin ∼E∗c.
+equation of conservation of momentum (Eq. B.4).                The inﬂow magnetization can be arbitrarily large. It is thus
+                                                                     the main actor to produce relativistic temperatures, and ther-
+                                                        mal inertia scales as Θedgexy,e ∝  σcoldin,e  1/2.3.8.1. Thermal versus bulk electron inertia
+                                                      – Second, the term corresponding to bulk inertia in Eq. 15 can
+We ﬁrst investigate the relative weight of thermal and bulk elec-      be estimated with the help of Eq. 9 (with ¯pout,s = ¯poutz   , ¯vout,s =
+tron inertia. At the center of the electron diﬀusion region, we          ¯voutz   , and neglecting the guide ﬁeld):
+learn from Sect. 3.3 that the reconnection electric ﬁeld is sus-
+tained by electron thermal and bulk inertia, with only the terms       δe  ¯vcentery     ¯poutz      δe  ¯vcentery      ¯voutz      ¯pin        !
+∂x(ne⟨δpxδvy⟩) and ∂z(ne ¯pz¯vy) contributing to either one of them,             =            + σcoldin,e   .            (17)                                                       De    c2      De    c2          ¯vin
+respectively.
+                                                      The ratio δe/De  is of order 1/10 in our simulations.   If – Concerning thermal inertia, the temperature tensor is deﬁned
+                                                we neglect the term  ¯pin/¯vin, which is of order unity for    via Eq. B.10, so that ⟨δpxδvy⟩= c2Θxy,e/Γe. We see in Fig. 8
+                                                                           non-relativistic inﬂow temperatures, we see that bulk inertia    that Θxy,e is linear in the electron diﬀusion region. It vanishes
+                                                                       scales with σcoldin,e .    at the center because there the distribution function fe is sym-
+    metric with respect to vx. It is maximal at the diﬀusion region
+                                                                                                                                                      1/2, and   edge with a value Θedgexy,e . Consequently, we approximate the   In conclusion, thermal inertia scales at most as  σcoldin,e
+   thermal inertia contribution by (c2Θedgexy,e /Γine )/δe, where δe is   bulk inertia as σcoldin,e .  Consequently, regarding the non-ideal
+    the width of the electron diﬀusion region.                   terms in Ohm’s law in the electron diﬀusion region, we expect
+ – For the bulk inertia term, we use the fact that  ¯pz rises lin-   bulk inertia to outweight thermal inertia at large inﬂow electron
+    early from the center to its maximal value denoted by  ¯poutz    magnetization.
+   over a distance De/2, and that ¯vy has a vanishing derivative
+    at the center (Fig. 9). Consequently, it can be estimated as
+                                                                    3.8.2. Energy content of the outﬂows
+      ¯vcentery     ¯poutz /De.
+                                         We now turn to the energy content of the outﬂows, in order toAll in all, from Ohm’s law (Eq. 8), the electric ﬁeld at the center
+                                                               see whether we can explain their thermally dominated characterof the diﬀusion region is:
+                                                                     for relativistic runs. The temperature in the outﬂows is domi-
+        me   ∂               ∂           !                nated by Θxx,e or Θyy,e, which we denote by Θoute   . We ﬁrst have Ecentery   =                 · (ne⟨δpeδve⟩) +       · (ne ¯pe¯ve)         qene  ∂x              ∂x             y                 to link Θoute  to Θedgexy,e . The outﬂow temperature at the center of
+                                                         (14)   the diﬀusion region is roughly constant along z throughout the
+              c2Θedgexy,e                                      ¯vcentery     ¯poutz                                 area of linear increase of ¯vz (Fig. 9), because particles on their    ∼me              +          qe          δeΓine      De              .                      way from the X-point to the exhaust mainly turn into the recon-
+                                                             nected magnetic ﬁeld and thus do not really gain thermal agi-
+The next step is to use the constancy of Ey, that is well respected                                                                          tation, but convert it from one component of Θ to another. We
+in the simulations: Ecentery   = Einy = ¯vinB0. If we introduce the in-  can thus assume Θoute  = Θcentere      . We now would like to assume
+ertial length in the inﬂow, dine = c pϵ0me/(nine e2), and the inﬂow   Θedgexy,e ∼Θcenterxx,e  . This indeed holds for electrons in the case of
+magnetization σcoldin,e = B20/(µ0menine c2), we ultimately obtain:       Fig. 8. However, this does not hold in all simulations, and Θedgexy,e
+                                                                                                                                         xx,e  . This is due to the diﬀerent δe         1/2 ¯vin    Θedgexy,e    δe  ¯vcentery     ¯poutz                                 is between 1/10 to 10 times Θcenter
+     σcoldin,e     =    +                      .                 (15)   origin of these components: Θcenterxx,e  reﬂects particles in Speiser
+dine           c        Γine    De    c2                               orbits going up and down along x with a zero bulk x-velocity,
+  We now proceed to derive approximate scaling relations for   while Θedgexy,e reﬂects the asymmetry of the distribution function
+cases where either thermal or bulk inertia dominate the recon-   with respect to vx due to the newly entering particles at the edge
+nection electric ﬁeld.                                            of the diﬀusion zone.
+                                                          With the previous remark in mind, we still make the hypoth-
+ – First,  if thermal inertia dominates over bulk inertia, then
+                                                                       esis Θedgexy,e ∼Θcenterxx,e  . Next, if we assume that thermal inertia con-   Eq. 15 gives
+                                                                        tributes signiﬁcantly in Ohm’s law, we obtain with the scaling of
+    Θedgexy,e     δe         1/2 ¯vin,e            1/2                      Eq. 16:
+      =      σcoldin,e      ∝  σcoldin,e       .                (16)
+        Γine     dine           c                                                              1/2
+                                                                  Θoute ∝  σcoldin,e       .                                         (18)
+   There are thus several factors contributing to Θedgexy,e . The dif-
+    fusion zone width δe is dynamically set during the reconnec-  For relativistic temperatures we have h0,out,e ≃4Θoute  (Fig. B.1),
+    tion process. It can be of the order of the particles gyroradius   so that with Eq. 18 we see that a relativistic inﬂow magnetization
+
+Article number, page 14 of 22
+
+===== PDF PAGE 15 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+implies h0,out,e ∝  σcoldin,e  1/2. On another hand, energy conserva-
+tion gives, in its simplest form (Eq. 11 with σcolde  (B0) ≫1):
+
+h0,out,eΓout,e ∼σcoldin,e .                                       (19)
+
+Thus:
+
+                 1/2
+Γout,e ∝  σcoldin,e       .                                        (20)
+
+We ﬁnally turn to the ratio of energy ﬂuxes in the outﬂow. We
+see with Eq. 12 that the ﬂux associated with kinetic bulk en-
+ergy is Γout,e −1. With Eq. 20 (and for Γout,e ≫1), this ﬂux is
+Γout,e ∝  σcoldin,e  1/2. The ﬂux associated with thermal kinetic en-
+ergy and pressure work is h0,out,eΓout,e −1, and with Eq. 19 we
+have h0,out,eΓout,e −1 ∼σcoldin,e . The ratio of thermal to bulk energy
+ﬂuxes is thus ∝  σcoldin,e  1/2, meaning that relativistic inﬂow mag-
+netization inevitably implies reconnection exhausts dominated
+by thermal energy – which is what we see in our simulations
+(Table 4), even if the scalings derived here do not hold exactly
+because of the many assumptions involved.
+    In conclusion, we have shown that under the hypothesis of
+non-ideal eﬀects sustained by thermal inertia, relativistic in-
+ﬂow magnetizations produce thermally dominated outﬂows. The
+physical reason is that the reconnection electric ﬁeld Ey is large
+in the inﬂow region, so that thermal inertia must be high in order
+to sustain Ey in the central region, which implies high tempera-
+tures.
+   However, we also demonstrated that thermal inertia is not ex-
+pected to dominate for very relativistic inﬂows. When this is the
+case, there is no constraints from Ohm’s law on the temperature,
+and we cannot conclude on the ratio of thermal to bulk energy
+ﬂuxes. Since this ratio is (h0,out,eΓout,e −1)/(Γout,e −1) ∼h0,out,e,
+a relativistic outﬂow temperature of the order of mec2 suﬃces to
+give thermally dominated outﬂows.
+   For our simulations, thermal inertia contributes equally or
+less than bulk inertia (Sect. 3.3), but still signiﬁcantly, so that the
+outﬂows are thermally dominated.
+
+
+4. Effects of a guide ﬁeld
+
+Except in special conﬁgurations, the generic reconnection ge-
+ometry involves asymptotic ﬁelds that are not antiparallel. An
+angle diﬀerent from 180o can be described by the addition of a
+uniform guide magnetic ﬁeld BG = BGˆy to the antiparallel con-
+ﬁguration. Such conﬁgurations have been largely studied in the
+non-relativistic case (e.g., Pritchett & Coroniti 2004; Drake et al.
+2005; Goldman et al. 2011; Le et al. 2013; Graf von der Pahlen
+& Tsiklauri 2013), and feature signiﬁcant diﬀerences with the
+antiparallel case. Here we only focus on the reconnection rates
+and on the island structure, and postpone a study of other points
+to a future publication. We present results from two simulations,   Fig. 12.  Top: Simulation with BG = B0ˆy, time t = 37ω−1ci = 935ω−1ce .
+with BG = 0.5B0 and BG = B0.                                  Bottom: Simulation with BG = 0.5B0ˆy, time t = 37ω−1ci = 935ω−1ce ,
+                                                          same scale as for BG = B0ˆy.
+
+4.1. Overall structure
+We ﬁrst stress that because of the presence of the guide ﬁeld, in   non-idealness of the plasma response, E + ¯vs ∧B , 0, and are
+both cases BG = 0.5B0 and B0, the relation B > E holds ev-   indeed found at and around the X-points.
+erywhere through time and space, and hence also the relation       Just as in the zero guide ﬁeld case, the plasma accelerated by
+B > E⊥(with E⊥the component perpendicular to B). Conse-  Ey is slowly deviated by the reconnected Bx component, which
+quently, particle acceleration is not possible in directions perpen-   produces outﬂows directed along ±z. However, particles from
+dicular to B, and is only allowed along the ﬁeld lines at places   these outﬂows feel the Lorentz force from the guide ﬁeld, and
+where E · B , 0. Such parallel electric ﬁelds are allowed by the   their trajectories are tilted against the z axis, as is evident in
+
+                                                                                                                    Article number, page 15 of 22
+
+===== PDF PAGE 16 =====
+                                                             0.30
+                                                           Ey/(B0VRA,in cos θ)                    ωce/ωpe = 3
+                                Brec                               0.25
+                                            X-point                                         BG = 0              BG                                                                                   BG = 0.5B0
+                         current sheet    island                 0.20                               BG = 1
+                                                             0.15
+    2500                  Brec
+                                                             0.10
+   x
+                                                             0.05
+    2000
+                                                             0.00
+
+     1500
+                                                         0      20      40      60      80     100     120
+                                                                                                           tωci                                               1500
+                                          y
+                                             2000       Fig. 14.    Time evolution of the normalized reconnection electric
+                                                                                                                         A,in cos θ), measured at the X-point of various simulations.         4500                              2500         ﬁeld Ey/(B0VR                5000                                                         The velocity VRA,in cos θ is given in Table 2. Time is normalized by the                        5500                                 6000    3000
+                         z                                        ion cyclotron pulsation. Here B0 = 0.33, VRA,in = 0.88c, cos θ = (1 +
+                                                                B2G/B20)−1/2 = 1, 0.89, 0.71.Fig. 13.   Typical trajectory for a particle, here an electron, for sim-
+ulation with BG = B0ˆy. Axis scales are given in cell numbers, with 9
+cells representing one initial electron inertial length. Dot colors are the
+particle Lorentz factor, from 1 to 60 here. Solid lines are projections  Here Θzz ≃Θyy ≃Θxx equal to up to 4 for electrons and 0.2 for
+onto the x-y, y-z, and z-x planes.                                       ions. This is a value close to the average (Θzz + Θyy + Θxx)/3
+                                                                of the zero guide ﬁeld case. Oﬀ-diagonal terms are an order of
+                                                         magnitude smaller.
+Fig. 12. Reversing the guide ﬁeld from +ˆy to −ˆy tilts them in
+the opposite direction. We underline that while the tilt angle
+is indeed smaller for a smaller guide ﬁeld, it also depends on   4.3. Reconnection electric ﬁeld and reconnection rate
+the background plasma pressure, as shown by TenBarge et al.                                                                In the normalization of Sect. 3.6, E∗= Ey/(B0VRA,in), the Alfvén(2013).                                                                   velocity includes the total magnetic ﬁeld B = B0(ˆz + αˆy).  In
+    In the present case, Ey ∝−ˆy. Electrons are thus accelerated                                                                  the presence of a guide ﬁeld (α , 0), Alfvén waves propagating
+along the ﬁeld lines in the +ˆy direction. Their motion along the                                                            along the magnetic ﬁeld do so in a direction that makes an an-
+ﬁeld lines result in a projected (x-z plane) motion directed toward                                                                  gle θ = arctan α with the outﬂow direction ˆz. As we explained
+positive z where B · ˆz > 0 (i.e., in the x > 0 area), or toward neg-                                                                     in Sect. 3.6, the reconnection electric ﬁeld is in part set by the
+ative z where B · ˆz < 0 (i.e., in the x < 0 area). It results in large                                                                   velocity at which the ﬁeld lines are extracted from the X-point,
+and fast electron ﬂows above and below the current sheet, and                                                                                           i.e., by the outﬂow velocity. This outﬂow velocity is mostly set
+to a rotation around the islands in a sense opposed to cyclotron                                                     by the projection of the Alfvén speed onto the outﬂow direction
+gyration. Ions are accelerated toward −ˆy and counterstream with                                                               (Eq. 10 in the non-relativistic limit, Eq. 9 in the general case).
+respect to the electrons.                                                             Consequently, it seems justiﬁed to normalize the electric ﬁeld
+    Particles reaching the central part are accelerated along y by                                                            with the projection of the Alfvén speed onto the ˆz direction, i.e.,
+Ey and, because they always feel a magnetic ﬁeld B > E, they are                                                                     to use E∗= Ey/(B0VRA,in cos θ).guided by the magnetic ﬁeld and spend more time in the accel-                                                                 Figure 14 shows the time evolution of E∗for three simula-
+eration region for strong BG (Fig. 13). Consequently, ¯vy is larger
+                                                                     tions with BG/B0 = 0, 0.5, 1, with otherwise identical parame-than with no guide ﬁeld under similar conditions, and reaches
+                                                                               ters. The peak reconnection rate decreases when the guide ﬁeld
+large values on a larger area (compare ¯vy in Figs. 2 and 12).
+                                                                    increases: 0.24, 0.22 and 0.20. This is also the kind of depen-
+                                                         dence found in PIC simulations of ion-electron non-relativistic
+4.2. Islands structure                                         reconnection (Ricci et al. 2003; Huba 2005; TenBarge et al.
+                                                           2013; Liu et al. 2014), relativistic pair reconnection (Hesse &
+The structure of the islands bears resemblance with the no guide                                                                Zenitani 2007), or two-ﬂuid simulations of relativistic reconnec-
+ﬁeld case: their centers is composed of particles initially in the                                                                     tion (Zenitani et al. 2009a)4. Consequently, relativistic recon-
+current sheet, with background particles only circling at the pe-                                                                nection in ion-electron plasmas does not bring new eﬀects in this
+riphery. They are the hottest and strongest current-carrying part                                                                     respect. However, we underline that the normalization used here
+of the simulations. There are, however, important diﬀerences.                                                              allows to minimize the scatter in E∗for the various simulations.
+    First, the inclination of the outﬂows makes the island asym-
+metric, with electrons rotating around in a direction opposite to
+that of ions (when looking at the motion projection in the x-z   5. Summary and discussion
+plane). Second, as islands form and contract, the guide magnetic
+ﬁeld is compressed and increases in strength. In the simulation   5.1. Summary
+with BG = 0.5B0,  it passes from 0.5B0 initially to 1.8-2.1B0                                         We investigate magnetic reconnection in low β ion-electron plas-
+in the islands, while in the simulation with BG = B0, it passes                                                  mas (mass ratio of 25) with 2D PIC simulations, under relativis-
+from B0 initially to 2.1-2.4B0 in the islands. Third, because of
+the strong magnetic ﬁeld along y, temperatures are isotropized    4 We note, however, that in asymmetric reconnection the rate increases
+along x and z (in the no guide ﬁeld case we had Θzz ∼2Θxx).   with the guide ﬁeld strength, see Aunai et al. (2013), Hesse et al. (2013).
+
+Article number, page 16 of 22
+
+===== PDF PAGE 17 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+
+tic conditions, i.e., the magnetic energy of the inﬂowing plasma   (Khotyaintsev et al. 2010), without invoking island merging or
+exceeds its rest-mass energy. The simulations start from a Harris   particle escape along the ﬂux tube. Islands are also the hottest
+kinetic equilibrium with no localized perturbation. For diagnos-   parts of the ﬂow, with fully anisotropic temperatures in the an-
+tics and analytical models, we use momentum and energy ﬂuid   tiparallel case, and distributions close to gyrotropic with a guide
+equations based on lab-frame quantities (Appendix B). They   ﬁeld.
+have the advantage of being valid whatever the particle distri-    We argue that the reconnection rates are to be normalized
+bution function, while the usual relativistic ﬂuid equations using  by the asymptotic magnetic ﬁeld and relativistic Alfvén speed
+comobile quantities are restricted to isotropic comobile distribu-   in the inﬂow, projected onto the outﬂow direction if there is a
+tion functions.                                               guide ﬁeld: E∗= Ey/(B0VRA,in cos θ).  This leads to rates in a
+   For antiparallel reconnection, the structure of the diﬀusion  narrow range: E∗peaks between 0.14–0.25. However, we stress
+region has a width (in the inﬂow direction) δs given by the re-   that there is no universal value for E∗as deﬁned here or else-
+spective inertial length ds of the species s, measured at the center   where. First, because other studies show that it depends on the
+of the diﬀusion region. A large inﬂow temperature increases this  inﬂow plasma β (increasing with decreasing β). Here we ﬁnd no
+width.  At the entrance of the diﬀusion regions for simulations  dependence on the background plasma temperature, but smaller
+at low background β ≤2.5 × 10−3 we ﬁnd sharp transitions in   rates for larger particle number densities. Second, we ﬁnd larger
+the ﬂuid quantities that were not reported elsewhere. We argue   rates for the relativistic setups (0.18–0.25) than for the mildly
+that they are not shocks. Instead, they occur when the inﬂowing   relativistic case (0.15). These rates are also larger than those
+particles have a thermal velocity far smaller than their bulk E×B   reported in the literature for ion-electron non-relativistic recon-
+velocity, so that they enter the diﬀusion region with the same ve-   nection (0.07–0.15 for Birn et al. 2001; Pritchett 2001; Fujimoto
+locity and bounce back at the same location. We stress that these   2006, 2009; Daughton et al. 2006; Klimas et al. 2010).  This
+sharp transitions are not a feature of relativistic reconnection, as   points toward relativistic reconnection being slightly faster than
+they depend only on the cold nature of the inﬂow. However, the   non-relativistic reconnection. This trend is reinforced by simu-
+phenomenon should be more common in relativistic reconnec-   lations in relativistic pair plasmas (E∗= 0.3 in our case or, e.g.,
+tion because then the inﬂow bulk velocity vE×B ∼E/B is large.    0.17–0.36 for Zenitani & Hoshino 2007; Bessho & Bhattachar-
+  We explicit the balance of terms in the relativistic Ohm’s   jee 2012; Cerutti et al. 2012b). We note that this is against the
+law for antiparallel reconnection. The ion diﬀusion region is   interpretation of Hesse & Zenitani (2007) of a smaller rate for
+dominated by bulk inertia (as deﬁned in Eq. 8). In the electron  more relativistic setups.  Third, we conﬁrm that a guide ﬁeld
+diﬀusion region, bulk inertia contributes equally or more than   leads to a smaller normalized rate.
+thermal inertia. This latter result challenges the thermal-inertia-                                           We explore the consequences of adding a guide magnetic
+dominated paradigm that holds for non-relativistic or mildly rel-                                                                  ﬁeld. The ﬂow structure is strongly disturbed for two reasons:
+ativistic antiparallel reconnection. We show analytically that a                                                                  the Lorentz force associated with the guide ﬁeld, and the relation
+signiﬁcant contribution of bulk inertia is to be expected when-                                            E < B everywhere. The acceleration region is now deﬁned by
+ever the inﬂow magnetization σcolde   (cold meaning that the tem-   the condition E · B , 0. Inﬂowing ion and electron Larmor radii
+perature is not taken into account, see Eq. 4) of the electrons is                                                                  are smaller than the island scales or magnetic gradient scales,
+large, because then bulk inertia ∂z ¯pz¯vy ∼¯pzc/D ∝σcolde  /D can  and remain so even after the acceleration phase by Erec because
+exceed thermal inertia ∂xδpxδvy ∝(σcolde   )1/2/δ. This is a new   this phase conserves the perpendicular-to-B momentum. Parti-
+result that should hold for any large electron magnetization.       cles thus remain tied to the ﬁeld lines everywhere, including in
+   For the reconnection outﬂows we show analytically from   the acceleration region where they spend more time before being
+mass and energy conservation that reconnection is expected to   deviated in the outﬂows.
+produce relativistic outﬂow temperatures and/or relativistic out-
+ﬂow bulk velocities.  From simulations we ﬁnd that outﬂow
+thermal energy dominates over bulk kinetic energy (from 70%   5.2. Discussion and astrophysical outlook
+to 99%, for simulations with increasing background magneti-
+                                                            This study may serve as micro-physics input for analyses onzation). A more reﬁned analytical analysis shows that this is
+                                                                     larger scales concerning magnetic energy conversion in relativis-expected if the reconnection electric ﬁeld is sustained by ther-
+                                                                                tic ion-electron plasmas, as should be encountered in the coronaemal inertia. If bulk inertia dominates over thermal inertia, as ex-
+                                                                of AGN and microquasar accretion ﬂows, in the lobe of radiopected at very large inﬂow magnetization, then our simple ana-
+                                                                    galaxies, or inside relativistic jets from AGNs or GRBs. We nowlytical model does not allow to conclude on the cold or hot nature
+                                                                 discuss such applications, and give estimates for key parametersof the outﬂows. Also, our simulations do not probe high enough
+                                                                     in these objects: magnetic ﬁeld B, electron number density ne,electron magnetizations to reach this regime: at σcolde  = 90, ther-
+                                                              magnetizations σcolds   (where cold means that only the rest massmal inertia contributes as 50% of the reconnection electric ﬁeld,
+                                                           energy is taken into account, Eq. 4), with s =  i, e for ions orand this fraction goes down to 25-40% at σcolde  = 360, which is
+                                                                     electrons, and Alfvén speeds VRA. The properties of magneticsigniﬁcant enough for the hypothesis of Erec sustained by ther-
+                                                              reconnection as studied here depend only on the inﬂow magneti-mal inertia to hold.
+                                                                  zation and temperatures, regardless of the real values of B and ne.   For the islands we show that, with or without a guide ﬁeld,
+                                                            This is true at least as long as eﬀects such as pair creation and an-their centers consist mainly of particles initially in the current
+                                                                        nihilation, radiative braking, or Compton drag on the electrons,sheet that were gathered inside the island during the tearing in-
+                                                          can be neglected (see Melzani et al., in prep, for a discussion onstability, that do not mix with the background plasma even after
+                                                                 these eﬀects).many island merging events. Particles of the background plasma
+cannot reach the inner parts because of the strong magnetic ﬁeld
+surrounding the islands, and thus circle around the central part.   5.2.1. Toward a new regime: non-dissipative reconnection?
+As a result, the central part is less dense than its immediate sur-
+rounding. This may explain observed density dips at the cen-  Our ﬁnding of a reconnection electric ﬁeld sustained equally or
+ter of magnetic islands during magnetotail reconnection events  more by bulk inertia than by thermal inertia for large inﬂow
+
+                                                                                                                    Article number, page 17 of 22
+
+===== PDF PAGE 18 =====
+electron magnetization (σcolde   ≥90), and the extrapolation of   in the island. As we demonstrate, this plasma does not mix with
+Sect. 3.8, indicate that bulk inertia might end up dominating at   the reconnected plasma and is simply compressed and heated
+even larger inﬂow electron magnetizations. This was also envi-   (see Vapirev et al. 2013, for a 3D case where instabilities imply
+sioned by Hesse & Zenitani (2007), and reconnection in such a  magnetic to kinetic energy conversion). In an open conﬁgura-
+regime would bear signiﬁcant diﬀerences with the standard pic-   tion, it would be at the head of the large scale outﬂow.
+ture.  However, we nuance the assertion of Hesse & Zenitani
+(2007) that reconnection would then be a reversible process: as
+underlined in Sect. 3.8, the reconnection outﬂows may be ther-
+                                                                    5.2.3. Plasma heating in AGN and microquasar coronae and
+mally dominated even when bulk inertia dominates Ohm’s law.
+                                                                                in galaxy radio lobes
+A deﬁnite answer to these questions requires very high magneti-
+zations, that we can hardly aﬀord with a PIC code, and that may
+require relativistic gyrokinetic codes.                         Photon emission in the hard state of microquasars and AGNs
+   Highly magnetized environments, such as magnetar magne-   is believed to come from inverse-Compton scattering of seed
+tospheres (with magnetizations exceeding σcolde  = 1013, Lyu-   photons by the electrons of a corona.  To achieve this, these
+tikov & Lazarian 2013), pulsar winds near the termination shock   electrons must reach temperatures of the order of 109 K, i.e.,
+(σcolde   =  1013, Bucciantini et al. 2011; Sironi & Spitkovsky  Θe = Te/mec2 ∼0.2. A non-thermal population of electrons
+2011), other objects with σcolde ≫1 discussed in what follows,   is also required by the observation of MeV photons (Poutanen
+are likely to support this reconnection regime.           & Veledina 2014). A proposed mechanism for plasma heating is
+                                                     by magnetic reconnection (Di Matteo 1998; Merloni & Fabian
+                                                           2001; Reis & Miller 2013). The plasma Alfvén speed estimated
+5.2.2. Large scale transient outﬂow production, the example
+                                                     by these authors lies in the range 0.03c–0.3c. Associated elec-
+       of microquasars
+                                                                  tron magnetizations are σcolde   ∼1.7-180, which is in the range of
+We have shown that the reconnection outﬂows are thermally   the present study. A crucial question is the energy distribution
+dominated, with a bulk Lorentz factor not necessarily increas-  between ions and electrons: if most of the magnetic energy goes
+ing with the inﬂow magnetization and featuring low values (1.63   to ions, and because of the low collisionality of these dilute en-
+at most, Table 4). However, applications to large scale outﬂows   vironments, a large temperature diﬀerence can be sustained (Di
+triggered by reconnection events require some care. The out-  Matteo et al. 1997). Our study shows that ions are slightly more
+ﬂows studied in the present manuscript originate from the elec-   heated than electrons: this can be seen with the temperatures of
+tron diﬀusion region, and feature ion/electron decoupling. On   Figs. 8, 9, 10, and 12. More generally, the kinetic energy of the
+larger distances, if not bounded by the islands and by our pe-   particles trapped in the magnetic islands is distributed as 55%
+riodic setup, electrons and ions are expected to couple and to   for ions and 45% for electrons, and the kinetic energy of the
+follow the ideal MHD dynamic. The scale on which they can   particles from the background plasma that are accelerated when
+propagate is ﬁxed by larger scales than simulated here.           reaching the current sheet is also distributed as 60% for ions and
+  On another hand,  it is expected and observed (Khotyaint-  40% for electrons (for details see Melzani et al., in prep.). The
+sev et al. 2006) that magnetic energy conversion takes place also   energy distribution by acceleration processes far downstream of
+along the magnetic separatrices far away from the dissipation re-   the diﬀusion region requires another study.
+gion, on length scales of hundreds of ion inertial lengths. This
+conversion occurs through instabilities that produce thermal and      Similar questions arise concerning the heating of the lobes of
+non-thermal electrons (Drake et al. 2005; Egedal et al. 2009;   radio galaxies (Kronberg et al. 2004). There, n ∼3 × 10−6 cm−3
+Egedal et al. 2012), and through the complex structure of col-   for the number densities, and B ∼5 µG for the equipartition
+lisionless non-linear waves (slow shock, compound wave, rota-  magnetic ﬁeld with values that can be locally ten times higher,
+tional wave) by which the magnetized inﬂowing plasma tran-  which gives magnetizations σcolde   ∼0.8-80 and Alfvén speeds
+sits to the hot and unmagnetized outﬂow on MHD scales (Liu   ∼0.02c-0.2c. Our conclusion for the energy repartition between
+et al. 2012; Higashimori & Hoshino 2012). It is this large scale   ions and electrons also holds.
+outﬂow that should be identiﬁed to the transient reconnection-
+driven jets in microquasar models (de Gouveia dal Pino & Lazar-
+ian 2005; de Gouveia Dal Pino et al. 2010; Kowal et al. 2011;                                                                    5.2.4. Flares and “mini”-jets in extragalactic jets and in GRBs
+McKinney et al. 2012; Dexter et al. 2013). In the magnetosphere
+close to the black hole, de Gouveia dal Pino & Lazarian (2005)
+estimates on the basis of an analytical model, ne ∼5×1015 cm−3,   Flare-like activity in the GeV-TeV range is observed from ex-
+B ∼7 × 107 G, which gives electron and ion magnetizations   tragalactic jets, and may possibly be explained by local recon-
+σcolde  ∼105 and σcoldi   ∼60, and an Alfvén speed VRA ∼c.   nection events inside the jet, that produce smaller jets (the re-
+This is clearly in the relativistic case. The energy content of the   connection exhausts) which in turn radiate the expected photons
+large scale outﬂows in this case has not been studied, but we can   (Giannios et al. 2009). This γ-ray emission region may be lo-
+expect from the collisionless slow shocks, or rotational discon-   cated close to the black-hole (< 0.05 pc, Giroletti et al. 2004),
+tinuities at the separatrices, to produce a thermally dominated  where B ∼0.02-0.2 G and the plasma magnetization is high. For
+outﬂow.  It may not be so for other jet production mechanisms,   example, Giannios et al. (2009) take σcoldi  = 100, which leads to
+and could help discriminating in favor or against reconnection   σcolde  = 2 × 105 and VA ∼c. This is in the regime where bulk in-
+scenarios.                                                                ertia should dominate in Ohm’s law. Also, Giannios et al. (2009)
+   Another unknown is what becomes of the ambient plasma   estimate from energy considerations, that the blobs emitted from
+that is expelled by the ﬁrst reconnected ﬁeld lines, ahead of the   the reconnection exhausts should be ∼1014 cm, i.e., based on its
+dipolarization front. In our study, it would correspond to half of   estimated particle density, 1010 ion inertial lengths. Here again,
+a magnetic island, ejected out of the simulation box. The ambi-   the physics far from the dissipation region should play an impor-
+ent plasma would be the plasma from the current sheet trapped   tant role in producing such large scale structures.
+
+Article number, page 18 of 22
+
+===== PDF PAGE 19 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+
+5.2.5. Radio emission from extragalactic jets                    Another central question is the validity of the 2D ﬁndings
+                                                                     in three dimensions.  Magnetic islands then become extended
+Another case for relativistic magnetic reconnection is inside jets   ﬁlaments, modulated or broken by instabilities in the third di-
+from AGNs, on scales of 10-100 kpc. Radio spectra may be ex-  mension or by a lack of coherence of the tearing instability
+plained by radiation linked to reconnection events (Romanova  (Daughton et al. 2011; Kagan et al. 2012; Markidis et al. 2013).
+& Lovelace 1992). Observations of AGN jets indicate B ∼10-    It may imply more mixing of the current sheet particles with
+30µG, n ∼0.8-5 × 10−8cm−3, and electron magnetizations in the   those of the background plasma.  Concerning the validity of
+range σcolde   ∼500-2500 (Schwartz et al. 2006), which implies   our claims on Ohm’s law, 3D PIC simulations in non-relativistic
+ion magnetizations σcoldi   ∼0.3-1.3 and Alfvén speeds ∼0.5-  plasmas have shown that anomalous resistivity due to microin-
+0.8c. Again, our results apply in these cases, and in particular the   stabilities remains a negligible dissipation mechanism in the dif-
+electron magnetizations are in the very relativistic range where   fusion region (Liu et al. 2013; Karimabadi et al. 2013), where
+bulk inertia should dominate in Ohm’s law.                       the reconnection electric ﬁeld is still sustained by thermal elec-
+                                                                  tron inertia. The scaling analysis of Sect. 3.8 should thus remain
+                                                                        valid, as well as the conclusion that bulk inertia dominates at
+5.2.6. High-energy particle production                                                            high inﬂow magnetization.
+The proposed normalization of the reconnection rate, E∗=   Acknowledgements. The simulations were performed using HPC ressources
+Erec/(B0VRA,in cos θ) with VRA,in  the  relativistic inﬂow Alfvén   from GENCI (Grand Équipement National de Calcul Intensif) at CINES, CCRT
+                                                                     and IDRIS, under the allocation x2013046960. Tests were conducted at pôle sci-speed, leads to E∗in a close range (0.14-0.25) and, because it
+                                                                            entiﬁque de modélisation numérique, PSMN, at the École Normale Supérieure
+relies only on inﬂow quantities, allows for an easy prediction of   de Lyon, whose staﬀwe thank for their steady technical support.  This work
+the reconnection electric ﬁeld. In particular, the ratio Erec/B0 is   has been ﬁnancially supported by the Programme National Hautes Energies
+a key quantity to estimate the time scale of energy dissipation   (PNHE).
+or the maximal energy gain for particles. It is interesting to no-
+tice that for very relativistic plasmas, VRA,in saturates at c, so that
+Erec/B0 saturates at ∼0.2c.  It may imply that the hardness of  References
+the high-energy tails saturates. We explore these matters in a
+forthcoming paper (Melzani et al., in prep.). Brieﬂy, we ﬁnd for   Aunai, N., Hesse, M., Zenitani, S., Kuznetsova, M., Black, C., Evans, R., &
+                                                                             Smets, R. 2013, Physics of Plasmas, 20, 022902
+a given species a power-law tail whenever its background mag-                                                                          Barkov, M., Komissarov, S. S., Korolev, V., & Zankovich, A. 2013, ArXiv e-
+netization is relativistic (above a few), with an index depending       prints
+mainly on the inﬂow magnetization.                                    Baty, H., Petri, J., & Zenitani, S. 2013, MNRAS, 436, L20
+                                                                              Baty, H., Priest, E. R., & Forbes, T. G. 2006, Physics of Plasmas, 13, 022312
+                                                                  Baumann, G. & Nordlund, Å. 2012, ApJ, 759, L9
+                                                                           Bessho, N. & Bhattacharjee, A. 2005, Physical Review Letters, 95, 245001
+5.2.7. Other complications                                                                           Bessho, N. & Bhattacharjee, A. 2012, The Astrophysical Journal, 750, 129
+                                                                                  Birk, G. T., Crusius-Wätzel, A. R., & Lesch, H. 2001, ApJ, 559, 96
+We ﬁnally point out that the present study is oversimpliﬁed in    Birn, J., Drake, J. F., Shay, M. A., Rogers, B. N., Denton, R. E., Hesse, M.,
+many respects. Magnetic reconnection in magnetized coronae      Kuznetsova, M., Ma, Z. W., Bhattacharjee, A., Otto, A., & Pritchett, P. L.
+and jets likely often implies asymmetric plasmas from each side      2001, J. Geophys. Res., 106, 3715
+of the current sheet, guide ﬁelds (Aunai et al. 2013; Hesse et al.    Birn, J. & Priest, E. R. 2007, Reconnection of magnetic ﬁelds : magnetohydro-
+                                                                        dynamics and collisionless theory and observations
+2013; Eastwood et al. 2013), and also normal ﬁelds (along  ˆx   Biskamp, D. 2000, Magnetic Reconnection in Plasmas, ed. Biskamp, D.
+here) reminiscent from the ambient magnetic ﬁeld.  The last   Borovsky, J. E. & Hesse, M. 2007, Physics of Plasmas, 14, 102309
+point has been studied in the context of the Earth magnetotail    Bucciantini, N., Arons, J., & Amato, E. 2011, MNRAS, 410, 381
+(Pritchett 2005a, 2010; Sitnov & Swisdak 2011). Also, the ini-   Bulanov, S. V. & Sasorov, P. V. 1976, Soviet. Astron., 19, 464
+                                                                            Cassak, P. A. & Shay, M. A. 2007, Physics of Plasmas, 14, 102114
+tial conditions chosen in the simulations are arbitrary and do not    Cerutti, B., Uzdensky, D. A., & Begelman, M. C. 2012a, ApJ, 746, 148
+necessarily reﬂect the real environments. Explored alternatives    Cerutti, B., Werner, G. R., Uzdensky, D. A., & Begelman, M. C. 2012b, ArXiv
+to the Harris sheet include X-point collapse (e.g., Graf von der       e-prints
+Pahlen & Tsiklauri 2013) or force-free equilibrium (e.g., Liu  —. 2013a, ArXiv e-prints
+                                                     —. 2013b, ArXiv e-prints
+et al. 2014), and show little diﬀerences with the Harris case.   Chen, L.-J., Daughton, W. S., Lefebvre, B., & Torbert, R. B. 2011, Physics of
+However, three dimensional initial conﬁgurations should also be      Plasmas (1994-present), 18,
+considered, because in a real environment most of the energy dis-   Coppi, B., Laval, G., & Pellat, R. 1966, Physical Review Letters, 16, 1207
+sipation may occur at 3D nulls, involving for example spine-fan   Daughton, W. & Karimabadi, H. 2007, Physics of Plasmas, 14, 072303
+                                                                        Daughton, W., Roytershteyn, V., Karimabadi, H., Yin, L., Albright, B. J., Bergen,
+reconnection, or at quasi-separatrix layers (Birn & Priest 2007;       B., & Bowers, K. J. 2011, Nature Physics, 7, 539
+Pontin 2011). Few kinetic simulations of such setups exist (Bau-   Daughton, W., Scudder, J., & Karimabadi, H. 2006, Physics of Plasmas, 13,
+mann & Nordlund 2012; Olshevsky et al. 2013). A related point     072101
+is the external forcing, i.e., the large scale plasma ﬂow that can   de Gouveia dal Pino, E. M. & Lazarian, A. 2005, A&A, 441, 845
+                                                                       de Gouveia Dal Pino, E. M., Piovezan, P. P., & Kadowaki, L. H. S. 2010, A&A,
+increase the magnetic ﬁeld gradients and trigger reconnection.      518, A5
+Studies (Pei et al. 2001; Pritchett 2005b; Ohtani & Horiuchi   Dexter, J., McKinney, J. C., Markoﬀ, S., & Tchekhovskoy, A. 2013, ArXiv e-
+2009; Klimas et al. 2010) show that the reconnection rate E∗       prints
+is then ﬁxed by the boundary conditions, and is thus larger than   Di Matteo, T. 1998, MNRAS, 299, L15
+                                                                   Di Matteo, T., Blackman, E. G., & Fabian, A. C. 1997, MNRAS, 291, L23
+the spontaneous rate. The timescale of the forcing also proves to                                                                           Drake, J. F., Shay, M. A., Thongthai, W., & Swisdak, M. 2005, Phys. Rev. Lett.,
+be of importance (Pei et al. 2001). These considerations, as well      94, 095001
+as some of the points made earlier on, highlight the multiscale   Drenkhahn, G. & Spruit, H. C. 2002, A&A, 391, 1141
+nature of reconnection in the context of concrete astrophysical   Dungey, J. W. 1958, in IAU Symposium, Vol. 6, Electromagnetic Phenomena in
+                                                                         Cosmical Physics, ed. B. Lehnert, 135
+objects – and demonstrate the need for corresponding multiscale                                                                        Eastwood, J. P., Phan, T. D., Øieroset, M., Shay, M. A., Malakit, K., Swisdak,
+simulation studies, a ﬁeld still in its infancy (e.g., Horiuchi et al.      M., Drake, J. F., & Masters, A. 2013, Plasma Physics and Controlled Fusion,
+2010; Innocenti et al. 2013)                                                  55, 124001
+
+                                                                                                                    Article number, page 19 of 22
+
+===== PDF PAGE 20 =====
+Egedal, J., Daughton, W., Drake, J. F., Katz, N., & Lê, A. 2009, Physics of   Olshevsky, V., Lapenta, G., & Markidis, S. 2013, Phys. Rev. Lett., 111, 045002
+   Plasmas (1994-present), 16,                                            Paschmann, G., Øieroset, M., & Phan, T. 2013, Space Sci. Rev., 178, 385
+Egedal, J., Daughton, W., & Le, A. 2012, Nature Physics, 8, 321                    Pei, W., Horiuchi, R., & Sato, T. 2001, Physics of Plasmas, 8, 3251
+Fujimoto, K. 2006, Physics of Plasmas, 13, 072904                                    Pétri, J. & Kirk, J. G. 2007, Plasma Physics and Controlled Fusion, 49, 1885
+Fujimoto, K. 2009, Physics of Plasmas (1994-present), 16,                            Pétri, J. & Lyubarsky, Y. 2007, A&A, 473, 683
+Gedalin, M. 1993, Phys. Rev. E, 47, 4354                                         Plotnikov, I., Pelletier, G., & Lemoine, M. 2013, MNRAS, 430, 1280
+Giannios, D., Uzdensky, D. A., & Begelman, M. C. 2009, MNRAS, 395, L29      Pontin, D. I. 2011, Advances in Space Research, 47, 1508
+Giovanelli, R. G. 1947, MNRAS, 107, 338                                     Poutanen, J. & Veledina, A. 2014, Space Sci. Rev.
+—. 1948, MNRAS, 108, 163                                                             Priest, E. R. 1987, Solar magneto-hydrodynamics.
+Giroletti, M., Giovannini, G., Feretti, L., Cotton, W. D., Edwards, P. G., Lara,                                                                                            Pritchett, P. L. 2001, J. Geophys. Res., 106, 3783
+   L., Marscher, A. P., Mattox, J. R., Piner, B. G., & Venturi, T. 2004, ApJ, 600,                                                     —. 2005a, Journal of Geophysical Research (Space Physics), 110, 5209
+  127                                                     —. 2005b, Journal of Geophysical Research (Space Physics), 110, 10213
+Goldman, M. V., Lapenta, G., Newman, D. L., Markidis, S., & Che, H. 2011,                                                     —. 2010, Journal of Geophysical Research (Space Physics), 115, 10208
+   Physical Review Letters, 107, 135001
+                                                     —. 2013, Physics of Plasmas, 20, 061204
+Goodman, J. & Uzdensky, D. 2008, ApJ, 688, 555
+                                                                                            Pritchett, P. L. & Coroniti, F. V. 2004, Journal of Geophysical Research (Space
+Graf von der Pahlen, J. & Tsiklauri, D. 2013, ArXiv e-prints
+                                                                                      Physics), 109, 1220
+Hesse, M., Aunai, N., Zenitani, S., Kuznetsova, M., & Birn, J. 2013, Physics of
+                                                                                  Reis, R. C. & Miller, J. M. 2013, ApJ, 769, L7   Plasmas (1994-present), 20,
+                                                                                     Ricci, P., Lapenta, G., & Brackbill, J. U. 2002, Geophysical Research Letters,Hesse, M., Kuznetsova, M., & Birn, J. 2004, Physics of Plasmas, 11, 5387
+                                                                                   29, 3Hesse, M., Kuznetsova, M., & Hoshino, M. 2002, Geophys. Res. Lett., 29, 1563
+Hesse, M., Neukirch, T., Schindler, K., Kuznetsova, M., & Zenitani, S. 2011,  —. 2003, Physics of Plasmas (1994-present), 10, 3554
+   Space Science Reviews, 160, 3                                             Rogers, B. N., Denton, R. E., Drake, J. F., & Shay, M. A. 2001, Physical Review
+Hesse, M., Schindler, K., Birn, J., & Kuznetsova, M. 1999, Physics of Plasmas,       Letters, 87, 195004
+   6, 1781                                                          Romanova, M. M. & Lovelace, R. V. E. 1992, A&A, 262, 26
+Hesse, M. & Zenitani, S. 2007, Physics of Plasmas, 14, 112102                    Sakai, J.-I., Saito, S., Mae, H., Farina, D., Lontano, M., Califano, F., Pegoraro,
+Hesse, M., Zenitani, S., Kuznetsova, M., & Klimas, A. 2009a, Physics of Plas-        F., & Bulanov, S. V. 2002, Physics of Plasmas, 9, 2959
+   mas, 16, 102106                                                          Schwartz, D. A., Marshall, H. L., Lovell, J. E. J., Murphy, D. W., Bicknell, G. V.,
+—. 2009b, Physics of Plasmas, 16, 129906                                        Birkinshaw, M., Gelbord,  J., Georganopoulos, M., Godfrey, L., Jauncey,
+Higashimori, K. & Hoshino, M. 2012, Journal of Geophysical Research (Space     D. L., Perlman, E. S., & Worrall, D. M. 2006, ApJ, 640, 592
+   Physics), 117, 1220                                                      Shay, M. A., Drake, J. F., & Swisdak, M. 2007, Physical Review Letters, 99,
+Horiuchi, R., Usami, S., Ohtani, H., & Moritaka, T. 2010, Plasma and Fusion     155002
+   Research, 5, 2006                                                                 Sironi, L. & Spitkovsky, A. 2011, ApJ, 741, 39
+Huba, J. D. 2005, Physics of Plasmas, 12, 012322                      —. 2014, ArXiv e-prints
+Innocenti, M. E., Lapenta, G., Markidis, S., Beck, A., & Vapirev, A. 2013, Jour-   Sitnov, M. I. & Swisdak, M. 2011, Journal of Geophysical Research (Space
+   nal of Computational Physics, 238, 115                                            Physics), 116, 12216
+Ishizawa, A. & Horiuchi, R. 2005, Phys. Rev. Lett., 95, 045003                 Takamoto, M. 2013, ApJ, 775, 50
+Jaroschek, C. H., Hoshino, M., Lesch, H., & Treumann, R. A. 2008, Advances   TenBarge, J. M., Daughton, W., Karimabadi, H., Howes, G. G., & Dorland, W.
+   in Space Research, 41, 481                                                  2013, ArXiv e-prints
+Ji, H. & Daughton, W. 2011, Physics of Plasmas, 18, 111207                   Treumann, R. A. & Baumjohann, W. 2013, Frontiers in Physics, 1
+Kagan, D., Milosavljevic, M., & Spitkovsky, A. 2012, ArXiv e-prints            Uzdensky, D. A. 2006, ArXiv Astrophysics e-prints
+Karimabadi, H., Krauss-Varban, D., Huba, J. D., & Vu, H. X. 2004, Journal of   Vapirev, A. E., Lapenta, G., Divin, A., Markidis, S., Henri, P., Goldman, M., &
+   Geophysical Research: Space Physics, 109, n/a                           Newman, D. 2013, Journal of Geophysical Research (Space Physics), 118,
+Karimabadi,  H.,  Roytershteyn,  V.,  Daughton,  W., &  Liu,  Y.-H. 2013,     1435
+   Space Sci. Rev., 178, 307                                               Watanabe, N. & Yokoyama, T. 2006, ApJ, 647, L123
+Khotyaintsev, Y. V., Vaivads, A., André, M., Fujimoto, M., Retinò, A., & Owen,                                                                                    Zenitani, S., Hesse, M., & Klimas, A. 2009a, ApJ, 705, 907
+   C. J. 2010, Phys. Rev. Lett., 105, 165002                                                     —. 2009b, ApJ, 696, 1385
+Khotyaintsev, Y. V., Vaivads, A., Retinò, A., André, M., Owen, C. J., & Nilsson,                                                                                    Zenitani, S., Hesse, M., & Klimas, A. 2011a, in American Institute of Physics
+   H. 2006, Phys. Rev. Lett., 97, 205003                                                                           Conference Series, Vol. 1366, American Institute of Physics Conference Se-
+Kirk, J. G. & Skjæraasen, O. 2003, ApJ, 591, 366                                                                                                      ries, ed. V. Florinski, J. Heerikhuisen, G. P. Zank, & D. L. Gallagher, 138–144
+Klimas, A., Hesse, M., Zenitani, S., & Kuznetsova, M. 2010, Physics of Plasmas,
+                                                                                    Zenitani, S., Hesse, M., Klimas, A., & Kuznetsova, M. 2011b, Physical Review
+   17, 112904
+                                                                                            Letters, 106, 195003
+Koide, S. & Arai, K. 2008, ApJ, 682, 1124
+                                                                                    Zenitani, S. & Hoshino, M. 2001, ApJ, 562, L63Kowal, G., de Gouveia Dal Pino, E. M., & Lazarian, A. 2011, ApJ, 735, 102
+                                                     —. 2005, ApJ, 618, L111Kronberg, P. P., Colgate, S. A., Li, H., & Dufton, Q. W. 2004, ApJ, 604, L77
+                                                     —. 2007, ApJ, 670, 702Larrabee, D. A., Lovelace, R. V. E., & Romanova, M. M. 2003, ApJ, 586, 72
+Lazar, A., Nakar, E., & Piran, T. 2009, ApJ, 695, L10                   —. 2008a, ApJ, 677, 530
+Lazarian, A., Eyink, G., & Vishniac, E. 2011, ArXiv e-prints               —. 2008b, arxiv
+Lazarian, A. & Vishniac, E. T. 1999, ApJ, 517, 700
+Le, A., Egedal, J., Ohia, O., Daughton, W., Karimabadi, H., & Lukin, V. S. 2013,
+   Physical Review Letters, 110, 135004
+Liu, Y.-H., Daughton, W., Karimabadi, H., Li, H., & Peter Gary, S. 2014, Physics  Appendix A: Relativistic Harris equilibrium
+   of Plasmas, 21, 022113
+Liu, Y.-H., Daughton, W., Karimabadi, H., Li, H., & Roytershteyn, V. 2013,  We derived the equilibrium relations for relativistic temperatures
+   Physical Review Letters, 110, 265004
+                                                        and current drift speeds, as well as for arbitrary ion to electronLiu, Y.-H., Drake, J. F., & Swisdak, M. 2012, Physics of Plasmas, 19, 022110
+Lyutikov, M. 2006a, MNRAS, 369, L5                             mass ratio and temperature ratio, in Melzani et al. (2013).
+—. 2006b, MNRAS, 367, 1594                                    Each species follow a Maxwell-Jüttner distribution :
+Lyutikov, M. & Lazarian, A. 2013, Space Sci. Rev., 178, 459
+Markidis, S., Henri, P., Lapenta, G., Divin, A., Goldman, M., Newman, D., &
+   Laure, E. 2013, Physics of Plasmas, 20, 082105                                    µs ncs(x)    (    q              !)                                               =           exp  −µsΓs   1 + ˜p2 −Us ˜py/c    ,McKinney, J. C., Tchekhovskoy, A., & Blandford, R. D. 2012, ArXiv e-prints      fs(x,ep)   4πΓsK2(µs)
+McKinney, J. C. & Uzdensky, D. A. 2012, MNRAS, 419, 573
+Melzani, M., Walder, R., Folini, D., & Winisdoerﬀer, C. 2014, International                                                          (A.1)
+   Journal of Modern Physics Conference Series, 28, 60194
+Melzani, M., Winisdoerﬀer, C., Walder, R., Folini, D., Favre, J. M., Krastanov,   with s =  i for ions or e for electrons, µs = 1/Θs = msc2/Ts,
+    S., & Messmer, P. 2013, A&A, 558, A133                     = p/c = γv/c, and K2 the modiﬁed Bessel function of theMerloni, A. & Fabian, A. C. 2001, MNRAS, 321, 549                            ep
+                                                          second kind. We note that  fs is indeed normalized with respectMihalas, D. & Mihalas, B. W. 1984, Foundations of radiation hydrodynamics,
+   ed. Mihalas, D. & Mihalas, B. W.                                       to ep to ncs(x) (Melzani et al. 2013), so that the particle density in
+Ohtani, H. & Horiuchi, R. 2009, Plasma and Fusion Research, 4, 24            the simulation frame is ncs(x), and that in the comobile plasma
+
+Article number, page 20 of 22
+
+===== PDF PAGE 21 =====
+                           M. Melzani et al.: Relativistic reconnection in ion-electron plasmas
+
+frame of each species is n0,cs(x) = ncs(x)/Γs. Loading the dis-  Appendix B: From Vlasov to ﬂuid equations
+tribution A.1 when both Θs and Us are relativistic is non-trivial,
+                                                      Appendix B.1: Fluid equationsand we use the method detailed in Melzani et al. (2013).
+   For the special case where ions and electrons have the same   Fluid equations employed in numerical codes are usually ex-
+temperatures, fulﬁlling Vlasov and Maxwell’s equations leads   pressed in term of comobile quantities, such as, for species s,
+to:                                                               the comobile particle number density n0s, the comobile enthalpy
+                                                                         h0s, the comobile pressure P0s, and in term of the ﬂuid veloc-
+            ncs(0)                                                                            ity ¯vs and its associated Lorentz factor Γs. The conservation of                                 ,                                  (A.2a)ncs(x) =
+        cosh2(x/L)                                                  particle number and of momentum for each species, and of to-
+                                                                                tal energy, then read (see e.g., Mihalas & Mihalas 1984; Barkov   Θi = (me/mi)Θe,                                  (A.2b)
+                                                                          et al. 2013):
+       1  ωce !2
+  Θe =                   ,                                   (A.2c)   ∂         ∂
+       4  ω0,pe                                                 ∂t(Γsn0s) + ∂x · (Γsn0s¯vs) = 0,                         (B.1a)ΓsUs           d0,e ω0,pe
+    = −2Θs          sgn(qs),                       (A.2d)   ∂             ∂
+  c         L  ωcs                                          ∂t(Γ2sn0sh0s¯vs) + ∂x · (n0sh0sΓs¯vsΓs¯vs)
+                                                                                                                    (B.1b)
+                                                                             ∂P0s    qswith sgn(qs) the sign of the charge qs, ωcs = eB0/ms the cy-          = −1    +   Γsn0s(E + ¯vs ∧B),
+clotron pulsation deﬁned in the asymptotic magnetic ﬁeld B0                ms ∂x   ms
+(e > 0 here), ω0,pe = p n0,cs(0)e2/(ϵ0me) the electron plasma   ∂                         E2     B2                      X                                                                  +                                                                         (Γ2sn0sh0smsc2 −P0s) +                                       =pulsation        deﬁned               by the                       comobile                             number                                            density                                                             n0,cs(0)                                                                    ∂t                                                                                              2µ0                                                                                         2µ0c2                                                                                                                                                                                                                                                                                                                                                                       s                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   the center                       of                          the current                                        sheet, andncs(0)/Γs at                                                           d0,e                                  = c/ω0,pe                                                                                                                      (B.1c)
+the associated inertial length.                                   ∂                E ∧B                        X                                            +       ·     (Γ2sn0sh0smsc2¯vs) +            0.    Inserting Eq. A.2c into Eq. A.2d, the latter becomes                                                          ∂x                                                                                              µ0                                                                                                                                                                                                                                                                                                                                                                                                           s                                                                                                                                                                                                                                             =
+ΓsUs                                                        These equations are, however, not well suited for the analysis    = −1 d0,e ωce sgn(qs),                           (A.3)
+  c      2 L  ω0,pe                                            of particle simulations.  First, because accessible quantities are
+                                                               those deﬁned in the simulation (or lab) frame, while those in the
+so that we see that Eqs. A.2a-A.2c and Eq. A.3 are well suited to  comobile frame of the plasma must be obtained by a boost at the
+express the equilibrium relations in term of the comobile quanti-   local mean speed ¯vs. Second, because they assume a comobile
+ties ωce/ω0,pe and L/d0,e only. Some manipulations are needed to   particle distribution that is isotropic in momentum space in order
+express everything in terms of the lab-frame quantities ωce/ωpe   to use a scalar pressure P0s instead of the full pressure tensor,
+and L/de, where ωpe is the counterpart of ω0,pe in the simulation   and, as we show below, in order to write relations such as ¯ps =
+                                              = h0sΓs¯vs for the mean momentum. This is not the case inframe (ωpe = √Γeω0,pe), and de = c/ωpe. To do so, we note in   ⟨γv⟩s
+Eq. A.2d that ω0,ped0,e = c = ωpede, and we express Eq. A.2c as   the out-of-equilibrium plasmas that we study.
+                                                                        Instead, we derive the ﬂuid equations directly from the colli-Θe = Γe(ωce/ωpe)2/4. With this, we obtain
+                                                                    sionless Vlasov equation. The latter reads
+
+Us     1 ωce de                                                                    ∂fs(x, p, t)                                                                                 ∂fs                                                                                          qs                                                                                                       ∂fs   =                        ,                                       (A.4a)                                                       +                                                 + v ·                                                                           (E + v ∧B) ·                                                                      = 0,         (B.2)
+ c    2 ωpe L                                                          ∂t         ∂x   ms           ∂p
+      Γe  ωce !2
+ Θe =                  .                                    (A.4b)  where p = γv, and  fs is the distribution function in the simula-
+      4  ωpe                                                      tion or lab frame. We will denote by  f0s its counterpart in the
+                                                         comobile frame.
+We see from Eq. A.4a that we have the condition ωce/ωpe <     The ﬁrst moment (with 1) of Eq. B.2 gives the equation of
+2L/de. If this is not the case, the equilibrium cannot be achieved.   conservation of the number of particles:
+Why  it  is so can be seen by rewriting Eq. A.2d as Θe =
+(L/2de)(ωce/ωpe)ΓeUe/c: satisfying Vlasov equation is possible   ∂       ∂                                               +       · (nlab,s¯vs) = 0.                             (B.3)only if Θe < (L/2de)(ωce/ωpe)Γe, but this is not possible if the    ∂tnlab,s  ∂x
+pressure balance condition (which is Eq. A.4b) requires a tem-
+                                                       Note that nlab,s = Γsn0s, so that we indeed recover Eq. B.1a.perature exceeding this limit to balance the magnetic ﬁeld pres-
+                                                      The second moment (with p) gives the equation of conserva-sure.
+                                                                     tion of momentum:
+   As a ﬁnal note, we express the thermal Larmor radius of the
+particles, deﬁned as ⟨(γv⊥)2⟩1/2/ωce where ⟨·⟩is an average over   ∂          ∂
+the distribution function, at current sheet center:                       ∂t(nlab,s ¯ps) + ∂x · (nlab,s ¯ps¯vs)
+                                                                                                                         (B.4)
+⟨rce⟩   ωpe                                     = −∂  · (nlab,s⟨δpsδvs⟩s) + qs nlab,s(E + ¯vs ∧B).
+    =   pΘe p κ32(µe) = pΓeκ32(µe)/2,              (A.5)        ∂x                ms
+ de    ωce
+                                         We used the deﬁnition δp = p −¯ps, where p = γv is the momen-
+where the ﬁrst part of the equality is general (Melzani et al.   tum, and similarly for δv. Also, ⟨·⟩s denotes an average in p over
+2013), and the second is obtained for the Harris equilibrium us-   the distribution function fs. In order to recover Eq. B.1b, we use
+ing Eq. A.4b for the ratio ωce/ωpe. The function κ32 is the plasma   the relation ¯ps = h0sΓs¯vs for the mean momentum, which is valid
+comobile enthalpy and is plotted in Fig. B.1. The thermal Lar-   only if the comobile distribution  f0s is isotropic in p (Melzani
+mor radius is consequently temperature dependent via κ32(1/Θe).   et al. 2013). Also, we note that the stress tensor is deﬁned as
+
+                                                                                                                    Article number, page 21 of 22
+
+===== PDF PAGE 22 =====
+Πi j = nlab,sms⟨pivj⟩s = nlab,sms( ¯pi¯vj+⟨δpiδv j⟩s), and is also equal                      h(T) = K3(mc2/T) = κ32(mc2/T)                                                                                                                      K2(mc2/T)
+(again if f0s is isotropic) to Πij = P0sδij + Γ2¯vsh0sn0sms¯vs,i¯vs,j. In-               8    4T/mc2
+serting these expressions into Eq. B.4 does lead to Eq. B.1b. We
+also note that Eq. B.4 can be put into a conservative form by us-               6
+ing the conservation of momentum for the electromagnetic ﬁeld,
+which reads
+                                                                               4
+ ∂     ∧B) −∂  · T = −[ρE + j ∧B],                   (B.5)∂tϵ0(E       ∂x                                                             2
+where Ti j = ϵ0(EiE j −E2δij/2)+µ−10 (BiBj −B2δij/2) is Maxwell               1
+stress tensor, ρ = P s qsnlab,s is the charge density, and j =                   0.0        0.5        1.0        1.5        2.0
+P s qsnlab,s¯vs is the current density. One thus has to sum Eq. B.4                                T/mc2
+over all species and then use Eq. B.5, to obtain:                     Fig. B.1.    Plot of the normalized comobile enthalpy for species s:
+                                                                               h0s = (n0s⟨γmsc2⟩s + Ps)/(n0smsc2), for a Maxwell-Jüttner distribu-
+ ∂                                                                          tion of temperature Ts. For the background plasma temperatures con-     X    ∧B +                     msnlab,s ¯ps                                         sidered in this study, T = (1.5 × 107, 2 × 108, 3 × 109) K, we have ∂t  ϵ0E            s                                                                                                                           for electrons Θe = (2.5 × 10−3, 3.4 × 10−2, 0.51) and corresponding
+                                                        (B.6)                                                                               h0e = (1.006, 1.086, 2.57), while for ions h0i ∼1 always holds.
+     ∂     X  +       ·   +     msnlab,s  ¯ps¯vs + ⟨δpsδvs⟩s     0.     ∂x    −T      s                                                                    =
+                                                       deﬁne the temperature tensor as the ratio of the pressure tensor
+    Finally, multiplying Vlasov equation B.2 by γmsc2 and in-   nlab,sms⟨δpsδvs⟩s (appearing in the equation of conservation of
+tegrating over p gives the equation of conservation of energy:  momentum, Eq. B.4), to the comobile particle number density
+                                                                         n0s. Since nlab,s = Γsn0,s, the temperature tensor is
+ ∂               ∂                                             Ti j,s      ⟨δpiδv j⟩s
+ ∂t(nlab,s⟨γmsc2⟩s) + ∂x · (nlab,s⟨vγmsc2⟩s)                (B.7)      = Γs               .                                  (B.10)                                                         msc2         c2
+                     = qsnlab,s⟨E · v⟩s.
+                                                              For the special case of a Maxwell-Jüttner distribution func-
+The right hand side accounts for the coupling between the   tion of temperature Θs = 1/µs = Ts/(msc2), of drift velocity β0,s
+species and the electromagnetic ﬁelds, and thus possibly with  and associated Lorentz factor Γ0,s, given in the simulation frame
+other species via collective interactions.  The non-relativistic  by fs(x, ˜p) = nlab,s(x)gs(˜p), ˜p = γv/c, and
+limit of this equation is easily obtained by making the diﬀerence
+between Eqs. B.7 and B.3. Also, Eq. B.7 can be put into a useful                µs       (    q              !)
+conservative form by expressing its right hand side through the   gs(˜p) =            exp  −µΓ0,s   1 + ˜p2 −¯vs/c · ˜p    ,                                                                       4πK2(µs)Γ0,s
+energy equation for the ﬁelds, which is:
+                                                                                                                    (B.11)
+ ∂   E2     B2 !   ∂  E ∧B
+       +    +       ·     = −E · j                 we do have (Melzani et al. 2013) ⟨δpiδv j⟩s/c2 = Θsδi j/Γs where
+ ∂t  2µ0c2   2µ0   ∂x    µ0                                                                                 δi j is Kronecker’s delta.# We also note that this distribution is
+         Z
+  = −E ·   X   d3p fs(x, p)qsv                          (B.8)   normalized to unity:    d3 ˜p gs(˜p) = 1. Based upon these con-
+                  s                                                        siderations, we measure the temperatures with expression B.10.
+  X  = −     nlab,sqs⟨v · E⟩s.
+              s
+
+We thus have to sum Eq. B.7 for all species, to obtain:
+
+ ∂                    E2     B2
+ X (nlab,s⟨γmsc2⟩s) +     +
+ ∂t                        2µ0c2   2µ0                    s                                                                                                                                                                                                                                                               (B.9)
+     ∂                E ∧B    X  +       ·     (nlab,s⟨vγmsc2⟩s) +            0.
+     ∂x                                 µ0                                                        s                                                                                          =
+To recover Eq. B.1c, we use the relation nlab,s⟨γmsc2⟩s =
+Γ2sn0sh0smsc2 −P0s (Melzani et al. 2013, Table 5), and the re-
+lations previously used for ¯ps and nlab,s.
+
+
+Appendix B.2: Measure of the temperature tensor
+
+The kinetic temperature is a second order moment of the particle
+distribution function and is, as such, not always suited to char-
+acterize the velocity distribution of a population strongly out of
+equilibrium. We nevertheless use it as an indication of the ther-
+mal energy content of the population, and of the momentum ﬂux
+transfers, the latter being especially relevant for Ohm’s law. We
+
+Article number, page 22 of 22

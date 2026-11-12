@@ -1,0 +1,969 @@
+
+===== PDF PAGE 1 =====
+ Two-ﬂuid 20-moment simulation of fast magnetic reconnection
+
+
+                       E. Alec Johnson
+
+                  Department of Mathematics
+                   KU Leuven
+
+   These slides were presented in my behalf at CSE13 in Boston
+              Massachusetts on February 25, 2013
+
+
+Abstract.  The 20-moment two-ﬂuid-Maxwell model resolves diago-
+nal pressure tensor components near the X-point when compared with
+Vlasov simulations of fast magnetic reconnection, in contrast to the 10-
+moment model. This occurs because, unlike the hyperbolic 10-moment
+model, the 20-moment model admits heat ﬂux, which is a modeling re-
+quirement to admit steady-state 2D symmetric (driven) magnetic recon-
+nection.
+
+
+
+    Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    1 / 56
+
+===== PDF PAGE 2 =====
+Outline
+
+
+
+
+
+  1 Hyperbolic plasma models
+
+
+
+
+  2 Magnetic reconnection: Vlasov vs. ﬂuid simulations
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    2 / 56
+
+===== PDF PAGE 3 =====
+Standard of truth: 2-species kinetic-Maxwell (classical)
+
+                   BGK collision operator     Maxwell’s equations:
+       ∂tB + ∇× E = 0,                               fθ −fs
+                                    Cs =           ,
+       ∂tE −c2∇× B = −J/ϵ,                       τs
+     ∇· B = 0,  ∇· E = σ/ϵ.
+                          where
+    Charge moments:
+                                     ρ          −|c|2
+      σ := Ps msqs R fs dv,                      fθ =        exp                ,                                       (2πθ)3/2       2θ
+      J := Ps msqs R vfs dv.
+                                 θ := ⟨|c|2/2⟩.
+     Kinetic equations:
+
+         ∂tfi +v · ∇xfi +ai · ∇vfi = Ci
+      ∂tfe+v · ∇xfe+ae · ∇vfe= Ce
+
+
+     Lorentz acceleration:
+
+         ai =  qi (E + v × B) ,                mi
+        ae = qe (E + v × B) .             me
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    3 / 56
+
+===== PDF PAGE 4 =====
+Fluid approximation requires a numerical collision operator
+
+ Fluid models are kinetic equation solvers.        How to choose Cs?
+      Characteristic speeds correspond to discrete          use a simple choice based on what you want to
+       velocities.                                                resolve.
+      Fluid models evolve moments.                 BGK damps all components and moments
+                                                            representing perturbation from Maxwellian at
+     Moments deﬁne a representation Fs selected            the same rate τs−1 .
+     from a ﬁnite-dimensional space F.
+                                                 Damping individual moments at tunable rates
+     convergence Fs →fs requires an inﬁnite                allows smooth transition to a model with more
+     number of moments.                              moments.
+   F is a good representation space when C is            Faster damping for higher moments
+      large but bad when C is small.                        corresponds to faster damping for ﬁner-scale
+                                                   components of fs.
+How can we justify ﬂuid models when physically
+ Cs = 0?
+
+     by a multiscale framework:
+
+      ﬂuid models are a coarse-scale model used to
+      accelerate convergence of the lowest moments
+      of the kinetic equation.
+
+      Cs can be physically deﬁned to incorporate all
+      microscale effects not resolved by the
+      coarse-scale model.
+
+       in code, Cs ̸= 0 is a numerical mechanism to
+      regularize fs.
+
+       collision period τs selects the largest time scale
+       for resolution of velocity-space detail.
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    4 / 56
+
+===== PDF PAGE 5 =====
+Conserved Moment Evolution
+
+
+Convention: Products and powers of      Substituting into equation (1) gives:
+vectors are deﬁned by tensor products.
+                                    General conserved moment evolution
+Conserved moments are moments of
+monomials in v. Let χ = χ(v). Take the        ∂teFn + ∇·eFn+1 ∨= mq                                                     n EeFn−1 + eFn × B + eCnχth moment of the kinetic equation:
+
+  Z                                     This is a hierarchy of moment evolution equations:
+   χ ∂tf + ∇x·(vf) + ∇v·(af) = C
+    v                                               ∂teF0 + ∇·eF1 = eC0,
+Integrate by parts to get                         ∂teF1             q                           + ∇·eF2 = m (EeF0 + eF1 × B)+eC1,
+ ∂t R vχf + ∇· R vvχf = R vfa · ∇vχ + R vχC    ∂teF2 + ∇·eF3 ∨= mq                                                   2 EeF1 + eF2 × B + eC2,
+                                                   3 EeF2 + eF3 × B + eC3,                                          (1)     ∂teF3             q                           + ∇·eF4 ∨= m
+Choose χ = vn. Deﬁne                         ∂teF4                           + ∇·eF5 ∨= mq                                                   4 EeF3 + eF4 × B + eC4.
+       Z             Z
+   eFn :=    vnf,      eCn :=   vnC.        Tensor notation:
+           v                  v
+                             AB = A ⊗B = tensor product,
+Since a = mq (E + v × B),               Sym A = symmetrization of tensor A,
+                 q                   A ⊻B = Sym(A ⊗B), and  a · ∇v(vn) ∨= m n Evn−1 + vn × B   .
+                             A ∨= B ⇐⇒Sym A = Sym B.
+
+
+           Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    5 / 56
+
+===== PDF PAGE 6 =====
+Primitive moments
+
+
+    Fluid closures should be Galilean invariant.
+    The kinetic equation is Galilean-invariant, so we require ﬂuid closures to be Galilean-invariant.
+
+     Primitive moments are Galilean-invariant
+
+    Deﬁnitions:
+
+         Z
+      ρ =      f
+               v
+             R                 v χ     ⟨χ⟩:=
+             ρ
+     u := ⟨v⟩
+
+      c := v −u
+
+          Z
+      Fn :=   cnf
+                v
+
+     Specifying closure in terms of primitive moments Fn ensures that closures are
+     Galilean-invariant.
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    6 / 56
+
+===== PDF PAGE 7 =====
+Mapping from conserved to primitive variables
+
+
+To express primitive moments in terms of conserved     Multiplying by f and integrating over velocity,
+moments we observe that
+                        n                                  F0 = ρ,
+                         n
+   cn ∨=(v −u)n ∨= X(−1)j    ujvn−j.                 F1 = 0,
+                       j=0                j
+                                                     F2 = eF2 −ρu2, Multiplying by C and integrating over velocity,
+                                                     F3 ∨= eF3 −3ueF2 + 2ρu3,  C0= eC0,
+                                                     F4 ∨= eF4 −4ueF3 + 6u2eF2 −3ρu4,  C1= eC1 −ueC0,
+   C2 = eC2−2ueC1 + u2eC0,                            F5 ∨= eF5 −5ueF4 + 10u2eF3 −10u3eF2 + 4ρu5,
+   C3 ∨= eC3 −3ueC2+3u2eC1 −u3eC0,                where we have used that eF1 = ρu.
+   C4 ∨= eC4 −4ueC3 + 6u2eC2−4u3eC1 + u4eC0,           In practice, when computing with conserved variables,
+                                        we compute the primitive variables that we need for
+where in the absence of production eC0 = 0 and in the   the closing moment and then use one of the relations
+ further absence of interspecies friction eC1 = 0.                                                                               eF3 ∨= F3 + 3ueF2 −2ρu3,
+                                                                               eF4 ∨= F4 + 4ueF3 −6u2eF2 + 3ρu4,
+                                                                               eF5 ∨= F5 + 5ueF4 −10u2eF3 + 10u3eF2 −4ρu5
+
+                                                             to solve for the closing conserved moment.
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    7 / 56
+
+===== PDF PAGE 8 =====
+Mapping from primitive to conserved variables
+
+
+To express conserved moments in terms of primitive     Multiplying by f and integrating over velocity,
+moments we observe that
+                        n                                                  eF0 = ρ,
+                     n
+   vn ∨=(u + c)n ∨= X                           ujcn−j.                                eF1 = ρu,                       j=0      j
+ Multiplying by C and integrating over velocity,                    eF2 = F2 + ρu2,
+                                                                               eF3 ∨= F3 + 3uF2 + ρu3,   eC0= C0,
+   eC1= C1 + uC0,                                                     eF4 ∨= F4 + 4uF3 + 6u2F2 + ρu4,
+    eC2 = C2+2uC1 + u2C0,                                          eF5 ∨= F5 + 5uF4 + 10u2F3 + 10u3F2 + ρu5,
+    eC3 ∨= C3 + 3uC2+3u2C1 + u3C0,                where we have used that F1 = 0.
+    eC4 ∨= C4 + 4uC3 + 6u2C2+4u3C1 + u4C0,
+where in the absence of production C0 = 0 and in the
+absence of interspecies friction C1 = 0.
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    8 / 56
+
+===== PDF PAGE 9 =====
+Collisional closures
+
+
+  Conventional names for primitive moments:            and where when computing
+      P := F2,   Q := F3,   R := F4,   S := F5,              Rc cn(fθ −f)                                                     Cn =
+     δtP := C2,   δtQ := C3,   δtR := C4.                                             eτ
+                                             we have used that
+   Collisional moments for BGK collision operator:         Z
+                                                                                 fθ = ρ,
+                                                                            c
+                          ,                                Z       δtP = −P◦                                                                       cfθ = 0,               τ
+                                                                            c
+                          ,                                Z      δtQ = −Q                                                                  ccfθ = P                τ3
+                                                                            c
+          3PP/ρ −R
+      δtR ∨=                                 ,                            Z cccfθ = 0, and
+                  τ4                                                      c
+  where P◦:= P −pI is deviatoric pressure and for BGK      Z ccccfθ ∨= 3PP/ρ.
+  τ = τ3 = τ4.                                                           c
+
+  Model coarsening:
+
+         dial τ4 ↘0 to smoothly transition from
+       35-moment to 20-moment model.
+
+         dial τ3 ↘0 to smoothly transition from
+       20-moment to 10-moment model.
+
+         dial τ ↘0 to smoothly transition to the 5-moment
+       model.
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                   Feb. 25, 2013    9 / 56
+
+===== PDF PAGE 10 =====
+20-moment ﬂux closure
+
+
+20-moment Maxwellian-based closure [Grad49]      Assumed distributions
+  R ∨= 3(PP −P◦P◦)/ρ.                                        Entropy-maximizing closure:
+                                                                            f(c) = exp(a · m),
+20-moment Gaussian-based closure [GrothGRB03]
+                                                            where m = (1, cc, ccc) is the tuple of evolved moments
+                                                           and a is a tuple of coefﬁcients.
+  R ∨= 3PP/ρ .                                                Maxwellian-based closure
+                                                                                                                           f = WM (1 + c′ · m),
+Comparison of closures:                                   where
+
+    The Maxwellian-based closure assumes that the        WM := exp(c0 · m0),
+      velocity distribution is a Maxwellian times a
+     polynomial.                                      m0 = (1, |c|2),
+    The Gaussian-based closure assumes that the          and c′ · m is a polynomial orthogonal to 1 and |c|2 in the
+      velocity distribution is a Gaussian times a                  weight WM .
+     polynomial.                                              Gaussian-based closure
+     Gaussian-based closure is a consistent                                        f = WG(1 + c′ · m),
+     generalization of the 10-moment model.                 where
+     Gaussian-based closure is hyperbolic if heat ﬂux is       WG := exp(c0 · m0),
+     small enough.                                                  m0 = (1, cc),
+     Maxwellian-based closure is hyperbolic if heat ﬂux       and c′ · m is a polynomial orthogonal to 1 and cc in the
+    and deviatoric stress are small enough.                    weight WG.
+   BGK would relax R to the Gaussian-based closure
+      for R.
+
+
+
+
+           Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    10 / 56
+
+===== PDF PAGE 11 =====
+35-moment ﬂux closure (aside)
+
+
+35-moment Gaussian-based closure [GrothGRB94]   Assumed distributions
+
+                                                                   Entropy-maximizing closure:
+   S ∨= 10ΘQ ,                                                         f(c) = exp(a · m),
+
+where Θ := P/ρ.                                            where m = (1, cc, ccc, cccc) is the tuple of evolved
+                                                        moments and a is a tuple of coefﬁcients.
+Remarks:                                                       Maxwellian-based closure
+     Thoroughly studied in [GrothGRB94] and                                     f = WM (1 + c′ · m),
+     [Brown96].                                             where
+     Large hyperbolicity region containing a Gaussian.       WM := exp(c0 · m0),
+     Simple eigenstructure.                             m0 = (1, |c|2),
+
+                                                           and c′ · m is a polynomial orthogonal to 1 and |c|2 in the
+                                                                    weight WM .
+
+                                                               Gaussian-based closure
+                                                                                                                           f = WG(1 + c′ · m),
+
+                                                            where
+
+                                           WG := exp(c0 · m0),
+                                                  m0 = (1, cc),
+                                                           and c′ · m is a polynomial orthogonal to 1 and cc in the
+                                                                    weight WG.
+
+
+
+
+
+           Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    11 / 56
+
+===== PDF PAGE 12 =====
+ Primitive moment evolution equations (aside)
+
+
+Take primitive moments of the kinetic equation.     Multiply the kinetic equation       putting it together,
+Relations for primitive moments:                  Dt f = C                        Dt χ =  a −dut u −c · ∇xu ·∇cχ   (3)
+    c(t, x, v) := v −u(t, x)                    by χ to get                     But solving momentum evolution
+   R v    = R c                                                      ρdut u + ∇·F2 = ρ⟨a⟩+ C1
+   χ(t, x, v) = χ(c) = cn                          Dt (χf) = fDt χ + χC.
+                                                                                                     for dut u, substituting in (3), and deﬁning
+  ∇vχ   = ∇cχ                                                                 (2)
+                                                                                      a′ := a −⟨a⟩= mq c × B   dvt       := ∂t + v · ∇x                    But observe that for χ(c):
+                                                                                   gives
+   ρ⟨α⟩    := Rvα                                Dt = dvt + a · ∇v·,
+   Dt (α)   := ∂t α + ∇x·(vα) + ∇v·(aα)       dvt χ = (dvt c) · ∇cχ               Dt χ =  a′ −c · ∇xu   · ∇cχ
+   Dt       := ∂t + v · ∇x + a · ∇v = Dt        = −(dvt u) · ∇cχ,           + ∇·F2 −C1 · ∇cχ.        (4)
+   Dt (αβ) = (Dt α)β + αDt β                    dvt = dut + c · ∇x;                      ρ
+
+ Substituting (4) into the kinetic equation (2) and integrating over velocity space yields:
+   ∂t(ρ⟨χ⟩) + ∇·(ρu⟨χ⟩) + ∇·(ρ⟨cχ⟩) = (∇·F2 −C1) · ⟨∇cχ⟩+ ρ   a′ −c · ∇u   · ∇cχ + R vχC.      (5)
+
+ Now impose that χ(c) = cn. For a generic α, α · ∇c  cn = n Sym  αcn−1   . So
+
+   ρ (a′ −c · ∇u) · ∇ccn = nρ Sym  (a′ −c · ∇u)cn−1 = n Sym  mq Fn × B −Fn · ∇u                  (6)
+
+ Substituting identity (6) into equation (5) gives an evolution equation for primitive moments:
+
+   ρdtFn + n Sym  Fn−1(C1 −∇·F2) + Fn · ∇u + ∇·Fn+1 = n Sym  mq Fn × B + Cn,                     (7)
+
+ where Fn := ⟨cn⟩= Fn/ρ. and dt := ∂t + u · ∇.
+
+           Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    12 / 56
+
+===== PDF PAGE 13 =====
+Primitive quasilinear form (aside)
+
+
+Equation (7) can also be written:
+
+   ρdtFn −nFn−1∇·F2 + nFn · ∇u + ∇·Fn+1 ∨= n mq Fn × B −nFn−1C1 + Cn  ,
+
+which is an evolution equation for the generalized temperature Fn.
+
+The 35-moment system in quasilinear form is thus
+
+                            dtρ + ρ∇·u = C0 = 0,
+                         ρdtu + ∇·F2 = mq ρ(E + u × B) + C1,
+               ρdtF2 + 2F2 · ∇u + ∇·F3 ∨= 2 mq F2 × B + C2,
+    ρdtF3 −3F2∇·F2 + 3F3 · ∇u + ∇·F4 ∨= 3 mq F3 × B −3F2C1 + C3,
+    ρdtF4 −4F3∇·F2 + 4F4 · ∇u + ∇·F5 ∨= 4 mq F4 × B −4F3C1 + C4,
+
+which generalizes equations (4.15) through (4.19) in [GrothGRB03] and agrees if C0 = 0 (as implicitly assumed
+on the previous slide).
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    13 / 56
+
+===== PDF PAGE 14 =====
+Outline
+
+
+
+
+
+  1 Hyperbolic plasma models
+
+
+
+
+  2 Magnetic reconnection: Vlasov vs. ﬂuid simulations
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    14 / 56
+
+===== PDF PAGE 15 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    15 / 56
+
+===== PDF PAGE 16 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    16 / 56
+
+===== PDF PAGE 17 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    17 / 56
+
+===== PDF PAGE 18 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    18 / 56
+
+===== PDF PAGE 19 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    19 / 56
+
+===== PDF PAGE 20 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    20 / 56
+
+===== PDF PAGE 21 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    21 / 56
+
+===== PDF PAGE 22 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    22 / 56
+
+===== PDF PAGE 23 =====
+Magnetic Reconnection
+
+
+   Magnetic ﬁeld lines are convected with plasma except near reconnection
+    point.
+   Adjacent oppositely directed magnetic ﬁeld lines ﬁeld lines come together
+   and cancel and reconnect.
+    Oppositely directed jets form along outﬂow axis.
+
+
+
+
+
+2D separator steady reconnection
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    23 / 56
+
+===== PDF PAGE 24 =====
+Dynamic reconnection: GEM challenge problem [GEM01]
+
+
+The GEM problem initiates reconnection by pinching adjacent oppositely directed ﬁeld lines.
+
+Two-ﬂuid simulations suggest qualitative agreement with kinetic simulations:
+     Vlasov-Darwin simulations: [SchmitzGrauer06]
+    5-moment two-ﬂuid-Maxwell simulations: [HaLoSh06], [LoHaSh11].
+    10-moment two-ﬂuid-Maxwell simulations: [Hakim06], [JoRo10], [Jo11].
+    20-moment two-ﬂuid-Maxwell simulations: [see the following slides]
+
+
+
+                            BIRN  ET  AL.' GEM RECONNECTION    CHALLENGE
+
+
+                 X   4           Full  Particle
+
+
+              3        Hybrid
+              2    HallMHD
+      MHD   /
+
+
+
+
+
+                                                                                                                                                                                 I
+
+              0          10         20         30         40
+
+                                                                      t
+
+       Figure  1. The reconnectedmagnetic flux versustime from a variety of simulation models: full
+        particle, hybrid, Hall MHD, and MHD (for resistivityr/-0.005).
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    24 / 56
+
+===== PDF PAGE 25 =====
+Simulation parameters
+
+
+
+    Symmetry is enforced and system is solved on a quarter-domain for all simulations.
+
+       All ﬂuid simulations use a 32x64 computational mesh.
+
+     3rd-order Runge-Kutta discontinuous Galerkin
+
+     time scale is ion gyroperiod.
+
+      Alfv´en speed is nondimensionalized to 1.
+
+     so spatial scale is ion skin depth.
+
+       light speed is 20.
+      relaxation period is chosen to be τs = 50√det Θs/ρs.
+
+     simulations were run until they crashed on negative pressure (positivity limiting not yet implemented).
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    25 / 56
+
+===== PDF PAGE 26 =====
+Reconnecting ﬂux for 10-moment model
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    26 / 56
+
+===== PDF PAGE 27 =====
+Reconnecting ﬂux for 10-moment model (again)
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    27 / 56
+
+===== PDF PAGE 28 =====
+Reconnecting ﬂux for 20-moment model
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    28 / 56
+
+===== PDF PAGE 29 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    29 / 56
+
+===== PDF PAGE 30 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    30 / 56
+
+===== PDF PAGE 31 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    31 / 56
+
+===== PDF PAGE 32 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    32 / 56
+
+===== PDF PAGE 33 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    33 / 56
+
+===== PDF PAGE 34 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    34 / 56
+
+===== PDF PAGE 35 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    35 / 56
+
+===== PDF PAGE 36 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    36 / 56
+
+===== PDF PAGE 37 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    37 / 56
+
+===== PDF PAGE 38 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    38 / 56
+
+===== PDF PAGE 39 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    39 / 56
+
+===== PDF PAGE 40 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    40 / 56
+
+===== PDF PAGE 41 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    41 / 56
+
+===== PDF PAGE 42 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    42 / 56
+
+===== PDF PAGE 43 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    43 / 56
+
+===== PDF PAGE 44 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    44 / 56
+
+===== PDF PAGE 45 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    45 / 56
+
+===== PDF PAGE 46 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    46 / 56
+
+===== PDF PAGE 47 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    47 / 56
+
+===== PDF PAGE 48 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    48 / 56
+
+===== PDF PAGE 49 =====
+Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    49 / 56
+
+===== PDF PAGE 50 =====
+Off-diagonal components of electron pressure tensor
+
+
+The 10-moment model resolves off-diagonal pressure tensor components well, because it admits viscous stress.
+
+
+
+
+
+                                                        Off-diagonal components of the electron pressure ten-
+                                                       sor for Vlasov simulation at Ωit =  17.7 [Schmitz-
+Off-diagonal components of the electron pressure ten-   Grauer06]
+sor for 10-moment simulation at Ωit = 18
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    50 / 56
+
+===== PDF PAGE 51 =====
+Off-diagonal components of electron pressure tensor
+
+
+The 20-moment model better resolves the off-diagonal components of the pressure tensor.
+
+
+
+
+
+                                                        Off-diagonal components of the electron pressure ten-
+                                                       sor for Vlasov simulation at Ωit =  17.7 [Schmitz-Off-diagonal components of the electron pressure ten-
+                                                 Grauer06]
+sor for 20-moment simulation at Ωit = 16
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    51 / 56
+
+===== PDF PAGE 52 =====
+Diagonal components of electron pressure tensor
+
+
+The 10-moment model resolves the diagonal components of the pressure tensor near the X-point
+poorly, because it does not admit heat ﬂux.
+
+
+
+
+
+                                             Diagonal components of the electron pressure
+                                                tensor  for Vlasov simulation at Ωit =  17.7Diagonal components of the electron pressure
+                                           [SchmitzGrauer06]
+tensor for 10-moment simulation at Ωit = 18
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    52 / 56
+
+===== PDF PAGE 53 =====
+Diagonal components of electron pressure tensor
+
+
+The 20-moment model resolves the diagonal components of the pressure tensor near the X-point
+better, because it admits heat ﬂux.
+
+
+
+
+
+                                             Diagonal components of the electron pressure
+                                                tensor  for Vlasov simulation at Ωit =  17.7
+Diagonal components of the electron pressure
+                                           [SchmitzGrauer06]
+tensor for 20-moment simulation at Ωit = 16
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    53 / 56
+
+===== PDF PAGE 54 =====
+Requirements for steady 2D symmetric magnetic reconnection
+
+
+Consider the simplest reconnection scenario: steady 2D reconnection symmetric under 180-degree
+rotation about the X-point.
+
+Theorem
+
+Reconnection is impossible without viscosity or resistivity.
+
+Argument:
+
+    Rate of reconnection is the electric ﬁeld strength at the X-point.
+
+     Electric ﬁeld strength at the X-point is resistive electric ﬁeld plus viscous electric ﬁeld.
+
+Theorem (Jo11)
+
+Reconnection is impossible for any conservative model for which heat ﬂux is zero.
+
+Argument:
+
+    Steady reconnection requires entropy production near the X-point (via resistivity or viscosity).
+
+    The X-point is a stagnation point.
+
+    Without heat ﬂux, heat accumulates at the X-point without bound.
+
+Observation: in kinetic simulations, fast reconnection is supported by viscosity, not resistivity.
+
+Conclusion: we need heat ﬂux and viscosity in a ﬂuid model of fast magnetic reconnection.
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    54 / 56
+
+===== PDF PAGE 55 =====
+Performance summary of ﬂuid models
+
+
+Performance of hyperbolic ﬂuid models relative to kinetic simulations:
+    5-moment
+          Success: rate of reconnection is qualitatively correct.
+        Reason for success: reconnection wants to happen, and the inertial term provides a mechanism.
+            Failure: reconnection is supported by inertial term rather than pressure term.
+        Reason for failure: lack of viscosity forces current to ramp at the X-point until mitigated by numerical
+              resistivity. [Jo11]
+    10-moment [Jo11]:
+          Success: pressure tensor supports reconnection
+                model shows reasonable resolution of off-diagonal components of electron pressure tensor. [JoRo10].
+                  reconnection is insensitive to collision period τs
+                  reconnection is robust and reliable if τs ̸= ∞is used to damp oscillations in deviatoric stress [Jo11]
+        Reason for success: the model admits viscosity.
+            Failure: diagonal components of pressure tensor are poorly resolved near X-point
+        Reason for failure: lack of heat ﬂux forces entropy and pressure anisotropy to ramp at the X-point.
+             Instability eventually kicks in. [Jo11]
+    20-moment:
+          Success: diagonal components of electron pressure tensor are resolved near X-point.
+        Reason for success: the model admits heat ﬂux to relieve temperature pile-up.
+           Issue: need for positivity limiting and instability are seen at late times.
+        What to do about it:
+             A generic framework for positivity limiting is developed in [JoRo13].
+               The GEM problem is unstable to secondary plasmoid formation, so convergence becomes unfeasible for any
+                  accurate model at late times.
+                 For stable steady reconnection an implicit method is called for.
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    55 / 56
+
+===== PDF PAGE 56 =====
+References
+
+
+[Brown96] Shawn Lee Brown. Approximate Riemann solvers for moment models of dilute gases. PhD thesis, University of Michigan
+    (1996).
+
+[GEM01] J. Birn, J. Drake, M. Shay, B. Rogers, R. Denton, M. Hesse, M. Kuznetsova, Z. Ma, A. Bhattacharjee, A. Otto, and P.
+    Pritchett. Geospace environmental modeling (GEM) magnetic reconnection challenge. Journal of Geophysical Research —
+   Space Physics, 106:3715–3719, 2001.
+
+[GrothGRB94] Clinton P. T. Groth, Tamas I. Gombosi, Philip L. Roe, and Shawn L. Brown, Gaussian-based moment-method closures
+    for the solution of the Boltzmann equation. Proceedings of the Fifth International Conference on Hyperbolic Problems. Theory,
+   Numerics, Applications.  University of New York at Stony Brook, Stony Brook, New York, USA, 1994, World Scientiﬁc, New
+    Jersey, pp. 339–346.
+
+[Grad49] Harold Grad. On the Kinetic Theory of Rareﬁed Gases. Commun. Pure Appl. Math., Vol. 2, pp. 331–407.
+
+[GrothGRB03] C.P.T. Groth, T.I. Gombosi, P.L. Roe, and S.L. Brown. A Gaussian-based closure for rareﬁed gases: derivation,
+   moment equations, and wave structure. Unpublished paper written in 2003 and obtained from Groth.
+
+[Hakim06] A. Hakim. Extended MHD modelling with the ten-moment equations. Journal of Fusion Energy, 27 (2008).
+
+[HaLoSh06] A. Hakim, J. Loverich, and U. Shumlak. A high-resolution wave propagation scheme for ideal two-ﬂuid plasma
+    equations. J. Comp. Phys., 219 (2006), pp. 418–442.
+
+[Jo11] E.A. Johnson, Gaussian-Moment Relaxation Closures for Veriﬁable Numerical Simulation of Fast Magnetic Reconnection in
+   Plasma. PhD thesis, UW–Madison, 2011
+
+[JoRo10] E. A. Johnson and J. A. Rossmanith, Ten-moment two-ﬂuid plasma model agrees well with PIC/Vlasov in GEM problem.
+    ‘proceedings for HYP2010, November 2010.
+
+[JoRo13] E. A. Johnson and J. A. Rossmanith, Outﬂow Positivity Limiting for Hyperbolic Conservation Laws. Part I: Framework and
+   Recipe. http://arxiv.org/abs/1212.4695.
+
+[LoHaSh11] J. Loverich, A. Hakim, and U. Shumlak A discontinuous Galerkin method for ideal two-ﬂuid plasma equations. Commun.
+   Comput. Phys., 9 (2011), pp. 240–268.
+
+[SchmitzGrauer06] H. Schmitz and R. Grauer. Darwin-Vlasov simulations of magnetised plasmas. J. Comp. Phys., 214 (2006), pp.
+   738–756.
+
+
+
+
+
+          Johnson (KU-Leuven)                     20-moment two-ﬂuid reconnection                                  Feb. 25, 2013    56 / 56

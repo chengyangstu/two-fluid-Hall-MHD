@@ -1,0 +1,356 @@
+\section{任意导引场四场约化：小压缩率为何不能先删掉}
+Fitzpatrick的两篇Taylor问题论文分别使用不可压Hall系统与消去快压缩波的四场系统。后者把弱、强导引场连在一起，但仍有明确排序；“任意导引场”不是对所有频率、温度和密度变化都有效。\citep{L057,L058}
+
+\subsection{先从压力平衡确定压缩响应}
+本节沿用原文的局部符号：$\B_\perp=\nabla a\times\hat z$，
+$\vct v_\perp=\nabla\varphi\times\hat z$，故
+$D=\partial_t-[\varphi,\cdot]$。注意$\varphi$是负的$E\times B$流函数；
+$U=\nabla^2\varphi$也是负的垂直涡量。以下量已按横向系统长度和重联场Alfvén速度归一化。
+令总压与面外场为
+\begin{equation}
+ P=P_0+B_g p_1+p_2,\qquad B_z=B_g+b,
+ \qquad P_0\gg B_g\gg1,
+\end{equation}
+其中$p_1,p_2,b$为一阶量，$P_0,B_g$在空间均匀。
+这个写法的目的是让压缩波比所研究的慢过程快得多，先建立近似总压平衡。
+最低阶垂直动量平衡为
+$B_g\nabla p_1\simeq-B_g\nabla b$，因而可把空间常数吸收到背景后写为$p_1=-b$。
+
+设$\vartheta=\nabla\cdot\vct v$。虽然$\vartheta$很小，磁场和压力方程中的
+$B_g\vartheta$及$\Gamma P_0\vartheta/B_g$却不能先丢掉。保留它们得
+\begin{align}
+ Db&=S_b-B_g\vartheta+\eta\nabla^2b,
+ &S_b&=d_i[\nabla^2a,a]+[V_z,a],\\
+ Dp_1&=-\frac{\Gamma P_0}{B_g}\vartheta+\kappa\nabla^2p_1.
+\end{align}
+由$p_1=-b$，第二式给
+$Db=(\Gamma P_0/B_g)\vartheta+\kappa\nabla^2b$。
+解出$\vartheta$代回第一式，得到
+\begin{equation}
+ \left(1+\frac1{\beta_F}\right)Db
+ =S_b+\left(\eta+\frac{\kappa}{\beta_F}\right)\nabla^2b,
+ \qquad \beta_F=\frac{\Gamma P_0}{B_g^2}.
+\end{equation}
+这里$\beta_F$等于本报告通常总压$\beta=2\mu_0p/B_g^2$的$\Gamma/2$倍。
+比较不同论文的“低$\beta$”数字时先换定义。
+
+\subsection{闭合的四个场与两个极限}
+定义$c_\beta=\sqrt{\beta_F/(1+\beta_F)}$、$d_\beta=c_\beta d_i$、$Z=b/c_\beta$。
+磁通、面外磁场、涡量和面外速度满足
+\begin{align}
+ Da&=d_\beta[a,Z]+\eta\nabla^2a,\\
+ DZ&=d_\beta[\nabla^2a,a]+c_\beta[V_z,a]
+       +\frac{\kappa+\beta_F\eta}{1+\beta_F}\nabla^2Z,\\
+ DU&=[\nabla^2a,a]+\mu\nabla^2U,\qquad U=\nabla^2\varphi,\\
+ DV_z&=c_\beta[Z,a]+\mu\nabla^2V_z.
+ \label{eq:fitzfour}
+\end{align}
+第一、二式的耦合来自Hall电流，第三、四式来自离子动量；压力并非消失，而是通过$c_\beta$和有效热扩散进入模型。
+数值实现另加$-\nu\nabla^4a$和$-\nu\nabla^4Z$，不能把它们漏出实际方程。
+
+当$\beta_F\gg1$时$c_\beta\to1$、$d_\beta\to d_i$，回到不可压弱导引场Hall形式；零导引场需改用$P_0\gg1$的高声速排序，不能直接把$B_g=0$代进前面的除法。
+当$\beta_F\ll1$时$d_\beta\simeq\sqrt{\beta_F}d_i$，成为含绝热声速定义的声回旋尺度，$V_z$耦合减弱。
+若再令该耦合趋零、初始$Z-d_\beta U=0$，且忽略两式的扩散差异，则
+$D(Z-d_\beta U)=0$，从而$Z=d_\beta U$；第一式变成两场磁通方程。
+这最后一步需要初始条件与闭合相容，并非所有四场初值都自动退化成两场。
+
+\assume{该系统使用冷离子、忽略电子惯性、低频快慢分离及相应密度近似。
+若电流层接近$d_e$，或离子回旋半径不能忽略，应换用含惯性／陀螺平均的模型。
+它也没有包含粒子加速所需的完整速度分布。}
+
+\subsection{Taylor驱动：先辨认速率，再比较标度}
+导体墙位于$x=\pm1$，初始$a_0=-x^2/2$，墙上施加
+\begin{equation}
+ a(\pm1,y,t)=-\frac12+\Xi(t)\sin ky,\qquad
+ \Xi(t)=\Xi_0[1-(1+t/\tau)e^{-t/\tau}].
+\end{equation}
+两面墙的位移方向相反，流函数边界为
+$\varphi(\pm1)=\mp\dot\Xi\cos(ky)/k$。
+因为$\Xi(0)=\dot\Xi(0)=0$，驱动平滑打开；后期位移保持常量，并非永久注入恒定速度的入流边界。
+原文定义$\Psi_r=(a_X-a_O)/2$及$R=\dot\Psi_r$，另画出$J=R/\eta$。
+所以看到$J_{\max}\propto\eta^{-1}$时，应先乘回$\eta$，才得到$R_{\max}$近常数。
+
+在没有显著超电阻贡献时，$R/\eta$也测量X/O点电流扰动的量级；它达到背景电流量级才提示非线性。
+超电阻主导时，\emph{总}$R/\eta$不再等于电流扰动，必须分出电阻贡献。
+数值扫描给出以下不同区间，指数是该驱动条件下的拟合与渐近标度：
+\begin{equation}
+ R_{\max}\sim
+ \begin{cases}
+ \eta^{2/3}\Xi_0,&\text{线性MHD},\\
+ d_i\eta^{1/3}\Xi_0,&\text{线性Hall},\\
+ \eta^{1/2}\Xi_0^{3/2},&\text{非线性MHD},\\
+ d_\beta^{3/2}\Xi_0^2,&\text{非线性约化Hall}.
+ \end{cases}
+\end{equation}
+这些不是仅由量纲自动推出的普遍定律；$d_\beta$接近系统尺度、过强耗散或进入电子尺度时均须重新检验。
+
+\subsection{体力驱动与三维几何的最小推导}
+Sullivan等改在离子动量方程加入空间局域的$F_y$。它首先改变上游$B_u,n_u$，随后局地层处理被送来的磁通。
+若近不可压二维层半长$D$、半厚$\delta$，连续性与张力估计为
+\begin{equation}
+ v_{\rm in}\simeq\frac\delta D v_{\rm out},\qquad
+ v_{\rm out}\sim\frac{B_u}{\sqrt{\mu_0m_in_u}},\qquad
+ |E_z|\sim\frac\delta D\frac{B_u^2}{\sqrt{\mu_0m_in_u}}.
+\end{equation}
+外驱动更强可通过$B_u$提高绝对率，而无需提高无量纲层效率。
+若三维出流近似圆盘、半径$D$、半厚$\delta$，上下入流面积共$2\pi D^2$，侧面出流面积$4\pi D\delta$，故
+\begin{equation}
+ \frac{v_{\rm in}}{v_{\rm out}}\simeq\frac{2\delta}{D}.
+\end{equation}
+因子2来自所假定的几何，不是三维重联普适加速倍数。磁通还可沿第三方向绕开局地层。
+2008预印本式(17a)、(18a)把$\delta/D$也乘到$v_{\rm out}$，与其前文及图6的Alfvén出流标度矛盾；上式按动量与连续性分别重建，不照抄该处。\citep{L076,F717}
+
+\section{强导引场的两层匹配：没有快速色散波为何仍可快}
+\subsection{色散条件与快率条件是两个命题}
+回到前面两场模型的$\B_\perp=\hat z\times\nabla\psi$符号，记$\rho_s=\rho_{\rm sound}$。
+在均匀面内背景场附近取Fourier扰动，由涡量式消去$\phi$，得
+\begin{equation}
+ \omega^2=k_\parallel^2 V_{Ag}^2
+ \frac{1+\rho_s^2k_\perp^2}{1+d_e^2k_\perp^2}.
+ \label{eq:guide_dispersion}
+\end{equation}
+这里$k_\parallel$沿总背景场，$V_{Ag}$也按同一场定义；二维强导引场中它们的乘积由面内场投影决定。
+对右侧比值关于$k_\perp^2$求导，得
+$(\rho_s^2-d_e^2)/(1+d_e^2k_\perp^2)^2$。
+故$\rho_s>d_e$才有随波数增大的平行相速区间；$\rho_s\le d_e$没有这种快速色散分支。
+但这个\emph{线性}结论尚未给出非线性层的长度或上游场。\citep{L216,L217}
+
+保留超电阻$\eta_H$后，磁通方程可重写为
+\begin{equation}
+ \partial_t\psi+[\phi-\rho_s^2\omega_z,\psi]
+ =d_e^2\{\partial_tj+[\phi,j]\}-\eta_H\nabla^2j,
+ \quad j=\nabla^2\psi.
+\end{equation}
+这里$j$是归一化电流；若另加电阻，还需$+\eta j$。
+磁通输运速度由$\phi-\rho_s^2\omega_z$给出，而惯性项仍由$\phi$平流。
+二者之差来自已讨论的陀螺黏性抵消，不能任意把右边也换成同一个输运速度。
+
+\subsection{把微观耗散层与外部两流体层分开}
+定义外层厚度$h=\max(d_e,\rho_s)$、长度$w_v$、其上游场$B_h$；
+微观耗散层厚度为$\delta$、长度为$w$、边缘场为$B_\delta$。
+这些长度和场值必须分别测量，尤其不能把电流整体宽度与超电阻支撑电场的窄层厚度混同。
+在Alfvén归一化下，外层近不可压供给的估计为
+\begin{equation}
+ v_{{\rm in},h}w_v\sim B_hh,\qquad
+ E_{\rm supply}\sim B_h^2\frac h{w_v}.
+\end{equation}
+准稳态二维层内的$E_z$近乎一致；微层的超电阻电场则为
+\begin{equation}
+ |E_z|\sim\eta_H\frac{B_\delta}{\delta^3}.
+\end{equation}
+若$\delta\ll h$，而场反转主要分布在$h$尺度内，线性内插给
+$B_\delta\sim(\delta/h)B_h$。把它代入并匹配外层供给，得到
+\begin{align}
+ \frac{\eta_HB_h}{h\delta^2}&\sim\frac{B_h^2h}{w_v},\\
+ \delta&\sim\frac1h\sqrt{\frac{\eta_Hw_v}{B_h}},\qquad
+ |E_z|\sim\frac{B_h^2h}{w_v}.
+ \label{eq:two_layer_rate}
+\end{align}
+还可定义同一上游场下的超电阻单流体厚度
+$\delta_h=(\eta_Hw_v/B_h)^{1/4}$，于是$\delta\sim\delta_h^2/h$。
+微观耗散越小，$\delta$和$B_\delta$一起减小；固定$B_\delta$推得的发散速率不是这组自洽扫描所走的路径。
+
+离散两场方程进一步要求：在无快速色散波的$d_e>\delta>\rho_s$区间，$w\sim w_v$；
+在$\delta<\rho_s$区间，$w\sim(\delta/\rho_s)w_v$。
+后者使微观层缩短，不能用固定的$w$讨论耗散趋零。
+这些匹配在原文由独立的场值、层长与厚度扫描核对，系数仍有量级为1的偏差。
+
+\note{上面的推导是条件化的匹配解释，未从初始条件独立算出$B_h,w_v$，更未证明它们永远不依赖系统大小。
+“速率不显含$\eta_H$”也不是“$\eta_H$可直接置零”：非理想层仍是改变普通磁通拓扑的必要部分。}
+
+\section{从三场扩到四场陀螺流体：离子平行流与双加速}
+\subsection{多保留一个矩，就多一条动力学约束}
+以下用$a=A_z$、$\B_\perp=\nabla a\times\hat z$，而$E\times B$速度为$\hat z\times\nabla\phi$。
+密度$N_i$是离子导心扰动，$N_e$是电子粒子扰动；$u_i,u_e$为平行速度，均采用论文Alfvén归一化。
+记$\Phi=\Gamma_1\phi$、$A_i=\Gamma_1a$、$r_i$为离子热回旋半径。
+对低频陀螺动理学方程取零阶、一阶平行速度矩，并用等温压力及忽略电子回旋半径闭合，得到
+\begin{align}
+ \partial_tN_i+[\Phi,N_i]&=[A_i,u_i],\\
+ \partial_tD_i+[\Phi,D_i]&=r_i^2[A_i,N_i],\quad D_i=A_i+d_i^2u_i,\\
+ \partial_tN_e+[\phi,N_e]&=[a,u_e],\\
+ \partial_tF_e+[\phi,F_e]&=-\rho_s^2[a,N_e],\quad F_e=a-d_e^2u_e.
+ \label{eq:gyrofour}
+\end{align}
+平行导数为$-[a,\cdot]$；因此虽$\partial_z=0$，平行压缩并未消失。
+正则动量中的$\pm a$来源于两物种相反电荷，而$d_s^2u_s$反映惯性。
+方程还必须配上
+\begin{equation}
+ \nabla^2a=u_e-\Gamma_1u_i,\qquad
+ N_e=\Gamma_1N_i+\frac{\Gamma_0-1}{r_i^2}\phi.
+ \label{eq:gyrofourconstraints}
+\end{equation}
+前式确定电流与磁通，后式把导心密度转换为满足准中性的粒子密度。
+此四场实现用$\Gamma_1=(1-r_i^2\nabla^2/2)^{-1}$、$\Gamma_0=\Gamma_1^2$；
+与前面三场示例分别近似$\Gamma_0,\Gamma_1$的选择有差异，复现时不要把两套算子混配。\citep{F672,E475}
+
+把离子平行响应形式上取$d_i\to\infty$，第二式除以$d_i^2$后只剩$u_i$平流；若初始为零，就一直为零。
+于是Ampère关系回到$u_e=\nabla^2a$，再忽略非均匀$N_i$便得到两场子模型。
+这是隔离离子声波耦合的数值对照极限，不能理解成独立改变$d_i$而所有真实等离子体参数都不变。
+
+\subsection{组合矩方程得到四族不变量}
+将前两式按$\pm d_ir_i$相加，后两式按$\pm d_e\rho_s$相加，分别有
+\begin{align}
+ I_\pm&=D_i\pm d_ir_iN_i,&
+ \partial_tI_\pm+[\Phi\mp(r_i/d_i)A_i,I_\pm]&=0,\\
+ G_\pm&=F_e\pm d_e\rho_sN_e,&
+ \partial_tG_\pm+[\phi\pm(\rho_s/d_e)a,G_\pm]&=0.
+\end{align}
+例如$[a,F_e]=-d_e^2[a,u_e]$，正好消去组合后的电子流项。
+在周期边界下，任意光滑函数$C$均满足$\partial_t\int C(G_\pm)\dd^2x=0$；
+这是广义场的输运约束，普通磁通$a$本身并不因而冻结。
+相容能量为
+\begin{equation}
+ H=\frac12\int\left(|\nabla a|^2+d_i^2u_i^2+d_e^2u_e^2
+ +r_i^2N_i^2+\rho_s^2N_e^2+\Phi N_i-\phi N_e\right)\dd^2x.
+\end{equation}
+用$\Gamma_1$自伴性和准中性式，最后两项的积分等于
+$-\int\phi(\Gamma_0-1)\phi/r_i^2$，在Fourier空间非负，体现极化能。
+
+\subsection{热离子为什么放大细尺度电场}
+在离子导心密度扰动较小的内区，
+$N_e=(\Gamma_0-1)\phi/r_i^2$。
+对于$k_\perp r_i\ll1$，$N_e\simeq\nabla^2\phi$；
+对于$k_\perp r_i\gg1$，$N_e\simeq-\phi/r_i^2$。
+两族$G$之差又给$G_+-G_-=2d_e\rho_sN_e$，故
+\begin{equation}
+ \phi\simeq
+ \begin{cases}
+ \nabla^{-2}(G_+-G_-)/(2d_e\rho_s),&k_\perp r_i\ll1,\\
+ r_i^2(G_--G_+)/(2d_e\rho_s),&k_\perp r_i\gg1.
+ \end{cases}
+\end{equation}
+第一种关系平滑高波数，第二种保留不变量卷绕产生的细结构。
+因此热离子情况下$\nabla\phi$和局地$E\times B$流可以先急剧增强，而宏观排气仍未充分打开。
+这为第一轮加速提供解释；第二轮加速还需结合随后出现的宏观开口，不能由上述局地关系单独推出。
+形式$\rho_s\to0$时，应回到原方程取极限，不能直接在分母处除以零。
+
+\subsection{小磁岛与大磁岛不能共用一个饱和结论}
+先取冷离子、$\rho_s\gg d_e$及$\Delta'd_e\ll(d_e/\rho_s)^{1/3}$的小$\Delta'$极限。热电子惯性撕裂的典型量级为
+\begin{equation}
+ \gamma\sim\frac{k_y}{L_s}d_e\rho_s\Delta',\qquad
+ \delta_e\sim\Delta'd_e^2.
+\end{equation}
+第二式可由电子共振宽度估计
+$\delta_e\sim\gamma L_s/(k_yv_{te})$
+与$v_{te}$对$\rho_s/d_e$的比例关系得到；数值系数须按各文献热速度定义计算。
+当半岛宽$w$达到该线性电流层宽度时，驱动会被非线性展平，故$w_{\rm sat}\sim\Delta'd_e^2$。
+在这个极限中$\rho_s$约去，解释了小岛饱和宽度可对电子温度较弱敏感，而增长率与岛振荡频率仍随温度改变。有限离子温度的数值比较也显示较弱的岛宽变化，但不能仅凭这个冷离子推导证明任意温比均不影响饱和。
+\citet{E475}还检验了$w\simeq\Delta'd_e^2/(2G)$、$G\simeq0.41$的动力学估计；这里$w$是\emph{半宽}。
+该结论只覆盖小$\Delta'$，不能替代\citet{F672}的大$\Delta'$非线性加速分析。
+
+\section{Landau六场约化：从温度矩到可检验的非局地闭合}
+\subsection{保留哪些阶次，为什么是六个场}
+Tassi等从带温度矩的母陀螺流体出发。定义$\delta_m^2=m_e/m_i\ll1$、低频参数$\epsilon\ll1$，
+使用$\rho_s$归一长度、$\Omega_i^{-1}$归一时间、$c_s=\sqrt{T_e/m_i}$归一速度、$T_e/e$归一静电势。
+取$k_\perp\rho_s=O(1)$、$T_i/T_e=O(1)$，而
+\begin{equation}
+ \beta_e=O(\delta_m^2),\quad
+ U_e,Q_e=O(\epsilon/\delta_m),\quad
+ N_s,T_s,\phi=O(\epsilon),\quad
+ k_z,A,U_i=O(\delta_m\epsilon).
+\end{equation}
+这里$N,T$表示\emph{扰动}，不是背景温度或总密度。
+该排序保留电子惯性及平行热流，同时使电子回旋平均修正很小，离子平行动量却不反馈到最低阶六场。
+六个演化量是$(N_e,A_e,T_{\parallel e},T_{\perp e},N_i,T_{\perp i})$；
+其中$A_e=A-\delta_m^2U_e$，$A$为按$B_g\rho_s$归一的平行矢势。\citep{L244}
+
+定义$D_E=\partial_t+[\phi,\cdot]$及
+$\nabla_\parallel=\partial_z-[A,\cdot]$。最低阶电子矩方程为
+\begin{align}
+ D_EN_e+\nabla_\parallel U_e&=0,\\
+ D_EA_e-\nabla_\parallel(N_e+T_{\parallel e})+\partial_z\phi&=0,\\
+ D_ET_{\parallel e}+\nabla_\parallel(2U_e+Q_{\parallel e})&=0,\\
+ D_ET_{\perp e}+\nabla_\parallel Q_{\perp e}&=0.
+ \label{eq:landau_e}
+\end{align}
+温度式中的系数2来自一维平行压力的绝热压缩：$p_\parallel$随密度三次方响应，而$T_\parallel=p_\parallel/n$随密度二次方响应。
+这与强迫设置中直接固定电子温度是不同闭合。
+令$\Gamma_2=b_i\partial\Gamma_1/\partial b_i$、$b_i=k_\perp^2r_i^2$，离子两式是
+\begin{align}
+ \partial_tN_i+[\Gamma_1\phi,N_i]+[\Gamma_2\phi,T_{\perp i}]&=0,\\
+ \partial_tT_{\perp i}+[\Gamma_1\phi,T_{\perp i}]
+ +2[\Gamma_2\phi,T_{\perp i}]+[\Gamma_2\phi,N_i]&=0.
+\end{align}
+热离子环平均不仅平滑势，还把密度与垂直温度耦合；这就是多一个温度矩带来的新项。
+闭合的场约束为
+\begin{equation}
+ N_e=\Gamma_1N_i+\frac{\Gamma_0-1}{\tau_i}\phi
+           +\Gamma_2T_{\perp i},\qquad
+ \nabla_\perp^2A=\frac{\beta_e}{2}U_e,\quad\tau_i=T_i/T_e.
+\end{equation}
+注意这里长度单位是$\rho_s$，所以极化分母为$\tau_i$；不能原样粘贴到上一节的Alfvén归一化。
+
+当$N_i=T_{\perp i}=0$且$\tau_i\to0$时，
+$(\Gamma_0-1)/\tau_i\to\nabla_\perp^2$，于是$N_e=\nabla_\perp^2\phi$。
+Ampère式还给
+\begin{equation}
+ A_e=A-\frac{2\delta_m^2}{\beta_e}\nabla_\perp^2A,
+ \qquad (d_e/\rho_s)^2=\frac{2\delta_m^2}{\beta_e}.
+\end{equation}
+这一步把六场模型与前面的电子惯性两场模型联系起来。
+
+\subsection{闭合为何是非局地算子，而不只是热扩散}
+温度方程仍缺$Q$。所研究模型取
+\begin{equation}
+ Q_{\parallel e}=-2\alpha\mathcal L T_{\parallel e},\qquad
+ Q_{\perp e}=-\alpha\mathcal L T_{\perp e},\qquad
+ \alpha=\delta_m^{-1}\sqrt{2/\pi}.
+\end{equation}
+均匀直场下，$\widehat{\mathcal L f}=i\,\mathrm{sgn}(k_\parallel)\hat f$。
+故温度方程的热流项给
+\begin{equation}
+ \partial_t\widehat T_{\parallel e}\big|_Q
+ =-2\alpha|k_\parallel|\widehat T_{\parallel e}.
+\end{equation}
+其阻尼率与$|k_\parallel|$成正比，反映自由流相混合；常数热导扩散给$k_\parallel^2$，只有特定波数才能调到相等。
+
+弯曲场下，原文采用建模算子
+\begin{equation}
+ \mathcal L=K^{-1/2}\nabla_\parallel,\qquad
+ \widehat{Kf}_{\vct k}=k_i\langle b_ib_j\rangle k_j\hat f_{\vct k},
+ \quad\vct b=\B/|\B|.
+ \label{eq:landau_nonlocal}
+\end{equation}
+它用场方向的空间平均二阶矩给非局地分母，保留局地平行梯度。
+这是一种受线性极限约束的模型，不是沿每条真实磁力线求解Vlasov的精确等价式。
+零特征值模需按实际离散明确处理，论文没有给出可直接运行的完整输入。
+
+若边界允许$D_\parallel=\nabla_\parallel$按分部积分反对称，且$K^{-1/2}$自伴非负，则热流导致
+\begin{equation}
+ \int T\,D_\parallel K^{-1/2}D_\parallel T\,\dd^3x
+ =-\int (D_\parallel T)K^{-1/2}(D_\parallel T)\,\dd^3x\le0.
+\end{equation}
+因此这个闭合可耗散已保留温度扰动的自由能。
+无碰撞Vlasov的细粒度动力学却仍把信息送向速度空间细结构；流体中的自由能损失是未解析相混合的代理，不能自动当成已解析的不可逆热化。
+
+\subsection{阻尼怎样改变压强响应和重联增长}
+局地线性示例中，设扰动按$e^{\gamma t}$变化，温度阻尼率为$\nu_L$。
+由密度和温度两式有
+$\gamma N=-\nabla_\parallel U$与
+$(\gamma+\nu_L)T_\parallel=-2\nabla_\parallel U$，故
+\begin{equation}
+ \frac{T_\parallel}{N}=\frac{2\gamma}{\gamma+\nu_L},\qquad
+ \frac{\delta p_\parallel}{T_{e0}\delta n}
+ =1+\frac{2\gamma}{\gamma+\nu_L}.
+\end{equation}
+无热流极限是平行绝热系数3，强平滑极限趋向等温系数1。
+这是解释用的局地响应，真正撕裂本征模还需求解空间非均匀方程。
+在原文小$\Delta'$解析极限中，绝热增长率为等温值的$\sqrt3$倍；闭合抑制温度扰动，便能降低增长率。
+即使阻尼在谐振面$k_\parallel(x_s)=0$处局地为零，面外的响应也会改变整个本征解，不能据此判定它不影响重联。
+
+\subsection{不变量与能量告诉我们还没有验证什么}
+无热流时，$s=N_e-T_{\parallel e}/2$和$T_{\perp e}$均被$E\times B$速度平流。
+离子组合$M_\pm=N_i+(1\pm\sqrt2)T_{\perp i}$则被
+$\Gamma_1\phi+(1\pm\sqrt2)\Gamma_2\phi$平流；可把上述两条离子式直接相加检验。
+这些组合揭示了额外温度矩带来的拓扑约束。
+但实际重联算例取冷离子和$T_{\perp e}(0)=0$，故并未检验全部六场的热离子非线性作用。
+
+冷离子子系统的二次自由能为
+\begin{equation}
+ H=\frac12\int\left[N_e^2+\delta_m^2U_e^2
+ +\frac2{\beta_e}|\nabla A|^2+\frac{T_{\parallel e}^2}{2}
+ +T_{\perp e}^2+|\nabla\phi|^2\right]\dd^3x.
+\end{equation}
+它适合比较保留矩之间的能量转移及闭合损失。
+数值误差必须同时除以总能量和\emph{本次释放的磁能}：若前者是0.2\%，而磁能只改变1\%，误差已占磁能释放约20\%。
+这正是原文算例需要保留的限制，而不是一句“能量守恒很好”可以代替的检查。
