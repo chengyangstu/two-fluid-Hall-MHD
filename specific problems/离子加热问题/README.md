@@ -1,14 +1,26 @@
 # 离子与电子加热：Hall MHD／双流体能研究到哪一步
 
-更新：2026-11-12。起点是《已解决与未解决的问题》原第1.4.5节的截图。
+更新：2026-11-13；11月12日批次记录保留。起点是《已解决与未解决的问题》原第1.4.5节的截图。
 
 **可以研究，但要有独立物种能量或压力方程及合适闭合。** 双温 Hall MHD 和十矩模型已经计算了局地离子／电子温度、流能与内能预算，并与部分实验、空间观测比较。Hall 项本身不提供热化闭合，也不决定一个普适加热比例。
 
-- [完整专题 PDF](report.pdf)：24页，包含定义与推导、模型能力比较、研究脉络、实验预算、已解决／未解决问题和研究设计。
+- [完整专题 PDF](report.pdf)：32页，包含定义与推导、模型能力比较、研究脉络、实验预算、已解决／未解决问题和研究设计。
 - [可维护 TeX 源](report.tex)、[专题书目](references.bib)。
-- [证据矩阵](evidence_matrix.csv)：26篇正文引用的已核读文献，记录模型身份、结论边界、版本与原文位置。
-- [候选与引文追踪表](candidate_screening.csv)：397条合并记录；自动题名提示、定向追踪和全文状态分开，未读候选不作科学结论。
-- [本轮计数与版本清单](batch_manifest.json)、[全仓库索引](../../paper_index.html)、[仓库主页](https://github.com/chengyangstu/two-fluid-Hall-MHD)。
+- [证据矩阵](evidence_matrix.csv)：27篇正文引用的已核读文献，记录模型身份、结论边界、版本与原文位置。
+- [候选与引文追踪表](candidate_screening.csv)：11月12日历史批次397条合并记录；自动题名提示、定向追踪和全文状态分开，未读候选不作科学结论。
+- [11月12日计数与版本清单](batch_manifest.json)、[11月13日修订清单](revision_manifest.json)、[全仓库索引](../../paper_index.html)、[仓库主页](https://github.com/chengyangstu/two-fluid-Hall-MHD)。
+
+## 11月13日实质修订
+
+本次发现并补齐的是报告讲解和证据对照缺口，不把它们冒充为刚刚解决了物理研究问题：
+
+- 第4章新增共同坐标与示意图，逐步讲清双温Hall热点、离子子激波/电子热前沿、电场梯度失磁化、拾取/轨道混合及电子相混到碰撞耗散。示意图不是论文数据。
+- 第5章增加按装置、诊断和图号的读图说明：MRX谱线/电势/流速、控制体预算、非对称侧别；MAST单次时间序列与跨脉冲二维图、双峰到三峰；HIT-SI/HIT-SI3测量身份及整体模型比较。
+- 纠正MRX电势来源：由浮动电势与电子温度换算，电子动量平衡是另一路一致性检验；纠正Yoo2017图10定位为本地PDF第15页。
+- 第6章新增两张对应表，分别列“报告已修复的缺口”和“原文/跨文献仍未解决的机制与证据问题”。保留Drake2009与Yoon2023在拾取主导程度、电场净功归因上的差异，没有强行统一。
+- 新增完整核读[Drake2009Pickup](../../papers/Drake2009Pickup.pdf)，14页含附录A和全部图表；[核读记录](reading_notes/Drake2009Pickup_note.json)、[本轮清单](revision_manifest.json)。它是JGR反平行拾取论文，仍未核读的2009 ApJ强导场/丰度论文是另一篇。
+
+**当前全库140篇，原文PDF340个，专题引用27篇。** 此次旧文为针对方法、正文和关键图页的复查，不宣称全部重新通读；不重复计数。未复跑作者轨道或原始实验数据。核验记录见[修订审计](../../research/ion_heating/revision_20261113/review.json)。
 
 ## 最重要的研究结论
 
@@ -28,7 +40,7 @@
 | L272 | Yoon与Bellan，2021，*How Hall electric fields intrinsically chaotize and heat ions during collisionless magnetic reconnection* | [正式版10页，含封面](../../papers/L272_published.pdf)，图1–7；[DOI](https://doi.org/10.1063/5.0040374) |
 | E512 | Zocco与Schekochihin，2011，*Reduced fluid-kinetic equations for low-frequency dynamics, magnetic reconnection, and electron heating in low-beta plasmas* | [28页PDF](../../papers/E512.pdf)，式76–84、附录A/B；[DOI](https://doi.org/10.1063/1.3628639) |
 
-## 全文核读与笔记
+## 11月12日历史批次：全文核读与笔记
 
 本轮新增17篇所记录版本的全文核读，主版本共300个PDF物理页。三分支另完整重读Yoo2013、L272、E512、L244共70页，主代理重读已核读F635共10页；合计22篇本轮全文阅读、380个物理页。页数含封面、参考文献及接收稿重复大图，不代表独立科学正文页数。原库其余已读文献只复用明确记录的档案，未声称全部重新通读。
 
@@ -48,7 +60,7 @@
 - [总检索日志](search/openalex_search.json)、[有向引用边](search/citation_edges.json)、[原始元数据归档](search/openalex_works.json.gz)、[分流说明](search/screening_summary.json)。
 - 元数据返回的3处临时签名URL已移除认证查询参数，DOI和来源入口保留；[发布清理记录](search/publication_cleanup.json)记录字段、原URL哈希及归档前后哈希，未静默改写书目信息。
 - 定向补充：[Hall分支](search/hall_fluid_search.json)、[实验分支](search/experiment_search.json)、[闭合分支](search/closure_search.json)。
-- 优先缺口：Drake2009离子拾取加热、L046的2003年EMHD电子加热、Stanier学位论文及若干闭合前序；取得或核读未完成，不据摘要升级证据。
+- 优先缺口：Drake2009 ApJ强导场/丰度论文（10.1088/0004-637X/700/1/L16；不同于本次已读JGR）、L046的2003年EMHD电子加热、Stanier学位论文及若干闭合前序；取得或核读未完成，不据摘要升级证据。
 - Kaptanoglu2020的[勘误](https://doi.org/10.1063/5.0032632)正文未取得；TenBarge2019正式PDF受限，所读作者版与正式网页补查分别记录。不能说已经逐页核验所有正式版本。
 - 未运行作者代码或复算原始数据，未取得的独立补充与前序方法逐篇保留缺口。本专题不声称穷尽全球文献。
 
@@ -64,4 +76,4 @@ python -X utf8 scripts/audit_ion_heating_report.py
 
 后两步需要XeLaTeX、BibTeX、PyMuPDF和Pillow；代数核验需SymPy。`build_heating_screening.py`从现有检索归档重建候选表，不联网。`search_ion_heating.py`是可选重检脚本，可能触发数据库限流；`ingest_ion_heating.py`是明确批次导入，不是日常构建入口。
 
-全局维护源、三卷和合订本也已同步。选定代数核验只检查Hall功、摩擦能量回收、十矩松弛迹及两束中心矩，不等于证明全部方程或验证物理闭合。渲染图片属于可再生检查缓存，不提交。
+全局维护源、三卷和合订本也已同步。七项选定代数核验检查Hall总功与物种功之和、摩擦能量回收、十矩松弛迹、两束中心矩、带符号梯度轨道式及拾取温度迹，不等于证明全部方程或验证物理闭合。渲染图片属于可再生检查缓存，不提交。

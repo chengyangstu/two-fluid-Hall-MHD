@@ -57,7 +57,7 @@ for k in range(0,len(rendered),4):
         im=Image.open(path);im.thumbnail((600,850));x=j%2*620;y=j//2*900
         canvas.paste(im,(x+10,y+30));draw.text((x+10,y+8),f'{stem}, PDF page {n}',fill='black')
     canvas.save(Q/f'contact_{k//4+1}.png')
-record={'date':'2026-11-12','volumes':reports,'errors':errors,'full_read_dossiers_preserved':len(V),
+record={'date':'2026-11-13','volumes':reports,'errors':errors,'full_read_dossiers_preserved':len(V),
         'all_master_labels_preserved':manifest['all_master_labels_preserved'],
         'rendered_samples':[[s,n] for s,n,p in rendered]}
 (Q/'audit.json').write_text(json.dumps(record,ensure_ascii=False,indent=2))

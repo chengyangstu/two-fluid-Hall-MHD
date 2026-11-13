@@ -56,7 +56,7 @@ for i,p in enumerate(d):
 log=(P/'main.log').read_text(errors='replace')
 problem_lines=[s for s in log.splitlines() if any(t in s for t in ['Overfull','Missing character','undefined','! LaTeX Error'])]
 errors+=['broken PDF local link '+str(x) for x in badlinks]
-report={'date':'2026-11-12','raw_records':len(c),'unique_nonexcluded_candidates':len(unique),
+report={'date':'2026-11-13','raw_records':len(c),'unique_nonexcluded_candidates':len(unique),
  'candidate_records_with_pdf':sum(bool(r.get('local_pdf')) for r in unique),'verified_full_reads':len(v),
  'remaining_candidates':len(backlog),'physical_pdf_files_in_papers':len(manifest),'report_pages':len(d),
  'remaining_batch_title_metadata_screened':legacy_screen_count,

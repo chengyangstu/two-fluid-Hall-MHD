@@ -1,5 +1,6 @@
 """Audit links, sources, layout and render every topical report page for inspection."""
 from pathlib import Path
+from heating_sources import report_source
 import json,re,hashlib
 import pymupdf
 from PIL import Image,ImageDraw
@@ -17,7 +18,7 @@ for page in doc:
 log=(T/'report.log').read_text(encoding='utf-8',errors='replace')
 warnings=[line for line in log.splitlines() if any(x in line for x in ['Overfull','Missing character','undefined','multiply defined','! LaTeX Error'])]
 if warnings:errors.append({'type':'TeX warnings','warnings':warnings})
-source=(T/'report.tex').read_text(encoding='utf-8');v=json.loads((P/'research/reading_notes/verified.json').read_text(encoding='utf-8'))
+source=report_source(T/'report.tex');v=json.loads((P/'research/reading_notes/verified.json').read_text(encoding='utf-8'))
 keys={k for ks in re.findall(r'\\cite\w*\{([^}]+)\}',source) for k in ks.split(',')}
 if keys-set(v):errors.append({'type':'unverified citations','keys':sorted(keys-set(v))})
 for page in doc:page.get_pixmap(matrix=pymupdf.Matrix(1.5,1.5)).save(R/f'topic_p{page.number+1}.png')
@@ -28,7 +29,7 @@ for start in range(0,len(doc),4):
   im=Image.open(R/f'topic_p{n+1}.png');im.thumbnail((615,875));x=j%2*640;y=j//2*920
   canvas.paste(im,(x+12,y+30));draw.text((x+12,y+8),f'Topic PDF page {n+1}',fill='black')
  path=R/f'topic_contact_{start//4+1}.png';canvas.save(path);contacts.append(path.relative_to(P).as_posix())
-record={'date':'2026-11-12','file':(T/'report.pdf').relative_to(P).as_posix(),'pages':len(doc),
+record={'date':'2026-11-13','file':(T/'report.pdf').relative_to(P).as_posix(),'pages':len(doc),
  'sha256':hashlib.sha256((T/'report.pdf').read_bytes()).hexdigest(),'cited_verified_keys':sorted(keys),
  'links':links,'warnings':warnings,'errors':errors,'rendered_pages':list(range(1,len(doc)+1)),'contact_sheets':contacts,
  'visual_inspection':'See visual_review.json; rendering alone is not visual inspection.'}
