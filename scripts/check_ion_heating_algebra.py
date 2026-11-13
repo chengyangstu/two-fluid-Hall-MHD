@@ -23,6 +23,10 @@ BL,BM,v0=s.symbols('BL BM v0',real=True)
 tpar=m*v0**2*BL**2/(BL**2+BM**2)
 tperp=m*v0**2*BM**2/(2*(BL**2+BM**2))
 checks['pickup_temperature_trace']=s.simplify((tpar+2*tperp)/3-m*v0**2/3)
+# Potential-reduced cold beams: this checks algebra, not the potential closure.
+phi,vb2=s.symbols('phi vb2',real=True)
+vb2_from_energy=s.solve(s.Eq(m*vb2/2,m*v0**2/2-e*phi),vb2)[0]
+checks['potential_reduced_beam_temperature']=s.simplify(m*vb2_from_energy/3-(m*v0**2-2*e*phi)/3)
 assert all(x==0 for x in checks.values())
 result={'date':'2026-11-13','checks':{k:str(x) for k,x in checks.items()},'passed':True,'limits':'Symbolic identities only; no plasma simulations or validation of closures/entropy production.'}
 (P/'research/ion_heating/algebra_checks.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
