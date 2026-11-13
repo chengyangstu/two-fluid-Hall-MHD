@@ -1,6 +1,7 @@
 # coding: utf-8
 from pathlib import Path
 import json,re,hashlib,collections
+from datetime import date
 import fitz
 P=Path(__file__).resolve().parents[1]
 c=json.loads((P/'research/catalog.json').read_text());v=json.loads((P/'research/reading_notes/verified.json').read_text());b={r['key']:r for r in c}
@@ -56,7 +57,7 @@ for i,p in enumerate(d):
 log=(P/'main.log').read_text(errors='replace')
 problem_lines=[s for s in log.splitlines() if any(t in s for t in ['Overfull','Missing character','undefined','! LaTeX Error'])]
 errors+=['broken PDF local link '+str(x) for x in badlinks]
-report={'date':'2026-11-13','raw_records':len(c),'unique_nonexcluded_candidates':len(unique),
+report={'date':date.today().isoformat(),'raw_records':len(c),'unique_nonexcluded_candidates':len(unique),
  'candidate_records_with_pdf':sum(bool(r.get('local_pdf')) for r in unique),'verified_full_reads':len(v),
  'remaining_candidates':len(backlog),'physical_pdf_files_in_papers':len(manifest),'report_pages':len(d),
  'remaining_batch_title_metadata_screened':legacy_screen_count,

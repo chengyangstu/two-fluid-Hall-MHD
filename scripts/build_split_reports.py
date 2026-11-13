@@ -57,7 +57,7 @@ def transform(s,vol):
         prefix='' if target==vol else '《'+titles[target]+'》'
         return prefix+'第'+str(num)+tail+m[3]
     # Apply only to source prose, before introducing new cross-volume refs.
-    s=re.sub(r'第([1-8一二三四五六七八])((?:\.\d+)*)(章|节)',chapter,s)
+    s=re.sub(r'(?<!论文)(?<!原文)第([1-8一二三四五六七八])((?:\.\d+)*)(章|节)',chapter,s)
     def ref(m):
         kind,key=m[1],m[2]
         if key not in ownership:raise ValueError('unknown reference '+key)
@@ -103,8 +103,8 @@ for i,body in enumerate(bodies):
     header+=r'{\sffamily\Large Hall MHD 与双流体磁重联调研\par}\vspace{14mm}'+'\n'
     header+=r'{\sffamily\Huge\bfseries\color{ink}'+titles[i]+r'\par}\vspace{10mm}'+'\n'
     header+=r'{\sffamily\large 三卷本 · 第'+str(i+1)+r'卷\par}\vfill'+'\n'
-    header+='分卷更新：2026年11月13日。\\\\[5pt]\n'
-    header+=f'全文核读证据：{full_read_count}篇，核读更新至2026年11月13日。\\\\[5pt]\n'
+    header+='分卷更新：2026年11月14日。\\\\[5pt]\n'
+    header+=f'全文核读证据：{full_read_count}篇，核读更新至2026年11月14日。\\\\[5pt]\n'
     header+=frontnotes[i]+'\n'+r'\end{titlepage}\chapter*{本卷阅读与查阅方式}'+'\n'
     header+=frontnotes[i]+'\n\n'
     header+='三卷分别编排目录和参考文献，文献键保持一致；同一论文在不同卷的引文编号可能不同。标明“基础卷、结果卷、问题卷”的交叉引用会跳转到对应PDF；各卷应保存在同一目录。若阅读器限制跨文件跳转，可按卷名和章节/公式号查阅。全部原文位于项目根目录的papers文件夹。\n\n'
@@ -115,7 +115,7 @@ for i,body in enumerate(bodies):
     (O/(ids[i]+'.tex')).write_text(header+transform(body,i)+'\n'+r'\backmatter\bibliographystyle{unsrtnat}\bibliography{'+ids[i]+r'}\end{document}'+'\n')
     (O/(ids[i]+'.bib')).write_text(transform((P/'references.bib').read_text(),i))
 
-manifest={'date':'2026-11-13','titles':dict(zip(ids,titles)),'source_hashes':provenance,
+manifest={'date':'2026-11-14','titles':dict(zip(ids,titles)),'source_hashes':provenance,
           'all_master_labels_preserved':True,'label_ownership':ownership,
           'cross_volume_reference_counts':link_counts,
           'omitted_text':f'Only the former combined-cover reading directions and the final repeated reading-route paragraph; scientific sections, {full_read_count} dossiers and candidate inventory retained.',

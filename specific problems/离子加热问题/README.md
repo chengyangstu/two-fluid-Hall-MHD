@@ -92,3 +92,8 @@ python -X utf8 scripts/audit_ion_heating_report.py
 后两步需要XeLaTeX、BibTeX、PyMuPDF和Pillow；代数核验需SymPy。`build_heating_screening.py`从现有检索归档重建候选表，不联网。`search_ion_heating.py`是可选重检脚本，可能触发数据库限流；`ingest_ion_heating.py`是明确批次导入，不是日常构建入口。
 
 全局维护源、三卷和合订本也已同步。八项选定代数核验检查Hall总功与物种功之和、摩擦能量回收、十矩松弛迹、两束中心矩、带符号梯度轨道式、拾取温度迹及电势减速后的冷束温度，不等于证明全部方程或验证物理闭合。渲染图片属于可再生检查缓存，不提交。
+
+
+## 2026-11-14 双流体扩展专题
+
+新的[双流体加热专题](../双流体加热问题/README.md)单独比较共速双温、五矩、十矩、压力/热流闭合及其相对具体Hall基线的增量。保留本专题现有PDF与源文件；新增观测核读及报告在新目录维护。
