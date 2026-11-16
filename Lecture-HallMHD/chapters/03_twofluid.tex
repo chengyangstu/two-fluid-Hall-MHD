@@ -1,0 +1,191 @@
+\chapter{完整双流体系统：两种流体如何通过场耦合}\section{先把离子、电子和场分别列全}\label{hall:sec:full-twofluid}
+前一章已经逐项推导了矩方程。这里将它们组成一套可以逐行检查的方程清单，不能只用“令$s=i,e$各写一遍”代替。
+\assume{以下是单价、完全电离、非相对论电子--离子等离子体，使用SI单位，无电离、复合、外加体力或辐射源。允许物种间碰撞交换；暂不取准中性、不删电子惯性，也不删位移电流。“完整”指在这些物理假设内列齐物种、场、约束与闭合，并不表示有限个流体矩等于完整动理学。}
+
+两个物种的电荷为$q_i=+e$、$q_e=-e$；各自有独立的
+$n_i,n_e,\vct u_i,\vct u_e,\mathsf P_i,\mathsf P_e$。
+所有物种作用于同一组$\E,\B$。记
+\begin{equation}
+ D_i=\partial_t+\vct u_i\cdot\grad,\qquad
+ D_e=\partial_t+\vct u_e\cdot\grad,\qquad \rho_s=m_sn_s.
+\end{equation}
+压力张量与热流沿用前一章的中心矩定义，$\vct q_s$是热流向量，标量$q_s$才是物种电荷。总粒子能量密度（不含电磁场能）为
+\begin{equation}
+ \mathcal E_i=\frac12m_in_i u_i^2+\frac12\operatorname{tr}\mathsf P_i,\qquad
+ \mathcal E_e=\frac12m_en_e u_e^2+\frac12\operatorname{tr}\mathsf P_e.
+ \label{hall:eq:twofluid-energy-def}
+\end{equation}
+
+\paragraph{离子：粒子数、三分量动量、总能量。}
+\begin{align}
+ \partial_t n_i+\grad\cdot(n_i\vct u_i)&=0,
+ \label{hall:eq:ion-cont-full}\\
+ m_in_iD_i\vct u_i
+ &=+en_i(\E+\vct u_i\times\B)-\grad\cdot\mathsf P_i+\vct R_i,
+ \label{hall:eq:ion-mom-full}\\
+ \partial_t\mathcal E_i+
+ \grad\cdot(\mathcal E_i\vct u_i+\mathsf P_i\cdot\vct u_i+\vct q_i)
+ &=+en_i\vct u_i\cdot\E+\vct u_i\cdot\vct R_i+H_i.
+ \label{hall:eq:ion-energy-full}
+\end{align}
+\paragraph{电子：同样三类方程，保留负电荷。}
+\begin{align}
+ \partial_t n_e+\grad\cdot(n_e\vct u_e)&=0,
+ \label{hall:eq:electron-cont-full}\\
+ m_en_eD_e\vct u_e
+ &=-en_e(\E+\vct u_e\times\B)-\grad\cdot\mathsf P_e+\vct R_e,
+ \label{hall:eq:electron-mom-full}\\
+ \partial_t\mathcal E_e+
+ \grad\cdot(\mathcal E_e\vct u_e+\mathsf P_e\cdot\vct u_e+\vct q_e)
+ &=-en_e\vct u_e\cdot\E+\vct u_e\cdot\vct R_e+H_e.
+ \label{hall:eq:electron-energy-full}
+\end{align}
+连续性方程没有正负电荷符号；动量中的电场力和磁场力都随电荷反号。能量中的磁场力没有显式做功项，因为
+$\vct u_s\cdot(\vct u_s\times\B)=0$。两套方程通过电磁场和碰撞相互作用，并非两份互不影响的流体。
+这组方程是前一章取矩结果的物种展开；五矩、十矩的具体取舍可与\citet{Wang2015}第II节对应。
+
+\paragraph{碰撞项怎样才相互一致。}
+$\vct R_s$是碰撞对该物种的单位体积动量输入，
+$H_s$是其\emph{随机运动内能}的碰撞输入。因此在孤立、仅有物种间交换的系统中，
+\begin{equation}
+ \vct R_i+\vct R_e=0,\qquad
+ H_i+H_e+\vct u_i\cdot\vct R_i+\vct u_e\cdot\vct R_e=0.
+ \label{hall:eq:twofluid-collision-consistency}
+\end{equation}
+不能同时有摩擦又随意令$H_i+H_e=0$：摩擦损失的相对流动能应进入内能。
+例如在准中性下取$\vct R_e=en\eta\J$、$\vct R_i=-\vct R_e$，则
+\begin{equation}
+ \vct u_i\cdot\vct R_i+\vct u_e\cdot\vct R_e
+ =-(\vct u_i-\vct u_e)\cdot(en\eta\J)=-\eta J^2,
+ \qquad H_i+H_e=\eta J^2.
+\end{equation}
+这里仅确定总摩擦热，分到离子和电子各多少仍需具体碰撞模型。无碰撞模型取$\vct R_i=\vct R_e=0$、$H_i=H_e=0$，但仍须决定压力和热流闭合。
+
+\section{共享的完整Maxwell方程：演化、约束和源}
+\begin{align}
+ \partial_t\B&=-\grad\times\E,
+ &\epsilon_0\partial_t\E&=\frac1{\mu_0}\grad\times\B-\J,
+ \label{hall:eq:twofluid-maxwell-evolve}\\
+ \grad\cdot\B&=0,
+ &\grad\cdot\E&=\frac{\rho_q}{\epsilon_0},
+ \label{hall:eq:twofluid-maxwell-constraints}\\
+ \J&=en_i\vct u_i-en_e\vct u_e,
+ &\rho_q&=e(n_i-n_e).
+ \label{hall:eq:twofluid-sources}
+\end{align}
+其中$c^2=1/(\mu_0\epsilon_0)$。第一行推进六个场分量；第二行是初值必须满足、演化中必须保持的两条散度约束；第三行由物种状态计算源，并不是额外的独立演化方程。
+完整模型中$\E$由Ampère--Maxwell方程推进，不能又把$\E=-\vct u_i\times\B$当作独立方程强加上去。广义欧姆定律是电子动量方程的改写；若已推进原电子动量，它应作为等价表达或诊断，而不是额外添加一套独立约束。
+
+对电场演化取散度并用两套连续性，可证明Gauss约束若初始满足便保持；本章后面的“电荷约束”一节给出逐行计算。初值还应给定各物种密度、速度及热力学状态，并规定与所选方程相容的场和物质边界条件。
+
+\section{闭合范例一：可以直接照写的完整五矩双流体}
+\label{hall:sec:full-five-moment}
+上面保留了一般压力张量，但一条能量方程只确定其迹，不能确定六个独立分量。先给出最容易学习的一套\textbf{已经闭合}的模型：无碰撞、标量压力、零热流，三维平动自由度取$\gamma_i=\gamma_e=5/3$。这些是附加模型假设，不是对任意无碰撞分布都成立的定理。令
+\begin{equation}
+ \mathsf P_i=p_i\mathsf I,\quad \mathsf P_e=p_e\mathsf I,\quad
+ \vct q_i=\vct q_e=0,\qquad
+ \mathcal E_s=\frac12m_sn_su_s^2+\frac{p_s}{\gamma_s-1}.
+\end{equation}
+于是物种部分的守恒形式明确为
+\begin{align}
+ \partial_t n_i+\grad\cdot(n_i\vct u_i)&=0,\\
+ \partial_t(m_in_i\vct u_i)+\grad\cdot(m_in_i\vct u_i\vct u_i+p_i\mathsf I)
+ &=+en_i(\E+\vct u_i\times\B),\\
+ \partial_t\mathcal E_i+\grad\cdot[(\mathcal E_i+p_i)\vct u_i]
+ &=+en_i\vct u_i\cdot\E,\\
+ \partial_t n_e+\grad\cdot(n_e\vct u_e)&=0,\\
+ \partial_t(m_en_e\vct u_e)+\grad\cdot(m_en_e\vct u_e\vct u_e+p_e\mathsf I)
+ &=-en_e(\E+\vct u_e\times\B),\\
+ \partial_t\mathcal E_e+\grad\cdot[(\mathcal E_e+p_e)\vct u_e]
+ &=-en_e\vct u_e\cdot\E.
+ \label{hall:eq:closed-five-species}
+\end{align}
+这六行，加上式\eqref{hall:eq:twofluid-maxwell-evolve}--\eqref{hall:eq:twofluid-sources}、上述能量定义及初边值，就是本例的完整闭合方程组。每个动量矢量算三条标量方程，因此每物种为$1+3+1=5$条；两物种十条，加六个场分量，共十六条演化方程，另有两条场约束。若文献计为$5S+8$，其中$S=2$，则把这两条约束也计入了。
+
+对光滑解，将各物种动量点乘其速度，从总能量中减去平均动能，便得到等价的压力形式
+\begin{align}
+ \partial_t p_i+\vct u_i\cdot\grad p_i+\gamma_i p_i\grad\cdot\vct u_i&=0,\\
+ \partial_t p_e+\vct u_e\cdot\grad p_e+\gamma_e p_e\grad\cdot\vct u_e&=0.
+ \label{hall:eq:twofluid-adiabatic}
+\end{align}
+这两式是相应总能量式的替代，不能与总能量重复计数。激波处应使用守恒能量形式及适当弱解条件，不能把光滑解的绝热关系直接跨越间断使用。两个温度
+$\Theta_i=p_i/n_i$、$\Theta_e=p_e/n_e$可以不同；五矩也仍有电子惯性和电荷分离，并不是Hall MHD的别名。
+
+\section{闭合范例二：保留离子和电子完整压力张量}
+\label{hall:sec:full-ten-moment}
+若研究非对角电子压力对重联电场的支撑，需替换掉五矩的各向同性假设。为避免物种$i$与分量$i$混淆，以下分量指标用$a,b,c,d\in\{x,y,z\}$。离子、电子压力分别满足
+\begin{multline}
+ \partial_tP_{i,ab}+\partial_c(u_{i,c}P_{i,ab})
+ +P_{i,ac}\partial_cu_{i,b}+P_{i,bc}\partial_cu_{i,a}
+ +\partial_cQ_{i,abc}\\
+ =
+ \frac e{m_i}(\epsilon_{acd}P_{i,cb}+\epsilon_{bcd}P_{i,ca})B_d
+ +C_{i,ab}.
+ \label{hall:eq:ion-pressure-full}
+\end{multline}
+\begin{multline}
+ \partial_tP_{e,ab}+\partial_c(u_{e,c}P_{e,ab})
+ +P_{e,ac}\partial_cu_{e,b}+P_{e,bc}\partial_cu_{e,a}
+ +\partial_cQ_{e,abc}\\
+ =
+ -\frac e{m_e}(\epsilon_{acd}P_{e,cb}+\epsilon_{bcd}P_{e,ca})B_d
+ +C_{e,ab}.
+ \label{hall:eq:electron-pressure-full}
+\end{multline}
+取$ab=xx,yy,zz,xy,xz,yz$各一次，每物种就是六条方程。
+$Q_{s,abc}$为三阶中心矩，
+$C_{s,ab}=m_s\int c_ac_bC_s[f]\dd^3v$；它的半迹是$H_s$。
+以上两式配合各自连续性和动量、共同Maxwell方程，并指定$\partial_cQ_{s,abc}$及碰撞闭合，才构成十矩双流体。每物种$1+3+6=10$条演化方程，连场共二十六条，另有两条场约束。
+
+此时内能由$\operatorname{tr}\mathsf P_s/2$给出，前面的总能量式可由压力方程的迹与动量重新推出，不能再把它计为独立的第十一矩。一个数学上封闭的无碰撞示例是$Q_{s,abc}=0$、$C_{s,ab}=0$，但在重联中可能产生不合理的停滞点压力行为；更实际的局地松弛、梯度和非局地闭合见本讲义的闭合章节。列齐方程、做到数学闭合与获得物理可信的闭合，是三件不同的事。\citep{Wang2015,Ng2020}
+
+\note{检查“完整方程组”时依次问：离子有哪几条，电子有哪几条，场怎样推进，两条散度约束是否满足，压力/热流怎样闭合？只给连续性、动量和一个欧姆定律，却不说明热力学及场方程，仍不是一套可直接求解的模型。}
+
+\section{电荷约束：连续性怎样保护Gauss定律}
+先将离子连续性乘以$e$，电子连续性乘以$-e$，然后相加：
+\begin{align}
+ e\partial_tn_i-e\partial_tn_e
+ +\nabla\cdot(en_i\vct u_i-en_e\vct u_e)&=0,\\
+ \partial_t\rho_q+\nabla\cdot\J&=0.
+ \label{hall:eq:charge-conservation}
+\end{align}
+这是电荷守恒；它不是新增加的经验规律，而是两种粒子数守恒的线性组合。再对Ampère--Maxwell方程取散度：
+\begin{align}
+ \epsilon_0\partial_t(\nabla\cdot\E)
+ &=\frac1{\mu_0}\nabla\cdot(\nabla\times\B)-\nabla\cdot\J\\
+ &=-\nabla\cdot\J=\partial_t\rho_q.
+\end{align}
+所以
+\begin{equation}
+\partial_t\bigl(\epsilon_0\nabla\cdot\E-\rho_q\bigr)=0.
+\end{equation}
+初始Gauss约束为零，则连续方程的精确解始终满足它。同理，Faraday定律给
+\begin{equation}
+\partial_t(\nabla\cdot\B)=-\nabla\cdot(\nabla\times\E)=0.
+\end{equation}
+数值网格上的离散散度和旋度未必自动满足“散度作用于旋度等于零”，因此代码还要专门保持这些约束；连续推导正确并不能保证离散实现正确。
+
+\section{为什么两种流体必须共享电场，而不是各自选电场}
+想象一块初始准中性的等离子体，某个压力梯度使电子先向右移动。若电子运动比离子快，左侧会留下正电荷，右侧会积累负电荷，产生阻止电子继续分离的电场。这个电场同时加速离子。由此可见，“两种流体”表示允许不同平均流和不同热力学，不表示它们可以任意独立运动。
+
+在全Maxwell模型里，这一反馈由两套连续性、电流、Gauss约束和电场演化共同完成。在后面采用的准中性模型里，我们不再解析快速电荷分离振荡，而让电场即时满足约化电子力平衡。两种表示处理的是不同时间尺度；不能在同一求解器中不加说明地同时强制两套不同层级的电场方程。
+
+\section{初值问题怎样才算指定完整}
+一套偏微分方程还需要初值和边界。例如一维平衡电流片，给定$B_x(y)$并不能任意给定电流：低频时必须满足
+\begin{equation}
+ J_z(y)=-\frac1{\mu_0}\frac{\dd B_x}{\dd y}.
+\end{equation}
+若又要求$n_i=n_e=n$，初始漂移必须满足$u_{iz}-u_{ez}=J_z/(en)$；全部电流由电子携带和由两物种共同携带是不同初态。总压还应与磁压满足所选平衡，例如静态标量压力平衡给
+\begin{equation}
+\frac{\dd}{\dd y}\left(p_i+p_e+\frac{B_x^2}{2\mu_0}\right)=0.
+\end{equation}
+这一式只决定总压，不决定$p_i/p_e$。因此即使$n,B,J$都相同，改变初始两温比例仍可能改变后来的电子压力电场与热流。
+
+边界也要物理一致：周期边界意味着出流离开一侧后从另一侧返回；开放边界需要处理流入特征和电磁波；理想导体壁约束切向电场，却并不自动规定离子、电子的热流边界。模型、初态和边界三者共同决定结果，不能只凭论文标题中的“双流体”判断两个算例应当相同。
+
+\section{从完整系统约化时，不可同时保留所有原约束}
+如果删掉位移电流，Ampère定律成为$\J=\nabla\times\B/\mu_0$，于是$\nabla\cdot\J=0$。若同时把$n_i=n_e$用作保留阶次的共同密度，Gauss定律通常只用来估计被删去的小电荷分离，而不再作为$\nabla\cdot\E=0$的独立严格约束。
+
+原因是渐近意义的准中性只说$(n_i-n_e)/n$很小，不要求由有限电场散度决定的下一阶电荷修正严格为零。强迫$\nabla\cdot\E=0$可能会过度约束约化系统，甚至排除维持电子压力平衡的电场。下一章会量化这个小量。
+
+\note{五矩与十矩规定保留多少流体矩；全Maxwell与准中性规定怎样处理场和电荷。它们是两个可以组合的选择维度。“五矩”并不自动等于无电子惯性的Hall模型，“十矩”也不自动意味着一个正确的无碰撞热流闭合。\citep{Wang2015,Ng2020}}

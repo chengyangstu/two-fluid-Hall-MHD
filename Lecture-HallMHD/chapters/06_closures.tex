@@ -1,0 +1,218 @@
+\chapter{闭合不是小修补：五矩、十矩、CGL与热流怎样选择}
+\label{hall:ch:closures}
+\section{为什么方程数总是追不上未知量}
+密度方程含速度，动量方程含压力，压力方程含三阶中心矩$Q_{ijk}$。继续为$Q_{ijk}$推演化式，又会出现四阶矩。精确取矩并没有丢失信息，但有限截断必须对下一阶信息作近似。
+
+“闭合”就是给出这些缺少的信息，例如规定压力各向同性、热流为某个温度梯度的函数，或指定沿场非局地响应。它决定模型是否会在一个热点积累过多压力、是否把电子热量过快带离扩散区、是否错误压制某个不稳定性。对磁重联来说，闭合可以改变结果本身，而不只是让方程便于计算。\citep{Wang2015,Ng2017,Ng2020}
+
+\section{五矩：从三维随机运动推到\texorpdfstring{$\gamma=5/3$}{gamma=5/3}}
+取$\mathsf P_s=p_s\mathsf I$、$\vct q_s=0$，并令碰撞内能源为零。由于随机速度仍有三个分量，
+\begin{equation}U_s=\frac12(P_{xx}+P_{yy}+P_{zz})=\frac32p_s.\end{equation}
+内能方程为
+\begin{equation}
+\partial_tU_s+\nabla\cdot(U_s\vct u_s)=-p_s\nabla\cdot\vct u_s.
+\end{equation}
+将左边散度展开，记$\theta_s=\nabla\cdot\vct u_s$：
+\begin{align}
+\frac32D_sp_s+\frac32p_s\theta_s&=-p_s\theta_s,\\
+\frac32D_sp_s+\frac52p_s\theta_s&=0,\\
+D_sp_s+\frac53p_s\theta_s&=0.
+\end{align}
+再除以$p_s$，并用$D_s\ln n_s=-\theta_s$：
+\begin{equation}
+D_s\ln p_s=\frac53D_s\ln n_s,
+\qquad D_s(p_sn_s^{-5/3})=0.
+\end{equation}
+这就是$\gamma=5/3$的来源。二维网格只使空间导数少一个方向，并不会自动把粒子的三个随机速度自由度改成两个，因此普通二维三速度分量模拟仍用$5/3$。
+
+\subsection{已完成的压缩例：等温与绝热绝不是同一预测}
+设初始密度$n_0$、温度能量$\Theta_0$，流体团被缓慢压缩到$8n_0$。五矩绝热式给
+\begin{equation}
+\frac p{p_0}=8^{5/3}=32,\qquad
+\frac\Theta{\Theta_0}=\frac{p/p_0}{n/n_0}=4.
+\end{equation}
+若初始温度为10 eV，最后就是40 eV。等温闭合则规定最后仍为10 eV，压强只增到$8p_0$。少掉的压缩热必须被热输运或热库带走；两种闭合不是把同一公式用不同名字书写。
+
+五矩也不保证分布真的各向同性。它把各向同性作为模型限制；若压缩或剪切在无碰撞时间内产生明显各向异性，五矩可能仍给出总内能，但无法正确表示每个方向的应力。
+
+\section{十矩：六个压力分量分别怎样演化}
+每物种$n$一个、速度三个、对称压力六个，共十个矩。压力分量为$xx,yy,zz,xy,xz,yz$；由于$P_{xy}=P_{yx}$，不是九个独立量。为便于阅读，下面暂省物种下标，把上一章得到的一般式写成随体形式：
+\begin{align}
+DP_{ij}+P_{ij}\theta+P_{ik}\partial_ku_j+P_{jk}\partial_ku_i
++\partial_kQ_{ijk}
+=\frac qm(\epsilon_{ikl}P_{kj}+\epsilon_{jkl}P_{ki})B_l+C_{ij}.
+\label{hall:eq:ten-central}
+\end{align}
+在二维$\partial_z=0$中，$xx$分量明确为
+\begin{align}
+DP_{xx}+P_{xx}\theta
+&+2P_{xx}\partial_xu_x+2P_{xy}\partial_yu_x\nonumber\\
+&+\partial_xQ_{xxx}+\partial_yQ_{xxy}
+=2\frac qm(P_{xy}B_z-P_{xz}B_y)+C_{xx}.
+\end{align}
+$xz$分量为
+\begin{align}
+DP_{xz}+P_{xz}\theta
+&+P_{xx}\partial_xu_z+P_{xy}\partial_yu_z
++P_{xz}\partial_xu_x+P_{yz}\partial_yu_x\nonumber\\
+&+\partial_xQ_{xxz}+\partial_yQ_{xyz}\nonumber\\
+&=\frac qm[P_{yz}B_z-P_{zz}B_y+P_{xx}B_y-P_{xy}B_x]+C_{xz}.
+\end{align}
+这些项说明，二维空间变化仍能通过面外速度剪切产生面外压力相关。$P_{xz},P_{yz}$的梯度恰是X点欧姆定律所需要的电子非对角压力项。十矩增加的不是一个随意拟合的电阻，而是可被演化的压力自由度。
+
+但$Q_{ijk}$还未给定。十矩能表示某个分量，不等于它已经准确预测了该分量；热流闭合可能使其幅度、位置和时间变化偏离真实分布。Wang等的结果支持部分局地压力结构，并不表明所有分量和全过程均与粒子模拟相同。\citep{Wang2015}
+
+\section{局地各向同性松弛究竟做了什么}
+一个常见闭合把三阶矩散度近似为
+\begin{equation}
+\partial_kQ_{ijk}\approx\nu_{\rm cl}(P_{ij}-p\delta_{ij}),
+\qquad\nu_{\rm cl}\sim v_t|k_0|>0.
+\label{hall:eq:local-relaxation}
+\end{equation}
+其中$v_t$为某个明确规范的热速度，$k_0$为选定的波数参数；$1/|k_0|$是闭合长度。不是实际碰撞频率却写得像松弛频率，正是这种近似容易被误解的地方。\citep{Wang2015}
+
+令$\mathsf P=p\mathsf I+\mathsf A$，$\operatorname{tr}\mathsf A=0$。单独看这一闭合子步，压力方程给
+\begin{equation}
+\partial_t\mathsf P=-\nu_{\rm cl}\mathsf A.
+\end{equation}
+取迹得到$3\partial_tp=-\nu_{\rm cl}\operatorname{tr}\mathsf A=0$，所以$p=p_0$不变，而
+\begin{equation}
+\mathsf A(t)=\mathsf A(0)e^{-\nu_{\rm cl}t},\qquad
+\mathsf P(t)=p_0\mathsf I+\mathsf A(0)e^{-\nu_{\rm cl}t}.
+\end{equation}
+取压力单位任意且初始对角值为$(3,1,2)$，则$p_0=2$，在$t=1/\nu_{\rm cl}$时为
+\begin{equation}
+(P_{xx},P_{yy},P_{zz})=(2+e^{-1},2-e^{-1},2)
+\simeq(2.368,1.632,2).
+\end{equation}
+初末迹都为6，总内能都为3。这一子步重新分配方向压力，却没有增加总内能，也没有将热点的能量搬运到旁边的冷点。
+
+若研究电子热输运，单纯增加$\nu_{\rm cl}$只能更快抹平本地各向异性，不能自动恢复真正的沿场热传导。局地松弛常能稳定数值、改善部分结构，但参数和应用场景必须验证。
+
+\section{温度梯度闭合与非局地闭合为何不同}
+真实碰撞热传导在适当排序下可写$\vct q=-\kappa\nabla T_{\rm K}$，其中$\kappa$单位W/(m K)。在强磁场中还要区分沿场与跨场传导。这类局地关系依赖粒子在温度变化尺度内经历足够多的碰撞；平均自由程$\lambda_{\rm mfp}$与温度尺度$L_T$之比很大时，局地碰撞展开通常失去依据。
+
+十矩无碰撞模型也使用梯度闭合，但其系数与逻辑不同。一个代表性形式为
+\begin{equation}
+Q_{ijk}=-n\chi\frac{v_t}{|k_0|}\,\mathcal S_{ijk}(\partial_i\Theta_{jk}),
+\qquad\Theta_{ij}=\frac{P_{ij}}n.
+\end{equation}
+$\mathcal S$表示使三个指标对称的求和或平均；其系数要与具体文献定义一致。这里$Q$具有压力乘速度的单位；$v_t/|k_0|$是扩散率单位。若系数近似常量，代入$-\partial_kQ_{ijk}$会产生二阶空间导数。
+
+对单一Fourier分量$\Theta_1\propto e^{\mathrm ikx}$，$\partial_x^2\Theta_1=-k^2\Theta_1$，所以梯度闭合的衰减率随$k^2/|k_0|$增长。局地松弛则约为固定的$v_t|k_0|$，并不分辨每个实际波数。非局地相混闭合近似的响应常随$v_t|k|$；$|k|$的逆变换不是有限阶局地导数，而要涉及较远空间的信息。
+
+Ng等比较了局地、非局地和温度梯度型闭合；梯度形式能改善一些离子结构和岛合并标度，但电子各向异性与跨场输运仍有局限。不同文献有的扩散$P_{ij}-p\delta_{ij}$，有的扩散温度张量，不能因为都叫“梯度闭合”就把式子互换。\citep{Ng2017,Ng2020,L256}
+
+\subsection{用自由流动看懂“相混”所需的信息}
+考虑最简单的一维无场运动方程
+\begin{equation}\partial_tf_1+v\partial_xf_1=0.\end{equation}
+若初始扰动为$f_1(x,v,0)=g(v)e^{\mathrm ikx}$，沿粒子轨迹$x-vt=\text{常数}$得到
+\begin{equation}f_1(x,v,t)=g(v)e^{\mathrm ikx}e^{-\mathrm ikvt}.\end{equation}
+不同$v$有不同相位。密度扰动是$\int g(v)e^{-\mathrm ikvt}\dd v$；取宽度$\sigma_v$的高斯$g$，可直接完成高斯积分：
+\begin{equation}
+n_1(x,t)=n_1(x,0)\exp\left(-\frac12k^2\sigma_v^2t^2\right).
+\end{equation}
+密度波幅变小，但粒子分布并未被碰撞抹平；信息进入速度空间越来越细的相位结构。这个自由流动例不是自洽Landau阻尼的完整色散解，却准确说明为什么少数局地矩会失去相混信息。Landau型闭合试图近似这种信息流，而不是凭空添加真正的碰撞。
+
+\section{CGL：在强磁化条件下只保留平行和垂直压力}
+当回旋时间远短于演化时间、回旋半径远小于梯度尺度、分布围绕局地磁场近似旋转对称时，可以写
+\begin{equation}
+\mathsf P=p_\perp\mathsf I+(p_\parallel-p_\perp)\vct b\vct b,
+\qquad\vct b=\frac\B B.
+\label{hall:eq:gyrotropic}
+\end{equation}
+它有两个独立压力，而不是完整十矩的六个压力。内能为$U=p_\perp+p_\parallel/2$，标量平均压为$(2p_\perp+p_\parallel)/3$。在磁零点$B=0$时$\vct b$没有定义，故这个表示本身就提示适用边界。
+
+双绝热推导还要求忽略相应热流与碰撞，并在所讨论阶次中让磁场随所选物种流速输运。对于离子已与磁场解耦的Hall层，不能不经检查就将离子流冻结关系用于离子CGL不变量。下面暂省物种下标，在上述共同磁化排序内推导。
+
+\subsection{先投影压力方程，再引入磁场演化}
+记
+\begin{equation}
+A=b_ib_j\partial_ju_i,\qquad\theta=\nabla\cdot\vct u.
+\end{equation}
+$A$是沿场伸长率。用$b_iP_{ik}=p_\parallel b_k$，压力方程两个应变项的平行投影都等于$p_\parallel A$。由于$\vct b\cdot D\vct b=0$，随体导数投影为$DP_\parallel$，故
+\begin{equation}
+Dp_\parallel+p_\parallel\theta+2p_\parallel A=0.
+\label{hall:eq:cgl-parallel}
+\end{equation}
+取压力方程的迹，磁旋转项为零：
+\begin{equation}
+D(2p_\perp+p_\parallel)+(2p_\perp+p_\parallel)\theta
++2[p_\perp\theta+(p_\parallel-p_\perp)A]=0.
+\end{equation}
+从此式减去式\eqref{hall:eq:cgl-parallel}，得到
+\begin{equation}
+2Dp_\perp+4p_\perp\theta-2p_\perp A=0,
+\qquad D\ln p_\perp=-2\theta+A.
+\end{equation}
+另一方面，由理想感应方程展开旋度并用$\nabla\cdot\B=0$：
+\begin{equation}
+D\B=(\B\cdot\nabla)\vct u-\B\theta.
+\end{equation}
+点乘$\vct b/B$给$D\ln B=A-\theta$；连续性给$D\ln n=-\theta$。于是
+\begin{align}
+D\ln\left(\frac{p_\perp}{nB}\right)
+&=(-2\theta+A)-(-\theta)-(A-\theta)=0,\\
+D\ln\left(\frac{p_\parallel B^2}{n^3}\right)
+&=(-\theta-2A)+2(A-\theta)-3(-\theta)=0.
+\end{align}
+最终得到
+\begin{equation}
+\boxed{D\left(\frac{p_\perp}{nB}\right)=0,\qquad
+D\left(\frac{p_\parallel B^2}{n^3}\right)=0.}
+\label{hall:eq:cgl-invariants}
+\end{equation}
+温度形式为$\Theta_\perp\propto B$、$\Theta_\parallel\propto n^2/B^2$。它们描述可逆磁化变形的极限，不是“两个方向产生不同不可逆热”的定律。
+
+\subsection{两个完成的磁通管算例}
+第一例只作垂直压缩，磁通管长度不变，截面积减半。冻结磁通$BA$不变使$B=2B_0$，粒子数$nA\ell$不变使$n=2n_0$。于是
+\begin{equation}
+p_\perp=4p_{\perp0},\quad p_\parallel=2p_{\parallel0},\quad
+\Theta_\perp=2\Theta_{\perp0},\quad\Theta_\parallel=\Theta_{\parallel0}.
+\end{equation}
+初始各向同性10 eV便变为垂直20 eV、平行10 eV。
+
+第二例仅沿场压缩，截面积不变、长度减半。此时$B=B_0$、$n=2n_0$，所以
+\begin{equation}
+p_\perp=2p_{\perp0},\quad p_\parallel=8p_{\parallel0},\quad
+\Theta_\perp=\Theta_{\perp0},\quad\Theta_\parallel=4\Theta_{\parallel0}.
+\end{equation}
+相同初始10 eV变为垂直10 eV、平行40 eV。密度都增加两倍，但沿场与跨场压缩给出不同温度；标量$p\propto n^{5/3}$无法保留这个方向信息。
+
+\section{各向异性怎样反馈到力与加热}
+令$\Delta p=p_\parallel-p_\perp$。对式\eqref{hall:eq:gyrotropic}求散度，逐项使用乘积法则：
+\begin{equation}
+\nabla\cdot\mathsf P=\nabla p_\perp
++\vct b(\vct b\cdot\nabla\Delta p)
++\Delta p[(\vct b\cdot\nabla)\vct b+\vct b\nabla\cdot\vct b].
+\end{equation}
+因此它不只是把$p$换成两个压力：场线曲率$\vct\kappa=(\vct b\cdot\nabla)\vct b$也与$\Delta p$相乘。结合磁张力，曲率力的系数成为$B^2/\mu_0+p_\perp-p_\parallel$；过大的平行压力可以削弱恢复张力。完整稳定性边界还依赖几何、有限回旋半径和动理学响应，本式仅揭示力学来源。
+
+压力功变为
+\begin{equation}
+-\mathsf P:\nabla\vct u=-p_\perp\theta-(p_\parallel-p_\perp)A.
+\end{equation}
+同样的总体压缩率$\theta$，若沿场伸长率$A$不同，内能交换也不同。这就是为什么压力闭合能够改变喷流减速和热点位置，而重联率看起来仍可能相近。
+
+\section{为什么俘获电子状态方程不是CGL的另一种写法}
+磁化电子沿场运动很快，但若存在限制逃逸的平行电势，一部分电子被俘获、一部分来自远处热库。它们对局部密度与磁场变化的响应不同，热流也受来源和通过时间限制。因此可以构造跨越近等温与双绝热极限的各向异性状态方程，而不是始终套用同一个CGL幂律。
+
+Wetherton等用强导场MMS事件的温度--密度转折检验这类电子闭合。其数值参照含动理学离子和流体电子，不是完整双流体离子加热验证。对初学者最重要的认识是：闭合有自己的物理假设和观测检验，而不是只要写出$p_\parallel,p_\perp$就能自动得到正确温度。\citep{Wetherton2019}
+
+\section{零热流为什么也可能把十矩算坏}
+在一个无导场、对称、近稳态停滞点，取局部不可压缩线性流
+\begin{equation}
+u_x=ax,\qquad u_y=-ay,\qquad a>0.
+\end{equation}
+在X点$\vct u=0$、$\theta=0$、$\B=0$。若又设$Q=0$、$C=0$，则$xx$压力方程只剩
+\begin{equation}
+\partial_tP_{xx}+2aP_{xx}=0.
+\end{equation}
+它的解为$P_{xx}(t)=P_{xx}(0)e^{-2at}$，持续流出应变会把该方向压力压到很小。若要求严格稳态，甚至只有$P_{xx}=0$。真实热流或其他物理过程应补充被此局部应变带走的压力信息。
+
+这个简化局部推导与Ng等附录讨论的停滞点问题一致。它解释“增加六个压力方程”为什么仍不足以保证结果更好；缺少热流补给时，多出来的自由度可以以不合理方式演化。上述流场是教学构造，不是声称重现了论文整个算例。\citep{Ng2020}
+
+\section{选择模型时应逐项回答什么}
+先确定目标量，再核对模型变量、闭合所需的磁化/碰撞/几何排序，最后验证实际初边值下的数值收敛与观测响应。标量双温Hall推进两物种热能，但没有完整非对角压力；十矩给出这些压力，却不唯一恢复尾部和多峰分布；CGL保留磁化各向异性，但在磁零点和强热流处需要谨慎。
+
+阅读论文时区分：“方程包含这个量”“数值能稳定计算”“该算例接近某个参照”“已经经过实验验证”。这些陈述依次需要更多证据，模型名称本身不能替代它们。

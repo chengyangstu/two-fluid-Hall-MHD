@@ -1,0 +1,306 @@
+\chapter{从双流体到Hall MHD：每一次近似究竟删掉什么}
+\label{hall:ch:reduction}
+\section{先分清“换变量”和“约化模型”}
+同一份流体信息可以用两套物种速度$\vct u_i,\vct u_e$表示，也可以用平均速度和相对速度表示。这个代数变换本身没有删去物理。只有接下来忽略电荷分离、位移电流、电子惯性、压力各向异性等某些项，才是在改变模型。学习Hall MHD时最常见的混淆，就是把这两步并在一句“电子质量很小”里。
+
+本章按以下次序进行：先说明低频与准中性的排序；在共同密度下做精确质心变换；相加两套动量方程；单独重写电子动量；最后才删去在目标尺度上足够小的项。全五矩模型到Hall极限的直接比较可参见Wang等；此处把中间代数逐行展开。\citep{Wang2015}
+
+\section{准中性：小的是相对电荷分离，不是电场}
+Poisson方程是
+\begin{equation}
+\epsilon_0\nabla\cdot\E=e(n_i-n_e).
+\end{equation}
+取特征长度$L$，若电子压力平衡给出$E\sim\Theta_e/(eL)$，那么
+\begin{align}
+\frac{|n_i-n_e|}{n}
+&\sim\frac{\epsilon_0 E}{enL}
+\sim\frac{\epsilon_0\Theta_e}{ne^2L^2}
+=\left(\frac{\lambda_{De}}{L}\right)^2,\\
+\lambda_{De}&=\sqrt{\frac{\epsilon_0\Theta_e}{ne^2}}.
+\label{hall:eq:qn-scale}
+\end{align}
+当$L\gg\lambda_{De}$，小到无法在保留精度内分辨的密度差就足以支持有限电场。例如果$L=100\lambda_{De}$，这一排序给$|n_i-n_e|/n\sim10^{-4}$；不需要百分之一级的电荷分离才能产生电子压力电场。
+
+这个估计还隐含电势能$e\Phi$与$\Theta_e$同阶。若外加电压很大、存在鞘层或高频Langmuir振荡，要重新检查排序。不能从“装置尺寸很大”推出所有局部结构都准中性；应比较的是所研究结构自己的$L$。
+
+\section{删去位移电流：需要独立的时间尺度检查}
+完整Ampère定律为
+\begin{equation}
+\frac{\nabla\times\B}{\mu_0}=\J+\epsilon_0\partial_t\E.
+\end{equation}
+取$J\sim B/(\mu_0L)$、$\partial_tE\sim E/\tau$，位移电流与传导电流的比为
+\begin{equation}
+\frac{\epsilon_0 E/\tau}{B/(\mu_0L)}
+\sim\frac{EL}{c^2B\tau}.
+\end{equation}
+若进一步是$E\sim UB$且$\tau\sim L/U$的低速流动排序，就得到
+\begin{equation}
+\frac{J_{\rm disp}}{J}\sim\frac{U^2}{c^2}\ll1.
+\label{hall:eq:displacement-order}
+\end{equation}
+这与式\eqref{hall:eq:qn-scale}是两个检查，不是同一个公式。电磁波的$E\sim cB$、$\tau\sim L/c$使这一比值为1，即使它传播在大而近中性的等离子体中，也不能删除位移电流。
+
+完成低频约化后采用
+\begin{equation}
+\J=\frac1{\mu_0}\nabla\times\B,\qquad\nabla\cdot\J=0.
+\label{hall:eq:low-ampere}
+\end{equation}
+电场不再由Ampère--Maxwell方程独立推进，而由电子力平衡给出。准中性近似删除的是快速电荷分离自由度；无位移电流近似删除的是光速电磁传播自由度。
+
+\section{精确的质心速度变换}
+在$n_i=n_e=n$这一保留阶次下，定义
+\begin{equation}
+M=m_i+m_e,\quad \rho=Mn,\quad
+\vct u=\frac{m_i\vct u_i+m_e\vct u_e}{M},\quad
+\vct w=\vct u_i-\vct u_e=\frac{\J}{en}.
+\end{equation}
+用$\vct u_e=\vct u_i-\vct w$代入质心定义：
+\begin{equation}
+M\vct u=m_i\vct u_i+m_e(\vct u_i-\vct w)
+=M\vct u_i-m_e\vct w.
+\end{equation}
+所以
+\begin{equation}
+\boxed{\vct u_i=\vct u+\frac{m_e}{M}\vct w,\qquad
+\vct u_e=\vct u-\frac{m_i}{M}\vct w.}
+\label{hall:eq:velocity-transform}
+\end{equation}
+无论$\vct w$多大，这在已采用的共同密度下都是代数恒等式。$m_e/m_i$小只使质心速度通常接近离子速度，并没有使电子速度接近离子速度。两个判断分别是
+\begin{equation}
+|\vct u_i-\vct u|=\frac{m_e}{M}|\vct w|,
+\qquad |\vct u_i-\vct u_e|=|\vct w|.
+\end{equation}
+后者没有小质量比系数。
+
+\subsection{共同密度为什么只需要一条连续性}
+将两种质量连续性相加，得到$\partial_t\rho+\nabla\cdot(\rho\vct u)=0$。若采用离子速度作为约化主速度，电子连续性也可直接检验：
+\begin{align}
+\partial_tn+\nabla\cdot(n\vct u_e)
+&=\partial_tn+\nabla\cdot\left(n\vct u_i-\frac{\J}{e}\right)\\
+&=\partial_tn+\nabla\cdot(n\vct u_i)-\frac1e\nabla\cdot\J=0.
+\end{align}
+因此在式\eqref{hall:eq:low-ampere}成立时，第二条粒子数方程与第一条相容，并不增加独立密度自由度。
+
+\section{总动量：相对漂移会留下一个应力}
+先在尚未取准中性的一般情形看电磁力相加：
+\begin{align}
+&en_i(\E+\vct u_i\times\B)-en_e(\E+\vct u_e\times\B)\\
+&\hspace{12mm}=e(n_i-n_e)\E+
+(en_i\vct u_i-en_e\vct u_e)\times\B
+=\rho_q\E+\J\times\B.
+\end{align}
+准中性低速排序下舍去$\rho_q\E$。在$E\sim UB$排序下它对$\J\times\B$的相对量级也约为$U^2/c^2$；若电场远大于这一排序，须再审查，不能只凭密度近等就盲删。
+
+总动量的时间项直接为$\partial_t(\rho\vct u)$。关键在动量通量：
+\begin{align}
+&m_in\vct u_i\vct u_i+m_en\vct u_e\vct u_e\\
+={}&m_in\left(\vct u+\frac{m_e}{M}\vct w\right)
+\left(\vct u+\frac{m_e}{M}\vct w\right)\nonumber\\
+&+m_en\left(\vct u-\frac{m_i}{M}\vct w\right)
+\left(\vct u-\frac{m_i}{M}\vct w\right).\nonumber
+\end{align}
+$\vct u\vct u$系数为$Mn=\rho$；$\vct u\vct w+\vct w\vct u$系数为
+$m_inm_e/M-m_enm_i/M=0$；$\vct w\vct w$系数为
+\begin{equation}
+n\left(\frac{m_im_e^2}{M^2}+\frac{m_em_i^2}{M^2}\right)
+=\frac{nm_im_e}{M}.
+\end{equation}
+故
+\begin{equation}
+\partial_t(\rho\vct u)+\nabla\cdot
+\left[\rho\vct u\vct u+\mathsf P_i+\mathsf P_e+
+\frac{m_im_e}{Me^2n}\J\J\right]=\J\times\B.
+\label{hall:eq:total-momentum-exact}
+\end{equation}
+已经使用内部碰撞$\vct R_i+\vct R_e=0$。最后的$\J\J$是相对漂移的动量通量；它不是额外的热压力，而是两种有序流在质心表示下留下的应力。
+
+\subsection{同一个变换也给出漂移动能}
+将刚才的张量通量取半迹，得到
+\begin{equation}
+\frac12m_inu_i^2+\frac12m_enu_e^2
+=\frac12\rho u^2+
+\frac{m_im_e}{2Me^2n}J^2.
+\label{hall:eq:drift-energy}
+\end{equation}
+右边第一项是质心动能，第二项是相对漂移能。若模拟保留电子惯性，却在总能量里完全漏记这项，便可能把可逆的电子流能改变误认为加热或数值能量损失。
+
+\section{广义欧姆定律：逐行追踪电子负电荷}
+电子动量方程是
+\begin{equation}
+m_enD_e\vct u_e=-en(\E+\vct u_e\times\B)
+-\nabla\cdot\mathsf P_e+\vct R_e.
+\end{equation}
+第一步，把带$\E$的项移到左边；再把原左边惯性移到右边：
+\begin{equation}
+en(\E+\vct u_e\times\B)
+=-m_enD_e\vct u_e-\nabla\cdot\mathsf P_e+\vct R_e.
+\end{equation}
+第二步，除以正数$en$：
+\begin{equation}
+\E+\vct u_e\times\B
+=-\frac{\nabla\cdot\mathsf P_e}{en}
+-\frac{m_e}{e}D_e\vct u_e+\frac{\vct R_e}{en}.
+\label{hall:eq:electron-ohm}
+\end{equation}
+第三步，在左边换成离子速度，等价于在两边同时加$(\vct u_i-\vct u_e)\times\B$：
+\begin{equation}
+\boxed{\E+\vct u_i\times\B
+=\frac{\J\times\B}{en}
+-\frac{\nabla\cdot\mathsf P_e}{en}
+-\frac{m_e}{e}D_e\vct u_e+\frac{\vct R_e}{en}.}
+\label{hall:eq:generalized-ohm}
+\end{equation}
+所以Hall项的正号来自速度的替换；压力和惯性的负号来自电子带负电。这个等式是电子动量的改写，在所选准中性阶次内尚未删去电子惯性。
+
+如果左端使用精确质心速度而不是离子速度，则$\vct u-\vct u_e=(m_i/M)\J/(en)$，相应Hall项系数为$m_i/M$。这与使用离子速度时的系数1并不矛盾；只有再取$m_e/m_i\ll1$，两种主速度才在保留阶次内一致。
+
+\subsection{碰撞阻力为什么给正的电阻率}
+在简单线性阻力模型中，电子受到离子相对运动方向的拖曳：
+\begin{equation}
+\vct R_e=m_en\nu_{ei}(\vct u_i-\vct u_e)
+=\frac{m_e\nu_{ei}}e\J.
+\end{equation}
+因此
+\begin{equation}
+\frac{\vct R_e}{en}=\eta\J,
+\qquad \eta=\frac{m_e\nu_{ei}}{ne^2}>0.
+\label{hall:eq:resistivity}
+\end{equation}
+这里$\nu_{ei}$是这一阻力定义中的动量松弛频率；真实碰撞输运可能还含热力等修正。$\eta$的单位是$\Omega\,\mathrm m$。磁感应方程中的扩散率是$D_\eta=\eta/\mu_0$，单位$\mathrm{m^2/s}$，二者不能互换。
+
+\subsection{逐项检查电场单位}
+Hall项可写成$(\J/en)\times\B$：$\J/(en)$是速度，乘磁场是V/m。压力项为
+\begin{equation}
+\left[\frac{\nabla p}{en}\right]
+=\frac{\mathrm{N/m^3}}{\mathrm{C/m^3}}
+=\mathrm{N/C}=\mathrm{V/m}.
+\end{equation}
+惯性项为$(\mathrm{kg/C})(\mathrm{m/s^2})=\mathrm{V/m}$。电阻项为$(\Omega\,\mathrm m)(\mathrm{A/m^2})=\mathrm{V/m}$。数值论文中这些项往往已经除以一个共同电场标度；比较之前要恢复同一归一化，不能直接把有量纲值和无量纲曲线相加。
+
+\section{电子惯性为什么不能简单写成一个电流时间导数}
+令$\vct w=\J/(en)$，$D_i=\partial_t+\vct u_i\cdot\nabla$。从$\vct u_e=\vct u_i-\vct w$直接展开：
+\begin{align}
+D_e\vct u_e
+&=[\partial_t+(\vct u_i-\vct w)\cdot\nabla](\vct u_i-\vct w)\\
+&=D_i\vct u_i-D_i\vct w-(\vct w\cdot\nabla)\vct u_i
+ +(\vct w\cdot\nabla)\vct w.
+\label{hall:eq:inertia-w}
+\end{align}
+密度也在$\vct w$里。利用离子连续性$D_in=-n\nabla\cdot\vct u_i$，
+\begin{align}
+D_i\vct w&=\frac{D_i\J}{en}-\frac{\J}{en^2}D_in
+=\frac{D_i\J+\J\nabla\cdot\vct u_i}{en},\\
+(\vct w\cdot\nabla)\vct w
+&=\frac{(\J\cdot\nabla)\J}{e^2n^2}
+-\frac{\J(\J\cdot\nabla n)}{e^2n^3}.
+\end{align}
+代回惯性电场：
+\begin{align}
+-\frac{m_e}{e}D_e\vct u_e={}&-\frac{m_e}{e}D_i\vct u_i
++\frac{m_e}{e^2n}(D_i\J+\J\nabla\cdot\vct u_i)\nonumber\\
+&+\frac{m_e}{e^2n}(\J\cdot\nabla)\vct u_i
+-\frac{m_e}{e^3n^2}(\J\cdot\nabla)\J
++\frac{m_e}{e^3n^3}\J(\J\cdot\nabla n).
+\end{align}
+只保留$(m_e/ne^2)\partial_t\J$同时删去了平均流加速度、对流、剪切、压缩与密度梯度。在线性均匀背景的某些排序中这可能合理；对强剪切的重联层，不能不经估计就宣称等价。
+
+\section{Hall项和电子惯性各自在哪个尺度重要}
+低频Ampère估计$J\sim B/(\mu_0L)$给出
+\begin{equation}
+\frac{J}{en}\sim\frac{B}{\mu_0enL}
+=\VA\frac{d_i}{L},\qquad
+\VA=\frac B{\sqrt{\mu_0m_in}},\quad
+ d_i=\sqrt{\frac{m_i}{\mu_0ne^2}}.
+\label{hall:eq:hall-scale}
+\end{equation}
+于是以$UB$为共同标度，
+\begin{equation}
+\frac{E_H}{UB}\sim\frac{\VA}{U}\frac{d_i}{L}.
+\end{equation}
+只有$U\sim\VA$时才简写为$d_i/L$。若用很慢的入流速度比较，会多出$\VA/U$；而且各矢量的相对方向也决定具体分量。对于薄电流片应分别用跨片厚度和沿片长度估算不同导数，不可全用装置尺寸代替。
+
+电子层内若$u_e\sim J/(en)$、所比较的惯性梯度尺度为$\delta$，且对应分量不因对称性消失，则
+\begin{align}
+\frac{(m_e/e)u_e^2/\delta}{u_eB}
+&\sim\frac{m_eu_e}{e\delta B}
+\sim\frac{m_e}{\mu_0ne^2\delta^2}
+=\frac{d_e^2}{\delta^2},\\
+d_e&=\sqrt{\frac{m_e}{\mu_0ne^2}}=d_i\sqrt{\frac{m_e}{m_i}}.
+\label{hall:eq:inertia-scale}
+\end{align}
+这是“小系数乘大梯度”的典型例子。若$\delta=d_e$，该比值为1；电子质量小并未保证电子惯性小。若时间变化主导，也要检查$\omega/|\Omega_e|$。这些估计在X点某一分量同时为零时不能直接作比值；下一章会逐项检查X点电场。
+
+\section{真正得到无电子惯性的Hall方程}
+现在明确采用以下约化：低频准中性；$m_e/m_i\ll1$；在目标尺度上电子惯性与漂移应力可忽略；离子和电子压力取标量；暂不引入黏性和热流。令$\vct u=\vct u_i$表示这一约化阶次的主速度，而不是上一节有限质量下的精确质心速度。
+
+总动量成为
+\begin{equation}
+m_in(\partial_t+\vct u\cdot\nabla)\vct u
+=-\nabla(p_i+p_e)+\J\times\B.
+\end{equation}
+电子力平衡仍保留$\vct u_e$和$p_e$：
+\begin{equation}
+\E+\vct u_e\times\B=-\frac{\nabla p_e}{en}+\eta\J,
+\qquad \vct u_e=\vct u-\frac{\J}{en}.
+\end{equation}
+代入并移项就是Hall欧姆定律
+\begin{equation}
+\boxed{\E+\vct u\times\B
+=\frac{\J\times\B}{en}-\frac{\nabla p_e}{en}+\eta\J.}
+\label{hall:eq:hall-ohm}
+\end{equation}
+取负旋度并用Faraday定律：
+\begin{equation}
+\partial_t\B=\nabla\times
+\left(\vct u\times\B-\frac{\J\times\B}{en}
++\frac{\nabla p_e}{en}-\eta\J\right).
+\label{hall:eq:hall-induction}
+\end{equation}
+Hall项是将电子携带磁通改写成以离子速度描述时留下的相对漂移项。总动量中没有一个单独叫“Hall力”的新增外力；Hall效应改变$\B,\J$的演化，随后通过$\J\times\B$反馈到流动。
+
+\section{一套可直接核对未知量的双温Hall模型}
+最简单、明确闭合的教学例取$\eta=0$、$\gamma_i=\gamma_e=5/3$、无热流、无显式碰撞交换。九个标量未知量为
+\begin{equation}
+(n,u_x,u_y,u_z,B_x,B_y,B_z,p_i,p_e).
+\end{equation}
+相应演化方程是
+\begin{align}
+\partial_tn+\nabla\cdot(n\vct u)&=0,\\
+m_in(\partial_t+\vct u\cdot\nabla)\vct u
+&=-\nabla(p_i+p_e)+\J\times\B,\\
+\partial_t\B&=\nabla\times
+\left(\vct u\times\B-\frac{\J\times\B}{en}+\frac{\nabla p_e}{en}\right),\\
+(\partial_t+\vct u\cdot\nabla)p_i+\gamma_i p_i\nabla\cdot\vct u&=0,\\
+(\partial_t+\vct u_e\cdot\nabla)p_e+\gamma_e p_e\nabla\cdot\vct u_e&=0.
+\label{hall:eq:closed-hall}
+\end{align}
+计算中再由下列关系重建三个辅助量，并保持一个约束：
+\begin{equation}
+\J=\frac{\nabla\times\B}{\mu_0},\quad
+\vct u_e=\vct u-\frac{\J}{en},\quad
+\E=-\vct u_e\times\B-\frac{\nabla p_e}{en},\quad
+\nabla\cdot\B=0.
+\end{equation}
+电子压力沿电子速度输运。若无说明地把它改成沿离子速度输运，就改动了热力学和能量通量，而不只是换一种符号。
+
+\subsection{怎样加入电阻而不漏掉热}
+在感应方程括号里增加$-\eta\J$，并在内能方程加入$H_i,H_e$。只考虑内部摩擦时必须满足
+\begin{equation}H_i+H_e=\eta J^2.\end{equation}
+可用$H_i=\chi\eta J^2+Q_{ie}$、$H_e=(1-\chi)\eta J^2-Q_{ie}$示范一个能量一致的分配，其中$0\leq\chi\leq1$、$Q_{ie}$是流向离子的物种热交换。这只是可调的教学闭合；$\chi$不能由Hall项自动求出，真实碰撞模型应另推分配与交换系数。
+
+压强方程右侧是$(\gamma_s-1)H_s$，因为$U_s=p_s/(\gamma_s-1)$。若有热流，应改为$(\gamma_s-1)(H_s-\nabla\cdot\vct q_s)$；若有黏性，还要同时在动量和内能中加入成对的应力功。下一章检验这些项怎样在总能量中抵消。
+
+\section{如何进一步回到普通MHD}
+若$J/(enU)\ll1$，可以在磁输运中忽略电子与离子的速度差。再要求电子压力项的旋度可忽略，或采用$p_e=p_e(n)$使之严格为零，就得到电阻MHD的感应方程：
+\begin{equation}
+\partial_t\B=\nabla\times(\vct u\times\B)-\nabla\times(\eta\J).
+\end{equation}
+若$\eta$空间均匀，利用$\nabla\times\nabla\times\B=\nabla(\nabla\cdot\B)-\nabla^2\B$，可写
+\begin{equation}
+\partial_t\B=\nabla\times(\vct u\times\B)+D_\eta\nabla^2\B.
+\end{equation}
+变电阻率还会留下$-\nabla\eta\times\J$，不能漏掉。若目标尺度上的磁Reynolds数$R_m=UL/D_\eta\gg1$，磁扩散相对对流小，才进一步得到理想MHD。
+
+最后，若想将$p_i,p_e$也合并成一个总压，仍需要说明两物种温度与热输运如何处理。单流体动量并不强迫单一温度；反之，两温度也并不保证保留了Hall项。模型名称常将这些选择混在一起，阅读论文时应以实际方程为准。
+
+\note{Hall MHD没有令电子消失，也没有令两物种同速；它用电子零惯性力平衡代替电子加速度方程，同时在磁输运中保留相对漂移。其电子扩散区是否可信，还取决于模型实际保留了什么破冻结机制。}
